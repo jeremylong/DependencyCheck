@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="DependencyCheck">
+  <bannerLeft>
+    <name>DependencyCheck</name>
+  </bannerLeft>
+  <bannerRight>
+  </bannerRight>
+  <body>
+    <menu ref="reports" />
+  </body>
+</project>
