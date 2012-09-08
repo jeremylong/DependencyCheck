@@ -61,7 +61,7 @@ public class CPEQuery {
      * utilized within the CPE Names.
      */
     static final String CLEANSE_CHARACTER_RX = "[^A-Za-z0-9 _-]";
-    /* A string representation of a regular expression used to remove all but 
+    /* A string representation of a regular expression used to remove all but
      * alpha characters.
      */
     static final String CLEANSE_NONALPHA_RX = "[^A-Za-z]*";
@@ -191,15 +191,15 @@ public class CPEQuery {
         do {
             List<Entry> entries = searchCPE(vendors, titles, versions, dependency.getTitleEvidence().getWeighting(),
                     dependency.getVendorEvidence().getWeighting());
-            
-            if (entries.size()>0) {
+
+            if (entries.size() > 0) {
                 List<String> verified = verifyEntries(entries, dependency);
                 if (verified.size() > 0) {
                     found = true;
                     dependency.setCPEs(verified);
                 }
             }
-            
+
             if (!found) {
                 int round = cnt % 3;
                 if (round == 0) {
@@ -320,7 +320,7 @@ public class CPEQuery {
      */
     protected String buildSearch(String vendor, String product, String version,
             List<String> vendorWeighting, List<String> produdctWeightings) {
-        
+
         StringBuilder sb = new StringBuilder(vendor.length() + product.length()
                 + version.length() + Fields.PRODUCT.length() + Fields.VERSION.length()
                 + Fields.VENDOR.length() + STRING_BUILDER_BUFFER);
@@ -335,7 +335,7 @@ public class CPEQuery {
         if (!appendWeightedSearch(sb, Fields.VENDOR, vendor.toLowerCase(), vendorWeighting)) {
             return null;
         }
-        
+
         sb.append(Fields.VERSION).append(":(");
         if (sb.indexOf("^") > 0) {
             //if we have a weighting on something else, reduce the weighting on the version a lot
@@ -369,7 +369,7 @@ public class CPEQuery {
         sb.append(" ").append(field).append(":( ");
 
         String cleanText = cleanseText(searchText);
-        
+
         if ("".equals(cleanText)) {
             return false;
         }
@@ -408,7 +408,7 @@ public class CPEQuery {
     private String cleanseText(String text) {
         return text.replaceAll(CLEANSE_CHARACTER_RX, " ");
     }
-    
+
     /**
      * Compares two strings after lower casing them and removing the non-alpha
      * characters.

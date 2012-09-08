@@ -1,13 +1,17 @@
 About:
-DependencyCheck is a simple utility that attempts to determine if there is a Common Product Enumeration (CPE) identifier for a given project dependency. If found, it will generate a report linking to the associated CVE entries.
+DependencyCheck is a simple utility that attempts to determine if there is a 
+Common Product Enumeration (CPE) identifier for a given project dependency. 
+If found, it will generate a report linking to the associated CVE entries.
 
 Usage:
 Still under development: mvn package site
 
+java -jar dependencycheck-0.1.jar -h
+
 TODO: 
 Add CVE download/indexing and CPE lookup.
-Finish report generation.
-Fix/finish the CLI.
+Finish report generation (xml).
+Consider utilizing the OSVDB in addition to CPE/CVE.
 
 Author: Jeremy Long (jeremy.long@gmail.com)
 

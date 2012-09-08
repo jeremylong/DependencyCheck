@@ -103,7 +103,7 @@ public final class CliParser {
                 //TODO - need a new exception type here, this isn't really a parseexception.
                 throw new ParseException("Scan cannot be run without specifying a directory to write the reports to via the 'out' argument.");
             } else {
-                String p = line.getOptionValue(ArgumentName.OUT,"");
+                String p = line.getOptionValue(ArgumentName.OUT, "");
                 File f = new File(p);
                 if ("".equals(p) || !(f.exists() && f.isDirectory())) {
                     //TODO - need a new exception type here, this isn't really a parseexception.
@@ -151,22 +151,29 @@ public final class CliParser {
      */
     @SuppressWarnings("static-access")
     private Options createCommandLineOptions() {
-        Option help = new Option(ArgumentName.HELP_SHORT, ArgumentName.HELP, false, "print this message");
-        Option version = new Option(ArgumentName.VERSION_SHORT, ArgumentName.VERSION, false, "print the version information and exit");
-        
-        Option appname = OptionBuilder.withArgName("name").hasArg().withLongOpt(ArgumentName.APPNAME).withDescription("the name of the application being scanned").create(ArgumentName.APPNAME_SHORT);
+        Option help = new Option(ArgumentName.HELP_SHORT, ArgumentName.HELP, false,
+                "print this message");
 
-        Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.SCAN).withDescription("the path to scan").create(ArgumentName.SCAN_SHORT);
+        Option version = new Option(ArgumentName.VERSION_SHORT, ArgumentName.VERSION,
+                false, "print the version information and exit");
 
-        Option load = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.CPE).withDescription("load the CPE xml file").create(ArgumentName.CPE_SHORT);
+        Option noupdate = new Option(ArgumentName.DISABLE_AUTO_UPDATE_SHORT, ArgumentName.DISABLE_AUTO_UPDATE,
+                false, "disables the automatic updating of the CPE data.");
 
-        Option out = OptionBuilder.withArgName("folder").hasArg().withLongOpt(ArgumentName.OUT).withDescription("the folder to write reports to.").create(ArgumentName.OUT_SHORT);
-        
+        Option appname = OptionBuilder.withArgName("name").hasArg().withLongOpt(ArgumentName.APPNAME)
+                .withDescription("the name of the application being scanned").create(ArgumentName.APPNAME_SHORT);
+
+        Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.SCAN)
+                .withDescription("the path to scan - this option can be specified multiple times.").create(ArgumentName.SCAN_SHORT);
+
+        Option load = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.CPE)
+                .withDescription("load the CPE xml file").create(ArgumentName.CPE_SHORT);
+
+        Option out = OptionBuilder.withArgName("folder").hasArg().withLongOpt(ArgumentName.OUT)
+                .withDescription("the folder to write reports to.").create(ArgumentName.OUT_SHORT);
+
         //TODO add the ability to load a properties file to override the defaults...
-        //TODO add the ability to load the CVE entries.
-        //TODO add a switch to auto-update CVE entries.
-        //TODO add a switch to auto-update CPE entries.
-        
+
         OptionGroup og = new OptionGroup();
         og.addOption(path);
         og.addOption(load);
@@ -177,6 +184,7 @@ public final class CliParser {
         opts.addOption(appname);
         opts.addOption(version);
         opts.addOption(help);
+        opts.addOption(noupdate);
 
         return opts;
     }
@@ -222,10 +230,14 @@ public final class CliParser {
      */
     public void printHelp() {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("DependencyCheck", options, true);
+        formatter.printHelp(Settings.getString("application.name", "DependencyCheck"),
+                "\n" + Settings.getString("application.name", "DependencyCheck") + 
+                " can be used to identify if there are any known CVE vulnerabilities in libraries utillized by an application." +
+                " " + Settings.getString("application.name", "DependencyCheck") + " will automatically update required data from the Internet, such as the CVE and CPE data files from nvd.nist.gov.\n",
+                options, "", true);
     }
 
-    
+
     /**
      * Retrieves the file command line parameter(s) specified for the 'cpe' argument.
      *
@@ -234,7 +246,7 @@ public final class CliParser {
     public String getCpeFile() {
         return line.getOptionValue(ArgumentName.CPE);
     }
-    
+
     /**
      * Retrieves the file command line parameter(s) specified for the 'scan' argument.
      *
@@ -242,12 +254,21 @@ public final class CliParser {
      */
     public String[] getScanFiles() {
         return line.getOptionValues(ArgumentName.SCAN);
-        
+
     }
 
+    /**
+     * returns the directory to write the reports to specified on the command line.
+     * @return the path to the reports directory.
+     */
     public String getReportDirectory() {
         return line.getOptionValue(ArgumentName.OUT);
     }
+
+    /**
+     * Returns the application name specified on the command line.
+     * @return the applicatoin name.
+     */
     public String getApplicationName() {
         return line.getOptionValue(ArgumentName.APPNAME);
     }
@@ -257,30 +278,20 @@ public final class CliParser {
      *     <li>Implementation-Version: ${pom.version}</li></ul>
      */
     public void printVersionInfo() {
-        String version = "DependencyCheck version unknown";
-
-        URLClassLoader cl = (URLClassLoader) this.getClass().getClassLoader();
-        InputStream is = null;
-
-        try {
-            URL url = cl.findResource("META-INF/MANIFEST.MF");
-            is = url.openStream();
-            Manifest manifest = new Manifest(is);
-            Attributes atts = manifest.getMainAttributes();
-            version = atts.getValue(Attributes.Name.IMPLEMENTATION_TITLE)
-                    + " version "
-                    + atts.getValue(Attributes.Name.IMPLEMENTATION_VERSION);
-        } catch (IOException ex) {
-            Logger.getLogger(CliParser.class.getName()).log(Level.WARNING, null, ex);
-        } finally {
-            try {
-                is.close();
-                is = null;
-            } catch (Throwable ex) {
-                Logger.getLogger(CliParser.class.getName()).log(Level.FINEST, null, ex);
-            }
-        }
+        String version = String.format("%s version %s",
+                Settings.getString("application.name", "DependencyCheck"),
+                Settings.getString("application.version", "Unknown"));
         System.out.println(version);
+    }
+
+    /**
+     * Checks if the auto update feature has been disabled. If it has been disabled
+     * via the command line this will return false.
+     *
+     * @return if auto-update is allowed.
+     */
+    public boolean isAutoUpdate() {
+        return (line != null) ? !line.hasOption(ArgumentName.DISABLE_AUTO_UPDATE) : false;
     }
 
     /**
@@ -288,18 +299,62 @@ public final class CliParser {
      * line arguments.
      */
     public static class ArgumentName {
-
+        /**
+         * The long CLI argument name specifing the directory/file to scan
+         */
         public static final String SCAN = "scan";
-        public static final String CPE = "cpe";
-        public static final String OUT = "out";
-        public static final String APPNAME = "app";
-        public static final String VERSION = "version";
-        public static final String HELP = "help";
+        /**
+         * The short CLI argument name specifing the directory/file to scan
+         */
         public static final String SCAN_SHORT = "s";
+        /**
+         * The long CLI argument name specifing the path to the CPE.XML file to import
+         */
+        public static final String CPE = "cpe";
+        /**
+         * The short CLI argument name specifing the path to the CPE.XML file to import
+         */
         public static final String CPE_SHORT = "c";
+        /**
+         * The long CLI argument name specifing that the CPE/CVE/etc. data should not be automatically updated.
+         */
+        public static final String DISABLE_AUTO_UPDATE = "noupdate";
+        /**
+         * The short CLI argument name specifing that the CPE/CVE/etc. data should not be automatically updated.
+         */
+        public static final String DISABLE_AUTO_UPDATE_SHORT = "n";
+        /**
+         * The long CLI argument name specifing the directory to write the reports to.
+         */
+        public static final String OUT = "out";
+        /**
+         * The short CLI argument name specifing the directory to write the reports to.
+         */
         public static final String OUT_SHORT = "o";
-        public static final String VERSION_SHORT = "v";
-        public static final String HELP_SHORT = "h";
+        /**
+         * The long CLI argument name specifing the name of the application to be scanned.
+         */
+        public static final String APPNAME = "app";
+        /**
+         * The short CLI argument name specifing the name of the application to be scanned.
+         */
         public static final String APPNAME_SHORT = "a";
+        /**
+         * The long CLI argument name asking for help.
+         */
+        public static final String HELP = "help";
+        /**
+         * The short CLI argument name asking for help.
+         */
+        public static final String HELP_SHORT = "h";
+        /**
+         * The long CLI argument name asking for the version.
+         */
+        public static final String VERSION_SHORT = "v";
+        /**
+         * The short CLI argument name asking for the version.
+         */
+        public static final String VERSION = "version";
+
     }
 }

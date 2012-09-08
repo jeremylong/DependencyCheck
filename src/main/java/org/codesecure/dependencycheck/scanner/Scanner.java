@@ -87,7 +87,7 @@ public class Scanner {
                     break;
                 }
             }
-            
+
             if (implmnts) {
                 this.analyzers.put(extension, (Analyzer) analyzer.newInstance());
             } else {

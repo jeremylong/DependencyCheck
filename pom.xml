@@ -16,13 +16,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
 -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.codesecure</groupId>
     <artifactId>DependencyCheck</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1</version>
     <packaging>jar</packaging>
 
     <name>DependencyCheck</name>
@@ -34,6 +35,11 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
             <email>jeremy.long@gmail.com</email>
         </developer>
     </developers>
+     <scm>                  
+	<connection>scm:git:git@github.com:jeremylong/DependencyCheck.git</connection>
+	<url>scm:git:git@github.com:jeremylong/DependencyCheck.git</url>
+	<developerConnection>scm:git:git@github.com:jeremylong/DependencyCheck.git</developerConnection>
+     </scm>
     <licenses>
         <license>
             <name>GNU General Public License version 3</name>
@@ -44,6 +50,25 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>  
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>**/*.properties</exclude>
+                    <exclude>**/*.gif</exclude>
+                    <exclude>**/*.js</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+        
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -54,7 +79,9 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.5.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -153,15 +180,15 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                             <workingDirectory>target</workingDirectory>
                         </property>
                         <property>
-                            <name>index.cpe</name>
-                            <value>${project.build.directory}/store/cpe</value>
+                            <name>cve</name>
+                            <value>${project.build.directory}/store/cve</value>
                         </property>
                         <property>
-                            <name>index.osvdb</name>
+                            <name>osvdb</name>
                             <value>${project.build.directory}/store/osvdb</value>
                         </property>
                         <property>
-                            <name>index.cpe</name>
+                            <name>cpe</name>
                             <value>${project.build.directory}/store/cpe</value>
                         </property>
                     </systemProperties>
@@ -390,6 +417,25 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
             <artifactId>velocity-tools</artifactId>
             <version>2.0</version>
             <classifier>javadoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.1</version>
+            <classifier>javadoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.1</version>
+            <classifier>sources</classifier>
             <scope>provided</scope>
         </dependency>
     </dependencies>

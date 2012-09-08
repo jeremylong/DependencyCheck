@@ -234,5 +234,5 @@ public class EvidenceCollection implements Iterable<Evidence> {
         }
         return sb.toString();
     }
-    
+
 }

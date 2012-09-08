@@ -31,7 +31,7 @@ public abstract class BaseIndexTestCase extends TestCase {
     }
     
     protected void ensureIndexExists() throws Exception {
-        String indexPath = Settings.getString("index.cpe");
+        String indexPath = Settings.getString("cpe");
         java.io.File f = new File(indexPath);
         if (!f.exists()) {
             f.mkdirs();

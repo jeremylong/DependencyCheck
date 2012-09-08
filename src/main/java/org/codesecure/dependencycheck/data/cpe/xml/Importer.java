@@ -39,6 +39,25 @@ public class Importer {
     private Importer() {
 
     }
+
+    /**
+     * Imports the CPE XML File into the Lucene Index.
+     *
+     * @param file containing the path to the CPE XML file.
+     * @throws ParserConfigurationException is thrown if the parser is misconfigured.
+     * @throws SAXException is thrown when there is a SAXException.
+     * @throws IOException is thrown when there is an IOException.
+     */
+    public static void importXML(File file) throws ParserConfigurationException, SAXException, IOException {
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        SAXParser saxParser = factory.newSAXParser();
+        CPEHandler handler = new CPEHandler();
+        Indexer indexer = new Indexer();
+        indexer.open();
+        handler.registerSaveDelegate(indexer);
+        saxParser.parse(file, handler);
+        indexer.close();
+    }
     /**
      * Imports the CPE XML File into the Lucene Index.
      *
@@ -48,14 +67,7 @@ public class Importer {
      * @throws IOException is thrown when there is an IOException.
      */
     public static void importXML(String path) throws ParserConfigurationException, SAXException, IOException {
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        SAXParser saxParser = factory.newSAXParser();
-        CPEHandler handler = new CPEHandler();
-        Indexer indexer = new Indexer();
-        indexer.open();
-        handler.registerSaveDelegate(indexer);
         File f = new File(path);
-        saxParser.parse(f, handler);
-        indexer.close();
+        Importer.importXML(f);
     }
 }

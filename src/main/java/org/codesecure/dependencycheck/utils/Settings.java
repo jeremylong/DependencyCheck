@@ -34,6 +34,7 @@ import java.util.logging.Logger;
  */
 public class Settings {
 
+
     /**
      * The collection of keys used within the properties file.
      */
@@ -42,19 +43,23 @@ public class Settings {
         /**
          * The properties key for the path where the CPE Lucene Index will be stored.
          */
-        public static final String CPE_INDEX = "index.cpe";
+        public static final String CPE_INDEX = "cpe";
         /**
          * The properties key for the URL to the CPE.
          */
-        public static final String CPE_URL = "index.cpe.url";
+        public static final String CPE_URL = "cpe.url";
+        /**
+         * The properties key for the URL to the CPE.
+         */
+        public static final String CPE_DOWNLOAD_FREQUENCY = "cpe.downloadfrequency";
         /**
          * The properties key for the path where the CCE Lucene Index will be stored.
          */
-        public static final String CVE_INDEX = "index.cve";
+        public static final String CVE_INDEX = "cve";
         /**
          * The properties key for the path where the OSVDB Lucene Index will be stored.
          */
-        public static final String OSVDB_INDEX = "index.osvdb";
+        public static final String OSVDB_INDEX = "osvdb";
         /**
          * The properties key prefix for the analyzer assocations.
          */
@@ -77,6 +82,24 @@ public class Settings {
         }
     }
 
+    /**
+     * Returns a value from the properties file. If the value was specified as a
+     * system property or passed in via the -Dprop=value argument - this method
+     * will return the value from the system properties before the values in
+     * the contained configuration file.
+     *
+     * @param key the key to lookup within the properties file.
+     * @param defaultValue the default value for the requested property.
+     * @return the property from the properties file.
+     */
+    public static String getString(String key, String defaultValue) {
+        String str = System.getProperty(key, instance.props.getProperty(key));
+        if (str==null) {
+            str = defaultValue;
+        }
+        return str;
+    }
+    
     /**
      * Returns a value from the properties file. If the value was specified as a
      * system property or passed in via the -Dprop=value argument - this method
@@ -127,13 +150,28 @@ public class Settings {
         }
         return ret;
     }
-//    public static boolean getBoolean(String key) {
-//        return Boolean.parseBoolean(instance.props.getProperty(key));
-//    }
-//    public static long getLong(String key) {
-//        return Long.parseLong(instance.props.getProperty(key));
-//    }
-//    public static int getInt(String key) {
-//        return Integer.parseInt(instance.props.getProperty(key));
-//    }
+    /**
+     * Returns a integer value from the properties file. If the value was specified as a
+     * system property or passed in via the -Dprop=value argument - this method
+     * will return the value from the system properties before the values in
+     * the contained configuration file.
+     *
+     * @param key the key to lookup within the properties file.
+     * @return the property from the properties file.
+     */
+    public static int getInt(String key) {
+        return Integer.parseInt(Settings.getString(key));
+    }
+    /**
+     * Returns a boolean value from the properties file. If the value was specified as a
+     * system property or passed in via the -Dprop=value argument - this method
+     * will return the value from the system properties before the values in
+     * the contained configuration file.
+     *
+     * @param key the key to lookup within the properties file.
+     * @return the property from the properties file.
+     */
+    public static boolean getBoolean(String key) {
+        return Boolean.parseBoolean(Settings.getString(key));
+    }
 }

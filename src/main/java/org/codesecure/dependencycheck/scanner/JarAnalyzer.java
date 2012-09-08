@@ -51,22 +51,23 @@ public class JarAnalyzer implements Analyzer {
     private static final String BUNDLE_NAME = "Bundle-Name"; //: Struts 2 Core
     private static final String BUNDLE_VENDOR = "Bundle-Vendor"; //: Apache Software Foundation
 
-    
     private enum STRING_STATE {
+
         ALPHA,
         NUMBER,
         OTHER
     }
+
     private STRING_STATE determineState(char c) {
-        if (c>='0' && c<='9' || c=='.') {
+        if (c >= '0' && c <= '9' || c == '.') {
             return STRING_STATE.NUMBER;
-        } else if (c>='a' && c<='z') {
+        } else if (c >= 'a' && c <= 'z') {
             return STRING_STATE.ALPHA;
         } else {
             return STRING_STATE.OTHER;
         }
     }
-    
+
     /**
      * Loads a specified JAR file and collects information from the manifest and
      * checksums to identify the correct CPE information.
@@ -82,19 +83,17 @@ public class JarAnalyzer implements Analyzer {
         String fileName = file.getName();
         dependency.setFileName(fileName);
         dependency.setFilePath(file.getCanonicalPath());
-        String fileNameEvidence = fileName.substring(0,fileName.length()-4)
-                .toLowerCase()
-                .replace('-', ' ')
-                .replace('_', ' ');
+        String fileNameEvidence = fileName.substring(0, fileName.length() - 4)
+                .toLowerCase().replace('-', ' ').replace('_', ' ');
         StringBuilder sb = new StringBuilder(fileNameEvidence.length());
         STRING_STATE state = determineState(fileNameEvidence.charAt(0));
-        
-        for(int i=0;i<fileNameEvidence.length();i++) {
+
+        for (int i = 0; i < fileNameEvidence.length(); i++) {
             char c = fileNameEvidence.charAt(i);
-            STRING_STATE new_state = determineState(c);
-            if (new_state != state) {
+            STRING_STATE newState = determineState(c);
+            if (newState != state) {
                 sb.append(' ');
-                state = new_state;
+                state = newState;
             }
             sb.append(c);
         }
@@ -106,7 +105,7 @@ public class JarAnalyzer implements Analyzer {
                 fileNameEvidence, Evidence.Confidence.HIGH);
         dependency.getVersionEvidence().addEvidence("jar", "file name",
                 fileNameEvidence, Evidence.Confidence.HIGH);
-        
+
         String md5 = null;
         String sha1 = null;
         try {

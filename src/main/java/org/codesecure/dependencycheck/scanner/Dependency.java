@@ -65,13 +65,16 @@ public class Dependency {
      */
     protected EvidenceCollection versionEvidence = null;
 
+    /**
+     * Constructs a new Dependency object.
+     */
     public Dependency() {
         vendorEvidence = new EvidenceCollection();
         titleEvidence = new EvidenceCollection();
         versionEvidence = new EvidenceCollection();
         cpes = new ArrayList<String>();
     }
-    
+
     /**
      * Returns the file name of the JAR.
      *
@@ -180,8 +183,8 @@ public class Dependency {
     public EvidenceCollection getEvidence() {
         return EvidenceCollection.mergeUsed(this.titleEvidence, this.vendorEvidence, this.versionEvidence);
     }
-    
-    
+
+
     /**
      * Returns the evidence used to identify this dependency.
      *

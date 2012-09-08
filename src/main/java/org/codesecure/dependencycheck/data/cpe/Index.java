@@ -19,10 +19,16 @@ package org.codesecure.dependencycheck.data.cpe;
  */
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -38,6 +44,8 @@ import org.apache.lucene.util.Version;
 import org.codesecure.dependencycheck.utils.Downloader;
 import org.codesecure.dependencycheck.utils.Settings;
 import org.codesecure.dependencycheck.data.cpe.xml.Importer;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 /**
  * The Index class is used to utilize and maintain the CPE Index.
@@ -46,6 +54,14 @@ import org.codesecure.dependencycheck.data.cpe.xml.Importer;
  */
 public class Index {
 
+    /**
+     * Te name of the properties file containing the timestamp of the last update.
+     */
+    private static final String UPDATE_PROPERTIES_FILE = "lastupdated.prop";
+    /**
+     * The properties file key for the last updated field.
+     */
+    private static final String LAST_UPDATED = "lastupdated";
     /**
      * The Lucene directory containing the index.
      */
@@ -124,10 +140,47 @@ public class Index {
                 outputPath = File.createTempFile("cpe", ".xml");
                 Downloader.fetchFile(url, outputPath);
                 Importer.importXML(outputPath.toString());
+                writeLastUpdatedPropertyFile();
             } catch (Exception ex) {
                 Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
-                outputPath.delete();
+                boolean deleted = false;
+                try {
+                    deleted = outputPath.delete();
+                } finally {
+                    if (!deleted) {
+                        outputPath.deleteOnExit();
+                    }
+                }
+            }
+        }
+    }
+
+    private void writeLastUpdatedPropertyFile() {
+        DateTime now = new DateTime();
+        String dir = Settings.getString(Settings.KEYS.CPE_INDEX);
+        File cpeProp = new File(dir + File.separatorChar + UPDATE_PROPERTIES_FILE);
+        Properties prop = new Properties();
+        prop.put(this.LAST_UPDATED, String.valueOf(now.getMillis()));
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(cpeProp);
+            OutputStreamWriter out = new OutputStreamWriter(os);
+            prop.store(out, dir);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                os.flush();
+            } catch (IOException ex) {
+                Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            try {
+                os.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -138,6 +191,43 @@ public class Index {
      * @return whether or not the CPE Index needs to be updated.
      */
     public boolean updateNeeded() {
-        return true;
+        boolean needed = false;
+        String lastUpdated = null;
+        String dir = Settings.getString(Settings.KEYS.CPE_INDEX);
+        File f = new File(dir);
+        if (!f.exists()) {
+            needed = true;
+        } else {
+            File cpeProp = new File(dir + File.separatorChar + UPDATE_PROPERTIES_FILE);
+            if (!cpeProp.exists()) {
+                needed = true;
+            } else {
+                Properties prop = new Properties();
+                FileInputStream is = null;
+                try {
+                    is = new FileInputStream(cpeProp);
+                    prop.load(is);
+                    lastUpdated = prop.getProperty(this.LAST_UPDATED);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                try {
+                    long lastupdate = Long.parseLong(lastUpdated);
+                    DateTime last = new DateTime(lastupdate);
+                    DateTime now = new DateTime();
+                    Days d = Days.daysBetween(last, now);
+                    int days = d.getDays();
+                    int freq = Settings.getInt(Settings.KEYS.CPE_DOWNLOAD_FREQUENCY);
+                    if (days >= freq) {
+                        needed = true;
+                    }
+                } catch (NumberFormatException ex) {
+                    needed = true;
+                }
+            }
+        }
+        return needed;
     }
 }

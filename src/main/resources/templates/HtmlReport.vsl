@@ -20,7 +20,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 @version 1
 *#
 
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -274,7 +273,9 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 #set($cnt=0)
                 #foreach($dependency in $dependencies) 
                     <h3 class="subsectionheader standardsubsection"><a name="$esc.html($dependency.FilePath)"></a>$esc.html($dependency.FileName)</h3>
-                    <div class="subsectioncontent">File&nbsp;Path:&nbsp;$esc.html($dependency.FilePath)
+                    <div class="subsectioncontent">File&nbsp;Path:&nbsp;$esc.html($dependency.FilePath)<br/>
+                        MD5:&nbsp;$esc.html($dependency.Md5sum)<br/>
+                        SHA1:&nbsp;$esc.html($dependency.Sha1sum)
                         #set($cnt=$cnt+1)
                         <h4 id="header$cnt" class="subsectionheader expandablesubsection white">Evidence</h4>
                         <div id="content$cnt" class="subsectioncontent standardsubsection hidden">
@@ -293,8 +294,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                                 Information for specific CVE entries for the idenfied CPE can be found <a href="http://web.nvd.nist.gov/view/vuln/search-results?cpe=$esc.url($cpevalue)" target="blank">here</a>.
                                 #* http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2012-0838 
                                 <a href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=" target="blank">cve://a:/blah1.blah</a><br/>
-                                <a href="cve.mitre.org" target="blank">cve://a:/blah2.blah</a><br/>
-                                <a href="cve.mitre.org" target="blank">cve://a:/blah3.blah</a><br/>*#
+                                *#
                             </div>
                         #end
                         #if($dependency.getCPEs().size()>1)
@@ -310,7 +310,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         #end
                         
                         #if($dependency.getCPEs().size()==0)
-                            <h4>No CPE Identifies were found for this dependency.</h4>
+                            <h4>No CPE Identifiers were found for this dependency.</h4>
                         #end
                      </div>
                 #end

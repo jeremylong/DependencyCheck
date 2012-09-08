@@ -36,15 +36,17 @@ public class DownloaderTest {
     public void tearDown() {
     }
 
-    /**
-     * Test of fetchFile method, of class Downloader.
-     * @throws Exception thrown when an excpetion occurs.
-     */
-    @Test
-    public void testFetchFile_URL_String() throws Exception {
-        System.out.println("fetchFile");
-        URL url = new URL(Settings.getString(Settings.KEYS.CPE_URL));
-        String outputPath = "target\\downloaded_cpe.xml";
-        Downloader.fetchFile(url, outputPath);
-    }
+    
+//This test is being removed because it is a bit too slow.
+//    /**
+//     * Test of fetchFile method, of class Downloader.
+//     * @throws Exception thrown when an excpetion occurs.
+//     */
+//    @Test
+//    public void testFetchFile_URL_String() throws Exception {
+//        System.out.println("fetchFile");
+//        URL url = new URL(Settings.getString(Settings.KEYS.CPE_URL));
+//        String outputPath = "target\\downloaded_cpe.xml";
+//        Downloader.fetchFile(url, outputPath);
+//    }
 }
