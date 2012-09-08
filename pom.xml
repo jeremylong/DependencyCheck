@@ -35,11 +35,11 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
             <email>jeremy.long@gmail.com</email>
         </developer>
     </developers>
-     <scm>                  
-	<connection>scm:git:git@github.com:jeremylong/DependencyCheck.git</connection>
-	<url>scm:git:git@github.com:jeremylong/DependencyCheck.git</url>
-	<developerConnection>scm:git:git@github.com:jeremylong/DependencyCheck.git</developerConnection>
-     </scm>
+    <scm>                  
+        <connection>scm:git:git@github.com:jeremylong/DependencyCheck.git</connection>
+        <url>https://github.com/jeremylong/DependencyCheck.git</url>
+        <developerConnection>scm:git:git@github.com:jeremylong/DependencyCheck.git</developerConnection>
+    </scm>
     <licenses>
         <license>
             <name>GNU General Public License version 3</name>
@@ -70,6 +70,11 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
         </resources>
         
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.3.2</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>

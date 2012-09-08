@@ -20,14 +20,6 @@ package org.codesecure.dependencycheck.utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -231,9 +223,9 @@ public final class CliParser {
     public void printHelp() {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp(Settings.getString("application.name", "DependencyCheck"),
-                "\n" + Settings.getString("application.name", "DependencyCheck") + 
-                " can be used to identify if there are any known CVE vulnerabilities in libraries utillized by an application." +
-                " " + Settings.getString("application.name", "DependencyCheck") + " will automatically update required data from the Internet, such as the CVE and CPE data files from nvd.nist.gov.\n",
+                "\n" + Settings.getString("application.name", "DependencyCheck")
+                + " can be used to identify if there are any known CVE vulnerabilities in libraries utillized by an application. "
+                + Settings.getString("application.name", "DependencyCheck") + " will automatically update required data from the Internet, such as the CVE and CPE data files from nvd.nist.gov.\n",
                 options, "", true);
     }
 

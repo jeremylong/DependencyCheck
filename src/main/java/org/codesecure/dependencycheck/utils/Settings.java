@@ -94,12 +94,12 @@ public class Settings {
      */
     public static String getString(String key, String defaultValue) {
         String str = System.getProperty(key, instance.props.getProperty(key));
-        if (str==null) {
+        if (str == null) {
             str = defaultValue;
         }
         return str;
     }
-    
+
     /**
      * Returns a value from the properties file. If the value was specified as a
      * system property or passed in via the -Dprop=value argument - this method
