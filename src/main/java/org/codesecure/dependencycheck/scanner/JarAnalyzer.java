@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -46,21 +47,44 @@ import org.codesecure.dependencycheck.utils.Checksum;
  */
 public class JarAnalyzer implements Analyzer {
 
+    /**
+     * item in some manifest, should be considered medium confidence.
+     */
     private static final String BUNDLE_VERSION = "Bundle-Version"; //: 2.1.2
+    /**
+     * item in some manifest, should be considered medium confidence.
+     */
     private static final String BUNDLE_DESCRIPTION = "Bundle-Description"; //: Apache Struts 2
+    /**
+     * item in some manifest, should be considered medium confidence.
+     */
     private static final String BUNDLE_NAME = "Bundle-Name"; //: Struts 2 Core
+    /**
+     * item in some manifest, should be considered medium confidence.
+     */
     private static final String BUNDLE_VENDOR = "Bundle-Vendor"; //: Apache Software Foundation
 
+    /**
+     * An enumeration to keep track of the characters in a string as it is being
+     * read in one character at a time.
+     */
     private enum STRING_STATE {
-
         ALPHA,
         NUMBER,
+        PERIOD,
         OTHER
     }
 
+    /**
+     * Determines type of the character passed in.
+     * @param c a character
+     * @return a STRING_STATE representing whether the character is number, alpha, or other.
+     */
     private STRING_STATE determineState(char c) {
-        if (c >= '0' && c <= '9' || c == '.') {
+        if (c >= '0' && c <= '9') {
             return STRING_STATE.NUMBER;
+        } else if (c == '.') {
+            return STRING_STATE.PERIOD;
         } else if (c >= 'a' && c <= 'z') {
             return STRING_STATE.ALPHA;
         } else {
@@ -83,8 +107,11 @@ public class JarAnalyzer implements Analyzer {
         String fileName = file.getName();
         dependency.setFileName(fileName);
         dependency.setFilePath(file.getCanonicalPath());
-        String fileNameEvidence = fileName.substring(0, fileName.length() - 4)
-                .toLowerCase().replace('-', ' ').replace('_', ' ');
+
+        //slightly process the filename to chunk it into distinct words, numbers.
+        // Yes, the lucene analyzer might do this, but I want a little better control
+        // over the process.
+        String fileNameEvidence = fileName.substring(0, fileName.length() - 4).toLowerCase().replace('-', ' ').replace('_', ' ');
         StringBuilder sb = new StringBuilder(fileNameEvidence.length());
         STRING_STATE state = determineState(fileNameEvidence.charAt(0));
 
@@ -92,9 +119,14 @@ public class JarAnalyzer implements Analyzer {
             char c = fileNameEvidence.charAt(i);
             STRING_STATE newState = determineState(c);
             if (newState != state) {
-                sb.append(' ');
-                state = newState;
+                if ((state != STRING_STATE.NUMBER && newState == STRING_STATE.PERIOD)
+                        || (state == STRING_STATE.PERIOD && newState != STRING_STATE.NUMBER)
+                        || (state == STRING_STATE.ALPHA || newState == STRING_STATE.ALPHA)
+                        || ((state == STRING_STATE.OTHER || newState == STRING_STATE.OTHER) && c != ' ')) {
+                    sb.append(' ');
+                }
             }
+            state = newState;
             sb.append(c);
         }
         Pattern rx = Pattern.compile("\\s\\s+");
@@ -307,58 +339,48 @@ public class JarAnalyzer implements Analyzer {
         EvidenceCollection versionEvidence = dependency.getVendorEvidence();
 
         String source = "Manifest";
-        String name = Attributes.Name.IMPLEMENTATION_TITLE.toString();
-        String value = atts.getValue(Attributes.Name.IMPLEMENTATION_TITLE);
-        if (value != null) {
-            titleEvidence.addEvidence(source, name, value, Evidence.Confidence.HIGH);
-        }
 
-        name = Attributes.Name.IMPLEMENTATION_VERSION.toString();
-        value = atts.getValue(Attributes.Name.IMPLEMENTATION_VERSION);
-        if (value != null) {
-            versionEvidence.addEvidence(source, name, value, Evidence.Confidence.HIGH);
-        }
-
-        name = Attributes.Name.IMPLEMENTATION_VENDOR.toString();
-        value = atts.getValue(Attributes.Name.IMPLEMENTATION_VENDOR);
-        if (value != null) {
-            vendorEvidence.addEvidence(source, name, value, Evidence.Confidence.HIGH);
-        }
-
-        name = Attributes.Name.IMPLEMENTATION_VENDOR_ID.toString();
-        value = atts.getValue(Attributes.Name.IMPLEMENTATION_VENDOR_ID);
-        if (value != null) {
-            vendorEvidence.addEvidence(source, name, value, Evidence.Confidence.MEDIUM);
-        }
-
-        name = BUNDLE_DESCRIPTION;
-        value = atts.getValue(BUNDLE_DESCRIPTION);
-        if (value != null) {
-            titleEvidence.addEvidence(source, name, value, Evidence.Confidence.MEDIUM);
-        }
-
-        name = BUNDLE_VENDOR;
-        value = atts.getValue(BUNDLE_VENDOR);
-        if (value != null) {
-            vendorEvidence.addEvidence(source, name, value, Evidence.Confidence.MEDIUM);
-        }
-
-        name = BUNDLE_VERSION;
-        value = atts.getValue(BUNDLE_VERSION);
-        if (value != null) {
-            versionEvidence.addEvidence(source, name, value, Evidence.Confidence.MEDIUM);
-        }
-        name = BUNDLE_NAME;
-        value = atts.getValue(BUNDLE_NAME);
-        if (value != null) {
-            titleEvidence.addEvidence(source, name, value, Evidence.Confidence.LOW);
-        }
-
-        name = Attributes.Name.MAIN_CLASS.toString();
-        value = atts.getValue(Attributes.Name.MAIN_CLASS);
-        if (value != null) {
-            titleEvidence.addEvidence(source, name, value, Evidence.Confidence.MEDIUM);
-            vendorEvidence.addEvidence(source, name, value, Evidence.Confidence.MEDIUM);
+        for (Entry<Object, Object> entry : atts.entrySet()) {
+            String key = entry.getKey().toString();
+            String value = atts.getValue(key);
+            if (key.equals(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {
+                titleEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
+            } else if (key.equals(Attributes.Name.IMPLEMENTATION_VERSION.toString())) {
+                versionEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
+            } else if (key.equals(Attributes.Name.IMPLEMENTATION_VENDOR.toString())) {
+                vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
+            } else if (key.equals(Attributes.Name.IMPLEMENTATION_VENDOR_ID.toString())) {
+                vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+            } else if (key.equals(BUNDLE_DESCRIPTION)) {
+                titleEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+            } else if (key.equals(BUNDLE_NAME)) {
+                titleEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+            } else if (key.equals(BUNDLE_VENDOR)) {
+                vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
+            } else if (key.equals(BUNDLE_VERSION)) {
+                versionEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
+            } else if (key.equals(Attributes.Name.MAIN_CLASS.toString())) {
+                titleEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+            } else {
+                key = key.toLowerCase();
+                if (key.contains("version")) {
+                    versionEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                } else if (key.contains("title")) {
+                    titleEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                } else if (key.contains("vendor")) {
+                    vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                } else if (key.contains("name")) {
+                    titleEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                    vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                } else {
+                    titleEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
+                    vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
+                    if (value.matches(".*\\d.*")) {
+                        versionEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
+                    }
+                }
+            }
         }
     }
 }

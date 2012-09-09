@@ -27,15 +27,24 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
     <packaging>jar</packaging>
 
     <name>DependencyCheck</name>
-    <url>http://maven.apache.org</url>
+    <url>http://codesecure.blogspot.com</url>
     <description>DependencyCheck is a simple utility that attempts to determine if there is a Common Product Enumeration (CPE) identifier for a given project dependency. If found, it will generate a report linking to the associated CVE entries.</description>
+    <organization>
+        <name>Jeremy Long</name>
+    </organization>
     <developers>
         <developer>
             <name>Jeremy Long</name>
             <email>jeremy.long@gmail.com</email>
+            <organization>Codesecure</organization>
+            <organizationUrl>http://codesecure.blogspot.com</organizationUrl>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
         </developer>
     </developers>
-    <scm>                  
+    <scm>
         <connection>scm:git:git@github.com:jeremylong/DependencyCheck.git</connection>
         <url>https://github.com/jeremylong/DependencyCheck.git</url>
         <developerConnection>scm:git:git@github.com:jeremylong/DependencyCheck.git</developerConnection>
@@ -48,7 +57,7 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
     </licenses>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>  
+    </properties>
     <build>
         <resources>
             <resource>
@@ -68,7 +77,7 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                 <filtering>false</filtering>
             </resource>
         </resources>
-        
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -155,7 +164,7 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                                 <branchRate>0</branchRate>
                                 <lineRate>0</lineRate>
                             </regex>
-                            
+
                             <regex>
                                 <pattern>org.codesecure.dependencycheck.utils.SSDeep</pattern>
                                 <branchRate>0</branchRate>
@@ -164,7 +173,7 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                         </regexes>
                     </check>
                 </configuration>
-                
+
                 <executions>
                     <execution>
                         <goals>
