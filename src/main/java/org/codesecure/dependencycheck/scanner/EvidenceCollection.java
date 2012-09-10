@@ -18,9 +18,9 @@ package org.codesecure.dependencycheck.scanner;
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 import org.codesecure.dependencycheck.utils.Filter;
 
 /**
@@ -85,15 +85,15 @@ public class EvidenceCollection implements Iterable<Evidence> {
             return EvidenceCollection.LOW_CONFIDENCE.filter(this.list);
         }
     }
-    private List<Evidence> list = null;
-    private List<String> weightedStrings = null;
+    private Set<Evidence> list = null;
+    private Set<String> weightedStrings = null;
 
     /**
      * Creates a new EvidenceCollection.
      */
     public EvidenceCollection() {
-        list = new ArrayList<Evidence>();
-        weightedStrings = new ArrayList<String>();
+        list = new HashSet<Evidence>();
+        weightedStrings = new HashSet<String>();
     }
 
     /**
@@ -133,18 +133,16 @@ public class EvidenceCollection implements Iterable<Evidence> {
      * @param str to add to the weighting collection.
      */
     public void addWeighting(String str) {
-        if (!weightedStrings.contains(str)) {
-            weightedStrings.add(str);
-        }
+        weightedStrings.add(str);
     }
 
     /**
-     * Returns a list of Weightings - a list of terms that are believed to be of
+     * Returns a set of Weightings - a list of terms that are believed to be of
      * higher confidence when also found in another location.
      *
-     * @return List<String>
+     * @return Set<String>
      */
-    public List<String> getWeighting() {
+    public Set<String> getWeighting() {
         return weightedStrings;
     }
 
@@ -208,19 +206,27 @@ public class EvidenceCollection implements Iterable<Evidence> {
         }
         return ret;
     }
-
-    /**
-     * Returns a string of evidence 'values' for a given confidence.
-     * @param confidence the confidence filter applied to the toString method.
-     * @return a string containing the evidence.
-     */
-    public String toString(Evidence.Confidence confidence) {
-        StringBuilder sb = new StringBuilder();
-        for (Evidence e : this.iterator(confidence)) {
-            sb.append(e.getValue()).append(' ');
-        }
-        return sb.toString();
-    }
+//  Removed because this wasn't working right (the function returned the right data, but 
+//  the use of the results was flawed.
+//    /**
+//     * Returns a string of evidence 'values' for a given confidence.
+//     * @param confidence the confidence filter applied to the toString method.
+//     * @return a string containing the evidence.
+//     */
+//    public String toString(Evidence.Confidence confidence) {
+//        StringBuilder sb = new StringBuilder();
+//        for (Evidence e : this.iterator(confidence)) {
+//            String str = e.getValue();
+//            //TODO this is a cheap hack, need to prevent the same string from hitting multiple times...
+//            // consider changing the evidencecollection.add to prevent the same "value" for a lower
+//            // confidence from being added? Might not work due to minor differences in the items in the manifest.
+//            // might need to actually use a StringTokenizer here and only add single words no in the list.
+//            if (sb.indexOf(str)<0) {
+//                sb.append(str).append(' ');
+//            }
+//        }
+//        return sb.toString();
+//    }
 
     /**
      * Returns a string of evidence 'values'.
@@ -235,4 +241,11 @@ public class EvidenceCollection implements Iterable<Evidence> {
         return sb.toString();
     }
 
+    /**
+     * Returns the number of elements in the EvidenceCollection.
+     * @return the number of elements in the collection.
+     */
+    public int size() {
+        return list.size();
+    }
 }

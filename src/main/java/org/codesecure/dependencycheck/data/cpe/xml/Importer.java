@@ -68,6 +68,9 @@ public class Importer {
      */
     public static void importXML(String path) throws ParserConfigurationException, SAXException, IOException {
         File f = new File(path);
+        if (!f.exists()) {
+            f.mkdirs();
+        }
         Importer.importXML(f);
     }
 }

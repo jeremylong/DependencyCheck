@@ -29,6 +29,7 @@ public class Evidence {
      * The confidence that the evidence is "high" quality.
      */
     public enum Confidence {
+
         /**
          * High confidence evidence.
          */
@@ -173,5 +174,48 @@ public class Evidence {
      */
     public void setConfidence(Confidence confidence) {
         this.confidence = confidence;
+    }
+
+    /**
+     * Implements the hashCode for Evidence.
+     * @return hash code.
+     */
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 67 * hash + (this.source != null ? this.source.hashCode() : 0);
+        hash = 67 * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = 67 * hash + (this.confidence != null ? this.confidence.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     * Implements equals for Evidence.
+     * @param that an object to check the equality of.
+     * @return whether the two objects are equal.
+     */
+    @Override
+    public boolean equals(Object that) {
+        if (this == that) {
+            return true;
+        }
+        if (!(that instanceof Evidence)) {
+            return false;
+        }
+        Evidence e = (Evidence) that;
+
+        return testEquality(name, e.name) && testEquality(source, e.source) && testEquality(value, e.value)
+                && (confidence == null ? e.confidence == null : confidence == e.confidence);
+    }
+
+    /**
+     * Simple equality test for use within the equals method. This does a case insensitive compare.
+     * @param l a string to compare.
+     * @param r another string to compare.
+     * @return whether the two strings are the same.
+     */
+    private boolean testEquality(String l, String r) {
+        return l == null ? r == null : l.equalsIgnoreCase(r);
     }
 }

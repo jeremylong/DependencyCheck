@@ -50,21 +50,22 @@ public class ScannerTest extends BaseIndexTestCase{
      * @throws Exception is thrown when an exception occurs.
      */
     @Test
+    //TODO remove the throws exception, this needs to be much more grainular.
     public void testScan() throws Exception {
         System.out.println("scan");
         String path = "./src/test/resources";
         Scanner instance = new Scanner();
         instance.scan(path);
         assertTrue(instance.getDependencies().size()>0);
-//        CPEQuery query = new CPEQuery();
-//        query.open();
-//        List<Dependency> dependencies = instance.getDependencies();
-//        for (Dependency d : dependencies) {
-//            query.determineCPE(d);
-//        }
-//        query.close();
-//        ReportGenerator rg = new ReportGenerator();
-//        rg.generateReports("./target/", "DependencyCheck", instance.getDependencies());
+        CPEQuery query = new CPEQuery();
+        query.open();
+        List<Dependency> dependencies = instance.getDependencies();
+        for (Dependency d : dependencies) {
+            query.determineCPE(d);
+        }
+        query.close();
+        ReportGenerator rg = new ReportGenerator();
+        rg.generateReports("./target/", "DependencyCheck", instance.getDependencies());
 
     }
 

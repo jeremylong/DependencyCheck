@@ -21,6 +21,8 @@ package org.codesecure.dependencycheck.data.cpe;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -37,7 +39,9 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.Version;
 import org.codesecure.dependencycheck.data.LuceneUtils;
 import org.codesecure.dependencycheck.scanner.Dependency;
+import org.codesecure.dependencycheck.scanner.Evidence;
 import org.codesecure.dependencycheck.scanner.Evidence.Confidence;
+import org.codesecure.dependencycheck.scanner.EvidenceCollection;
 
 /**
  * CPEQuery is a utility class that takes a project dependency and attempts
@@ -60,7 +64,7 @@ public class CPEQuery {
      * A string representation of a regular expression defining characters
      * utilized within the CPE Names.
      */
-    static final String CLEANSE_CHARACTER_RX = "[^A-Za-z0-9 _-]";
+    static final String CLEANSE_CHARACTER_RX = "[^A-Za-z0-9 ._-]";
     /* A string representation of a regular expression used to remove all but
      * alpha characters.
      */
@@ -166,22 +170,25 @@ public class CPEQuery {
      * @param dependency the dependency to search for CPE entries on.
      * @throws CorruptIndexException is thrown when the Lucene index is corrupt.
      * @throws IOException is thrown when an IOException occurs.
-     * @throws ParseException  is thrown when the Lucene query cannot be parsed.
+     * @throws ParseException is thrown when the Lucene query cannot be parsed.
      */
     public void determineCPE(Dependency dependency) throws CorruptIndexException, IOException, ParseException {
         Confidence vendorConf = Confidence.HIGH;
         Confidence titleConf = Confidence.HIGH;
         Confidence versionConf = Confidence.HIGH;
 
-        String vendors = dependency.getVendorEvidence().toString(vendorConf);
+        String vendors = addEvidenceWithoutDuplicateTerms("", dependency.getVendorEvidence(), vendorConf);
+        //dependency.getVendorEvidence().toString(vendorConf);
 //        if ("".equals(vendors)) {
 //            vendors = STRING_THAT_WILL_NEVER_BE_IN_THE_INDEX;
 //        }
-        String titles = dependency.getTitleEvidence().toString(titleConf);
+        String titles = addEvidenceWithoutDuplicateTerms("", dependency.getTitleEvidence(), titleConf);
+        ///dependency.getTitleEvidence().toString(titleConf);
 //        if ("".equals(titles)) {
 //            titles = STRING_THAT_WILL_NEVER_BE_IN_THE_INDEX;
 //        }
-        String versions = dependency.getVersionEvidence().toString(versionConf);
+        String versions = addEvidenceWithoutDuplicateTerms("", dependency.getVersionEvidence(), versionConf);
+        //dependency.getVersionEvidence().toString(versionConf);
 //        if ("".equals(versions)) {
 //            versions = STRING_THAT_WILL_NEVER_BE_IN_THE_INDEX;
 //        }
@@ -205,7 +212,8 @@ public class CPEQuery {
                 if (round == 0) {
                     vendorConf = reduceConfidence(vendorConf);
                     if (dependency.getVendorEvidence().contains(vendorConf)) {
-                        vendors += " " + dependency.getVendorEvidence().toString(vendorConf);
+                        //vendors += " " + dependency.getVendorEvidence().toString(vendorConf);
+                        vendors = addEvidenceWithoutDuplicateTerms(vendors, dependency.getVendorEvidence(), vendorConf);
                     } else {
                         cnt += 1;
                         round += 1;
@@ -214,7 +222,8 @@ public class CPEQuery {
                 if (round == 1) {
                     titleConf = reduceConfidence(titleConf);
                     if (dependency.getTitleEvidence().contains(titleConf)) {
-                        titles += " " + dependency.getTitleEvidence().toString(titleConf);
+                        //titles += " " + dependency.getTitleEvidence().toString(titleConf);
+                        titles = addEvidenceWithoutDuplicateTerms(titles, dependency.getTitleEvidence(), titleConf);
                     } else {
                         cnt += 1;
                         round += 1;
@@ -223,7 +232,8 @@ public class CPEQuery {
                 if (round == 2) {
                     versionConf = reduceConfidence(versionConf);
                     if (dependency.getVersionEvidence().contains(versionConf)) {
-                        versions += " " + dependency.getVersionEvidence().toString(versionConf);
+                        //versions += " " + dependency.getVersionEvidence().toString(versionConf);
+                        versions = addEvidenceWithoutDuplicateTerms(versions, dependency.getVersionEvidence(), versionConf);
                     }
                 }
 
@@ -232,6 +242,33 @@ public class CPEQuery {
         } while (!found && (++cnt) < 9);
     }
 
+    /**
+     * Returns the text created by concatonating the text and the values from the 
+     * EvidenceCollection (filtered for a specific confidence). This attempts to
+     * prevent duplicate terms from being added.<br/<br/>
+     * Note, if the evidence is longer then 200 characters it will be truncated.
+     * 
+     * @param text the base text.
+     * @param ec an EvidenceCollection
+     * @param confidenceFilter a Confidence level to filter the evidence by.
+     * @return 
+     */
+    private String addEvidenceWithoutDuplicateTerms(final String text, final EvidenceCollection ec, Confidence confidenceFilter) {
+        String txt = (text == null) ? "" : text;
+        StringBuilder sb = new StringBuilder(txt.length() + (20 * ec.size()));
+        for (Evidence e : ec.iterator(confidenceFilter)) {
+            String value = e.getValue();
+            if (sb.indexOf(value)<0) {
+                if (value.length()>200) {
+                    sb.append(value.substring(0,200));
+                } else {
+                    sb.append(value).append(' ');
+                }
+            }
+        }
+        return sb.toString();
+    }
+    
     /**
      * Reduces the given confidence by one level. This returns LOW if the confidence
      * passed in is not HIGH.
@@ -282,7 +319,7 @@ public class CPEQuery {
      * @throws ParseException when the generated query is not valid.
      */
     protected List<Entry> searchCPE(String vendor, String product, String version,
-            List<String> vendorWeightings, List<String> productWeightings)
+            Set<String> vendorWeightings, Set<String> productWeightings)
             throws CorruptIndexException, IOException, ParseException {
         ArrayList<Entry> ret = new ArrayList<Entry>(MAX_QUERY_RESULTS);
 
@@ -319,7 +356,7 @@ public class CPEQuery {
      * @return the Lucene query.
      */
     protected String buildSearch(String vendor, String product, String version,
-            List<String> vendorWeighting, List<String> produdctWeightings) {
+            Set<String> vendorWeighting, Set<String> produdctWeightings) {
 
         StringBuilder sb = new StringBuilder(vendor.length() + product.length()
                 + version.length() + Fields.PRODUCT.length() + Fields.VERSION.length()
@@ -364,7 +401,7 @@ public class CPEQuery {
      * importance when searching.
      * @return if the append was successful.
      */
-    private boolean appendWeightedSearch(StringBuilder sb, String field, String searchText, List<String> weightedText) {
+    private boolean appendWeightedSearch(StringBuilder sb, String field, String searchText, Set<String> weightedText) {
         //TODO add a mutator or special analyzer that combines words next to each other and adds them as a key.
         sb.append(" ").append(field).append(":( ");
 
@@ -377,8 +414,9 @@ public class CPEQuery {
         if (weightedText == null || weightedText.isEmpty()) {
             LuceneUtils.appendEscapedLuceneQuery(sb, cleanText);
         } else {
-            String[] text = cleanText.split("\\s");
-            for (String word : text) {
+            StringTokenizer tokens = new StringTokenizer(cleanText);
+            while (tokens.hasMoreElements()) {
+                String word = tokens.nextToken();
                 String temp = null;
                 for (String weighted : weightedText) {
                     String weightedStr = cleanseText(weighted);

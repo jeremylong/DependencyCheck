@@ -6,8 +6,9 @@ package org.codesecure.dependencycheck.data.cpe;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryParser.ParseException;
 import org.codesecure.dependencycheck.data.BaseIndexTestCase;
@@ -52,10 +53,10 @@ public class CPEQueryTest extends BaseIndexTestCase {
         assertEquals(expResult, result.get(0).getName());
         
         //TODO - yeah, not a very good test as the results are the same with or without weighting...
-        List<String> productWeightings = new ArrayList<String>(1);
+        Set<String> productWeightings = new HashSet<String>(1);
         productWeightings.add("struts2");
 
-        List<String> vendorWeightings = new ArrayList<String>(1);
+        Set<String> vendorWeightings = new HashSet<String>(1);
         vendorWeightings.add("apache");
         
         result = instance.searchCPE(vendor, product, version,productWeightings,vendorWeightings);
@@ -82,10 +83,10 @@ public class CPEQueryTest extends BaseIndexTestCase {
     @Test
     public void testBuildSearch() throws IOException, CorruptIndexException, ParseException {
         System.out.println("buildSearch");
-        List<String> productWeightings = new ArrayList<String>(1);
+        Set<String> productWeightings = new HashSet<String>(1);
         productWeightings.add("struts2");
 
-        List<String> vendorWeightings = new ArrayList<String>(1);
+        Set<String> vendorWeightings = new HashSet<String>(1);
         vendorWeightings.add("apache");
 
         String vendor = "apache software foundation";
@@ -191,10 +192,10 @@ public class CPEQueryTest extends BaseIndexTestCase {
         instance.open();
         
         //TODO - yeah, not a very good test as the results are the same with or without weighting...
-        List<String> productWeightings = new ArrayList<String>(1);
+        Set<String> productWeightings = new HashSet<String>(1);
         productWeightings.add("struts2");
 
-        List<String> vendorWeightings = new ArrayList<String>(1);
+        Set<String> vendorWeightings = new HashSet<String>(1);
         vendorWeightings.add("apache");
         
         List<Entry> result = instance.searchCPE(vendor, product, version,productWeightings,vendorWeightings);

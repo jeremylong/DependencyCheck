@@ -45,9 +45,9 @@ public class Downloader {
      * Retrieves a file from a given URL and saves it to the outputPath.
      * @param url the URL of the file to download.
      * @param outputPath the path to the save the file to.
-     * @throws IOException is thrown if an IOException occurs.
+     * @throws DownloadFailedException is thrown if there is an error downloading the file.
      */
-    public static void fetchFile(URL url, String outputPath) throws IOException {
+    public static void fetchFile(URL url, String outputPath) throws DownloadFailedException {
         File f = new File(outputPath);
         fetchFile(url, f);
     }
@@ -56,10 +56,14 @@ public class Downloader {
      * Retrieves a file from a given URL and saves it to the outputPath.
      * @param url the URL of the file to download.
      * @param outputPath the path to the save the file to.
-     * @throws IOException is thrown if an IOException occurs.
+     * @throws DownloadFailedException is thrown if there is an error downloading the file.
      */
-    public static void fetchFile(URL url, File outputPath) throws IOException {
-        url.openConnection();
+    public static void fetchFile(URL url, File outputPath) throws DownloadFailedException {
+        try {
+            url.openConnection();
+        } catch (IOException ex) {
+            throw new DownloadFailedException("Error downloading file.", ex);
+        }
         BufferedOutputStream writer = null;
         try {
             InputStream reader = url.openStream();
@@ -70,13 +74,13 @@ public class Downloader {
                 writer.write(buffer, 0, bytesRead);
             }
         } catch (Exception ex) {
-            Logger.getLogger(Downloader.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DownloadFailedException("Error saving downloaded file.", ex);
         } finally {
             try {
                 writer.close();
                 writer = null;
             } catch (Exception ex) {
-                Logger.getLogger(Downloader.class.getName()).log(Level.WARNING,
+                Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
                         "Error closing the writter in Downloader.", ex);
             }
         }

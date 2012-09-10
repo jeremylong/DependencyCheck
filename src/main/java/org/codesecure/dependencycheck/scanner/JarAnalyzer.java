@@ -22,7 +22,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -47,6 +49,20 @@ import org.codesecure.dependencycheck.utils.Checksum;
  */
 public class JarAnalyzer implements Analyzer {
 
+    private static List<String> IGNORE_LIST;
+
+    public JarAnalyzer() {
+        IGNORE_LIST = new ArrayList<String>();
+        IGNORE_LIST.add("built-by");
+        IGNORE_LIST.add("created-by");
+        IGNORE_LIST.add("license");
+        IGNORE_LIST.add("build-jdk");
+        IGNORE_LIST.add("ant-version");
+        IGNORE_LIST.add("import-package");
+        IGNORE_LIST.add("export-package");
+        IGNORE_LIST.add("sealed");
+        IGNORE_LIST.add("manifest-version");
+    }
     /**
      * item in some manifest, should be considered medium confidence.
      */
@@ -69,6 +85,7 @@ public class JarAnalyzer implements Analyzer {
      * read in one character at a time.
      */
     private enum STRING_STATE {
+
         ALPHA,
         NUMBER,
         PERIOD,
@@ -364,20 +381,23 @@ public class JarAnalyzer implements Analyzer {
                 vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
             } else {
                 key = key.toLowerCase();
-                if (key.contains("version")) {
-                    versionEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
-                } else if (key.contains("title")) {
-                    titleEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
-                } else if (key.contains("vendor")) {
-                    vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
-                } else if (key.contains("name")) {
-                    titleEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
-                    vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
-                } else {
-                    titleEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
-                    vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
-                    if (value.matches(".*\\d.*")) {
-                        versionEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
+
+                if (!IGNORE_LIST.contains(key)) {
+                    if (key.contains("version")) {
+                        versionEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                    } else if (key.contains("title")) {
+                        titleEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                    } else if (key.contains("vendor")) {
+                        vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                    } else if (key.contains("name")) {
+                        titleEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                        vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                    } else {
+                        titleEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
+                        vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
+                        if (value.matches(".*\\d.*")) {
+                            versionEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
+                        }
                     }
                 }
             }

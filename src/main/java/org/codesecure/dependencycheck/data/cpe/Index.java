@@ -25,12 +25,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.parsers.ParserConfigurationException;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.analysis.PerFieldAnalyzerWrapper;
@@ -44,8 +46,10 @@ import org.apache.lucene.util.Version;
 import org.codesecure.dependencycheck.utils.Downloader;
 import org.codesecure.dependencycheck.utils.Settings;
 import org.codesecure.dependencycheck.data.cpe.xml.Importer;
+import org.codesecure.dependencycheck.utils.DownloadFailedException;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.xml.sax.SAXException;
 
 /**
  * The Index class is used to utilize and maintain the CPE Index.
@@ -130,9 +134,12 @@ public class Index {
      * Downloads the latest CPE XML file from the web and imports it into
      * the current CPE Index.
      *
-     * @throws Exception is thrown if an exception occurs.
+     * @throws MalformedURLException is thrown if the URL for the CPE is malformed.
+     * @throws ParserConfigurationException is thrown if the parser is misconfigured.
+     * @throws SAXException is thrown if there is an error parsing the CPE XML.
+     * @throws IOException is thrown if a temporary file could not be created. 
      */
-    public void updateIndexFromWeb() throws Exception {
+    public void updateIndexFromWeb() throws MalformedURLException, ParserConfigurationException, SAXException, IOException {
         if (updateNeeded()) {
             URL url = new URL(Settings.getString(Settings.KEYS.CPE_URL));
             File outputPath = null;
@@ -141,7 +148,8 @@ public class Index {
                 Downloader.fetchFile(url, outputPath);
                 Importer.importXML(outputPath.toString());
                 writeLastUpdatedPropertyFile();
-            } catch (Exception ex) {
+                
+            } catch (DownloadFailedException ex) {
                 Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
                 boolean deleted = false;
@@ -209,9 +217,9 @@ public class Index {
                     prop.load(is);
                     lastUpdated = prop.getProperty(this.LAST_UPDATED);
                 } catch (FileNotFoundException ex) {
-                    Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Index.class.getName()).log(Level.FINEST, null, ex);
                 } catch (IOException ex) {
-                    Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Index.class.getName()).log(Level.FINEST, null, ex);
                 }
                 try {
                     long lastupdate = Long.parseLong(lastUpdated);
