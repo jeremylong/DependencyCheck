@@ -64,6 +64,9 @@ public class Settings {
          * The properties key prefix for the analyzer assocations.
          */
         public static final String FILE_EXTENSION_ANALYZER_ASSOCIATION_PREFIX = "file.extension.analyzer.association.";
+        public static final String PROXY_URL = "proxy.url";
+        public static final String PROXY_PORT = "proxy.port";
+        public static final String CONNECTION_TIMEOUT = "connection.timeout";
     }
     private static final String PROPERTIES_FILE = "dependencycheck.properties";
     private static Settings instance = new Settings();
@@ -100,6 +103,15 @@ public class Settings {
         return str;
     }
 
+    /**
+     * Sets a property value.
+     * @param key the key for the property.
+     * @param value the value for the property.
+     */
+    public static void setString(String key, String value) {
+        instance.props.setProperty(key, value);
+    }
+    
     /**
      * Returns a value from the properties file. If the value was specified as a
      * system property or passed in via the -Dprop=value argument - this method

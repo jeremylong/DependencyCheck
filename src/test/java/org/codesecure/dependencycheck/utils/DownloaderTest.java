@@ -45,6 +45,11 @@ public class DownloaderTest {
 //    @Test
 //    public void testFetchFile_URL_String() throws Exception {
 //        System.out.println("fetchFile");
+//        
+////        Settings.setString(Settings.KEYS.PROXY_URL, "test");
+////        Settings.setString(Settings.KEYS.PROXY_PORT, "80");
+////        Settings.setString(Settings.KEYS.CONNECTION_TIMEOUT, "1000");
+//        
 //        URL url = new URL(Settings.getString(Settings.KEYS.CPE_URL));
 //        String outputPath = "target\\downloaded_cpe.xml";
 //        Downloader.fetchFile(url, outputPath);

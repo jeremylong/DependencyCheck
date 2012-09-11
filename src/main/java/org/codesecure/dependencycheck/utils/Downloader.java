@@ -23,6 +23,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.SocketAddress;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,14 +63,42 @@ public class Downloader {
      * @throws DownloadFailedException is thrown if there is an error downloading the file.
      */
     public static void fetchFile(URL url, File outputPath) throws DownloadFailedException {
+        HttpURLConnection conn = null;
+        Proxy proxy = null;
+        String proxyUrl = Settings.getString(Settings.KEYS.PROXY_URL);
+        
         try {
-            url.openConnection();
+            if (proxyUrl != null) {
+                int proxyPort = Settings.getInt(Settings.KEYS.PROXY_PORT);
+                SocketAddress addr = new InetSocketAddress(proxyUrl, proxyPort);
+                proxy = new Proxy(Proxy.Type.HTTP, addr);
+                conn = (HttpURLConnection) url.openConnection(proxy);
+            } else {
+                conn = (HttpURLConnection) url.openConnection();
+            }
+            if (Settings.getString(Settings.KEYS.CONNECTION_TIMEOUT) != null) {
+                int timeout = Settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT);
+                conn.setConnectTimeout(timeout);
+            }
+        
+            conn.connect();
         } catch (IOException ex) {
+            try {
+                if (conn!=null) {
+                    conn.disconnect();
+                }
+            } finally {
+                conn = null;
+            }
             throw new DownloadFailedException("Error downloading file.", ex);
         }
+        
         BufferedOutputStream writer = null;
         try {
-            InputStream reader = url.openStream();
+            //the following times out on some systems because the CPE is big.
+            //InputStream reader = url.openStream();
+            InputStream reader = conn.getInputStream();
+            
             writer = new BufferedOutputStream(new FileOutputStream(outputPath));
             byte[] buffer = new byte[4096];
             int bytesRead = 0;
@@ -82,6 +114,11 @@ public class Downloader {
             } catch (Exception ex) {
                 Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
                         "Error closing the writter in Downloader.", ex);
+            }
+            try {
+                conn.disconnect();
+            } finally {
+                conn = null;
             }
         }
     }
