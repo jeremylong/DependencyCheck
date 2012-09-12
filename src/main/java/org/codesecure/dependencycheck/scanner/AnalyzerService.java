@@ -22,10 +22,11 @@ import java.util.Iterator;
 import java.util.ServiceLoader;
 
 /**
- * 
+ *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public class AnalyzerService {
+
     private static AnalyzerService service;
     private ServiceLoader<Analyzer> loader;
 
@@ -46,7 +47,7 @@ public class AnalyzerService {
         }
         return service;
     }
-    
+
     /**
      * Returns an Iterator for all instances of the Analyzer interface.
      * @return an iterator of Analyzers.

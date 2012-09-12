@@ -135,6 +135,7 @@ public final class CliParser {
             throw new FileNotFoundException("Invalid file argument: " + path);
         }
     }
+
     /**
      * Generates an Options collection that is used to parse the command line
      * and to display the help message.
@@ -156,7 +157,8 @@ public final class CliParser {
                 .withDescription("the name of the application being scanned").create(ArgumentName.APPNAME_SHORT);
 
         Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.SCAN)
-                .withDescription("the path to scan - this option can be specified multiple times.").create(ArgumentName.SCAN_SHORT);
+                .withDescription("the path to scan - this option can be specified multiple times.")
+                .create(ArgumentName.SCAN_SHORT);
 
         Option load = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.CPE)
                 .withDescription("load the CPE xml file").create(ArgumentName.CPE_SHORT);
@@ -225,10 +227,10 @@ public final class CliParser {
         formatter.printHelp(Settings.getString("application.name", "DependencyCheck"),
                 "\n" + Settings.getString("application.name", "DependencyCheck")
                 + " can be used to identify if there are any known CVE vulnerabilities in libraries utillized by an application. "
-                + Settings.getString("application.name", "DependencyCheck") + " will automatically update required data from the Internet, such as the CVE and CPE data files from nvd.nist.gov.\n",
+                + Settings.getString("application.name", "DependencyCheck")
+                + " will automatically update required data from the Internet, such as the CVE and CPE data files from nvd.nist.gov.\n",
                 options, "", true);
     }
-
 
     /**
      * Retrieves the file command line parameter(s) specified for the 'cpe' argument.
@@ -264,6 +266,7 @@ public final class CliParser {
     public String getApplicationName() {
         return line.getOptionValue(ArgumentName.APPNAME);
     }
+
     /**
      * <p>Prints the manifest information to standard output:</p>
      * <ul><li>Implementation-Title: ${pom.name}</li>
@@ -291,6 +294,7 @@ public final class CliParser {
      * line arguments.
      */
     public static class ArgumentName {
+
         /**
          * The long CLI argument name specifing the directory/file to scan
          */
@@ -347,6 +351,5 @@ public final class CliParser {
          * The short CLI argument name asking for the version.
          */
         public static final String VERSION = "version";
-
     }
 }

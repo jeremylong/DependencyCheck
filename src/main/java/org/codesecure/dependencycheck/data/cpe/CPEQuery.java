@@ -243,24 +243,24 @@ public class CPEQuery {
     }
 
     /**
-     * Returns the text created by concatonating the text and the values from the 
+     * Returns the text created by concatonating the text and the values from the
      * EvidenceCollection (filtered for a specific confidence). This attempts to
      * prevent duplicate terms from being added.<br/<br/>
      * Note, if the evidence is longer then 200 characters it will be truncated.
-     * 
+     *
      * @param text the base text.
      * @param ec an EvidenceCollection
      * @param confidenceFilter a Confidence level to filter the evidence by.
-     * @return 
+     * @return
      */
     private String addEvidenceWithoutDuplicateTerms(final String text, final EvidenceCollection ec, Confidence confidenceFilter) {
         String txt = (text == null) ? "" : text;
         StringBuilder sb = new StringBuilder(txt.length() + (20 * ec.size()));
         for (Evidence e : ec.iterator(confidenceFilter)) {
             String value = e.getValue();
-            if (sb.indexOf(value)<0) {
-                if (value.length()>200) {
-                    sb.append(value.substring(0,200));
+            if (sb.indexOf(value) < 0) {
+                if (value.length() > 200) {
+                    sb.append(value.substring(0, 200));
                 } else {
                     sb.append(value).append(' ');
                 }
@@ -268,7 +268,7 @@ public class CPEQuery {
         }
         return sb.toString();
     }
-    
+
     /**
      * Reduces the given confidence by one level. This returns LOW if the confidence
      * passed in is not HIGH.

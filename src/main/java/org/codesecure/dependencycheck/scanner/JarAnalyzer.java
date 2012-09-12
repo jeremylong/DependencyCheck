@@ -22,11 +22,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.jar.Attributes;
@@ -52,12 +48,11 @@ import org.codesecure.dependencycheck.utils.Checksum;
  */
 public class JarAnalyzer extends AbstractAnalyzer {
 
-    private final static String ANALYZER_NAME = "Jar Analyzer";
-    
+    private static final String ANALYZER_NAME = "Jar Analyzer";
     /**
      * A list of elements in the manifest to ignore.
      */
-    private final static Set<String> IGNORE_LIST = newHashSet(
+    private static final Set<String> IGNORE_LIST = newHashSet(
             "built-by",
             "created-by",
             "license",
@@ -70,9 +65,10 @@ public class JarAnalyzer extends AbstractAnalyzer {
             "archiver-version",
             "classpath",
             "bundle-manifestversion");
-            
-    private final static Set<String> extensions = newHashSet("jar");
-    
+    /**
+     * The set of file extensions supported by this analyzer.
+     */
+    private static final Set<String> EXTENSIONS = newHashSet("jar");
     /**
      * item in some manifest, should be considered medium confidence.
      */
@@ -91,11 +87,11 @@ public class JarAnalyzer extends AbstractAnalyzer {
     private static final String BUNDLE_VENDOR = "Bundle-Vendor"; //: Apache Software Foundation
 
     /**
-     * Returns a list of file extensions supported by this analyzer.
-     * @return a list of file extensions supported by this analyzer.
+     * Returns a list of file EXTENSIONS supported by this analyzer.
+     * @return a list of file EXTENSIONS supported by this analyzer.
      */
     public Set<String> getSupportedExtensions() {
-        return extensions;
+        return EXTENSIONS;
     }
 
     /**
@@ -112,7 +108,7 @@ public class JarAnalyzer extends AbstractAnalyzer {
      * @return whether or not the specified file extension is supported by tihs analyzer.
      */
     public boolean supportsExtension(String extension) {
-        return extensions.contains(extension);
+        return EXTENSIONS.contains(extension);
     }
 
     /**
@@ -187,9 +183,10 @@ public class JarAnalyzer extends AbstractAnalyzer {
                 fileNameEvidence, Evidence.Confidence.HIGH);
         dependency.getVendorEvidence().addEvidence("jar", "file name",
                 fileNameEvidence, Evidence.Confidence.HIGH);
-        dependency.getVersionEvidence().addEvidence("jar", "file name",
-                fileNameEvidence, Evidence.Confidence.HIGH);
-
+        if (fileNameEvidence.matches(".*\\d.*")) {
+            dependency.getVersionEvidence().addEvidence("jar", "file name",
+                    fileNameEvidence, Evidence.Confidence.HIGH);
+        }
         String md5 = null;
         String sha1 = null;
         try {
@@ -205,11 +202,6 @@ public class JarAnalyzer extends AbstractAnalyzer {
 
         parseManifest(dependency);
         analyzePackageNames(dependency);
-
-        //TODO - can we get "version" information from the filename?  add it as medium confidence?
-        //   strip extension. find first numeric, chop off the first part. consider replacing [_-] with .
-        //dependency.getVersionEvidence().addEvidence("jar", "file name",
-        //                      version from file, Evidence.Confidence.MEDIUM);
 
         return dependency;
     }
@@ -378,7 +370,7 @@ public class JarAnalyzer extends AbstractAnalyzer {
      *     <li>Main Class</li>
      * </ul>
      * However, all but a handful of specific entries are read in.
-     * 
+     *
      * @param dependency A reference to the dependency.
      * @throws IOException if there is an issue reading the JAR file.
      */
@@ -389,7 +381,7 @@ public class JarAnalyzer extends AbstractAnalyzer {
 
         EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
         EvidenceCollection titleEvidence = dependency.getTitleEvidence();
-        EvidenceCollection versionEvidence = dependency.getVendorEvidence();
+        EvidenceCollection versionEvidence = dependency.getVersionEvidence();
 
         String source = "Manifest";
 

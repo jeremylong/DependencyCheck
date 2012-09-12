@@ -42,7 +42,6 @@ public class Downloader {
      * Private constructor for utility class.
      */
     private Downloader() {
-
     }
 
     /**
@@ -66,7 +65,7 @@ public class Downloader {
         HttpURLConnection conn = null;
         Proxy proxy = null;
         String proxyUrl = Settings.getString(Settings.KEYS.PROXY_URL);
-        
+
         try {
             if (proxyUrl != null) {
                 int proxyPort = Settings.getInt(Settings.KEYS.PROXY_PORT);
@@ -80,11 +79,11 @@ public class Downloader {
                 int timeout = Settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT);
                 conn.setConnectTimeout(timeout);
             }
-        
+
             conn.connect();
         } catch (IOException ex) {
             try {
-                if (conn!=null) {
+                if (conn != null) {
                     conn.disconnect();
                 }
             } finally {
@@ -92,13 +91,13 @@ public class Downloader {
             }
             throw new DownloadFailedException("Error downloading file.", ex);
         }
-        
+
         BufferedOutputStream writer = null;
         try {
             //the following times out on some systems because the CPE is big.
             //InputStream reader = url.openStream();
             InputStream reader = conn.getInputStream();
-            
+
             writer = new BufferedOutputStream(new FileOutputStream(outputPath));
             byte[] buffer = new byte[4096];
             int bytesRead = 0;

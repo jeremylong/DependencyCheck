@@ -20,9 +20,6 @@ package org.codesecure.dependencycheck.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,7 +30,6 @@ import java.util.logging.Logger;
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public class Settings {
-
 
     /**
      * The collection of keys used within the properties file.
@@ -60,10 +56,6 @@ public class Settings {
          * The properties key for the path where the OSVDB Lucene Index will be stored.
          */
         public static final String OSVDB_INDEX = "osvdb";
-        /**
-         * The properties key prefix for the analyzer assocations.
-         */
-        public static final String FILE_EXTENSION_ANALYZER_ASSOCIATION_PREFIX = "file.extension.analyzer.association.";
         /**
          * The properties key for the proxy url.
          */
@@ -120,7 +112,7 @@ public class Settings {
     public static void setString(String key, String value) {
         instance.props.setProperty(key, value);
     }
-    
+
     /**
      * Returns a value from the properties file. If the value was specified as a
      * system property or passed in via the -Dprop=value argument - this method
@@ -133,7 +125,7 @@ public class Settings {
     public static String getString(String key) {
         return System.getProperty(key, instance.props.getProperty(key));
     }
-    
+
     /**
      * Returns a integer value from the properties file. If the value was specified as a
      * system property or passed in via the -Dprop=value argument - this method
@@ -146,6 +138,7 @@ public class Settings {
     public static int getInt(String key) {
         return Integer.parseInt(Settings.getString(key));
     }
+
     /**
      * Returns a boolean value from the properties file. If the value was specified as a
      * system property or passed in via the -Dprop=value argument - this method

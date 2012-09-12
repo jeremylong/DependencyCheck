@@ -206,7 +206,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
         }
         return ret;
     }
-//  Removed because this wasn't working right (the function returned the right data, but 
+//  Removed because this wasn't working right (the function returned the right data, but
 //  the use of the results was flawed.
 //    /**
 //     * Returns a string of evidence 'values' for a given confidence.

@@ -21,14 +21,10 @@ package org.codesecure.dependencycheck.scanner;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.codesecure.dependencycheck.utils.Settings;
-import org.codesecure.dependencycheck.utils.Settings.KEYS;
 
 /**
  * Scans files, directories, etc. for Dependencies. Analyzers are loaded and
@@ -62,7 +58,7 @@ public class Scanner {
     private void loadAnalyzers() {
         AnalyzerService service = AnalyzerService.getInstance();
         Iterator<Analyzer> iterator = service.getAnalyzers();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             Analyzer a = iterator.next();
             analyzers.add(a);
         }

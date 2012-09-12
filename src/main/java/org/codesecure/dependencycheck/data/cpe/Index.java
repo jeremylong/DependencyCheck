@@ -137,7 +137,7 @@ public class Index {
      * @throws MalformedURLException is thrown if the URL for the CPE is malformed.
      * @throws ParserConfigurationException is thrown if the parser is misconfigured.
      * @throws SAXException is thrown if there is an error parsing the CPE XML.
-     * @throws IOException is thrown if a temporary file could not be created. 
+     * @throws IOException is thrown if a temporary file could not be created.
      */
     public void updateIndexFromWeb() throws MalformedURLException, ParserConfigurationException, SAXException, IOException {
         if (updateNeeded()) {
@@ -148,7 +148,7 @@ public class Index {
                 Downloader.fetchFile(url, outputPath);
                 Importer.importXML(outputPath.toString());
                 writeLastUpdatedPropertyFile();
-                
+
             } catch (DownloadFailedException ex) {
                 Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
