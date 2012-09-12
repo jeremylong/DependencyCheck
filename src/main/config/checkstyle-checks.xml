@@ -41,7 +41,7 @@ under the License.
     </module-->
     
     <module name="SuppressionFilter">
-        <property name="file" value="checkstyle-suppressions.xml"/>
+        <property name="file" value="src/main/config/checkstyle-suppressions.xml"/>
     </module>
 
     <!-- Checks that property files contain the same keys.         -->
@@ -53,7 +53,7 @@ under the License.
     <!-- Checks for Headers                              -->
     <!-- See http://checkstyle.sf.net/config_header.html -->
     <module name="RegexpHeader">
-      <property name="headerFile" value="checkstyle-header.txt"/>
+      <property name="headerFile" value="src/main/config/checkstyle-header.txt"/>
     </module>
     
     <module name="FileTabCharacter">

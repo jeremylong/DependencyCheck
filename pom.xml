@@ -270,7 +270,7 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                             <version>2.9.1</version>
                             <configuration>
                                 <enableRulesSummary>false</enableRulesSummary>
-                                <configLocation>checkstyle-checks.xml</configLocation>
+                                <configLocation>src/main/config/checkstyle-checks.xml</configLocation>
                             </configuration>
                         </plugin>
                     </reportPlugins>
