@@ -122,6 +122,9 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                             <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
                     </archive>
+                    <excludes>
+                        <exclude>**/checkstyle*</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 
