@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -44,9 +45,9 @@ public class Scanner {
      */
     protected List<Dependency> dependencies = new ArrayList<Dependency>();
     /**
-     * A Map of analyzers - the key is the file extension.
+     * A List of analyzers.
      */
-    protected Map<String, Analyzer> analyzers = new HashMap<String, Analyzer>();
+    protected List<Analyzer> analyzers = new ArrayList<Analyzer>();
 
     /**
      * Creates a new Scanner.
@@ -59,56 +60,20 @@ public class Scanner {
      * Loads the analyzers specified in the configuration file (or system properties).
      */
     private void loadAnalyzers() {
-        Map<String, String> associations = Settings.getPropertiesByPrefix(KEYS.FILE_EXTENSION_ANALYZER_ASSOCIATION_PREFIX);
-        for (Map.Entry<String, String> entry : associations.entrySet()) {
-            addAnalyzer(entry.getKey(), entry.getValue());
+        AnalyzerService service = AnalyzerService.getInstance();
+        Iterator<Analyzer> iterator = service.getAnalyzers();
+        while(iterator.hasNext()) {
+            Analyzer a = iterator.next();
+            analyzers.add(a);
         }
     }
 
     /**
-     * Adds an Analyzer to the collection of analyzers and associates the
-     * analyzer with a file extension.
-     *
-     * If the specified class does not implement 'org.codesecure.dependencycheck.detect.Analyzer'
-     * the load will fail mostly silently - only writting the failure to the log file.
-     *
-     * @param extension the file extension that this analyzer can analyze.
-     * @param className the fully qualified classname of the Analyzer.
-     */
-    public final void addAnalyzer(String extension, String className) {
-
-        ClassLoader loader = this.getClass().getClassLoader();
-        try {
-            Class analyzer = loader.loadClass(className);
-            boolean implmnts = false;
-            for (Class p : analyzer.getInterfaces()) {
-                if (org.codesecure.dependencycheck.scanner.Analyzer.class.isAssignableFrom(p)) {
-                    implmnts = true;
-                    break;
-                }
-            }
-
-            if (implmnts) {
-                this.analyzers.put(extension, (Analyzer) analyzer.newInstance());
-            } else {
-                String msg = String.format("Class '%s' does not implement org.codesecure.dependencycheck.scanner.Analyzer and cannot be loaded as an Analyzer for extension '%s'.", className, extension);
-                Logger.getLogger(Scanner.class.getName()).log(Level.WARNING, msg);
-            }
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Scanner.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(Scanner.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(Scanner.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    /**
-     * Get the Map of the analyzers.
+     * Get the List of the analyzers.
      *
      * @return the analyzers loaded
      */
-    public Map<String, Analyzer> getAnalyzers() {
+    public List<Analyzer> getAnalyzers() {
         return analyzers;
     }
 
@@ -170,24 +135,24 @@ public class Scanner {
         String fileName = file.getName();
         String extension = getFileExtension(fileName);
         if (extension != null) {
-            if (analyzers.containsKey(extension)) {
-                Analyzer a = analyzers.get(extension);
-                try {
-                    Dependency dependency = a.insepct(file);
-                    dependencies.add(dependency);
-                } catch (IOException ex) {
-                    String msg = String.format("IOException occured while scanning the file '%s'.", file.toString());
-                    Logger.getLogger(Scanner.class.getName()).log(Level.SEVERE, msg, ex);
+            for (Analyzer a : analyzers) {
+                if (a.supportsExtension(extension)) {
+                    try {
+                        Dependency dependency = a.insepct(file);
+                        if (dependency != null) {
+                            dependencies.add(dependency);
+                            break;
+                        }
+                    } catch (IOException ex) {
+                        String msg = String.format("IOException occured while scanning the file '%s'.", file.toString());
+                        Logger.getLogger(Scanner.class.getName()).log(Level.SEVERE, msg, ex);
+                    }
                 }
-            } else {
-                String msg = String.format("No analyzer is configured for files of type '%s'. The file, '%s', was not analyzed.", extension, file.toString());
-                Logger.getLogger(Scanner.class.getName()).log(Level.WARNING, msg);
             }
         } else {
             String msg = String.format("No files extension found on file '%s'. The file was not analyzed.", file.toString());
             Logger.getLogger(Scanner.class.getName()).log(Level.WARNING, msg);
         }
-
     }
 
     /**

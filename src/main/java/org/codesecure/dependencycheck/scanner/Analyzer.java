@@ -20,6 +20,7 @@ package org.codesecure.dependencycheck.scanner;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * An interface that defines an Analyzer that is used to identify Dependencies.
@@ -38,4 +39,26 @@ public interface Analyzer {
      * @throws IOException is thrown if there is an error reading the dependency file
      */
     Dependency insepct(File file) throws IOException;
+    
+    /**
+     * Returns a list of supported file extensions. An example would be an analyzer
+     * that inpected java jar files. The getSupportedExtensions function would return
+     * a set with a single element "jar".
+     * 
+     * @return The file extensions supported by this analyzer.
+     */
+    Set<String> getSupportedExtensions();
+    
+    /**
+     * Returns the name of the analyzer.
+     * @return the name of the analyzer.
+     */
+    String getName();
+    
+    /**
+     * Returns whether or not this analyzer can process the given extension.
+     * @param extension the file extension to test for support.
+     * @return whether or not the specified file extension is supported by tihs analyzer.
+     */
+    boolean supportsExtension(String extension);
 }

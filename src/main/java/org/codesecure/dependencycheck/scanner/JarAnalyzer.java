@@ -23,9 +23,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -47,22 +50,29 @@ import org.codesecure.dependencycheck.utils.Checksum;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class JarAnalyzer implements Analyzer {
+public class JarAnalyzer extends AbstractAnalyzer {
 
-    private static List<String> IGNORE_LIST;
-
-    public JarAnalyzer() {
-        IGNORE_LIST = new ArrayList<String>();
-        IGNORE_LIST.add("built-by");
-        IGNORE_LIST.add("created-by");
-        IGNORE_LIST.add("license");
-        IGNORE_LIST.add("build-jdk");
-        IGNORE_LIST.add("ant-version");
-        IGNORE_LIST.add("import-package");
-        IGNORE_LIST.add("export-package");
-        IGNORE_LIST.add("sealed");
-        IGNORE_LIST.add("manifest-version");
-    }
+    private final static String ANALYZER_NAME = "Jar Analyzer";
+    
+    /**
+     * A list of elements in the manifest to ignore.
+     */
+    private final static Set<String> IGNORE_LIST = newHashSet(
+            "built-by",
+            "created-by",
+            "license",
+            "build-jdk",
+            "ant-version",
+            "import-package",
+            "export-package",
+            "sealed",
+            "manifest-version",
+            "archiver-version",
+            "classpath",
+            "bundle-manifestversion");
+            
+    private final static Set<String> extensions = newHashSet("jar");
+    
     /**
      * item in some manifest, should be considered medium confidence.
      */
@@ -79,6 +89,31 @@ public class JarAnalyzer implements Analyzer {
      * item in some manifest, should be considered medium confidence.
      */
     private static final String BUNDLE_VENDOR = "Bundle-Vendor"; //: Apache Software Foundation
+
+    /**
+     * Returns a list of file extensions supported by this analyzer.
+     * @return a list of file extensions supported by this analyzer.
+     */
+    public Set<String> getSupportedExtensions() {
+        return extensions;
+    }
+
+    /**
+     * Returns the name of the analyzer.
+     * @return the name of the analyzer.
+     */
+    public String getName() {
+        return ANALYZER_NAME;
+    }
+
+    /**
+     * Returns whether or not this analyzer can process the given extension.
+     * @param extension the file extension to test for support.
+     * @return whether or not the specified file extension is supported by tihs analyzer.
+     */
+    public boolean supportsExtension(String extension) {
+        return extensions.contains(extension);
+    }
 
     /**
      * An enumeration to keep track of the characters in a string as it is being
@@ -331,7 +366,7 @@ public class JarAnalyzer implements Analyzer {
     }
 
     /**
-     * <p>Reads the manifest from the JAR file and collects the:</p>
+     * <p>Reads the manifest from the JAR file and collects the entries. Some key entries are:</p>
      * <ul><li>Implementation Title</li>
      *     <li>Implementation Version</li>
      *     <li>Implementation Vendor</li>
@@ -342,7 +377,8 @@ public class JarAnalyzer implements Analyzer {
      *     <li>Bundle Description</li>
      *     <li>Main Class</li>
      * </ul>
-     *
+     * However, all but a handful of specific entries are read in.
+     * 
      * @param dependency A reference to the dependency.
      * @throws IOException if there is an issue reading the JAR file.
      */
@@ -382,7 +418,7 @@ public class JarAnalyzer implements Analyzer {
             } else {
                 key = key.toLowerCase();
 
-                if (!IGNORE_LIST.contains(key)) {
+                if (!IGNORE_LIST.contains(key) && !key.contains("license") && !key.endsWith("jdk")) {
                     if (key.contains("version")) {
                         versionEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
                     } else if (key.contains("title")) {

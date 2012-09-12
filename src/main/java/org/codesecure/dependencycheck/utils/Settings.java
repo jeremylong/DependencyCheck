@@ -64,8 +64,17 @@ public class Settings {
          * The properties key prefix for the analyzer assocations.
          */
         public static final String FILE_EXTENSION_ANALYZER_ASSOCIATION_PREFIX = "file.extension.analyzer.association.";
+        /**
+         * The properties key for the proxy url.
+         */
         public static final String PROXY_URL = "proxy.url";
+        /**
+         * The properties key for the proxy port - this must be an integer value.
+         */
         public static final String PROXY_PORT = "proxy.port";
+        /**
+         * The properties key for the connection timeout.
+         */
         public static final String CONNECTION_TIMEOUT = "connection.timeout";
     }
     private static final String PROPERTIES_FILE = "dependencycheck.properties";
@@ -124,44 +133,7 @@ public class Settings {
     public static String getString(String key) {
         return System.getProperty(key, instance.props.getProperty(key));
     }
-
-    /**
-     * Returns a map of properties selected by a given prefix. For isntance
-     * if you have five properties that started off with "org.codesecure.name"
-     * you could get a collection of those properties by calling this method.
-     *
-     * NOTE: The prefix is removed from the given properties when returned.
-     *
-     * @param prefix the prefix used to search the property collections for.
-     * @return a Map of properties found.
-     */
-    public static Map<String, String> getPropertiesByPrefix(String prefix) {
-        Map<String, String> ret = new HashMap<String, String>();
-
-        Properties properties = instance.props;
-        for (Enumeration<Object> e = properties.keys(); e.hasMoreElements(); ) {
-            Object o = e.nextElement();
-            if (o instanceof String) {
-                String key = (String) o;
-                if (key.startsWith(prefix)) {
-                    String ext = key.substring(prefix.length());
-                    ret.put(ext, properties.getProperty(key));
-                }
-            }
-        }
-        properties = System.getProperties();
-        for (Enumeration<Object> e = properties.keys(); e.hasMoreElements(); ) {
-            Object o = e.nextElement();
-            if (o instanceof String) {
-                String key = (String) o;
-                if (key.startsWith(prefix)) {
-                    String ext = key.substring(prefix.length() + 1);
-                    ret.put(ext, properties.getProperty(key));
-                }
-            }
-        }
-        return ret;
-    }
+    
     /**
      * Returns a integer value from the properties file. If the value was specified as a
      * system property or passed in via the -Dprop=value argument - this method
