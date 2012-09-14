@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
@@ -47,8 +48,6 @@ import org.codesecure.dependencycheck.utils.Downloader;
 import org.codesecure.dependencycheck.utils.Settings;
 import org.codesecure.dependencycheck.data.cpe.xml.Importer;
 import org.codesecure.dependencycheck.utils.DownloadFailedException;
-import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.xml.sax.SAXException;
 
 /**
@@ -140,23 +139,24 @@ public class Index {
      * @throws IOException is thrown if a temporary file could not be created.
      */
     public void updateIndexFromWeb() throws MalformedURLException, ParserConfigurationException, SAXException, IOException {
-        if (updateNeeded()) {
+        long timeStamp = updateNeeded();
+        if (timeStamp > 0) {
             URL url = new URL(Settings.getString(Settings.KEYS.CPE_URL));
             File outputPath = null;
             try {
                 outputPath = File.createTempFile("cpe", ".xml");
-                Downloader.fetchFile(url, outputPath);
+                Downloader.fetchFile(url, outputPath, true);
                 Importer.importXML(outputPath.toString());
-                writeLastUpdatedPropertyFile();
-
+                writeLastUpdatedPropertyFile(timeStamp);
             } catch (DownloadFailedException ex) {
                 Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
-                boolean deleted = false;
                 try {
-                    deleted = outputPath.delete();
+                    if (outputPath != null && outputPath.exists()) {
+                        outputPath.delete();
+                    }
                 } finally {
-                    if (!deleted) {
+                    if (outputPath != null && outputPath.exists()) {
                         outputPath.deleteOnExit();
                     }
                 }
@@ -164,12 +164,15 @@ public class Index {
         }
     }
 
-    private void writeLastUpdatedPropertyFile() {
-        DateTime now = new DateTime();
+    /**
+     * Writes a properties file containing the last updated date to the CPE directory.
+     * @param timeStamp the timestamp to write.
+     */
+    private void writeLastUpdatedPropertyFile(long timeStamp) {
         String dir = Settings.getString(Settings.KEYS.CPE_INDEX);
         File cpeProp = new File(dir + File.separatorChar + UPDATE_PROPERTIES_FILE);
         Properties prop = new Properties();
-        prop.put(this.LAST_UPDATED, String.valueOf(now.getMillis()));
+        prop.put(Index.LAST_UPDATED, String.valueOf(timeStamp));
         OutputStream os = null;
         try {
             os = new FileOutputStream(cpeProp);
@@ -194,48 +197,91 @@ public class Index {
     }
 
     /**
-     * Determines if the index needs to be updated.
+     * Determines if the index needs to be updated. This is done by fetching the
+     * cpe.meta data and checking the lastModifiedDate. If the CPE data needs to
+     * be refreshed this method will return the timestamp of the new CPE. If an
+     * update is not required this function will return 0.
      *
-     * @return whether or not the CPE Index needs to be updated.
+     * @return the timestamp of the currently published CPE.xml if the index needs to be updated, otherwise returns 0..
+     * @throws MalformedURLException is thrown if the URL for the CPE Meta data is incorrect.
+     * @throws DownloadFailedException is thrown if there is an error downloading the cpe.meta data file.
      */
-    public boolean updateNeeded() {
-        boolean needed = false;
-        String lastUpdated = null;
+    public long updateNeeded() throws MalformedURLException, DownloadFailedException {
+        long retVal = 0;
+        long lastUpdated = 0;
+        long currentlyPublishedDate = retrieveCurrentCPETimestampFromWeb();
+        if (currentlyPublishedDate == 0) {
+            throw new DownloadFailedException("Unable to retrieve valid timestamp from cpe.meta file");
+        }
+
         String dir = Settings.getString(Settings.KEYS.CPE_INDEX);
         File f = new File(dir);
         if (!f.exists()) {
-            needed = true;
+            retVal = currentlyPublishedDate;
         } else {
             File cpeProp = new File(dir + File.separatorChar + UPDATE_PROPERTIES_FILE);
             if (!cpeProp.exists()) {
-                needed = true;
+                retVal = currentlyPublishedDate;
             } else {
                 Properties prop = new Properties();
-                FileInputStream is = null;
+                InputStream is = null;
                 try {
                     is = new FileInputStream(cpeProp);
                     prop.load(is);
-                    lastUpdated = prop.getProperty(this.LAST_UPDATED);
+                    lastUpdated = Long.parseLong(prop.getProperty(Index.LAST_UPDATED));
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(Index.class.getName()).log(Level.FINEST, null, ex);
                 } catch (IOException ex) {
                     Logger.getLogger(Index.class.getName()).log(Level.FINEST, null, ex);
-                }
-                try {
-                    long lastupdate = Long.parseLong(lastUpdated);
-                    DateTime last = new DateTime(lastupdate);
-                    DateTime now = new DateTime();
-                    Days d = Days.daysBetween(last, now);
-                    int days = d.getDays();
-                    int freq = Settings.getInt(Settings.KEYS.CPE_DOWNLOAD_FREQUENCY);
-                    if (days >= freq) {
-                        needed = true;
-                    }
                 } catch (NumberFormatException ex) {
-                    needed = true;
+                    Logger.getLogger(Index.class.getName()).log(Level.FINEST, null, ex);
+                }
+                if (currentlyPublishedDate > lastUpdated) {
+                    retVal = currentlyPublishedDate;
                 }
             }
         }
-        return needed;
+        return retVal;
+    }
+
+    /**
+     * Retrieves the timestamp from the CPE meta data file.
+     * @return the timestamp from the currently published cpe.meta.
+     * @throws MalformedURLException is thrown if the URL for the CPE Meta data is incorrect.
+     * @throws DownloadFailedException is thrown if there is an error downloading the cpe.meta data file.
+     */
+    private long retrieveCurrentCPETimestampFromWeb() throws MalformedURLException, DownloadFailedException {
+        long timestamp = 0;
+        File tmp = null;
+        InputStream is = null;
+        try {
+            tmp = File.createTempFile("cpe", "meta");
+            URL url = new URL(Settings.getString(Settings.KEYS.CPE_META_URL));
+            Downloader.fetchFile(url, tmp);
+            Properties prop = new Properties();
+            is = new FileInputStream(tmp);
+            prop.load(is);
+            timestamp = Long.parseLong(prop.getProperty("lastModifiedDate"));
+        } catch (IOException ex) {
+            throw new DownloadFailedException("Unable to create temporary file for CPE Meta File download.", ex);
+        } finally {
+            try {
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(Index.class.getName()).log(Level.FINEST, null, ex);
+                    }
+                }
+                if (tmp != null && tmp.exists()) {
+                    tmp.delete();
+                }
+            } finally {
+                if (tmp != null && tmp.exists()) {
+                    tmp.deleteOnExit();
+                }
+            }
+        }
+        return timestamp;
     }
 }

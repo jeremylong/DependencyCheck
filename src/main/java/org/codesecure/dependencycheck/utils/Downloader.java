@@ -30,6 +30,7 @@ import java.net.SocketAddress;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
 
 /**
  * A utility to download files from the Internet.
@@ -51,8 +52,19 @@ public class Downloader {
      * @throws DownloadFailedException is thrown if there is an error downloading the file.
      */
     public static void fetchFile(URL url, String outputPath) throws DownloadFailedException {
+        fetchFile(url, outputPath, false);
+    }
+
+    /**
+     * Retrieves a file from a given URL and saves it to the outputPath.
+     * @param url the URL of the file to download.
+     * @param outputPath the path to the save the file to.
+     * @param unzip true/false indicating that the file being retrieved is gzipped and if true, should be uncompressed before writting to the file.
+     * @throws DownloadFailedException is thrown if there is an error downloading the file.
+     */
+    public static void fetchFile(URL url, String outputPath, boolean unzip) throws DownloadFailedException {
         File f = new File(outputPath);
-        fetchFile(url, f);
+        fetchFile(url, f, unzip);
     }
 
     /**
@@ -62,6 +74,17 @@ public class Downloader {
      * @throws DownloadFailedException is thrown if there is an error downloading the file.
      */
     public static void fetchFile(URL url, File outputPath) throws DownloadFailedException {
+        fetchFile(url, outputPath, false);
+    }
+
+    /**
+     * Retrieves a file from a given URL and saves it to the outputPath.
+     * @param url the URL of the file to download.
+     * @param outputPath the path to the save the file to.
+     * @param unzip true/false indicating that the file being retrieved is gzipped and if true, should be uncompressed before writting to the file.
+     * @throws DownloadFailedException is thrown if there is an error downloading the file.
+     */
+    public static void fetchFile(URL url, File outputPath, boolean unzip) throws DownloadFailedException {
         HttpURLConnection conn = null;
         Proxy proxy = null;
         String proxyUrl = Settings.getString(Settings.KEYS.PROXY_URL);
@@ -96,7 +119,12 @@ public class Downloader {
         try {
             //the following times out on some systems because the CPE is big.
             //InputStream reader = url.openStream();
-            InputStream reader = conn.getInputStream();
+            InputStream reader;
+            if (unzip) {
+                reader = new GZIPInputStream(conn.getInputStream());
+            } else {
+                reader = conn.getInputStream();
+            }
 
             writer = new BufferedOutputStream(new FileOutputStream(outputPath));
             byte[] buffer = new byte[4096];

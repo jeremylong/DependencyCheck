@@ -47,7 +47,7 @@ public class Settings {
         /**
          * The properties key for the URL to the CPE.
          */
-        public static final String CPE_DOWNLOAD_FREQUENCY = "cpe.downloadfrequency";
+        public static final String CPE_META_URL = "cpe.meta.url";
         /**
          * The properties key for the path where the CCE Lucene Index will be stored.
          */
@@ -69,8 +69,8 @@ public class Settings {
          */
         public static final String CONNECTION_TIMEOUT = "connection.timeout";
     }
-    private static final String PROPERTIES_FILE = "dependencycheck.properties";
-    private static Settings instance = new Settings();
+    private static final String PROPERTIES_FILE = "META-INF/dependencycheck.properties";
+    private static final Settings INSTANCE = new Settings();
     private Properties props = null;
 
     /**
@@ -97,7 +97,7 @@ public class Settings {
      * @return the property from the properties file.
      */
     public static String getString(String key, String defaultValue) {
-        String str = System.getProperty(key, instance.props.getProperty(key));
+        String str = System.getProperty(key, INSTANCE.props.getProperty(key));
         if (str == null) {
             str = defaultValue;
         }
@@ -110,7 +110,7 @@ public class Settings {
      * @param value the value for the property.
      */
     public static void setString(String key, String value) {
-        instance.props.setProperty(key, value);
+        INSTANCE.props.setProperty(key, value);
     }
 
     /**
@@ -123,7 +123,7 @@ public class Settings {
      * @return the property from the properties file.
      */
     public static String getString(String key) {
-        return System.getProperty(key, instance.props.getProperty(key));
+        return System.getProperty(key, INSTANCE.props.getProperty(key));
     }
 
     /**
