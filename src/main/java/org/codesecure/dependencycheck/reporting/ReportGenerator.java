@@ -27,6 +27,8 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.runtime.RuntimeConstants;
@@ -82,9 +84,7 @@ public class ReportGenerator {
         Context context = manager.createContext();
         EasyFactoryConfiguration config = new EasyFactoryConfiguration();
         config.addDefaultTools();
-        config.toolbox("application")
-                .tool("esc", "org.apache.velocity.tools.generic.EscapeTool")
-                .tool("org.apache.velocity.tools.generic.DateTool");
+        config.toolbox("application").tool("esc", "org.apache.velocity.tools.generic.EscapeTool").tool("org.apache.velocity.tools.generic.DateTool");
 
         manager.configure(config);
 
@@ -119,12 +119,12 @@ public class ReportGenerator {
             try {
                 writer.close();
             } catch (Exception ex) {
-                //ignore this error.
+                Logger.getLogger(ReportGenerator.class.getName()).log(Level.FINEST, null, ex);
             }
             try {
                 reader.close();
             } catch (Exception ex) {
-                //ignore this error.
+                Logger.getLogger(ReportGenerator.class.getName()).log(Level.FINEST, null, ex);
             }
         }
     }

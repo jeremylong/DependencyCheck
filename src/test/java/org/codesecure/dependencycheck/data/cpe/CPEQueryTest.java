@@ -95,7 +95,7 @@ public class CPEQueryTest extends BaseIndexTestCase {
         CPEQuery instance = new CPEQuery();
 
         String queryText = instance.buildSearch(vendor, product, version, null, null);
-        String expResult = " product:( struts 2 core )  vendor:( apache software foundation ) version:(2.1.2)";
+        String expResult = " product:( struts 2 core )  vendor:( apache software foundation ) version:(2.1.2^0.7 )";
         assertTrue(expResult.equals(queryText));
 
         queryText = instance.buildSearch(vendor, product, version, null, productWeightings);

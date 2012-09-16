@@ -48,7 +48,17 @@ public class LuceneUtilsTest {
         LuceneUtils.appendEscapedLuceneQuery(buf, text);
         assertEquals(expResult, buf.toString());
     }
-
+/**
+     * Test of appendEscapedLuceneQuery method, of class LuceneUtils.
+     */
+    @Test
+    public void testAppendEscapedLuceneQuery_null() {
+        System.out.println("appendEscapedLuceneQuery");
+        StringBuilder buf = new StringBuilder();
+        CharSequence text = null;
+        LuceneUtils.appendEscapedLuceneQuery(buf, text);
+        assertEquals(0, buf.length());
+    }
     /**
      * Test of escapeLuceneQuery method, of class LuceneUtils.
      */
@@ -57,6 +67,18 @@ public class LuceneUtilsTest {
         System.out.println("escapeLuceneQuery");
         CharSequence text = "test encoding + - & | ! ( ) { } [ ] ^ \" ~ * ? : \\"; 
         String expResult = "test encoding \\+ \\- \\& \\| \\! \\( \\) \\{ \\} \\[ \\] \\^ \\\" \\~ \\* \\? \\: \\\\"; 
+        String result = LuceneUtils.escapeLuceneQuery(text);
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Test of escapeLuceneQuery method, of class LuceneUtils.
+     */
+    @Test
+    public void testEscapeLuceneQuery_null() {
+        System.out.println("escapeLuceneQuery");
+        CharSequence text = null;
+        String expResult = null;
         String result = LuceneUtils.escapeLuceneQuery(text);
         assertEquals(expResult, result);
     }

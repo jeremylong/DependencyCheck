@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.codesecure.dependencycheck.cpe.xml;
+package org.codesecure.dependencycheck.data.cpe.xml;
 
 import java.io.File;
 import junit.framework.TestCase;

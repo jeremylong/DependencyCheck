@@ -18,6 +18,8 @@ package org.codesecure.dependencycheck.utils;
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -53,10 +55,6 @@ public class Settings {
          */
         public static final String CVE_INDEX = "cve";
         /**
-         * The properties key for the path where the OSVDB Lucene Index will be stored.
-         */
-        public static final String OSVDB_INDEX = "osvdb";
-        /**
          * The properties key for the proxy url.
          */
         public static final String PROXY_URL = "proxy.url";
@@ -86,6 +84,44 @@ public class Settings {
         }
     }
 
+
+    /**
+     * Sets a property value.
+     * @param key the key for the property.
+     * @param value the value for the property.
+     */
+    public static void setString(String key, String value) {
+        INSTANCE.props.setProperty(key, value);
+    }
+
+    /**
+     * Merges a new properties file into the current properties. This
+     * method allows for the loading of a user provided properties file.<br/><br/>
+     * Note: even if using this method - system properties will be loaded before
+     * properties loaded from files.
+     *
+     * @param filePath the path to the properties file to merge.
+     * @throws FileNotFoundException is thrown when the filePath points to a non-existent file.
+     * @throws IOException is thrown when there is an exception loading/merging the properties.
+     */
+    public static void mergeProperties(String filePath) throws FileNotFoundException, IOException {
+        FileInputStream fis = new FileInputStream(filePath);
+        mergeProperties(fis);
+    }
+
+    /**
+     * Merges a new properties file into the current properties. This
+     * method allows for the loading of a user provided properties file.<br/><br/>
+     * Note: even if using this method - system properties will be loaded before
+     * properties loaded from files.
+     *
+     * @param stream an Input Stream pointing at a properties file to merge.
+     * @throws IOException is thrown when there is an exception loading/merging the properties
+     */
+    public static void mergeProperties(InputStream stream) throws IOException {
+        INSTANCE.props.load(stream);
+    }
+
     /**
      * Returns a value from the properties file. If the value was specified as a
      * system property or passed in via the -Dprop=value argument - this method
@@ -105,15 +141,6 @@ public class Settings {
     }
 
     /**
-     * Sets a property value.
-     * @param key the key for the property.
-     * @param value the value for the property.
-     */
-    public static void setString(String key, String value) {
-        INSTANCE.props.setProperty(key, value);
-    }
-
-    /**
      * Returns a value from the properties file. If the value was specified as a
      * system property or passed in via the -Dprop=value argument - this method
      * will return the value from the system properties before the values in
@@ -127,7 +154,7 @@ public class Settings {
     }
 
     /**
-     * Returns a integer value from the properties file. If the value was specified as a
+     * Returns an int value from the properties file. If the value was specified as a
      * system property or passed in via the -Dprop=value argument - this method
      * will return the value from the system properties before the values in
      * the contained configuration file.
@@ -137,6 +164,18 @@ public class Settings {
      */
     public static int getInt(String key) {
         return Integer.parseInt(Settings.getString(key));
+    }
+    /**
+     * Returns a long value from the properties file. If the value was specified as a
+     * system property or passed in via the -Dprop=value argument - this method
+     * will return the value from the system properties before the values in
+     * the contained configuration file.
+     *
+     * @param key the key to lookup within the properties file.
+     * @return the property from the properties file.
+     */
+    public static long getLong(String key) {
+        return Long.parseLong(Settings.getString(key));
     }
 
     /**

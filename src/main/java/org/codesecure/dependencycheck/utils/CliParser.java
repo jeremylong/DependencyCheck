@@ -145,26 +145,26 @@ public final class CliParser {
     @SuppressWarnings("static-access")
     private Options createCommandLineOptions() {
         Option help = new Option(ArgumentName.HELP_SHORT, ArgumentName.HELP, false,
-                "print this message");
+                "print this message.");
+
+        Option advancedHelp = new Option(ArgumentName.ADVANCED_HELP_SHORT, ArgumentName.ADVANCED_HELP, false,
+                "shows additional help regarding properties file.");
 
         Option version = new Option(ArgumentName.VERSION_SHORT, ArgumentName.VERSION,
-                false, "print the version information and exit");
+                false, "print the version information.");
 
         Option noupdate = new Option(ArgumentName.DISABLE_AUTO_UPDATE_SHORT, ArgumentName.DISABLE_AUTO_UPDATE,
                 false, "disables the automatic updating of the CPE data.");
 
-        Option appname = OptionBuilder.withArgName("name").hasArg().withLongOpt(ArgumentName.APPNAME)
-                .withDescription("the name of the application being scanned").create(ArgumentName.APPNAME_SHORT);
+        Option appname = OptionBuilder.withArgName("name").hasArg().withLongOpt(ArgumentName.APPNAME).withDescription("the name of the application being scanned.").create(ArgumentName.APPNAME_SHORT);
 
-        Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.SCAN)
-                .withDescription("the path to scan - this option can be specified multiple times.")
-                .create(ArgumentName.SCAN_SHORT);
+        Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.SCAN).withDescription("the path to scan - this option can be specified multiple times.").create(ArgumentName.SCAN_SHORT);
 
-        Option load = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.CPE)
-                .withDescription("load the CPE xml file").create(ArgumentName.CPE_SHORT);
+        Option load = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.CPE).withDescription("load the CPE xml file.").create(ArgumentName.CPE_SHORT);
 
-        Option out = OptionBuilder.withArgName("folder").hasArg().withLongOpt(ArgumentName.OUT)
-                .withDescription("the folder to write reports to.").create(ArgumentName.OUT_SHORT);
+        Option props = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.PROP).withDescription("a property file to load.").create(ArgumentName.PROP_SHORT);
+
+        Option out = OptionBuilder.withArgName("folder").hasArg().withLongOpt(ArgumentName.OUT).withDescription("the folder to write reports to.").create(ArgumentName.OUT_SHORT);
 
         //TODO add the ability to load a properties file to override the defaults...
 
@@ -179,7 +179,8 @@ public final class CliParser {
         opts.addOption(version);
         opts.addOption(help);
         opts.addOption(noupdate);
-
+        opts.addOption(props);
+        opts.addOption(advancedHelp);
         return opts;
     }
 
@@ -224,12 +225,28 @@ public final class CliParser {
      */
     public void printHelp() {
         HelpFormatter formatter = new HelpFormatter();
+        String nl = System.getProperty("line.separator");
+        String advancedHelp = null;
+        if (line.hasOption(ArgumentName.ADVANCED_HELP)) {
+            advancedHelp = nl + nl
+                    + "Additionally, the following properties are supported and can be specified either"
+                    + "using the -p <file> argument or by passing them in as system properties." + nl
+                    + nl + " " + Settings.KEYS.PROXY_URL + "\t\t    the proxy URL to use when downloading resources."
+                    + nl + " " + Settings.KEYS.PROXY_PORT + "\t\t    the proxy port to use when downloading resources."
+                    + nl + " " + Settings.KEYS.CONNECTION_TIMEOUT + "\t    the cconnection timeout (in milliseconds) to use" + nl + "\t\t\t    when downloading resources.";
+        }
+
         formatter.printHelp(Settings.getString("application.name", "DependencyCheck"),
-                "\n" + Settings.getString("application.name", "DependencyCheck")
+                nl + Settings.getString("application.name", "DependencyCheck")
                 + " can be used to identify if there are any known CVE vulnerabilities in libraries utillized by an application. "
                 + Settings.getString("application.name", "DependencyCheck")
-                + " will automatically update required data from the Internet, such as the CVE and CPE data files from nvd.nist.gov.\n",
-                options, "", true);
+                + " will automatically update required data from the Internet, such as the CVE and CPE data files from nvd.nist.gov." + nl + nl,
+                options,
+                "",
+                true);
+        if (advancedHelp != null) {
+            System.out.println(advancedHelp);
+        }
     }
 
     /**
@@ -351,5 +368,21 @@ public final class CliParser {
          * The short CLI argument name asking for the version.
          */
         public static final String VERSION = "version";
+        /**
+         * The CLI argument name asking for advanced help.
+         */
+        public static final String ADVANCED_HELP_SHORT = "ah";
+        /**
+         * The short CLI argument name asking for advanced help.
+         */
+        public static final String ADVANCED_HELP = "advancedhelp";
+        /**
+         * The short CLI argument name for setting the location of an additional properties file.
+         */
+        public static final String PROP_SHORT = "p";
+        /**
+         * The CLI argument name for setting the location of an additional properties file.
+         */
+        public static final String PROP = "propertyfile";
     }
 }

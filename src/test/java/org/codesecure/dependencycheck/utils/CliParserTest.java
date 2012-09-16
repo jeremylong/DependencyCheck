@@ -331,6 +331,11 @@ public class CliParserTest extends TestCase {
         System.setOut(new PrintStream(baos));
 
         CliParser instance = new CliParser();
+        String[] args = {"-h"};
+        instance.parse(args);
+        instance.printHelp();
+        args[0] = "-ah";
+        instance.parse(args);
         instance.printHelp();
         try {
             baos.flush();

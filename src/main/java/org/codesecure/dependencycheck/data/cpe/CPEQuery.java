@@ -381,7 +381,12 @@ public class CPEQuery {
                 sb.append("^0.2 ");
             }
         } else {
-            LuceneUtils.appendEscapedLuceneQuery(sb, version);
+            //LuceneUtils.appendEscapedLuceneQuery(sb, version);
+            //if we have a weighting on something else, reduce the weighting on the version a lot
+            for (String v : version.split(" ")) {
+                LuceneUtils.appendEscapedLuceneQuery(sb, v);
+                sb.append("^0.7 ");
+            }
         }
         sb.append(")");
 

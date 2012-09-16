@@ -67,7 +67,7 @@ public final class LuceneUtils {
                 case '*':
                 case '?':
                 case ':':
-                case '\\':
+                case '\\': //it is supposed to fall through here
                     buf.append('\\');
                 default:
                     buf.append(c);
