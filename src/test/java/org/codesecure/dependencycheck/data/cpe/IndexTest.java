@@ -56,13 +56,7 @@ public class IndexTest extends BaseIndexTestCase {
         } catch (IOException ex) {
             fail(ex.getMessage());
         }
-        try {
-            instance.close();
-        } catch (CorruptIndexException ex) {
-            fail(ex.getMessage());
-        } catch (IOException ex) {
-            fail(ex.getMessage());
-        }
+        instance.close();
     }
 
     /**
@@ -71,7 +65,8 @@ public class IndexTest extends BaseIndexTestCase {
     @Test
     public void testGetDirectory() throws Exception {
         System.out.println("getDirectory");
-        Directory result = Index.getDirectory();
+        Index index = new Index();
+        Directory result = index.getDirectory();
         String exp = "\\target\\store\\cpe";
         // TODO review the generated test code and remove the default call to fail.
         assertTrue(result.toString().contains(exp));

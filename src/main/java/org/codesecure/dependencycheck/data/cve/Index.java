@@ -1,4 +1,4 @@
-package org.codesecure.dependencycheck.data.cpe;
+package org.codesecure.dependencycheck.data.cve;
 /*
  * This file is part of DependencyCheck.
  *
@@ -38,9 +38,6 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.analysis.PerFieldAnalyzerWrapper;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
@@ -53,7 +50,7 @@ import org.codesecure.dependencycheck.utils.DownloadFailedException;
 import org.xml.sax.SAXException;
 
 /**
- * The Index class is used to utilize and maintain the CPE Index.
+ * The Index class is used to utilize and maintain the CVE Index.
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
@@ -76,10 +73,10 @@ public class Index extends AbstractIndex implements WebDataIndex {
      * @throws IOException is thrown if an IOException occurs.
      */
     public Directory getDirectory() throws IOException {
-        String fileName = Settings.getString(Settings.KEYS.CPE_INDEX);
+        String fileName = Settings.getString(Settings.KEYS.CVE_INDEX);
         File path = new File(fileName);
         Directory dir = FSDirectory.open(path);
-
+        
         return dir;
     }
 
@@ -115,7 +112,7 @@ public class Index extends AbstractIndex implements WebDataIndex {
             URL url = new URL(Settings.getString(Settings.KEYS.CPE_URL));
             File outputPath = null;
             try {
-                outputPath = File.createTempFile("cpe", ".xml");
+                outputPath = File.createTempFile("cve", ".xml");
                 Downloader.fetchFile(url, outputPath, true);
                 Importer.importXML(outputPath.toString());
                 writeLastUpdatedPropertyFile(timeStamp);

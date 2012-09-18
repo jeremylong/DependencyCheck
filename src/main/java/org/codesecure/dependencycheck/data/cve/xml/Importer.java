@@ -1,4 +1,4 @@
-package org.codesecure.dependencycheck.data.cpe.xml;
+package org.codesecure.dependencycheck.data.cve.xml;
 /*
  * This file is part of DependencyCheck.
  *
@@ -18,7 +18,7 @@ package org.codesecure.dependencycheck.data.cpe.xml;
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 
-import org.codesecure.dependencycheck.data.cpe.Indexer;
+import org.codesecure.dependencycheck.data.cve.Indexer;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -27,7 +27,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.SAXException;
 
 /**
- * Imports a CPE XML file into the Lucene CPE Index.
+ * Imports a CVE XML file into the Lucene CVE Index.
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
@@ -51,9 +51,9 @@ public class Importer {
     public static void importXML(File file) throws ParserConfigurationException, SAXException, IOException {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser saxParser = factory.newSAXParser();
-        CPEHandler handler = new CPEHandler();
+        CVEHandler handler = new CVEHandler();
         Indexer indexer = new Indexer();
-        indexer.openIndexWriter();
+        indexer.open();
         handler.registerSaveDelegate(indexer);
         saxParser.parse(file, handler);
         indexer.close();

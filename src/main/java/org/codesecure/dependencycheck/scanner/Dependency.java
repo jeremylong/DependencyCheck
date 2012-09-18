@@ -57,9 +57,9 @@ public class Dependency {
      */
     protected EvidenceCollection vendorEvidence = null;
     /**
-     * A collection of title evidence.
+     * A collection of product evidence.
      */
-    protected EvidenceCollection titleEvidence = null;
+    protected EvidenceCollection productEvidence = null;
     /**
      * A collection of version evidence.
      */
@@ -70,7 +70,7 @@ public class Dependency {
      */
     public Dependency() {
         vendorEvidence = new EvidenceCollection();
-        titleEvidence = new EvidenceCollection();
+        productEvidence = new EvidenceCollection();
         versionEvidence = new EvidenceCollection();
         cpes = new ArrayList<String>();
     }
@@ -181,7 +181,7 @@ public class Dependency {
      * @return an EvidenceCollection.
      */
     public EvidenceCollection getEvidence() {
-        return EvidenceCollection.mergeUsed(this.titleEvidence, this.vendorEvidence, this.versionEvidence);
+        return EvidenceCollection.mergeUsed(this.productEvidence, this.vendorEvidence, this.versionEvidence);
     }
 
 
@@ -191,7 +191,7 @@ public class Dependency {
      * @return an EvidenceCollection.
      */
     public EvidenceCollection getEvidenceUsed() {
-        EvidenceCollection ec = EvidenceCollection.mergeUsed(this.titleEvidence, this.vendorEvidence, this.versionEvidence);
+        EvidenceCollection ec = EvidenceCollection.mergeUsed(this.productEvidence, this.vendorEvidence, this.versionEvidence);
         return ec;
     }
 
@@ -205,12 +205,12 @@ public class Dependency {
     }
 
     /**
-     * Gets the Title Evidence.
+     * Gets the Product Evidence.
      *
      * @return an EvidenceCollection.
      */
-    public EvidenceCollection getTitleEvidence() {
-        return this.titleEvidence;
+    public EvidenceCollection getProductEvidence() {
+        return this.productEvidence;
     }
 
     /**
@@ -244,7 +244,7 @@ public class Dependency {
         if (vendorEvidence.containsUsedString(str)) {
             return true;
         }
-        if (titleEvidence.containsUsedString(str)) {
+        if (productEvidence.containsUsedString(str)) {
             return true;
         }
         if (versionEvidence.containsUsedString(fnd)) {

@@ -1,4 +1,4 @@
-package org.codesecure.dependencycheck.data.cpe;
+package org.codesecure.dependencycheck.data.cve;
 /*
  * This file is part of DependencyCheck.
  *
@@ -25,11 +25,7 @@ import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.FieldInfo.IndexOptions;
 import org.apache.lucene.index.Term;
 import org.codesecure.dependencycheck.data.LuceneUtils;
-import org.codesecure.dependencycheck.data.cpe.Entry;
-import org.codesecure.dependencycheck.data.cpe.Fields;
-import org.codesecure.dependencycheck.data.cpe.Index;
-import org.codesecure.dependencycheck.data.cpe.xml.EntrySaveDelegate;
-import org.codesecure.dependencycheck.data.cpe.xml.EntrySaveDelegate;
+import org.codesecure.dependencycheck.data.cve.xml.EntrySaveDelegate;
 
 /**
  * The Indexer is used to convert a CPE Entry, retrieved from the CPE XML file,
@@ -101,5 +97,4 @@ public class Indexer extends Index implements EntrySaveDelegate {
 
         return doc;
     }
-
 }

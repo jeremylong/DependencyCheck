@@ -68,10 +68,10 @@ public class ReportGeneratorTest extends BaseIndexTestCase {
         d.addCPEentry("cpe://a:/some:cpe:1.0");
         
         List<Dependency> dependencies = new ArrayList<Dependency>();
-        d.getTitleEvidence().addEvidence("jar","filename","<test>test", Confidence.HIGH);
-        d.getTitleEvidence().addEvidence("manifest","vendor","<test>test", Confidence.HIGH);
+        d.getProductEvidence().addEvidence("jar","filename","<test>test", Confidence.HIGH);
+        d.getProductEvidence().addEvidence("manifest","vendor","<test>test", Confidence.HIGH);
         
-        for (Evidence e : d.getTitleEvidence().iterator(Confidence.HIGH)) {
+        for (Evidence e : d.getProductEvidence().iterator(Confidence.HIGH)) {
             String t = e.getValue();
         }
         dependencies.add(d);
@@ -82,10 +82,10 @@ public class ReportGeneratorTest extends BaseIndexTestCase {
         d2.addCPEentry("cpe://a:/another:cpe:1.0");
         d2.addCPEentry("cpe://a:/another:cpe:1.1");
         d2.addCPEentry("cpe://a:/another:cpe:1.2");
-        d2.getTitleEvidence().addEvidence("jar","filename","another.jar", Confidence.HIGH);
-        d2.getTitleEvidence().addEvidence("manifest","vendor","Company A", Confidence.MEDIUM);
+        d2.getProductEvidence().addEvidence("jar","filename","another.jar", Confidence.HIGH);
+        d2.getProductEvidence().addEvidence("manifest","vendor","Company A", Confidence.MEDIUM);
         
-        for (Evidence e : d2.getTitleEvidence().iterator(Confidence.HIGH)) {
+        for (Evidence e : d2.getProductEvidence().iterator(Confidence.HIGH)) {
             String t = e.getValue();
         }
         
@@ -94,9 +94,9 @@ public class ReportGeneratorTest extends BaseIndexTestCase {
         Dependency d3 = new Dependency();
         d3.setFileName("Third.jar");
         d3.setFilePath("lib/Third.jar");
-        d3.getTitleEvidence().addEvidence("jar","filename","third.jar", Confidence.HIGH);
+        d3.getProductEvidence().addEvidence("jar","filename","third.jar", Confidence.HIGH);
         
-        for (Evidence e : d3.getTitleEvidence().iterator(Confidence.HIGH)) {
+        for (Evidence e : d3.getProductEvidence().iterator(Confidence.HIGH)) {
             String t = e.getValue();
         }
          

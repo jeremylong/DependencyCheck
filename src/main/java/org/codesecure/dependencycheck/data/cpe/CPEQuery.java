@@ -75,29 +75,17 @@ public class CPEQuery {
      */
     static final int STRING_BUILDER_BUFFER = 20;
     /**
-     * The Lucene IndexReader.
+     * The CPE Index.
      */
-    private IndexReader indexReader = null;
+    protected Index cpe = null;
     /**
      * The Lucene IndexSearcher.
      */
     private IndexSearcher indexSearcher = null;
     /**
-     * The Lucene directory.
-     */
-    private Directory directory = null;
-    /**
-     * The Lucene Analyzer.
-     */
-    private Analyzer analyzer = null;
-    /**
      * The Lucene QueryParser.
      */
     private QueryParser queryParser = null;
-    /**
-     * Indicates whether or not the Lucene Index is open.
-     */
-    private boolean indexOpen = false;
 
     /**
      * Opens the data source.
@@ -105,41 +93,21 @@ public class CPEQuery {
      * @throws IOException when the Lucene directory to be querried does not exist or is corrupt.
      */
     public void open() throws IOException {
-        directory = Index.getDirectory();
-        indexReader = IndexReader.open(directory, true);
-        indexSearcher = new IndexSearcher(indexReader);
-        analyzer = Index.createAnalyzer(); //use the same analyzer as used when indexing
+        cpe = new Index();
+        cpe.open();
+        indexSearcher = cpe.getIndexSearcher();
+        Analyzer analyzer = cpe.getAnalyzer();
         //TITLE is the default field because it contains venddor, product, and version all in one.
         queryParser = new QueryParser(Version.LUCENE_35, Fields.TITLE, analyzer);
-        indexOpen = true;
     }
 
     /**
      * Closes the data source.
      */
     public void close() {
-        analyzer.close();
-        analyzer = null;
         queryParser = null;
-        try {
-            indexSearcher.close();
-        } catch (IOException ex) {
-            Logger.getLogger(CPEQuery.class.getName()).log(Level.SEVERE, null, ex);
-        }
         indexSearcher = null;
-        try {
-            indexReader.close();
-        } catch (IOException ex) {
-            Logger.getLogger(CPEQuery.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        indexReader = null;
-        try {
-            directory.close();
-        } catch (IOException ex) {
-            Logger.getLogger(CPEQuery.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        directory = null;
-        indexOpen = false;
+        cpe.close();
     }
 
     /**
@@ -147,7 +115,7 @@ public class CPEQuery {
      * @return true or false.
      */
     public boolean isOpen() {
-        return indexOpen;
+        return (cpe == null) ? false : cpe.isOpen();
     }
 
     /**
@@ -157,7 +125,7 @@ public class CPEQuery {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        if (indexOpen) {
+        if (isOpen()) {
             close();
         }
     }
@@ -174,7 +142,7 @@ public class CPEQuery {
      */
     public void determineCPE(Dependency dependency) throws CorruptIndexException, IOException, ParseException {
         Confidence vendorConf = Confidence.HIGH;
-        Confidence titleConf = Confidence.HIGH;
+        Confidence productConf = Confidence.HIGH;
         Confidence versionConf = Confidence.HIGH;
 
         String vendors = addEvidenceWithoutDuplicateTerms("", dependency.getVendorEvidence(), vendorConf);
@@ -182,10 +150,10 @@ public class CPEQuery {
 //        if ("".equals(vendors)) {
 //            vendors = STRING_THAT_WILL_NEVER_BE_IN_THE_INDEX;
 //        }
-        String titles = addEvidenceWithoutDuplicateTerms("", dependency.getTitleEvidence(), titleConf);
-        ///dependency.getTitleEvidence().toString(titleConf);
-//        if ("".equals(titles)) {
-//            titles = STRING_THAT_WILL_NEVER_BE_IN_THE_INDEX;
+        String products = addEvidenceWithoutDuplicateTerms("", dependency.getProductEvidence(), productConf);
+        ///dependency.getProductEvidence().toString(productConf);
+//        if ("".equals(products)) {
+//            products = STRING_THAT_WILL_NEVER_BE_IN_THE_INDEX;
 //        }
         String versions = addEvidenceWithoutDuplicateTerms("", dependency.getVersionEvidence(), versionConf);
         //dependency.getVersionEvidence().toString(versionConf);
@@ -196,7 +164,7 @@ public class CPEQuery {
         boolean found = false;
         int cnt = 0;
         do {
-            List<Entry> entries = searchCPE(vendors, titles, versions, dependency.getTitleEvidence().getWeighting(),
+            List<Entry> entries = searchCPE(vendors, products, versions, dependency.getProductEvidence().getWeighting(),
                     dependency.getVendorEvidence().getWeighting());
 
             if (entries.size() > 0) {
@@ -220,10 +188,10 @@ public class CPEQuery {
                     }
                 }
                 if (round == 1) {
-                    titleConf = reduceConfidence(titleConf);
-                    if (dependency.getTitleEvidence().contains(titleConf)) {
-                        //titles += " " + dependency.getTitleEvidence().toString(titleConf);
-                        titles = addEvidenceWithoutDuplicateTerms(titles, dependency.getTitleEvidence(), titleConf);
+                    productConf = reduceConfidence(productConf);
+                    if (dependency.getProductEvidence().contains(productConf)) {
+                        //products += " " + dependency.getProductEvidence().toString(productConf);
+                        products = addEvidenceWithoutDuplicateTerms(products, dependency.getProductEvidence(), productConf);
                     } else {
                         cnt += 1;
                         round += 1;
@@ -289,7 +257,7 @@ public class CPEQuery {
      * with the supplied vendor, product, and version.
      *
      * @param vendor the text used to search the vendor field.
-     * @param product the text used to search the title field.
+     * @param product the text used to search the product field.
      * @param version the text used to search the version field.
      * @return a list of possible CPE values.
      * @throws CorruptIndexException when the Lucene index is corrupt.
@@ -309,10 +277,10 @@ public class CPEQuery {
      * this data is used to add weighting factors to the search.</p>
      *
      * @param vendor the text used to search the vendor field.
-     * @param product the text used to search the title field.
+     * @param product the text used to search the product field.
      * @param version the text used to search the version field.
      * @param vendorWeightings a list of strings to use to add weighting factors to the vendor field.
-     * @param productWeightings Adds a list of strings that will be used to add weighting factors to the title search.
+     * @param productWeightings Adds a list of strings that will be used to add weighting factors to the product search.
      * @return a list of possible CPE values.
      * @throws CorruptIndexException when the Lucene index is corrupt.
      * @throws IOException when the Lucene index is not found.
@@ -347,11 +315,11 @@ public class CPEQuery {
      * data is used to add weighting factors to the search string generated.</p>
      *
      * @param vendor text to search the vendor field.
-     * @param product text to search the title field.
+     * @param product text to search the product field.
      * @param version text to search the version field.
      * @param vendorWeighting a list of strings to apply to the vendor
      * to boost the terms weight.
-     * @param produdctWeightings a list of strings to apply to the product/title
+     * @param produdctWeightings a list of strings to apply to the product
      * to boost the terms weight.
      * @return the Lucene query.
      */
@@ -473,7 +441,7 @@ public class CPEQuery {
     /**
      * Takes a list of entries and a dependency. If the entry has terms that were
      * used (i.e. this CPE entry wasn't identified because the version matched
-     * but the product and title did not) then the CPE Entry is returned in a list
+     * but the product names did not) then the CPE Entry is returned in a list
      * of possible CPE Entries.
      *
      * @param entries a list of CPE entries.
@@ -483,7 +451,7 @@ public class CPEQuery {
     private List<String> verifyEntries(final List<Entry> entries, final Dependency dependency) {
         List<String> verified = new ArrayList<String>();
         for (Entry e : entries) {
-            if (dependency.getTitleEvidence().containsUsedString(e.getProduct())
+            if (dependency.getProductEvidence().containsUsedString(e.getProduct())
                     && dependency.getVendorEvidence().containsUsedString(e.getVendor())) {
                 //TODO - determine if this is right? Should we be carrying too much about the
                 //  version at this point? Likely need to implement the versionAnalyzer....

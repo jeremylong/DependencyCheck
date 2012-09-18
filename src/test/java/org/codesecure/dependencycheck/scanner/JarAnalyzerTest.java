@@ -59,7 +59,7 @@ public class JarAnalyzerTest {
         
         result = instance.insepct(file);
         boolean found = false;
-        for (Evidence e : result.getTitleEvidence()) {
+        for (Evidence e : result.getProductEvidence()) {
             if (e.getName().equals("package-title") && e.getValue().equals("org.mortbay.http")) {
                 found = true;
                 break;
