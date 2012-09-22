@@ -25,4 +25,11 @@ package org.codesecure.dependencycheck.data;
  */
 public class VersionAnalyzer {
     //TODO Implement this...
+    
+    // use custom attributes for major, minor, x, x, x, rcx
+    // these can then be used to weight the score for searches on the version.
+    // see http://lucene.apache.org/core/3_6_1/api/core/org/apache/lucene/analysis/package-summary.html#package_description
+    
+    // look at this article to implement 
+    // http://www.codewrecks.com/blog/index.php/2012/08/25/index-your-blog-using-tags-and-lucene-net/
 }

@@ -35,7 +35,7 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.velocity.tools.ToolManager;
 import org.apache.velocity.tools.config.EasyFactoryConfiguration;
-import org.codesecure.dependencycheck.scanner.Dependency;
+import org.codesecure.dependencycheck.dependency.Dependency;
 
 /**
  *

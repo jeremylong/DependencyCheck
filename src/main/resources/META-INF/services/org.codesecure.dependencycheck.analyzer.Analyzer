@@ -1,0 +1,2 @@
+org.codesecure.dependencycheck.analyzer.JarAnalyzer
+org.codesecure.dependencycheck.analyzer.FileNameAnalyzer

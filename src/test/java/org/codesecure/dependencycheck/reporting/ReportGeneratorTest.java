@@ -4,15 +4,15 @@
  */
 package org.codesecure.dependencycheck.reporting;
 
-import org.codesecure.dependencycheck.scanner.Evidence;
+import org.codesecure.dependencycheck.dependency.Evidence;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.File;
-import org.codesecure.dependencycheck.scanner.Dependency;
+import org.codesecure.dependencycheck.dependency.Dependency;
 import java.util.HashMap;
 import org.codesecure.dependencycheck.data.BaseIndexTestCase;
 import java.util.Map;
-import org.codesecure.dependencycheck.scanner.Evidence.Confidence;
+import org.codesecure.dependencycheck.dependency.Evidence.Confidence;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -64,7 +64,7 @@ public class ReportGeneratorTest extends BaseIndexTestCase {
         Map<String, Object> properties = new HashMap<String, Object>();
         Dependency d = new Dependency();
         d.setFileName("FileName.jar");
-        d.setFilePath("lib/FileName.jar");
+        d.setActualFilePath("lib/FileName.jar");
         d.addCPEentry("cpe://a:/some:cpe:1.0");
         
         List<Dependency> dependencies = new ArrayList<Dependency>();
@@ -78,7 +78,7 @@ public class ReportGeneratorTest extends BaseIndexTestCase {
         
         Dependency d2 = new Dependency();
         d2.setFileName("Another.jar");
-        d2.setFilePath("lib/Another.jar");
+        d2.setActualFilePath("lib/Another.jar");
         d2.addCPEentry("cpe://a:/another:cpe:1.0");
         d2.addCPEentry("cpe://a:/another:cpe:1.1");
         d2.addCPEentry("cpe://a:/another:cpe:1.2");
@@ -93,7 +93,7 @@ public class ReportGeneratorTest extends BaseIndexTestCase {
         
         Dependency d3 = new Dependency();
         d3.setFileName("Third.jar");
-        d3.setFilePath("lib/Third.jar");
+        d3.setActualFilePath("lib/Third.jar");
         d3.getProductEvidence().addEvidence("jar","filename","third.jar", Confidence.HIGH);
         
         for (Evidence e : d3.getProductEvidence().iterator(Confidence.HIGH)) {

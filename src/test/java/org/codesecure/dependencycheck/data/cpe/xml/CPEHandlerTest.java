@@ -6,8 +6,6 @@ package org.codesecure.dependencycheck.data.cpe.xml;
 
 import java.io.File;
 import junit.framework.TestCase;
-import org.codesecure.dependencycheck.data.cpe.xml.Importer;
-import org.xml.sax.Attributes;
 
 /**
  *

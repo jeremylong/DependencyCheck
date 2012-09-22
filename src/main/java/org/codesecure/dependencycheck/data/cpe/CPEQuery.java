@@ -38,10 +38,10 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.Version;
 import org.codesecure.dependencycheck.data.LuceneUtils;
-import org.codesecure.dependencycheck.scanner.Dependency;
-import org.codesecure.dependencycheck.scanner.Evidence;
-import org.codesecure.dependencycheck.scanner.Evidence.Confidence;
-import org.codesecure.dependencycheck.scanner.EvidenceCollection;
+import org.codesecure.dependencycheck.dependency.Dependency;
+import org.codesecure.dependencycheck.dependency.Evidence;
+import org.codesecure.dependencycheck.dependency.Evidence.Confidence;
+import org.codesecure.dependencycheck.dependency.EvidenceCollection;
 
 /**
  * CPEQuery is a utility class that takes a project dependency and attempts
@@ -168,6 +168,8 @@ public class CPEQuery {
                     dependency.getVendorEvidence().getWeighting());
 
             if (entries.size() > 0) {
+            
+                //TODO - after changing the lucene query to use the AND conditions we should no longer need this.
                 List<String> verified = verifyEntries(entries, dependency);
                 if (verified.size() > 0) {
                     found = true;
@@ -323,6 +325,8 @@ public class CPEQuery {
      * to boost the terms weight.
      * @return the Lucene query.
      */
+    //TODO change this whole search mechanism into building the query
+    // using terms and the org.apache.lucene.search.Query API.
     protected String buildSearch(String vendor, String product, String version,
             Set<String> vendorWeighting, Set<String> produdctWeightings) {
 
@@ -337,10 +341,12 @@ public class CPEQuery {
         if (!appendWeightedSearch(sb, Fields.PRODUCT, product.toLowerCase(), produdctWeightings)) {
             return null;
         }
+        sb.append(" AND ");
         if (!appendWeightedSearch(sb, Fields.VENDOR, vendor.toLowerCase(), vendorWeighting)) {
             return null;
         }
-
+        sb.append(" AND ");
+        
         sb.append(Fields.VERSION).append(":(");
         if (sb.indexOf("^") > 0) {
             //if we have a weighting on something else, reduce the weighting on the version a lot

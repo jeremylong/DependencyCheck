@@ -73,13 +73,13 @@ public class IndexTest extends BaseIndexTestCase {
     }
 
     /**
-     * Test of updateIndexFromWeb method, of class Index.
+     * Test of update method, of class Index.
      */
     @Test
     public void testUpdateIndexFromWeb() throws Exception {
         System.out.println("updateIndexFromWeb");
         Index instance = new Index();
-        instance.updateIndexFromWeb();
+        instance.update();
     }
 
     /**

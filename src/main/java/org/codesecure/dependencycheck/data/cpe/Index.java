@@ -45,7 +45,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import org.codesecure.dependencycheck.data.AbstractIndex;
-import org.codesecure.dependencycheck.data.WebDataIndex;
+import org.codesecure.dependencycheck.data.CachedWebDataSource;
 import org.codesecure.dependencycheck.utils.Downloader;
 import org.codesecure.dependencycheck.utils.Settings;
 import org.codesecure.dependencycheck.data.cpe.xml.Importer;
@@ -57,7 +57,7 @@ import org.xml.sax.SAXException;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class Index extends AbstractIndex implements WebDataIndex {
+public class Index extends AbstractIndex implements CachedWebDataSource {
 
     /**
      * The name of the properties file containing the timestamp of the last update.
@@ -109,7 +109,7 @@ public class Index extends AbstractIndex implements WebDataIndex {
      * @throws SAXException is thrown if there is an error parsing the CPE XML.
      * @throws IOException is thrown if a temporary file could not be created.
      */
-    public void updateIndexFromWeb() throws MalformedURLException, ParserConfigurationException, SAXException, IOException {
+    public void update() throws MalformedURLException, ParserConfigurationException, SAXException, IOException {
         long timeStamp = updateNeeded();
         if (timeStamp > 0) {
             URL url = new URL(Settings.getString(Settings.KEYS.CPE_URL));

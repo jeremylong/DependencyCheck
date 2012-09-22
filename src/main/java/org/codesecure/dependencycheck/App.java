@@ -29,8 +29,7 @@ import org.codesecure.dependencycheck.data.cpe.CPEQuery;
 import org.codesecure.dependencycheck.data.cpe.Index;
 import org.codesecure.dependencycheck.data.cpe.xml.Importer;
 import org.codesecure.dependencycheck.reporting.ReportGenerator;
-import org.codesecure.dependencycheck.scanner.Dependency;
-import org.codesecure.dependencycheck.scanner.Scanner;
+import org.codesecure.dependencycheck.dependency.Dependency;
 import org.codesecure.dependencycheck.utils.CliParser;
 import org.xml.sax.SAXException;
 
@@ -93,7 +92,7 @@ public class App {
             if (cli.isAutoUpdate()) {
                 Index cpeI = new Index();
                 try {
-                    cpeI.updateIndexFromWeb();
+                    cpeI.update();
                 } catch (Exception ex) {
                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -130,10 +129,11 @@ public class App {
      */
     private void runScan(String reportDirectory, String applicationName, String[] files) {
         try {
-            Scanner scanner = new Scanner();
+            Engine scanner = new Engine();
             for (String file : files) {
                 scanner.scan(file);
             }
+            scanner.analyzeDependencies();
             List<Dependency> dependencies = scanner.getDependencies();
             CPEQuery query = new CPEQuery();
             query.open();

@@ -18,7 +18,6 @@ package org.codesecure.dependencycheck.data.cve.xml;
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 
-import org.codesecure.dependencycheck.data.cve.Indexer;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
