@@ -4,7 +4,7 @@
  * <title>org.codesecure.dependencycheck.data</title>
  * </head>
  * <body>
- * Contains utility classes used to work with the Lucene Indexes.
+ * Contains classes used to work with the data sources.
  * </body>
  * </html>
 */

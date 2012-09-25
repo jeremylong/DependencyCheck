@@ -19,38 +19,37 @@ package org.codesecure.dependencycheck.data.cpe;
  */
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.Version;
-import org.codesecure.dependencycheck.data.LuceneUtils;
+import org.codesecure.dependencycheck.analyzer.AnalysisException;
+import org.codesecure.dependencycheck.analyzer.AnalysisPhase;
+import org.codesecure.dependencycheck.data.lucene.LuceneUtils;
 import org.codesecure.dependencycheck.dependency.Dependency;
 import org.codesecure.dependencycheck.dependency.Evidence;
 import org.codesecure.dependencycheck.dependency.Evidence.Confidence;
 import org.codesecure.dependencycheck.dependency.EvidenceCollection;
 
 /**
- * CPEQuery is a utility class that takes a project dependency and attempts
+ * CPEAnalyzer is a utility class that takes a project dependency and attempts
  * to decern if there is an associated CPE. It uses the evidence contained
  * within the dependency to search the Lucene index.
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class CPEQuery {
+public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Analyzer {
 
     /**
      * The maximum number of query results to return.
@@ -140,7 +139,7 @@ public class CPEQuery {
      * @throws IOException is thrown when an IOException occurs.
      * @throws ParseException is thrown when the Lucene query cannot be parsed.
      */
-    public void determineCPE(Dependency dependency) throws CorruptIndexException, IOException, ParseException {
+    protected void determineCPE(Dependency dependency) throws CorruptIndexException, IOException, ParseException {
         Confidence vendorConf = Confidence.HIGH;
         Confidence productConf = Confidence.HIGH;
         Confidence versionConf = Confidence.HIGH;
@@ -167,15 +166,20 @@ public class CPEQuery {
             List<Entry> entries = searchCPE(vendors, products, versions, dependency.getProductEvidence().getWeighting(),
                     dependency.getVendorEvidence().getWeighting());
 
-            if (entries.size() > 0) {
-            
-                //TODO - after changing the lucene query to use the AND conditions we should no longer need this.
-                List<String> verified = verifyEntries(entries, dependency);
-                if (verified.size() > 0) {
+
+            for (Entry e : entries) {
+                if (verifyEntry(e, dependency)) {
                     found = true;
-                    dependency.setCPEs(verified);
+
+                    dependency.addIdentifier(
+                            "cpe",
+                            e.getName(),
+                            e.getTitle(),
+                            "http://web.nvd.nist.gov/view/vuln/search?cpe="
+                            + URLEncoder.encode(e.getName(), "UTF-8"));
                 }
             }
+
 
             if (!found) {
                 int round = cnt % 3;
@@ -206,9 +210,7 @@ public class CPEQuery {
                         versions = addEvidenceWithoutDuplicateTerms(versions, dependency.getVersionEvidence(), versionConf);
                     }
                 }
-
             }
-
         } while (!found && (++cnt) < 9);
     }
 
@@ -226,11 +228,18 @@ public class CPEQuery {
     private String addEvidenceWithoutDuplicateTerms(final String text, final EvidenceCollection ec, Confidence confidenceFilter) {
         String txt = (text == null) ? "" : text;
         StringBuilder sb = new StringBuilder(txt.length() + (20 * ec.size()));
+        sb.append(txt);
         for (Evidence e : ec.iterator(confidenceFilter)) {
             String value = e.getValue();
+            if (value.startsWith("http://")) {
+                value = value.substring(7).replaceAll("\\.", " ");
+            }
+            if (value.startsWith("https://")) {
+                value = value.substring(8).replaceAll("\\.", " ");
+            }
             if (sb.indexOf(value) < 0) {
                 if (value.length() > 200) {
-                    sb.append(value.substring(0, 200));
+                    sb.append(value.substring(0, 200)).append(' ');
                 } else {
                     sb.append(value).append(' ');
                 }
@@ -325,8 +334,6 @@ public class CPEQuery {
      * to boost the terms weight.
      * @return the Lucene query.
      */
-    //TODO change this whole search mechanism into building the query
-    // using terms and the org.apache.lucene.search.Query API.
     protected String buildSearch(String vendor, String product, String version,
             Set<String> vendorWeighting, Set<String> produdctWeightings) {
 
@@ -346,7 +353,7 @@ public class CPEQuery {
             return null;
         }
         sb.append(" AND ");
-        
+
         sb.append(Fields.VERSION).append(":(");
         if (sb.indexOf("^") > 0) {
             //if we have a weighting on something else, reduce the weighting on the version a lot
@@ -445,27 +452,83 @@ public class CPEQuery {
     }
 
     /**
-     * Takes a list of entries and a dependency. If the entry has terms that were
-     * used (i.e. this CPE entry wasn't identified because the version matched
-     * but the product names did not) then the CPE Entry is returned in a list
-     * of possible CPE Entries.
+     * Ensures that the CPE Identified matches the dependency. This validates that
+     * the product, vendor, and version information for the CPE are contained within
+     * the dependencies evidence.
      *
-     * @param entries a list of CPE entries.
+     * @param entry a CPE entry.
      * @param dependency the dependency that the CPE entries could be for.
-     * @return a list of matched CPE entries.
+     * @return whether or not the entry is valid.
      */
-    private List<String> verifyEntries(final List<Entry> entries, final Dependency dependency) {
-        List<String> verified = new ArrayList<String>();
-        for (Entry e : entries) {
-            if (dependency.getProductEvidence().containsUsedString(e.getProduct())
-                    && dependency.getVendorEvidence().containsUsedString(e.getVendor())) {
-                //TODO - determine if this is right? Should we be carrying too much about the
-                //  version at this point? Likely need to implement the versionAnalyzer....
-                if (dependency.getVersionEvidence().containsUsedString(e.getVersion())) {
-                    verified.add(e.getName());
-                }
+    private boolean verifyEntry(final Entry entry, final Dependency dependency) {
+        boolean isValid = false;
+        if (dependency.getProductEvidence().containsUsedString(entry.getProduct())
+                && dependency.getVendorEvidence().containsUsedString(entry.getVendor())) {
+            //TODO - determine if this is right? Should we be carrying too much about the
+            //  version at this point? Likely need to implement the versionAnalyzer....
+            if (dependency.getVersionEvidence().containsUsedString(entry.getVersion())) {
+                isValid = true;
             }
         }
-        return verified;
+        return isValid;
+    }
+
+    /**
+     * Analyzes a dependency and attempts to determine if there are any CPE identifiers
+     * for this dependency.
+     * @param dependency The Dependency to analyze.
+     * @throws AnalysisException is thrown if there is an issue analyzing the dependency.
+     */
+    public void analyze(Dependency dependency) throws AnalysisException {
+        try {
+            determineCPE(dependency);
+        } catch (CorruptIndexException ex) {
+            throw new AnalysisException("CPE Index is corrupt.", ex);
+        } catch (IOException ex) {
+            throw new AnalysisException("Failure opening the CPE Index.", ex);
+        } catch (ParseException ex) {
+            throw new AnalysisException("Unable to parse the generated Lucene query for this dependency.", ex);
+        }
+    }
+
+    /**
+     * Returns true because this analyzer supports all dependency types.
+     * @return true.
+     */
+    public Set<String> getSupportedExtensions() {
+        return null;
+    }
+
+    /**
+     * Returns the name of this analyzer.
+     * @return the name of this analyzer.
+     */
+    public String getName() {
+        return "CPE Analyzer";
+    }
+
+    /**
+     * Returns true because this analyzer supports all dependency types.
+     * @param extension the file extension of the dependency being analyzed.
+     * @return true.
+     */
+    public boolean supportsExtension(String extension) {
+        return true;
+    }
+
+    /**
+     * Returns the analysis phase that this analyzer should run in.
+     * @return the analysis phase that this analyzer should run in.
+     */
+    public AnalysisPhase getAnalysisPhase() {
+        return AnalysisPhase.IDENTIFIER_ANALYSIS;
+    }
+
+    /**
+     * Opens the CPE Lucene Index.
+     * @throws Exception is thrown if there is an issue opening the index.
+     */
+    public void initialize() throws Exception {
+        this.open();
     }
 }

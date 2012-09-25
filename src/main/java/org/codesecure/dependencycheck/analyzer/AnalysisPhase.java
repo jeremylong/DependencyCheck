@@ -20,11 +20,11 @@ package org.codesecure.dependencycheck.analyzer;
 
 /**
  * An enumeration defining the phases of analysis.
- * 
+ *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public enum AnalysisPhase {
-    
+
     /**
      * The first phase of analysis.
      */

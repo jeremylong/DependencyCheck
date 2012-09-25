@@ -20,8 +20,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 @version 1
 *#
 
-
-#[[
 <!DOCTYPE html>
 <html>
     <head>
@@ -263,7 +261,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     <body>
         <div class="wrapper">
             <h1>Dependency Report</h1>
-]]#
             <h2 class="sectionheader white">Project:&nbsp;$esc.html($applicationName)</h2>
             <div class="sectioncontent">Report Generated On: $date<br/><br/>
                 Dependencies Scanned:&nbsp;$dependencies.size()<br/><br/>
@@ -290,9 +287,10 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                             </table>
                         </div>
                         #set($cnt=$cnt+1)
+                        #set($identfiers=$dependency.getIdentifiers())
                         #set($cpeCount=0)
-                        #foreach($id in $dependency.getIdentifiers())
-                            #if($id.type.equals("cpe"))
+                        #foreach($id in $identifiers)
+                            #if("cpe".equals($id.type)
                                 #set($cpeCount=$cpeCount+1)
                             #end
                         #end
@@ -303,20 +301,26 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                             Several possible CPEs where identified. If one of the following are correct please update the configuration
                             to set the hash code for this file to the CPE entry below.<br/><br/>
                         #end
-                        #if($dependency.getIdentifiers().size()==0)
-                            <ul><li><b>None</b></li></ul>
+                        #if($dependency.getCPEs().size()==0)
+                            <b>None</b>
                         #end
-                        #if($dependency.getIdentifiers().size()>0)
+                        #if($cpeCount>0)
                             <ul>
-                            #foreach($id in $dependency.getIdentifiers())
-                                ##yes, we are HTML Encoding the href. this is okay. We can't URL encode as we have to trust the analyzer here...
-                                <li><b>$esc.html($id.type):</b>&nbsp;$esc.html($id.title)&nbsp;:&nbsp;<a href="$esc.html($id.url)" target="blank">$esc.html($id.value)</a></li>
+                        #end
+                        #foreach($id in $identifiers)
+                            ##yes, we are HTML Encoding the href. this is okay. We can't URL encode as we have to trust the analyzer here...
+                            <li>$enc.html($id.title)&nbsp;:&nbsp;<a href="$enc.html($id.url)" target="blank">$enc.html($id.value)</a>
+                            #if($id.description!=null)
+                                <br/>$enc.html(id.description)
                             #end
+                            </li>
+                        #end
+                        #if($cpeCount>0)
                             </ul>
                         #end
                      </div>
-                </div>
                 #end
+                </div>
             </div>
         </div>        
     </body>

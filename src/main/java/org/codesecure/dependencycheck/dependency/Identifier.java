@@ -24,15 +24,23 @@ package org.codesecure.dependencycheck.dependency;
  */
 public class Identifier {
 
-    protected String value;
-
-    Identifier(String type, String value, String title, String url, String description) {
+    /**
+     * Constructs a new Identifier with the specified data.
+     * @param type the identifier type.
+     * @param value the identifier value.
+     * @param title the identifier title.
+     * @param url the identifier url.
+     */
+    Identifier(String type, String value, String title, String url) {
         this.type = type;
         this.value = value;
         this.title = title;
         this.url = url;
-        this.description = description;
     }
+    /**
+     * The value of the identifeir
+     */
+    protected String value;
 
     /**
      * Get the value of value
@@ -51,6 +59,9 @@ public class Identifier {
     public void setValue(String value) {
         this.value = value;
     }
+    /**
+     * The title of the identifeir
+     */
     protected String title;
 
     /**
@@ -70,25 +81,9 @@ public class Identifier {
     public void setTitle(String title) {
         this.title = title;
     }
-    protected String description;
-
     /**
-     * Get the value of description
-     *
-     * @return the value of description
+     * The url for the identifeir
      */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Set the value of description
-     *
-     * @param description new value of description
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
     protected String url;
 
     /**
@@ -108,6 +103,9 @@ public class Identifier {
     public void setUrl(String url) {
         this.url = url;
     }
+    /**
+     * The type of the identifeir
+     */
     protected String type;
 
     /**

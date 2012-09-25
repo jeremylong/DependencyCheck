@@ -18,7 +18,6 @@ package org.codesecure.dependencycheck.data;
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -27,7 +26,7 @@ import org.xml.sax.SAXException;
 /**
  * Defines an Index who's data is retrieved from the Internet. This data can
  * be downloaded and the index updated.
- * 
+ *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public interface CachedWebDataSource {
@@ -41,5 +40,5 @@ public interface CachedWebDataSource {
      * @throws SAXException is thrown if there is an error parsing the CPE XML.
      * @throws IOException is thrown if a temporary file could not be created.
      */
-    public void update() throws MalformedURLException, ParserConfigurationException, SAXException, IOException;
+    void update() throws MalformedURLException, ParserConfigurationException, SAXException, IOException;
 }

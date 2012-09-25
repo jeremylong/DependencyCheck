@@ -38,13 +38,10 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.analysis.PerFieldAnalyzerWrapper;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
-import org.codesecure.dependencycheck.data.AbstractIndex;
+import org.codesecure.dependencycheck.data.lucene.AbstractIndex;
 import org.codesecure.dependencycheck.data.CachedWebDataSource;
 import org.codesecure.dependencycheck.utils.Downloader;
 import org.codesecure.dependencycheck.utils.Settings;
@@ -67,7 +64,6 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
      * The properties file key for the last updated field.
      */
     private static final String LAST_UPDATED = "lastupdated";
-
 
     /**
      * Returns the directory that holds the CPE Index.

@@ -23,7 +23,7 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
 
     <groupId>org.codesecure</groupId>
     <artifactId>DependencyCheck</artifactId>
-    <version>0.1</version>
+    <version>0.1.1</version>
     <packaging>jar</packaging>
 
     <name>DependencyCheck</name>
@@ -345,56 +345,14 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
             <version>3.5.0</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-core</artifactId>
-            <version>3.5.0</version>
-            <classifier>sources</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-core</artifactId>
-            <version>3.5.0</version>
-            <classifier>javadoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-io</artifactId>
             <version>1.3.2</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>1.3.2</version>
-            <classifier>javadoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>1.3.2</version>
-            <classifier>sources</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
             <version>1.7</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
-            <version>1.7</version>
-            <classifier>javadoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
-            <version>1.7</version>
-            <classifier>sources</classifier>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.velocity</groupId>
@@ -439,13 +397,6 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                     <artifactId>struts-tiles</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity-tools</artifactId>
-            <version>2.0</version>
-            <classifier>javadoc</classifier>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

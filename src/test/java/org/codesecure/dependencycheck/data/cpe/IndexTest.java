@@ -4,7 +4,7 @@
  */
 package org.codesecure.dependencycheck.data.cpe;
 
-import org.codesecure.dependencycheck.data.BaseIndexTestCase;
+import org.codesecure.dependencycheck.data.lucene.BaseIndexTestCase;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;

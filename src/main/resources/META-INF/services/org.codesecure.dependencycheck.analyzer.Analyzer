@@ -1,2 +1,3 @@
 org.codesecure.dependencycheck.analyzer.JarAnalyzer
 org.codesecure.dependencycheck.analyzer.FileNameAnalyzer
+org.codesecure.dependencycheck.data.cpe.CPEAnalyzer

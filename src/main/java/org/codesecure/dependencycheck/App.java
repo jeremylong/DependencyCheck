@@ -25,7 +25,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.cli.ParseException;
-import org.codesecure.dependencycheck.data.cpe.CPEQuery;
 import org.codesecure.dependencycheck.data.cpe.Index;
 import org.codesecure.dependencycheck.data.cpe.xml.Importer;
 import org.codesecure.dependencycheck.reporting.ReportGenerator;
@@ -128,32 +127,21 @@ public class App {
      * @param files the files/directories to scan.
      */
     private void runScan(String reportDirectory, String applicationName, String[] files) {
-        try {
-            Engine scanner = new Engine();
-            for (String file : files) {
-                scanner.scan(file);
-            }
-            scanner.analyzeDependencies();
-            List<Dependency> dependencies = scanner.getDependencies();
-            CPEQuery query = new CPEQuery();
-            query.open();
-            for (Dependency d : dependencies) {
-                query.determineCPE(d);
-            }
-            query.close();
-            ReportGenerator report = new ReportGenerator();
-            try {
-                report.generateReports(reportDirectory, applicationName, dependencies);
-            } catch (IOException ex) {
-                Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (Exception ex) {
-                Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        Engine scanner = new Engine();
+        for (String file : files) {
+            scanner.scan(file);
+        }
+        scanner.analyzeDependencies();
+        List<Dependency> dependencies = scanner.getDependencies();
 
+        ReportGenerator report = new ReportGenerator();
+        try {
+            report.generateReports(reportDirectory, applicationName, dependencies);
         } catch (IOException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (org.apache.lucene.queryParser.ParseException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 }

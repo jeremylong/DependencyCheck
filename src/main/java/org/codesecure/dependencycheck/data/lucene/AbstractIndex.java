@@ -1,4 +1,4 @@
-package org.codesecure.dependencycheck.data;
+package org.codesecure.dependencycheck.data.lucene;
 /*
  * This file is part of DependencyCheck.
  *
@@ -33,11 +33,11 @@ import org.apache.lucene.util.Version;
 
 /**
  * The base Index for other index objects. Implements the open and close methods.
- * 
+ *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public abstract class AbstractIndex {
-    
+
     /**
      * The Lucene directory containing the index.
      */
@@ -46,7 +46,7 @@ public abstract class AbstractIndex {
      * The IndexWriter for the Lucene index.
      */
     protected IndexWriter indexWriter = null;
-        /**
+    /**
      * The Lucene IndexReader.
      */
     private IndexReader indexReader = null;
@@ -54,12 +54,10 @@ public abstract class AbstractIndex {
      * The Lucene IndexSearcher.
      */
     private IndexSearcher indexSearcher = null;
-
     /**
      * The Lucene Analyzer.
      */
     private Analyzer analyzer = null;
-
     /**
      * Indicates whether or not the Lucene Index is open.
      */
@@ -106,7 +104,7 @@ public abstract class AbstractIndex {
                 indexSearcher = null;
             }
         }
-        
+
         if (analyzer != null) {
             analyzer.close();
             analyzer = null;
@@ -120,7 +118,7 @@ public abstract class AbstractIndex {
         }
         indexOpen = false;
     }
-    
+
     /**
      * Returns the status of the data source - is the index open.
      * @return true or false.
@@ -128,9 +126,10 @@ public abstract class AbstractIndex {
     public boolean isOpen() {
         return indexOpen;
     }
+
     /**
      * Opens the Lucene Index Writer.
-     * 
+     *
      * @throws CorruptIndexException is thrown if the Lucene index is corrupt.
      * @throws IOException is thrown if an IOException occurs opening the index.
      */
@@ -141,10 +140,10 @@ public abstract class AbstractIndex {
         IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_35, analyzer);
         indexWriter = new IndexWriter(directory, conf);
     }
-    
+
     /**
      * Retrieves the IndexWriter for the Lucene Index.
-     * 
+     *
      * @return an IndexWriter.
      * @throws CorruptIndexException is thrown if the Lucene Index is corrupt.
      * @throws LockObtainFailedException is thrown if there is an exception obtaining a lock on the Lucene index.
@@ -156,14 +155,25 @@ public abstract class AbstractIndex {
         }
         return indexWriter;
     }
-    
+
+    /**
+     * Opens the Lucene Index for reading.
+     * @throws CorruptIndexException is thrown if the index is corrupt.
+     * @throws IOException is thrown if there is an exception reading the index.
+     */
     public void openIndexReader() throws CorruptIndexException, IOException {
         if (!isOpen()) {
             open();
         }
         indexReader = IndexReader.open(directory, true);
     }
-    
+
+    /**
+     * Returns an IndexSearcher for the Lucene Index.
+     * @return an IndexSearcher.
+     * @throws CorruptIndexException is thrown if the index is corrupt.
+     * @throws IOException is thrown if there is an exception reading the index.
+     */
     public IndexSearcher getIndexSearcher() throws CorruptIndexException, IOException {
         if (indexReader == null) {
             openIndexReader();
@@ -173,24 +183,28 @@ public abstract class AbstractIndex {
         }
         return indexSearcher;
     }
-    
+
+    /**
+     * Returns an Analyzer for the Lucene Index.
+     * @return an Analyzer.
+     */
     public Analyzer getAnalyzer() {
         if (analyzer == null) {
             analyzer = createAnalyzer();
         }
         return analyzer;
     }
-    
+
     /**
      * Gets the directory that contains the Lucene Index.
      * @return a Lucene Directory.
      * @throws IOException is thrown when an IOException occurs.
      */
     public abstract Directory getDirectory() throws IOException;
+
     /**
      * Creates the Lucene Analyzer used when indexing and searching the index.
      * @return a Lucene Analyzer.
      */
     public abstract Analyzer createAnalyzer();
-    
 }

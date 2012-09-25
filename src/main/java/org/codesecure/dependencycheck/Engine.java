@@ -52,11 +52,12 @@ public class Engine {
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-    protected EnumMap<AnalysisPhase, List<Analyzer>> analyzers = new EnumMap<AnalysisPhase, List<Analyzer>>(AnalysisPhase.class);
+    protected EnumMap<AnalysisPhase, List<Analyzer>> analyzers =
+            new EnumMap<AnalysisPhase, List<Analyzer>>(AnalysisPhase.class);
     /**
      * A set of extensions supported by the analyzers.
      */
-    protected static final Set<String> extensions = new HashSet<String>();
+    protected Set<String> extensions = new HashSet<String>();
 
     /**
      * Creates a new Engine.
@@ -172,7 +173,17 @@ public class Engine {
             List<Analyzer> analyzerList = analyzers.get(phase);
 
             for (Analyzer a : analyzerList) {
-                a.initialize();
+                try {
+                    a.initialize();
+                } catch (Exception ex) {
+                    Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, "Exception occured initializing " + a.getName() + ".", ex);
+                    try {
+                        a.close();
+                    } catch (Exception ex1) {
+                        Logger.getLogger(Engine.class.getName()).log(Level.FINER, null, ex1);
+                    }
+                    continue;
+                }
                 for (Dependency d : dependencies) {
                     if (a.supportsExtension(d.getFileExtension())) {
                         try {
@@ -183,16 +194,20 @@ public class Engine {
                                 a.analyze(d);
                             }
                         } catch (IOException ex) {
-                            String msg = String.format("IOException occured while scanning the file '%s'.",
+                            String msg = String.format("IOException occured while analyzing the file '%s'.",
                                     d.getActualFilePath());
                             Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, msg, ex);
                         }
                     }
                 }
-                a.close();
+                try {
+                    a.close();
+                } catch (Exception ex) {
+                    Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
-        
+
         //Now cycle through all of the analyzers one last time to call
         // cleanup on any archiveanalyzers. These should only exist in the
         // initial phase, but we are going to be thourough just in case.

@@ -1,4 +1,4 @@
-package org.codesecure.dependencycheck.utils;
+package org.codesecure.dependencycheck.data.lucene;
 /*
  * This file is part of DependencyCheck.
  *
@@ -18,30 +18,28 @@ package org.codesecure.dependencycheck.utils;
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 
+import org.apache.lucene.search.DefaultSimilarity;
+
 /**
- * A collection of utilities for processing information about files.
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class FileUtils {
+public class DependencySimilarity extends DefaultSimilarity {
+
+    private static final long serialVersionUID = 1L;
 
     /**
-     * Private constructor for a utility class.
+     * <p>Override the default idf implementation so that frequency within
+     * all document is ignored.</p>
+     *
+     * See <a href="http://www.lucenetutorial.com/advanced-topics/scoring.html">this article</a> for more details.
+     *
+     * @param docFreq - the number of documents which contain the term
+     * @param numDocs - the total number of documents in the collection
+     * @return 1
      */
-    private FileUtils() {
-    }
-
-    /**
-     * Returns the (lowercase) file extension for a specified file.
-     * @param fileName the file name to retrieve the file extension from.
-     * @return the file extension.
-     */
-    public static String getFileExtension(String fileName) {
-        String ret = null;
-        int pos = fileName.lastIndexOf(".");
-        if (pos >= 0) {
-            ret = fileName.substring(pos + 1, fileName.length()).toLowerCase();
-        }
-        return ret;
+    @Override
+    public float idf(int docFreq, int numDocs) {
+        return 1;
     }
 }

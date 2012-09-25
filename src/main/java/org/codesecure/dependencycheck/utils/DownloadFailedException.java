@@ -46,7 +46,7 @@ public class DownloadFailedException extends IOException {
 
     /**
      * Creates a new DownloadFailedException.
-     * @param ex the cause of te download failure.
+     * @param ex the cause of the download failure.
      */
     public DownloadFailedException(Throwable ex) {
         super(ex);
@@ -55,7 +55,7 @@ public class DownloadFailedException extends IOException {
     /**
      * Creates a new DownloadFailedException.
      * @param msg a message for the exception.
-     * @param ex the cause of te download failure.
+     * @param ex the cause of the download failure.
      */
     public DownloadFailedException(String msg, Throwable ex) {
         super(msg, ex);

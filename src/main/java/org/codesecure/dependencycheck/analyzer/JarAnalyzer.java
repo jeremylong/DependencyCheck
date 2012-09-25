@@ -149,12 +149,15 @@ public class JarAnalyzer extends AbstractAnalyzer {
      * checksums to identify the correct CPE information.
      *
      * @param dependency the dependency to analyze.
-     * @throws IOException is thrown if there is an error reading the JAR file.
+     * @throws AnalysisException is thrown if there is an error reading the JAR file.
      */
-    public void analyze(Dependency dependency) throws IOException {
-
-        parseManifest(dependency);
-        analyzePackageNames(dependency);
+    public void analyze(Dependency dependency) throws AnalysisException {
+        try {
+            parseManifest(dependency);
+            analyzePackageNames(dependency);
+        } catch (IOException ex) {
+            throw new AnalysisException("Exception occured reading the JAR file.", ex);
+        }
 
     }
 
@@ -362,7 +365,9 @@ public class JarAnalyzer extends AbstractAnalyzer {
             } else {
                 key = key.toLowerCase();
 
-                if (!IGNORE_LIST.contains(key) && !key.contains("license") && !key.endsWith("jdk")) {
+                if (!IGNORE_LIST.contains(key) && !key.contains("license") && !key.endsWith("jdk")
+                        && !key.contains("lastmodified")) {
+
                     if (key.contains("version")) {
                         versionEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
                     } else if (key.contains("title")) {

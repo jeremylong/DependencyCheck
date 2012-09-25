@@ -35,6 +35,7 @@ public interface ArchiveAnalyzer {
      * the exploded contents.
      *
      * @param dependency a dependency to analyze.
+     * @param engine the engine that is scanning the dependencies.
      * @throws IOException is thrown if there is an error reading the dependency file
      */
     void analyze(Dependency dependency, Engine engine) throws IOException;

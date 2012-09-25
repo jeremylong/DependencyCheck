@@ -11,18 +11,20 @@ import java.util.List;
 import java.util.Set;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryParser.ParseException;
-import org.codesecure.dependencycheck.data.BaseIndexTestCase;
+import org.codesecure.dependencycheck.data.lucene.BaseIndexTestCase;
 import org.codesecure.dependencycheck.dependency.Dependency;
 import org.codesecure.dependencycheck.analyzer.JarAnalyzer;
+import org.codesecure.dependencycheck.dependency.Evidence;
+import org.codesecure.dependencycheck.dependency.Evidence.Confidence;
 import org.junit.Test;
 
 /**
  *
  * @author jeremy
  */
-public class CPEQueryTest extends BaseIndexTestCase {
+public class CPEAnalyzerTest extends BaseIndexTestCase {
 
-    public CPEQueryTest(String testName) {
+    public CPEAnalyzerTest(String testName) {
         super(testName);
     }
 
@@ -37,7 +39,7 @@ public class CPEQueryTest extends BaseIndexTestCase {
     }
 
     /**
-     * Tests of buildSearch of class CPEQuery.
+     * Tests of buildSearch of class CPEAnalyzer.
      * @throws IOException is thrown when an IO Exception occurs.
      * @throws CorruptIndexException is thrown when the index is corrupt.
      * @throws ParseException is thrown when a parse exception occurs
@@ -54,7 +56,7 @@ public class CPEQueryTest extends BaseIndexTestCase {
         String vendor = "apache software foundation";
         String product = "struts 2 core";
         String version = "2.1.2";
-        CPEQuery instance = new CPEQuery();
+        CPEAnalyzer instance = new CPEAnalyzer();
 
         String queryText = instance.buildSearch(vendor, product, version, null, null);
         String expResult = " product:( struts 2 core )  AND  vendor:( apache software foundation )  AND version:(2.1.2^0.7 )";
@@ -74,13 +76,13 @@ public class CPEQueryTest extends BaseIndexTestCase {
     }
 
     /**
-     * Test of open method, of class CPEQuery.
+     * Test of open method, of class CPEAnalyzer.
      * @throws Exception is thrown when an exception occurs
      */
     @Test
     public void testOpen() throws Exception {
         System.out.println("open");
-        CPEQuery instance = new CPEQuery();
+        CPEAnalyzer instance = new CPEAnalyzer();
         assertFalse(instance.isOpen());
         instance.open();
         assertTrue(instance.isOpen());
@@ -89,7 +91,7 @@ public class CPEQueryTest extends BaseIndexTestCase {
     }
 
     /**
-     * Test of determineCPE method, of class CPEQuery.
+     * Test of determineCPE method, of class CPEAnalyzer.
      * @throws Exception is thrown when an exception occurs
      */
     @Test
@@ -97,18 +99,20 @@ public class CPEQueryTest extends BaseIndexTestCase {
         System.out.println("determineCPE");
         File file = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
         JarAnalyzer jarAnalyzer = new JarAnalyzer();
-        Dependency depends = jarAnalyzer.insepct(file);
-        CPEQuery instance = new CPEQuery();
+        Dependency depends = new Dependency(file);
+        jarAnalyzer.analyze(depends);
+        
+        CPEAnalyzer instance = new CPEAnalyzer();
         instance.open();
         String expResult = "cpe:/a:apache:struts:2.1.2";
         instance.determineCPE(depends);
         instance.close();
-        assertTrue("Incorrect match", depends.getCPEs().contains(expResult));
-        assertTrue("Incorrect match", depends.getCPEs().size() == 1);
+        assertTrue("Incorrect match", depends.getIdentifiers().size() == 1);
+        assertTrue("Incorrect match", depends.getIdentifiers().get(0).getValue().equals(expResult));
     }
 
     /**
-     * Test of searchCPE method, of class CPEQuery.
+     * Test of searchCPE method, of class CPEAnalyzer.
      * @throws Exception is thrown when an exception occurs
      */
     @Test
@@ -117,7 +121,7 @@ public class CPEQueryTest extends BaseIndexTestCase {
         String vendor = "apache software foundation";
         String product = "struts 2 core";
         String version = "2.1.2";
-        CPEQuery instance = new CPEQuery();
+        CPEAnalyzer instance = new CPEAnalyzer();
         instance.open();
         String expResult = "cpe:/a:apache:struts:2.1.2";
         List<Entry> result = instance.searchCPE(vendor, product, version);
@@ -127,17 +131,14 @@ public class CPEQueryTest extends BaseIndexTestCase {
         product = "struts 2 core";
         version = "2.3.1.2";
 
-        expResult = "cpe:/a:apache:struts";
+        expResult = "cpe:/a:apache:struts:2.3.1.2";
         result = instance.searchCPE(vendor, product, version);
-        //TODO fix this
-        assertTrue(result.isEmpty());
-        //boolean startsWith = result.get(0).getName().startsWith(expResult);
-        //assertTrue("CPE does not begin with apache struts", startsWith);
+        assertEquals(expResult, result.get(0).getName());
         instance.close();
     }
 
     /**
-     * Test of searchCPE method, of class CPEQuery.
+     * Test of searchCPE method, of class CPEAnalyzer.
      * @throws Exception is thrown when an exception occurs
      */
     @Test
@@ -148,7 +149,7 @@ public class CPEQueryTest extends BaseIndexTestCase {
         String version = "2.1.2";
         String expResult = "cpe:/a:apache:struts:2.1.2";
 
-        CPEQuery instance = new CPEQuery();
+        CPEAnalyzer instance = new CPEAnalyzer();
         instance.open();
 
         //TODO - yeah, not a very good test as the results are the same with or without weighting...

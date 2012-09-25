@@ -90,6 +90,10 @@ public class Dependency {
         identifiers = new ArrayList<Identifier>();
     }
 
+    /**
+     * Constructs a new Dependency object.
+     * @param file the File to create the dependency object from.
+     */
     public Dependency(File file) {
         this();
         this.actualFilePath = file.getPath();
@@ -232,10 +236,9 @@ public class Dependency {
      * @param value the value of the identifier.
      * @param title the title of the identifier.
      * @param url the URL of the identifier.
-     * @param description the description of the identifier.
      */
-    public void addIdentifier(String type, String value, String title, String url, String description) {
-        Identifier i = new Identifier(type, value, title, url, description);
+    public void addIdentifier(String type, String value, String title, String url) {
+        Identifier i = new Identifier(type, value, title, url);
         this.identifiers.add(i);
     }
 
@@ -245,7 +248,7 @@ public class Dependency {
      * @return an EvidenceCollection.
      */
     public EvidenceCollection getEvidence() {
-        return EvidenceCollection.mergeUsed(this.productEvidence, this.vendorEvidence, this.versionEvidence);
+        return EvidenceCollection.merge(this.productEvidence, this.vendorEvidence, this.versionEvidence);
     }
 
     /**
@@ -254,8 +257,7 @@ public class Dependency {
      * @return an EvidenceCollection.
      */
     public EvidenceCollection getEvidenceUsed() {
-        EvidenceCollection ec = EvidenceCollection.mergeUsed(this.productEvidence, this.vendorEvidence, this.versionEvidence);
-        return ec;
+        return EvidenceCollection.mergeUsed(this.productEvidence, this.vendorEvidence, this.versionEvidence);
     }
 
     /**

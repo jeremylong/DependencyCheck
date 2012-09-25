@@ -1,4 +1,4 @@
-package org.codesecure.dependencycheck.data;
+package org.codesecure.dependencycheck.data.lucene;
 /*
  * This file is part of DependencyCheck.
  *

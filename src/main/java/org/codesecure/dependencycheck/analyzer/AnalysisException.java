@@ -1,4 +1,4 @@
-package org.codesecure.dependencycheck.data;
+package org.codesecure.dependencycheck.analyzer;
 /*
  * This file is part of DependencyCheck.
  *
@@ -18,28 +18,44 @@ package org.codesecure.dependencycheck.data;
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 
-import org.apache.lucene.search.DefaultSimilarity;
-
 /**
+ * An exception thrown when the analysis of a dependency fails.
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class DependencySimilarity extends DefaultSimilarity {
+public class AnalysisException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * <p>Override the default idf implementation so that frequency within
-     * all document is ignored.</p>
-     * 
-     * See <a href="http://www.lucenetutorial.com/advanced-topics/scoring.html">this article</a> for more details.
-     * 
-     * @param docFreq - the number of documents which contain the term
-     * @param numDocs - the total number of documents in the collection
-     * @return 1
+     * Creates a new AnalysisException.
      */
-    @Override
-    public float idf(int docFreq, int numDocs) {
-        return 1;
+    public AnalysisException() {
+        super();
+    }
+
+    /**
+     * Creates a new AnalysisException.
+     * @param msg a message for the exception.
+     */
+    public AnalysisException(String msg) {
+        super(msg);
+    }
+
+    /**
+     * Creates a new AnalysisException.
+     * @param ex the cause of the failure.
+     */
+    public AnalysisException(Throwable ex) {
+        super(ex);
+    }
+
+    /**
+     * Creates a new DownloadFailedException.
+     * @param msg a message for the exception.
+     * @param ex the cause of the failure.
+     */
+    public AnalysisException(String msg, Throwable ex) {
+        super(msg, ex);
     }
 }

@@ -20,7 +20,6 @@ package org.codesecure.dependencycheck.analyzer;
 
 import org.codesecure.dependencycheck.dependency.Dependency;
 import org.codesecure.dependencycheck.dependency.Evidence;
-import java.io.IOException;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -35,7 +34,7 @@ public class FileNameAnalyzer implements Analyzer {
     /**
      * The name of the analyzer.
      */
-    private static final String ANALYZER_NAME = "File Analyzer";
+    private static final String ANALYZER_NAME = "File Name Analyzer";
     /**
      * The phase that this analyzer is intended to run in.
      */
@@ -111,9 +110,9 @@ public class FileNameAnalyzer implements Analyzer {
      * Collects information about the file such as hashsums.
      *
      * @param dependency the dependency to analyze.
-     * @throws IOException is thrown if there is an error reading the JAR file.
+     * @throws AnalysisException is thrown if there is an error reading the JAR file.
      */
-    public void analyze(Dependency dependency) throws IOException {
+    public void analyze(Dependency dependency) throws AnalysisException {
 
         analyzeFileName(dependency);
 

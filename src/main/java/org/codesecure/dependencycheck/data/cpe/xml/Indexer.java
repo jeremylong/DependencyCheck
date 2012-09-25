@@ -24,15 +24,10 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.FieldInfo.IndexOptions;
 import org.apache.lucene.index.Term;
-import org.codesecure.dependencycheck.data.LuceneUtils;
-import org.codesecure.dependencycheck.data.cpe.Entry;
+import org.codesecure.dependencycheck.data.lucene.LuceneUtils;
 import org.codesecure.dependencycheck.data.cpe.Entry;
 import org.codesecure.dependencycheck.data.cpe.Fields;
-import org.codesecure.dependencycheck.data.cpe.Fields;
 import org.codesecure.dependencycheck.data.cpe.Index;
-import org.codesecure.dependencycheck.data.cpe.Index;
-import org.codesecure.dependencycheck.data.cpe.xml.EntrySaveDelegate;
-import org.codesecure.dependencycheck.data.cpe.xml.EntrySaveDelegate;
 
 /**
  * The Indexer is used to convert a CPE Entry, retrieved from the CPE XML file,
@@ -82,7 +77,7 @@ public class Indexer extends Index implements EntrySaveDelegate {
         product.setBoost(5.0F);
         doc.add(product);
 
-        Field title = new Field(Fields.TITLE, entry.getTitle(), Field.Store.NO, Field.Index.ANALYZED);
+        Field title = new Field(Fields.TITLE, entry.getTitle(), Field.Store.YES, Field.Index.ANALYZED);
         title.setIndexOptions(IndexOptions.DOCS_ONLY);
         //title.setBoost(1.0F);
         doc.add(title);
@@ -104,5 +99,4 @@ public class Indexer extends Index implements EntrySaveDelegate {
 
         return doc;
     }
-
 }

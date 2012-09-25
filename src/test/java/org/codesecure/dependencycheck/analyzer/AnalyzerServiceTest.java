@@ -53,7 +53,7 @@ public class AnalyzerServiceTest {
         while (result.hasNext()) {
             Analyzer a = result.next();
             Set<String> e = a.getSupportedExtensions();
-            if (e.contains("jar")) {
+            if (e != null && e.contains("jar")) {
                 found = true;
             }
         }

@@ -147,6 +147,14 @@ public class EvidenceCollection implements Iterable<Evidence> {
     }
 
     /**
+     * Returns the set of evidence.
+     * @return the set of evidence.
+     */
+    public Set<Evidence> getEvidence() {
+        return list;
+    }
+
+    /**
      * Implements the iterator interface for the Evidence Collection.
      * @return an Iterator<Evidence>.
      */
@@ -206,27 +214,21 @@ public class EvidenceCollection implements Iterable<Evidence> {
         }
         return ret;
     }
-//  Removed because this wasn't working right (the function returned the right data, but
-//  the use of the results was flawed.
-//    /**
-//     * Returns a string of evidence 'values' for a given confidence.
-//     * @param confidence the confidence filter applied to the toString method.
-//     * @return a string containing the evidence.
-//     */
-//    public String toString(Evidence.Confidence confidence) {
-//        StringBuilder sb = new StringBuilder();
-//        for (Evidence e : this.iterator(confidence)) {
-//            String str = e.getValue();
-//            //TODO this is a cheap hack, need to prevent the same string from hitting multiple times...
-//            // consider changing the evidencecollection.add to prevent the same "value" for a lower
-//            // confidence from being added? Might not work due to minor differences in the items in the manifest.
-//            // might need to actually use a StringTokenizer here and only add single words no in the list.
-//            if (sb.indexOf(str)<0) {
-//                sb.append(str).append(' ');
-//            }
-//        }
-//        return sb.toString();
-//    }
+
+    /**
+     * Merges multiple EvidenceCollections together.
+     *
+     * @param ec One or more EvidenceCollections.
+     * @return a new EvidenceCollection.
+     */
+    public static EvidenceCollection merge(EvidenceCollection... ec) {
+        EvidenceCollection ret = new EvidenceCollection();
+        for (EvidenceCollection col : ec) {
+            ret.list.addAll(col.list);
+            ret.weightedStrings.addAll(col.weightedStrings);
+        }
+        return ret;
+    }
 
     /**
      * Returns a string of evidence 'values'.

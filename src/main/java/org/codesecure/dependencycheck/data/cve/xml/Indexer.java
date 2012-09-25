@@ -24,11 +24,10 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.FieldInfo.IndexOptions;
 import org.apache.lucene.index.Term;
-import org.codesecure.dependencycheck.data.LuceneUtils;
+import org.codesecure.dependencycheck.data.lucene.LuceneUtils;
 import org.codesecure.dependencycheck.data.cve.Entry;
 import org.codesecure.dependencycheck.data.cve.Fields;
 import org.codesecure.dependencycheck.data.cve.Index;
-import org.codesecure.dependencycheck.data.cve.xml.EntrySaveDelegate;
 
 /**
  * The Indexer is used to convert a CPE Entry, retrieved from the CPE XML file,

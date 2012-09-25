@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public class JarAnalyzerTest {
-    
+
     public JarAnalyzerTest() {
     }
 
@@ -33,11 +33,11 @@ public class JarAnalyzerTest {
     @AfterClass
     public static void tearDownClass() throws Exception {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -47,20 +47,19 @@ public class JarAnalyzerTest {
      * @throws Exception is thrown when an excpetion occurs.
      */
     @Test
-    public void testInsepct() throws Exception {
-        System.out.println("insepct");
+    public void testAnalyze() throws Exception {
+        System.out.println("analyze");
         File file = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
+        Dependency result = new Dependency(file);
         JarAnalyzer instance = new JarAnalyzer();
-        Dependency result = instance.insepct(file);
-        assertEquals("C30B57142E1CCBC1EFD5CD15F307358F", result.getMd5sum());
-        assertEquals("89CE9E36AA9A9E03F1450936D2F4F8DD0F961F8B", result.getSha1sum());
+        instance.analyze(result);
         assertTrue(result.getVendorEvidence().toString().toLowerCase().contains("apache"));
         assertTrue(result.getVendorEvidence().getWeighting().contains("apache"));
-        
-        
+
+
         file = new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath());
-        
-        result = instance.insepct(file);
+        result = new Dependency(file);
+        instance.analyze(result);
         boolean found = false;
         for (Evidence e : result.getProductEvidence()) {
             if (e.getName().equals("package-title") && e.getValue().equals("org.mortbay.http")) {
@@ -69,7 +68,7 @@ public class JarAnalyzerTest {
             }
         }
         assertTrue("package-title of org.mortbay.http not found in org.mortbay.jetty.jar", found);
-        
+
         found = false;
         for (Evidence e : result.getVendorEvidence()) {
             if (e.getName().equals("implementation-url") && e.getValue().equals("http://jetty.mortbay.org")) {
@@ -78,7 +77,7 @@ public class JarAnalyzerTest {
             }
         }
         assertTrue("implementation-url of http://jetty.mortbay.org not found in org.mortbay.jetty.jar", found);
-        
+
         found = false;
         for (Evidence e : result.getVersionEvidence()) {
             if (e.getName().equals("Implementation-Version") && e.getValue().equals("4.2.27")) {
@@ -87,10 +86,11 @@ public class JarAnalyzerTest {
             }
         }
         assertTrue("implementation-version of 4.2.27 not found in org.mortbay.jetty.jar", found);
-        
+
         file = new File(this.getClass().getClassLoader().getResource("org.mortbay.jmx.jar").getPath());
-        result = instance.insepct(file);
-        assertEquals("org.mortbar,jmx.jar has version evidence?",result.getVersionEvidence().size(),0);     
+        result = new Dependency(file);
+        instance.analyze(result);
+        assertEquals("org.mortbar,jmx.jar has version evidence?", result.getVersionEvidence().size(), 0);
     }
 
     /**

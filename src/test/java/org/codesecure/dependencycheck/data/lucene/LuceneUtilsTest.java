@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.codesecure.dependencycheck.data;
+package org.codesecure.dependencycheck.data.lucene;
 
+import org.codesecure.dependencycheck.data.lucene.LuceneUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

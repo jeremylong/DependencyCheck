@@ -41,7 +41,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
-import org.codesecure.dependencycheck.data.AbstractIndex;
+import org.codesecure.dependencycheck.data.lucene.AbstractIndex;
 import org.codesecure.dependencycheck.data.CachedWebDataSource;
 import org.codesecure.dependencycheck.utils.Downloader;
 import org.codesecure.dependencycheck.utils.Settings;
@@ -65,7 +65,6 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
      */
     private static final String LAST_UPDATED = "lastupdated";
 
-
     /**
      * Returns the directory that holds the CPE Index.
      *
@@ -76,7 +75,7 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
         String fileName = Settings.getString(Settings.KEYS.CVE_INDEX);
         File path = new File(fileName);
         Directory dir = FSDirectory.open(path);
-        
+
         return dir;
     }
 

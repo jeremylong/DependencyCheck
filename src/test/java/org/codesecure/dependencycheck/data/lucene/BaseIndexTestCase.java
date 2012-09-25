@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.codesecure.dependencycheck.data;
+package org.codesecure.dependencycheck.data.lucene;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
