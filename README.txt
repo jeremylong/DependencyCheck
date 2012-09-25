@@ -2,7 +2,7 @@ About:
 DependencyCheck is a utility that attempts to detect publically disclosed
 vulnerabilities contained within project dependencies. It does this by determining
 if there is a Common Platform Enumeration (CPE) identifier for a given dependency. 
-If found, it will generate a report linking to the associated CVE entries.
+If found, it will generate a report linking to the associated CVE entries. 
 
 Usage:
 $ mvn package
