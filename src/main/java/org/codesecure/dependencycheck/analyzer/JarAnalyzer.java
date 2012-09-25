@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -366,7 +367,7 @@ public class JarAnalyzer extends AbstractAnalyzer {
                 key = key.toLowerCase();
 
                 if (!IGNORE_LIST.contains(key) && !key.contains("license") && !key.endsWith("jdk")
-                        && !key.contains("lastmodified")) {
+                        && !key.contains("lastmodified") && !key.endsWith("package")) {
 
                     if (key.contains("version")) {
                         versionEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
@@ -381,7 +382,14 @@ public class JarAnalyzer extends AbstractAnalyzer {
                         productEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
                         vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
                         if (value.matches(".*\\d.*")) {
-                            versionEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
+                            StringTokenizer tokenizer = new StringTokenizer(value," ");
+                            while (tokenizer.hasMoreElements()) {
+                                String s = tokenizer.nextToken();
+                                if (s.matches("^[0-9.]+$")) {
+                                    versionEvidence.addEvidence(source, key, s, Evidence.Confidence.LOW);
+                                }
+                            }
+                            //versionEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
                         }
                     }
                 }
