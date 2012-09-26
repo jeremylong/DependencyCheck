@@ -4,6 +4,7 @@
  */
 package org.codesecure.dependencycheck.data.cpe;
 
+import java.io.File;
 import org.codesecure.dependencycheck.data.lucene.BaseIndexTestCase;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -67,7 +68,8 @@ public class IndexTest extends BaseIndexTestCase {
         System.out.println("getDirectory");
         Index index = new Index();
         Directory result = index.getDirectory();
-        String exp = "\\target\\store\\cpe";
+        
+        String exp = File.separatorChar + "target" + File.separatorChar + "store" + File.separatorChar + "cpe";
         // TODO review the generated test code and remove the default call to fail.
         assertTrue(result.toString().contains(exp));
     }
