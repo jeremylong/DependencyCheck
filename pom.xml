@@ -158,21 +158,20 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                         <packageBranchRate>85</packageBranchRate>
                         <regexes>
                             <regex>
-                                <pattern>org.codesecure.dependencycheck.cpe.CPEEntry</pattern>
-                                <branchRate>60</branchRate>
-                                <lineRate>60</lineRate>
-                            </regex>
-                            <regex>
                                 <pattern>.*\$.*</pattern>
                                 <branchRate>0</branchRate>
                                 <lineRate>0</lineRate>
                             </regex>
                             <regex>
-                                <pattern>org.codesecure.dependencycheck.store.CPEFields</pattern>
+                                <pattern>org.codesecure.dependencycheck.data.cpe.Fields</pattern>
                                 <branchRate>0</branchRate>
                                 <lineRate>0</lineRate>
                             </regex>
-
+                            <regex>
+                                <pattern>org.codesecure.dependencycheck.App</pattern>
+                                <branchRate>0</branchRate>
+                                <lineRate>0</lineRate>
+                            </regex>
                             <regex>
                                 <pattern>org.codesecure.dependencycheck.utils.SSDeep</pattern>
                                 <branchRate>0</branchRate>
@@ -203,11 +202,11 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                         </property>
                         <property>
                             <name>cve</name>
-                            <value>${project.build.directory}/store/cve</value>
+                            <value>${project.build.directory}/data/cve</value>
                         </property>
                         <property>
                             <name>cpe</name>
-                            <value>${project.build.directory}/store/cpe</value>
+                            <value>${project.build.directory}/data/cpe</value>
                         </property>
                     </systemProperties>
                 </configuration>

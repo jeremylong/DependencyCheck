@@ -337,6 +337,28 @@ public class Dependency {
     public void setDescription(String description) {
         this.description = description;
     }
+    /**
+     * The license that this dependency uses.
+     */
+    private String license;
+
+    /**
+     * Get the value of license
+     *
+     * @return the value of license
+     */
+    public String getLicense() {
+        return license;
+    }
+
+    /**
+     * Set the value of license
+     *
+     * @param license new value of license
+     */
+    public void setLicense(String license) {
+        this.license = license;
+    }
 
     /**
      * Determines if the specified string was used when searching.

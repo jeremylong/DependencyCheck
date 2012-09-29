@@ -32,12 +32,17 @@ import java.util.jar.Manifest;
 
 /**
  *
- * Used to load a JAR file and collect information that can be used to determine the associated CPE.
+ * Used to load a JAR file and collect information that can be used to determine
+ * the associated CPE.
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public class JarAnalyzer extends AbstractAnalyzer {
 
+    /**
+     * The system independent newline character.
+     */
+    private static final String NEWLINE = System.getProperty("line.separator");
     /**
      * The name of the analyzer.
      */
@@ -52,7 +57,7 @@ public class JarAnalyzer extends AbstractAnalyzer {
     private static final Set<String> IGNORE_LIST = newHashSet(
             "built-by",
             "created-by",
-            "license",
+            //"license",
             "build-jdk",
             "ant-version",
             "import-package",
@@ -61,6 +66,7 @@ public class JarAnalyzer extends AbstractAnalyzer {
             "manifest-version",
             "archiver-version",
             "classpath",
+            "tool",
             "bundle-manifestversion");
     /**
      * The set of file extensions supported by this analyzer.
@@ -85,6 +91,7 @@ public class JarAnalyzer extends AbstractAnalyzer {
 
     /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
+     *
      * @return a list of file EXTENSIONS supported by this analyzer.
      */
     public Set<String> getSupportedExtensions() {
@@ -93,6 +100,7 @@ public class JarAnalyzer extends AbstractAnalyzer {
 
     /**
      * Returns the name of the analyzer.
+     *
      * @return the name of the analyzer.
      */
     public String getName() {
@@ -101,8 +109,10 @@ public class JarAnalyzer extends AbstractAnalyzer {
 
     /**
      * Returns whether or not this analyzer can process the given extension.
+     *
      * @param extension the file extension to test for support.
-     * @return whether or not the specified file extension is supported by tihs analyzer.
+     * @return whether or not the specified file extension is supported by tihs
+     * analyzer.
      */
     public boolean supportsExtension(String extension) {
         return EXTENSIONS.contains(extension);
@@ -110,6 +120,7 @@ public class JarAnalyzer extends AbstractAnalyzer {
 
     /**
      * Returns the phase that the analyzer is intended to run in.
+     *
      * @return the phase that the analyzer is intended to run in.
      */
     public AnalysisPhase getAnalysisPhase() {
@@ -117,40 +128,12 @@ public class JarAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * An enumeration to keep track of the characters in a string as it is being
-     * read in one character at a time.
-     */
-    private enum STRING_STATE {
-
-        ALPHA,
-        NUMBER,
-        PERIOD,
-        OTHER
-    }
-
-    /**
-     * Determines type of the character passed in.
-     * @param c a character
-     * @return a STRING_STATE representing whether the character is number, alpha, or other.
-     */
-    private STRING_STATE determineState(char c) {
-        if (c >= '0' && c <= '9') {
-            return STRING_STATE.NUMBER;
-        } else if (c == '.') {
-            return STRING_STATE.PERIOD;
-        } else if (c >= 'a' && c <= 'z') {
-            return STRING_STATE.ALPHA;
-        } else {
-            return STRING_STATE.OTHER;
-        }
-    }
-
-    /**
      * Loads a specified JAR file and collects information from the manifest and
      * checksums to identify the correct CPE information.
      *
      * @param dependency the dependency to analyze.
-     * @throws AnalysisException is thrown if there is an error reading the JAR file.
+     * @throws AnalysisException is thrown if there is an error reading the JAR
+     * file.
      */
     public void analyze(Dependency dependency) throws AnalysisException {
         try {
@@ -163,9 +146,10 @@ public class JarAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Analyzes the path information of the classes contained within the JarAnalyzer
-     * to try and determine possible vendor or product names. If any are found they are
-     * stored in the packageVendor and packageProduct hashSets.
+     * Analyzes the path information of the classes contained within the
+     * JarAnalyzer to try and determine possible vendor or product names. If any
+     * are found they are stored in the packageVendor and packageProduct
+     * hashSets.
      *
      * @param dependency A reference to the dependency.
      * @throws IOException is thrown if there is an error reading the JAR file.
@@ -314,17 +298,11 @@ public class JarAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * <p>Reads the manifest from the JAR file and collects the entries. Some key entries are:</p>
-     * <ul><li>Implementation Title</li>
-     *     <li>Implementation Version</li>
-     *     <li>Implementation Vendor</li>
-     *     <li>Implementation VendorId</li>
-     *     <li>Bundle Name</li>
-     *     <li>Bundle Version</li>
-     *     <li>Bundle Vendor</li>
-     *     <li>Bundle Description</li>
-     *     <li>Main Class</li>
-     * </ul>
+     * <p>Reads the manifest from the JAR file and collects the entries. Some
+     * key entries are:</p> <ul><li>Implementation Title</li> <li>Implementation
+     * Version</li> <li>Implementation Vendor</li> <li>Implementation
+     * VendorId</li> <li>Bundle Name</li> <li>Bundle Version</li> <li>Bundle
+     * Vendor</li> <li>Bundle Description</li> <li>Main Class</li> </ul>
      * However, all but a handful of specific entries are read in.
      *
      * @param dependency A reference to the dependency.
@@ -367,7 +345,7 @@ public class JarAnalyzer extends AbstractAnalyzer {
             } else {
                 key = key.toLowerCase();
 
-                if (!IGNORE_LIST.contains(key) && !key.contains("license") && !key.endsWith("jdk")
+                if (!IGNORE_LIST.contains(key) && !key.endsWith("jdk")
                         && !key.contains("lastmodified") && !key.endsWith("package")) {
 
                     if (key.contains("version")) {
@@ -379,9 +357,11 @@ public class JarAnalyzer extends AbstractAnalyzer {
                     } else if (key.contains("name")) {
                         productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
                         vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                    } else if (key.contains("license")) {
+                        addLicense(dependency, value);
                     } else {
                         if (key.contains("description")) {
-                            dependency.setDescription(value);
+                            addDescription(dependency, value);
                         }
                         productEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
                         vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
@@ -404,6 +384,14 @@ public class JarAnalyzer extends AbstractAnalyzer {
     private void addDescription(Dependency d, String description) {
         if (d.getDescription() == null) {
             d.setDescription(description);
+        }
+    }
+
+    private void addLicense(Dependency d, String license) {
+        if (d.getLicense() == null) {
+            d.setLicense(license);
+        } else if (!d.getLicense().contains(license)) {
+            d.setLicense(d.getLicense() + NEWLINE + license);
         }
     }
 

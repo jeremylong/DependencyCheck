@@ -69,7 +69,7 @@ public class IndexTest extends BaseIndexTestCase {
         Index index = new Index();
         Directory result = index.getDirectory();
         
-        String exp = File.separatorChar + "target" + File.separatorChar + "store" + File.separatorChar + "cpe";
+        String exp = File.separatorChar + "target" + File.separatorChar + "data" + File.separatorChar + "cpe";
         // TODO review the generated test code and remove the default call to fail.
         assertTrue(result.toString().contains(exp));
     }

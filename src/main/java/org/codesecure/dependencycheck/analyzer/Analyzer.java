@@ -18,8 +18,8 @@ package org.codesecure.dependencycheck.analyzer;
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 
-import org.codesecure.dependencycheck.dependency.Dependency;
 import java.util.Set;
+import org.codesecure.dependencycheck.dependency.Dependency;
 
 /**
  * An interface that defines an Analyzer that is used to identify Dependencies.
@@ -33,8 +33,8 @@ public interface Analyzer {
     /**
      * Analyzes the given dependency. The analysis could be anything from identifying
      * an Idenifier for the dependency, to finding vulnerabilities, etc. Additionally,
-     * if the analyzer collects enough information to add a description for the dependency
-     * one should be added.
+     * if the analyzer collects enough information to add a description or license
+     * information for the dependency it should be added.
      *
      * @param dependency a dependency to analyze.
      * @throws AnalysisException is thrown if there is an error analyzing the dependency file
@@ -43,7 +43,7 @@ public interface Analyzer {
 
     /**
      * <p>Returns a list of supported file extensions. An example would be an analyzer
-     * that inpected java jar files. The getSupportedExtensions function would return
+     * that inspected java jar files. The getSupportedExtensions function would return
      * a set with a single element "jar".</p>
      *
      * <p><b>Note:</b> when implementing this the extensions returned MUST be lowercase.</p>

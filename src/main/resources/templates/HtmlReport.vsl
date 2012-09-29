@@ -261,8 +261,11 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             table {
                 border: 0px;
             }
-            table tr:nth-child(even) {
-                background-color: #eeeeee;
+            table.lined tr:nth-child(even) {
+                background-color: #fbfbfb;
+            }
+            .fullwidth {
+                width:100%;
             }
             body {
                 font: 13px "Droid Sans",Arial,"Helvetica Neue","Lucida Grande",sans-serif
@@ -291,22 +294,27 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <h3 class="subsectionheader standardsubsection"><a name="$esc.html($dependency.FilePath)"></a>$esc.html($dependency.FileName)</h3>
                     <div class="subsectioncontent">
                         #if ($dependency.description) 
-                            <p><b>Description:&nbsp;</b>$esc.html($dependency.description)</p>
+                            <p><b>Description:</b>&nbsp;$esc.html($dependency.description)<br/></p>
                         #end
-                        <p><b>File&nbsp;Path:</b>&nbsp;$esc.html($dependency.FilePath)<br/>
-                        <b>MD5:</b>&nbsp;$esc.html($dependency.Md5sum)<br/>
-                        <b>SHA1:</b>&nbsp;$esc.html($dependency.Sha1sum)</p>
-                        
+                        <p>
+                        #if ($dependency.license)
+                            <b>License:</b><pre class="indent">$esc.html($dependency.license)</pre>
+                        #end
+                            <b>File&nbsp;Path:</b>&nbsp;$esc.html($dependency.FilePath)<br/>
+                            <b>MD5:</b>&nbsp;$esc.html($dependency.Md5sum)<br/>
+                            <b>SHA1:</b>&nbsp;$esc.html($dependency.Sha1sum)
+                        </p>
+
                         #if ( $dependency.analysisExceptions.size() != 0 )
                             #set($cnt=$cnt+1)
                             <h4 id="header$cnt" class="subsectionheader red">Analysis Exceptions</h4>
                             <div id="content$cnt" class="subsectioncontent standardsubsection">
                                 <ul>
                                 #foreach($ex in $dependency.analysisExceptions)
-                                    <li>$esc.html($ex.message)<br/><br/>$esc.html($ex.stackTrace)
+                                    <li>$esc.html($ex.message)<br/><br/><pre class="indent">$esc.html($ex.stackTrace)</pre>
                                     #if ( $ex.cause )
                                         <br/><b>Caused by:</b> $esc.html($ex.cause.message)
-                                        <br/><br/>$esc.html($ex.cause.stackTrace)
+                                        <br/><br/><pre class="indent">$esc.html($ex.cause.stackTrace)</pre>
                                     #end
                                     </li>
                                 #end
@@ -316,7 +324,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         #set($cnt=$cnt+1)
                         <h4 id="header$cnt" class="subsectionheader expandablesubsection white">Evidence</h4>
                         <div id="content$cnt" class="subsectioncontent standardsubsection hidden">
-                            <table border="0" style="width:100%">
+                            <table class="lined fullwidth" border="0">
                                 <tr><th class="left" style="width:10%;">Source</th><th class="left" style="width:20%;">Name</th><th class="left" style="width:70%;">Value</th></tr>
                                 #foreach($evidence in $dependency.getEvidenceUsed())
                                     <tr><td>$esc.html($evidence.getSource())</td><td>$esc.html($evidence.getName())</td><td>$esc.html($evidence.getValue())</td></tr>
