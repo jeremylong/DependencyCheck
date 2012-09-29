@@ -31,7 +31,10 @@ import java.util.Set;
 public interface Analyzer {
 
     /**
-     * Analyzes the given dependency.
+     * Analyzes the given dependency. The analysis could be anything from identifying
+     * an Idenifier for the dependency, to finding vulnerabilities, etc. Additionally,
+     * if the analyzer collects enough information to add a description for the dependency
+     * one should be added.
      *
      * @param dependency a dependency to analyze.
      * @throws AnalysisException is thrown if there is an error analyzing the dependency file

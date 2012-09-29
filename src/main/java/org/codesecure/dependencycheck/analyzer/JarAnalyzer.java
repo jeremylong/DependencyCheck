@@ -354,6 +354,7 @@ public class JarAnalyzer extends AbstractAnalyzer {
                 vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
             } else if (key.equals(BUNDLE_DESCRIPTION)) {
                 productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                dependency.setDescription(value);
             } else if (key.equals(BUNDLE_NAME)) {
                 productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
             } else if (key.equals(BUNDLE_VENDOR)) {
@@ -379,10 +380,13 @@ public class JarAnalyzer extends AbstractAnalyzer {
                         productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
                         vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
                     } else {
+                        if (key.contains("description")) {
+                            dependency.setDescription(value);
+                        }
                         productEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
                         vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
                         if (value.matches(".*\\d.*")) {
-                            StringTokenizer tokenizer = new StringTokenizer(value," ");
+                            StringTokenizer tokenizer = new StringTokenizer(value, " ");
                             while (tokenizer.hasMoreElements()) {
                                 String s = tokenizer.nextToken();
                                 if (s.matches("^[0-9.]+$")) {
@@ -394,6 +398,12 @@ public class JarAnalyzer extends AbstractAnalyzer {
                     }
                 }
             }
+        }
+    }
+
+    private void addDescription(Dependency d, String description) {
+        if (d.getDescription() == null) {
+            d.setDescription(description);
         }
     }
 

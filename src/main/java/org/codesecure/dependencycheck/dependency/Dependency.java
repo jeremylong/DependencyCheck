@@ -286,6 +286,57 @@ public class Dependency {
     public EvidenceCollection getVersionEvidence() {
         return this.versionEvidence;
     }
+    /**
+     * A list of exceptions that occured during analysis of this dependency.
+     */
+    protected List<Exception> analysisExceptions = new ArrayList<Exception>();
+
+    /**
+     * Get the value of analysisExceptions
+     *
+     * @return the value of analysisExceptions
+     */
+    public List<Exception> getAnalysisExceptions() {
+        return analysisExceptions;
+    }
+
+    /**
+     * Set the value of analysisExceptions
+     *
+     * @param analysisExceptions new value of analysisExceptions
+     */
+    public void setAnalysisExceptions(List<Exception> analysisExceptions) {
+        this.analysisExceptions = analysisExceptions;
+    }
+    /**
+     * Adds an exception to the analysis exceptions collection.
+     * @param ex an exception.
+     */
+    public void addAnalysisException(Exception ex) {
+        this.analysisExceptions.add(ex);
+    }
+    /**
+     * The description of the JAR file.
+     */
+    protected String description;
+
+    /**
+     * Get the value of description
+     *
+     * @return the value of description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Set the value of description
+     *
+     * @param description new value of description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     /**
      * Determines if the specified string was used when searching.

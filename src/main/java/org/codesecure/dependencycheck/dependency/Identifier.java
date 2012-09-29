@@ -38,6 +38,18 @@ public class Identifier {
         this.url = url;
     }
     /**
+     * Constructs a new Identifier with the specified data.
+     * @param type the identifier type.
+     * @param value the identifier value.
+     * @param title the identifier title.
+     * @param url the identifier url.
+     * @param description the description of the identifier.
+     */
+    Identifier(String type, String value, String title, String url, String description) {
+        this(type, value, title, url);
+        this.description = description;
+    }
+    /**
      * The value of the identifeir
      */
     protected String value;
@@ -125,4 +137,27 @@ public class Identifier {
     public void setType(String type) {
         this.type = type;
     }
+    /**
+     * A description of the identifier.
+     */
+    protected String description;
+
+    /**
+     * Get the value of description
+     *
+     * @return the value of description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Set the value of description
+     *
+     * @param description new value of description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
 }

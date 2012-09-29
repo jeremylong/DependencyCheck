@@ -23,11 +23,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.cli.ParseException;
 import org.codesecure.dependencycheck.data.cpe.Index;
@@ -63,6 +61,7 @@ import org.xml.sax.SAXException;
 public class App {
 
     private static final String LOG_PROPERTIES_FILE = "configuration/log.properties";
+
     /**
      * @param args the command line arguments
      */

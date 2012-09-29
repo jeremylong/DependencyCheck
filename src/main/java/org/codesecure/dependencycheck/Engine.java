@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.codesecure.dependencycheck.analyzer.AnalysisException;
 import org.codesecure.dependencycheck.analyzer.AnalysisPhase;
 import org.codesecure.dependencycheck.analyzer.Analyzer;
 import org.codesecure.dependencycheck.analyzer.AnalyzerService;
@@ -193,6 +194,8 @@ public class Engine {
                             } else {
                                 a.analyze(d);
                             }
+                        } catch (AnalysisException ex) {
+                            d.addAnalysisException(ex);
                         } catch (IOException ex) {
                             String msg = String.format("IOException occured while analyzing the file '%s'.",
                                     d.getActualFilePath());

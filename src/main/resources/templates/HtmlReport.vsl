@@ -245,6 +245,9 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             .white {
                 background-color: #ffffff;
             }
+            .red {
+                background-color: #DF0101;
+            }
             .left {
                 text-align: left;
             }
@@ -252,11 +255,21 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 margin-left:20px;
             }
             td, th {
-                padding:3px;
-                margin:3px;
+                padding:6px;
+                margin:0px;
+            }
+            table {
+                border: 0px;
+            }
+            table tr:nth-child(even) {
+                background-color: #eeeeee;
             }
             body {
                 font: 13px "Droid Sans",Arial,"Helvetica Neue","Lucida Grande",sans-serif
+            }
+            ul {
+                margin-top:3px;
+                margin-bottom:3px;
             }
         </style>
     </head>
@@ -276,14 +289,35 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 #set($cnt=0)
                 #foreach($dependency in $dependencies) 
                     <h3 class="subsectionheader standardsubsection"><a name="$esc.html($dependency.FilePath)"></a>$esc.html($dependency.FileName)</h3>
-                    <div class="subsectioncontent">File&nbsp;Path:&nbsp;$esc.html($dependency.FilePath)<br/>
-                        MD5:&nbsp;$esc.html($dependency.Md5sum)<br/>
-                        SHA1:&nbsp;$esc.html($dependency.Sha1sum)
+                    <div class="subsectioncontent">
+                        #if ($dependency.description) 
+                            <p><b>Description:&nbsp;</b>$esc.html($dependency.description)</p>
+                        #end
+                        <p><b>File&nbsp;Path:</b>&nbsp;$esc.html($dependency.FilePath)<br/>
+                        <b>MD5:</b>&nbsp;$esc.html($dependency.Md5sum)<br/>
+                        <b>SHA1:</b>&nbsp;$esc.html($dependency.Sha1sum)</p>
+                        
+                        #if ( $dependency.analysisExceptions.size() != 0 )
+                            #set($cnt=$cnt+1)
+                            <h4 id="header$cnt" class="subsectionheader red">Analysis Exceptions</h4>
+                            <div id="content$cnt" class="subsectioncontent standardsubsection">
+                                <ul>
+                                #foreach($ex in $dependency.analysisExceptions)
+                                    <li>$esc.html($ex.message)<br/><br/>$esc.html($ex.stackTrace)
+                                    #if ( $ex.cause )
+                                        <br/><b>Caused by:</b> $esc.html($ex.cause.message)
+                                        <br/><br/>$esc.html($ex.cause.stackTrace)
+                                    #end
+                                    </li>
+                                #end
+                                </ul>
+                            </div>
+                        #end
                         #set($cnt=$cnt+1)
                         <h4 id="header$cnt" class="subsectionheader expandablesubsection white">Evidence</h4>
                         <div id="content$cnt" class="subsectioncontent standardsubsection hidden">
-                            <table border="0">
-                                <tr><th class="left">Source</th><th class="left">Name</th><th class="left">Value</th></tr>
+                            <table border="0" style="width:100%">
+                                <tr><th class="left" style="width:10%;">Source</th><th class="left" style="width:20%;">Name</th><th class="left" style="width:70%;">Value</th></tr>
                                 #foreach($evidence in $dependency.getEvidenceUsed())
                                     <tr><td>$esc.html($evidence.getSource())</td><td>$esc.html($evidence.getName())</td><td>$esc.html($evidence.getValue())</td></tr>
                                 #end
@@ -310,7 +344,11 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                             <ul>
                             #foreach($id in $dependency.getIdentifiers())
                                 ##yes, we are HTML Encoding the href. this is okay. We can't URL encode as we have to trust the analyzer here...
-                                <li><b>$esc.html($id.type):</b>&nbsp;$esc.html($id.title)&nbsp;:&nbsp;<a href="$esc.html($id.url)" target="blank">$esc.html($id.value)</a></li>
+                                <li><b>$esc.html($id.type):</b>&nbsp;$esc.html($id.title)&nbsp;:&nbsp;<a href="$esc.html($id.url)" target="blank">$esc.html($id.value)</a>
+                                #if( $id.descrription )
+                                    <br/>$esc.html($id.description)
+                                #end
+                                </li>
                             #end
                             </ul>
                         #end

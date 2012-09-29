@@ -23,7 +23,7 @@ package org.codesecure.dependencycheck.analyzer;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class AnalysisException extends RuntimeException {
+public class AnalysisException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
