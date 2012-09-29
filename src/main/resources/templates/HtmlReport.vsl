@@ -307,14 +307,27 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 
                         #if ( $dependency.analysisExceptions.size() != 0 )
                             #set($cnt=$cnt+1)
-                            <h4 id="header$cnt" class="subsectionheader red">Analysis Exceptions</h4>
-                            <div id="content$cnt" class="subsectioncontent standardsubsection">
+                            <h4 id="header$cnt" class="subsectionheader expandablesubsection red">Exceptions Occured During Analysis</h4>
+                            <div id="content$cnt" class="subsectioncontent standardsubsection hidden">
                                 <ul>
                                 #foreach($ex in $dependency.analysisExceptions)
-                                    <li>$esc.html($ex.message)<br/><br/><pre class="indent">$esc.html($ex.stackTrace)</pre>
+                                    <li>$esc.html($ex.message)
+                                    #if ( $ex.stackTrace )
+                                        <div class="indent">
+                                            #foreach ($st in $ex.stackTrace)
+                                                $esc.html($st)<br/>
+                                            #end
+                                        </div>
+                                    #end
                                     #if ( $ex.cause )
                                         <br/><b>Caused by:</b> $esc.html($ex.cause.message)
-                                        <br/><br/><pre class="indent">$esc.html($ex.cause.stackTrace)</pre>
+                                        #if ( $ex.cause.stackTrace )
+                                            <div class="indent">
+                                                #foreach ($st in $ex.cause.stackTrace)
+                                                    $esc.html($st)<br/>
+                                                #end
+                                            </div>
+                                        #end
                                     #end
                                     </li>
                                 #end

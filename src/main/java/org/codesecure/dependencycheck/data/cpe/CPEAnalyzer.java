@@ -215,7 +215,7 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
     }
 
     /**
-     * Returns the text created by concatonating the text and the values from the
+     * Returns the text created by concatenating the text and the values from the
      * EvidenceCollection (filtered for a specific confidence). This attempts to
      * prevent duplicate terms from being added.<br/<br/>
      * Note, if the evidence is longer then 200 characters it will be truncated.
@@ -241,11 +241,11 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
                 value = value.substring(8).replaceAll("\\.", " ");
             }
             if (sb.indexOf(value) < 0) {
-                if (value.length() > 200) {
-                    sb.append(value.substring(0, 200)).append(' ');
-                } else {
+//                if (value.length() > 200) {
+//                    sb.append(value.substring(0, 200)).append(' ');
+//                } else {
                     sb.append(value).append(' ');
-                }
+//                }
             }
         }
         return sb.toString();
@@ -361,14 +361,14 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
         if (sb.indexOf("^") > 0) {
             //if we have a weighting on something else, reduce the weighting on the version a lot
             for (String v : version.split(" ")) {
-                LuceneUtils.appendEscapedLuceneQuery(sb, v);
+                LuceneUtils.appendEscapedLuceneQuery(sb, cleanseText(v));
                 sb.append("^0.2 ");
             }
         } else {
             //LuceneUtils.appendEscapedLuceneQuery(sb, version);
             //if we have a weighting on something else, reduce the weighting on the version a lot
             for (String v : version.split(" ")) {
-                LuceneUtils.appendEscapedLuceneQuery(sb, v);
+                LuceneUtils.appendEscapedLuceneQuery(sb, cleanseText(v));
                 sb.append("^0.7 ");
             }
         }
@@ -442,7 +442,7 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
      *
      * @param l string one to compare.
      * @param r string two to compare.
-     * @return whether or not the two strings are similiar.
+     * @return whether or not the two strings are similar.
      */
     private boolean equalsIgnoreCaseAndNonAlpha(String l, String r) {
         if (l == null || r == null) {

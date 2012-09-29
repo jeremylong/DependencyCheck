@@ -38,8 +38,8 @@ import org.codesecure.dependencycheck.utils.FileUtils;
 
 /**
  * Scans files, directories, etc. for Dependencies. Analyzers are loaded and
- * used to process the files found by the scan, if a file is encountered and
- * an Analyzer is associated with the file type then the file is turned into a
+ * used to process the files found by the scan, if a file is encountered and an
+ * Analyzer is associated with the file type then the file is turned into a
  * dependency.
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
@@ -68,7 +68,8 @@ public class Engine {
     }
 
     /**
-     * Loads the analyzers specified in the configuration file (or system properties).
+     * Loads the analyzers specified in the configuration file (or system
+     * properties).
      */
     private void loadAnalyzers() {
 
@@ -108,8 +109,8 @@ public class Engine {
 
     /**
      * Scans a given file or directory. If a directory is specified, it will be
-     * scanned recursively.
-     * Any dependencies identified are added to the dependency collection.
+     * scanned recursively. Any dependencies identified are added to the
+     * dependency collection.
      *
      * @param path the path to a file or directory to be analyzed.
      */
@@ -125,8 +126,8 @@ public class Engine {
     }
 
     /**
-     * Recursively scans files and directories.
-     * Any dependencies identified are added to the dependency collection.
+     * Recursively scans files and directories. Any dependencies identified are
+     * added to the dependency collection.
      *
      * @param dir the directory to scan.
      */
