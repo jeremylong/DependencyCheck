@@ -18,11 +18,16 @@ package org.codesecure.dependencycheck;
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.cli.ParseException;
 import org.codesecure.dependencycheck.data.cpe.Index;
@@ -57,13 +62,34 @@ import org.xml.sax.SAXException;
  */
 public class App {
 
+    private static final String LOG_PROPERTIES_FILE = "configuration/log.properties";
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        //Preferences.systemRoot().put("java.util.logging.config.file", "log.properties");
+        prepareLogger();
         App app = new App();
         app.run(args);
+    }
+
+    private static void prepareLogger() {
+        //while java doc for JUL says to use preferences api - it throws an exception...
+        //Preferences.systemRoot().put("java.util.logging.config.file", "log.properties");
+        //System.getProperties().put("java.util.logging.config.file", "configuration/log.properties");
+        File dir = new File("logs");
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+        try {
+            InputStream in = App.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
+            LogManager.getLogManager().reset();
+            LogManager.getLogManager().readConfiguration(in);
+        } catch (IOException ex) {
+            System.err.println(ex.toString());
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SecurityException ex) {
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -72,14 +98,19 @@ public class App {
      * @param args the command line arguments
      */
     public void run(String[] args) {
+
         CliParser cli = new CliParser();
         try {
             cli.parse(args);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println(ex.getMessage());
+            cli.printHelp();
+            Logger.getLogger(App.class.getName()).log(Level.WARNING, null, ex);
             return;
         } catch (ParseException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println(ex.getMessage());
+            cli.printHelp();
+            Logger.getLogger(App.class.getName()).log(Level.INFO, null, ex);
             return;
         }
 

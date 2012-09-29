@@ -67,7 +67,7 @@ public class Settings {
          */
         public static final String CONNECTION_TIMEOUT = "connection.timeout";
     }
-    private static final String PROPERTIES_FILE = "META-INF/dependencycheck.properties";
+    private static final String PROPERTIES_FILE = "configuration/dependencycheck.properties";
     private static final Settings INSTANCE = new Settings();
     private Properties props = null;
 
