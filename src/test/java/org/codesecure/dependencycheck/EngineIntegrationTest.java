@@ -16,9 +16,9 @@ import static org.junit.Assert.*;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class EngineTest {
+public class EngineIntegrationTest {
 
-    public EngineTest() throws Exception {
+    public EngineIntegrationTest() throws Exception {
         org.codesecure.dependencycheck.data.nvdcve.BaseIndexTestCase.ensureIndexExists();
         org.codesecure.dependencycheck.data.cpe.BaseIndexTestCase.ensureIndexExists();
     }
