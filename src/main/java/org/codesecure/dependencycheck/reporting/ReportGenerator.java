@@ -2,18 +2,18 @@ package org.codesecure.dependencycheck.reporting;
 /*
  * This file is part of DependencyCheck.
  *
- * DependencyCheck is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * DependencyCheck is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
- * DependencyCheck is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * DependencyCheck is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with DependencyCheck. If not, see http://www.gnu.org/licenses/.
+ * You should have received a copy of the GNU General Public License along with
+ * DependencyCheck. If not, see http://www.gnu.org/licenses/.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -50,7 +50,8 @@ public class ReportGenerator {
      * @param applicationName the name of the application that was scanned.
      * @param dependencies a list of dependencies to include in the report.
      * @throws IOException is thrown when the template file does not exist.
-     * @throws Exception is thrown if there is an error writting out the reports.
+     * @throws Exception is thrown if there is an error writting out the
+     * reports.
      */
     public void generateReports(String outputDir, String applicationName, List<Dependency> dependencies) throws IOException, Exception {
 
@@ -66,7 +67,9 @@ public class ReportGenerator {
     }
 
     /**
-     * much of this code is from http://stackoverflow.com/questions/2931516/loading-velocity-template-inside-a-jar-file
+     * much of this code is from
+     * http://stackoverflow.com/questions/2931516/loading-velocity-template-inside-a-jar-file
+     *
      * @param templateName the name of the template to load.
      * @param outFileName The filename and path to write the report to.
      * @param properties a map of properties to load into the velocity context.

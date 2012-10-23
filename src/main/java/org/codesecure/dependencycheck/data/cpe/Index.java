@@ -2,18 +2,18 @@ package org.codesecure.dependencycheck.data.cpe;
 /*
  * This file is part of DependencyCheck.
  *
- * DependencyCheck is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * DependencyCheck is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
- * DependencyCheck is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * DependencyCheck is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with DependencyCheck. If not, see http://www.gnu.org/licenses/.
+ * You should have received a copy of the GNU General Public License along with
+ * DependencyCheck. If not, see http://www.gnu.org/licenses/.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -43,6 +43,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import org.codesecure.dependencycheck.data.lucene.AbstractIndex;
 import org.codesecure.dependencycheck.data.CachedWebDataSource;
+import org.codesecure.dependencycheck.data.UpdateException;
 import org.codesecure.dependencycheck.utils.Downloader;
 import org.codesecure.dependencycheck.utils.Settings;
 import org.codesecure.dependencycheck.data.cpe.xml.Importer;
@@ -57,7 +58,8 @@ import org.xml.sax.SAXException;
 public class Index extends AbstractIndex implements CachedWebDataSource {
 
     /**
-     * The name of the properties file containing the timestamp of the last update.
+     * The name of the properties file containing the timestamp of the last
+     * update.
      */
     private static final String UPDATE_PROPERTIES_FILE = "lastupdated.prop";
     /**
@@ -97,42 +99,58 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
     }
 
     /**
-     * Downloads the latest CPE XML file from the web and imports it into
-     * the current CPE Index.
+     * Downloads the latest CPE XML file from the web and imports it into the
+     * current CPE Index.
      *
-     * @throws MalformedURLException is thrown if the URL for the CPE is malformed.
-     * @throws ParserConfigurationException is thrown if the parser is misconfigured.
-     * @throws SAXException is thrown if there is an error parsing the CPE XML.
-     * @throws IOException is thrown if a temporary file could not be created.
+     * @throws UpdateException is thrown if there is a problem updating the
+     * index.
      */
-    public void update() throws MalformedURLException, ParserConfigurationException, SAXException, IOException {
-        long timeStamp = updateNeeded();
-        if (timeStamp > 0) {
-            URL url = new URL(Settings.getString(Settings.KEYS.CPE_URL));
-            File outputPath = null;
-            try {
-                outputPath = File.createTempFile("cpe", ".xml");
-                Downloader.fetchFile(url, outputPath, true);
-                Importer.importXML(outputPath.toString());
-                writeLastUpdatedPropertyFile(timeStamp);
-            } catch (DownloadFailedException ex) {
-                Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
+    public void update() throws UpdateException {
+        try {
+            long timeStamp = updateNeeded();
+            if (timeStamp > 0) {
+                URL url = new URL(Settings.getString(Settings.KEYS.CPE_URL));
+                Logger.getLogger(Index.class.getName()).log(Level.WARNING, "Updating CPE :" + url.toString());
+                File outputPath = null;
                 try {
-                    if (outputPath != null && outputPath.exists()) {
-                        outputPath.delete();
-                    }
+                    outputPath = File.createTempFile("cpe", ".xml");
+                    Downloader.fetchFile(url, outputPath, true);
+                    Importer.importXML(outputPath.toString());
+                    writeLastUpdatedPropertyFile(timeStamp);
+                } catch (ParserConfigurationException ex) {
+                    //Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+                    throw new UpdateException(ex);
+                } catch (SAXException ex) {
+                    //Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+                    throw new UpdateException(ex);
+                } catch (IOException ex) {
+                    //Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+                    throw new UpdateException(ex);
                 } finally {
-                    if (outputPath != null && outputPath.exists()) {
-                        outputPath.deleteOnExit();
+                    try {
+                        if (outputPath != null && outputPath.exists()) {
+                            outputPath.delete();
+                        }
+                    } finally {
+                        if (outputPath != null && outputPath.exists()) {
+                            outputPath.deleteOnExit();
+                        }
                     }
                 }
             }
+        } catch (MalformedURLException ex) {
+            //Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+            throw new UpdateException(ex);
+        } catch (DownloadFailedException ex) {
+            //Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+            throw new UpdateException(ex);
         }
     }
 
     /**
-     * Writes a properties file containing the last updated date to the CPE directory.
+     * Writes a properties file containing the last updated date to the CPE
+     * directory.
+     *
      * @param timeStamp the timestamp to write.
      */
     private void writeLastUpdatedPropertyFile(long timeStamp) {
@@ -169,9 +187,12 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
      * be refreshed this method will return the timestamp of the new CPE. If an
      * update is not required this function will return 0.
      *
-     * @return the timestamp of the currently published CPE.xml if the index needs to be updated, otherwise returns 0..
-     * @throws MalformedURLException is thrown if the URL for the CPE Meta data is incorrect.
-     * @throws DownloadFailedException is thrown if there is an error downloading the cpe.meta data file.
+     * @return the timestamp of the currently published CPE.xml if the index
+     * needs to be updated, otherwise returns 0..
+     * @throws MalformedURLException is thrown if the URL for the CPE Meta data
+     * is incorrect.
+     * @throws DownloadFailedException is thrown if there is an error
+     * downloading the cpe.meta data file.
      */
     public long updateNeeded() throws MalformedURLException, DownloadFailedException {
         long retVal = 0;
@@ -213,9 +234,12 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
 
     /**
      * Retrieves the timestamp from the CPE meta data file.
+     *
      * @return the timestamp from the currently published cpe.meta.
-     * @throws MalformedURLException is thrown if the URL for the CPE Meta data is incorrect.
-     * @throws DownloadFailedException is thrown if there is an error downloading the cpe.meta data file.
+     * @throws MalformedURLException is thrown if the URL for the CPE Meta data
+     * is incorrect.
+     * @throws DownloadFailedException is thrown if there is an error
+     * downloading the cpe.meta data file.
      */
     private long retrieveCurrentCPETimestampFromWeb() throws MalformedURLException, DownloadFailedException {
         long timestamp = 0;

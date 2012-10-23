@@ -23,14 +23,16 @@ import java.util.logging.Logger;
 public class Checksum {
 
     /**
-     * <p>Creates the cryptographic checksum of a given file using the specified alogirhtm.</p>
-     * <p>This algorithm was copied and heavily modified from Real's How To: http://www.rgagnon.com/javadetails/java-0416.html</p>
+     * <p>Creates the cryptographic checksum of a given file using the specified
+     * alogirhtm.</p> <p>This algorithm was copied and heavily modified from
+     * Real's How To: http://www.rgagnon.com/javadetails/java-0416.html</p>
      *
      * @param algorithm the algorithm to use to calculate the checksum
      * @param file the file to calculate the checksum for
      * @return the checksum
      * @throws FileNotFoundException when the file does not exist
-     * @throws NoSuchAlgorithmException when an algorithm is specified that does not exist
+     * @throws NoSuchAlgorithmException when an algorithm is specified that does
+     * not exist
      */
     public static byte[] getChecksum(String algorithm, File file) throws FileNotFoundException, NoSuchAlgorithmException {
         InputStream fis = new FileInputStream(file);
@@ -86,7 +88,8 @@ public class Checksum {
     /**
      * <p>Converts a byte array into a hex string.</p>
      *
-     * <p>This method was copied from <a href="http://www.rgagnon.com/javadetails/java-0596.html">http://www.rgagnon.com/javadetails/java-0596.html</a></p>
+     * <p>This method was copied from <a
+     * href="http://www.rgagnon.com/javadetails/java-0596.html">http://www.rgagnon.com/javadetails/java-0596.html</a></p>
      *
      * @param raw a byte array
      * @return the hex representation of the byte array

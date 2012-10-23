@@ -2,21 +2,22 @@ package org.codesecure.dependencycheck.data.cpe;
 /*
  * This file is part of DependencyCheck.
  *
- * DependencyCheck is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * DependencyCheck is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
- * DependencyCheck is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * DependencyCheck is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with DependencyCheck. If not, see http://www.gnu.org/licenses/.
+ * You should have received a copy of the GNU General Public License along with
+ * DependencyCheck. If not, see http://www.gnu.org/licenses/.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.ParseException;
@@ -27,16 +28,16 @@ import java.util.logging.Logger;
 import org.apache.lucene.document.Document;
 
 /**
- * A single CPE entry from the cpe.xml downloaded from
- * <a href="http://nvd.nist.gov/cpe.cfm">http://nvd.nist.gov/cpe.cfm</a>.
+ * A single CPE entry from the cpe.xml downloaded from <a
+ * href="http://nvd.nist.gov/cpe.cfm">http://nvd.nist.gov/cpe.cfm</a>.
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public class Entry {
 
     /**
-     * This parse method does not fully convert a Lucene Document into a CPE Entry;
-     * it only sets the Entry.Name.
+     * This parse method does not fully convert a Lucene Document into a CPE
+     * Entry; it only sets the Entry.Name.
      *
      * @param doc a Lucene Document.
      * @return a CPE Entry.
@@ -94,7 +95,8 @@ public class Entry {
     }
 
     /**
-     * Set the value of name and calls parseName to obtain the vendor:product:version:revision
+     * Set the value of name and calls parseName to obtain the
+     * vendor:product:version:revision
      *
      * @param name new value of name
      * @throws UnsupportedEncodingException should never be thrown...
@@ -277,28 +279,6 @@ public class Entry {
         this.revision = revision;
     }
     /**
-     * If the CPE Entry is well known (i.e. based off a hash)
-     */
-    protected boolean wellKnown = false;
-
-    /**
-     * Get the value of wellKnown
-     *
-     * @return the value of wellKnown
-     */
-    public boolean isWellKnown() {
-        return wellKnown;
-    }
-
-    /**
-     * Set the value of wellKnown
-     *
-     * @param wellKnown new value of wellKnown
-     */
-    public void setWellKnown(boolean wellKnown) {
-        this.wellKnown = wellKnown;
-    }
-    /**
      * The search score.
      */
     protected float searchScore;
@@ -327,13 +307,8 @@ public class Entry {
      * <p>Example:</p>
      * <code>&nbsp;&nbsp;&nbsp;cpe:/a:apache:struts:1.1:rc2</code>
      *
-     * <p>Results in:</p>
-     * <ul>
-     *    <li>Vendor: apache</li>
-     *    <li>Product: struts</li>
-     *    <li>Version: 1.1</li>
-     *    <li>Revision: rc2</li>
-     * </ul>
+     * <p>Results in:</p> <ul> <li>Vendor: apache</li> <li>Product: struts</li>
+     * <li>Version: 1.1</li> <li>Revision: rc2</li> </ul>
      *
      * @throws UnsupportedEncodingException should never be thrown...
      */

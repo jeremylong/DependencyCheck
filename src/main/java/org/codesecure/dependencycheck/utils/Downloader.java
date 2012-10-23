@@ -2,18 +2,18 @@ package org.codesecure.dependencycheck.utils;
 /*
  * This file is part of DependencyCheck.
  *
- * DependencyCheck is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * DependencyCheck is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
- * DependencyCheck is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * DependencyCheck is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with DependencyCheck. If not, see http://www.gnu.org/licenses/.
+ * You should have received a copy of the GNU General Public License along with
+ * DependencyCheck. If not, see http://www.gnu.org/licenses/.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -47,9 +47,11 @@ public class Downloader {
 
     /**
      * Retrieves a file from a given URL and saves it to the outputPath.
+     *
      * @param url the URL of the file to download.
      * @param outputPath the path to the save the file to.
-     * @throws DownloadFailedException is thrown if there is an error downloading the file.
+     * @throws DownloadFailedException is thrown if there is an error
+     * downloading the file.
      */
     public static void fetchFile(URL url, String outputPath) throws DownloadFailedException {
         fetchFile(url, outputPath, false);
@@ -57,10 +59,13 @@ public class Downloader {
 
     /**
      * Retrieves a file from a given URL and saves it to the outputPath.
+     *
      * @param url the URL of the file to download.
      * @param outputPath the path to the save the file to.
-     * @param unzip true/false indicating that the file being retrieved is gzipped and if true, should be uncompressed before writting to the file.
-     * @throws DownloadFailedException is thrown if there is an error downloading the file.
+     * @param unzip true/false indicating that the file being retrieved is
+     * gzipped and if true, should be uncompressed before writting to the file.
+     * @throws DownloadFailedException is thrown if there is an error
+     * downloading the file.
      */
     public static void fetchFile(URL url, String outputPath, boolean unzip) throws DownloadFailedException {
         File f = new File(outputPath);
@@ -69,9 +74,11 @@ public class Downloader {
 
     /**
      * Retrieves a file from a given URL and saves it to the outputPath.
+     *
      * @param url the URL of the file to download.
      * @param outputPath the path to the save the file to.
-     * @throws DownloadFailedException is thrown if there is an error downloading the file.
+     * @throws DownloadFailedException is thrown if there is an error
+     * downloading the file.
      */
     public static void fetchFile(URL url, File outputPath) throws DownloadFailedException {
         fetchFile(url, outputPath, false);
@@ -79,10 +86,13 @@ public class Downloader {
 
     /**
      * Retrieves a file from a given URL and saves it to the outputPath.
+     *
      * @param url the URL of the file to download.
      * @param outputPath the path to the save the file to.
-     * @param unzip true/false indicating that the file being retrieved is gzipped and if true, should be uncompressed before writting to the file.
-     * @throws DownloadFailedException is thrown if there is an error downloading the file.
+     * @param unzip true/false indicating that the file being retrieved is
+     * gzipped and if true, should be uncompressed before writting to the file.
+     * @throws DownloadFailedException is thrown if there is an error
+     * downloading the file.
      */
     public static void fetchFile(URL url, File outputPath, boolean unzip) throws DownloadFailedException {
         HttpURLConnection conn = null;

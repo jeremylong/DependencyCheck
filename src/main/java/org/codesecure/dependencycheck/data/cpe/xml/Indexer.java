@@ -2,18 +2,18 @@ package org.codesecure.dependencycheck.data.cpe.xml;
 /*
  * This file is part of DependencyCheck.
  *
- * DependencyCheck is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * DependencyCheck is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
- * DependencyCheck is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * DependencyCheck is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with DependencyCheck. If not, see http://www.gnu.org/licenses/.
+ * You should have received a copy of the GNU General Public License along with
+ * DependencyCheck. If not, see http://www.gnu.org/licenses/.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -24,10 +24,10 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.FieldInfo.IndexOptions;
 import org.apache.lucene.index.Term;
-import org.codesecure.dependencycheck.data.lucene.LuceneUtils;
 import org.codesecure.dependencycheck.data.cpe.Entry;
 import org.codesecure.dependencycheck.data.cpe.Fields;
 import org.codesecure.dependencycheck.data.cpe.Index;
+import org.codesecure.dependencycheck.data.lucene.LuceneUtils;
 
 /**
  * The Indexer is used to convert a CPE Entry, retrieved from the CPE XML file,
@@ -51,7 +51,7 @@ public class Indexer extends Index implements EntrySaveDelegate {
     }
 
     /**
-     * Converst a CPE entry into a Lucene Document.
+     * Converts a CPE entry into a Lucene Document.
      *
      * @param entry a CPE Entry.
      * @return a Lucene Document containing a CPE Entry.

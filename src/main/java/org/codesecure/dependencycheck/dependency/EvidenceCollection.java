@@ -2,18 +2,18 @@ package org.codesecure.dependencycheck.dependency;
 /*
  * This file is part of DependencyCheck.
  *
- * DependencyCheck is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * DependencyCheck is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
- * DependencyCheck is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * DependencyCheck is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with DependencyCheck. If not, see http://www.gnu.org/licenses/.
+ * You should have received a copy of the GNU General Public License along with
+ * DependencyCheck. If not, see http://www.gnu.org/licenses/.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -31,7 +31,8 @@ import org.codesecure.dependencycheck.utils.Filter;
 public class EvidenceCollection implements Iterable<Evidence> {
 
     /**
-     * Used to iterate over high confidence evidence contained in the collection.
+     * Used to iterate over high confidence evidence contained in the
+     * collection.
      */
     private static final Filter<Evidence> HIGH_CONFIDENCE =
             new Filter<Evidence>() {
@@ -41,7 +42,8 @@ public class EvidenceCollection implements Iterable<Evidence> {
                 }
             };
     /**
-     * Used to iterate over medium confidence evidence contained in the collection.
+     * Used to iterate over medium confidence evidence contained in the
+     * collection.
      */
     private static final Filter<Evidence> MEDIUM_CONFIDENCE =
             new Filter<Evidence>() {
@@ -61,7 +63,8 @@ public class EvidenceCollection implements Iterable<Evidence> {
                 }
             };
     /**
-     * Used to iterate over evidence that has was used (aka read) from the collection.
+     * Used to iterate over evidence that has was used (aka read) from the
+     * collection.
      */
     private static final Filter<Evidence> EVIDENCE_USED =
             new Filter<Evidence>() {
@@ -73,7 +76,9 @@ public class EvidenceCollection implements Iterable<Evidence> {
 
     /**
      * Used to iterate over evidence of the specified confidence.
-     * @param confidence the confidence level for the evidence to be iterated over.
+     *
+     * @param confidence the confidence level for the evidence to be iterated
+     * over.
      * @return Iterable<Evidence>.
      */
     public final Iterable<Evidence> iterator(Evidence.Confidence confidence) {
@@ -98,6 +103,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
 
     /**
      * Adds evidence to the collection.
+     *
      * @param e Evidence.
      */
     public void addEvidence(Evidence e) {
@@ -119,16 +125,17 @@ public class EvidenceCollection implements Iterable<Evidence> {
     }
 
     /**
-     * Adds term to the weighting collection. The terms added here are used later
-     * to boost the score of other terms. This is a way of combining evidence from
-     * multiple sources to boost the confidence of the given evidence.
+     * Adds term to the weighting collection. The terms added here are used
+     * later to boost the score of other terms. This is a way of combining
+     * evidence from multiple sources to boost the confidence of the given
+     * evidence.
      *
-     * Example: The term 'Apache' is found in the manifest of a JAR and is added to the
-     * Collection. When we parse the package names within the JAR file we may add
-     * these package names to the "weighted" strings collection to boost the score
-     * in the Lucene query. That way when we construct the Lucene query we find the
-     * term Apache in the collection AND in the weighted strings; as such, we will
-     * boost the confidence of the term Apache.
+     * Example: The term 'Apache' is found in the manifest of a JAR and is added
+     * to the Collection. When we parse the package names within the JAR file we
+     * may add these package names to the "weighted" strings collection to boost
+     * the score in the Lucene query. That way when we construct the Lucene
+     * query we find the term Apache in the collection AND in the weighted
+     * strings; as such, we will boost the confidence of the term Apache.
      *
      * @param str to add to the weighting collection.
      */
@@ -148,6 +155,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
 
     /**
      * Returns the set of evidence.
+     *
      * @return the set of evidence.
      */
     public Set<Evidence> getEvidence() {
@@ -156,6 +164,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
 
     /**
      * Implements the iterator interface for the Evidence Collection.
+     *
      * @return an Iterator<Evidence>.
      */
     public Iterator<Evidence> iterator() {
@@ -164,6 +173,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
 
     /**
      * Used to determine if a given string was used (aka read).
+     *
      * @param text the string to search for.
      * @return whether or not the string was used.
      */
@@ -184,6 +194,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
     /**
      * Returns whether or not the collection contains evidence of a specified
      * Confidence.
+     *
      * @param confidence A Confidence value.
      * @return boolean.
      */
@@ -232,6 +243,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
 
     /**
      * Returns a string of evidence 'values'.
+     *
      * @return a string containing the evidence.
      */
     @Override
@@ -245,6 +257,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
 
     /**
      * Returns the number of elements in the EvidenceCollection.
+     *
      * @return the number of elements in the collection.
      */
     public int size() {

@@ -101,7 +101,7 @@ public class SettingsTest extends TestCase {
      * Test of getInt method, of class Settings.
      */
     @Test
-    public void testGetInt() {
+    public void testGetInt() throws InvalidSettingException {
         System.out.println("getInt");
         String key = "SomeNumber";
         int expResult = 85;
@@ -114,7 +114,7 @@ public class SettingsTest extends TestCase {
      * Test of getLong method, of class Settings.
      */
     @Test
-    public void testGetLong() {
+    public void testGetLong() throws InvalidSettingException {
         System.out.println("getLong");
         String key = "SomeNumber";
         long expResult = 300L;
@@ -127,7 +127,7 @@ public class SettingsTest extends TestCase {
      * Test of getBoolean method, of class Settings.
      */
     @Test
-    public void testGetBoolean() {
+    public void testGetBoolean() throws InvalidSettingException {
         System.out.println("getBoolean");
         String key = "SomeBoolean";
         Settings.setString(key, "false");

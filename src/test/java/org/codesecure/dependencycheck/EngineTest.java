@@ -4,7 +4,6 @@
  */
 package org.codesecure.dependencycheck;
 
-import org.codesecure.dependencycheck.data.lucene.BaseIndexTestCase;
 import org.codesecure.dependencycheck.reporting.ReportGenerator;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -17,10 +16,11 @@ import static org.junit.Assert.*;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class EngineTest extends BaseIndexTestCase {
+public class EngineTest {
 
-    public EngineTest(String testName) {
-        super(testName);
+    public EngineTest() throws Exception {
+        org.codesecure.dependencycheck.data.nvdcve.BaseIndexTestCase.ensureIndexExists();
+        org.codesecure.dependencycheck.data.cpe.BaseIndexTestCase.ensureIndexExists();
     }
 
     @BeforeClass

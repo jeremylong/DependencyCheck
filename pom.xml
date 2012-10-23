@@ -18,7 +18,7 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.codesecure</groupId>
@@ -62,6 +62,7 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
     </licenses>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>  
     </properties>
     <build>
         <resources>
@@ -78,6 +79,10 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                     <exclude>**/*.properties</exclude>
                     <exclude>**/*.gif</exclude>
                     <exclude>**/*.js</exclude>
+                    <exclude>**/schema/**/*.xsd</exclude>
+                    <exclude>**/schema/**/*.xml</exclude>
+                    <exclude>**/schema/**/*.bat</exclude>
+                    <exclude>**/schema/**/*.sh</exclude>
                 </excludes>
                 <filtering>false</filtering>
             </resource>
@@ -209,7 +214,23 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                             <value>${project.build.directory}/data/cpe</value>
                         </property>
                     </systemProperties>
+                    <excludes>
+                        <exclude>**/*IntegrationTest.java</exclude>
+                    </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.12.4</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -239,17 +260,17 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                             </reportSets>
                         </plugin>
                         <plugin>
-                          <groupId>org.codehaus.mojo</groupId>
-                          <artifactId>versions-maven-plugin</artifactId>
-                          <version>1.3.1</version>
-                          <reportSets>
-                            <reportSet>
-                              <reports>
-                                <report>dependency-updates-report</report>
-                                <report>plugin-updates-report</report>
-                              </reports>
-                            </reportSet>
-                          </reportSets>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>versions-maven-plugin</artifactId>
+                            <version>1.3.1</version>
+                            <reportSets>
+                                <reportSet>
+                                    <reports>
+                                        <report>dependency-updates-report</report>
+                                        <report>plugin-updates-report</report>
+                                    </reports>
+                                </reportSet>
+                            </reportSets>
                         </plugin>
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
@@ -304,6 +325,19 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                                 <enableRulesSummary>false</enableRulesSummary>
                                 <configLocation>src/main/config/checkstyle-checks.xml</configLocation>
                             </configuration>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-surefire-report-plugin</artifactId>
+                            <version>2.12.4</version>
+                            <reportSets>
+                                <reportSet>
+                                    <id>integration-tests</id>
+                                    <reports>
+                                        <report>failsafe-report-only</report>
+                                    </reports>
+                                </reportSet>
+                            </reportSets>
                         </plugin>
                     </reportPlugins>
                 </configuration>

@@ -2,18 +2,18 @@ package org.codesecure.dependencycheck.analyzer;
 /*
  * This file is part of DependencyCheck.
  *
- * DependencyCheck is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * DependencyCheck is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
- * DependencyCheck is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * DependencyCheck is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with DependencyCheck. If not, see http://www.gnu.org/licenses/.
+ * You should have received a copy of the GNU General Public License along with
+ * DependencyCheck. If not, see http://www.gnu.org/licenses/.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -46,6 +46,7 @@ public class FileNameAnalyzer implements Analyzer {
 
     /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
+     *
      * @return a list of file EXTENSIONS supported by this analyzer.
      */
     public Set<String> getSupportedExtensions() {
@@ -54,6 +55,7 @@ public class FileNameAnalyzer implements Analyzer {
 
     /**
      * Returns the name of the analyzer.
+     *
      * @return the name of the analyzer.
      */
     public String getName() {
@@ -62,8 +64,10 @@ public class FileNameAnalyzer implements Analyzer {
 
     /**
      * Returns whether or not this analyzer can process the given extension.
+     *
      * @param extension the file extension to test for support.
-     * @return whether or not the specified file extension is supported by tihs analyzer.
+     * @return whether or not the specified file extension is supported by tihs
+     * analyzer.
      */
     public boolean supportsExtension(String extension) {
         return true;
@@ -71,6 +75,7 @@ public class FileNameAnalyzer implements Analyzer {
 
     /**
      * Returns the phase that the analyzer is intended to run in.
+     *
      * @return the phase that the analyzer is intended to run in.
      */
     public AnalysisPhase getAnalysisPhase() {
@@ -91,8 +96,10 @@ public class FileNameAnalyzer implements Analyzer {
 
     /**
      * Determines type of the character passed in.
+     *
      * @param c a character
-     * @return a STRING_STATE representing whether the character is number, alpha, or other.
+     * @return a STRING_STATE representing whether the character is number,
+     * alpha, or other.
      */
     private STRING_STATE determineState(char c) {
         if (c >= '0' && c <= '9') {
@@ -110,7 +117,8 @@ public class FileNameAnalyzer implements Analyzer {
      * Collects information about the file such as hashsums.
      *
      * @param dependency the dependency to analyze.
-     * @throws AnalysisException is thrown if there is an error reading the JAR file.
+     * @throws AnalysisException is thrown if there is an error reading the JAR
+     * file.
      */
     public void analyze(Dependency dependency) throws AnalysisException {
 
@@ -119,7 +127,9 @@ public class FileNameAnalyzer implements Analyzer {
     }
 
     /**
-     * Analyzes the filename of the dependency and adds it to the evidence collections.
+     * Analyzes the filename of the dependency and adds it to the evidence
+     * collections.
+     *
      * @param dependency the dependency to analyze.
      */
     private void analyzeFileName(Dependency dependency) {
@@ -156,7 +166,6 @@ public class FileNameAnalyzer implements Analyzer {
                     fileNameEvidence, Evidence.Confidence.HIGH);
         }
     }
-
 
     /**
      * The initialize method does nothing for this Analyzer

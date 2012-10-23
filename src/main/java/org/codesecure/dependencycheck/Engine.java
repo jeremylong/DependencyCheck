@@ -2,18 +2,18 @@ package org.codesecure.dependencycheck;
 /*
  * This file is part of DependencyCheck.
  *
- * DependencyCheck is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * DependencyCheck is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
- * DependencyCheck is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * DependencyCheck is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with DependencyCheck. If not, see http://www.gnu.org/licenses/.
+ * You should have received a copy of the GNU General Public License along with
+ * DependencyCheck. If not, see http://www.gnu.org/licenses/.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -34,6 +34,9 @@ import org.codesecure.dependencycheck.analyzer.AnalysisPhase;
 import org.codesecure.dependencycheck.analyzer.Analyzer;
 import org.codesecure.dependencycheck.analyzer.AnalyzerService;
 import org.codesecure.dependencycheck.analyzer.ArchiveAnalyzer;
+import org.codesecure.dependencycheck.data.CachedWebDataSource;
+import org.codesecure.dependencycheck.data.UpdateException;
+import org.codesecure.dependencycheck.data.UpdateService;
 import org.codesecure.dependencycheck.utils.FileUtils;
 
 /**
@@ -64,6 +67,20 @@ public class Engine {
      * Creates a new Engine.
      */
     public Engine() {
+        doUpdates();
+        loadAnalyzers();
+    }
+
+    /**
+     * Creates a new Engine
+     *
+     * @param autoUpdate indicates whether or not data should be updated from
+     * the Internet.
+     */
+    public Engine(boolean autoUpdate) {
+        if (autoUpdate) {
+            doUpdates();
+        }
         loadAnalyzers();
     }
 
@@ -222,6 +239,22 @@ public class Engine {
                     ArchiveAnalyzer aa = (ArchiveAnalyzer) a;
                     aa.cleanup();
                 }
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    private void doUpdates() {
+        UpdateService service = UpdateService.getInstance();
+        Iterator<CachedWebDataSource> iterator = service.getDataSources();
+        while (iterator.hasNext()) {
+            CachedWebDataSource source = iterator.next();
+            try {
+                source.update();
+            } catch (UpdateException ex) {
+                Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, "Unable to update " + source.getClass().getName(), ex);
             }
         }
     }

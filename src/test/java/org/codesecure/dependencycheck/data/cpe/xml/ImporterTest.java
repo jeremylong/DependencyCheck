@@ -32,7 +32,7 @@ public class ImporterTest extends TestCase {
 
     /**
      * Test of all methods within class CPEHandler.
-     * @throws Exception is thrown when an excpetion occurs.
+     * @throws Exception is thrown when an excretion occurs.
      */
     public void testHandler() throws Exception {
         System.out.println("importXML");

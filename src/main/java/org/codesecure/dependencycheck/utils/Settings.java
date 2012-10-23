@@ -2,18 +2,18 @@ package org.codesecure.dependencycheck.utils;
 /*
  * This file is part of DependencyCheck.
  *
- * DependencyCheck is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * DependencyCheck is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
- * DependencyCheck is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * DependencyCheck is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with DependencyCheck. If not, see http://www.gnu.org/licenses/.
+ * You should have received a copy of the GNU General Public License along with
+ * DependencyCheck. If not, see http://www.gnu.org/licenses/.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -39,7 +39,8 @@ public class Settings {
     public abstract class KEYS {
 
         /**
-         * The properties key for the path where the CPE Lucene Index will be stored.
+         * The properties key for the path where the CPE Lucene Index will be
+         * stored.
          */
         public static final String CPE_INDEX = "cpe";
         /**
@@ -51,15 +52,43 @@ public class Settings {
          */
         public static final String CPE_META_URL = "cpe.meta.url";
         /**
-         * The properties key for the path where the CCE Lucene Index will be stored.
+         * The properties key for the path where the CCE Lucene Index will be
+         * stored.
          */
         public static final String CVE_INDEX = "cve";
+        /**
+         * The properties key for the URL to retrieve the "meta" data from about
+         * the CVE entries.
+         */
+        public static final String CVE_META_URL = "cve.url.meta";
+        /**
+         * The properties key for the URL to retrieve the recently modified and
+         * added CVE entries (last 8 days).
+         */
+        public static final String CVE_MODIFIED_URL = "cve.url.modified";
+        /**
+         * The properties key for the URL to retrieve the recently modified and
+         * added CVE entries (last 8 days).
+         */
+        public static final String CVE_MODIFIED_VALID_FOR_DAYS = "cve.url.modified.validfordays";
+        /**
+         * The properties key for the telling us how many cvr.url.* URLs exists.
+         * This is used in combination with CVE_BASE_URL to be able to retrieve
+         * the URLs for all of the files that make up the NVD CVE listing.
+         */
+        public static final String CVE_URL_COUNT = "cve.url.count";
+        /**
+         * The properties key for the "base" property key for the CVE URLs (e.g.
+         * cve.url.1, cve.url.2, cve.url.n).
+         */
+        public static final String CVE_BASE_URL = "cve.url.";
         /**
          * The properties key for the proxy url.
          */
         public static final String PROXY_URL = "proxy.url";
         /**
-         * The properties key for the proxy port - this must be an integer value.
+         * The properties key for the proxy port - this must be an integer
+         * value.
          */
         public static final String PROXY_PORT = "proxy.port";
         /**
@@ -72,7 +101,8 @@ public class Settings {
     private Properties props = null;
 
     /**
-     * Private contructor for the Settings class. This class loads the properties files.
+     * Private constructor for the Settings class. This class loads the
+     * properties files.
      */
     private Settings() {
         InputStream in = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);
@@ -84,9 +114,9 @@ public class Settings {
         }
     }
 
-
     /**
      * Sets a property value.
+     *
      * @param key the key for the property.
      * @param value the value for the property.
      */
@@ -95,14 +125,16 @@ public class Settings {
     }
 
     /**
-     * Merges a new properties file into the current properties. This
-     * method allows for the loading of a user provided properties file.<br/><br/>
+     * Merges a new properties file into the current properties. This method
+     * allows for the loading of a user provided properties file.<br/><br/>
      * Note: even if using this method - system properties will be loaded before
      * properties loaded from files.
      *
      * @param filePath the path to the properties file to merge.
-     * @throws FileNotFoundException is thrown when the filePath points to a non-existent file.
-     * @throws IOException is thrown when there is an exception loading/merging the properties.
+     * @throws FileNotFoundException is thrown when the filePath points to a
+     * non-existent file.
+     * @throws IOException is thrown when there is an exception loading/merging
+     * the properties.
      */
     public static void mergeProperties(String filePath) throws FileNotFoundException, IOException {
         FileInputStream fis = new FileInputStream(filePath);
@@ -110,13 +142,14 @@ public class Settings {
     }
 
     /**
-     * Merges a new properties file into the current properties. This
-     * method allows for the loading of a user provided properties file.<br/><br/>
+     * Merges a new properties file into the current properties. This method
+     * allows for the loading of a user provided properties file.<br/><br/>
      * Note: even if using this method - system properties will be loaded before
      * properties loaded from files.
      *
      * @param stream an Input Stream pointing at a properties file to merge.
-     * @throws IOException is thrown when there is an exception loading/merging the properties
+     * @throws IOException is thrown when there is an exception loading/merging
+     * the properties
      */
     public static void mergeProperties(InputStream stream) throws IOException {
         INSTANCE.props.load(stream);
@@ -125,8 +158,8 @@ public class Settings {
     /**
      * Returns a value from the properties file. If the value was specified as a
      * system property or passed in via the -Dprop=value argument - this method
-     * will return the value from the system properties before the values in
-     * the contained configuration file.
+     * will return the value from the system properties before the values in the
+     * contained configuration file.
      *
      * @param key the key to lookup within the properties file.
      * @param defaultValue the default value for the requested property.
@@ -143,8 +176,8 @@ public class Settings {
     /**
      * Returns a value from the properties file. If the value was specified as a
      * system property or passed in via the -Dprop=value argument - this method
-     * will return the value from the system properties before the values in
-     * the contained configuration file.
+     * will return the value from the system properties before the values in the
+     * contained configuration file.
      *
      * @param key the key to lookup within the properties file.
      * @return the property from the properties file.
@@ -154,40 +187,65 @@ public class Settings {
     }
 
     /**
-     * Returns an int value from the properties file. If the value was specified as a
-     * system property or passed in via the -Dprop=value argument - this method
-     * will return the value from the system properties before the values in
-     * the contained configuration file.
+     * Returns an int value from the properties file. If the value was specified
+     * as a system property or passed in via the -Dprop=value argument - this
+     * method will return the value from the system properties before the values
+     * in the contained configuration file.
      *
      * @param key the key to lookup within the properties file.
      * @return the property from the properties file.
+     * @throws InvalidSettingException is thrown if there is an error retrieving
+     * the setting.
      */
-    public static int getInt(String key) {
-        return Integer.parseInt(Settings.getString(key));
-    }
-    /**
-     * Returns a long value from the properties file. If the value was specified as a
-     * system property or passed in via the -Dprop=value argument - this method
-     * will return the value from the system properties before the values in
-     * the contained configuration file.
-     *
-     * @param key the key to lookup within the properties file.
-     * @return the property from the properties file.
-     */
-    public static long getLong(String key) {
-        return Long.parseLong(Settings.getString(key));
+    public static int getInt(String key) throws InvalidSettingException {
+        int value;
+        try {
+            value = Integer.parseInt(Settings.getString(key));
+        } catch (NumberFormatException ex) {
+            throw new InvalidSettingException("Could not convert property '" + key + "' to an int.", ex);
+        }
+        return value;
     }
 
     /**
-     * Returns a boolean value from the properties file. If the value was specified as a
-     * system property or passed in via the -Dprop=value argument - this method
-     * will return the value from the system properties before the values in
-     * the contained configuration file.
+     * Returns a long value from the properties file. If the value was specified
+     * as a system property or passed in via the -Dprop=value argument - this
+     * method will return the value from the system properties before the values
+     * in the contained configuration file.
      *
      * @param key the key to lookup within the properties file.
      * @return the property from the properties file.
+     * @throws InvalidSettingException is thrown if there is an error retrieving
+     * the setting.
      */
-    public static boolean getBoolean(String key) {
-        return Boolean.parseBoolean(Settings.getString(key));
+    public static long getLong(String key) throws InvalidSettingException {
+        long value;
+        try {
+            value = Long.parseLong(Settings.getString(key));
+        } catch (NumberFormatException ex) {
+            throw new InvalidSettingException("Could not convert property '" + key + "' to an int.", ex);
+        }
+        return value;
+    }
+
+    /**
+     * Returns a boolean value from the properties file. If the value was
+     * specified as a system property or passed in via the -Dprop=value argument
+     * - this method will return the value from the system properties before the
+     * values in the contained configuration file.
+     *
+     * @param key the key to lookup within the properties file.
+     * @return the property from the properties file.
+     * @throws InvalidSettingException is thrown if there is an error retrieving
+     * the setting.
+     */
+    public static boolean getBoolean(String key) throws InvalidSettingException {
+        boolean value;
+        try {
+            value = Boolean.parseBoolean(Settings.getString(key));
+        } catch (NumberFormatException ex) {
+            throw new InvalidSettingException("Could not convert property '" + key + "' to an int.", ex);
+        }
+        return value;
     }
 }

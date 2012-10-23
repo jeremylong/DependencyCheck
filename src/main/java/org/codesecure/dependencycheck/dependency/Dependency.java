@@ -2,18 +2,18 @@ package org.codesecure.dependencycheck.dependency;
 /*
  * This file is part of DependencyCheck.
  *
- * DependencyCheck is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * DependencyCheck is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
- * DependencyCheck is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * DependencyCheck is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with DependencyCheck. If not, see http://www.gnu.org/licenses/.
+ * You should have received a copy of the GNU General Public License along with
+ * DependencyCheck. If not, see http://www.gnu.org/licenses/.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -30,10 +30,9 @@ import org.codesecure.dependencycheck.utils.FileUtils;
 
 /**
  * A program dependency. This object is one of the core components within
- * DependencyCheck. It is used to collect information about the dependency
- * in the form of evidence. The Evidence is then used to determine if there
- * are any known, published, vulnerabilities associated with the program
- * dependency.
+ * DependencyCheck. It is used to collect information about the dependency in
+ * the form of evidence. The Evidence is then used to determine if there are any
+ * known, published, vulnerabilities associated with the program dependency.
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
@@ -88,10 +87,12 @@ public class Dependency {
         productEvidence = new EvidenceCollection();
         versionEvidence = new EvidenceCollection();
         identifiers = new ArrayList<Identifier>();
+        vulnerabilities = new ArrayList<Vulnerability>();
     }
 
     /**
      * Constructs a new Dependency object.
+     *
      * @param file the File to create the dependency object from.
      */
     public Dependency(File file) {
@@ -123,6 +124,7 @@ public class Dependency {
 
     /**
      * Sets the actual file path of the dependency on disk.
+     *
      * @param actualFilePath the file path of the dependency.
      */
     public void setActualFilePath(String actualFilePath) {
@@ -140,6 +142,7 @@ public class Dependency {
 
     /**
      * Sets the file path of the dependency.
+     *
      * @param filePath the file path of the dependency.
      */
     public void setFilePath(String filePath) {
@@ -147,9 +150,9 @@ public class Dependency {
     }
 
     /**
-     * <p>Gets the file path of the dependency.</p>
-     * <p><b>NOTE:</b> This may not be the actual path of the file on disk. The
-     * actual path of the file on disk can be obtained via the getActualFilePath().</p>
+     * <p>Gets the file path of the dependency.</p> <p><b>NOTE:</b> This may not
+     * be the actual path of the file on disk. The actual path of the file on
+     * disk can be obtained via the getActualFilePath().</p>
      *
      * @return the file path of the dependency.
      */
@@ -230,7 +233,8 @@ public class Dependency {
     }
 
     /**
-     * Adds an entry to the list of detected Identifiers for the dependency file.
+     * Adds an entry to the list of detected Identifiers for the dependency
+     * file.
      *
      * @param type the type of identifier (such as CPE).
      * @param value the value of the identifier.
@@ -308,8 +312,10 @@ public class Dependency {
     public void setAnalysisExceptions(List<Exception> analysisExceptions) {
         this.analysisExceptions = analysisExceptions;
     }
+
     /**
      * Adds an exception to the analysis exceptions collection.
+     *
      * @param ex an exception.
      */
     public void addAnalysisException(Exception ex) {
@@ -373,12 +379,6 @@ public class Dependency {
 
         String fnd = str.toLowerCase();
 
-        //TODO add the filename is analyzed and added as evidence
-        //TODO remove special characters from filename and check this (including spaces)
-        if (this.fileName != null && this.fileName.contains(fnd)) {
-            return true;
-        }
-
         if (vendorEvidence.containsUsedString(str)) {
             return true;
         }
@@ -389,6 +389,28 @@ public class Dependency {
             return true;
         }
         return false;
+    }
+    /**
+     * A list of vulnerabilities for this dependency
+     */
+    private List<Vulnerability> vulnerabilities;
+
+    /**
+     * Get the list of vulnerabilities
+     *
+     * @return the list of vulnerabilities
+     */
+    public List<Vulnerability> getVulnerabilities() {
+        return vulnerabilities;
+    }
+
+    /**
+     * Set the value of vulnerabilities
+     *
+     * @param vulnerabilities new value of vulnerabilities
+     */
+    public void setVulnerabilities(List<Vulnerability> vulnerabilities) {
+        this.vulnerabilities = vulnerabilities;
     }
 
     private void determineHashes(File file) {
@@ -404,5 +426,14 @@ public class Dependency {
         }
         this.setMd5sum(md5);
         this.setSha1sum(sha1);
+    }
+
+    /**
+     * Adds a vulnerability to the dependency.
+     *
+     * @param vulnerability a vulnerability outlining a vulnerability.
+     */
+    public void addVulnerability(Vulnerability vulnerability) {
+        this.vulnerabilities.add(vulnerability);
     }
 }

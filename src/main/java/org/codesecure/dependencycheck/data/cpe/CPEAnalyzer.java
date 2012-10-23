@@ -2,18 +2,18 @@ package org.codesecure.dependencycheck.data.cpe;
 /*
  * This file is part of DependencyCheck.
  *
- * DependencyCheck is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * DependencyCheck is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
- * DependencyCheck is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * DependencyCheck is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with DependencyCheck. If not, see http://www.gnu.org/licenses/.
+ * You should have received a copy of the GNU General Public License along with
+ * DependencyCheck. If not, see http://www.gnu.org/licenses/.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -64,7 +64,8 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
      * utilized within the CPE Names.
      */
     static final String CLEANSE_CHARACTER_RX = "[^A-Za-z0-9 ._-]";
-    /* A string representation of a regular expression used to remove all but
+    /*
+     * A string representation of a regular expression used to remove all but
      * alpha characters.
      */
     static final String CLEANSE_NONALPHA_RX = "[^A-Za-z]*";
@@ -89,7 +90,8 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
     /**
      * Opens the data source.
      *
-     * @throws IOException when the Lucene directory to be querried does not exist or is corrupt.
+     * @throws IOException when the Lucene directory to be querried does not
+     * exist or is corrupt.
      */
     public void open() throws IOException {
         cpe = new Index();
@@ -111,6 +113,7 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
 
     /**
      * Returns the status of the data source - is the index open.
+     *
      * @return true or false.
      */
     public boolean isOpen() {
@@ -119,6 +122,7 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
 
     /**
      * Ensures that the Lucene index is closed.
+     *
      * @throws Throwable when a throwable is thrown.
      */
     @Override
@@ -130,9 +134,9 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
     }
 
     /**
-     * Searches the data store of CPE entries, trying to identify the CPE for the given
-     * dependency based on the evidence contained within. The depencency passed in is
-     * updated with any identified CPE values.
+     * Searches the data store of CPE entries, trying to identify the CPE for
+     * the given dependency based on the evidence contained within. The
+     * depencency passed in is updated with any identified CPE values.
      *
      * @param dependency the dependency to search for CPE entries on.
      * @throws CorruptIndexException is thrown when the Lucene index is corrupt.
@@ -215,10 +219,10 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
     }
 
     /**
-     * Returns the text created by concatenating the text and the values from the
-     * EvidenceCollection (filtered for a specific confidence). This attempts to
-     * prevent duplicate terms from being added.<br/<br/>
-     * Note, if the evidence is longer then 200 characters it will be truncated.
+     * Returns the text created by concatenating the text and the values from
+     * the EvidenceCollection (filtered for a specific confidence). This
+     * attempts to prevent duplicate terms from being added.<br/<br/> Note, if
+     * the evidence is longer then 200 characters it will be truncated.
      *
      * @param text the base text.
      * @param ec an EvidenceCollection
@@ -244,7 +248,7 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
 //                if (value.length() > 200) {
 //                    sb.append(value.substring(0, 200)).append(' ');
 //                } else {
-                    sb.append(value).append(' ');
+                sb.append(value).append(' ');
 //                }
             }
         }
@@ -252,8 +256,8 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
     }
 
     /**
-     * Reduces the given confidence by one level. This returns LOW if the confidence
-     * passed in is not HIGH.
+     * Reduces the given confidence by one level. This returns LOW if the
+     * confidence passed in is not HIGH.
      *
      * @param c the confidence to reduce.
      * @return One less then the confidence passed in.
@@ -284,17 +288,19 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
     }
 
     /**
-     * <p>Searches the Lucene CPE index to identify possible CPE entries associated with
-     * the supplied vendor, product, and version.</p>
+     * <p>Searches the Lucene CPE index to identify possible CPE entries
+     * associated with the supplied vendor, product, and version.</p>
      *
-     * <p>If either the vendorWeightings or productWeightings lists have been populated
-     * this data is used to add weighting factors to the search.</p>
+     * <p>If either the vendorWeightings or productWeightings lists have been
+     * populated this data is used to add weighting factors to the search.</p>
      *
      * @param vendor the text used to search the vendor field.
      * @param product the text used to search the product field.
      * @param version the text used to search the version field.
-     * @param vendorWeightings a list of strings to use to add weighting factors to the vendor field.
-     * @param productWeightings Adds a list of strings that will be used to add weighting factors to the product search.
+     * @param vendorWeightings a list of strings to use to add weighting factors
+     * to the vendor field.
+     * @param productWeightings Adds a list of strings that will be used to add
+     * weighting factors to the product search.
      * @return a list of possible CPE values.
      * @throws CorruptIndexException when the Lucene index is corrupt.
      * @throws IOException when the Lucene index is not found.
@@ -323,18 +329,20 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
     }
 
     /**
-     * <p>Builds a Lucene search string by properly escaping data and constructing a valid search query.</p>
+     * <p>Builds a Lucene search string by properly escaping data and
+     * constructing a valid search query.</p>
      *
-     * <p>If either the possibleVendor or possibleProducts lists have been populated this
-     * data is used to add weighting factors to the search string generated.</p>
+     * <p>If either the possibleVendor or possibleProducts lists have been
+     * populated this data is used to add weighting factors to the search string
+     * generated.</p>
      *
      * @param vendor text to search the vendor field.
      * @param product text to search the product field.
      * @param version text to search the version field.
-     * @param vendorWeighting a list of strings to apply to the vendor
-     * to boost the terms weight.
-     * @param produdctWeightings a list of strings to apply to the product
-     * to boost the terms weight.
+     * @param vendorWeighting a list of strings to apply to the vendor to boost
+     * the terms weight.
+     * @param produdctWeightings a list of strings to apply to the product to
+     * boost the terms weight.
      * @return the Lucene query.
      */
     protected String buildSearch(String vendor, String product, String version,
@@ -379,12 +387,13 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
 
     /**
      * This method constructs a Lucene query for a given field. The searchText
-     * is split into seperate words and if the word is within the list of weighted
-     * words then an additional weighting is applied to the term as it is appended
-     * into the query.
+     * is split into seperate words and if the word is within the list of
+     * weighted words then an additional weighting is applied to the term as it
+     * is appended into the query.
      *
      * @param sb a StringBuilder that the query text will be appended to.
-     * @param field the field within the Lucene index that the query is searching.
+     * @param field the field within the Lucene index that the query is
+     * searching.
      * @param searchText text used to construct the query.
      * @param weightedText a list of terms that will be considered higher
      * importance when searching.
@@ -427,7 +436,8 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
     }
 
     /**
-     * Removes characters from the input text that are not used within the CPE index.
+     * Removes characters from the input text that are not used within the CPE
+     * index.
      *
      * @param text is the text to remove the characters from.
      * @return the text having removed some characters.
@@ -455,9 +465,9 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
     }
 
     /**
-     * Ensures that the CPE Identified matches the dependency. This validates that
-     * the product, vendor, and version information for the CPE are contained within
-     * the dependencies evidence.
+     * Ensures that the CPE Identified matches the dependency. This validates
+     * that the product, vendor, and version information for the CPE are
+     * contained within the dependencies evidence.
      *
      * @param entry a CPE entry.
      * @param dependency the dependency that the CPE entries could be for.
@@ -477,10 +487,12 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
     }
 
     /**
-     * Analyzes a dependency and attempts to determine if there are any CPE identifiers
-     * for this dependency.
+     * Analyzes a dependency and attempts to determine if there are any CPE
+     * identifiers for this dependency.
+     *
      * @param dependency The Dependency to analyze.
-     * @throws AnalysisException is thrown if there is an issue analyzing the dependency.
+     * @throws AnalysisException is thrown if there is an issue analyzing the
+     * dependency.
      */
     public void analyze(Dependency dependency) throws AnalysisException {
         try {
@@ -496,6 +508,7 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
 
     /**
      * Returns true because this analyzer supports all dependency types.
+     *
      * @return true.
      */
     public Set<String> getSupportedExtensions() {
@@ -504,6 +517,7 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
 
     /**
      * Returns the name of this analyzer.
+     *
      * @return the name of this analyzer.
      */
     public String getName() {
@@ -512,6 +526,7 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
 
     /**
      * Returns true because this analyzer supports all dependency types.
+     *
      * @param extension the file extension of the dependency being analyzed.
      * @return true.
      */
@@ -521,6 +536,7 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
 
     /**
      * Returns the analysis phase that this analyzer should run in.
+     *
      * @return the analysis phase that this analyzer should run in.
      */
     public AnalysisPhase getAnalysisPhase() {
@@ -529,6 +545,7 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
 
     /**
      * Opens the CPE Lucene Index.
+     *
      * @throws Exception is thrown if there is an issue opening the index.
      */
     public void initialize() throws Exception {

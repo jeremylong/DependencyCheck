@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.io.File;
 import org.codesecure.dependencycheck.dependency.Dependency;
 import java.util.HashMap;
-import org.codesecure.dependencycheck.data.lucene.BaseIndexTestCase;
+import org.codesecure.dependencycheck.data.cpe.BaseIndexTestCase;
 import java.util.Map;
 import org.codesecure.dependencycheck.dependency.Evidence.Confidence;
 import org.junit.After;

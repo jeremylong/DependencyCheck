@@ -2,18 +2,18 @@ package org.codesecure.dependencycheck.data.lucene;
 /*
  * This file is part of DependencyCheck.
  *
- * DependencyCheck is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * DependencyCheck is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
- * DependencyCheck is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * DependencyCheck is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with DependencyCheck. If not, see http://www.gnu.org/licenses/.
+ * You should have received a copy of the GNU General Public License along with
+ * DependencyCheck. If not, see http://www.gnu.org/licenses/.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -32,7 +32,8 @@ import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.util.Version;
 
 /**
- * The base Index for other index objects. Implements the open and close methods.
+ * The base Index for other index objects. Implements the open and close
+ * methods.
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
@@ -65,6 +66,7 @@ public abstract class AbstractIndex {
 
     /**
      * Opens the CPE Index.
+     *
      * @throws IOException is thrown if an IOException occurs opening the index.
      */
     public void open() throws IOException {
@@ -121,6 +123,7 @@ public abstract class AbstractIndex {
 
     /**
      * Returns the status of the data source - is the index open.
+     *
      * @return true or false.
      */
     public boolean isOpen() {
@@ -146,7 +149,8 @@ public abstract class AbstractIndex {
      *
      * @return an IndexWriter.
      * @throws CorruptIndexException is thrown if the Lucene Index is corrupt.
-     * @throws LockObtainFailedException is thrown if there is an exception obtaining a lock on the Lucene index.
+     * @throws LockObtainFailedException is thrown if there is an exception
+     * obtaining a lock on the Lucene index.
      * @throws IOException is thrown if an IOException occurs opening the index.
      */
     public IndexWriter getIndexWriter() throws CorruptIndexException, LockObtainFailedException, IOException {
@@ -158,6 +162,7 @@ public abstract class AbstractIndex {
 
     /**
      * Opens the Lucene Index for reading.
+     *
      * @throws CorruptIndexException is thrown if the index is corrupt.
      * @throws IOException is thrown if there is an exception reading the index.
      */
@@ -170,6 +175,7 @@ public abstract class AbstractIndex {
 
     /**
      * Returns an IndexSearcher for the Lucene Index.
+     *
      * @return an IndexSearcher.
      * @throws CorruptIndexException is thrown if the index is corrupt.
      * @throws IOException is thrown if there is an exception reading the index.
@@ -186,6 +192,7 @@ public abstract class AbstractIndex {
 
     /**
      * Returns an Analyzer for the Lucene Index.
+     *
      * @return an Analyzer.
      */
     public Analyzer getAnalyzer() {
@@ -197,6 +204,7 @@ public abstract class AbstractIndex {
 
     /**
      * Gets the directory that contains the Lucene Index.
+     *
      * @return a Lucene Directory.
      * @throws IOException is thrown when an IOException occurs.
      */
@@ -204,6 +212,7 @@ public abstract class AbstractIndex {
 
     /**
      * Creates the Lucene Analyzer used when indexing and searching the index.
+     *
      * @return a Lucene Analyzer.
      */
     public abstract Analyzer createAnalyzer();

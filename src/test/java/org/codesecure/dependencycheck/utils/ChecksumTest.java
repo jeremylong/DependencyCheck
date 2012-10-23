@@ -32,7 +32,7 @@ public class ChecksumTest extends TestCase {
 
     /**
      * Test of getChecksum method, of class Checksum.
-     * @throws Exception thrown when an excpetion occurs.
+     * @throws Exception thrown when an exception occurs.
      */
     @Test
     public void testGetChecksum() throws Exception {

@@ -2,18 +2,18 @@ package org.codesecure.dependencycheck.utils;
 /*
  * This file is part of DependencyCheck.
  *
- * DependencyCheck is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * DependencyCheck is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
- * DependencyCheck is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * DependencyCheck is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with DependencyCheck. If not, see http://www.gnu.org/licenses/.
+ * You should have received a copy of the GNU General Public License along with
+ * DependencyCheck. If not, see http://www.gnu.org/licenses/.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -110,10 +110,12 @@ public final class CliParser {
 
     /**
      * Validates whether or not the path(s) points at a file that exists; if the
-     * path(s) does not point to an existing file a FileNotFoundException is thrown.
+     * path(s) does not point to an existing file a FileNotFoundException is
+     * thrown.
      *
      * @param paths the paths to validate if they exists
-     * @throws FileNoteFoundException is thrown if one of the paths being validated does not exist.
+     * @throws FileNoteFoundException is thrown if one of the paths being
+     * validated does not exist.
      */
     private void validatePathExists(String[] paths) throws FileNotFoundException {
         for (String path : paths) {
@@ -123,10 +125,12 @@ public final class CliParser {
 
     /**
      * Validates whether or not the path points at a file that exists; if the
-     * path does not point to an existing file a FileNotFoundException is thrown.
+     * path does not point to an existing file a FileNotFoundException is
+     * thrown.
      *
      * @param paths the paths to validate if they exists
-     * @throws FileNoteFoundException is thrown if the path being validated does not exist.
+     * @throws FileNoteFoundException is thrown if the path being validated does
+     * not exist.
      */
     private void validatePathExists(String path) throws FileNotFoundException {
         File f = new File(path);
@@ -250,7 +254,8 @@ public final class CliParser {
     }
 
     /**
-     * Retrieves the file command line parameter(s) specified for the 'cpe' argument.
+     * Retrieves the file command line parameter(s) specified for the 'cpe'
+     * argument.
      *
      * @return the file paths specified on the command line
      */
@@ -259,7 +264,8 @@ public final class CliParser {
     }
 
     /**
-     * Retrieves the file command line parameter(s) specified for the 'scan' argument.
+     * Retrieves the file command line parameter(s) specified for the 'scan'
+     * argument.
      *
      * @return the file paths specified on the command line for scan
      */
@@ -269,7 +275,9 @@ public final class CliParser {
     }
 
     /**
-     * returns the directory to write the reports to specified on the command line.
+     * returns the directory to write the reports to specified on the command
+     * line.
+     *
      * @return the path to the reports directory.
      */
     public String getReportDirectory() {
@@ -278,6 +286,7 @@ public final class CliParser {
 
     /**
      * Returns the application name specified on the command line.
+     *
      * @return the applicatoin name.
      */
     public String getApplicationName() {
@@ -287,7 +296,7 @@ public final class CliParser {
     /**
      * <p>Prints the manifest information to standard output:</p>
      * <ul><li>Implementation-Title: ${pom.name}</li>
-     *     <li>Implementation-Version: ${pom.version}</li></ul>
+     * <li>Implementation-Version: ${pom.version}</li></ul>
      */
     public void printVersionInfo() {
         String version = String.format("%s version %s",
@@ -297,8 +306,8 @@ public final class CliParser {
     }
 
     /**
-     * Checks if the auto update feature has been disabled. If it has been disabled
-     * via the command line this will return false.
+     * Checks if the auto update feature has been disabled. If it has been
+     * disabled via the command line this will return false.
      *
      * @return if auto-update is allowed.
      */
@@ -321,35 +330,43 @@ public final class CliParser {
          */
         public static final String SCAN_SHORT = "s";
         /**
-         * The long CLI argument name specifing the path to the CPE.XML file to import
+         * The long CLI argument name specifing the path to the CPE.XML file to
+         * import
          */
         public static final String CPE = "cpe";
         /**
-         * The short CLI argument name specifing the path to the CPE.XML file to import
+         * The short CLI argument name specifing the path to the CPE.XML file to
+         * import
          */
         public static final String CPE_SHORT = "c";
         /**
-         * The long CLI argument name specifing that the CPE/CVE/etc. data should not be automatically updated.
+         * The long CLI argument name specifing that the CPE/CVE/etc. data
+         * should not be automatically updated.
          */
         public static final String DISABLE_AUTO_UPDATE = "noupdate";
         /**
-         * The short CLI argument name specifing that the CPE/CVE/etc. data should not be automatically updated.
+         * The short CLI argument name specifing that the CPE/CVE/etc. data
+         * should not be automatically updated.
          */
         public static final String DISABLE_AUTO_UPDATE_SHORT = "n";
         /**
-         * The long CLI argument name specifing the directory to write the reports to.
+         * The long CLI argument name specifing the directory to write the
+         * reports to.
          */
         public static final String OUT = "out";
         /**
-         * The short CLI argument name specifing the directory to write the reports to.
+         * The short CLI argument name specifing the directory to write the
+         * reports to.
          */
         public static final String OUT_SHORT = "o";
         /**
-         * The long CLI argument name specifing the name of the application to be scanned.
+         * The long CLI argument name specifing the name of the application to
+         * be scanned.
          */
         public static final String APPNAME = "app";
         /**
-         * The short CLI argument name specifing the name of the application to be scanned.
+         * The short CLI argument name specifing the name of the application to
+         * be scanned.
          */
         public static final String APPNAME_SHORT = "a";
         /**
@@ -377,11 +394,13 @@ public final class CliParser {
          */
         public static final String ADVANCED_HELP = "advancedhelp";
         /**
-         * The short CLI argument name for setting the location of an additional properties file.
+         * The short CLI argument name for setting the location of an additional
+         * properties file.
          */
         public static final String PROP_SHORT = "p";
         /**
-         * The CLI argument name for setting the location of an additional properties file.
+         * The CLI argument name for setting the location of an additional
+         * properties file.
          */
         public static final String PROP = "propertyfile";
     }

@@ -2,18 +2,18 @@
 ^/\*\s*$
 ^ \* This file is part of DependencyCheck\.\s*$
 ^ \*\s*$
-^ \* DependencyCheck is free software\: you can redistribute it and/or modify\s*$
-^ \* it under the terms of the GNU General Public License as published by\s*$
-^ \* the Free Software Foundation, either version 3 of the License, or\s*$
-^ \* \(at your option\) any later version\.\s*$
+^ \* DependencyCheck is free software\: you can redistribute it and/or modify it\s*$
+^ \* under the terms of the GNU General Public License as published by the Free\s*$
+^ \* Software Foundation, either version 3 of the License, or \(at your option\) any\s*$
+^ \* later version\.
 ^ \*\s*$
-^ \* DependencyCheck is distributed in the hope that it will be useful,\s*$
-^ \* but WITHOUT ANY WARRANTY\; without even the implied warranty of\s*$
-^ \* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE\. See the\s*$
-^ \* GNU General Public License for more details\.\s*$
-^ \*\s*
-^ \* You should have received a copy of the GNU General Public License
-^ \* along with DependencyCheck\. If not, see http://www.gnu.org/licenses/\.\s*$
+^ \* DependencyCheck is distributed in the hope that it will be useful, but\s*$
+^ \* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or\s*$
+^ \* FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more\s*$
+^ \* details\.\s*$
 ^ \*\s*$
-^ \* Copyright \(c\) 2012 Jeremy Long. All Rights Reserved\.\s*$
+^ \* You should have received a copy of the GNU General Public License along with\s*$
+^ \* DependencyCheck\. If not, see http://www.gnu.org/licenses/\.\s*$
+^ \*\s*$
+^ \* Copyright \(c\) 2012 Jeremy Long\. All Rights Reserved\.\s*$
 ^ \*/\s*$

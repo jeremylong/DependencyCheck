@@ -2,18 +2,18 @@ package org.codesecure.dependencycheck.dependency;
 /*
  * This file is part of DependencyCheck.
  *
- * DependencyCheck is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * DependencyCheck is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
- * DependencyCheck is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * DependencyCheck is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with DependencyCheck. If not, see http://www.gnu.org/licenses/.
+ * You should have received a copy of the GNU General Public License along with
+ * DependencyCheck. If not, see http://www.gnu.org/licenses/.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -178,6 +178,7 @@ public class Evidence {
 
     /**
      * Implements the hashCode for Evidence.
+     *
      * @return hash code.
      */
     @Override
@@ -192,6 +193,7 @@ public class Evidence {
 
     /**
      * Implements equals for Evidence.
+     *
      * @param that an object to check the equality of.
      * @return whether the two objects are equal.
      */
@@ -210,7 +212,9 @@ public class Evidence {
     }
 
     /**
-     * Simple equality test for use within the equals method. This does a case insensitive compare.
+     * Simple equality test for use within the equals method. This does a case
+     * insensitive compare.
+     *
      * @param l a string to compare.
      * @param r another string to compare.
      * @return whether the two strings are the same.

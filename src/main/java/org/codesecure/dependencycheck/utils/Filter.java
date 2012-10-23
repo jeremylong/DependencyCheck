@@ -6,12 +6,12 @@ import java.util.NoSuchElementException;
 /*
  * This is an abstract filter that can be used to filter iterable list.
  *
- * This Filter class was copied from: http://erikras.com/2008/01/18/the-filter-pattern-java-conditional-abstraction-with-iterables/
+ * This Filter class was copied from:
+ * http://erikras.com/2008/01/18/the-filter-pattern-java-conditional-abstraction-with-iterables/
  *
- * Erik Rasmussen - © 2006 - 2012 All Rights Reserved.
- * @author Erik Rasmussen https://plus.google.com/115403795880834599019/?rel=author
+ * Erik Rasmussen - © 2006 - 2012 All Rights Reserved. @author Erik Rasmussen
+ * https://plus.google.com/115403795880834599019/?rel=author
  */
-
 public abstract class Filter<T> {
 
     public abstract boolean passes(T object);

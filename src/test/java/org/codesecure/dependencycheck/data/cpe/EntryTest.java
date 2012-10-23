@@ -4,7 +4,6 @@
  */
 package org.codesecure.dependencycheck.data.cpe;
 
-import org.codesecure.dependencycheck.data.cpe.Entry;
 import junit.framework.TestCase;
 
 /**

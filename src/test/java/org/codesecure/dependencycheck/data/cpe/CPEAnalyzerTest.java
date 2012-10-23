@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Set;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryParser.ParseException;
-import org.codesecure.dependencycheck.data.lucene.BaseIndexTestCase;
 import org.codesecure.dependencycheck.dependency.Dependency;
 import org.codesecure.dependencycheck.analyzer.JarAnalyzer;
 import org.codesecure.dependencycheck.dependency.Evidence;
