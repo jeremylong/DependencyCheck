@@ -112,7 +112,7 @@ public class Downloader {
                 int timeout = Settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT);
                 conn.setConnectTimeout(timeout);
             }
-
+            conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
             conn.connect();
         } catch (IOException ex) {
             try {
@@ -124,11 +124,10 @@ public class Downloader {
             }
             throw new DownloadFailedException("Error downloading file.", ex);
         }
-
+        String encoding = conn.getContentEncoding();
+        
         BufferedOutputStream writer = null;
         try {
-            //the following times out on some systems because the CPE is big.
-            //InputStream reader = url.openStream();
             InputStream reader;
             if (unzip) {
                 reader = new GZIPInputStream(conn.getInputStream());

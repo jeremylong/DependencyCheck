@@ -417,5 +417,11 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                 </exclusion>
             </exclusions>
         </dependency>
+        <!--
+        <dependency>
+            <groupId>org.fusesource.hawtdb</groupId>
+            <artifactId>hawtdb</artifactId>
+            <version>1.6</version>
+        </dependency>-->
     </dependencies>
 </project>

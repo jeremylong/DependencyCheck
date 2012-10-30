@@ -121,13 +121,16 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
             for (NvdCveUrl cve : update.values()) {
                 if (cve.getNeedsUpdate()) {
                     count += 1;
-                    Logger.getLogger(Index.class.getName()).log(Level.WARNING, "Updating NVD CVE (" + count + " of " + maxUpdates + ") :" + cve.getUrl());
+                    Logger.getLogger(Index.class.getName()).log(Level.WARNING, "Updating NVD CVE (" + count + " of " + maxUpdates + ")");
                     URL url = new URL(cve.getUrl());
                     File outputPath = null;
                     try {
+                        Logger.getLogger(Index.class.getName()).log(Level.WARNING, "Downloading " + cve.getUrl());
                         outputPath = File.createTempFile("cve" + cve.getId() + "_", ".xml");
                         Downloader.fetchFile(url, outputPath, false);
+                        Logger.getLogger(Index.class.getName()).log(Level.WARNING, "Processing " + cve.getUrl());
                         Importer.importXML(outputPath.toString());
+                        Logger.getLogger(Index.class.getName()).log(Level.WARNING, "Completed updated " + count + " of " + maxUpdates);
                     } catch (FileNotFoundException ex) {
                         //Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
                         throw new UpdateException(ex);

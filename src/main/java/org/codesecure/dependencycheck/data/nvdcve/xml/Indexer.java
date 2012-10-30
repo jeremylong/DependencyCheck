@@ -106,7 +106,7 @@ public class Indexer extends Index implements EntrySaveDelegate {
         doc.add(name);
 
         Field description = new Field(Fields.DESCRIPTION, vulnerability.getSummary(), Field.Store.NO, Field.Index.ANALYZED);
-        name.setIndexOptions(IndexOptions.DOCS_ONLY);
+        description.setIndexOptions(IndexOptions.DOCS_ONLY);
         doc.add(description);
 
 
