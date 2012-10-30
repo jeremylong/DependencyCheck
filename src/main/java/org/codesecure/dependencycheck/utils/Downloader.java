@@ -31,6 +31,7 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.InflaterInputStream;
 
 /**
  * A utility to download files from the Internet.
@@ -129,8 +130,10 @@ public class Downloader {
         BufferedOutputStream writer = null;
         try {
             InputStream reader;
-            if (unzip) {
+            if (unzip || (encoding != null && "gzip".equalsIgnoreCase(encoding))) {
                 reader = new GZIPInputStream(conn.getInputStream());
+            } else if (encoding != null && "deflate".equalsIgnoreCase(encoding)) {
+                reader = new InflaterInputStream(conn.getInputStream());
             } else {
                 reader = conn.getInputStream();
             }

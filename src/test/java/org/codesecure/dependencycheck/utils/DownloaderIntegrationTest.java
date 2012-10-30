@@ -52,7 +52,7 @@ public class DownloaderIntegrationTest {
 //        Settings.setString(Settings.KEYS.PROXY_URL, "127.0.0.1");
 
         //URL url = new URL(Settings.getString(Settings.KEYS.CPE_URL));
-        URL url = new URL("http://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-modified.xml");
+        URL url = new URL("http://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-2010.xml");
 
         String outputPath = "target\\downloaded_cpe.xml";
         Downloader.fetchFile(url, outputPath);
