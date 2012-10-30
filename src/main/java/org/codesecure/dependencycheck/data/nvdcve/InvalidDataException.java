@@ -24,7 +24,7 @@ package org.codesecure.dependencycheck.data.nvdcve;
  *
  * @author Jeremy
  */
-class InvalidDataException extends Exception {
+public class InvalidDataException extends Exception {
 
     /**
      * Creates an InvalidDataException

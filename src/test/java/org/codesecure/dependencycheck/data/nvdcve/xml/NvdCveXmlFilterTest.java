@@ -12,10 +12,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.MalformedURLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
+import org.apache.lucene.index.CorruptIndexException;
+import org.codesecure.dependencycheck.data.nvdcve.InvalidDataException;
 import org.codesecure.dependencycheck.data.nvdcve.generated.VulnerabilityType;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -58,20 +62,42 @@ public class NvdCveXmlFilterTest {
      * Test of process method, of class NvdCveXmlFilter.
      */
     @Test
-    public void testFilter() throws JAXBException, SAXException, ParserConfigurationException, MalformedURLException, IOException {
-        System.out.println("filter");
-        
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        factory.setNamespaceAware(true);
-        XMLReader reader = factory.newSAXParser().getXMLReader();
-        
-        JAXBContext context = JAXBContext.newInstance("org.codesecure.dependencycheck.data.nvdcve.generated");
-        NvdCveXmlFilter filter = new NvdCveXmlFilter(context);
+    public void testFilter() throws InvalidDataException {
+        Indexer indexer = null;
+        try {
+            System.out.println("filter");
+            
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            XMLReader reader = factory.newSAXParser().getXMLReader();
+            
+            JAXBContext context = JAXBContext.newInstance("org.codesecure.dependencycheck.data.nvdcve.generated");
+            NvdCveXmlFilter filter = new NvdCveXmlFilter(context);
+            
+            indexer = new Indexer();
+            indexer.openIndexWriter();
 
-        reader.setContentHandler(filter);
-        File file = new File(this.getClass().getClassLoader().getResource("nvdcve-2.0-2012.xml").getPath());
-        Reader fileReader = new FileReader(file);
-        InputSource is = new InputSource(fileReader);
-        reader.parse(is);
+            filter.registerSaveDelegate(indexer);
+            
+            reader.setContentHandler(filter);
+            File file = new File(this.getClass().getClassLoader().getResource("nvdcve-2.0-2012.xml").getPath());
+            Reader fileReader = new FileReader(file);
+            InputSource is = new InputSource(fileReader);
+            reader.parse(is);
+        } catch (JAXBException ex) {
+            throw new InvalidDataException("JAXBException", ex);
+        } catch (SAXException ex) {
+            throw new InvalidDataException("SAXException", ex);
+        } catch (ParserConfigurationException ex) {
+            throw new InvalidDataException("ParserConfigurationException", ex);
+        } catch (CorruptIndexException ex) {
+            throw new InvalidDataException("CorruptIndexException", ex);
+        } catch (IOException ex) {
+            throw new InvalidDataException("IOException", ex);
+        } finally {
+            if (indexer != null) {
+                indexer.close();
+            }
+        }
     }
 }

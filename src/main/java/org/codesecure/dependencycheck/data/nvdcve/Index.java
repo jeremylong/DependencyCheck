@@ -115,7 +115,7 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
                 }
             }
             if (maxUpdates > 3) {
-                Logger.getLogger(Index.class.getName()).log(Level.WARNING, "NVD CVE requires several updates. This could take a couple of hours. To avoid this in the future, ensure that an update is run at least every seven days.");
+                Logger.getLogger(Index.class.getName()).log(Level.WARNING, "NVD CVE requires several updates; this could take a couple of minutes.");
             }
             int count = 0;
             for (NvdCveUrl cve : update.values()) {

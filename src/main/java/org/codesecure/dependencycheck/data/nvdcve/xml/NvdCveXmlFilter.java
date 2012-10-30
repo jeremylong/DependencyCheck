@@ -222,9 +222,9 @@ public class NvdCveXmlFilter extends XMLFilterImpl {
 
                 // then retrieve the fully unmarshalled object
                 try {
-                    JAXBElement<VulnerabilityType> result = (JAXBElement<VulnerabilityType>) unmarshallerHandler.getResult();
-                    VulnerabilityType entry = result.getValue();
                     if (saveDelegate != null) {
+                        JAXBElement<VulnerabilityType> result = (JAXBElement<VulnerabilityType>) unmarshallerHandler.getResult();
+                        VulnerabilityType entry = result.getValue();
                         saveDelegate.saveEntry(entry);
                     }
                 } catch (JAXBException je) { //we can continue with this exception.

@@ -25,6 +25,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
+import org.apache.lucene.index.CorruptIndexException;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -54,34 +55,55 @@ public class Importer {
      * @throws JAXBException is thrown when there is a JAXBException.
      * @throws SAXException is thrown when there is a SAXException.
      */
-    public static void importXML(File file) throws FileNotFoundException, IOException, JAXBException,
-            ParserConfigurationException, SAXException {
-
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        factory.setNamespaceAware(true);
-        XMLReader reader = factory.newSAXParser().getXMLReader();
-
-        JAXBContext context = JAXBContext.newInstance("org.codesecure.dependencycheck.data.nvdcve.generated");
-        NvdCveXmlFilter filter = new NvdCveXmlFilter(context);
-
-        Indexer indexer = new Indexer();
-        indexer.openIndexWriter();
-
-        filter.registerSaveDelegate(indexer);
-
-        reader.setContentHandler(filter);
-        Reader fileReader = new FileReader(file);
-        InputSource is = new InputSource(fileReader);
+    public static void importXML(File file) {
+        NvdCveParser indexer = null;
         try {
-            reader.parse(is);
+
+            indexer = new NvdCveParser();
+
+            indexer.openIndexWriter();
+
+
+            indexer.parse(file);
+
+        } catch (CorruptIndexException ex) {
+            Logger.getLogger(Importer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(Importer.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SAXException ex) {
-            Logger.getLogger(Importer.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            indexer.close();
+            if (indexer != null) {
+                indexer.close();
+            }
         }
     }
+//    public static void importXML(File file) throws FileNotFoundException, IOException, JAXBException,
+//            ParserConfigurationException, SAXException {
+//
+//        SAXParserFactory factory = SAXParserFactory.newInstance();
+//        factory.setNamespaceAware(true);
+//        XMLReader reader = factory.newSAXParser().getXMLReader();
+//
+//        JAXBContext context = JAXBContext.newInstance("org.codesecure.dependencycheck.data.nvdcve.generated");
+//        NvdCveXmlFilter filter = new NvdCveXmlFilter(context);
+//
+//        Indexer indexer = new Indexer();
+//        indexer.openIndexWriter();
+//
+//        filter.registerSaveDelegate(indexer);
+//
+//        reader.setContentHandler(filter);
+//        Reader fileReader = new FileReader(file);
+//        InputSource is = new InputSource(fileReader);
+//        try {
+//            reader.parse(is);
+//        } catch (IOException ex) {
+//            Logger.getLogger(Importer.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (SAXException ex) {
+//            Logger.getLogger(Importer.class.getName()).log(Level.SEVERE, null, ex);
+//        } finally {
+//            indexer.close();
+//        }
+//    }
 
     /**
      * Imports the CPE XML File into the Lucene Index.
