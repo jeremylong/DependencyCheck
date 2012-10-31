@@ -26,8 +26,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.analysis.PerFieldAnalyzerWrapper;
@@ -42,7 +40,6 @@ import org.codesecure.dependencycheck.data.nvdcve.xml.Importer;
 import org.codesecure.dependencycheck.utils.DownloadFailedException;
 import org.codesecure.dependencycheck.utils.Downloader;
 import org.codesecure.dependencycheck.utils.Settings;
-import org.xml.sax.SAXException;
 
 /**
  * The Index class is used to utilize and maintain the NVD CVE Index.
@@ -132,15 +129,6 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
                         Importer.importXML(outputPath.toString());
                         Logger.getLogger(Index.class.getName()).log(Level.WARNING, "Completed updated " + count + " of " + maxUpdates);
                     } catch (FileNotFoundException ex) {
-                        //Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
-                        throw new UpdateException(ex);
-                    } catch (JAXBException ex) {
-                        //Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
-                        throw new UpdateException(ex);
-                    } catch (ParserConfigurationException ex) {
-                        //Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
-                        throw new UpdateException(ex);
-                    } catch (SAXException ex) {
                         //Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
                         throw new UpdateException(ex);
                     } catch (IOException ex) {

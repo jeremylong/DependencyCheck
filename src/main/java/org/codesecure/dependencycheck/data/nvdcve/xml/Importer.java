@@ -21,14 +21,7 @@ package org.codesecure.dependencycheck.data.nvdcve.xml;
 import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 import org.apache.lucene.index.CorruptIndexException;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 /**
  * Imports a NVD CVE XML file into the Lucene NVD CVE Index.
@@ -47,13 +40,6 @@ public class Importer {
      * Imports the NVD CVE XML File into the Lucene Index.
      *
      * @param file containing the path to the NVD CVE XML file.
-     * @throws ParserConfigurationException is thrown if the parser is
-     * misconfigured.
-     * @throws FileNotFoundException is thrown when there is a
-     * FileNotFoundException.
-     * @throws IOException is thrown when there is an IOException.
-     * @throws JAXBException is thrown when there is a JAXBException.
-     * @throws SAXException is thrown when there is a SAXException.
      */
     public static void importXML(File file) {
         NvdCveParser indexer = null;
@@ -109,16 +95,8 @@ public class Importer {
      * Imports the CPE XML File into the Lucene Index.
      *
      * @param path the path to the CPE XML file.
-     * @throws ParserConfigurationException is thrown if the parser is
-     * misconfigured.
-     * @throws FileNotFoundException is thrown when there is a
-     * FileNotFoundException.
-     * @throws IOException is thrown when there is an IOException.
-     * @throws JAXBException is thrown when there is a JAXBException.
-     * @throws SAXException is thrown when there is a SAXException.
      */
-    public static void importXML(String path) throws FileNotFoundException, IOException, JAXBException,
-            ParserConfigurationException, SAXException {
+    public static void importXML(String path) {
         File f = new File(path);
         if (!f.exists()) {
             f.mkdirs();
