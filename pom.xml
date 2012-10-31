@@ -33,6 +33,7 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
     <organization>
         <name>Jeremy Long</name>
     </organization>
+
     <developers>
         <developer>
             <name>Jeremy Long</name>
