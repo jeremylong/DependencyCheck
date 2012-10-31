@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public class NvdCveParserTest {
-    
+
     public NvdCveParserTest() {
     }
 
@@ -33,11 +33,11 @@ public class NvdCveParserTest {
     @AfterClass
     public static void tearDownClass() throws Exception {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }

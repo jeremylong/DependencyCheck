@@ -46,6 +46,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
  *
  * @author Jeremy
  */
+@Deprecated
 public class NvdCveXmlFilter extends XMLFilterImpl {
 
     EntrySaveDelegate saveDelegate = null;

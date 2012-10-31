@@ -126,7 +126,7 @@ public class Downloader {
             throw new DownloadFailedException("Error downloading file.", ex);
         }
         String encoding = conn.getContentEncoding();
-        
+
         BufferedOutputStream writer = null;
         try {
             InputStream reader;

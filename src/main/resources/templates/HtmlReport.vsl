@@ -353,7 +353,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                             #end
                         #end
                         <h4 id="header$cnt" class="subsectionheader white">Identifiers</h4>
-                        ##:&nbsp;<a href="http://web.nvd.nist.gov/view/vuln/search-results?cpe=$esc.url($cpevalue)" target="blank">$esc.html($cpevalue)</a></h4>
+                        ##:&nbsp;<a href="http://web.nvd.nist.gov/view/vuln/search-results?cpe=$esc.url($cpevalue)" target="_blank">$esc.html($cpevalue)</a></h4>
                         <div id="content$cnt" class="subsectioncontent standardsubsection">
                         #if($cpeCount>1)
                             Several possible CPEs where identified. If one of the following are correct please update the configuration
@@ -366,7 +366,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                             <ul>
                             #foreach($id in $dependency.getIdentifiers())
                                 ##yes, we are HTML Encoding the href. this is okay. We can't URL encode as we have to trust the analyzer here...
-                                <li><b>$esc.html($id.type):</b>&nbsp;$esc.html($id.title)&nbsp;:&nbsp;<a href="$esc.html($id.url)" target="blank">$esc.html($id.value)</a>
+                                <li><b>$esc.html($id.type):</b>&nbsp;$esc.html($id.title)&nbsp;:&nbsp;<a href="$esc.html($id.url)" target="_blank">$esc.html($id.value)</a>
                                 #if( $id.descrription )
                                     <br/>$esc.html($id.description)
                                 #end
@@ -380,12 +380,12 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <h4 id="header$cnt" class="subsectionheader white">Published Vulnerabilities</h4>
                     <div id="content$cnt" class="subsectioncontent standardsubsection">
                         #foreach($vuln in $dependency.getVulnerabilities())
-                            <p><b><a target="blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$esc.url($vuln.name)">$esc.html($vuln.name)</a></b></p>
+                            <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$esc.url($vuln.name)">$esc.html($vuln.name)</a></b></p>
                             <p>$esc.html($vuln.description)
                                 #if ($vuln.getReferences().size()>0)
                                     <ul>
                                     #foreach($ref in $vuln.getReferences())
-                                        <li>$esc.html($ref.source) - <a target="blank" href="$esc.html($ref.url)">$ref.name</a></li>
+                                        <li>$esc.html($ref.source) - <a target="_blank" href="$esc.html($ref.url)">$ref.name</a></li>
                                     #end
                                     </ul>
                                 #end
