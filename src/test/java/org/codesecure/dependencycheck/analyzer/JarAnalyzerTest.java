@@ -4,6 +4,7 @@
  */
 package org.codesecure.dependencycheck.analyzer;
 
+import java.util.Properties;
 import org.codesecure.dependencycheck.analyzer.JarAnalyzer;
 import org.codesecure.dependencycheck.dependency.Dependency;
 import org.codesecure.dependencycheck.dependency.Evidence;
@@ -129,5 +130,17 @@ public class JarAnalyzerTest {
         boolean expResult = true;
         boolean result = instance.supportsExtension(extension);
         assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testInterpolateString() {
+        Properties prop = new Properties();
+        prop.setProperty("key", "value");
+        prop.setProperty("nested", "nested ${key}");
+        String text = "This is a test of '${key}' '${nested}'";
+        String expResults = "This is a test of 'value' 'nested value'";
+        JarAnalyzer instance = new JarAnalyzer();
+        String results = instance.interpolateString(text, prop);
+        assertEquals(expResults, results);
     }
 }
