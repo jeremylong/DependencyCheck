@@ -38,7 +38,7 @@ public class SettingsTest extends TestCase {
     public void testGetString() {
         System.out.println("getString");
         String key = Settings.KEYS.CPE_INDEX;
-        String expResult = "target/data/cpe";
+        String expResult = "../data/cpe";
         String result = Settings.getString(key);
         assertTrue(result.endsWith(expResult));
     }

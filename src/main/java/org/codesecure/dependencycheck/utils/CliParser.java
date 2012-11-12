@@ -93,17 +93,20 @@ public final class CliParser {
             validatePathExists(getScanFiles());
             if (!line.hasOption(ArgumentName.OUT)) {
                 //TODO - need a new exception type here, this isn't really a parseexception.
-                throw new ParseException("Scan cannot be run without specifying a directory to write the reports to via the 'out' argument.");
+                throw new ParseException("Scan cannot be run without specifying a directory "
+                        + "to write the reports to via the 'out' argument.");
             } else {
                 String p = line.getOptionValue(ArgumentName.OUT, "");
                 File f = new File(p);
                 if ("".equals(p) || !(f.exists() && f.isDirectory())) {
                     //TODO - need a new exception type here, this isn't really a parseexception.
-                    throw new ParseException("A valid directory name must be specified for the 'out' argument.");
+                    throw new ParseException("A valid directory name must be specified for "
+                            + "the 'out' argument.");
                 }
             }
             if (!line.hasOption(ArgumentName.APPNAME)) {
-                throw new ParseException("Scan cannot be run without specifying an application name via the 'app' argument.");
+                throw new ParseException("Scan cannot be run without specifying an application "
+                        + "name via the 'app' argument.");
             }
         }
     }
@@ -160,15 +163,25 @@ public final class CliParser {
         Option noupdate = new Option(ArgumentName.DISABLE_AUTO_UPDATE_SHORT, ArgumentName.DISABLE_AUTO_UPDATE,
                 false, "disables the automatic updating of the CPE data.");
 
-        Option appname = OptionBuilder.withArgName("name").hasArg().withLongOpt(ArgumentName.APPNAME).withDescription("the name of the application being scanned.").create(ArgumentName.APPNAME_SHORT);
+        Option appname = OptionBuilder.withArgName("name").hasArg().withLongOpt(ArgumentName.APPNAME)
+                .withDescription("the name of the application being scanned.")
+                .create(ArgumentName.APPNAME_SHORT);
 
-        Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.SCAN).withDescription("the path to scan - this option can be specified multiple times.").create(ArgumentName.SCAN_SHORT);
+        Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.SCAN)
+                .withDescription("the path to scan - this option can be specified multiple times.")
+                .create(ArgumentName.SCAN_SHORT);
 
-        Option load = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.CPE).withDescription("load the CPE xml file.").create(ArgumentName.CPE_SHORT);
+        Option load = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.CPE)
+                .withDescription("load the CPE xml file.")
+                .create(ArgumentName.CPE_SHORT);
 
-        Option props = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.PROP).withDescription("a property file to load.").create(ArgumentName.PROP_SHORT);
+        Option props = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.PROP)
+                .withDescription("a property file to load.")
+                .create(ArgumentName.PROP_SHORT);
 
-        Option out = OptionBuilder.withArgName("folder").hasArg().withLongOpt(ArgumentName.OUT).withDescription("the folder to write reports to.").create(ArgumentName.OUT_SHORT);
+        Option out = OptionBuilder.withArgName("folder").hasArg().withLongOpt(ArgumentName.OUT)
+                .withDescription("the folder to write reports to.")
+                .create(ArgumentName.OUT_SHORT);
 
         //TODO add the ability to load a properties file to override the defaults...
 
@@ -237,7 +250,8 @@ public final class CliParser {
                     + "using the -p <file> argument or by passing them in as system properties." + nl
                     + nl + " " + Settings.KEYS.PROXY_URL + "\t\t    the proxy URL to use when downloading resources."
                     + nl + " " + Settings.KEYS.PROXY_PORT + "\t\t    the proxy port to use when downloading resources."
-                    + nl + " " + Settings.KEYS.CONNECTION_TIMEOUT + "\t    the cconnection timeout (in milliseconds) to use" + nl + "\t\t\t    when downloading resources.";
+                    + nl + " " + Settings.KEYS.CONNECTION_TIMEOUT + "\t    the cconnection timeout (in milliseconds) to use"
+                    + nl + "\t\t\t    when downloading resources.";
         }
 
         formatter.printHelp(Settings.getString("application.name", "DependencyCheck"),

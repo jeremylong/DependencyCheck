@@ -75,15 +75,30 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
      * @throws IOException is thrown if an IOException occurs.
      */
     public Directory getDirectory() throws IOException {
-        String fileName = Settings.getString(Settings.KEYS.CPE_INDEX);
-        String filePath = Index.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        String decodedPath = URLDecoder.decode(filePath, "UTF-8");
-
-        File path = new File(decodedPath + File.separator + fileName);
-        path = new File(path.getCanonicalPath());
+        File path = getDataDirectory();
         Directory dir = FSDirectory.open(path);
 
         return dir;
+    }
+
+    /**
+     * Retrieves the directory that the JAR file exists in so that
+     * we can ensure we always use a common data directory.
+     *
+     * @return the data directory for this index.
+     * @throws IOException is thrown if an IOException occurs of course...
+     */
+    protected File getDataDirectory() throws IOException {
+        String fileName = Settings.getString(Settings.KEYS.CPE_INDEX);
+        String filePath = Index.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String decodedPath = URLDecoder.decode(filePath, "UTF-8");
+        File exePath = new File(decodedPath);
+        if (!exePath.isDirectory()) {
+            exePath = exePath.getParentFile();
+        }
+        File path = new File(exePath.getCanonicalFile() + File.separator + fileName);
+        path = new File(path.getCanonicalPath());
+        return path;
     }
 
     /**
@@ -158,8 +173,14 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
      *
      * @param timeStamp the timestamp to write.
      */
-    private void writeLastUpdatedPropertyFile(long timeStamp) {
-        String dir = Settings.getString(Settings.KEYS.CPE_INDEX);
+    private void writeLastUpdatedPropertyFile(long timeStamp) throws UpdateException {
+        String dir;
+        try {
+            dir = getDataDirectory().getCanonicalPath();
+        } catch (IOException ex) {
+            Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+            throw new UpdateException("Unable to locate the last updated properties file.", ex);
+        }
         File cpeProp = new File(dir + File.separatorChar + UPDATE_PROPERTIES_FILE);
         Properties prop = new Properties();
         prop.put(Index.LAST_UPDATED, String.valueOf(timeStamp));
@@ -198,8 +219,10 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
      * is incorrect.
      * @throws DownloadFailedException is thrown if there is an error
      * downloading the cpe.meta data file.
+     * @throws UpdateException is thrown if there is an error locating the last updated
+     * properties file.
      */
-    public long updateNeeded() throws MalformedURLException, DownloadFailedException {
+    public long updateNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
         long retVal = 0;
         long lastUpdated = 0;
         long currentlyPublishedDate = retrieveCurrentCPETimestampFromWeb();
@@ -207,12 +230,24 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
             throw new DownloadFailedException("Unable to retrieve valid timestamp from cpe.meta file");
         }
 
-        String dir = Settings.getString(Settings.KEYS.CPE_INDEX);
-        File f = new File(dir);
+        //String dir = Settings.getString(Settings.KEYS.CPE_INDEX);
+        File f;
+        try {
+            f = getDataDirectory(); //new File(dir);
+        } catch (IOException ex) {
+            Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+            throw new UpdateException("Unable to locate last updated properties file.", ex);
+        }
         if (!f.exists()) {
             retVal = currentlyPublishedDate;
         } else {
-            File cpeProp = new File(dir + File.separatorChar + UPDATE_PROPERTIES_FILE);
+            File cpeProp;
+            try {
+                cpeProp = new File(f.getCanonicalPath() + File.separatorChar + UPDATE_PROPERTIES_FILE);
+            } catch (IOException ex) {
+                Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+                throw new UpdateException("Unable to find last updated properties file.", ex);
+            }
             if (!cpeProp.exists()) {
                 retVal = currentlyPublishedDate;
             } else {
