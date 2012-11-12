@@ -13,8 +13,6 @@ import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryParser.ParseException;
 import org.codesecure.dependencycheck.dependency.Dependency;
 import org.codesecure.dependencycheck.analyzer.JarAnalyzer;
-import org.codesecure.dependencycheck.dependency.Evidence;
-import org.codesecure.dependencycheck.dependency.Evidence.Confidence;
 import org.junit.Test;
 
 /**
@@ -133,6 +131,7 @@ public class CPEAnalyzerTest extends BaseIndexTestCase {
         expResult = "cpe:/a:apache:struts:2.3.1.2";
         result = instance.searchCPE(vendor, product, version);
         assertEquals(expResult, result.get(0).getName());
+        
         instance.close();
     }
 

@@ -4,11 +4,8 @@
  */
 package org.codesecure.dependencycheck.data.nvdcve;
 
-import java.io.File;
+
 import java.util.Map;
-import org.apache.lucene.store.Directory;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.*;
 
 /**

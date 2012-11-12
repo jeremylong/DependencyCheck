@@ -36,11 +36,13 @@ public abstract class BaseIndexTestCase extends TestCase {
     
     protected static File getDataDirectory() throws IOException {
         String fileName = Settings.getString(Settings.KEYS.CVE_INDEX);
-        String filePath = BaseIndexTestCase.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String filePath = Index.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         String decodedPath = URLDecoder.decode(filePath, "UTF-8");
         File exePath = new File(decodedPath);
-        if (!exePath.isDirectory()) {
+        if (exePath.getName().toLowerCase().endsWith(".jar")) {
             exePath = exePath.getParentFile();
+        } else {
+            exePath = new File( "." );
         }
         File path = new File(exePath.getCanonicalFile() + File.separator + fileName);
         path = new File(path.getCanonicalPath());

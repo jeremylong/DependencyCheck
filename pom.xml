@@ -216,11 +216,11 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                         </property>-->
                         <property>
                             <name>cve</name>
-                            <value>../data/cve</value>
+                            <value>target/data/cve</value>
                         </property>
                         <property>
                             <name>cpe</name>
-                            <value>../data/cpe</value>
+                            <value>target/data/cpe</value>
                         </property>
                     </systemProperties>
                     <excludes>
@@ -236,11 +236,11 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                     <systemProperties>
                         <property>
                             <name>cve</name>
-                            <value>../data/cve</value>
+                            <value>target/data/cve</value>
                         </property>
                         <property>
                             <name>cpe</name>
-                            <value>../data/cpe</value>
+                            <value>target/data/cpe</value>
                         </property>
                     </systemProperties>
                 </configuration>
@@ -357,9 +357,10 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                             <reportSets>
                                 <reportSet>
                                     <id>integration-tests</id>
-                                    <!--<reports>
+                                    <reports>
+                                        <report>report-only</report>
                                         <report>failsafe-report-only</report>
-                                    </reports>-->
+                                    </reports>
                                 </reportSet>
                             </reportSets>
                         </plugin>

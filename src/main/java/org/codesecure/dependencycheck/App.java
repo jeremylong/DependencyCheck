@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLDecoder;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -70,31 +69,11 @@ public class App {
         app.run(args);
     }
 
-    private static File getLoggingDirectory() throws IOException {
-        String fileName = "logs";
-        String filePath = App.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        String decodedPath = URLDecoder.decode(filePath, "UTF-8");
-        File exePath = new File(decodedPath);
-        if (!exePath.isDirectory()) {
-            exePath = exePath.getParentFile();
-        }
-        File path = new File(exePath.getCanonicalFile() + File.separator + fileName);
-        path = new File(path.getCanonicalPath());
-        return path;
-    }
-
     private static void prepareLogger() {
         //while java doc for JUL says to use preferences api - it throws an exception...
         //Preferences.systemRoot().put("java.util.logging.config.file", "log.properties");
         //System.getProperties().put("java.util.logging.config.file", "configuration/log.properties");
-        File dir;
-        try {
-            dir = getLoggingDirectory();
-        } catch (IOException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, "Unable to get default logging location, "
-                    + "using the working directory instead.", ex);
-            dir = new File("logs");
-        }
+        File dir = new File("logs");
 
         if (!dir.exists()) {
             dir.mkdir();
