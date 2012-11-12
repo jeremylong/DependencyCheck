@@ -206,13 +206,21 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                             <value>${project.build.directory}/cobertura/cobertura.ser</value>
                             <workingDirectory>target</workingDirectory>
                         </property>
-                        <property>
+                        <!--<property>
                             <name>cve</name>
                             <value>${project.build.directory}/data/cve</value>
                         </property>
                         <property>
                             <name>cpe</name>
                             <value>${project.build.directory}/data/cpe</value>
+                        </property>-->
+                        <property>
+                            <name>cve</name>
+                            <value>../data/cve</value>
+                        </property>
+                        <property>
+                            <name>cpe</name>
+                            <value>../data/cpe</value>
                         </property>
                     </systemProperties>
                     <excludes>
@@ -337,9 +345,9 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                             <reportSets>
                                 <reportSet>
                                     <id>integration-tests</id>
-                                    <reports>
+                                    <!--<reports>
                                         <report>failsafe-report-only</report>
-                                    </reports>
+                                    </reports>-->
                                 </reportSet>
                             </reportSets>
                         </plugin>

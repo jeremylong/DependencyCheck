@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -75,7 +76,11 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
      */
     public Directory getDirectory() throws IOException {
         String fileName = Settings.getString(Settings.KEYS.CPE_INDEX);
-        File path = new File(fileName);
+        String filePath = Index.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String decodedPath = URLDecoder.decode(filePath, "UTF-8");
+
+        File path = new File(decodedPath + File.separator + fileName);
+        path = new File(path.getCanonicalPath());
         Directory dir = FSDirectory.open(path);
 
         return dir;

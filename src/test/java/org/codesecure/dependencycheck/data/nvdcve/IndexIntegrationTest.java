@@ -16,7 +16,7 @@ import org.junit.*;
  * @author Jeremy
  */
 public class IndexIntegrationTest extends BaseIndexTestCase {
-    
+
     public IndexIntegrationTest(String testName) {
         super(testName);
     }
@@ -28,11 +28,11 @@ public class IndexIntegrationTest extends BaseIndexTestCase {
     @AfterClass
     public static void tearDownClass() throws Exception {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -45,19 +45,7 @@ public class IndexIntegrationTest extends BaseIndexTestCase {
         System.out.println("retrieveCurrentTimestampFromWeb");
         Index instance = new Index();
         Map<String, Index.NvdCveUrl> result = instance.retrieveCurrentTimestampsFromWeb();
-        assertEquals(12, result.size());        
-    }
-
-    /**
-     * Test of getDirectory method, of class Index.
-     */
-    @Test
-    public void testGetDirectory() throws Exception {
-        System.out.println("getDirectory");
-        Index instance = new Index();
-        String exp = File.separatorChar + "target" + File.separatorChar + "data" + File.separatorChar + "cve";
-        Directory result = instance.getDirectory();
-        assertTrue(result.toString().contains(exp));
+        assertEquals(12, result.size());
     }
 
     /**
@@ -81,5 +69,4 @@ public class IndexIntegrationTest extends BaseIndexTestCase {
         //if an exception is thrown this test fails. However, because it depends on the
         //  order of the tests what this will return I am just testing for the exception.
     }
-
 }
