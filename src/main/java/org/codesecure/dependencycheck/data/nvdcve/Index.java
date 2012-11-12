@@ -91,8 +91,10 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
         String filePath = Index.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         String decodedPath = URLDecoder.decode(filePath, "UTF-8");
         File exePath = new File(decodedPath);
-        if (!exePath.isDirectory()) {
+        if (exePath.getName().toLowerCase().endsWith(".jar")) {
             exePath = exePath.getParentFile();
+        } else {
+            exePath = new File(".");
         }
         File path = new File(exePath.getCanonicalFile() + File.separator + fileName);
         path = new File(path.getCanonicalPath());

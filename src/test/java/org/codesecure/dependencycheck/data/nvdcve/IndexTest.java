@@ -5,7 +5,6 @@
 package org.codesecure.dependencycheck.data.nvdcve;
 
 import java.io.File;
-import java.util.Map;
 import org.apache.lucene.store.Directory;
 import static org.junit.Assert.assertTrue;
 import org.junit.*;
@@ -45,8 +44,7 @@ public class IndexTest extends BaseIndexTestCase {
         Index instance = new Index();
         String exp = File.separatorChar + "target" + File.separatorChar + "data" + File.separatorChar + "cve";
         Directory result = instance.getDirectory();
-        
-        assertTrue("Recieved '" + result.toString() + "' and excpected '" + exp + "'.",
-                result.toString().contains(exp));
+       
+        assertTrue(result.toString().contains(exp));
     }
 }
