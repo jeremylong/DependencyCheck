@@ -21,6 +21,7 @@ package org.codesecure.dependencycheck.data.nvdcve;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,8 +74,13 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
      */
     public Directory getDirectory() throws IOException {
         String fileName = Settings.getString(Settings.KEYS.CVE_INDEX);
-        File path = new File(fileName);
+        String filePath = Index.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String decodedPath = URLDecoder.decode(filePath, "UTF-8");
+
+        File path = new File(decodedPath + File.separator + fileName);
+        path = new File(path.getCanonicalPath());
         Directory dir = FSDirectory.open(path);
+
         return dir;
     }
 

@@ -18,9 +18,9 @@ import static org.junit.Assert.*;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class IndexIntegrationTest extends BaseIndexTestCase {
+public class IndexTest extends BaseIndexTestCase {
 
-    public IndexIntegrationTest(String testCase) {
+    public IndexTest(String testCase) {
         super(testCase);
     }
 
@@ -41,25 +41,31 @@ public class IndexIntegrationTest extends BaseIndexTestCase {
     }
 
     /**
-     * Test of update method, of class Index.
+     * Test of open method, of class Index.
      */
     @Test
-    public void testUpdate() throws Exception {
-        System.out.println("update");
+    public void testOpen() {
+        System.out.println("open");
         Index instance = new Index();
-        instance.update();
+        try {
+            instance.open();
+        } catch (IOException ex) {
+            fail(ex.getMessage());
+        }
+        instance.close();
     }
 
     /**
-     * Test of updateNeeded method, of class Index.
+     * Test of getDirectory method, of class Index.
      */
     @Test
-    public void testUpdateNeeded() throws Exception {
-        System.out.println("updateNeeded");
-        Index instance = new Index();
-        instance.updateNeeded();
-        //if an exception is thrown this test fails. However, because it depends on the
-        //  order of the tests what this will return I am just testing for the exception.
-        //assertTrue(expResult < result);
+    public void testGetDirectory() throws Exception {
+        System.out.println("getDirectory");
+        Index index = new Index();
+        Directory result = index.getDirectory();
+
+        String exp = File.separatorChar + "target" + File.separatorChar + "data" + File.separatorChar + "cpe";
+        // TODO review the generated test code and remove the default call to fail.
+        assertTrue(result.toString().contains(exp));
     }
 }
