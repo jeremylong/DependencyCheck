@@ -45,6 +45,8 @@ public class IndexTest extends BaseIndexTestCase {
         Index instance = new Index();
         String exp = File.separatorChar + "target" + File.separatorChar + "data" + File.separatorChar + "cve";
         Directory result = instance.getDirectory();
-        assertTrue(result.toString().contains(exp));
+        
+        assertTrue("Recieved '" + result.toString() + "' and excpected '" + exp + "'.",
+                result.toString().contains(exp));
     }
 }

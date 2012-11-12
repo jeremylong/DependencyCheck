@@ -9,6 +9,8 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import junit.framework.TestCase;
@@ -30,8 +32,22 @@ public abstract class BaseIndexTestCase extends TestCase {
         ensureIndexExists();        
     }
     
+    protected static File getDataDirectory() throws IOException {
+        String fileName = Settings.getString(Settings.KEYS.CPE_INDEX);
+        String filePath = BaseIndexTestCase.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String decodedPath = URLDecoder.decode(filePath, "UTF-8");
+        File exePath = new File(decodedPath);
+        if (!exePath.isDirectory()) {
+            exePath = exePath.getParentFile();
+        }
+        File path = new File(exePath.getCanonicalFile() + File.separator + fileName);
+        path = new File(path.getCanonicalPath());
+        return path;
+    }
+    
     public static void ensureIndexExists() throws Exception {
-        String indexPath = Settings.getString(Settings.KEYS.CPE_INDEX);
+        //String indexPath = Settings.getString(Settings.KEYS.CPE_INDEX);
+        String indexPath = getDataDirectory().getCanonicalPath();
         java.io.File f = new File(indexPath);
         if (!f.exists()) {
             f.mkdirs();

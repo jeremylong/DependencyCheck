@@ -232,6 +232,18 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.12.4</version>
+                <configuration>
+                    <systemProperties>
+                        <property>
+                            <name>cve</name>
+                            <value>../data/cve</value>
+                        </property>
+                        <property>
+                            <name>cpe</name>
+                            <value>../data/cpe</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>

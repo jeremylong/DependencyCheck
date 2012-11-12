@@ -67,21 +67,36 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
     private static final String LAST_UPDATED_BASE = "lastupdated.";
 
     /**
-     * Returns the directory that holds the NVD CVE Index.
+     * Returns the directory that holds the NVD CVE Index. Note, this
+     * returns the path where the class or jar file exists.
      *
      * @return the Directory containing the NVD CVE Index.
      * @throws IOException is thrown if an IOException occurs.
      */
     public Directory getDirectory() throws IOException {
+        File path = getDataDirectory();
+        Directory dir = FSDirectory.open(path);
+        return dir;
+    }
+
+    /**
+     * Retrieves the directory that the JAR file exists in so that
+     * we can ensure we always use a common data directory.
+     *
+     * @return the data directory for this index.
+     * @throws IOException is thrown if an IOException occurs of course...
+     */
+    protected File getDataDirectory() throws IOException {
         String fileName = Settings.getString(Settings.KEYS.CVE_INDEX);
         String filePath = Index.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         String decodedPath = URLDecoder.decode(filePath, "UTF-8");
-
-        File path = new File(decodedPath + File.separator + fileName);
+        File exePath = new File(decodedPath);
+        if (!exePath.isDirectory()) {
+            exePath = exePath.getParentFile();
+        }
+        File path = new File(exePath.getCanonicalFile() + File.separator + fileName);
         path = new File(path.getCanonicalPath());
-        Directory dir = FSDirectory.open(path);
-
-        return dir;
+        return path;
     }
 
     /**
@@ -171,8 +186,14 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
      *
      * @param timeStamp the timestamp to write.
      */
-    private void writeLastUpdatedPropertyFile(Map<String, NvdCveUrl> updated) {
-        String dir = Settings.getString(Settings.KEYS.CVE_INDEX);
+    private void writeLastUpdatedPropertyFile(Map<String, NvdCveUrl> updated) throws UpdateException {
+        String dir;
+        try {
+            dir = getDataDirectory().getCanonicalPath();
+        } catch (IOException ex) {
+            Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+            throw new UpdateException("Unable to locate last updated properties file.", ex);
+        }
         File cveProp = new File(dir + File.separatorChar + UPDATE_PROPERTIES_FILE);
         Properties prop = new Properties();
 
@@ -187,8 +208,10 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
             prop.store(out, dir);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+            throw new UpdateException("Unable to find last updated properties file.", ex);
         } catch (IOException ex) {
             Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+            throw new UpdateException("Unable to update last updated properties file.", ex);
         } finally {
             try {
                 os.flush();
@@ -212,10 +235,11 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
      * @return the NvdCveUrl of the files that need to be updated.
      * @throws MalformedURLException is thrown if the URL for the NVD CVE Meta
      * data is incorrect.
-     * @throws DownloadFailedException is thrown if there is an error
+     * @throws DownloadFailedException is thrown if there is an error.
      * downloading the nvd cve download data file.
+     * @throws UpdateException Is thrown if there is an issue with the last updated properties file.
      */
-    public Map<String, NvdCveUrl> updateNeeded() throws MalformedURLException, DownloadFailedException {
+    public Map<String, NvdCveUrl> updateNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
 
         Map<String, NvdCveUrl> currentlyPublished;
         try {
@@ -227,7 +251,14 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
         if (currentlyPublished == null) {
             throw new DownloadFailedException("Unable to retrieve valid timestamp from nvd cve downloads page");
         }
-        String dir = Settings.getString(Settings.KEYS.CVE_INDEX);
+        String dir;
+        try {
+            dir = getDataDirectory().getCanonicalPath();
+        } catch (IOException ex) {
+            Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+            throw new UpdateException("Unable to locate last updated properties file.", ex);
+        }
+
         File f = new File(dir);
         if (f.exists()) {
             File cveProp = new File(dir + File.separatorChar + UPDATE_PROPERTIES_FILE);
