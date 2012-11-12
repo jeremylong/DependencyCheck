@@ -18,17 +18,34 @@ package org.codesecure.dependencycheck.analyzer;
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.bind.JAXBException;
 import org.codesecure.dependencycheck.dependency.Dependency;
 import org.codesecure.dependencycheck.dependency.Evidence;
 import org.codesecure.dependencycheck.dependency.EvidenceCollection;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
+import org.codesecure.dependencycheck.analyzer.pom.generated.License;
+import org.codesecure.dependencycheck.analyzer.pom.generated.Model;
+import org.codesecure.dependencycheck.analyzer.pom.generated.Organization;
+import org.codesecure.dependencycheck.utils.NonClosingStream;
 
 /**
  *
@@ -97,6 +114,26 @@ public class JarAnalyzer extends AbstractAnalyzer {
      * item in some manifest, should be considered medium confidence.
      */
     private static final String BUNDLE_VENDOR = "Bundle-Vendor"; //: Apache Software Foundation
+    /**
+     * The JAXB Contexts used to unmarshall the pom.xml from a JAR file.
+     */
+    private JAXBContext jaxbContext = null;
+    /**
+     * The unmarshaller used to parse the pom.xml from a JAR file.
+     */
+    private Unmarshaller pomUnmarshaller = null;
+
+    /**
+     * Constructs a new JarAnalyzer.
+     */
+    public JarAnalyzer() {
+        try {
+            jaxbContext = JAXBContext.newInstance("org.codesecure.dependencycheck.analyzer.pom.generated");
+            pomUnmarshaller = jaxbContext.createUnmarshaller();
+        } catch (JAXBException ex) { //guess we will just have a null pointer exception later...
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
@@ -148,10 +185,134 @@ public class JarAnalyzer extends AbstractAnalyzer {
         try {
             parseManifest(dependency);
             analyzePackageNames(dependency);
+            analyzePOM(dependency);
         } catch (IOException ex) {
             throw new AnalysisException("Exception occured reading the JAR file.", ex);
+        } catch (JAXBException ex) {
+            throw new AnalysisException("Exception occured reading the POM within the JAR file.", ex);
         }
 
+    }
+
+    /**
+     * Attempts to find a pom.xml within the JAR file. If found it extracts information
+     * and adds it to the evidence. This will attempt to interpolate the strings contained
+     * within the pom.properties if one exists.
+     *
+     * @param dependency the dependency being analyzed.
+     * @throws IOException is thrown if there is an error reading the zip file.
+     * @throws JAXBException is thrown if there is an error extracting the model (aka pom).
+     * @throws AnalysisException is thrown if there is an exception parsing the pom.
+     */
+    protected void analyzePOM(Dependency dependency) throws IOException, JAXBException, AnalysisException {
+
+        Properties pomProperties = null;
+        Model pom = null;
+        FileInputStream fs = null;
+        try {
+            fs = new FileInputStream(dependency.getActualFilePath());
+            ZipInputStream zin = new ZipInputStream(fs);
+            ZipEntry entry = zin.getNextEntry();
+
+            while (entry != null) {
+                String entryName = (new File(entry.getName())).getName().toLowerCase();
+
+                if (!entry.isDirectory() && "pom.xml".equals(entryName)) {
+                    if (pom == null) {
+                        NonClosingStream stream = new NonClosingStream(zin);
+                        JAXBElement obj = (JAXBElement) pomUnmarshaller.unmarshal(stream);
+                        pom = (org.codesecure.dependencycheck.analyzer.pom.generated.Model) obj.getValue();
+                        zin.closeEntry();
+                    } else {
+                        throw new AnalysisException("JAR file contains multiple pom.xml files - unable to process POM");
+                    }
+                } else if (!entry.isDirectory() && "pom.properties".equals(entryName)) {
+                    if (pomProperties == null) {
+                        Reader reader = new InputStreamReader(zin);
+                        pomProperties = new Properties();
+                        pomProperties.load(reader);
+                        zin.closeEntry();
+                    } else {
+                        throw new AnalysisException("JAR file contains multiple pom.properties files - unable to process POM");
+                    }
+                }
+
+                entry = zin.getNextEntry();
+            }
+        } catch (IOException ex) {
+            throw new AnalysisException("Error reading JAR file as zip.", ex);
+        } finally {
+            if (fs != null) {
+                fs.close();
+            }
+        }
+
+        if (pom != null) {
+            //group id
+            String groupid = interpolateString(pom.getGroupId(), pomProperties);
+            if (groupid != null) {
+                dependency.getVendorEvidence().addEvidence("pom", "groupid", groupid, Evidence.Confidence.HIGH);
+                dependency.getProductEvidence().addEvidence("pom", "groupid", groupid, Evidence.Confidence.LOW);
+            }
+            //artifact id
+            String artifactid = interpolateString(pom.getArtifactId(), pomProperties);
+            if (artifactid != null) {
+                dependency.getProductEvidence().addEvidence("pom", "artifactid", artifactid, Evidence.Confidence.HIGH);
+            }
+            //version
+            String version = interpolateString(pom.getVersion(), pomProperties);
+            if (version != null) {
+                dependency.getVersionEvidence().addEvidence("pom", "version", version, Evidence.Confidence.HIGH);
+            }
+            // org name
+            Organization org = pom.getOrganization();
+            if (org != null && org.getName() != null) {
+                String orgName = interpolateString(org.getName(), pomProperties);
+                dependency.getVendorEvidence().addEvidence("pom", "organization name", orgName, Evidence.Confidence.HIGH);
+            }
+            //pom name
+            String pomName = interpolateString(pom.getName(), pomProperties);
+            if (pomName != null) {
+                dependency.getProductEvidence().addEvidence("pom", "name", pomName, Evidence.Confidence.HIGH);
+            }
+
+            //Description
+            if (pom.getDescription() != null) {
+                String description = interpolateString(pom.getDescription(), pomProperties);
+                dependency.setDescription(description);
+                dependency.getProductEvidence().addEvidence("pom", "description", description, Evidence.Confidence.MEDIUM);
+                dependency.getVendorEvidence().addEvidence("pom", "description", description, Evidence.Confidence.MEDIUM);
+            }
+
+            //license
+            if (pom.getLicenses() != null) {
+                String license = null;
+                for (License lic : pom.getLicenses().getLicense()) {
+                    String tmp = null;
+                    if (lic.getName() != null) {
+                        tmp = interpolateString(lic.getName(), pomProperties);
+                    }
+                    if (lic.getUrl() != null) {
+                        if (tmp == null) {
+                            tmp = interpolateString(lic.getUrl(), pomProperties);
+                        } else {
+                            tmp += ": " + interpolateString(lic.getUrl(), pomProperties);
+                        }
+                    }
+                    if (tmp == null) {
+                        continue;
+                    }
+                    if (license == null) {
+                        license = tmp;
+                    } else {
+                        license += "\n" + tmp;
+                    }
+                }
+                if (license != null) {
+                    dependency.setLicense(license);
+                }
+            }
+        }
     }
 
     /**
@@ -416,5 +577,42 @@ public class JarAnalyzer extends AbstractAnalyzer {
      */
     public void close() {
         //do nothing
+    }
+
+    /**
+     * A utiltiy function that will interpolate strings based on values given
+     * in the properties file. It will also interpolate the strings contained
+     * within the properties file so that properties can reference other
+     * properties.
+     *
+     * @param text the string that contains references to properties.
+     * @param properties a collection of properties that may be referenced within the text.
+     * @return the interpolated text.
+     */
+    protected String interpolateString(String text, Properties properties) {
+        //${project.build.directory}
+        if (properties == null || text == null) {
+            return text;
+        }
+
+        int pos = text.indexOf("${");
+        if (pos < 0) {
+            return text;
+        }
+        int end = text.indexOf("}");
+        if (end < pos) {
+            return text;
+        }
+
+        String propName = text.substring(pos + 2, end);
+        String propValue = interpolateString(properties.getProperty(propName), properties);
+        if (propValue == null) {
+            propValue = "";
+        }
+        StringBuilder sb = new StringBuilder(propValue.length() + text.length());
+        sb.append(text.subSequence(0, pos));
+        sb.append(propValue);
+        sb.append(text.substring(end + 1));
+        return interpolateString(sb.toString(), properties); //yes yes, this should be a loop...
     }
 }
