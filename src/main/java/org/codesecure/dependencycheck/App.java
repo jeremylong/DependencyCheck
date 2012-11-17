@@ -28,6 +28,7 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.cli.ParseException;
+import org.codesecure.dependencycheck.analyzer.AnalysisPhase;
 import org.codesecure.dependencycheck.data.cpe.xml.Importer;
 import org.codesecure.dependencycheck.reporting.ReportGenerator;
 import org.codesecure.dependencycheck.dependency.Dependency;
@@ -158,9 +159,9 @@ public class App {
         scanner.analyzeDependencies();
         List<Dependency> dependencies = scanner.getDependencies();
 
-        ReportGenerator report = new ReportGenerator();
+        ReportGenerator report = new ReportGenerator(applicationName, dependencies, scanner.getAnalyzers());
         try {
-            report.generateReports(reportDirectory, applicationName, dependencies);
+            report.generateReports(reportDirectory);
         } catch (IOException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {

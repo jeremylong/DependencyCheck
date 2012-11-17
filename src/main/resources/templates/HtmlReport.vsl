@@ -285,8 +285,12 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <div class="sectioncontent">Report Generated On: $date<br/><br/>
                 Dependencies Scanned:&nbsp;$dependencies.size()<br/><br/>
                 <div class="indent">
-                #foreach($dependency in $dependencies) 
-                    <a href="#$esc.html($esc.url($dependency.FilePath))">$esc.html($dependency.FileName)</a><br/>
+                #foreach($dependency in $dependencies)
+                    #if($dependency.getVulnerabilities().size()>0)
+                        <a href="#$esc.html($esc.url($dependency.FilePath))">$esc.html($dependency.FileName)</a>&nbsp;<b style="color:#ff0000;">&#8226;</b><br/>
+                    #else
+                        <a href="#$esc.html($esc.url($dependency.FilePath))">$esc.html($dependency.FileName)</a><br/>
+                    #end
                 #end
                 </div>
                 <h2>Dependencies</h2>

@@ -195,7 +195,8 @@ public class Engine {
                 try {
                     a.initialize();
                 } catch (Exception ex) {
-                    Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, "Exception occured initializing " + a.getName() + ".", ex);
+                    Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, 
+                            "Exception occured initializing " + a.getName() + ".", ex);
                     try {
                         a.close();
                     } catch (Exception ex1) {
@@ -254,8 +255,23 @@ public class Engine {
             try {
                 source.update();
             } catch (UpdateException ex) {
-                Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, "Unable to update " + source.getClass().getName(), ex);
+                Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, 
+                        "Unable to update " + source.getClass().getName(), ex);
             }
         }
+    }
+
+    /**
+     * Returns a full list of all of the analyzers. This is useful
+     * for reporting which analyzers where used.
+     * @return a list of Analyzers
+     */
+    public List<Analyzer> getAnalyzers() {
+        List<Analyzer> ret = new ArrayList<Analyzer>();
+        for (AnalysisPhase phase : AnalysisPhase.values()) {
+            List<Analyzer> analyzerList = analyzers.get(phase);
+            ret.addAll(analyzerList);
+        }
+        return ret;
     }
 }

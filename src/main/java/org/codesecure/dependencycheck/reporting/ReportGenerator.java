@@ -18,15 +18,15 @@ package org.codesecure.dependencycheck.reporting;
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 
+import java.io.FileInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.velocity.app.VelocityEngine;
@@ -35,66 +35,110 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.velocity.tools.ToolManager;
 import org.apache.velocity.tools.config.EasyFactoryConfiguration;
+import org.codesecure.dependencycheck.analyzer.Analyzer;
 import org.codesecure.dependencycheck.dependency.Dependency;
 
 /**
+ * The ReportGenerator is used to, as the name implies, generate reports. Internally
+ * the generator uses the Velocity Templating Engine. The ReportGenerator exposes
+ * a list of Dependencies to the template when generating the report.
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public class ReportGenerator {
 
     /**
+     * The Velocity Engine.
+     */
+    private VelocityEngine engine = null;
+    /**
+     * The Velocity Engine Context.
+     */
+    private Context context = null;
+
+    /**
+     * Constructs a new ReportGenerator.
+     *
+     * @param applicationName the application name being analyzed
+     * @param dependencies the list of dependencies
+     * @param analyzers the list of analyzers used.
+     */
+    public ReportGenerator(String applicationName, List<Dependency> dependencies, List<Analyzer> analyzers) {
+        engine = createVelocityEngine();
+        context = createContext();
+
+        engine.init();
+
+        context.put("applicationName", applicationName);
+        context.put("dependencies", dependencies);
+        context.put("analyzers", analyzers);
+    }
+
+    /**
+     * Creates a new Velocity Engine.
+     * @return a velocity engine.
+     */
+    private VelocityEngine createVelocityEngine() {
+        VelocityEngine ve = new VelocityEngine();
+        ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+        ve.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+        return ve;
+    }
+
+    /**
+     * Creates a new Velocity Context initialized with escape and date tools.
+     * @return a Velcotiy Context.
+     */
+    private Context createContext() {
+        ToolManager manager = new ToolManager();
+        Context c = manager.createContext();
+        EasyFactoryConfiguration config = new EasyFactoryConfiguration();
+        config.addDefaultTools();
+        config.toolbox("application")
+                .tool("esc", "org.apache.velocity.tools.generic.EscapeTool")
+                .tool("org.apache.velocity.tools.generic.DateTool");
+        manager.configure(config);
+        return c;
+    }
+
+    /**
      * Generates the Dependency Reports for the identified dependencies.
      *
      * @param outputDir the path where the reports should be written.
-     * @param applicationName the name of the application that was scanned.
-     * @param dependencies a list of dependencies to include in the report.
      * @throws IOException is thrown when the template file does not exist.
      * @throws Exception is thrown if there is an error writting out the
      * reports.
      */
-    public void generateReports(String outputDir, String applicationName, List<Dependency> dependencies) throws IOException, Exception {
-
-        Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put("dependencies", dependencies);
-        properties.put("applicationName", applicationName);
-
-        String reportName = applicationName.replaceAll("[^a-zA-Z0-9-_ \\.]+", "");
-        String filename = outputDir + File.separatorChar + reportName;
-        generateReport("HtmlReport", filename + ".html", properties);
-        //generateReport("XmlReport",filename + ".xml",properties);
-
+    public void generateReports(String outputDir) throws IOException, Exception {
+        generateReport("HtmlReport", outputDir + File.separator + "DependencyCheck-Report.html");
+        //generateReport("XmlReport", outputDir + File.separator + "DependencyCheck-Report.xml");
     }
 
     /**
-     * much of this code is from
-     * http://stackoverflow.com/questions/2931516/loading-velocity-template-inside-a-jar-file
+     * Generates a report from a given Velocity Template. The template name
+     * provided can be the name of a template contained in the jar file, such as
+     * 'XmlReport' or 'HtmlReport', or the template name can be the path to a template file.
      *
      * @param templateName the name of the template to load.
-     * @param outFileName The filename and path to write the report to.
-     * @param properties a map of properties to load into the velocity context.
+     * @param outFileName the filename and path to write the report to.
      * @throws IOException is thrown when the template file does not exist.
      * @throws Exception is thrown when an exception occurs.
      */
-    protected void generateReport(String templateName, String outFileName,
-            Map<String, Object> properties) throws IOException, Exception {
-
-        VelocityEngine ve = new VelocityEngine();
-        ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
-        ve.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
-
-        ToolManager manager = new ToolManager();
-        Context context = manager.createContext();
-        EasyFactoryConfiguration config = new EasyFactoryConfiguration();
-        config.addDefaultTools();
-        config.toolbox("application").tool("esc", "org.apache.velocity.tools.generic.EscapeTool").tool("org.apache.velocity.tools.generic.DateTool");
-
-        manager.configure(config);
-
-        ve.init();
-
-        final String templatePath = "templates/" + templateName + ".vsl";
-        InputStream input = this.getClass().getClassLoader().getResourceAsStream(templatePath);
+    public void generateReport(String templateName, String outFileName) throws IOException, Exception {
+        InputStream input = null;
+        String templatePath = null;
+        File f = new File(templateName);
+        if (f.exists() && f.isFile()) {
+            try {
+                templatePath = templateName;
+                input = new FileInputStream(f);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            templatePath = "templates/" + templateName + ".vsl";
+            input = this.getClass().getClassLoader().getResourceAsStream(templatePath);
+        }
         if (input == null) {
             throw new IOException("Template file doesn't exist");
         }
@@ -102,19 +146,10 @@ public class ReportGenerator {
         InputStreamReader reader = new InputStreamReader(input);
         BufferedWriter writer = null;
 
-        //VelocityContext context = new VelocityContext();
-
-        //load the data into the context
-        if (properties != null) {
-            for (Map.Entry<String, Object> property : properties.entrySet()) {
-                context.put(property.getKey(), property.getValue());
-            }
-        }
-
         try {
             writer = new BufferedWriter(new FileWriter(new File(outFileName)));
 
-            if (!ve.evaluate(context, writer, templatePath, reader)) {
+            if (!engine.evaluate(context, writer, templatePath, reader)) {
                 throw new Exception("Failed to convert the template into html.");
             }
             writer.flush();
