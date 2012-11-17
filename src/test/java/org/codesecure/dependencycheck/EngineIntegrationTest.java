@@ -51,7 +51,8 @@ public class EngineIntegrationTest {
         instance.scan(path);
         assertTrue(instance.getDependencies().size() > 0);
         instance.analyzeDependencies();
-        ReportGenerator rg = new ReportGenerator();
-        rg.generateReports("./target/", "DependencyCheck", instance.getDependencies());
+        ReportGenerator rg = new ReportGenerator("DependencyCheck",
+                instance.getDependencies(), instance.getAnalyzers());
+        rg.generateReports("./target/");
     }
 }

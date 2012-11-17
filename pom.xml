@@ -243,6 +243,9 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                             <value>target/data/cpe</value>
                         </property>
                     </systemProperties>
+                    <includes>
+                        <include>**/*IntegrationTest.java</include>
+                    </includes>
                 </configuration>
                 <executions>
                     <execution>
