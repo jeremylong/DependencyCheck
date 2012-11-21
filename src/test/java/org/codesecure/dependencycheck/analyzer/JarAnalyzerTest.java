@@ -63,7 +63,8 @@ public class JarAnalyzerTest {
         instance.analyze(result);
         boolean found = false;
         for (Evidence e : result.getProductEvidence()) {
-            if (e.getName().equals("package-title") && e.getValue().equals("org.mortbay.http")) {
+            if (e.getName().equalsIgnoreCase("package-title")
+                    && e.getValue().equalsIgnoreCase("org.mortbay.http")) {
                 found = true;
                 break;
             }
@@ -72,7 +73,8 @@ public class JarAnalyzerTest {
 
         found = false;
         for (Evidence e : result.getVendorEvidence()) {
-            if (e.getName().equals("implementation-url") && e.getValue().equals("http://jetty.mortbay.org")) {
+            if (e.getName().equalsIgnoreCase("implementation-url")
+                    && e.getValue().equalsIgnoreCase("http://jetty.mortbay.org")) {
                 found = true;
                 break;
             }
@@ -81,7 +83,8 @@ public class JarAnalyzerTest {
 
         found = false;
         for (Evidence e : result.getVersionEvidence()) {
-            if (e.getName().equals("Implementation-Version") && e.getValue().equals("4.2.27")) {
+            if (e.getName().equalsIgnoreCase("Implementation-Version")
+                    && e.getValue().equalsIgnoreCase("4.2.27")) {
                 found = true;
                 break;
             }
