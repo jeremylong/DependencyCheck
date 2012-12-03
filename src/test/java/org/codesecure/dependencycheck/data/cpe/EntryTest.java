@@ -35,7 +35,7 @@ public class EntryTest extends TestCase {
         String name = "cpe:/a:apache:struts:1.1:rc2";
         
         Entry instance = new Entry();
-        instance.setName(name);
+        instance.parseName(name);
         
         assertEquals(name,instance.getName());
         assertEquals("apache", instance.getVendor());

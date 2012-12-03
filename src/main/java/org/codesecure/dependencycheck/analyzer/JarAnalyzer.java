@@ -186,6 +186,7 @@ public class JarAnalyzer extends AbstractAnalyzer {
             parseManifest(dependency);
             analyzePackageNames(dependency);
             analyzePOM(dependency);
+            addPredefinedData(dependency);
         } catch (IOException ex) {
             throw new AnalysisException("Exception occured reading the JAR file.", ex);
         } catch (JAXBException ex) {
@@ -614,5 +615,16 @@ public class JarAnalyzer extends AbstractAnalyzer {
         sb.append(propValue);
         sb.append(text.substring(end + 1));
         return interpolateString(sb.toString(), properties); //yes yes, this should be a loop...
+    }
+
+    private void addPredefinedData(Dependency dependency) {
+        Evidence spring = new Evidence("Manifest",
+                "Implementation-Title",
+                "Spring Framework",
+                Evidence.Confidence.HIGH);
+
+        if (dependency.getProductEvidence().getEvidence().contains(spring)) {
+            dependency.getVendorEvidence().addEvidence("a priori", "vendor", "SpringSource", Evidence.Confidence.HIGH);
+        }
     }
 }

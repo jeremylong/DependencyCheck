@@ -34,7 +34,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         </script>
         <script type="text/javascript">
             $(document).ready(function() {
-                $(".expandablesubsection").click(function (e) {
+                $(".expandable").click(function (e) {
                     e = e || window.event;
                     var h = e.target || e.srcElement;
                     var content = "#content" + h.id.substr(6);
@@ -64,7 +64,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             .hidden {
                 display: none;
             }
-            
+            .exandable {}
             .expandablesubsection {
                 cursor: pointer;
                 /*background-image: url(img/plus.gif);*/
@@ -312,7 +312,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 
                         #if ( $dependency.analysisExceptions.size() != 0 )
                             #set($cnt=$cnt+1)
-                            <h4 id="header$cnt" class="subsectionheader expandablesubsection red">Exceptions Occured During Analysis</h4>
+                            <h4 id="header$cnt" class="subsectionheader expandable expandablesubsection red">Exceptions Occured During Analysis</h4>
                             <div id="content$cnt" class="subsectioncontent standardsubsection hidden">
                                 <ul>
                                 #foreach($ex in $dependency.analysisExceptions)
@@ -340,7 +340,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                             </div>
                         #end
                         #set($cnt=$cnt+1)
-                        <h4 id="header$cnt" class="subsectionheader expandablesubsection white">Evidence</h4>
+                        <h4 id="header$cnt" class="subsectionheader expandable expandablesubsection white">Evidence</h4>
                         <div id="content$cnt" class="subsectioncontent standardsubsection hidden">
                             <table class="lined fullwidth" border="0">
                                 <tr><th class="left" style="width:10%;">Source</th><th class="left" style="width:20%;">Name</th><th class="left" style="width:70%;">Value</th></tr>
@@ -381,7 +381,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         </div>
                     #if($dependency.getVulnerabilities().size()>0)
                     #set($cnt=$cnt+1)
-                    <h4 id="header$cnt" class="subsectionheader white">Published Vulnerabilities</h4>
+                    <h4 id="header$cnt" class="subsectionheader expandable collaspablesubsection white">Published Vulnerabilities</h4>
                     <div id="content$cnt" class="subsectioncontent standardsubsection">
                         #foreach($vuln in $dependency.getVulnerabilities())
                             <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$esc.url($vuln.name)">$esc.html($vuln.name)</a></b></p>

@@ -326,7 +326,7 @@ public final class CliParser {
      * @return if auto-update is allowed.
      */
     public boolean isAutoUpdate() {
-        return (line != null) ? !line.hasOption(ArgumentName.DISABLE_AUTO_UPDATE) : false;
+        return (line != null) ? !line.hasOption(ArgumentName.DISABLE_AUTO_UPDATE) : true;
     }
 
     /**

@@ -23,14 +23,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.FieldInfo.IndexOptions;
 import org.apache.lucene.index.Term;
+import org.codesecure.dependencycheck.data.cpe.Entry;
 import org.codesecure.dependencycheck.data.nvdcve.Fields;
 import org.codesecure.dependencycheck.data.nvdcve.Index;
 
@@ -39,6 +42,19 @@ import org.codesecure.dependencycheck.data.nvdcve.Index;
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public class NvdCveParser extends Index {
+
+    //HACK - this has initially been placed here as a hack because not all
+    // of the CPEs listed in the NVD CVE are actually in the CPE xml file
+    // hosted by NIST.
+    private org.codesecure.dependencycheck.data.cpe.xml.Indexer cpeIndexer = null;
+
+    /**
+     * Adds the CPE Index to add additional CPEs found by parsing the NVD CVE.
+     * @param indexer the CPE Indexer to write new CPEs into.
+     */
+    public void setCPEIndexer(org.codesecure.dependencycheck.data.cpe.xml.Indexer indexer) {
+        this.cpeIndexer = indexer;
+    }
 
     /**
      * Parses an NVD CVE xml file using a buffered readerd. This
@@ -164,10 +180,27 @@ public class NvdCveParser extends Index {
      * Adds a CPE to the Lucene Document
      * @param cpe a string representing a CPE
      * @param doc a lucene document
+     * @throws CorruptIndexException is thrown if the CPE Index is corrupt
+     * @throws IOException is thrown if there is an IO Exception while writting to the CPE Index
      */
-    private void addVulnerableCpe(String cpe, Document doc) {
+    private void addVulnerableCpe(String cpe, Document doc) throws CorruptIndexException, IOException {
         Field vulnerable = new Field(Fields.VULNERABLE_CPE, cpe, Field.Store.NO, Field.Index.ANALYZED);
         vulnerable.setIndexOptions(IndexOptions.DOCS_ONLY);
         doc.add(vulnerable);
+
+        //HACK - this has initially been placed here as a hack because not all
+        // of the CPEs listed in the NVD CVE are actually in the CPE xml file
+        // hosted by NIST.
+        Entry cpeEntry = new Entry();
+        try {
+            cpeEntry.parseName(cpe);
+            cpeEntry.setNvdId("0");
+            cpeEntry.setTitle(cpe);
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(NvdCveParser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (cpeIndexer != null) {
+            cpeIndexer.saveEntry(cpeEntry);
+        }
     }
 }

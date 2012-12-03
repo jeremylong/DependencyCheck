@@ -100,6 +100,11 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
         }
         File path = new File(exePath.getCanonicalFile() + File.separator + fileName);
         path = new File(path.getCanonicalPath());
+        if (!path.exists()) {
+            if (!path.mkdirs()) {
+                throw new IOException("Unable to create CPE Data directory");
+            }
+        }
         return path;
     }
 
@@ -113,6 +118,7 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
         Map fieldAnalyzers = new HashMap();
 
         fieldAnalyzers.put(Fields.VERSION, new KeywordAnalyzer());
+        fieldAnalyzers.put(Fields.NAME, new KeywordAnalyzer());
 
         PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(
                 new StandardAnalyzer(Version.LUCENE_35), fieldAnalyzers);

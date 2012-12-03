@@ -195,7 +195,7 @@ public class Engine {
                 try {
                     a.initialize();
                 } catch (Exception ex) {
-                    Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, 
+                    Logger.getLogger(Engine.class.getName()).log(Level.SEVERE,
                             "Exception occured initializing " + a.getName() + ".", ex);
                     try {
                         a.close();
@@ -255,7 +255,7 @@ public class Engine {
             try {
                 source.update();
             } catch (UpdateException ex) {
-                Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, 
+                Logger.getLogger(Engine.class.getName()).log(Level.SEVERE,
                         "Unable to update " + source.getClass().getName(), ex);
             }
         }
