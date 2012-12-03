@@ -98,6 +98,11 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
         }
         File path = new File(exePath.getCanonicalFile() + File.separator + fileName);
         path = new File(path.getCanonicalPath());
+        if (!path.exists()) {
+            if (!path.mkdirs()) {
+                throw new IOException("Unable to create NVD CVE Data directory");
+            }
+        }
         return path;
     }
 

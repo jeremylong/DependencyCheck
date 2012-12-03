@@ -184,7 +184,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
         text = text.toLowerCase();
 
         for (Evidence e : this.list) {
-            if (e.used && e.value.contains(text)) {
+            if (e.used && e.value.toLowerCase().contains(text)) {
                 return true;
             }
         }

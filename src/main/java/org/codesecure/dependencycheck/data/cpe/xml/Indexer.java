@@ -27,7 +27,6 @@ import org.apache.lucene.index.Term;
 import org.codesecure.dependencycheck.data.cpe.Entry;
 import org.codesecure.dependencycheck.data.cpe.Fields;
 import org.codesecure.dependencycheck.data.cpe.Index;
-import org.codesecure.dependencycheck.data.lucene.LuceneUtils;
 
 /**
  * The Indexer is used to convert a CPE Entry, retrieved from the CPE XML file,
@@ -46,7 +45,8 @@ public class Indexer extends Index implements EntrySaveDelegate {
      */
     public void saveEntry(Entry entry) throws CorruptIndexException, IOException {
         Document doc = convertEntryToDoc(entry);
-        Term term = new Term(Fields.NVDID, LuceneUtils.escapeLuceneQuery(entry.getNvdId()));
+        //Term term = new Term(Fields.NVDID, LuceneUtils.escapeLuceneQuery(entry.getNvdId()));
+        Term term = new Term(Fields.NAME, entry.getName());
         indexWriter.updateDocument(term, doc);
     }
 

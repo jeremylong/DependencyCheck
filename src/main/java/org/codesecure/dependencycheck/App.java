@@ -28,7 +28,6 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.cli.ParseException;
-import org.codesecure.dependencycheck.analyzer.AnalysisPhase;
 import org.codesecure.dependencycheck.data.cpe.xml.Importer;
 import org.codesecure.dependencycheck.reporting.ReportGenerator;
 import org.codesecure.dependencycheck.dependency.Dependency;

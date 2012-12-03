@@ -66,7 +66,7 @@ public class CPEHandler extends DefaultHandler {
             skip = (temp != null && temp.equals("true"));
             try {
                 if (!skip && name.startsWith("cpe:/a:")) {
-                    entry.setName(name);
+                    entry.parseName(name);
                 } else {
                     skip = true;
                 }

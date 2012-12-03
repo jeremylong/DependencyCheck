@@ -43,15 +43,17 @@ public class Importer {
      */
     public static void importXML(File file) {
         NvdCveParser indexer = null;
+        org.codesecure.dependencycheck.data.cpe.xml.Indexer cpeIndexer = null;
         try {
-
             indexer = new NvdCveParser();
-
             indexer.openIndexWriter();
 
+            //HACK - hack to ensure all CPE data is stored in the index.
+            cpeIndexer = new org.codesecure.dependencycheck.data.cpe.xml.Indexer();
+            cpeIndexer.openIndexWriter();
+            indexer.setCPEIndexer(cpeIndexer);
 
             indexer.parse(file);
-
         } catch (CorruptIndexException ex) {
             Logger.getLogger(Importer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -59,6 +61,9 @@ public class Importer {
         } finally {
             if (indexer != null) {
                 indexer.close();
+            }
+            if (cpeIndexer != null) {
+                cpeIndexer.close();
             }
         }
     }

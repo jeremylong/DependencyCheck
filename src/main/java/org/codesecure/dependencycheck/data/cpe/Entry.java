@@ -45,17 +45,12 @@ public class Entry {
     public static Entry parse(Document doc) {
         Entry entry = new Entry();
         try {
-            entry.setName(doc.get(Fields.NAME));
+            entry.parseName(doc.get(Fields.NAME));
             entry.setTitle(doc.get(Fields.TITLE));
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(Entry.class.getName()).log(Level.SEVERE, null, ex);
             entry.name = doc.get(Fields.NAME);
         }
-//        entry.vendor = doc.get(Fields.VENDOR);
-//        entry.version = doc.get(Fields.VERSION);
-//        //entry.revision = doc.get(Fields.REVISION);
-//        entry.product = doc.get(Fields.TITLE);
-//        entry.nvdId = doc.get(Fields.NVDID);
         return entry;
     }
     /**
@@ -95,15 +90,12 @@ public class Entry {
     }
 
     /**
-     * Set the value of name and calls parseName to obtain the
-     * vendor:product:version:revision
+     * Set the value of name
      *
      * @param name new value of name
-     * @throws UnsupportedEncodingException should never be thrown...
      */
-    public void setName(String name) throws UnsupportedEncodingException {
+    public void setName(String name) {
         this.name = name;
-        parseName();
     }
     /**
      * The status of the CPE Entry.
@@ -310,15 +302,17 @@ public class Entry {
      * <p>Results in:</p> <ul> <li>Vendor: apache</li> <li>Product: struts</li>
      * <li>Version: 1.1</li> <li>Revision: rc2</li> </ul>
      *
+     * @param cpeName the cpe name
      * @throws UnsupportedEncodingException should never be thrown...
      */
-    private void parseName() throws UnsupportedEncodingException {
-        if (name != null && name.length() > 7) {
-            String[] data = name.substring(7).split(":");
+    public void parseName(String cpeName) throws UnsupportedEncodingException {
+        this.name = cpeName;
+        if (cpeName != null && cpeName.length() > 7) {
+            String[] data = cpeName.substring(7).split(":");
             if (data.length >= 1) {
-                vendor = URLDecoder.decode(data[0], "UTF-8");
+                vendor = URLDecoder.decode(data[0], "UTF-8").replaceAll("[_-]", " ");
                 if (data.length >= 2) {
-                    product = URLDecoder.decode(data[1], "UTF-8");
+                    product = URLDecoder.decode(data[1], "UTF-8").replaceAll("[_-]", " ");
                     if (data.length >= 3) {
                         version = URLDecoder.decode(data[2], "UTF-8");
                         if (data.length >= 4) {
