@@ -21,6 +21,8 @@ package org.codesecure.dependencycheck.data.cpe.xml;
 import java.io.IOException;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.FieldInfo.IndexOptions;
 import org.apache.lucene.index.Term;
@@ -59,44 +61,30 @@ public class Indexer extends Index implements EntrySaveDelegate {
     protected Document convertEntryToDoc(Entry entry) {
         Document doc = new Document();
 
-        Field name = new Field(Fields.NAME, entry.getName(), Field.Store.YES, Field.Index.ANALYZED);
-        name.setIndexOptions(IndexOptions.DOCS_ONLY);
+        Field name = new StoredField(Fields.NAME, entry.getName());
         doc.add(name);
 
-        Field nvdId = new Field(Fields.NVDID, entry.getNvdId(), Field.Store.NO, Field.Index.ANALYZED);
-        nvdId.setIndexOptions(IndexOptions.DOCS_ONLY);
-        doc.add(nvdId);
-
-        Field vendor = new Field(Fields.VENDOR, entry.getVendor(), Field.Store.NO, Field.Index.ANALYZED);
-        vendor.setIndexOptions(IndexOptions.DOCS_ONLY);
+        Field vendor = new TextField(Fields.VENDOR, entry.getVendor(), Field.Store.NO);
         vendor.setBoost(5.0F);
         doc.add(vendor);
 
-        Field product = new Field(Fields.PRODUCT, entry.getProduct(), Field.Store.NO, Field.Index.ANALYZED);
-        product.setIndexOptions(IndexOptions.DOCS_ONLY);
+        Field product = new TextField(Fields.PRODUCT, entry.getProduct(), Field.Store.NO);
         product.setBoost(5.0F);
         doc.add(product);
-
-        Field title = new Field(Fields.TITLE, entry.getTitle(), Field.Store.YES, Field.Index.ANALYZED);
-        title.setIndexOptions(IndexOptions.DOCS_ONLY);
-        //title.setBoost(1.0F);
-        doc.add(title);
 
         //TODO revision should likely be its own field
         if (entry.getVersion() != null) {
             Field version = null;
             if (entry.getRevision() != null) {
-                version = new Field(Fields.VERSION, entry.getVersion() + " "
-                        + entry.getRevision(), Field.Store.NO, Field.Index.ANALYZED);
+                version = new TextField(Fields.VERSION, entry.getVersion() + " "
+                        + entry.getRevision(), Field.Store.NO);
             } else {
-                version = new Field(Fields.VERSION, entry.getVersion(),
-                        Field.Store.NO, Field.Index.ANALYZED);
+                version = new TextField(Fields.VERSION, entry.getVersion(),
+                        Field.Store.NO);
             }
-            version.setIndexOptions(IndexOptions.DOCS_ONLY);
             version.setBoost(0.8F);
             doc.add(version);
         }
-
         return doc;
     }
 }

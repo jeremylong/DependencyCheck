@@ -35,21 +35,12 @@ public abstract class Fields {
      */
     public static final String VENDOR = "vendor";
     /**
-     * The key for the version field.
-     */
-    public static final String VERSION = "version";
-    //public static final String REVISION = "revision";
-    /**
      * The key for the product field.
      */
     public static final String PRODUCT = "product";
     /**
-     * The key for the title field. This is a field combining vendor, product,
-     * and version.
+     * The key for the version field.
      */
-    public static final String TITLE = "title";
-    /**
-     * The key for the nvdId field.
-     */
-    public static final String NVDID = "nvdid";
+    public static final String VERSION = "version";
+    //public static final String REVISION = "revision";
 }

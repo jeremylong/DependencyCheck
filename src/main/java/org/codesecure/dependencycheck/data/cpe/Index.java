@@ -36,8 +36,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.KeywordAnalyzer;
-import org.apache.lucene.analysis.PerFieldAnalyzerWrapper;
+import org.apache.lucene.analysis.core.KeywordAnalyzer;
+import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -121,7 +121,7 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
         fieldAnalyzers.put(Fields.NAME, new KeywordAnalyzer());
 
         PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(
-                new StandardAnalyzer(Version.LUCENE_35), fieldAnalyzers);
+                new StandardAnalyzer(Version.LUCENE_40), fieldAnalyzers);
 
         return wrapper;
     }

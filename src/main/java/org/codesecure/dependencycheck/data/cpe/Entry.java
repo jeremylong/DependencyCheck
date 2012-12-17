@@ -46,7 +46,6 @@ public class Entry {
         Entry entry = new Entry();
         try {
             entry.parseName(doc.get(Fields.NAME));
-            entry.setTitle(doc.get(Fields.TITLE));
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(Entry.class.getName()).log(Level.SEVERE, null, ex);
             entry.name = doc.get(Fields.NAME);

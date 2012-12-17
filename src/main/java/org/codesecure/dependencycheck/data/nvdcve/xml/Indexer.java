@@ -27,8 +27,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.FieldInfo.IndexOptions;
 import org.apache.lucene.index.Term;
 import org.codesecure.dependencycheck.data.lucene.LuceneUtils;
 import org.codesecure.dependencycheck.data.nvdcve.generated.VulnerabilityType;
@@ -101,14 +102,11 @@ public class Indexer extends Index implements EntrySaveDelegate {
             return null;
         }
 
-        Field name = new Field(Fields.CVE_ID, vulnerability.getId(), Field.Store.NO, Field.Index.ANALYZED);
-        name.setIndexOptions(IndexOptions.DOCS_ONLY);
+        Field name = new StringField(Fields.CVE_ID, vulnerability.getId(), Field.Store.NO);
         doc.add(name);
 
-        Field description = new Field(Fields.DESCRIPTION, vulnerability.getSummary(), Field.Store.NO, Field.Index.ANALYZED);
-        description.setIndexOptions(IndexOptions.DOCS_ONLY);
-        doc.add(description);
-
+//        Field description = new Field(Fields.DESCRIPTION, vulnerability.getSummary(), Field.Store.NO, Field.Index.ANALYZED);
+//        doc.add(description);
 
         JAXBContext context = JAXBContext.newInstance("org.codesecure.dependencycheck.data.nvdcve.generated");
 
@@ -119,7 +117,7 @@ public class Indexer extends Index implements EntrySaveDelegate {
 
         m.marshal(vulnerability, out);
 
-        Field xml = new Field(Fields.XML, out.toString(), Field.Store.YES, Field.Index.NO);
+        Field xml = new StoredField(Fields.XML, out.toString());
         doc.add(xml);
 
         return doc;
@@ -141,8 +139,7 @@ public class Indexer extends Index implements EntrySaveDelegate {
     }
 
     private void addVulnerableCpe(String cpe, Document doc) {
-        Field vulnerable = new Field(Fields.VULNERABLE_CPE, cpe, Field.Store.NO, Field.Index.ANALYZED);
-        vulnerable.setIndexOptions(IndexOptions.DOCS_ONLY);
+        Field vulnerable = new StringField(Fields.VULNERABLE_CPE, cpe, Field.Store.NO);
         doc.add(vulnerable);
     }
 }
