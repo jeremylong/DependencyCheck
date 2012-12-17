@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -98,13 +99,7 @@ public abstract class AbstractIndex {
             }
         }
         if (indexSearcher != null) {
-            try {
-                indexSearcher.close();
-            } catch (IOException ex) {
-                Logger.getLogger(AbstractIndex.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                indexSearcher = null;
-            }
+            indexSearcher = null;
         }
 
         if (analyzer != null) {
@@ -140,7 +135,7 @@ public abstract class AbstractIndex {
         if (!isOpen()) {
             open();
         }
-        IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_35, analyzer);
+        IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_40, analyzer);
         indexWriter = new IndexWriter(directory, conf);
     }
 
@@ -170,7 +165,8 @@ public abstract class AbstractIndex {
         if (!isOpen()) {
             open();
         }
-        indexReader = IndexReader.open(directory, true);
+        //indexReader = IndexReader.open(directory, true);
+        indexReader = DirectoryReader.open(directory);
     }
 
     /**

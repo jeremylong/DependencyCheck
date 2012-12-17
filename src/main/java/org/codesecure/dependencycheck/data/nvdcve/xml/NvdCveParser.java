@@ -30,6 +30,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.FieldInfo.IndexOptions;
 import org.apache.lucene.index.Term;
@@ -121,23 +123,21 @@ public class NvdCveParser extends Index {
                     sb.append("id=\"").append(id).append("\">");
                     //sb.append(str); //need to do the above to get the correct schema generated from files.
 
-                    Field name = new Field(Fields.CVE_ID, id, Field.Store.NO, Field.Index.ANALYZED);
-                    name.setIndexOptions(IndexOptions.DOCS_ONLY);
+                    Field name = new StringField(Fields.CVE_ID, id, Field.Store.NO);
                     doc.add(name);
                     continue;
                 }
-                Matcher matcherSummary = rxSummary.matcher(str);
-                if (matcherSummary.matches()) {
-                    String summary = matcherSummary.group(1);
-                    Field description = new Field(Fields.DESCRIPTION, summary, Field.Store.NO, Field.Index.ANALYZED);
-                    description.setIndexOptions(IndexOptions.DOCS_ONLY);
-                    doc.add(description);
-                    continue;
-                }
+//                Matcher matcherSummary = rxSummary.matcher(str);
+//                if (matcherSummary.matches()) {
+//                    String summary = matcherSummary.group(1);
+//                    Field description = new Field(Fields.DESCRIPTION, summary, Field.Store.NO);
+//                    doc.add(description);
+//                    continue;
+//                }
 
                 if (matcherEntryEnd.matches()) {
                     sb.append("</vulnerabilityType>");
-                    Field xml = new Field(Fields.XML, sb.toString(), Field.Store.YES, Field.Index.NO);
+                    Field xml = new StoredField(Fields.XML, sb.toString());
                     doc.add(xml);
 
                     if (!skipEntry) {
@@ -184,8 +184,7 @@ public class NvdCveParser extends Index {
      * @throws IOException is thrown if there is an IO Exception while writting to the CPE Index
      */
     private void addVulnerableCpe(String cpe, Document doc) throws CorruptIndexException, IOException {
-        Field vulnerable = new Field(Fields.VULNERABLE_CPE, cpe, Field.Store.NO, Field.Index.ANALYZED);
-        vulnerable.setIndexOptions(IndexOptions.DOCS_ONLY);
+        Field vulnerable = new StringField(Fields.VULNERABLE_CPE, cpe, Field.Store.NO);
         doc.add(vulnerable);
 
         //HACK - this has initially been placed here as a hack because not all
@@ -194,8 +193,6 @@ public class NvdCveParser extends Index {
         Entry cpeEntry = new Entry();
         try {
             cpeEntry.parseName(cpe);
-            cpeEntry.setNvdId("0");
-            cpeEntry.setTitle(cpe);
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(NvdCveParser.class.getName()).log(Level.SEVERE, null, ex);
         }

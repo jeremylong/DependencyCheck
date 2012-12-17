@@ -28,8 +28,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.KeywordAnalyzer;
-import org.apache.lucene.analysis.PerFieldAnalyzerWrapper;
+import org.apache.lucene.analysis.core.KeywordAnalyzer;
+import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -119,7 +119,7 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
         fieldAnalyzers.put(Fields.VULNERABLE_CPE, new KeywordAnalyzer());
 
         PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(
-                new StandardAnalyzer(Version.LUCENE_35), fieldAnalyzers);
+                new StandardAnalyzer(Version.LUCENE_40), fieldAnalyzers);
 
         return wrapper;
     }

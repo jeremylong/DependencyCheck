@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.codesecure.dependencycheck.dependency.Dependency;
 import org.codesecure.dependencycheck.analyzer.JarAnalyzer;
 import org.junit.Test;

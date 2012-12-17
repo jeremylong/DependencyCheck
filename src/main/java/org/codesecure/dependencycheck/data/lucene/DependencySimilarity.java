@@ -18,7 +18,7 @@ package org.codesecure.dependencycheck.data.lucene;
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 
-import org.apache.lucene.search.DefaultSimilarity;
+import org.apache.lucene.search.similarities.DefaultSimilarity;
 
 /**
  *
@@ -41,7 +41,7 @@ public class DependencySimilarity extends DefaultSimilarity {
      * @return 1
      */
     @Override
-    public float idf(int docFreq, int numDocs) {
+    public float idf(long docFreq, long numDocs) {
         return 1;
     }
 }

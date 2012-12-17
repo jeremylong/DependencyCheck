@@ -27,8 +27,10 @@ import java.util.StringTokenizer;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
+//TODO convert to the analyzing query parser
+//import org.apache.lucene.queryparser.analyzing.AnalyzingQueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -98,8 +100,7 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
         cpe.open();
         indexSearcher = cpe.getIndexSearcher();
         Analyzer analyzer = cpe.getAnalyzer();
-        //TITLE is the default field because it contains venddor, product, and version all in one.
-        queryParser = new QueryParser(Version.LUCENE_35, Fields.TITLE, analyzer);
+        queryParser = new QueryParser(Version.LUCENE_40, Fields.NAME, analyzer);
     }
 
     /**
