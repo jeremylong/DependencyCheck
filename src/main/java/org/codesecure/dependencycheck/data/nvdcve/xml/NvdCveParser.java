@@ -33,7 +33,6 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.FieldInfo.IndexOptions;
 import org.apache.lucene.index.Term;
 import org.codesecure.dependencycheck.data.cpe.Entry;
 import org.codesecure.dependencycheck.data.nvdcve.Fields;

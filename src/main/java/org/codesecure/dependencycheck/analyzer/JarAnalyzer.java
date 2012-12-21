@@ -482,6 +482,12 @@ public class JarAnalyzer extends AbstractAnalyzer {
     protected void parseManifest(Dependency dependency) throws IOException {
         JarFile jar = new JarFile(dependency.getActualFilePath());
         Manifest manifest = jar.getManifest();
+        if (manifest == null) {
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE,
+                    "Jar file '{0}' does not contain a manifest.",
+                    dependency.getFileName());
+            return;
+        }
         Attributes atts = manifest.getMainAttributes();
 
         EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
