@@ -128,8 +128,8 @@ public class Downloader {
         String encoding = conn.getContentEncoding();
 
         BufferedOutputStream writer = null;
+        InputStream reader = null;
         try {
-            InputStream reader;
             if (unzip || (encoding != null && "gzip".equalsIgnoreCase(encoding))) {
                 reader = new GZIPInputStream(conn.getInputStream());
             } else if (encoding != null && "deflate".equalsIgnoreCase(encoding)) {
@@ -147,12 +147,24 @@ public class Downloader {
         } catch (Exception ex) {
             throw new DownloadFailedException("Error saving downloaded file.", ex);
         } finally {
+            if (writer != null) {
             try {
                 writer.close();
                 writer = null;
             } catch (Exception ex) {
                 Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
                         "Error closing the writter in Downloader.", ex);
+            }
+            }
+            if (reader != null) {
+                try {
+                    reader.close();
+                    reader = null;
+                } catch (Exception ex) {
+
+                Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
+                        "Error closing the reader in Downloader.", ex);
+                }
             }
             try {
                 conn.disconnect();

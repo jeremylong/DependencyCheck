@@ -19,13 +19,14 @@ package org.codesecure.dependencycheck.reporting;
  */
 
 import java.io.FileInputStream;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -94,9 +95,7 @@ public class ReportGenerator {
         Context c = manager.createContext();
         EasyFactoryConfiguration config = new EasyFactoryConfiguration();
         config.addDefaultTools();
-        config.toolbox("application")
-                .tool("esc", "org.apache.velocity.tools.generic.EscapeTool")
-                .tool("org.apache.velocity.tools.generic.DateTool");
+        config.toolbox("application").tool("esc", "org.apache.velocity.tools.generic.EscapeTool").tool("org.apache.velocity.tools.generic.DateTool");
         manager.configure(config);
         return c;
     }
@@ -143,21 +142,33 @@ public class ReportGenerator {
             throw new IOException("Template file doesn't exist");
         }
 
-        InputStreamReader reader = new InputStreamReader(input);
-        BufferedWriter writer = null;
+        InputStreamReader reader = new InputStreamReader(input, "UTF-8");
+        OutputStreamWriter writer = null;
+        OutputStream outputStream = null;
 
         try {
-            writer = new BufferedWriter(new FileWriter(new File(outFileName)));
+            outputStream = new FileOutputStream(outFileName);
+            writer = new OutputStreamWriter(outputStream, "UTF-8");
+            //writer = new BufferedWriter(oswriter);
 
             if (!engine.evaluate(context, writer, templatePath, reader)) {
                 throw new Exception("Failed to convert the template into html.");
             }
             writer.flush();
         } finally {
-            try {
-                writer.close();
-            } catch (Exception ex) {
-                Logger.getLogger(ReportGenerator.class.getName()).log(Level.FINEST, null, ex);
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (Exception ex) {
+                    Logger.getLogger(ReportGenerator.class.getName()).log(Level.FINEST, null, ex);
+                }
+            }
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (Exception ex) {
+                    Logger.getLogger(ReportGenerator.class.getName()).log(Level.FINEST, null, ex);
+                }
             }
             try {
                 reader.close();

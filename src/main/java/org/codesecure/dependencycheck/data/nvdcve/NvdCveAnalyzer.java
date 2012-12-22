@@ -20,6 +20,7 @@ package org.codesecure.dependencycheck.data.nvdcve;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -142,6 +143,9 @@ public class NvdCveAnalyzer implements org.codesecure.dependencycheck.analyzer.A
                         } catch (JAXBException ex) {
                             Logger.getLogger(NvdCveAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
                             dependency.addAnalysisException(new AnalysisException("Unable to retrieve vulnerability data", ex));
+                        } catch (UnsupportedEncodingException ex) {
+                            Logger.getLogger(NvdCveAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+                            dependency.addAnalysisException(new AnalysisException("Unable to retrieve vulnerability data - utf-8", ex));
                         }
                     }
                 } catch (IOException ex) {
@@ -198,11 +202,11 @@ public class NvdCveAnalyzer implements org.codesecure.dependencycheck.analyzer.A
         this.open();
     }
 
-    private Vulnerability parseVulnerability(String xml) throws JAXBException {
+    private Vulnerability parseVulnerability(String xml) throws JAXBException, UnsupportedEncodingException {
 
         JAXBContext jaxbContext = JAXBContext.newInstance(VulnerabilityType.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        ByteArrayInputStream input = new ByteArrayInputStream(xml.getBytes());
+        ByteArrayInputStream input = new ByteArrayInputStream(xml.getBytes("UTF-8"));
         VulnerabilityType cvedata = (VulnerabilityType) unmarshaller.unmarshal(input);
         if (cvedata == null) {
             return null;

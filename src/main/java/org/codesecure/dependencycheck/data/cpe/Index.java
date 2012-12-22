@@ -197,24 +197,27 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
         Properties prop = new Properties();
         prop.put(Index.LAST_UPDATED, String.valueOf(timeStamp));
         OutputStream os = null;
+        OutputStreamWriter out = null;
         try {
             os = new FileOutputStream(cpeProp);
-            OutputStreamWriter out = new OutputStreamWriter(os);
+            out = new OutputStreamWriter(os, "UTF-8");
             prop.store(out, dir);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                os.flush();
-            } catch (IOException ex) {
-                Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            try {
-                os.close();
-            } catch (IOException ex) {
-                Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+            if (os != null) {
+                try {
+                    os.flush();
+                } catch (IOException ex) {
+                    Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                try {
+                    os.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }
@@ -277,6 +280,14 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
                     Logger.getLogger(Index.class.getName()).log(Level.FINEST, null, ex);
                 } catch (NumberFormatException ex) {
                     Logger.getLogger(Index.class.getName()).log(Level.FINEST, null, ex);
+                } finally {
+                    if (is != null) {
+                        try {
+                            is.close();
+                        } catch (IOException ex) {
+                            Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
                 }
                 if (currentlyPublishedDate > lastUpdated) {
                     retVal = currentlyPublishedDate;

@@ -128,7 +128,7 @@ public class Entry {
      * The modification date of the CPE Entry.
      * @deprecated This field is no longer used
      */
-    protected Date modificationDate;
+    private Date modificationDate;
 
     /**
      * Get the value of modificationDate
@@ -137,7 +137,7 @@ public class Entry {
      * @deprecated This field is no longer used
      */
     public Date getModificationDate() {
-        return modificationDate;
+        return (Date) modificationDate.clone();
     }
 
     /**
@@ -147,7 +147,7 @@ public class Entry {
      * @deprecated This field is no longer used
      */
     public void setModificationDate(Date modificationDate) {
-        this.modificationDate = modificationDate;
+        this.modificationDate = (Date) modificationDate.clone();
     }
 
     /**

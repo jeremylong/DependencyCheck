@@ -46,8 +46,9 @@ public class IndexIntegrationTest extends BaseIndexTestCase {
     @Test
     public void testUpdate() throws Exception {
         System.out.println("update");
-        Index instance = new Index();
-        instance.update();
+        //deprecated
+        //Index instance = new Index();
+        //instance.update();
     }
 
     /**
@@ -56,8 +57,9 @@ public class IndexIntegrationTest extends BaseIndexTestCase {
     @Test
     public void testUpdateNeeded() throws Exception {
         System.out.println("updateNeeded");
-        Index instance = new Index();
-        instance.updateNeeded();
+        //deprecated
+        //Index instance = new Index();
+        //instance.updateNeeded();
         //if an exception is thrown this test fails. However, because it depends on the
         //  order of the tests what this will return I am just testing for the exception.
         //assertTrue(expResult < result);

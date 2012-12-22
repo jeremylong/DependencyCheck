@@ -5,7 +5,7 @@
 package org.codesecure.dependencycheck.utils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import junit.framework.TestCase;
 import org.junit.Test;
@@ -66,7 +66,7 @@ public class ChecksumTest extends TestCase {
         boolean exceptionThrown = false;
         try {
             byte[] result = Checksum.getChecksum(algorithm, file);
-        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
             exceptionThrown = true;
         }
         assertTrue(exceptionThrown);
