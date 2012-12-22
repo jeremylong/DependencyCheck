@@ -55,7 +55,7 @@ public class FileUtils {
      * the contents.
      *
      * @param file the File to delete
-     * @throws IOException
+     * @throws IOException is thrown if the file could not be deleted
      */
     public static void delete(File file) throws IOException {
         if (file.isDirectory()) {

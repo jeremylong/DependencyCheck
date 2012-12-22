@@ -229,7 +229,7 @@ public class JarAnalyzer extends AbstractAnalyzer {
                     }
                 } else if (!entry.isDirectory() && "pom.properties".equals(entryName)) {
                     if (pomProperties == null) {
-                        Reader reader = new InputStreamReader(zin);
+                        Reader reader = new InputStreamReader(zin, "UTF-8");
                         pomProperties = new Properties();
                         pomProperties.load(reader);
                         zin.closeEntry();

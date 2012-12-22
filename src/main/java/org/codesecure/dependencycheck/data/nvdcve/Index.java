@@ -49,11 +49,11 @@ import org.codesecure.dependencycheck.utils.Settings;
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public class Index extends AbstractIndex implements CachedWebDataSource {
-    /**
-     * The current version of Lucene used to build the index.
-     */
-    public static final String INDEX_VERSION = "4.0";
 
+    /**
+     * The current version of the index
+     */
+    public static final String INDEX_VERSION = "1.0";
     /**
      * The name of the properties file containing the timestamp of the last
      * update.
@@ -216,7 +216,7 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
         OutputStream os = null;
         try {
             os = new FileOutputStream(cveProp);
-            OutputStreamWriter out = new OutputStreamWriter(os);
+            OutputStreamWriter out = new OutputStreamWriter(os, "UTF-8");
             prop.store(out, dir);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
@@ -225,15 +225,17 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
             Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
             throw new UpdateException("Unable to update last updated properties file.", ex);
         } finally {
-            try {
-                os.flush();
-            } catch (IOException ex) {
-                Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            try {
-                os.close();
-            } catch (IOException ex) {
-                Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+            if (os != null) {
+                try {
+                    os.flush();
+                } catch (IOException ex) {
+                    Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                try {
+                    os.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }
@@ -473,7 +475,7 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
      * @throws IOException is thrown if an IOExcpetion occurs.
      */
     private String readFile(File file) throws IOException {
-        FileReader stream = new FileReader(file);
+        InputStreamReader stream = new InputStreamReader(new FileInputStream(file), "UTF-8");
         StringBuilder str = new StringBuilder((int) file.length());
         try {
             char[] buf = new char[8096];
@@ -486,8 +488,6 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
             stream.close();
         }
         return str.toString();
-
-
     }
 
     /**

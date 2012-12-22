@@ -2,7 +2,6 @@ package org.codesecure.dependencycheck.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
@@ -30,29 +29,30 @@ public class Checksum {
      * @param algorithm the algorithm to use to calculate the checksum
      * @param file the file to calculate the checksum for
      * @return the checksum
-     * @throws FileNotFoundException when the file does not exist
+     * @throws IOException when the file does not exist
      * @throws NoSuchAlgorithmException when an algorithm is specified that does
      * not exist
      */
-    public static byte[] getChecksum(String algorithm, File file) throws FileNotFoundException, NoSuchAlgorithmException {
-        InputStream fis = new FileInputStream(file);
+    public static byte[] getChecksum(String algorithm, File file) throws NoSuchAlgorithmException, IOException {
+        InputStream fis = null;
         byte[] buffer = new byte[1024];
         MessageDigest complete = MessageDigest.getInstance(algorithm);
         int numRead;
         try {
+            fis = new FileInputStream(file);
             do {
                 numRead = fis.read(buffer);
                 if (numRead > 0) {
                     complete.update(buffer, 0, numRead);
                 }
             } while (numRead != -1);
-        } catch (IOException ex) {
-            Logger.getLogger(Checksum.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                fis.close();
-            } catch (IOException ex) {
-                Logger.getLogger(Checksum.class.getName()).log(Level.SEVERE, null, ex);
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(Checksum.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
         return complete.digest();
@@ -63,10 +63,10 @@ public class Checksum {
      *
      * @param file the file to generate the MD5 checksum
      * @return the hex representation of the MD5 hash
-     * @throws FileNotFoundException when the file passed in does not exist
+     * @throws IOException when the file passed in does not exist
      * @throws NoSuchAlgorithmException when the MD5 algorithm is not available
      */
-    public static String getMD5Checksum(File file) throws FileNotFoundException, NoSuchAlgorithmException {
+    public static String getMD5Checksum(File file) throws IOException, NoSuchAlgorithmException {
         byte[] b = getChecksum("MD5", file);
         return getHex(b);
     }
@@ -76,10 +76,10 @@ public class Checksum {
      *
      * @param file the file to generate the MD5 checksum
      * @return the hex representation of the SHA1 hash
-     * @throws FileNotFoundException when the file passed in does not exist
+     * @throws IOException when the file passed in does not exist
      * @throws NoSuchAlgorithmException when the SHA1 algorithm is not available
      */
-    public static String getSHA1Checksum(File file) throws FileNotFoundException, NoSuchAlgorithmException {
+    public static String getSHA1Checksum(File file) throws IOException, NoSuchAlgorithmException {
         byte[] b = getChecksum("SHA1", file);
         return getHex(b);
     }

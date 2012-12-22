@@ -19,7 +19,7 @@ package org.codesecure.dependencycheck.dependency;
  */
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -418,7 +418,7 @@ public class Dependency {
         try {
             md5 = Checksum.getMD5Checksum(file);
             sha1 = Checksum.getSHA1Checksum(file);
-        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(Dependency.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(Dependency.class.getName()).log(Level.SEVERE, null, ex);

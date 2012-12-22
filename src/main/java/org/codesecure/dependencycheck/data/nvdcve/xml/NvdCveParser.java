@@ -20,9 +20,10 @@ package org.codesecure.dependencycheck.data.nvdcve.xml;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -66,14 +67,15 @@ public class NvdCveParser extends Index {
      * @param file the reference to the NVD CVE file
      */
     public void parse(File file) {
-        FileReader fr = null;
+        InputStreamReader fr = null;
         BufferedReader br = null;
         Pattern rxEntry = Pattern.compile("^\\s*<entry\\s*id\\=\\\"([^\\\"]+)\\\".*$");
         Pattern rxEntryEnd = Pattern.compile("^\\s*</entry>.*$");
         Pattern rxFact = Pattern.compile("^\\s*<cpe\\-lang\\:fact\\-ref name=\\\"([^\\\"]+).*$");
-        Pattern rxSummary = Pattern.compile("^\\s*<vuln:summary>([^\\<]+).*$");
+        //Pattern rxSummary = Pattern.compile("^\\s*<vuln:summary>([^\\<]+).*$");
         try {
-            fr = new FileReader(file);
+
+            fr = new InputStreamReader(new FileInputStream(file), "UTF-8");
             br = new BufferedReader(fr);
             StringBuilder sb = new StringBuilder(7000);
             String str = null;
@@ -161,7 +163,9 @@ public class NvdCveParser extends Index {
             Logger.getLogger(NvdCveParser.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
-                fr.close();
+                if (fr != null) {
+                    fr.close();
+                }
             } catch (IOException ex) {
                 Logger.getLogger(NvdCveParser.class.getName()).log(Level.SEVERE, null, ex);
             }

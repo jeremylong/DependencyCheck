@@ -20,6 +20,7 @@ package org.codesecure.dependencycheck.data.nvdcve.xml;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
@@ -56,7 +57,12 @@ public class Indexer extends Index implements EntrySaveDelegate {
      */
     public void saveEntry(VulnerabilityType vulnerability) throws CorruptIndexException, IOException {
         try {
-            Document doc = convertEntryToDoc(vulnerability);
+            Document doc = null;
+            try {
+                doc = convertEntryToDoc(vulnerability);
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(Indexer.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
             if (doc == null) {
                 return;
@@ -75,8 +81,9 @@ public class Indexer extends Index implements EntrySaveDelegate {
      * @param vulnerability a VULNERABLE_CPE Entry.
      * @return a Lucene Document containing a VULNERABLE_CPE Entry.
      * @throws JAXBException is thrown when there is a JAXBException.
+     * @throws UnsupportedEncodingException if the system doesn't support utf-8
      */
-    protected Document convertEntryToDoc(VulnerabilityType vulnerability) throws JAXBException {
+    protected Document convertEntryToDoc(VulnerabilityType vulnerability) throws JAXBException, UnsupportedEncodingException {
         boolean hasApplication = false;
         Document doc = new Document();
 
@@ -117,7 +124,7 @@ public class Indexer extends Index implements EntrySaveDelegate {
 
         m.marshal(vulnerability, out);
 
-        Field xml = new StoredField(Fields.XML, out.toString());
+        Field xml = new StoredField(Fields.XML, out.toString("UTF-8"));
         doc.add(xml);
 
         return doc;
