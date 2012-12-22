@@ -88,7 +88,7 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
      * @return the data directory for this index.
      * @throws IOException is thrown if an IOException occurs of course...
      */
-    protected File getDataDirectory() throws IOException {
+    public File getDataDirectory() throws IOException {
         String fileName = Settings.getString(Settings.KEYS.CPE_INDEX);
         String filePath = Index.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         String decodedPath = URLDecoder.decode(filePath, "UTF-8");
@@ -132,6 +132,8 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
      *
      * @throws UpdateException is thrown if there is a problem updating the
      * index.
+     *
+     * @deprecated this should no longer be used as the raw CPE hosted at NIST is not complete enough.
      */
     public void update() throws UpdateException {
         try {
@@ -180,6 +182,8 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
      * directory.
      *
      * @param timeStamp the timestamp to write.
+     *
+     * @deprecated this should no longer be used as the raw CPE hosted at NIST is not complete enough.
      */
     private void writeLastUpdatedPropertyFile(long timeStamp) throws UpdateException {
         String dir;
@@ -229,6 +233,8 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
      * downloading the cpe.meta data file.
      * @throws UpdateException is thrown if there is an error locating the last updated
      * properties file.
+     *
+     * @deprecated this should no longer be used as the raw CPE hosted at NIST is not complete enough.
      */
     public long updateNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
         long retVal = 0;

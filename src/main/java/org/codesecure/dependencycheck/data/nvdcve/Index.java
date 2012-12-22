@@ -40,6 +40,7 @@ import org.codesecure.dependencycheck.data.lucene.AbstractIndex;
 import org.codesecure.dependencycheck.data.nvdcve.xml.Importer;
 import org.codesecure.dependencycheck.utils.DownloadFailedException;
 import org.codesecure.dependencycheck.utils.Downloader;
+import org.codesecure.dependencycheck.utils.FileUtils;
 import org.codesecure.dependencycheck.utils.Settings;
 
 /**
@@ -48,6 +49,10 @@ import org.codesecure.dependencycheck.utils.Settings;
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public class Index extends AbstractIndex implements CachedWebDataSource {
+    /**
+     * The current version of Lucene used to build the index.
+     */
+    public static final String INDEX_VERSION = "4.0";
 
     /**
      * The name of the properties file containing the timestamp of the last
@@ -203,7 +208,7 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
         }
         File cveProp = new File(dir + File.separatorChar + UPDATE_PROPERTIES_FILE);
         Properties prop = new Properties();
-
+        prop.put("version", INDEX_VERSION);
         for (NvdCveUrl cve : updated.values()) {
             prop.put(LAST_UPDATED_BASE + cve.id, String.valueOf(cve.getTimestamp()));
         }
@@ -271,10 +276,23 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
             File cveProp = new File(dir + File.separatorChar + UPDATE_PROPERTIES_FILE);
             if (cveProp.exists()) {
                 Properties prop = new Properties();
-                InputStream is;
+                InputStream is = null;
                 try {
                     is = new FileInputStream(cveProp);
                     prop.load(is);
+
+                    if (prop.getProperty("version") == null) {
+                        is.close();
+                        //this is an old version of the lucene index - just delete it
+                        FileUtils.delete(f);
+
+                        //this importer also updates the CPE index and it is also using an old version
+                        org.codesecure.dependencycheck.data.cpe.Index cpeidx = new org.codesecure.dependencycheck.data.cpe.Index();
+                        File cpeDir = cpeidx.getDataDirectory();
+                        FileUtils.delete(cpeDir);
+                        return currentlyPublished;
+                    }
+
                     long lastUpdated = Long.parseLong(prop.getProperty(Index.LAST_UPDATED_MODIFIED));
                     Date now = new Date();
                     int days = Settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS);
@@ -308,6 +326,14 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
                     Logger.getLogger(Index.class.getName()).log(Level.FINEST, null, ex);
                 } catch (NumberFormatException ex) {
                     Logger.getLogger(Index.class.getName()).log(Level.FINEST, null, ex);
+                } finally {
+                    if (is != null) {
+                        try {
+                            is.close();
+                        } catch (IOException ex) {
+                            Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
                 }
             }
         }
@@ -460,6 +486,8 @@ public class Index extends AbstractIndex implements CachedWebDataSource {
             stream.close();
         }
         return str.toString();
+
+
     }
 
     /**

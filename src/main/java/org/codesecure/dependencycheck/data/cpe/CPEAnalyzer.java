@@ -167,12 +167,10 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
                     dependency.addIdentifier(
                             "cpe",
                             e.getName(),
-                            e.getTitle(),
                             "http://web.nvd.nist.gov/view/vuln/search?cpe="
                             + URLEncoder.encode(e.getName(), "UTF-8"));
                 }
             }
-
 
             if (!found) {
                 int round = ctr % 3;

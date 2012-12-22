@@ -18,6 +18,10 @@ package org.codesecure.dependencycheck.utils;
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 /**
  * A collection of utilities for processing information about files.
  *
@@ -44,5 +48,23 @@ public class FileUtils {
             ret = fileName.substring(pos + 1, fileName.length()).toLowerCase();
         }
         return ret;
+    }
+
+    /**
+     * Deletes a file. If the File is a directory it will recursively delete
+     * the contents.
+     *
+     * @param file the File to delete
+     * @throws IOException
+     */
+    public static void delete(File file) throws IOException {
+        if (file.isDirectory()) {
+            for (File c : file.listFiles()) {
+                delete(c);
+            }
+        }
+        if (!file.delete()) {
+            throw new FileNotFoundException("Failed to delete file: " + file);
+        }
     }
 }

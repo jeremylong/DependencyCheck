@@ -54,6 +54,7 @@ public class Entry {
     }
     /**
      * The title of the CPE
+     * @deprecated This field is no longer used
      */
     protected String title;
 
@@ -61,6 +62,7 @@ public class Entry {
      * Get the value of title
      *
      * @return the value of title
+     * @deprecated This field is no longer used
      */
     public String getTitle() {
         return title;
@@ -70,6 +72,7 @@ public class Entry {
      * Set the value of title
      *
      * @param title new value of title
+     * @deprecated This field is no longer used
      */
     public void setTitle(String title) {
         this.title = title;
@@ -98,6 +101,7 @@ public class Entry {
     }
     /**
      * The status of the CPE Entry.
+     * @deprecated This field is no longer used
      */
     protected String status;
 
@@ -105,6 +109,7 @@ public class Entry {
      * Get the value of status
      *
      * @return the value of status
+     * @deprecated This field is no longer used
      */
     public String getStatus() {
         return status;
@@ -114,12 +119,14 @@ public class Entry {
      * Set the value of status
      *
      * @param status new value of status
+     * @deprecated This field is no longer used
      */
     public void setStatus(String status) {
         this.status = status;
     }
     /**
      * The modification date of the CPE Entry.
+     * @deprecated This field is no longer used
      */
     protected Date modificationDate;
 
@@ -127,6 +134,7 @@ public class Entry {
      * Get the value of modificationDate
      *
      * @return the value of modificationDate
+     * @deprecated This field is no longer used
      */
     public Date getModificationDate() {
         return modificationDate;
@@ -136,6 +144,7 @@ public class Entry {
      * Set the value of modificationDate
      *
      * @param modificationDate new value of modificationDate
+     * @deprecated This field is no longer used
      */
     public void setModificationDate(Date modificationDate) {
         this.modificationDate = modificationDate;
@@ -148,6 +157,7 @@ public class Entry {
      *
      * @param modificationDate new value of modificationDate
      * @throws ParseException is thrown when a parse exception occurs.
+     * @deprecated This field is no longer used
      */
     public void setModificationDate(String modificationDate) throws ParseException {
 
@@ -161,6 +171,7 @@ public class Entry {
     }
     /**
      * The nvdId.
+     * @deprecated This field is no longer used
      */
     protected String nvdId;
 
@@ -168,6 +179,7 @@ public class Entry {
      * Get the value of nvdId
      *
      * @return the value of nvdId
+     * @deprecated This field is no longer used
      */
     public String getNvdId() {
         return nvdId;
@@ -177,6 +189,7 @@ public class Entry {
      * Set the value of nvdId
      *
      * @param nvdId new value of nvdId
+     * @deprecated This field is no longer used
      */
     public void setNvdId(String nvdId) {
         this.nvdId = nvdId;

@@ -29,13 +29,11 @@ public class Identifier {
      *
      * @param type the identifier type.
      * @param value the identifier value.
-     * @param title the identifier title.
      * @param url the identifier url.
      */
-    Identifier(String type, String value, String title, String url) {
+    Identifier(String type, String value, String url) {
         this.type = type;
         this.value = value;
-        this.title = title;
         this.url = url;
     }
 
@@ -44,12 +42,11 @@ public class Identifier {
      *
      * @param type the identifier type.
      * @param value the identifier value.
-     * @param title the identifier title.
      * @param url the identifier url.
      * @param description the description of the identifier.
      */
-    Identifier(String type, String value, String title, String url, String description) {
-        this(type, value, title, url);
+    Identifier(String type, String value, String url, String description) {
+        this(type, value, url);
         this.description = description;
     }
     /**
@@ -74,28 +71,7 @@ public class Identifier {
     public void setValue(String value) {
         this.value = value;
     }
-    /**
-     * The title of the identifeir
-     */
-    protected String title;
 
-    /**
-     * Get the value of title
-     *
-     * @return the value of title
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
-     * Set the value of title
-     *
-     * @param title new value of title
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
     /**
      * The url for the identifeir
      */

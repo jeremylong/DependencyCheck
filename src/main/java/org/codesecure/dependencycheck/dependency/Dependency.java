@@ -238,11 +238,10 @@ public class Dependency {
      *
      * @param type the type of identifier (such as CPE).
      * @param value the value of the identifier.
-     * @param title the title of the identifier.
      * @param url the URL of the identifier.
      */
-    public void addIdentifier(String type, String value, String title, String url) {
-        Identifier i = new Identifier(type, value, title, url);
+    public void addIdentifier(String type, String value, String url) {
+        Identifier i = new Identifier(type, value, url);
         this.identifiers.add(i);
     }
 
