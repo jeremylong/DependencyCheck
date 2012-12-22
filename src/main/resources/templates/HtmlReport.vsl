@@ -370,7 +370,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                             <ul>
                             #foreach($id in $dependency.getIdentifiers())
                                 ##yes, we are HTML Encoding the href. this is okay. We can't URL encode as we have to trust the analyzer here...
-                                <li><b>$esc.html($id.type):</b>&nbsp;$esc.html($id.title)&nbsp;:&nbsp;<a href="$esc.html($id.url)" target="_blank">$esc.html($id.value)</a>
+                                <li><b>$esc.html($id.type):</b>&nbsp;<a href="$esc.html($id.url)" target="_blank">$esc.html($id.value)</a>
                                 #if( $id.descrription )
                                     <br/>$esc.html($id.description)
                                 #end
