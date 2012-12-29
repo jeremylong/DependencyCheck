@@ -56,10 +56,6 @@ public class NvdCveAnalyzer implements org.codesecure.dependencycheck.analyzer.A
      * The CVE Index.
      */
     protected Index cve = null;
-    /**
-     * The Lucene IndexSearcher.
-     */
-    private IndexSearcher indexSearcher = null;
 
     /**
      * Opens the data source.
@@ -70,14 +66,12 @@ public class NvdCveAnalyzer implements org.codesecure.dependencycheck.analyzer.A
     public void open() throws IOException {
         cve = new Index();
         cve.open();
-        indexSearcher = cve.getIndexSearcher();
     }
 
     /**
      * Closes the data source.
      */
     public void close() {
-        indexSearcher = null;
         cve.close();
     }
 
@@ -132,9 +126,9 @@ public class NvdCveAnalyzer implements org.codesecure.dependencycheck.analyzer.A
                     query.add(query1, BooleanClause.Occur.SHOULD);
                     query.add(query2, BooleanClause.Occur.SHOULD);
 
-                    TopDocs docs = indexSearcher.search(query, MAX_QUERY_RESULTS);
+                    TopDocs docs = cve.search(query, MAX_QUERY_RESULTS);
                     for (ScoreDoc d : docs.scoreDocs) {
-                        Document doc = indexSearcher.doc(d.doc);
+                        Document doc = cve.getDocument(d.doc);
                         String xml = doc.get(Fields.XML);
                         Vulnerability vuln;
                         try {

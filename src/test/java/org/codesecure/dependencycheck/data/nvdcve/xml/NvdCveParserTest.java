@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.lucene.index.CorruptIndexException;
-import org.codesecure.dependencycheck.data.nvdcve.InvalidDataException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

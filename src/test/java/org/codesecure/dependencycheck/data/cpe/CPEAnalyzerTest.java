@@ -113,40 +113,14 @@ public class CPEAnalyzerTest extends BaseIndexTestCase {
         assertTrue("Incorrect match", depends.getIdentifiers().get(0).getValue().equals(expResult));
     }
 
-    /**
-     * Test of searchCPE method, of class CPEAnalyzer.
-     * @throws Exception is thrown when an exception occurs
-     */
-    @Test
-    public void testSearchCPE_3args() throws Exception {
-        System.out.println("searchCPE - 3 args");
-        String vendor = "apache software foundation";
-        String product = "struts 2 core";
-        String version = "2.1.2";
-        CPEAnalyzer instance = new CPEAnalyzer();
-        instance.open();
-        String expResult = "cpe:/a:apache:struts:2.1.2";
-        List<Entry> result = instance.searchCPE(vendor, product, version);
-        assertEquals(expResult, result.get(0).getName());
-
-        vendor = "apache software foundation";
-        product = "struts 2 core";
-        version = "2.3.1.2";
-
-        expResult = "cpe:/a:apache:struts:2.3.1.2";
-        result = instance.searchCPE(vendor, product, version);
-        assertEquals(expResult, result.get(0).getName());
-
-        instance.close();
-    }
 
     /**
      * Test of searchCPE method, of class CPEAnalyzer.
      * @throws Exception is thrown when an exception occurs
      */
     @Test
-    public void testSearchCPE_5args() throws Exception {
-        System.out.println("searchCPE - 5 args");
+    public void testSearchCPE() throws Exception {
+        System.out.println("searchCPE");
         String vendor = "apache software foundation";
         String product = "struts 2 core";
         String version = "2.1.2";

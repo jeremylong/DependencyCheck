@@ -93,9 +93,15 @@ public class NvdCveParser extends Index {
                 //facts occur more often, do them first.
                 Matcher matcherFact = rxFact.matcher(str);
                 if (matcherFact.matches()) {
-                    String cpe = matcherFact.group(1);
+                    String cpe = matcherFact.group(1).trim();
                     if (cpe != null && cpe.startsWith("cpe:/a:")) {
                         skipEntry = false;
+
+                        //TODO deal with other possible :-: scenarios. do we need to be concerned about those?
+                        if (cpe.endsWith(":-")) {
+                            cpe = cpe.substring(0, cpe.length() - 2);
+                        }
+
                         addVulnerableCpe(cpe, doc);
                     }
                     continue;

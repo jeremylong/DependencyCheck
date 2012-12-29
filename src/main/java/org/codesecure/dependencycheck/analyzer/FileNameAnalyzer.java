@@ -21,7 +21,6 @@ package org.codesecure.dependencycheck.analyzer;
 import org.codesecure.dependencycheck.dependency.Dependency;
 import org.codesecure.dependencycheck.dependency.Evidence;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  *
@@ -83,38 +82,7 @@ public class FileNameAnalyzer implements Analyzer {
     }
 
     /**
-     * An enumeration to keep track of the characters in a string as it is being
-     * read in one character at a time.
-     */
-    private enum STRING_STATE {
-
-        ALPHA,
-        NUMBER,
-        PERIOD,
-        OTHER
-    }
-
-    /**
-     * Determines type of the character passed in.
-     *
-     * @param c a character
-     * @return a STRING_STATE representing whether the character is number,
-     * alpha, or other.
-     */
-    private STRING_STATE determineState(char c) {
-        if (c >= '0' && c <= '9') {
-            return STRING_STATE.NUMBER;
-        } else if (c == '.') {
-            return STRING_STATE.PERIOD;
-        } else if (c >= 'a' && c <= 'z') {
-            return STRING_STATE.ALPHA;
-        } else {
-            return STRING_STATE.OTHER;
-        }
-    }
-
-    /**
-     * Collects information about the file such as hashsums.
+     * Collects information about the file name.
      *
      * @param dependency the dependency to analyze.
      * @throws AnalysisException is thrown if there is an error reading the JAR
@@ -122,48 +90,21 @@ public class FileNameAnalyzer implements Analyzer {
      */
     public void analyze(Dependency dependency) throws AnalysisException {
 
-        analyzeFileName(dependency);
-
-    }
-
-    /**
-     * Analyzes the filename of the dependency and adds it to the evidence
-     * collections.
-     *
-     * @param dependency the dependency to analyze.
-     */
-    private void analyzeFileName(Dependency dependency) {
         String fileName = dependency.getFileName();
-        //slightly process the filename to chunk it into distinct words, numbers.
-        // Yes, the lucene analyzer might do this, but I want a little better control
-        // over the process.
-        String fileNameEvidence = fileName.substring(0, fileName.length() - 4).toLowerCase().replace('-', ' ').replace('_', ' ');
-        StringBuilder sb = new StringBuilder(fileNameEvidence.length());
-        STRING_STATE state = determineState(fileNameEvidence.charAt(0));
-
-        for (int i = 0; i < fileNameEvidence.length(); i++) {
-            char c = fileNameEvidence.charAt(i);
-            STRING_STATE newState = determineState(c);
-            if (newState != state) {
-                if ((state != STRING_STATE.NUMBER && newState == STRING_STATE.PERIOD)
-                        || (state == STRING_STATE.PERIOD && newState != STRING_STATE.NUMBER)
-                        || (state == STRING_STATE.ALPHA || newState == STRING_STATE.ALPHA)
-                        || ((state == STRING_STATE.OTHER || newState == STRING_STATE.OTHER) && c != ' ')) {
-                    sb.append(' ');
-                }
-            }
-            state = newState;
-            sb.append(c);
+        int pos = fileName.lastIndexOf(".");
+        if (pos > 0) {
+            fileName = fileName.substring(0, pos - 1);
         }
-        Pattern rx = Pattern.compile("\\s\\s+");
-        fileNameEvidence = rx.matcher(sb.toString()).replaceAll(" ");
+
         dependency.getProductEvidence().addEvidence("file", "name",
-                fileNameEvidence, Evidence.Confidence.HIGH);
+                fileName, Evidence.Confidence.HIGH);
+
         dependency.getVendorEvidence().addEvidence("file", "name",
-                fileNameEvidence, Evidence.Confidence.HIGH);
-        if (fileNameEvidence.matches(".*\\d.*")) {
+                fileName, Evidence.Confidence.HIGH);
+
+        if (fileName.matches(".*\\d.*")) {
             dependency.getVersionEvidence().addEvidence("file", "name",
-                    fileNameEvidence, Evidence.Confidence.HIGH);
+                    fileName, Evidence.Confidence.HIGH);
         }
     }
 
