@@ -24,18 +24,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
-//TODO convert to the analyzing query parser
-//import org.apache.lucene.queryparser.analyzing.AnalyzingQueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.util.Version;
 import org.codesecure.dependencycheck.analyzer.AnalysisException;
 import org.codesecure.dependencycheck.analyzer.AnalysisPhase;
 import org.codesecure.dependencycheck.data.lucene.LuceneUtils;
@@ -80,14 +73,6 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
      * The CPE Index.
      */
     protected Index cpe = null;
-    /**
-     * The Lucene IndexSearcher.
-     */
-    private IndexSearcher indexSearcher = null;
-    /**
-     * The Lucene QueryParser.
-     */
-    private QueryParser queryParser = null;
 
     /**
      * Opens the data source.
@@ -98,17 +83,12 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
     public void open() throws IOException {
         cpe = new Index();
         cpe.open();
-        indexSearcher = cpe.getIndexSearcher();
-        Analyzer analyzer = cpe.getAnalyzer();
-        queryParser = new QueryParser(Version.LUCENE_40, Fields.NAME, analyzer);
     }
 
     /**
      * Closes the data source.
      */
     public void close() {
-        queryParser = null;
-        indexSearcher = null;
         cpe.close();
     }
 
@@ -232,11 +212,7 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
                 value = value.substring(8).replaceAll("\\.", " ");
             }
             if (sb.indexOf(value) < 0) {
-//                if (value.length() > 200) {
-//                    sb.append(value.substring(0, 200)).append(' ');
-//                } else {
                 sb.append(value).append(' ');
-//                }
             }
         }
         return sb.toString();
@@ -255,23 +231,6 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
         } else {
             return Confidence.LOW;
         }
-    }
-
-    /**
-     * Searches the Lucene CPE index to identify possible CPE entries associated
-     * with the supplied vendor, product, and version.
-     *
-     * @param vendor the text used to search the vendor field.
-     * @param product the text used to search the product field.
-     * @param version the text used to search the version field.
-     * @return a list of possible CPE values.
-     * @throws CorruptIndexException when the Lucene index is corrupt.
-     * @throws IOException when the Lucene index is not found.
-     * @throws ParseException when the generated query is not valid.
-     */
-    protected List<Entry> searchCPE(String vendor, String product, String version)
-            throws CorruptIndexException, IOException, ParseException {
-        return searchCPE(vendor, product, version, null, null);
     }
 
     /**
@@ -302,10 +261,9 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
         if (searchString == null) {
             return ret;
         }
-        Query query = queryParser.parse(searchString);
-        TopDocs docs = indexSearcher.search(query, MAX_QUERY_RESULTS);
+        TopDocs docs = cpe.search(searchString, MAX_QUERY_RESULTS);
         for (ScoreDoc d : docs.scoreDocs) {
-            Document doc = indexSearcher.doc(d.doc);
+            Document doc = cpe.getDocument(d.doc);
             Entry entry = Entry.parse(doc);
             entry.setSearchScore(d.score);
             if (!ret.contains(entry)) {
@@ -343,11 +301,11 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
             return null;
         }
 
-        if (!appendWeightedSearch(sb, Fields.PRODUCT, product.toLowerCase(), produdctWeightings)) {
+        if (!appendWeightedSearch(sb, Fields.PRODUCT, product, produdctWeightings)) {
             return null;
         }
         sb.append(" AND ");
-        if (!appendWeightedSearch(sb, Fields.VENDOR, vendor.toLowerCase(), vendorWeighting)) {
+        if (!appendWeightedSearch(sb, Fields.VENDOR, vendor, vendorWeighting)) {
             return null;
         }
         sb.append(" AND ");

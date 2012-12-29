@@ -86,9 +86,6 @@ public final class CliParser {
      * SCAN or CPE command line arguments that does not exist.
      */
     private void validateArgs() throws FileNotFoundException, ParseException {
-        if (isLoadCPE()) {
-            validatePathExists(getCpeFile());
-        }
         if (isRunScan()) {
             validatePathExists(getScanFiles());
             if (!line.hasOption(ArgumentName.OUT)) {
@@ -171,10 +168,6 @@ public final class CliParser {
                 .withDescription("the path to scan - this option can be specified multiple times.")
                 .create(ArgumentName.SCAN_SHORT);
 
-        Option load = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.CPE)
-                .withDescription("load the CPE xml file.")
-                .create(ArgumentName.CPE_SHORT);
-
         Option props = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.PROP)
                 .withDescription("a property file to load.")
                 .create(ArgumentName.PROP_SHORT);
@@ -187,7 +180,6 @@ public final class CliParser {
 
         OptionGroup og = new OptionGroup();
         og.addOption(path);
-        og.addOption(load);
 
         Options opts = new Options();
         opts.addOptionGroup(og);
@@ -217,15 +209,6 @@ public final class CliParser {
      */
     public boolean isGetHelp() {
         return (line != null) ? line.hasOption(ArgumentName.HELP) : false;
-    }
-
-    /**
-     * Determines if the 'cpe' command line argument was passed in.
-     *
-     * @return whether or not the 'cpe' command line argument was passed in
-     */
-    public boolean isLoadCPE() {
-        return (line != null) ? isValid && line.hasOption(ArgumentName.CPE) : false;
     }
 
     /**
@@ -265,16 +248,6 @@ public final class CliParser {
         if (advancedHelp != null) {
             System.out.println(advancedHelp);
         }
-    }
-
-    /**
-     * Retrieves the file command line parameter(s) specified for the 'cpe'
-     * argument.
-     *
-     * @return the file paths specified on the command line
-     */
-    public String getCpeFile() {
-        return line.getOptionValue(ArgumentName.CPE);
     }
 
     /**
@@ -343,16 +316,6 @@ public final class CliParser {
          * The short CLI argument name specifing the directory/file to scan
          */
         public static final String SCAN_SHORT = "s";
-        /**
-         * The long CLI argument name specifing the path to the CPE.XML file to
-         * import
-         */
-        public static final String CPE = "cpe";
-        /**
-         * The short CLI argument name specifing the path to the CPE.XML file to
-         * import
-         */
-        public static final String CPE_SHORT = "c";
         /**
          * The long CLI argument name specifing that the CPE/CVE/etc. data
          * should not be automatically updated.

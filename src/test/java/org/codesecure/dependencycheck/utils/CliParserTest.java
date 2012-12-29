@@ -53,7 +53,6 @@ public class CliParserTest extends TestCase {
         assertFalse(instance.isGetVersion());
         assertFalse(instance.isGetHelp());
         assertFalse(instance.isRunScan());
-        assertFalse(instance.isLoadCPE());
     }
 
     /**
@@ -73,7 +72,6 @@ public class CliParserTest extends TestCase {
         assertFalse(instance.isGetVersion());
         assertTrue(instance.isGetHelp());
         assertFalse(instance.isRunScan());
-        assertFalse(instance.isLoadCPE());
     }
 
     /**
@@ -91,31 +89,6 @@ public class CliParserTest extends TestCase {
         assertTrue(instance.isGetVersion());
         assertFalse(instance.isGetHelp());
         assertFalse(instance.isRunScan());
-        assertFalse(instance.isLoadCPE());
-
-    }
-
-    /**
-     * Test of parse method with jar and cpe args, of class CliParser.
-     * @throws Exception thrown when an excpetion occurs.
-     */
-    @Test
-    public void testParse_scan_cpe() throws Exception {
-        System.out.println("parse -cpe file -scan file");
-
-        String[] args = {"-scan", "file", "-cpe", "file"};
-
-        CliParser instance = new CliParser();
-        try {
-            instance.parse(args);
-        } catch (ParseException ex) {
-            assertTrue(ex.getMessage().contains("an option from this group has already been selected"));
-        }
-
-        assertFalse(instance.isGetVersion());
-        assertFalse(instance.isGetHelp());
-        assertFalse(instance.isRunScan());
-        assertFalse(instance.isLoadCPE());
 
     }
 
@@ -146,7 +119,6 @@ public class CliParserTest extends TestCase {
         assertFalse(instance.isGetVersion());
         assertFalse(instance.isGetHelp());
         assertFalse(instance.isRunScan());
-        assertFalse(instance.isLoadCPE());
     }
 
     /**
@@ -170,8 +142,6 @@ public class CliParserTest extends TestCase {
         assertFalse(instance.isGetVersion());
         assertFalse(instance.isGetHelp());
         assertFalse(instance.isRunScan());
-        assertFalse(instance.isLoadCPE());
-
     }
 
     /**
@@ -194,7 +164,6 @@ public class CliParserTest extends TestCase {
         assertFalse(instance.isGetVersion());
         assertFalse(instance.isGetHelp());
         assertFalse(instance.isRunScan());
-        assertFalse(instance.isLoadCPE());
     }
 
     /**
@@ -215,78 +184,6 @@ public class CliParserTest extends TestCase {
         assertFalse(instance.isGetVersion());
         assertFalse(instance.isGetHelp());
         assertTrue(instance.isRunScan());
-        assertFalse(instance.isLoadCPE());
-
-    }
-
-    /**
-     * Test of parse method with cpe arg, of class CliParser.
-     * @throws Exception thrown when an excpetion occurs.
-     */
-    @Test
-    public void testParse_cpe() throws Exception {
-        System.out.println("parse -cpe");
-
-        String[] args = {"-cpe"};
-
-        CliParser instance = new CliParser();
-
-        try {
-            instance.parse(args);
-        } catch (ParseException ex) {
-            assertTrue(ex.getMessage().contains("Missing argument"));
-        }
-
-        assertFalse(instance.isGetVersion());
-        assertFalse(instance.isGetHelp());
-        assertFalse(instance.isRunScan());
-        assertFalse(instance.isLoadCPE());
-
-    }
-
-    /**
-     * Test of parse method with jar arg, of class CliParser.
-     * @throws Exception thrown when an excpetion occurs.
-     */
-    @Test
-    public void testParse_cpe_unknownFile() throws Exception {
-        System.out.println("parse -cpe cpe.that.does.not.exist");
-
-        String[] args = {"-cpe", "cpe.that.does.not.exist"};
-
-        CliParser instance = new CliParser();
-        try {
-            instance.parse(args);
-        } catch (FileNotFoundException ex) {
-            assertTrue(ex.getMessage().contains("Invalid file argument"));
-        }
-
-        assertFalse(instance.isGetVersion());
-        assertFalse(instance.isGetHelp());
-        assertFalse(instance.isRunScan());
-        assertFalse(instance.isLoadCPE());
-    }
-
-    /**
-     * Test of parse method with jar arg, of class CliParser.
-     * @throws Exception thrown when an excpetion occurs.
-     */
-    @Test
-    public void testParse_cpe_withFileExists() throws Exception {
-        System.out.println("parse -cpe checkSumTest.file");
-        File path = new File(this.getClass().getClassLoader().getResource("checkSumTest.file").getPath());
-        String[] args = {"-cpe", path.getCanonicalPath()};
-
-        CliParser instance = new CliParser();
-        instance.parse(args);
-
-        assertEquals(path.getCanonicalPath(), instance.getCpeFile());
-
-        assertFalse(instance.isGetVersion());
-        assertFalse(instance.isGetHelp());
-        assertFalse(instance.isRunScan());
-        assertTrue(instance.isLoadCPE());
-
     }
 
     /**
@@ -342,7 +239,7 @@ public class CliParserTest extends TestCase {
             String text = (new String(baos.toByteArray()));
             String[] lines = text.split(System.getProperty("line.separator"));
             assertTrue(lines[0].startsWith("usage: "));
-            assertTrue((lines.length>2));
+            assertTrue((lines.length > 2));
         } catch (IOException ex) {
             System.setOut(out);
             fail("CliParser.printVersionInfo did not write anything to system.out.");

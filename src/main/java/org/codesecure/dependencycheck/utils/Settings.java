@@ -36,7 +36,14 @@ public class Settings {
     /**
      * The collection of keys used within the properties file.
      */
-    public abstract class KEYS {
+    public static class KEYS {
+
+        /**
+         * private contructor because this is a "utility" class containing constants
+         */
+        private KEYS() {
+            //do nothing
+        }
 
         /**
          * The properties key for the path where the CPE Lucene Index will be

@@ -22,12 +22,17 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.util.Version;
@@ -57,9 +62,17 @@ public abstract class AbstractIndex {
      */
     private IndexSearcher indexSearcher = null;
     /**
-     * The Lucene Analyzer.
+     * The Lucene Analyzer used for Indexing.
      */
-    private Analyzer analyzer = null;
+    private Analyzer indexingAnalyzer = null;
+    /**
+     * The Lucene Analyzer used for Searching
+     */
+    private Analyzer searchingAnalyzer = null;
+    /**
+     * The Lucene QueryParser used for Searching
+     */
+    private QueryParser queryParser = null;
     /**
      * Indicates whether or not the Lucene Index is open.
      */
@@ -72,7 +85,8 @@ public abstract class AbstractIndex {
      */
     public void open() throws IOException {
         directory = this.getDirectory();
-        analyzer = this.getAnalyzer(); //new StandardAnalyzer(Version.LUCENE_35);
+        indexingAnalyzer = this.getIndexingAnalyzer();
+        searchingAnalyzer = this.getSearchingAnalyzer();
         indexOpen = true;
     }
 
@@ -102,10 +116,16 @@ public abstract class AbstractIndex {
             indexSearcher = null;
         }
 
-        if (analyzer != null) {
-            analyzer.close();
-            analyzer = null;
+        if (indexingAnalyzer != null) {
+            indexingAnalyzer.close();
+            indexingAnalyzer = null;
         }
+
+        if (searchingAnalyzer != null) {
+            searchingAnalyzer.close();
+            searchingAnalyzer = null;
+        }
+
         try {
             directory.close();
         } catch (IOException ex) {
@@ -135,7 +155,7 @@ public abstract class AbstractIndex {
         if (!isOpen()) {
             open();
         }
-        IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_40, analyzer);
+        IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_40, indexingAnalyzer);
         indexWriter = new IndexWriter(directory, conf);
     }
 
@@ -176,7 +196,7 @@ public abstract class AbstractIndex {
      * @throws CorruptIndexException is thrown if the index is corrupt.
      * @throws IOException is thrown if there is an exception reading the index.
      */
-    public IndexSearcher getIndexSearcher() throws CorruptIndexException, IOException {
+    protected IndexSearcher getIndexSearcher() throws CorruptIndexException, IOException {
         if (indexReader == null) {
             openIndexReader();
         }
@@ -187,29 +207,116 @@ public abstract class AbstractIndex {
     }
 
     /**
-     * Returns an Analyzer for the Lucene Index.
+     * Returns an Analyzer to be used when indexing.
      *
      * @return an Analyzer.
      */
-    public Analyzer getAnalyzer() {
-        if (analyzer == null) {
-            analyzer = createAnalyzer();
+    public Analyzer getIndexingAnalyzer() {
+        if (indexingAnalyzer == null) {
+            indexingAnalyzer = createIndexingAnalyzer();
         }
-        return analyzer;
+        return indexingAnalyzer;
     }
 
     /**
-     * Gets the directory that contains the Lucene Index.
+     * Returns an analyzer used for searching the index
+     * @return a lucene analyzer
+     */
+    protected Analyzer getSearchingAnalyzer() {
+        if (searchingAnalyzer == null) {
+            searchingAnalyzer = createSearchingAnalyzer();
+        }
+        return searchingAnalyzer;
+    }
+
+    /**
+     * Gets a query parser
+     * @return a query parser
+     */
+    protected QueryParser getQueryParser() {
+        if (queryParser == null) {
+            queryParser = createQueryParser();
+        }
+        return queryParser;
+    }
+
+    /**
+     * Searches the index using the given search string
+     * @param searchString the query text
+     * @param maxQueryResults the maximum number of documents to return
+     * @return the TopDocs found by the search
+     * @throws ParseException thrown when the searchString is invalid
+     * @throws IOException is thrown if there is an issue with the underlying Index
+     */
+    public TopDocs search(String searchString, int maxQueryResults) throws ParseException, IOException {
+
+        QueryParser parser = getQueryParser();
+
+        Query query = parser.parse(searchString);
+
+        resetSearchingAnalyzer();
+
+        IndexSearcher is = getIndexSearcher();
+
+        TopDocs docs = is.search(query, maxQueryResults);
+
+        return docs;
+    }
+
+    /**
+     * Searches the index using the given query
+     * @param query the query used to search the index
+     * @param maxQueryResults the max number of results to return
+     * @return the TopDocs found be the query
+     * @throws CorruptIndexException thrown if the Index is corrupt
+     * @throws IOException thrown if there is an IOException
+     */
+    public TopDocs search(Query query, int maxQueryResults) throws CorruptIndexException, IOException {
+        IndexSearcher is = getIndexSearcher();
+        return is.search(query, maxQueryResults);
+    }
+
+    /**
+     * Retrieves a document from the Index
+     * @param documentId the id of the document to retrieve
+     * @return the Document
+     * @throws IOException thrown if there is an IOException
+     */
+    public Document getDocument(int documentId) throws IOException {
+        IndexSearcher is = getIndexSearcher();
+        return is.doc(documentId);
+    }
+
+    /**
+     * Gets the directory that contains the Lucene Index
      *
-     * @return a Lucene Directory.
-     * @throws IOException is thrown when an IOException occurs.
+     * @return a Lucene Directory
+     * @throws IOException is thrown when an IOException occurs
      */
     public abstract Directory getDirectory() throws IOException;
 
     /**
-     * Creates the Lucene Analyzer used when indexing and searching the index.
+     * Creates the Lucene Analyzer used when indexing
      *
-     * @return a Lucene Analyzer.
+     * @return a Lucene Analyzer
      */
-    public abstract Analyzer createAnalyzer();
+    public abstract Analyzer createIndexingAnalyzer();
+
+    /**
+     * Creates the Lucene Analyzer used when querying the index
+     *
+     * @return a Lucene Analyzer
+     */
+    public abstract Analyzer createSearchingAnalyzer();
+
+    /**
+     * Creates the Lucene QueryParser used when querying the index
+     * @return a QueryParser
+     */
+    public abstract QueryParser createQueryParser();
+
+    /**
+     * Resets the searching analyzers
+     */
+    protected abstract void resetSearchingAnalyzer();
 }

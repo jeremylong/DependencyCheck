@@ -376,15 +376,13 @@ public class Dependency {
             return false;
         }
 
-        String fnd = str.toLowerCase();
-
         if (vendorEvidence.containsUsedString(str)) {
             return true;
         }
         if (productEvidence.containsUsedString(str)) {
             return true;
         }
-        if (versionEvidence.containsUsedString(fnd)) {
+        if (versionEvidence.containsUsedString(str)) {
             return true;
         }
         return false;

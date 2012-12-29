@@ -18,7 +18,6 @@ package org.codesecure.dependencycheck;
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,13 +25,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
-import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.cli.ParseException;
-import org.codesecure.dependencycheck.data.cpe.xml.Importer;
 import org.codesecure.dependencycheck.reporting.ReportGenerator;
 import org.codesecure.dependencycheck.dependency.Dependency;
 import org.codesecure.dependencycheck.utils.CliParser;
-import org.xml.sax.SAXException;
 
 /*
  * This file is part of App.
@@ -73,11 +69,12 @@ public class App {
         //while java doc for JUL says to use preferences api - it throws an exception...
         //Preferences.systemRoot().put("java.util.logging.config.file", "log.properties");
         //System.getProperties().put("java.util.logging.config.file", "configuration/log.properties");
-        File dir = new File("logs");
 
-        if (!dir.exists()) {
-            dir.mkdir();
-        }
+        //removed the file handler. since this is a console app - just write to console.
+//        File dir = new File("logs");
+//        if (!dir.exists()) {
+//            dir.mkdir();
+//        }
         try {
             InputStream in = App.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
             LogManager.getLogManager().reset();
@@ -114,31 +111,12 @@ public class App {
 
         if (cli.isGetVersion()) {
             cli.printVersionInfo();
-        } else if (cli.isLoadCPE()) {
-            loadCPE(cli.getCpeFile());
         } else if (cli.isRunScan()) {
             runScan(cli.getReportDirectory(), cli.getApplicationName(), cli.getScanFiles(), cli.isAutoUpdate());
         } else {
             cli.printHelp();
         }
 
-    }
-
-    /**
-     * Loads the specified CPE.XML file into Lucene Index.
-     *
-     * @param cpePath
-     */
-    private void loadCPE(String cpePath) {
-        try {
-            Importer.importXML(cpePath);
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SAXException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     /**
