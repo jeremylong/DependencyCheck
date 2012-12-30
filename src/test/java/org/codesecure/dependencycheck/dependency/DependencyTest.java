@@ -5,8 +5,6 @@
 package org.codesecure.dependencycheck.dependency;
 
 import java.io.File;
-import org.codesecure.dependencycheck.dependency.Dependency;
-import org.codesecure.dependencycheck.dependency.Evidence;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;

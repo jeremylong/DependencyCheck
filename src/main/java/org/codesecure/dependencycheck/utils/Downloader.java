@@ -97,22 +97,8 @@ public class Downloader {
      */
     public static void fetchFile(URL url, File outputPath, boolean unzip) throws DownloadFailedException {
         HttpURLConnection conn = null;
-        Proxy proxy = null;
-        String proxyUrl = Settings.getString(Settings.KEYS.PROXY_URL);
-
         try {
-            if (proxyUrl != null) {
-                int proxyPort = Settings.getInt(Settings.KEYS.PROXY_PORT);
-                SocketAddress addr = new InetSocketAddress(proxyUrl, proxyPort);
-                proxy = new Proxy(Proxy.Type.HTTP, addr);
-                conn = (HttpURLConnection) url.openConnection(proxy);
-            } else {
-                conn = (HttpURLConnection) url.openConnection();
-            }
-            if (Settings.getString(Settings.KEYS.CONNECTION_TIMEOUT) != null) {
-                int timeout = Settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT);
-                conn.setConnectTimeout(timeout);
-            }
+            conn = Downloader.getConnection(url);
             conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
             conn.connect();
         } catch (IOException ex) {
@@ -148,13 +134,13 @@ public class Downloader {
             throw new DownloadFailedException("Error saving downloaded file.", ex);
         } finally {
             if (writer != null) {
-            try {
-                writer.close();
-                writer = null;
-            } catch (Exception ex) {
-                Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
-                        "Error closing the writter in Downloader.", ex);
-            }
+                try {
+                    writer.close();
+                    writer = null;
+                } catch (Exception ex) {
+                    Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
+                            "Error closing the writter in Downloader.", ex);
+                }
             }
             if (reader != null) {
                 try {
@@ -162,8 +148,8 @@ public class Downloader {
                     reader = null;
                 } catch (Exception ex) {
 
-                Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
-                        "Error closing the reader in Downloader.", ex);
+                    Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
+                            "Error closing the reader in Downloader.", ex);
                 }
             }
             try {
@@ -172,5 +158,73 @@ public class Downloader {
                 conn = null;
             }
         }
+    }
+
+    /**
+     * Makes an HTTP Head request to retrieve the last modified date of the given URL.
+     *
+     * @param url the URL to retrieve the timestamp from
+     * @return an epoch timestamp
+     * @throws DownloadFailedException is thrown if an exception occurs making the HTTP request
+     */
+    public static long getLastModified(URL url) throws DownloadFailedException {
+        HttpURLConnection conn = null;
+        long timestamp = 0;
+        try {
+            conn = Downloader.getConnection(url);
+            conn.setRequestMethod("HEAD");
+            conn.connect();
+            timestamp = conn.getLastModified();
+        } catch (Exception ex) {
+            throw new DownloadFailedException("Error making HTTP HEAD request.", ex);
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.disconnect();
+                } finally {
+                    conn = null;
+                }
+            }
+        }
+        return timestamp;
+    }
+
+    /**
+     * Utility method to get an HttpURLConnectoin. If the app is configured to
+     * use a proxy this method will retrieve the proxy settings and use them
+     * when setting up the connection.
+     *
+     * @param url the url to connect to
+     * @return an HttpURLConnection
+     * @throws DownloadFailedException thrown if there is an exception
+     */
+    private static HttpURLConnection getConnection(URL url) throws DownloadFailedException {
+        HttpURLConnection conn = null;
+        Proxy proxy = null;
+        String proxyUrl = Settings.getString(Settings.KEYS.PROXY_URL);
+        try {
+            if (proxyUrl != null) {
+                int proxyPort = Settings.getInt(Settings.KEYS.PROXY_PORT);
+                SocketAddress addr = new InetSocketAddress(proxyUrl, proxyPort);
+                proxy = new Proxy(Proxy.Type.HTTP, addr);
+                conn = (HttpURLConnection) url.openConnection(proxy);
+            } else {
+                conn = (HttpURLConnection) url.openConnection();
+            }
+            if (Settings.getString(Settings.KEYS.CONNECTION_TIMEOUT) != null) {
+                int timeout = Settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT);
+                conn.setConnectTimeout(timeout);
+            }
+        } catch (IOException ex) {
+            try {
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            } finally {
+                conn = null;
+            }
+            throw new DownloadFailedException("Error getting connection.", ex);
+        }
+        return conn;
     }
 }
