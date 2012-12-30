@@ -134,7 +134,7 @@ public class JarAnalyzerTest {
         boolean result = instance.supportsExtension(extension);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testInterpolateString() {
         Properties prop = new Properties();
