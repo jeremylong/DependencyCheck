@@ -48,14 +48,14 @@ public class NvdCveParser extends Index {
     //HACK - this has initially been placed here as a hack because not all
     // of the CPEs listed in the NVD CVE are actually in the CPE xml file
     // hosted by NIST.
-    private org.codesecure.dependencycheck.data.cpe.xml.Indexer cpeIndexer = null;
+    private org.codesecure.dependencycheck.data.cpe.Index cpeIndex = null;
 
     /**
      * Adds the CPE Index to add additional CPEs found by parsing the NVD CVE.
-     * @param indexer the CPE Indexer to write new CPEs into.
+     * @param index the CPE Index to write new CPEs into.
      */
-    public void setCPEIndexer(org.codesecure.dependencycheck.data.cpe.xml.Indexer indexer) {
-        this.cpeIndexer = indexer;
+    public void setCPEIndexer(org.codesecure.dependencycheck.data.cpe.Index index) {
+        this.cpeIndex = index;
     }
 
     /**
@@ -205,8 +205,8 @@ public class NvdCveParser extends Index {
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(NvdCveParser.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (cpeIndexer != null) {
-            cpeIndexer.saveEntry(cpeEntry);
+        if (cpeIndex != null) {
+            cpeIndex.saveEntry(cpeEntry);
         }
     }
 }
