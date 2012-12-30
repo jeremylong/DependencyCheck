@@ -20,9 +20,6 @@ package org.codesecure.dependencycheck.data.cpe;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.lucene.document.Document;
@@ -53,31 +50,6 @@ public class Entry {
         return entry;
     }
     /**
-     * The title of the CPE
-     * @deprecated This field is no longer used
-     */
-    protected String title;
-
-    /**
-     * Get the value of title
-     *
-     * @return the value of title
-     * @deprecated This field is no longer used
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
-     * Set the value of title
-     *
-     * @param title new value of title
-     * @deprecated This field is no longer used
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    /**
      * The name of the CPE entry.
      */
     protected String name;
@@ -98,101 +70,6 @@ public class Entry {
      */
     public void setName(String name) {
         this.name = name;
-    }
-    /**
-     * The status of the CPE Entry.
-     * @deprecated This field is no longer used
-     */
-    protected String status;
-
-    /**
-     * Get the value of status
-     *
-     * @return the value of status
-     * @deprecated This field is no longer used
-     */
-    public String getStatus() {
-        return status;
-    }
-
-    /**
-     * Set the value of status
-     *
-     * @param status new value of status
-     * @deprecated This field is no longer used
-     */
-    public void setStatus(String status) {
-        this.status = status;
-    }
-    /**
-     * The modification date of the CPE Entry.
-     * @deprecated This field is no longer used
-     */
-    private Date modificationDate;
-
-    /**
-     * Get the value of modificationDate
-     *
-     * @return the value of modificationDate
-     * @deprecated This field is no longer used
-     */
-    public Date getModificationDate() {
-        return (Date) modificationDate.clone();
-    }
-
-    /**
-     * Set the value of modificationDate
-     *
-     * @param modificationDate new value of modificationDate
-     * @deprecated This field is no longer used
-     */
-    public void setModificationDate(Date modificationDate) {
-        this.modificationDate = (Date) modificationDate.clone();
-    }
-
-    /**
-     * Set the value of modificationDate
-     *
-     * Expected format: yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
-     *
-     * @param modificationDate new value of modificationDate
-     * @throws ParseException is thrown when a parse exception occurs.
-     * @deprecated This field is no longer used
-     */
-    public void setModificationDate(String modificationDate) throws ParseException {
-
-        String formatStr = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-        Date tempDate = null;
-        SimpleDateFormat sdf = new SimpleDateFormat(formatStr);
-        sdf.setLenient(true);
-        tempDate = sdf.parse(modificationDate);
-
-        this.modificationDate = tempDate;
-    }
-    /**
-     * The nvdId.
-     * @deprecated This field is no longer used
-     */
-    protected String nvdId;
-
-    /**
-     * Get the value of nvdId
-     *
-     * @return the value of nvdId
-     * @deprecated This field is no longer used
-     */
-    public String getNvdId() {
-        return nvdId;
-    }
-
-    /**
-     * Set the value of nvdId
-     *
-     * @param nvdId new value of nvdId
-     * @deprecated This field is no longer used
-     */
-    public void setNvdId(String nvdId) {
-        this.nvdId = nvdId;
     }
     /**
      * The vendor name.

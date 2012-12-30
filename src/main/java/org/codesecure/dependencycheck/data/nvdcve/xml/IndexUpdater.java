@@ -147,17 +147,18 @@ public class IndexUpdater extends Index implements CachedWebDataSource {
             file.mkdirs();
         }
         NvdCveParser indexer = null;
-        org.codesecure.dependencycheck.data.cpe.xml.Indexer cpeIndexer = null;
+        org.codesecure.dependencycheck.data.cpe.Index cpeIndex = null;
         try {
             indexer = new NvdCveParser();
             indexer.openIndexWriter();
 
             //HACK - hack to ensure all CPE data is stored in the index.
-            cpeIndexer = new org.codesecure.dependencycheck.data.cpe.xml.Indexer();
-            cpeIndexer.openIndexWriter();
-            indexer.setCPEIndexer(cpeIndexer);
+            cpeIndex = new org.codesecure.dependencycheck.data.cpe.Index();
+            cpeIndex.openIndexWriter();
+            indexer.setCPEIndexer(cpeIndex);
 
             indexer.parse(file);
+
         } catch (CorruptIndexException ex) {
             Logger.getLogger(IndexUpdater.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -166,8 +167,8 @@ public class IndexUpdater extends Index implements CachedWebDataSource {
             if (indexer != null) {
                 indexer.close();
             }
-            if (cpeIndexer != null) {
-                cpeIndexer.close();
+            if (cpeIndex != null) {
+                cpeIndex.close();
             }
         }
     }
@@ -181,7 +182,7 @@ public class IndexUpdater extends Index implements CachedWebDataSource {
 //        JAXBContext context = JAXBContext.newInstance("org.codesecure.dependencycheck.data.nvdcve.generated");
 //        NvdCveXmlFilter filter = new NvdCveXmlFilter(context);
 //
-//        Indexer indexer = new Indexer();
+//        CPEIndexWriter indexer = new CPEIndexWriter();
 //        indexer.openIndexWriter();
 //
 //        filter.registerSaveDelegate(indexer);
