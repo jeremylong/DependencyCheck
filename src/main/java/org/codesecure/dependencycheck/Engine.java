@@ -1,4 +1,3 @@
-package org.codesecure.dependencycheck;
 /*
  * This file is part of DependencyCheck.
  *
@@ -17,6 +16,7 @@ package org.codesecure.dependencycheck;
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
+package org.codesecure.dependencycheck;
 
 import java.util.EnumMap;
 import org.codesecure.dependencycheck.dependency.Dependency;

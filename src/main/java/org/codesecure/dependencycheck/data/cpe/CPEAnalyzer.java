@@ -1,4 +1,3 @@
-package org.codesecure.dependencycheck.data.cpe;
 /*
  * This file is part of DependencyCheck.
  *
@@ -17,6 +16,7 @@ package org.codesecure.dependencycheck.data.cpe;
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
+package org.codesecure.dependencycheck.data.cpe;
 
 import java.io.IOException;
 import java.net.URLEncoder;

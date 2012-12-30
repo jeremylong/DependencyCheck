@@ -1,4 +1,3 @@
-package org.codesecure.dependencycheck.data;
 /*
  * This file is part of DependencyCheck.
  *
@@ -17,6 +16,7 @@ package org.codesecure.dependencycheck.data;
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
+package org.codesecure.dependencycheck.data;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;

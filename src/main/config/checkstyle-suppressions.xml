@@ -6,7 +6,6 @@
 
 <suppressions>
     <suppress checks=".*" files=".*[\\/]package-info\.java" />
-    <suppress checks=".*" files=".*org[\\/]codesecure[\\/]dependencycheck[\\/]utils[\\/]SSDeep.java" />
     <suppress checks=".*" files=".*org[\\/]codesecure[\\/]dependencycheck[\\/]utils[\\/]Filter.java" />
     <suppress checks=".*" files=".*org[\\/]codesecure[\\/]dependencycheck[\\/]utils[\\/]Checksum.java" />
     <suppress checks=".*" files=".*[\\/]generated[\\/].*.java" />
