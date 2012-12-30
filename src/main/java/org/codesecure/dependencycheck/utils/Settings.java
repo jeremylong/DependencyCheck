@@ -1,4 +1,3 @@
-package org.codesecure.dependencycheck.utils;
 /*
  * This file is part of DependencyCheck.
  *
@@ -17,6 +16,7 @@ package org.codesecure.dependencycheck.utils;
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
+package org.codesecure.dependencycheck.utils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

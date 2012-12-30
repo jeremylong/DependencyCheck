@@ -1,4 +1,3 @@
-package org.codesecure.dependencycheck.data.lucene;
 /*
  * This file is part of DependencyCheck.
  *
@@ -17,6 +16,7 @@ package org.codesecure.dependencycheck.data.lucene;
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
+package org.codesecure.dependencycheck.data.lucene;
 
 /**
  * <p>Lucene utils is a set of utilitize written to make constructing Lucene

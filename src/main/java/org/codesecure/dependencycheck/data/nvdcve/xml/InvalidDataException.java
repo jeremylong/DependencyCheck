@@ -1,4 +1,3 @@
-package org.codesecure.dependencycheck.data.nvdcve.xml;
 /*
  * This file is part of DependencyCheck.
  *
@@ -17,6 +16,7 @@ package org.codesecure.dependencycheck.data.nvdcve.xml;
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
+package org.codesecure.dependencycheck.data.nvdcve.xml;
 
 /**
  * An InvalidataDataException is a generic exception used when trying to load

@@ -1,4 +1,3 @@
-package org.codesecure.dependencycheck.analyzer;
 /*
  * This file is part of DependencyCheck.
  *
@@ -17,6 +16,7 @@ package org.codesecure.dependencycheck.analyzer;
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
+package org.codesecure.dependencycheck.analyzer;
 
 /**
  * An exception thrown when the analysis of a dependency fails.

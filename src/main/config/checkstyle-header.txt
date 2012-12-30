@@ -1,4 +1,3 @@
-^package 
 ^/\*\s*$
 ^ \* This file is part of DependencyCheck\.\s*$
 ^ \*\s*$
@@ -17,3 +16,4 @@
 ^ \*\s*$
 ^ \* Copyright \(c\) 2012 Jeremy Long\. All Rights Reserved\.\s*$
 ^ \*/\s*$
+^package

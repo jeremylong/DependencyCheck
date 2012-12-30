@@ -1,4 +1,3 @@
-package org.codesecure.dependencycheck.data;
 /*
  * This file is part of DependencyCheck.
  *
@@ -17,6 +16,7 @@ package org.codesecure.dependencycheck.data;
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
+package org.codesecure.dependencycheck.data;
 
 /**
  * Defines an Index who's data is retrieved from the Internet. This data can be

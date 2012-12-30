@@ -1,4 +1,3 @@
-package org.codesecure.dependencycheck.data.nvdcve;
 /*
  * This file is part of DependencyCheck.
  *
@@ -17,6 +16,7 @@ package org.codesecure.dependencycheck.data.nvdcve;
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
+package org.codesecure.dependencycheck.data.nvdcve;
 
 /**
  * Fields is a collection of field names used within the Lucene index for NVD
