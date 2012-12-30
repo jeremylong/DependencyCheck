@@ -18,6 +18,7 @@ package org.codesecure.dependencycheck.data.cpe;
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.logging.Level;
@@ -25,12 +26,13 @@ import java.util.logging.Logger;
 import org.apache.lucene.document.Document;
 
 /**
- * A single CPE entry from the cpe.xml downloaded from <a
- * href="http://nvd.nist.gov/cpe.cfm">http://nvd.nist.gov/cpe.cfm</a>.
+ * A CPE entry containing the name, vendor, product, and version.
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class Entry {
+public class Entry implements Serializable {
+
+    static final long serialVersionUID = 8011924485946326934L;
 
     /**
      * This parse method does not fully convert a Lucene Document into a CPE

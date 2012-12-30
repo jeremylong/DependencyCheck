@@ -1,7 +1,4 @@
 package org.codesecure.dependencycheck.dependency;
-
-import java.io.Serializable;
-
 /*
  * This file is part of DependencyCheck.
  *
@@ -20,6 +17,9 @@ import java.io.Serializable;
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
+
+import java.io.Serializable;
+
 /**
  * An external reference for a vulnerability. This contains a name, URL, and a
  * source.
@@ -95,4 +95,35 @@ public class Reference implements Serializable {
     public void setSource(String source) {
         this.source = source;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Reference other = (Reference) obj;
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+            return false;
+        }
+        if ((this.url == null) ? (other.url != null) : !this.url.equals(other.url)) {
+            return false;
+        }
+        if ((this.source == null) ? (other.source != null) : !this.source.equals(other.source)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 67 * hash + (this.url != null ? this.url.hashCode() : 0);
+        hash = 67 * hash + (this.source != null ? this.source.hashCode() : 0);
+        return hash;
+    }
+
 }
