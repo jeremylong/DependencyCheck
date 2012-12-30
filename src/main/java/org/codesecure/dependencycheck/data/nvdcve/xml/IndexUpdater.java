@@ -395,7 +395,7 @@ public class IndexUpdater extends Index implements CachedWebDataSource {
      * @return whether or not the date is within the range.
      */
     private boolean withinRange(long date, long compareTo, int range) {
-        double differenceInDays = (compareTo - date) / 1000 / 60 / 60 / 24;
+        double differenceInDays = (compareTo - date) / 1000.0 / 60.0 / 60.0 / 24.0;
         return differenceInDays < range;
     }
 
