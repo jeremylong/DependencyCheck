@@ -65,8 +65,8 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
-    
-    <!-- if we use db4o we will need this: http://blog.dub.podval.org/2010/01/maven-in-project-repository.html
+
+    <!-- used to make db4o available as a lib: http://blog.dub.podval.org/2010/01/maven-in-project-repository.html -->
     <repositories>
         <repository>
             <id>lib</id>
@@ -81,8 +81,7 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
             <url>file://${project.basedir}/lib</url>
         </repository>
     </repositories>
-    -->
-    
+
     <build>
         <resources>
             <resource>
@@ -483,6 +482,11 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                     <artifactId>struts-tiles</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.db4o</groupId>
+            <artifactId>db4o-all</artifactId>
+            <version>8.0.249.16098</version>
         </dependency>
         <!--
         <dependency>
