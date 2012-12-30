@@ -234,8 +234,7 @@ public class JarAnalyzer extends AbstractAnalyzer {
                             reader = new InputStreamReader(zin, "UTF-8");
                             pomProperties = new Properties();
                             pomProperties.load(reader);
-                        }
-                        finally {
+                        } finally {
                             //zin.closeEntry closes the reader
                             //reader.close();
                             zin.closeEntry();
@@ -338,144 +337,144 @@ public class JarAnalyzer extends AbstractAnalyzer {
         try {
             jar = new JarFile(dependency.getActualFilePath());
 
-        java.util.Enumeration en = jar.entries();
+            java.util.Enumeration en = jar.entries();
 
-        HashMap<String, Integer> level0 = new HashMap<String, Integer>();
-        HashMap<String, Integer> level1 = new HashMap<String, Integer>();
-        HashMap<String, Integer> level2 = new HashMap<String, Integer>();
-        HashMap<String, Integer> level3 = new HashMap<String, Integer>();
-        int count = 0;
-        while (en.hasMoreElements()) {
-            java.util.jar.JarEntry entry = (java.util.jar.JarEntry) en.nextElement();
-            if (entry.getName().endsWith(".class") && entry.getName().contains("/")) {
-                String[] path = entry.getName().toLowerCase().split("/");
+            HashMap<String, Integer> level0 = new HashMap<String, Integer>();
+            HashMap<String, Integer> level1 = new HashMap<String, Integer>();
+            HashMap<String, Integer> level2 = new HashMap<String, Integer>();
+            HashMap<String, Integer> level3 = new HashMap<String, Integer>();
+            int count = 0;
+            while (en.hasMoreElements()) {
+                java.util.jar.JarEntry entry = (java.util.jar.JarEntry) en.nextElement();
+                if (entry.getName().endsWith(".class") && entry.getName().contains("/")) {
+                    String[] path = entry.getName().toLowerCase().split("/");
 
-                if ("java".equals(path[0])
-                        || "javax".equals(path[0])
-                        || ("com".equals(path[0]) && "sun".equals(path[0]))) {
-                    continue;
-                }
+                    if ("java".equals(path[0])
+                            || "javax".equals(path[0])
+                            || ("com".equals(path[0]) && "sun".equals(path[0]))) {
+                        continue;
+                    }
 
-                count += 1;
-                String temp = path[0];
-                if (level0.containsKey(temp)) {
-                    level0.put(temp, level0.get(temp) + 1);
-                } else {
-                    level0.put(temp, 1);
-                }
-
-                if (path.length > 2) {
-                    temp += "/" + path[1];
-                    if (level1.containsKey(temp)) {
-                        level1.put(temp, level1.get(temp) + 1);
+                    count += 1;
+                    String temp = path[0];
+                    if (level0.containsKey(temp)) {
+                        level0.put(temp, level0.get(temp) + 1);
                     } else {
-                        level1.put(temp, 1);
+                        level0.put(temp, 1);
+                    }
+
+                    if (path.length > 2) {
+                        temp += "/" + path[1];
+                        if (level1.containsKey(temp)) {
+                            level1.put(temp, level1.get(temp) + 1);
+                        } else {
+                            level1.put(temp, 1);
+                        }
+                    }
+                    if (path.length > 3) {
+                        temp += "/" + path[2];
+                        if (level2.containsKey(temp)) {
+                            level2.put(temp, level2.get(temp) + 1);
+                        } else {
+                            level2.put(temp, 1);
+                        }
+                    }
+
+                    if (path.length > 4) {
+                        temp += "/" + path[3];
+                        if (level3.containsKey(temp)) {
+                            level3.put(temp, level3.get(temp) + 1);
+                        } else {
+                            level3.put(temp, 1);
+                        }
+                    }
+
+                }
+            }
+
+            if (count == 0) {
+                return;
+            }
+            EvidenceCollection vendor = dependency.getVendorEvidence();
+            EvidenceCollection product = dependency.getProductEvidence();
+
+            for (String s : level0.keySet()) {
+                if (!"org".equals(s) && !"com".equals(s)) {
+                    vendor.addWeighting(s);
+                    product.addWeighting(s);
+                    vendor.addEvidence("jar", "package", s, Evidence.Confidence.LOW);
+                    product.addEvidence("jar", "package", s, Evidence.Confidence.LOW);
+                }
+            }
+            for (String s : level1.keySet()) {
+                float ratio = level1.get(s);
+                ratio /= count;
+                if (ratio > 0.5) {
+                    String[] parts = s.split("/");
+                    if ("org".equals(parts[0]) || "com".equals(parts[0])) {
+                        vendor.addWeighting(parts[1]);
+                        vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
+                    } else {
+                        vendor.addWeighting(parts[0]);
+                        product.addWeighting(parts[1]);
+                        vendor.addEvidence("jar", "package", parts[0], Evidence.Confidence.LOW);
+                        product.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
                     }
                 }
-                if (path.length > 3) {
-                    temp += "/" + path[2];
-                    if (level2.containsKey(temp)) {
-                        level2.put(temp, level2.get(temp) + 1);
+            }
+            for (String s : level2.keySet()) {
+                float ratio = level2.get(s);
+                ratio /= count;
+                if (ratio > 0.4) {
+                    String[] parts = s.split("/");
+                    if ("org".equals(parts[0]) || "com".equals(parts[0])) {
+                        vendor.addWeighting(parts[1]);
+                        product.addWeighting(parts[2]);
+                        vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
+                        product.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
                     } else {
-                        level2.put(temp, 1);
+                        vendor.addWeighting(parts[0]);
+                        vendor.addWeighting(parts[1]);
+                        product.addWeighting(parts[1]);
+                        product.addWeighting(parts[2]);
+                        vendor.addEvidence("jar", "package", parts[0], Evidence.Confidence.LOW);
+                        vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
+                        product.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
+                        product.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
                     }
                 }
+            }
+            for (String s : level3.keySet()) {
+                float ratio = level3.get(s);
+                ratio /= count;
+                if (ratio > 0.3) {
+                    String[] parts = s.split("/");
+                    if ("org".equals(parts[0]) || "com".equals(parts[0])) {
+                        vendor.addWeighting(parts[1]);
+                        vendor.addWeighting(parts[2]);
+                        product.addWeighting(parts[2]);
+                        product.addWeighting(parts[3]);
+                        vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
+                        vendor.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
+                        product.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
+                        product.addEvidence("jar", "package", parts[3], Evidence.Confidence.LOW);
 
-                if (path.length > 4) {
-                    temp += "/" + path[3];
-                    if (level3.containsKey(temp)) {
-                        level3.put(temp, level3.get(temp) + 1);
                     } else {
-                        level3.put(temp, 1);
+                        vendor.addWeighting(parts[0]);
+                        vendor.addWeighting(parts[1]);
+                        vendor.addWeighting(parts[2]);
+                        product.addWeighting(parts[1]);
+                        product.addWeighting(parts[2]);
+                        product.addWeighting(parts[3]);
+                        vendor.addEvidence("jar", "package", parts[0], Evidence.Confidence.LOW);
+                        vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
+                        vendor.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
+                        product.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
+                        product.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
+                        product.addEvidence("jar", "package", parts[3], Evidence.Confidence.LOW);
                     }
                 }
-
             }
-        }
-
-        if (count == 0) {
-            return;
-        }
-        EvidenceCollection vendor = dependency.getVendorEvidence();
-        EvidenceCollection product = dependency.getProductEvidence();
-
-        for (String s : level0.keySet()) {
-            if (!"org".equals(s) && !"com".equals(s)) {
-                vendor.addWeighting(s);
-                product.addWeighting(s);
-                vendor.addEvidence("jar", "package", s, Evidence.Confidence.LOW);
-                product.addEvidence("jar", "package", s, Evidence.Confidence.LOW);
-            }
-        }
-        for (String s : level1.keySet()) {
-            float ratio = level1.get(s);
-            ratio /= count;
-            if (ratio > 0.5) {
-                String[] parts = s.split("/");
-                if ("org".equals(parts[0]) || "com".equals(parts[0])) {
-                    vendor.addWeighting(parts[1]);
-                    vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
-                } else {
-                    vendor.addWeighting(parts[0]);
-                    product.addWeighting(parts[1]);
-                    vendor.addEvidence("jar", "package", parts[0], Evidence.Confidence.LOW);
-                    product.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
-                }
-            }
-        }
-        for (String s : level2.keySet()) {
-            float ratio = level2.get(s);
-            ratio /= count;
-            if (ratio > 0.4) {
-                String[] parts = s.split("/");
-                if ("org".equals(parts[0]) || "com".equals(parts[0])) {
-                    vendor.addWeighting(parts[1]);
-                    product.addWeighting(parts[2]);
-                    vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
-                    product.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
-                } else {
-                    vendor.addWeighting(parts[0]);
-                    vendor.addWeighting(parts[1]);
-                    product.addWeighting(parts[1]);
-                    product.addWeighting(parts[2]);
-                    vendor.addEvidence("jar", "package", parts[0], Evidence.Confidence.LOW);
-                    vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
-                    product.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
-                    product.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
-                }
-            }
-        }
-        for (String s : level3.keySet()) {
-            float ratio = level3.get(s);
-            ratio /= count;
-            if (ratio > 0.3) {
-                String[] parts = s.split("/");
-                if ("org".equals(parts[0]) || "com".equals(parts[0])) {
-                    vendor.addWeighting(parts[1]);
-                    vendor.addWeighting(parts[2]);
-                    product.addWeighting(parts[2]);
-                    product.addWeighting(parts[3]);
-                    vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
-                    vendor.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
-                    product.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
-                    product.addEvidence("jar", "package", parts[3], Evidence.Confidence.LOW);
-
-                } else {
-                    vendor.addWeighting(parts[0]);
-                    vendor.addWeighting(parts[1]);
-                    vendor.addWeighting(parts[2]);
-                    product.addWeighting(parts[1]);
-                    product.addWeighting(parts[2]);
-                    product.addWeighting(parts[3]);
-                    vendor.addEvidence("jar", "package", parts[0], Evidence.Confidence.LOW);
-                    vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
-                    vendor.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
-                    product.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
-                    product.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
-                    product.addEvidence("jar", "package", parts[3], Evidence.Confidence.LOW);
-                }
-            }
-        }
         } finally {
             if (jar != null) {
                 jar.close();
