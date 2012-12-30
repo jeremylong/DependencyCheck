@@ -229,10 +229,17 @@ public class JarAnalyzer extends AbstractAnalyzer {
                     }
                 } else if (!entry.isDirectory() && "pom.properties".equals(entryName)) {
                     if (pomProperties == null) {
-                        Reader reader = new InputStreamReader(zin, "UTF-8");
-                        pomProperties = new Properties();
-                        pomProperties.load(reader);
-                        zin.closeEntry();
+                        Reader reader = null;
+                        try {
+                            reader = new InputStreamReader(zin, "UTF-8");
+                            pomProperties = new Properties();
+                            pomProperties.load(reader);
+                        }
+                        finally {
+                            //zin.closeEntry closes the reader
+                            //reader.close();
+                            zin.closeEntry();
+                        }
                     } else {
                         throw new AnalysisException("JAR file contains multiple pom.properties files - unable to process POM");
                     }
@@ -327,7 +334,10 @@ public class JarAnalyzer extends AbstractAnalyzer {
      */
     protected void analyzePackageNames(Dependency dependency) throws IOException {
 
-        JarFile jar = new JarFile(dependency.getActualFilePath());
+        JarFile jar = null;
+        try {
+            jar = new JarFile(dependency.getActualFilePath());
+
         java.util.Enumeration en = jar.entries();
 
         HashMap<String, Integer> level0 = new HashMap<String, Integer>();
@@ -466,6 +476,11 @@ public class JarAnalyzer extends AbstractAnalyzer {
                 }
             }
         }
+        } finally {
+            if (jar != null) {
+                jar.close();
+            }
+        }
     }
 
     /**
@@ -480,80 +495,88 @@ public class JarAnalyzer extends AbstractAnalyzer {
      * @throws IOException if there is an issue reading the JAR file.
      */
     protected void parseManifest(Dependency dependency) throws IOException {
-        JarFile jar = new JarFile(dependency.getActualFilePath());
-        Manifest manifest = jar.getManifest();
-        if (manifest == null) {
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE,
-                    "Jar file '{0}' does not contain a manifest.",
-                    dependency.getFileName());
-            return;
-        }
-        Attributes atts = manifest.getMainAttributes();
+        JarFile jar = null;
+        try {
+            jar = new JarFile(dependency.getActualFilePath());
 
-        EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
-        EvidenceCollection productEvidence = dependency.getProductEvidence();
-        EvidenceCollection versionEvidence = dependency.getVersionEvidence();
+            Manifest manifest = jar.getManifest();
+            if (manifest == null) {
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE,
+                        "Jar file '{0}' does not contain a manifest.",
+                        dependency.getFileName());
+                return;
+            }
+            Attributes atts = manifest.getMainAttributes();
 
-        String source = "Manifest";
+            EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
+            EvidenceCollection productEvidence = dependency.getProductEvidence();
+            EvidenceCollection versionEvidence = dependency.getVersionEvidence();
 
-        for (Entry<Object, Object> entry : atts.entrySet()) {
-            String key = entry.getKey().toString();
-            String value = atts.getValue(key);
-            if (key.equals(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {
-                productEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
-            } else if (key.equals(Attributes.Name.IMPLEMENTATION_VERSION.toString())) {
-                versionEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
-            } else if (key.equals(Attributes.Name.IMPLEMENTATION_VENDOR.toString())) {
-                vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
-            } else if (key.equals(Attributes.Name.IMPLEMENTATION_VENDOR_ID.toString())) {
-                vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
-            } else if (key.equals(BUNDLE_DESCRIPTION)) {
-                productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
-                dependency.setDescription(value);
-            } else if (key.equals(BUNDLE_NAME)) {
-                productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
-            } else if (key.equals(BUNDLE_VENDOR)) {
-                vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
-            } else if (key.equals(BUNDLE_VERSION)) {
-                versionEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
-            } else if (key.equals(Attributes.Name.MAIN_CLASS.toString())) {
-                productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
-                vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
-            } else {
-                key = key.toLowerCase();
+            String source = "Manifest";
 
-                if (!IGNORE_LIST.contains(key) && !key.endsWith("jdk")
-                        && !key.contains("lastmodified") && !key.endsWith("package")) {
+            for (Entry<Object, Object> entry : atts.entrySet()) {
+                String key = entry.getKey().toString();
+                String value = atts.getValue(key);
+                if (key.equals(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {
+                    productEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
+                } else if (key.equals(Attributes.Name.IMPLEMENTATION_VERSION.toString())) {
+                    versionEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
+                } else if (key.equals(Attributes.Name.IMPLEMENTATION_VENDOR.toString())) {
+                    vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
+                } else if (key.equals(Attributes.Name.IMPLEMENTATION_VENDOR_ID.toString())) {
+                    vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                } else if (key.equals(BUNDLE_DESCRIPTION)) {
+                    productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                    dependency.setDescription(value);
+                } else if (key.equals(BUNDLE_NAME)) {
+                    productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                } else if (key.equals(BUNDLE_VENDOR)) {
+                    vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
+                } else if (key.equals(BUNDLE_VERSION)) {
+                    versionEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
+                } else if (key.equals(Attributes.Name.MAIN_CLASS.toString())) {
+                    productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                    vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                } else {
+                    key = key.toLowerCase();
 
-                    if (key.contains("version")) {
-                        versionEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
-                    } else if (key.contains("title")) {
-                        productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
-                    } else if (key.contains("vendor")) {
-                        vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
-                    } else if (key.contains("name")) {
-                        productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
-                        vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
-                    } else if (key.contains("license")) {
-                        addLicense(dependency, value);
-                    } else {
-                        if (key.contains("description")) {
-                            addDescription(dependency, value);
-                        }
-                        productEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
-                        vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
-                        if (value.matches(".*\\d.*")) {
-                            StringTokenizer tokenizer = new StringTokenizer(value, " ");
-                            while (tokenizer.hasMoreElements()) {
-                                String s = tokenizer.nextToken();
-                                if (s.matches("^[0-9.]+$")) {
-                                    versionEvidence.addEvidence(source, key, s, Evidence.Confidence.LOW);
-                                }
+                    if (!IGNORE_LIST.contains(key) && !key.endsWith("jdk")
+                            && !key.contains("lastmodified") && !key.endsWith("package")) {
+
+                        if (key.contains("version")) {
+                            versionEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                        } else if (key.contains("title")) {
+                            productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                        } else if (key.contains("vendor")) {
+                            vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                        } else if (key.contains("name")) {
+                            productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                            vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                        } else if (key.contains("license")) {
+                            addLicense(dependency, value);
+                        } else {
+                            if (key.contains("description")) {
+                                addDescription(dependency, value);
                             }
-                            //versionEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
+                            productEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
+                            vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
+                            if (value.matches(".*\\d.*")) {
+                                StringTokenizer tokenizer = new StringTokenizer(value, " ");
+                                while (tokenizer.hasMoreElements()) {
+                                    String s = tokenizer.nextToken();
+                                    if (s.matches("^[0-9.]+$")) {
+                                        versionEvidence.addEvidence(source, key, s, Evidence.Confidence.LOW);
+                                    }
+                                }
+                                //versionEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
+                            }
                         }
                     }
                 }
+            }
+        } finally {
+            if (jar != null) {
+                jar.close();
             }
         }
     }
