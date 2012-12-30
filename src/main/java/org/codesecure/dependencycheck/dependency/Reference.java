@@ -1,4 +1,7 @@
 package org.codesecure.dependencycheck.dependency;
+
+import java.io.Serializable;
+
 /*
  * This file is part of DependencyCheck.
  *
@@ -17,15 +20,15 @@ package org.codesecure.dependencycheck.dependency;
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-
 /**
  * An external reference for a vulnerability. This contains a name, URL, and a
  * source.
  *
  * @author Jeremy
  */
-public class Reference {
+public class Reference implements Serializable {
 
+    private static final long serialVersionUID = -3444464824563008021L;
     /**
      * The name of the reference.
      */
