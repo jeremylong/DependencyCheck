@@ -10,6 +10,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -57,5 +58,13 @@ public class DownloaderIntegrationTest {
         outputPath = "target\\downloaded_cve.xml";
         Downloader.fetchFile(url, outputPath, false);
 
+    }
+    
+    @Test
+    public void testGetLastModified() throws Exception {
+        System.out.println("getLastModified");
+        URL url = new URL("http://nvd.nist.gov/download/nvdcve-2012.xml");
+        long timestamp = Downloader.getLastModified(url);
+        assertTrue("timestamp equal to zero?", timestamp>0);
     }
 }

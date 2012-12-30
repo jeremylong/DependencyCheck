@@ -6,7 +6,6 @@ package org.codesecure.dependencycheck.utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import junit.framework.TestCase;
 import org.junit.Test;

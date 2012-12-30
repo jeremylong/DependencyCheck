@@ -70,9 +70,14 @@ public class Settings {
         public static final String CVE_META_URL = "cve.url.meta";
         /**
          * The properties key for the URL to retrieve the recently modified and
-         * added CVE entries (last 8 days).
+         * added CVE entries (last 8 days) using the 2.0 schema.
          */
-        public static final String CVE_MODIFIED_URL = "cve.url.modified";
+        public static final String CVE_MODIFIED_20_URL = "cve.url-2.0.modified";
+        /**
+         * The properties key for the URL to retrieve the recently modified and
+         * added CVE entries (last 8 days) using the 1.2 schema.
+         */
+        public static final String CVE_MODIFIED_12_URL = "cve.url-1.2.modified";
         /**
          * The properties key for the URL to retrieve the recently modified and
          * added CVE entries (last 8 days).
@@ -86,9 +91,19 @@ public class Settings {
         public static final String CVE_URL_COUNT = "cve.url.count";
         /**
          * The properties key for the "base" property key for the CVE URLs (e.g.
-         * cve.url.1, cve.url.2, cve.url.n).
+         * cve.url-2.0.1, cve.url-1.2.2, cve.url.n).
          */
-        public static final String CVE_BASE_URL = "cve.url.";
+        public static final String CVE_BASE_URL = "cve.url-";
+        /**
+         * The properties key for the CVE schema version 1.2
+         */
+        public static final String CVE_SCHEMA_1_2 = "1.2.";
+        /**
+         * The properties key for the CVE schema version 2.0
+         */
+        public static final String CVE_SCHEMA_2_0 = "2.0.";
+
+
         /**
          * The properties key for the proxy url.
          */

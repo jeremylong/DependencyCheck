@@ -24,28 +24,24 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import org.codesecure.dependencycheck.data.CachedWebDataSource;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.lucene.index.CorruptIndexException;
 import org.codesecure.dependencycheck.data.nvdcve.Index;
 import org.codesecure.dependencycheck.data.UpdateException;
 import org.codesecure.dependencycheck.utils.DownloadFailedException;
 import org.codesecure.dependencycheck.utils.Downloader;
 import org.codesecure.dependencycheck.utils.FileUtils;
+import org.codesecure.dependencycheck.utils.InvalidSettingException;
 import org.codesecure.dependencycheck.utils.Settings;
 
 /**
@@ -283,7 +279,12 @@ public class IndexUpdater extends Index implements CachedWebDataSource {
         } catch (InvalidDataException ex) {
             Logger.getLogger(IndexUpdater.class.getName()).log(Level.SEVERE, null, ex);
             throw new DownloadFailedException("Unable to retrieve valid timestamp from nvd cve downloads page", ex);
+
+        } catch (InvalidSettingException ex) {
+            Logger.getLogger(IndexUpdater.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DownloadFailedException("Invalid settings", ex);
         }
+
         if (currentlyPublished == null) {
             throw new DownloadFailedException("Unable to retrieve valid timestamp from nvd cve downloads page");
         }
@@ -401,139 +402,176 @@ public class IndexUpdater extends Index implements CachedWebDataSource {
      * Retrieves the timestamps from the NVD CVE meta data file.
      *
      * @return the timestamp from the currently published nvdcve downloads page
-     * @throws MalformedURLException is thrown if the URL for the NVD CCE Meta
+     * @throws MalformedURLException thrown if the URL for the NVD CCE Meta
      * data is incorrect.
-     * @throws DownloadFailedException is thrown if there is an error
+     * @throws DownloadFailedException thrown if there is an error
      * downloading the nvd cve meta data file
-     * @throws InvalidDataException is thrown if there is an exception parsing
+     * @throws InvalidDataException thrown if there is an exception parsing
      * the timestamps
+     * @throws InvalidSettingException thrown if the settings are invalid
      */
-    protected Map<String, NvdCveUrl> retrieveCurrentTimestampsFromWeb() throws MalformedURLException, DownloadFailedException, InvalidDataException {
+    protected Map<String, NvdCveUrl> retrieveCurrentTimestampsFromWeb()
+            throws MalformedURLException, DownloadFailedException, InvalidDataException, InvalidSettingException {
+
         Map<String, NvdCveUrl> map = new HashMap<String, NvdCveUrl>();
+        String retrieveUrl = Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL);
 
-        File tmp = null;
-        try {
-            tmp = File.createTempFile("cve", "meta");
-            URL url = new URL(Settings.getString(Settings.KEYS.CVE_META_URL));
-            Downloader.fetchFile(url, tmp);
-            String html = readFile(tmp);
+        NvdCveUrl item = new NvdCveUrl();
+        item.setNeedsUpdate(false); //the others default to true, to make life easier later this should default to false.
+        item.id = "modified";
+        item.timestamp = Downloader.getLastModified(new URL(retrieveUrl));
+        map.put("modified", item);
 
-            String retrieveUrl = Settings.getString(Settings.KEYS.CVE_MODIFIED_URL);
-            NvdCveUrl cve = createNvdCveUrl("modified", retrieveUrl, html);
-            cve.setNeedsUpdate(false); //the others default to true, to make life easier later this should default to false.
-            map.put("modified", cve);
-            int max = Settings.getInt(Settings.KEYS.CVE_URL_COUNT);
-            for (int i = 1; i <= max; i++) {
-                retrieveUrl = Settings.getString(Settings.KEYS.CVE_BASE_URL + i);
-                String key = Integer.toString(i);
-                cve = createNvdCveUrl(key, retrieveUrl, html);
-                map.put(key, cve);
-            }
-        } catch (IOException ex) {
-            throw new DownloadFailedException("Unable to create temporary file for NVD CVE Meta File download.", ex);
-        } finally {
-            try {
-                if (tmp != null && tmp.exists()) {
-                    tmp.delete();
-                }
-            } finally {
-                if (tmp != null && tmp.exists()) {
-                    tmp.deleteOnExit();
-                }
-            }
+        int max = Settings.getInt(Settings.KEYS.CVE_URL_COUNT);
+        for (int i = 1; i <= max; i++) {
+            retrieveUrl = Settings.getString(Settings.KEYS.CVE_BASE_URL + Settings.KEYS.CVE_SCHEMA_2_0 + i);
+            item = new NvdCveUrl();
+            item.id = Integer.toString(i);
+            item.url = retrieveUrl;
+            item.timestamp = Downloader.getLastModified(new URL(retrieveUrl));
+            map.put(item.id, item);
         }
         return map;
     }
 
-    /**
-     * Creates a new NvdCveUrl object from the provide id, url, and text/html
-     * from the NVD CVE downloads page.
-     *
-     * @param id the name of this NVD CVE Url
-     * @param retrieveUrl the URL to download the file from
-     * @param text a bit of HTML from the NVD CVE downloads page that contains
-     * the URL and the last updated timestamp.
-     * @return a shiny new NvdCveUrl object.
-     * @throws InvalidDataException is thrown if the timestamp could not be
-     * extracted from the provided text.
-     */
-    private NvdCveUrl createNvdCveUrl(String id, String retrieveUrl, String text) throws InvalidDataException {
-        Pattern pattern = Pattern.compile(Pattern.quote(retrieveUrl) + ".+?\\<br");
-        Matcher m = pattern.matcher(text);
-        NvdCveUrl item = new NvdCveUrl();
-        item.id = id;
-        item.url = retrieveUrl;
-        if (m.find()) {
-            String line = m.group();
-            int pos = line.indexOf("Updated:");
-            if (pos > 0) {
-                pos += 9;
-                try {
-                    String timestampstr = line.substring(pos, line.length() - 3).replace("at ", "");
-                    long timestamp = getEpochTimeFromDateTime(timestampstr);
-                    item.setTimestamp(timestamp);
-                } catch (NumberFormatException ex) {
-                    throw new InvalidDataException("NVD CVE Meta file does not contain a valid timestamp for '" + retrieveUrl + "'.", ex);
-                }
-            } else {
-                throw new InvalidDataException("NVD CVE Meta file does not contain the updated timestamp for '" + retrieveUrl + "'.");
-            }
-        } else {
-            throw new InvalidDataException("NVD CVE Meta file does not contain the url for '" + retrieveUrl + "'.");
-        }
-        return item;
-    }
-
-    /**
-     * Parses a timestamp in the format of "MM/dd/yy hh:mm" into a calendar
-     * object and returns the epoch time. Note, this removes the millisecond
-     * portion of the epoch time so all numbers returned should end in 000.
-     *
-     * @param timestamp a string in the format of "MM/dd/yy hh:mm"
-     * @return a Calendar object.
-     * @throws NumberFormatException if the timestamp was parsed incorrectly.
-     */
-    private long getEpochTimeFromDateTime(String timestamp) throws NumberFormatException {
-        Calendar c = new GregorianCalendar();
-        int month = Integer.parseInt(timestamp.substring(0, 2));
-        int date = Integer.parseInt(timestamp.substring(3, 5));
-        int year = 2000 + Integer.parseInt(timestamp.substring(6, 8));
-        int hourOfDay = Integer.parseInt(timestamp.substring(9, 11));
-        int minute = Integer.parseInt(timestamp.substring(12, 14));
-        c.set(year, month, date, hourOfDay, minute, 0);
-        long t = c.getTimeInMillis();
-        t = (t / 1000) * 1000;
-        return t;
-    }
-
-    /**
-     * Reads a file into a string.
-     *
-     * @param file the file to be read.
-     * @return the contents of the file.
-     * @throws IOException is thrown if an IOExcpetion occurs.
-     */
-    private String readFile(File file) throws IOException {
-        InputStreamReader stream = new InputStreamReader(new FileInputStream(file), "UTF-8");
-        StringBuilder str = new StringBuilder((int) file.length());
-        try {
-            char[] buf = new char[8096];
-            int read = stream.read(buf, 0, 8096);
-            while (read > 0) {
-                str.append(buf, 0, read);
-                read = stream.read(buf, 0, 8096);
-            }
-        } finally {
-            stream.close();
-        }
-        return str.toString();
-    }
-
+    //<editor-fold defaultstate="collapsed" desc="old dead code">
+//    /**
+//     * Retrieves the timestamps from the NVD CVE meta data file.
+//     *
+//     * @return the timestamp from the currently published nvdcve downloads page
+//     * @throws MalformedURLException is thrown if the URL for the NVD CCE Meta
+//     * data is incorrect.
+//     * @throws DownloadFailedException is thrown if there is an error
+//     * downloading the nvd cve meta data file
+//     * @throws InvalidDataException is thrown if there is an exception parsing
+//     * the timestamps
+//     */
+//    protected Map<String, NvdCveUrl> retrieveCurrentTimestampsFromWeb() throws MalformedURLException, DownloadFailedException, InvalidDataException {
+//        Map<String, NvdCveUrl> map = new HashMap<String, NvdCveUrl>();
+//
+//        File tmp = null;
+//        try {
+//            tmp = File.createTempFile("cve", "meta");
+//            URL url = new URL(Settings.getString(Settings.KEYS.CVE_META_URL));
+//            Downloader.fetchFile(url, tmp);
+//            String html = readFile(tmp);
+//
+//            String retrieveUrl = Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL);
+//            NvdCveUrl cve = createNvdCveUrl("modified", retrieveUrl, html);
+//            cve.setNeedsUpdate(false); //the others default to true, to make life easier later this should default to false.
+//            map.put("modified", cve);
+//            int max = Settings.getInt(Settings.KEYS.CVE_URL_COUNT);
+//            for (int i = 1; i <= max; i++) {
+//                retrieveUrl = Settings.getString(Settings.KEYS.CVE_BASE_URL + Settings.KEYS.CVE_SCHEMA_2_0 + i);
+//                String key = Integer.toString(i);
+//                cve = createNvdCveUrl(key, retrieveUrl, html);
+//                map.put(key, cve);
+//            }
+//        } catch (IOException ex) {
+//            throw new DownloadFailedException("Unable to create temporary file for NVD CVE Meta File download.", ex);
+//        } finally {
+//            try {
+//                if (tmp != null && tmp.exists()) {
+//                    tmp.delete();
+//                }
+//            } finally {
+//                if (tmp != null && tmp.exists()) {
+//                    tmp.deleteOnExit();
+//                }
+//            }
+//        }
+//        return map;
+//    }
+//
+//    /**
+//     * Creates a new NvdCveUrl object from the provide id, url, and text/html
+//     * from the NVD CVE downloads page.
+//     *
+//     * @param id the name of this NVD CVE Url
+//     * @param retrieveUrl the URL to download the file from
+//     * @param text a bit of HTML from the NVD CVE downloads page that contains
+//     * the URL and the last updated timestamp.
+//     * @return a shiny new NvdCveUrl object.
+//     * @throws InvalidDataException is thrown if the timestamp could not be
+//     * extracted from the provided text.
+//     */
+//    private NvdCveUrl createNvdCveUrl(String id, String retrieveUrl, String text) throws InvalidDataException {
+//        Pattern pattern = Pattern.compile(Pattern.quote(retrieveUrl) + ".+?\\<br");
+//        Matcher m = pattern.matcher(text);
+//        NvdCveUrl item = new NvdCveUrl();
+//        item.id = id;
+//        item.url = retrieveUrl;
+//        if (m.find()) {
+//            String line = m.group();
+//            int pos = line.indexOf("Updated:");
+//            if (pos > 0) {
+//                pos += 9;
+//                try {
+//                    String timestampstr = line.substring(pos, line.length() - 3).replace("at ", "");
+//                    long timestamp = getEpochTimeFromDateTime(timestampstr);
+//                    item.setTimestamp(timestamp);
+//                } catch (NumberFormatException ex) {
+//                    throw new InvalidDataException("NVD CVE Meta file does not contain a valid timestamp for '" + retrieveUrl + "'.", ex);
+//                }
+//            } else {
+//                throw new InvalidDataException("NVD CVE Meta file does not contain the updated timestamp for '" + retrieveUrl + "'.");
+//            }
+//        } else {
+//            throw new InvalidDataException("NVD CVE Meta file does not contain the url for '" + retrieveUrl + "'.");
+//        }
+//        return item;
+//    }
+//
+//    /**
+//     * Parses a timestamp in the format of "MM/dd/yy hh:mm" into a calendar
+//     * object and returns the epoch time. Note, this removes the millisecond
+//     * portion of the epoch time so all numbers returned should end in 000.
+//     *
+//     * @param timestamp a string in the format of "MM/dd/yy hh:mm"
+//     * @return a Calendar object.
+//     * @throws NumberFormatException if the timestamp was parsed incorrectly.
+//     */
+//    private long getEpochTimeFromDateTime(String timestamp) throws NumberFormatException {
+//        Calendar c = new GregorianCalendar();
+//        int month = Integer.parseInt(timestamp.substring(0, 2));
+//        int date = Integer.parseInt(timestamp.substring(3, 5));
+//        int year = 2000 + Integer.parseInt(timestamp.substring(6, 8));
+//        int hourOfDay = Integer.parseInt(timestamp.substring(9, 11));
+//        int minute = Integer.parseInt(timestamp.substring(12, 14));
+//        c.set(year, month, date, hourOfDay, minute, 0);
+//        long t = c.getTimeInMillis();
+//        t = (t / 1000) * 1000;
+//        return t;
+//    }
+//
+//    /**
+//     * Reads a file into a string.
+//     *
+//     * @param file the file to be read.
+//     * @return the contents of the file.
+//     * @throws IOException is thrown if an IOExcpetion occurs.
+//     */
+//    private String readFile(File file) throws IOException {
+//        InputStreamReader stream = new InputStreamReader(new FileInputStream(file), "UTF-8");
+//        StringBuilder str = new StringBuilder((int) file.length());
+//        try {
+//            char[] buf = new char[8096];
+//            int read = stream.read(buf, 0, 8096);
+//            while (read > 0) {
+//                str.append(buf, 0, read);
+//                read = stream.read(buf, 0, 8096);
+//            }
+//        } finally {
+//            stream.close();
+//        }
+//        return str.toString();
+//    }
+    //</editor-fold>
     /**
      * A pojo that contains the Url and timestamp of the current NvdCve XML
      * files.
      */
-    protected class NvdCveUrl {
+    protected static class NvdCveUrl {
 
         /**
          * an id.
