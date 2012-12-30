@@ -30,31 +30,9 @@ import org.codesecure.dependencycheck.data.cpe.Entry;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class VulnerableSoftware implements Serializable {
+public class VulnerableSoftware extends Entry implements Serializable {
 
     private static final long serialVersionUID = 307319490326651052L;
-    /**
-     * a cpe entry
-     */
-    protected Entry cpe;
-
-    /**
-     * Get the value of cpe
-     *
-     * @return the value of cpe
-     */
-    public Entry getCpe() {
-        return cpe;
-    }
-
-    /**
-     * Set the value of cpe
-     *
-     * @param cpe new value of cpe
-     */
-    public void setCpe(Entry cpe) {
-        this.cpe = cpe;
-    }
 
     /**
      * Parse a CPE entry from the cpe string repesentation
@@ -62,22 +40,14 @@ public class VulnerableSoftware implements Serializable {
      * @param cpe a cpe entry (e.g. cpe:/a:vendor:software:version)
      */
     public void setCpe(String cpe) {
-        this.cpe = new Entry();
         try {
-            this.cpe.parseName(cpe);
+            parseName(cpe);
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(VulnerableSoftware.class.getName()).log(Level.SEVERE, null, ex);
-            this.cpe.setName(cpe);
+            setName(cpe);
         }
     }
 
-    /**
-     * Returns the CPE entry name
-     * @return te CPE entry name
-     */
-    public String getName() {
-        return this.cpe.getName();
-    }
     /**
      * If present, indicates that previous version are vulnerable
      */
@@ -108,5 +78,28 @@ public class VulnerableSoftware implements Serializable {
      */
     public void setPreviousVersion(String previousVersion) {
         this.previousVersion = previousVersion;
+    }
+
+        @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final VulnerableSoftware other = (VulnerableSoftware) obj;
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 83 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 83 * hash + (this.previousVersion != null ? this.previousVersion.hashCode() : 0);
+        return hash;
     }
 }
