@@ -59,7 +59,7 @@ public class VulnerableSoftware extends Entry implements Serializable {
      * @return if previous versions of this software are vulnerable
      */
     public boolean hasPreviousVersion() {
-        return previousVersion == null;
+        return previousVersion != null;
     }
 
     /**
@@ -80,7 +80,7 @@ public class VulnerableSoftware extends Entry implements Serializable {
         this.previousVersion = previousVersion;
     }
 
-        @Override
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -99,7 +99,6 @@ public class VulnerableSoftware extends Entry implements Serializable {
     public int hashCode() {
         int hash = 7;
         hash = 83 * hash + (this.name != null ? this.name.hashCode() : 0);
-        hash = 83 * hash + (this.previousVersion != null ? this.previousVersion.hashCode() : 0);
         return hash;
     }
 }

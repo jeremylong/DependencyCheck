@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 public class EngineIntegrationTest {
 
     public EngineIntegrationTest() throws Exception {
-        org.codesecure.dependencycheck.data.nvdcve.BaseIndexTestCase.ensureIndexExists();
+        org.codesecure.dependencycheck.data.nvdcve.BaseDBTestCase.ensureDBExists();
         org.codesecure.dependencycheck.data.cpe.BaseIndexTestCase.ensureIndexExists();
     }
 

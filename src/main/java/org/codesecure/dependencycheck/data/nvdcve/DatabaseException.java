@@ -16,33 +16,31 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.codesecure.dependencycheck.data.nvdcve.xml;
+package org.codesecure.dependencycheck.data.nvdcve;
 
 /**
- * An InvalidataDataException is a generic exception used when trying to load
- * the nvd cve meta data.
+ * An exception thrown if an operation against the database fails.
  *
- * @author Jeremy
+ * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class InvalidDataException extends Exception {
-    private static final long serialVersionUID = 1L;
+public class DatabaseException extends Exception {
 
     /**
-     * Creates an InvalidDataException
+     * Creates an DatabaseException
      *
      * @param msg the exception message
      */
-    public InvalidDataException(String msg) {
+    public DatabaseException(String msg) {
         super(msg);
     }
 
     /**
-     * Creates an InvalidDataException
+     * Creates an DatabaseException
      *
      * @param msg the exception message
      * @param ex the cause of the exception
      */
-    public InvalidDataException(String msg, Exception ex) {
+    public DatabaseException(String msg, Exception ex) {
         super(msg, ex);
     }
 }
