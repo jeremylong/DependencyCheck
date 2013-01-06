@@ -66,22 +66,6 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
-    <!-- used to make db4o available as a lib: http://blog.dub.podval.org/2010/01/maven-in-project-repository.html -->
-    <repositories>
-        <repository>
-            <id>lib</id>
-            <name>lib</name>
-            <releases>
-                <enabled>true</enabled>
-                <checksumPolicy>ignore</checksumPolicy>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <url>file://${project.basedir}/lib</url>
-        </repository>
-    </repositories>
-
     <build>
         <resources>
             <resource>
@@ -471,9 +455,9 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.db4o</groupId>
-            <artifactId>db4o-all</artifactId>
-            <version>8.0.249.16098</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.3.170</version>
         </dependency>
         <!--
         <dependency>

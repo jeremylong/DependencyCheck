@@ -4,28 +4,19 @@
  */
 package org.codesecure.dependencycheck.reporting;
 
-import org.codesecure.dependencycheck.dependency.Evidence;
-import java.util.List;
-import java.util.ArrayList;
-import java.io.File;
-import org.codesecure.dependencycheck.dependency.Dependency;
-import java.util.HashMap;
 import org.codesecure.dependencycheck.data.cpe.BaseIndexTestCase;
-import java.util.Map;
-import org.codesecure.dependencycheck.dependency.Evidence.Confidence;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public class ReportGeneratorTest extends BaseIndexTestCase {
-    
+
     public ReportGeneratorTest(String testName) {
         super(testName);
     }
@@ -37,12 +28,12 @@ public class ReportGeneratorTest extends BaseIndexTestCase {
     @AfterClass
     public static void tearDownClass() throws Exception {
     }
-    
+
     @Before
     @Override
     public void setUp() {
     }
-    
+
     @After
     @Override
     public void tearDown() {
@@ -66,16 +57,16 @@ public class ReportGeneratorTest extends BaseIndexTestCase {
 //        d.setFileName("FileName.jar");
 //        d.setActualFilePath("lib/FileName.jar");
 //        d.addCPEentry("cpe://a:/some:cpe:1.0");
-//        
+//
 //        List<Dependency> dependencies = new ArrayList<Dependency>();
 //        d.getProductEvidence().addEvidence("jar","filename","<test>test", Confidence.HIGH);
 //        d.getProductEvidence().addEvidence("manifest","vendor","<test>test", Confidence.HIGH);
-//        
+//
 //        for (Evidence e : d.getProductEvidence().iterator(Confidence.HIGH)) {
 //            String t = e.getValue();
 //        }
 //        dependencies.add(d);
-//        
+//
 //        Dependency d2 = new Dependency();
 //        d2.setFileName("Another.jar");
 //        d2.setActualFilePath("lib/Another.jar");
@@ -84,26 +75,26 @@ public class ReportGeneratorTest extends BaseIndexTestCase {
 //        d2.addCPEentry("cpe://a:/another:cpe:1.2");
 //        d2.getProductEvidence().addEvidence("jar","filename","another.jar", Confidence.HIGH);
 //        d2.getProductEvidence().addEvidence("manifest","vendor","Company A", Confidence.MEDIUM);
-//        
+//
 //        for (Evidence e : d2.getProductEvidence().iterator(Confidence.HIGH)) {
 //            String t = e.getValue();
 //        }
-//        
+//
 //        dependencies.add(d2);
-//        
+//
 //        Dependency d3 = new Dependency();
 //        d3.setFileName("Third.jar");
 //        d3.setActualFilePath("lib/Third.jar");
 //        d3.getProductEvidence().addEvidence("jar","filename","third.jar", Confidence.HIGH);
-//        
+//
 //        for (Evidence e : d3.getProductEvidence().iterator(Confidence.HIGH)) {
 //            String t = e.getValue();
 //        }
-//         
+//
 //        dependencies.add(d3);
-//        
+//
 //        properties.put("dependencies",dependencies);
-//        
+//
 //        ReportGenerator instance = new ReportGenerator();
 //        instance.generateReport(templateName, writeTo, properties);
         //TODO add an assertion here...

@@ -18,26 +18,15 @@
  */
 package org.codesecure.dependencycheck.data.nvdcve;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.*;
 import org.codesecure.dependencycheck.analyzer.AnalysisException;
 import org.codesecure.dependencycheck.analyzer.AnalysisPhase;
-import org.codesecure.dependencycheck.data.nvdcve.generated.VulnerabilityReferenceType;
-import org.codesecure.dependencycheck.data.nvdcve.generated.VulnerabilityType;
 import org.codesecure.dependencycheck.dependency.Dependency;
 import org.codesecure.dependencycheck.dependency.Vulnerability;
 import org.codesecure.dependencycheck.dependency.Identifier;
-import org.codesecure.dependencycheck.dependency.Reference;
 
 /**
  * NvdCveAnalyzer is a utility class that takes a project dependency and
@@ -55,37 +44,39 @@ public class NvdCveAnalyzer implements org.codesecure.dependencycheck.analyzer.A
     /**
      * The CVE Index.
      */
-    protected Index cve = null;
+    protected CveDB cveDB = null;
 
     /**
      * Opens the data source.
      *
-     * @throws IOException when the Lucene directory to be querried does not
-     * exist or is corrupt.
+     * @throws SQLException thrown wwhen there is a SQL Exception
+     * @throws IOException thrown when there is an IO Exception
+     * @throws DatabaseException thrown when there is a database exceptions
      */
-    public void open() throws IOException {
-        cve = new Index();
-        cve.open();
+    public void open() throws SQLException, IOException, DatabaseException {
+        cveDB = new CveDB();
+        cveDB.open();
     }
 
     /**
      * Closes the data source.
      */
     public void close() {
-        cve.close();
+        cveDB.close();
+        cveDB = null;
     }
 
     /**
-     * Returns the status of the data source - is the index open.
+     * Returns the status of the data source - is the database open.
      *
      * @return true or false.
      */
     public boolean isOpen() {
-        return (cve == null) ? false : cve.isOpen();
+        return (cveDB != null);
     }
 
     /**
-     * Ensures that the Lucene index is closed.
+     * Ensures that the CVE Database is closed.
      *
      * @throws Throwable when a throwable is thrown.
      */
@@ -110,41 +101,12 @@ public class NvdCveAnalyzer implements org.codesecure.dependencycheck.analyzer.A
             if ("cpe".equals(id.getType())) {
                 try {
                     String value = id.getValue();
-                    Term term1 = new Term(Fields.VULNERABLE_CPE, value);
-                    Query query1 = new TermQuery(term1);
-
-                    //need to get the cpe:/a:vendor:product - some CVEs are referenced very broadly.
-                    //find the index of the colon after the product of the cpe value
-                    //cpe:/a:microsoft:anti-cross_site_scripting_library:3.1
-                    int pos = value.indexOf(":", 7) + 1;
-                    pos = value.indexOf(":", pos);
-                    String productVendor = value.substring(0, pos);
-                    Term term2 = new Term(Fields.VULNERABLE_CPE, productVendor);
-                    Query query2 = new TermQuery(term2);
-
-                    BooleanQuery query = new BooleanQuery();
-                    query.add(query1, BooleanClause.Occur.SHOULD);
-                    query.add(query2, BooleanClause.Occur.SHOULD);
-
-                    TopDocs docs = cve.search(query, MAX_QUERY_RESULTS);
-                    for (ScoreDoc d : docs.scoreDocs) {
-                        Document doc = cve.getDocument(d.doc);
-                        String xml = doc.get(Fields.XML);
-                        Vulnerability vuln;
-                        try {
-                            vuln = parseVulnerability(xml);
-                            dependency.addVulnerability(vuln);
-                        } catch (JAXBException ex) {
-                            Logger.getLogger(NvdCveAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
-                            dependency.addAnalysisException(new AnalysisException("Unable to retrieve vulnerability data", ex));
-                        } catch (UnsupportedEncodingException ex) {
-                            Logger.getLogger(NvdCveAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
-                            dependency.addAnalysisException(new AnalysisException("Unable to retrieve vulnerability data - utf-8", ex));
-                        }
+                    List<Vulnerability> vulns = cveDB.getVulnerablilities(value);
+                    for (Vulnerability v : vulns) {
+                        dependency.addVulnerability(v);
                     }
-                } catch (IOException ex) {
-                    Logger.getLogger(NvdCveAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
-                    throw new AnalysisException("Exception occured while determining CVEs", ex);
+                } catch (DatabaseException ex) {
+                    throw new AnalysisException(ex);
                 }
             }
         }
@@ -194,30 +156,5 @@ public class NvdCveAnalyzer implements org.codesecure.dependencycheck.analyzer.A
      */
     public void initialize() throws Exception {
         this.open();
-    }
-
-    private Vulnerability parseVulnerability(String xml) throws JAXBException, UnsupportedEncodingException {
-
-        JAXBContext jaxbContext = JAXBContext.newInstance(VulnerabilityType.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        ByteArrayInputStream input = new ByteArrayInputStream(xml.getBytes("UTF-8"));
-        VulnerabilityType cvedata = (VulnerabilityType) unmarshaller.unmarshal(input);
-        if (cvedata == null) {
-            return null;
-        }
-
-        Vulnerability vuln = new Vulnerability();
-        vuln.setName(cvedata.getId());
-        vuln.setDescription(cvedata.getSummary());
-        if (cvedata.getReferences() != null) {
-            for (VulnerabilityReferenceType r : cvedata.getReferences()) {
-                Reference ref = new Reference();
-                ref.setName(r.getReference().getValue());
-                ref.setSource(r.getSource());
-                ref.setUrl(r.getReference().getHref());
-                vuln.addReference(ref);
-            }
-        }
-        return vuln;
     }
 }

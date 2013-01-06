@@ -59,7 +59,7 @@ public class Settings {
          */
         public static final String CPE_META_URL = "cpe.meta.url";
         /**
-         * The properties key for the path where the CCE Lucene Index will be
+         * The properties key for the path where the CVE Lucene Index will be
          * stored.
          */
         public static final String CVE_INDEX = "cve";
