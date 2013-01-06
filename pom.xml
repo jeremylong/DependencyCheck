@@ -55,6 +55,15 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
         <system>github</system>
         <url>https://github.com/jeremylong/DependencyCheck/issues</url>
     </issueManagement>
+    <mailingLists>
+        <mailingList>
+            <name>Dependency Check</name>
+            <subscribe>dependency-check+subscribe@googlegroups.com</subscribe>
+            <unsubscribe>dependency-check+unsubscribe@googlegroups.com</unsubscribe>
+            <post>dependency-check@googlegroups.com</post>
+            <archive>https://groups.google.com/forum/?fromgroups#!forum/dependency-check</archive>
+        </mailingList>
+    </mailingLists>
     <licenses>
         <license>
             <name>GNU General Public License version 3</name>
@@ -257,7 +266,7 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
                             <reportSets>
                                 <reportSet>
                                     <reports>
-                                  <!--<report>mailing-list</report>-->
+                                        <report>mailing-list</report>
                                   <!--<report>cim</report>-->
                                         <report>index</report>
                                         <report>summary</report>
