@@ -472,7 +472,7 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
         <!-- The following dependencies are only scanned during integration testing -->
         <!--<dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
+            <artifactId>spring-webmvc</artifactId>
             <version>2.5.5</version>
             <scope>test</scope>
         </dependency>-->

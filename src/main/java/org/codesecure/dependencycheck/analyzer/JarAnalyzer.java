@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
+import org.codesecure.dependencycheck.Engine;
 import org.codesecure.dependencycheck.dependency.Dependency;
 import org.codesecure.dependencycheck.dependency.Evidence;
 import org.codesecure.dependencycheck.dependency.EvidenceCollection;
@@ -54,7 +55,7 @@ import org.codesecure.dependencycheck.utils.NonClosingStream;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class JarAnalyzer extends AbstractAnalyzer {
+public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
 
     /**
      * The system independent newline character.
@@ -178,10 +179,11 @@ public class JarAnalyzer extends AbstractAnalyzer {
      * checksums to identify the correct CPE information.
      *
      * @param dependency the dependency to analyze.
+     * @param engine the engine that is scanning the dependencies
      * @throws AnalysisException is thrown if there is an error reading the JAR
      * file.
      */
-    public void analyze(Dependency dependency) throws AnalysisException {
+    public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
         try {
             parseManifest(dependency);
             analyzePackageNames(dependency);

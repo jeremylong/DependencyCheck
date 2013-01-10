@@ -19,9 +19,7 @@
 package org.codesecure.dependencycheck;
 
 import java.util.EnumMap;
-import org.codesecure.dependencycheck.dependency.Dependency;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,10 +31,10 @@ import org.codesecure.dependencycheck.analyzer.AnalysisException;
 import org.codesecure.dependencycheck.analyzer.AnalysisPhase;
 import org.codesecure.dependencycheck.analyzer.Analyzer;
 import org.codesecure.dependencycheck.analyzer.AnalyzerService;
-import org.codesecure.dependencycheck.analyzer.ArchiveAnalyzer;
 import org.codesecure.dependencycheck.data.CachedWebDataSource;
 import org.codesecure.dependencycheck.data.UpdateException;
 import org.codesecure.dependencycheck.data.UpdateService;
+import org.codesecure.dependencycheck.dependency.Dependency;
 import org.codesecure.dependencycheck.utils.FileUtils;
 
 /**
@@ -188,9 +186,9 @@ public class Engine {
      * Runs the analyzers against all of the dependencies.
      */
     public void analyzeDependencies() {
+        //phase one initilize
         for (AnalysisPhase phase : AnalysisPhase.values()) {
             List<Analyzer> analyzerList = analyzers.get(phase);
-
             for (Analyzer a : analyzerList) {
                 try {
                     a.initialize();
@@ -204,41 +202,34 @@ public class Engine {
                     }
                     continue;
                 }
+            }
+        }
+
+        // analysis phases
+        for (AnalysisPhase phase : AnalysisPhase.values()) {
+            List<Analyzer> analyzerList = analyzers.get(phase);
+
+            for (Analyzer a : analyzerList) {
                 for (Dependency d : dependencies) {
                     if (a.supportsExtension(d.getFileExtension())) {
                         try {
-                            if (a instanceof ArchiveAnalyzer) {
-                                ArchiveAnalyzer aa = (ArchiveAnalyzer) a;
-                                aa.analyze(d, this);
-                            } else {
-                                a.analyze(d);
-                            }
+                            a.analyze(d, this);
                         } catch (AnalysisException ex) {
                             d.addAnalysisException(ex);
-                        } catch (IOException ex) {
-                            String msg = String.format("IOException occured while analyzing the file '%s'.",
-                                    d.getActualFilePath());
-                            Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, msg, ex);
                         }
                     }
-                }
-                try {
-                    a.close();
-                } catch (Exception ex) {
-                    Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
 
-        //Now cycle through all of the analyzers one last time to call
-        // cleanup on any archiveanalyzers. These should only exist in the
-        // initial phase, but we are going to be thourough just in case.
+        //close/cleanup
         for (AnalysisPhase phase : AnalysisPhase.values()) {
             List<Analyzer> analyzerList = analyzers.get(phase);
             for (Analyzer a : analyzerList) {
-                if (a instanceof ArchiveAnalyzer) {
-                    ArchiveAnalyzer aa = (ArchiveAnalyzer) a;
-                    aa.cleanup();
+                try {
+                    a.close();
+                } catch (Exception ex) {
+                    Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }

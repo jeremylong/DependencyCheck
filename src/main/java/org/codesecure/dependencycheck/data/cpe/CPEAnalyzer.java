@@ -29,6 +29,7 @@ import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.codesecure.dependencycheck.Engine;
 import org.codesecure.dependencycheck.analyzer.AnalysisException;
 import org.codesecure.dependencycheck.analyzer.AnalysisPhase;
 import org.codesecure.dependencycheck.data.lucene.LuceneUtils;
@@ -436,10 +437,11 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
      * identifiers for this dependency.
      *
      * @param dependency The Dependency to analyze.
+     * @param engine The analysis engine
      * @throws AnalysisException is thrown if there is an issue analyzing the
      * dependency.
      */
-    public void analyze(Dependency dependency) throws AnalysisException {
+    public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
         try {
             determineCPE(dependency);
         } catch (CorruptIndexException ex) {

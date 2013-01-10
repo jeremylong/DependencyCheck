@@ -97,11 +97,11 @@ public class CPEAnalyzerTest extends BaseIndexTestCase {
         File file = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
         JarAnalyzer jarAnalyzer = new JarAnalyzer();
         Dependency depends = new Dependency(file);
-        jarAnalyzer.analyze(depends);
+        jarAnalyzer.analyze(depends, null);
 
         File fileSpring = new File(this.getClass().getClassLoader().getResource("spring-core-2.5.5.jar").getPath());
         Dependency spring = new Dependency(fileSpring);
-        jarAnalyzer.analyze(spring);
+        jarAnalyzer.analyze(spring, null);
 
         CPEAnalyzer instance = new CPEAnalyzer();
         instance.open();
