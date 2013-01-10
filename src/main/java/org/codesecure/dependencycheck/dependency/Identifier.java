@@ -138,4 +138,31 @@ public class Identifier {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Identifier other = (Identifier) obj;
+        if ((this.value == null) ? (other.value != null) : !this.value.equals(other.value)) {
+            return false;
+        }
+        if ((this.type == null) ? (other.type != null) : !this.type.equals(other.type)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 53 * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = 53 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
+    }
+
 }

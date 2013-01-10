@@ -53,14 +53,14 @@ public class JarAnalyzerTest {
         File file = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
         Dependency result = new Dependency(file);
         JarAnalyzer instance = new JarAnalyzer();
-        instance.analyze(result);
+        instance.analyze(result, null);
         assertTrue(result.getVendorEvidence().toString().toLowerCase().contains("apache"));
         assertTrue(result.getVendorEvidence().getWeighting().contains("apache"));
 
 
         file = new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath());
         result = new Dependency(file);
-        instance.analyze(result);
+        instance.analyze(result, null);
         boolean found = false;
         for (Evidence e : result.getProductEvidence()) {
             if (e.getName().equalsIgnoreCase("package-title")
@@ -93,7 +93,7 @@ public class JarAnalyzerTest {
 
         file = new File(this.getClass().getClassLoader().getResource("org.mortbay.jmx.jar").getPath());
         result = new Dependency(file);
-        instance.analyze(result);
+        instance.analyze(result, null);
         assertEquals("org.mortbar,jmx.jar has version evidence?", result.getVersionEvidence().size(), 0);
     }
 

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
+import org.codesecure.dependencycheck.Engine;
 import org.codesecure.dependencycheck.analyzer.AnalysisException;
 import org.codesecure.dependencycheck.analyzer.AnalysisPhase;
 import org.codesecure.dependencycheck.dependency.Dependency;
@@ -92,11 +93,12 @@ public class NvdCveAnalyzer implements org.codesecure.dependencycheck.analyzer.A
      * Analyzes a dependency and attempts to determine if there are any CPE
      * identifiers for this dependency.
      *
-     * @param dependency The Dependency to analyze.
+     * @param dependency The Dependency to analyze
+     * @param engine The analysis engine
      * @throws AnalysisException is thrown if there is an issue analyzing the
-     * dependency.
+     * dependency
      */
-    public void analyze(Dependency dependency) throws AnalysisException {
+    public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
         for (Identifier id : dependency.getIdentifiers()) {
             if ("cpe".equals(id.getType())) {
                 try {

@@ -21,6 +21,7 @@ package org.codesecure.dependencycheck.analyzer;
 import org.codesecure.dependencycheck.dependency.Dependency;
 import org.codesecure.dependencycheck.dependency.Evidence;
 import java.util.Set;
+import org.codesecure.dependencycheck.Engine;
 
 /**
  *
@@ -85,10 +86,11 @@ public class FileNameAnalyzer implements Analyzer {
      * Collects information about the file name.
      *
      * @param dependency the dependency to analyze.
+     * @param engine the engine that is scanning the dependencies
      * @throws AnalysisException is thrown if there is an error reading the JAR
      * file.
      */
-    public void analyze(Dependency dependency) throws AnalysisException {
+    public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
 
         String fileName = dependency.getFileName();
         int pos = fileName.lastIndexOf(".");

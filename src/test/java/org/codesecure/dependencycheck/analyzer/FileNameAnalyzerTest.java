@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public class FileNameAnalyzerTest {
-    
+
     public FileNameAnalyzerTest() {
     }
 
@@ -30,11 +30,11 @@ public class FileNameAnalyzerTest {
     @AfterClass
     public static void tearDownClass() throws Exception {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -97,7 +97,7 @@ public class FileNameAnalyzerTest {
         File file = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
         Dependency result = new Dependency(file);
         FileNameAnalyzer instance = new FileNameAnalyzer();
-        instance.analyze(result);
+        instance.analyze(result, null);
         assertTrue(result.getVendorEvidence().toString().toLowerCase().contains("struts"));
     }
 
@@ -119,7 +119,7 @@ public class FileNameAnalyzerTest {
     public void testClose() {
         System.out.println("close");
         FileNameAnalyzer instance = new FileNameAnalyzer();
-        instance.close();        
+        instance.close();
         assertTrue(true); //close does nothing.
     }
 }

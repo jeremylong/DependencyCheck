@@ -19,6 +19,7 @@
 package org.codesecure.dependencycheck.analyzer;
 
 import java.util.Set;
+import org.codesecure.dependencycheck.Engine;
 import org.codesecure.dependencycheck.dependency.Dependency;
 
 /**
@@ -37,10 +38,12 @@ public interface Analyzer {
      * description or license information for the dependency it should be added.
      *
      * @param dependency a dependency to analyze.
+     * @param engine the engine that is scanning the dependencies - this is useful
+     * if we need to check other dependencies
      * @throws AnalysisException is thrown if there is an error analyzing the
      * dependency file
      */
-    void analyze(Dependency dependency) throws AnalysisException;
+    void analyze(Dependency dependency, Engine engine) throws AnalysisException;
 
     /**
      * <p>Returns a list of supported file extensions. An example would be an
