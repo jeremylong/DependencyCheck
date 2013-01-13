@@ -68,7 +68,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     /**
      * The phase that this analyzer is intended to run in.
      */
-    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INITIAL;
+    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
     /**
      * A list of elements in the manifest to ignore.
      */
