@@ -388,14 +388,15 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                             <p>Severity:
                             #if ($vuln.cvssScore<4.0)
                                 Low
+                            #elseif ($vuln.cvssScore>=7.0)
+                                High
                             #else
-                                #if ($vuln.cvssScore>=7.0)
-                                    High
-                                #else
-                                    Medium
-                                #end
+                                Medium
                             #end
-                            <br/>CVSS Score: $vuln.cvssScore</p>
+                            <br/>CVSS Score: $vuln.cvssScore
+                            #if ($vuln.cwe)
+                                <br/>CWE: $vuln.cwe
+                            #end</p>
                             <p>$esc.html($vuln.description)
                                 #if ($vuln.getReferences().size()>0)
                                     <ul>
