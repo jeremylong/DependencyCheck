@@ -76,8 +76,10 @@ public class CveDB {
     /**
      * SQL Statement to create the vulnerability table
      */
-    public static final String CREATE_TABLE_VULNERABILITY = "CREATE TABLE IF NOT EXISTS vulnerability "
-            + "(cveid CHAR(13) PRIMARY KEY, description varchar(8000))";
+    public static final String CREATE_TABLE_VULNERABILITY = "CREATE TABLE IF NOT EXISTS vulnerability (cveid CHAR(13) PRIMARY KEY, "
+            + "description varchar(8000), cwe varchar(10), cvssScore DECIMAL(3,1), cvssAccessVector varchar(20), "
+            + "cvssAccessComplexity varchar(20), cvssAuthentication varchar(20), cvssConfidentialityImpact varchar(20), "
+            + "cvssIntegrityImpact varchar(20), cvssAvailabilityImpact varchar(20))";
     /**
      * SQL Statement to delete references by CVEID
      */
@@ -102,7 +104,9 @@ public class CveDB {
     /**
      * SQL Statement to insert a new vulnerability
      */
-    public static final String INSERT_VULNERABILITY = "INSERT INTO vulnerability (cveid, description) VALUES (?, ?)";
+    public static final String INSERT_VULNERABILITY = "INSERT INTO vulnerability (cveid, description, cwe, cvssScore, cvssAccessVector, "
+            + "cvssAccessComplexity, cvssAuthentication, cvssConfidentialityImpact, cvssIntegrityImpact, cvssAvailabilityImpact) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     /**
      * SQL Statement to find CVE entries based on CPE data
      */
@@ -119,7 +123,7 @@ public class CveDB {
     /**
      * SQL Statement to select a vulnerability by CVEID
      */
-    public static final String SELECT_VULNERABILITY = "SELECT cveid, description FROM vulnerability WHERE cveid = ?";
+    public static final String SELECT_VULNERABILITY = "SELECT cveid, description, cwe, cvssScore, cvssAccessVector, cvssAccessComplexity, cvssAuthentication, cvssConfidentialityImpact, cvssIntegrityImpact, cvssAvailabilityImpact FROM vulnerability WHERE cveid = ?";
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Collection of CallableStatements to work with the DB">
@@ -144,7 +148,7 @@ public class CveDB {
      */
     private CallableStatement insertSoftware = null;
     /**
-     * insert vulnerability - parameters (cveid, description)
+     * insert vulnerability - parameters (cveid, description, cwe, cvssScore, cvssAccessVector, cvssAccessComplexity, cvssAuthentication, cvssConfidentialityImpact, cvssIntegrityImpact, cvssAvailabilityImpact)
      */
     private CallableStatement insertVulnerability = null;
     /**
@@ -269,6 +273,15 @@ public class CveDB {
                 vuln = new Vulnerability();
                 vuln.setName(cve);
                 vuln.setDescription(rsV.getString(2));
+                vuln.setCwe(rsV.getString(3));
+                vuln.setCvssScore(rsV.getFloat(4));
+                vuln.setCvssAccessVector(rsV.getString(5));
+                vuln.setCvssAccessComplexity(rsV.getString(6));
+                vuln.setCvssAuthentication(rsV.getString(7));
+                vuln.setCvssConfidentialityImpact(rsV.getString(8));
+                vuln.setCvssIntegrityImpact(rsV.getString(9));
+                vuln.setCvssAvailabilityImpact(rsV.getString(10));
+
                 selectReferences.setString(1, cve);
                 rsR = selectReferences.executeQuery();
                 while (rsR.next()) {
@@ -333,6 +346,14 @@ public class CveDB {
 
             insertVulnerability.setString(1, vuln.getName());
             insertVulnerability.setString(2, vuln.getDescription());
+            insertVulnerability.setString(3, vuln.getCwe());
+            insertVulnerability.setFloat(4, vuln.getCvssScore());
+            insertVulnerability.setString(5, vuln.getCvssAccessVector());
+            insertVulnerability.setString(6, vuln.getCvssAccessComplexity());
+            insertVulnerability.setString(7, vuln.getCvssAuthentication());
+            insertVulnerability.setString(8, vuln.getCvssConfidentialityImpact());
+            insertVulnerability.setString(9, vuln.getCvssIntegrityImpact());
+            insertVulnerability.setString(10, vuln.getCvssAvailabilityImpact());
             insertVulnerability.execute();
 
             insertReference.setString(1, vuln.getName());

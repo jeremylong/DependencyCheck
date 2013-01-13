@@ -48,12 +48,12 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         $(header).addClass("expandablesubsection");
                         $(header).removeClass("collaspablesubsection");
                     }
-                    
+
                 });
             });
         </script>
         <style type="text/css">
-            
+
             .rounded-corners {
                 -moz-border-radius: 20px;
                 -webkit-border-radius: 20px;
@@ -81,7 +81,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 /*background-image: url(img/minus.gif);*/
                 background-image: url(data:image/gif;base64,R0lGODlhDAAMAIABAICAgP///yH5BAEAAAEALAAAAAAMAAwAAAIajI8Hy22Q1IszQHphW3ZuXUUZ1ZXi8zFkUgAAOw==);
                 background-repeat: no-repeat;
-                background-position: 98% 50%;  
+                background-position: 98% 50%;
                 -moz-border-radius-bottomleft:0px; /* bottom left corner */
                 -webkit-border-bottom-left-radius:0px; /* bottom left corner */
                 border-bottom-left-radius: 0px;
@@ -93,7 +93,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 border-bottom-left-radius: 0px;
                 border-bottom: 0px solid #ffffff;
             }
-                        
+
             .content {
                 margin-top:0px;
                 margin-left:20px;
@@ -102,7 +102,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 background: #ffffff;
                 padding: 20px;
             }
-            
+
             .sectionheader {
                 background-color: #cccccc;
                 margin-top: 20px;
@@ -148,12 +148,12 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 margin-right:20px;
                 margin-bottom:10px;
                 background: #ffffff;
-                
+
                 padding-top: 10px;
                 padding-bottom: 20px;
                 padding-left:20px;
                 padding-right:20px;
-                
+
                 border-top: 0px;
                 border-right: 1px solid #ccc;
                 border-left: 1px solid #ccc;
@@ -175,7 +175,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 border-bottom-right-radius: 15px;
                 border-bottom-left-radius: 15px;
             }
-            
+
             .subsectionheader {
                 background-color: #cccccc;
                 margin-top: 20px;
@@ -295,10 +295,10 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 </div>
                 <h2>Dependencies</h2>
                 #set($cnt=0)
-                #foreach($dependency in $dependencies) 
+                #foreach($dependency in $dependencies)
                     <h3 class="subsectionheader standardsubsection"><a name="$esc.html($dependency.FilePath)"></a>$esc.html($dependency.FileName)</h3>
                     <div class="subsectioncontent">
-                        #if ($dependency.description) 
+                        #if ($dependency.description)
                             <p><b>Description:</b>&nbsp;$esc.html($dependency.description)<br/></p>
                         #end
                         <p>
@@ -385,6 +385,17 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <div id="content$cnt" class="subsectioncontent standardsubsection">
                         #foreach($vuln in $dependency.getVulnerabilities())
                             <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$esc.url($vuln.name)">$esc.html($vuln.name)</a></b></p>
+                            <p>Severity:
+                            #if ($vuln.cvssScore<4.0)
+                                Low
+                            #else
+                                #if ($vuln.cvssScore>=7.0)
+                                    High
+                                #else
+                                    Medium
+                                #end
+                            #end
+                            <br/>CVSS Score: $vuln.cvssScore</p>
                             <p>$esc.html($vuln.description)
                                 #if ($vuln.getReferences().size()>0)
                                     <ul>
@@ -400,6 +411,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 </div>
                 #end
             </div>
-        </div>        
+        </div>
     </body>
 </html>

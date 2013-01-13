@@ -21,6 +21,8 @@ package org.codesecure.dependencycheck.data.nvdcve.xml;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.lucene.index.CorruptIndexException;
 import org.codesecure.dependencycheck.data.cpe.Index;
 import org.codesecure.dependencycheck.data.nvdcve.CveDB;
@@ -75,6 +77,22 @@ public class NvdCve20Handler extends DefaultHandler {
             if (!CURRENT_SCHEMA_VERSION.equals(nvdVer)) {
                 throw new SAXNotSupportedException("Schema version " + nvdVer + " is not supported");
             }
+        } else if (current.isVulnCWENode()) {
+            vulnerability.setCwe(attributes.getValue("id"));
+        } else if (current.isCVSSScoreNode()) {
+            nodeText = new StringBuilder(5);
+        } else if (current.isCVSSAccessVectorNode()) {
+            nodeText = new StringBuilder(20);
+        } else if (current.isCVSSAccessComplexityNode()) {
+            nodeText = new StringBuilder(20);
+        } else if (current.isCVSSAuthenticationNode()) {
+            nodeText = new StringBuilder(20);
+        } else if (current.isCVSSAvailabilityImpactNode()) {
+            nodeText = new StringBuilder(20);
+        } else if (current.isCVSSConfidentialityImpactNode()) {
+            nodeText = new StringBuilder(20);
+        } else if (current.isCVSSIntegrityImpactNode()) {
+            nodeText = new StringBuilder(20);
         }
     }
 
@@ -101,6 +119,32 @@ public class NvdCve20Handler extends DefaultHandler {
                 }
             }
             vulnerability = null;
+        } else if (current.isCVSSScoreNode()) {
+            try {
+                float score = Float.parseFloat(nodeText.toString());
+                vulnerability.setCvssScore(score);
+            } catch (NumberFormatException ex) {
+                Logger.getLogger(NvdCve20Handler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            nodeText = null;
+        } else if (current.isCVSSAccessVectorNode()) {
+            vulnerability.setCvssAccessVector(nodeText.toString());
+            nodeText = null;
+        } else if (current.isCVSSAccessComplexityNode()) {
+            vulnerability.setCvssAccessComplexity(nodeText.toString());
+            nodeText = null;
+        } else if (current.isCVSSAuthenticationNode()) {
+            vulnerability.setCvssAuthentication(nodeText.toString());
+            nodeText = null;
+        } else if (current.isCVSSAvailabilityImpactNode()) {
+            vulnerability.setCvssAvailabilityImpact(nodeText.toString());
+            nodeText = null;
+        } else if (current.isCVSSConfidentialityImpactNode()) {
+            vulnerability.setCvssConfidentialityImpact(nodeText.toString());
+            nodeText = null;
+        } else if (current.isCVSSIntegrityImpactNode()) {
+            vulnerability.setCvssIntegrityImpact(nodeText.toString());
+            nodeText = null;
         } else if (current.isVulnProductNode()) {
             String cpe = nodeText.toString();
             if (cpe.startsWith("cpe:/a:")) {
@@ -217,6 +261,40 @@ public class NvdCve20Handler extends DefaultHandler {
          * A node type in the NVD CVE Schema 2.0
          */
         public static final String VULN_SUMMARY = "vuln:summary";
+
+        /**
+         * A node type in the NVD CVE Schema 2.0
+         */
+        public static final String VULN_CWE = "vuln:cwe";
+        /**
+         * A node type in the NVD CVE Schema 2.0
+         */
+        public static final String CVSS_SCORE = "cvss:score";
+        /**
+         * A node type in the NVD CVE Schema 2.0
+         */
+        public static final String CVSS_ACCESS_VECTOR = "cvss:access-vector";
+        /**
+         * A node type in the NVD CVE Schema 2.0
+         */
+        public static final String CVSS_ACCESS_COMPLEXITY = "cvss:access-complexity";
+        /**
+         * A node type in the NVD CVE Schema 2.0
+         */
+        public static final String CVSS_AUTHENTICATION = "cvss:authentication";
+        /**
+         * A node type in the NVD CVE Schema 2.0
+         */
+        public static final String CVSS_CONFIDENTIALITY_IMPACT = "cvss:confidentiality-impact";
+        /**
+         * A node type in the NVD CVE Schema 2.0
+         */
+        public static final String CVSS_INTEGRITY_IMPACT = "cvss:integrity-impact";
+        /**
+         * A node type in the NVD CVE Schema 2.0
+         */
+        public static final String CVSS_AVAILABILITY_IMPACT = "cvss:availability-impact";
+
         private String node = null;
 
         /**
@@ -299,6 +377,72 @@ public class NvdCve20Handler extends DefaultHandler {
         public boolean isVulnSummaryNode() {
             return VULN_SUMMARY.equals(node);
         }
+
+        /**
+         * Checks if the handler is at the VULN_CWE node
+         *
+         * @return true or false
+         */
+        public boolean isVulnCWENode() {
+            return VULN_CWE.equals(node);
+        }
+        /**
+         * Checks if the handler is at the CVSS_SCORE node
+         *
+         * @return true or false
+         */
+        public boolean isCVSSScoreNode() {
+            return CVSS_SCORE.equals(node);
+        }
+        /**
+         * Checks if the handler is at the CVSS_ACCESS_VECTOR node
+         *
+         * @return true or false
+         */
+        public boolean isCVSSAccessVectorNode() {
+            return CVSS_ACCESS_VECTOR.equals(node);
+        }
+        /**
+         * Checks if the handler is at the CVSS_ACCESS_COMPLEXITY node
+         *
+         * @return true or false
+         */
+        public boolean isCVSSAccessComplexityNode() {
+            return CVSS_ACCESS_COMPLEXITY.equals(node);
+        }
+        /**
+         * Checks if the handler is at the CVSS_AUTHENTICATION node
+         *
+         * @return true or false
+         */
+        public boolean isCVSSAuthenticationNode() {
+            return CVSS_AUTHENTICATION.equals(node);
+        }
+        /**
+         * Checks if the handler is at the CVSS_CONFIDENTIALITY_IMPACT node
+         *
+         * @return true or false
+         */
+        public boolean isCVSSConfidentialityImpactNode() {
+            return CVSS_CONFIDENTIALITY_IMPACT.equals(node);
+        }
+        /**
+         * Checks if the handler is at the CVSS_INTEGRITY_IMPACT node
+         *
+         * @return true or false
+         */
+        public boolean isCVSSIntegrityImpactNode() {
+            return CVSS_INTEGRITY_IMPACT.equals(node);
+        }
+        /**
+         * Checks if the handler is at the CVSS_AVAILABILITY_IMPACT node
+         *
+         * @return true or false
+         */
+        public boolean isCVSSAvailabilityImpactNode() {
+            return CVSS_AVAILABILITY_IMPACT.equals(node);
+        }
+
     }
     // </editor-fold>
 }
