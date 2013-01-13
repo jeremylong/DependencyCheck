@@ -359,14 +359,12 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         <h4 id="header$cnt" class="subsectionheader white">Identifiers</h4>
                         ##:&nbsp;<a href="http://web.nvd.nist.gov/view/vuln/search-results?cpe=$esc.url($cpevalue)" target="_blank">$esc.html($cpevalue)</a></h4>
                         <div id="content$cnt" class="subsectioncontent standardsubsection">
-                        #if($cpeCount>1)
+                        #if ($cpeCount>1)
                             Several possible CPEs where identified. If one of the following are correct please update the configuration
                             to set the hash code for this file to the CPE entry below.<br/><br/>
-                        #end
-                        #if($dependency.getIdentifiers().size()==0)
+                        #elseif ($dependency.getIdentifiers().size()==0)
                             <ul><li><b>None</b></li></ul>
-                        #end
-                        #if($dependency.getIdentifiers().size()>0)
+                        #elseif ($dependency.getIdentifiers().size()>0)
                             <ul>
                             #foreach($id in $dependency.getIdentifiers())
                                 ##yes, we are HTML Encoding the href. this is okay. We can't URL encode as we have to trust the analyzer here...
