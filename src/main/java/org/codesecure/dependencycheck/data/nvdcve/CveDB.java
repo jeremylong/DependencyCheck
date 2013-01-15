@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.codesecure.dependencycheck.data.cpe.Entry;
+import org.codesecure.dependencycheck.data.cwe.CweDB;
 import org.codesecure.dependencycheck.dependency.Reference;
 import org.codesecure.dependencycheck.dependency.Vulnerability;
 import org.codesecure.dependencycheck.dependency.VulnerableSoftware;
@@ -273,7 +274,14 @@ public class CveDB {
                 vuln = new Vulnerability();
                 vuln.setName(cve);
                 vuln.setDescription(rsV.getString(2));
-                vuln.setCwe(rsV.getString(3));
+                String cwe = rsV.getString(3);
+                if (cwe != null) {
+                    String name = CweDB.getCweName(cwe);
+                    if (name != null) {
+                        cwe += " " + name;
+                    }
+                }
+                vuln.setCwe(cwe);
                 vuln.setCvssScore(rsV.getFloat(4));
                 vuln.setCvssAccessVector(rsV.getString(5));
                 vuln.setCvssAccessComplexity(rsV.getString(6));
