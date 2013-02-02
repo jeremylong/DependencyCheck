@@ -7,8 +7,8 @@ If found, it will generate a report linking to the associated CVE entries.
 Usage:
 $ mvn package
 $ cd target
-$ java -jar DependencyCheck-0.2.5.2.jar -h
-$ java -jar DependencyCheck-0.2.5.2.jar -a Testing -out . -scan ./test-classes/org.mortbay.jetty.jar -scan ./test-classes/struts2-core-2.1.2.jar -scan ./lib
+$ java -jar dependency-check-0.2.6.0.jar -h
+$ java -jar dependency-check-0.2.6.0.jar -a Testing -out . -scan ./test-classes/org.mortbay.jetty.jar -scan ./test-classes/struts2-core-2.1.2.jar -scan ./lib
 
 Then load the resulting 'DependencyCheck-Report.html' into your favorite browser.
 
