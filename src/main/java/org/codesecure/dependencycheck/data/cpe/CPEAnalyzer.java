@@ -144,7 +144,6 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
             for (Entry e : entries) {
                 if (verifyEntry(e, dependency)) {
                     found = true;
-
                     dependency.addIdentifier(
                             "cpe",
                             e.getName(),
@@ -421,15 +420,22 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
      */
     private boolean verifyEntry(final Entry entry, final Dependency dependency) {
         boolean isValid = false;
-        if (dependency.getProductEvidence().containsUsedString(entry.getProduct())
-                && dependency.getVendorEvidence().containsUsedString(entry.getVendor())) {
-            //TODO - determine if this is right? Should we be carrying too much about the
-            //  version at this point? Likely need to implement the versionAnalyzer....
-            if (dependency.getVersionEvidence().containsUsedString(entry.getVersion())) {
-                isValid = true;
-            }
+
+        if (collectionContainsStrings(dependency.getProductEvidence(), entry.getProduct())
+                && collectionContainsStrings(dependency.getVendorEvidence(), entry.getVendor())
+                && collectionContainsStrings(dependency.getVersionEvidence(), entry.getVersion())) {
+            isValid = true;
         }
         return isValid;
+    }
+
+    private boolean collectionContainsStrings(EvidenceCollection ec, String text) {
+        String[] words = text.split("[\\s_-]");
+        boolean contains = true;
+        for (String word : words) {
+            contains &= ec.containsUsedString(word);
+        }
+        return contains;
     }
 
     /**

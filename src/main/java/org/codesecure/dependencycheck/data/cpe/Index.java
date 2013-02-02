@@ -40,6 +40,8 @@ import org.codesecure.dependencycheck.data.lucene.AbstractIndex;
 import org.codesecure.dependencycheck.utils.Settings;
 import org.codesecure.dependencycheck.data.lucene.FieldAnalyzer;
 import org.codesecure.dependencycheck.data.lucene.SearchFieldAnalyzer;
+import org.codesecure.dependencycheck.data.lucene.SearchVersionAnalyzer;
+import org.codesecure.dependencycheck.data.lucene.VersionAnalyzer;
 
 /**
  * The Index class is used to utilize and maintain the CPE Index.
@@ -97,7 +99,8 @@ public class Index extends AbstractIndex {
     public Analyzer createIndexingAnalyzer() {
         Map fieldAnalyzers = new HashMap();
 
-        fieldAnalyzers.put(Fields.VERSION, new KeywordAnalyzer());
+        //fieldAnalyzers.put(Fields.VERSION, new KeywordAnalyzer());
+        fieldAnalyzers.put(Fields.VERSION, new VersionAnalyzer(Version.LUCENE_40));
         fieldAnalyzers.put(Fields.NAME, new KeywordAnalyzer());
 
         PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(
@@ -117,8 +120,9 @@ public class Index extends AbstractIndex {
     public Analyzer createSearchingAnalyzer() {
         Map fieldAnalyzers = new HashMap();
 
-        fieldAnalyzers.put(Fields.VERSION, new KeywordAnalyzer());
         fieldAnalyzers.put(Fields.NAME, new KeywordAnalyzer());
+        //fieldAnalyzers.put(Fields.VERSION, new KeywordAnalyzer());
+        fieldAnalyzers.put(Fields.VERSION, new SearchVersionAnalyzer(Version.LUCENE_40));
         productSearchFieldAnalyzer = new SearchFieldAnalyzer(Version.LUCENE_40);
         vendorSearchFieldAnalyzer = new SearchFieldAnalyzer(Version.LUCENE_40);
         fieldAnalyzers.put(Fields.PRODUCT, productSearchFieldAnalyzer);

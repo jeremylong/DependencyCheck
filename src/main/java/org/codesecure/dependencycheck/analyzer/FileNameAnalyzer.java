@@ -95,7 +95,7 @@ public class FileNameAnalyzer implements Analyzer {
         String fileName = dependency.getFileName();
         int pos = fileName.lastIndexOf(".");
         if (pos > 0) {
-            fileName = fileName.substring(0, pos - 1);
+            fileName = fileName.substring(0, pos);
         }
 
         dependency.getProductEvidence().addEvidence("file", "name",

@@ -103,14 +103,25 @@ public class CPEAnalyzerTest extends BaseIndexTestCase {
         Dependency spring = new Dependency(fileSpring);
         jarAnalyzer.analyze(spring, null);
 
+        File fileSpring3 = new File(this.getClass().getClassLoader().getResource("spring-core-3.0.0.RELEASE.jar").getPath());
+        Dependency spring3 = new Dependency(fileSpring3);
+        jarAnalyzer.analyze(spring3, null);
+
         CPEAnalyzer instance = new CPEAnalyzer();
         instance.open();
         String expResult = "cpe:/a:apache:struts:2.1.2";
+        String expResultSpring = "cpe:/a:springsource:spring_framework:2.5.5";
+        String expResultSpring3 = "cpe:/a:vmware:springsource_spring_framework:3.0.0";
         instance.determineCPE(depends);
         instance.determineCPE(spring);
+        instance.determineCPE(spring3);
         instance.close();
-        assertTrue("Incorrect match", depends.getIdentifiers().size() == 1);
-        assertTrue("Incorrect match", depends.getIdentifiers().get(0).getValue().equals(expResult));
+        assertTrue("Incorrect match size - struts", depends.getIdentifiers().size() == 1);
+        assertTrue("Incorrect match - struts", depends.getIdentifiers().get(0).getValue().equals(expResult));
+        assertTrue("Incorrect match size - spring", spring.getIdentifiers().size() == 1);
+        assertTrue("Incorrect match - spring", spring.getIdentifiers().get(0).getValue().equals(expResultSpring));
+        assertTrue("Incorrect match size - spring3 - " + spring3.getIdentifiers().size(), spring3.getIdentifiers().size() >= 9);
+        //assertTrue("Incorrect match - spring3", spring3.getIdentifiers().get(0).getValue().equals(expResultSpring3));
     }
 
 

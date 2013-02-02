@@ -23,6 +23,9 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.codesecure.dependencycheck.utils.Checksum;
@@ -87,7 +90,7 @@ public class Dependency {
         productEvidence = new EvidenceCollection();
         versionEvidence = new EvidenceCollection();
         identifiers = new ArrayList<Identifier>();
-        vulnerabilities = new ArrayList<Vulnerability>();
+        vulnerabilities = new TreeSet<Vulnerability>(new VulnerabilityComparator());
     }
 
     /**
@@ -366,7 +369,8 @@ public class Dependency {
     }
 
     /**
-     * Determines if the specified string was used when searching.
+     * Determines if the specified string was used when searching. This is
+     * currently only used in test.
      *
      * @param str is the string that is being checked if it was used.
      * @return true or false.
@@ -390,14 +394,14 @@ public class Dependency {
     /**
      * A list of vulnerabilities for this dependency
      */
-    private List<Vulnerability> vulnerabilities;
+    private SortedSet<Vulnerability> vulnerabilities;
 
     /**
      * Get the list of vulnerabilities
      *
      * @return the list of vulnerabilities
      */
-    public List<Vulnerability> getVulnerabilities() {
+    public Set<Vulnerability> getVulnerabilities() {
         return vulnerabilities;
     }
 
@@ -406,7 +410,7 @@ public class Dependency {
      *
      * @param vulnerabilities new value of vulnerabilities
      */
-    public void setVulnerabilities(List<Vulnerability> vulnerabilities) {
+    public void setVulnerabilities(SortedSet<Vulnerability> vulnerabilities) {
         this.vulnerabilities = vulnerabilities;
     }
 

@@ -18,16 +18,9 @@
  */
 package org.codesecure.dependencycheck.data.cwe;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import org.codesecure.dependencycheck.dependency.VulnerableSoftware;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -37,9 +30,13 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class CweHandler extends DefaultHandler {
 
-    private HashMap<String,String> cwe = new HashMap<String,String>();
+    private HashMap<String, String> cwe = new HashMap<String, String>();
 
-    public HashMap<String,String> getCwe() {
+    /**
+     * Returns the HashMap of CWE entries (CWE-ID, Full CWE Name).
+     * @return a HashMap of CWE entries <String, String>
+     */
+    public HashMap<String, String> getCwe() {
         return cwe;
     }
 

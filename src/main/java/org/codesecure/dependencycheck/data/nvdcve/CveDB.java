@@ -47,7 +47,6 @@ import org.codesecure.dependencycheck.utils.Settings;
 public class CveDB {
 
     //<editor-fold defaultstate="collapsed" desc="Constants to create, maintain, and retrieve data from the CVE Database">
-
     /**
      * SQL Statement to create an index on the reference table
      */
@@ -124,9 +123,9 @@ public class CveDB {
     /**
      * SQL Statement to select a vulnerability by CVEID
      */
-    public static final String SELECT_VULNERABILITY = "SELECT cveid, description, cwe, cvssScore, cvssAccessVector, cvssAccessComplexity, cvssAuthentication, cvssConfidentialityImpact, cvssIntegrityImpact, cvssAvailabilityImpact FROM vulnerability WHERE cveid = ?";
+    public static final String SELECT_VULNERABILITY = "SELECT cveid, description, cwe, cvssScore, cvssAccessVector, cvssAccessComplexity, "
+            + "cvssAuthentication, cvssConfidentialityImpact, cvssIntegrityImpact, cvssAvailabilityImpact FROM vulnerability WHERE cveid = ?";
     //</editor-fold>
-
     //<editor-fold defaultstate="collapsed" desc="Collection of CallableStatements to work with the DB">
     /**
      * delete reference - parameters (cveid)
@@ -149,7 +148,8 @@ public class CveDB {
      */
     private CallableStatement insertSoftware = null;
     /**
-     * insert vulnerability - parameters (cveid, description, cwe, cvssScore, cvssAccessVector, cvssAccessComplexity, cvssAuthentication, cvssConfidentialityImpact, cvssIntegrityImpact, cvssAvailabilityImpact)
+     * insert vulnerability - parameters (cveid, description, cwe, cvssScore, cvssAccessVector,
+     * cvssAccessComplexity, cvssAuthentication, cvssConfidentialityImpact, cvssIntegrityImpact, cvssAvailabilityImpact)
      */
     private CallableStatement insertVulnerability = null;
     /**
@@ -169,7 +169,6 @@ public class CveDB {
      */
     private CallableStatement selectSoftware = null;
     //</editor-fold>
-
     /**
      * Database connection
      */
