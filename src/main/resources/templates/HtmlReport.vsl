@@ -285,18 +285,22 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <div class="sectioncontent">Report Generated On: $date<br/><br/>
                 Dependencies Scanned:&nbsp;$dependencies.size()<br/><br/>
                 <div class="indent">
+                #set($lnkcnt=0)
                 #foreach($dependency in $dependencies)
+                    #set($lnkcnt=$lnkcnt+1)
                     #if($dependency.getVulnerabilities().size()>0)
-                        <a href="#$esc.html($esc.url($dependency.FilePath))">$esc.html($dependency.FileName)</a>&nbsp;<b style="color:#ff0000;">&#8226;</b><br/>
+                        <a href="#l${lnkcnt}_$esc.html($esc.url($dependency.Sha1sum))">$esc.html($dependency.FileName)</a>&nbsp;<b style="color:#ff0000;">&#8226;</b><br/>
                     #else
-                        <a href="#$esc.html($esc.url($dependency.FilePath))">$esc.html($dependency.FileName)</a><br/>
+                        <a href="#l${lnkcnt}_$esc.html($esc.url($dependency.Sha1sum))">$esc.html($dependency.FileName)</a><br/>
                     #end
                 #end
                 </div>
                 <h2>Dependencies</h2>
+                #set($lnkcnt=0)
                 #set($cnt=0)
                 #foreach($dependency in $dependencies)
-                    <h3 class="subsectionheader standardsubsection"><a name="$esc.html($dependency.FilePath)"></a>$esc.html($dependency.FileName)</h3>
+                    #set($lnkcnt=$lnkcnt+1)
+                    <h3 class="subsectionheader standardsubsection"><a name="l${lnkcnt}_$esc.html($dependency.Sha1sum)"></a>$esc.html($dependency.FileName)</h3>
                     <div class="subsectioncontent">
                         #if ($dependency.description)
                             <p><b>Description:</b>&nbsp;$esc.html($dependency.description)<br/></p>
@@ -359,12 +363,9 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         <h4 id="header$cnt" class="subsectionheader white">Identifiers</h4>
                         ##:&nbsp;<a href="http://web.nvd.nist.gov/view/vuln/search-results?cpe=$esc.url($cpevalue)" target="_blank">$esc.html($cpevalue)</a></h4>
                         <div id="content$cnt" class="subsectioncontent standardsubsection">
-                        #if ($cpeCount>1)
-                            Several possible CPEs where identified. If one of the following are correct please update the configuration
-                            to set the hash code for this file to the CPE entry below.<br/><br/>
-                        #elseif ($dependency.getIdentifiers().size()==0)
+                        #if ($dependency.getIdentifiers().size()==0)
                             <ul><li><b>None</b></li></ul>
-                        #elseif ($dependency.getIdentifiers().size()>0)
+                        #else ## ($dependency.getIdentifiers().size()>0)
                             <ul>
                             #foreach($id in $dependency.getIdentifiers())
                                 ##yes, we are HTML Encoding the href. this is okay. We can't URL encode as we have to trust the analyzer here...

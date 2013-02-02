@@ -149,7 +149,8 @@ public class SpringCleaningAnalyzer extends AbstractAnalyzer {
 
     private boolean isSpringFrameworkCpe(Identifier identifier) {
         return "cpe".equals(identifier.getType())
-                && identifier.getValue().startsWith("cpe:/a:springsource:spring_framework:");
+                && (identifier.getValue().startsWith("cpe:/a:springsource:spring_framework:")
+                || identifier.getValue().startsWith("cpe:/a:vmware:springsource_spring_framework"));
     }
 
     private boolean isCoreFramework(String filename) {

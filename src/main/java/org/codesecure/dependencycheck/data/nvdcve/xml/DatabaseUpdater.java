@@ -77,7 +77,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
     /**
      * The current version of the database
      */
-    public static final String DATABASE_VERSION = "2.1";
+    public static final String DATABASE_VERSION = "2.2";
 
     /**
      * <p>Downloads the latest NVD CVE XML file from the web and imports it into

@@ -648,13 +648,21 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     private void addPredefinedData(Dependency dependency) {
-        Evidence spring = new Evidence("Manifest",
+        Evidence springTest1 = new Evidence("Manifest",
                 "Implementation-Title",
                 "Spring Framework",
                 Evidence.Confidence.HIGH);
 
-        if (dependency.getProductEvidence().getEvidence().contains(spring)) {
+        Evidence springTest2 = new Evidence("Manifest",
+                "Implementation-Title",
+                "org.springframework.core",
+                Evidence.Confidence.HIGH);
+
+        Set<Evidence> evidence = dependency.getProductEvidence().getEvidence();
+        if (evidence.contains(springTest1) || evidence.contains(springTest2)) {
+            dependency.getProductEvidence().addEvidence("a priori", "product", "springsource_spring_framework", Evidence.Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("a priori", "vendor", "SpringSource", Evidence.Confidence.HIGH);
+            dependency.getVendorEvidence().addEvidence("a priori", "vendor", "vmware", Evidence.Confidence.HIGH);
         }
     }
 }

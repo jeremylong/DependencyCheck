@@ -22,7 +22,7 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses/>.
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.codesecure</groupId>
-    <artifactId>DependencyCheck</artifactId>
+    <artifactId>dependency-check</artifactId>
     <version>0.2.5.2</version>
     <packaging>jar</packaging>
 
