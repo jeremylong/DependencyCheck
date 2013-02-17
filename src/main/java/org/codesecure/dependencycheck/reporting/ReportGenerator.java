@@ -104,13 +104,17 @@ public class ReportGenerator {
      * Generates the Dependency Reports for the identified dependencies.
      *
      * @param outputDir the path where the reports should be written.
+     * @param outputFormat the format the report should be written in.
      * @throws IOException is thrown when the template file does not exist.
      * @throws Exception is thrown if there is an error writting out the
      * reports.
      */
-    public void generateReports(String outputDir) throws IOException, Exception {
-        generateReport("HtmlReport", outputDir + File.separator + "DependencyCheck-Report.html");
-        //generateReport("XmlReport", outputDir + File.separator + "DependencyCheck-Report.xml");
+    public void generateReports(String outputDir, String outputFormat) throws IOException, Exception {
+        if (outputFormat.equalsIgnoreCase("XML")) {
+            generateReport("XmlReport", outputDir + File.separator + "DependencyCheck-Report.xml");
+        } else {
+            generateReport("HtmlReport", outputDir + File.separator + "DependencyCheck-Report.html");
+		}
     }
 
     /**
