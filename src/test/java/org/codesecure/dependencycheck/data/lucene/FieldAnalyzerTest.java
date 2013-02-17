@@ -109,7 +109,7 @@ public class FieldAnalyzerTest {
         
         assertEquals("Did not find 1 document?", 1, hits.length);
         
-        searchAnalyzerProduct.clear(); //ensure we don't have anything left over from the previuos search.
+        searchAnalyzerProduct.clear(); //ensure we don't have anything left over from the previous search.
         searchAnalyzerVendor.clear();
         querystr = "product:(Apache Struts) vendor:(Apache)";
         Query q2 = parser.parse(querystr);

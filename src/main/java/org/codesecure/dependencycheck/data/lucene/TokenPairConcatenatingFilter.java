@@ -58,13 +58,13 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
     @Override
     public boolean incrementToken() throws IOException {
 
-        //collect all the terms into the words collaction
+        //collect all the terms into the words collection
         while (input.incrementToken()) {
             String word = new String(termAtt.buffer(), 0, termAtt.length());
             words.add(word);
         }
 
-        //if we have a previousTerm - write it out as its own token concatonated
+        //if we have a previousTerm - write it out as its own token concatenated
         // with the current word (if one is available).
         if (previousWord != null && words.size() > 0) {
             String word = words.getFirst();

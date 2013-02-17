@@ -203,7 +203,7 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
         for (Evidence e : ec.iterator(confidenceFilter)) {
             String value = e.getValue();
 
-            //hack to get around the fact that lucene does a realy good job of recognizing domains and not
+            //hack to get around the fact that lucene does a really good job of recognizing domains and not
             // splitting them. TODO - put together a better lucene analyzer specific to the domain.
             if (value.startsWith("http://")) {
                 value = value.substring(7).replaceAll("\\.", " ");

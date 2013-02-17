@@ -89,14 +89,14 @@ public final class CliParser {
         if (isRunScan()) {
             validatePathExists(getScanFiles());
             if (!line.hasOption(ArgumentName.OUT)) {
-                //TODO - need a new exception type here, this isn't really a parseexception.
+                //TODO - need a new exception type here, this isn't really a ParseException.
                 throw new ParseException("Scan cannot be run without specifying a directory "
                         + "to write the reports to via the 'out' argument.");
             } else {
                 String p = line.getOptionValue(ArgumentName.OUT, "");
                 File f = new File(p);
                 if ("".equals(p) || !(f.exists() && f.isDirectory())) {
-                    //TODO - need a new exception type here, this isn't really a parseexception.
+                    //TODO - need a new exception type here, this isn't really a ParseException.
                     throw new ParseException("A valid directory name must be specified for "
                             + "the 'out' argument.");
                 }
