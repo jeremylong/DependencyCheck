@@ -105,6 +105,11 @@ public final class CliParser {
                 throw new ParseException("Scan cannot be run without specifying an application "
                         + "name via the 'app' argument.");
             }
+            if (line.hasOption(ArgumentName.OUTPUT_FORMAT)) {
+                String format = line.getOptionValue(ArgumentName.OUTPUT_FORMAT);
+                if (!(format.equalsIgnoreCase("XML") || format.equalsIgnoreCase("HTML")))
+                    throw new ParseException("Supported output formats are XML and HTML");
+            }
         }
     }
 
@@ -114,7 +119,7 @@ public final class CliParser {
      * thrown.
      *
      * @param paths the paths to validate if they exists
-     * @throws FileNoteFoundException is thrown if one of the paths being
+     * @throws FileNotFoundException is thrown if one of the paths being
      * validated does not exist.
      */
     private void validatePathExists(String[] paths) throws FileNotFoundException {
@@ -128,8 +133,8 @@ public final class CliParser {
      * path does not point to an existing file a FileNotFoundException is
      * thrown.
      *
-     * @param paths the paths to validate if they exists
-     * @throws FileNoteFoundException is thrown if the path being validated does
+     * @param path the paths to validate if they exists
+     * @throws FileNotFoundException is thrown if the path being validated does
      * not exist.
      */
     private void validatePathExists(String path) throws FileNotFoundException {
@@ -176,6 +181,10 @@ public final class CliParser {
                 .withDescription("the folder to write reports to.")
                 .create(ArgumentName.OUT_SHORT);
 
+        Option outputformat = OptionBuilder.withArgName("format").hasArg().withLongOpt(ArgumentName.OUTPUT_FORMAT)
+                .withDescription("the output format to write to.")
+                .create(ArgumentName.OUTPUT_FORMAT_SHORT);
+
         //TODO add the ability to load a properties file to override the defaults...
 
         OptionGroup og = new OptionGroup();
@@ -184,6 +193,7 @@ public final class CliParser {
         Options opts = new Options();
         opts.addOptionGroup(og);
         opts.addOption(out);
+        opts.addOption(outputformat);
         opts.addOption(appname);
         opts.addOption(version);
         opts.addOption(help);
@@ -233,13 +243,13 @@ public final class CliParser {
                     + "using the -p <file> argument or by passing them in as system properties." + nl
                     + nl + " " + Settings.KEYS.PROXY_URL + "\t\t    the proxy URL to use when downloading resources."
                     + nl + " " + Settings.KEYS.PROXY_PORT + "\t\t    the proxy port to use when downloading resources."
-                    + nl + " " + Settings.KEYS.CONNECTION_TIMEOUT + "\t    the cconnection timeout (in milliseconds) to use"
+                    + nl + " " + Settings.KEYS.CONNECTION_TIMEOUT + "\t    the connection timeout (in milliseconds) to use"
                     + nl + "\t\t\t    when downloading resources.";
         }
 
         formatter.printHelp(Settings.getString("application.name", "DependencyCheck"),
                 nl + Settings.getString("application.name", "DependencyCheck")
-                + " can be used to identify if there are any known CVE vulnerabilities in libraries utillized by an application. "
+                + " can be used to identify if there are any known CVE vulnerabilities in libraries utilized by an application. "
                 + Settings.getString("application.name", "DependencyCheck")
                 + " will automatically update required data from the Internet, such as the CVE and CPE data files from nvd.nist.gov." + nl + nl,
                 options,
@@ -272,9 +282,19 @@ public final class CliParser {
     }
 
     /**
+     * Returns the output format specified on the command line. Defaults to
+     * HTML if no format was specified.
+     *
+     * @return the output format name.
+     */
+    public String getReportFormat() {
+        return line.getOptionValue(ArgumentName.OUTPUT_FORMAT, "HTML");
+    }
+
+    /**
      * Returns the application name specified on the command line.
      *
-     * @return the applicatoin name.
+     * @return the application name.
      */
     public String getApplicationName() {
         return line.getOptionValue(ArgumentName.APPNAME);
@@ -336,6 +356,16 @@ public final class CliParser {
          * reports to.
          */
         public static final String OUT_SHORT = "o";
+        /**
+         * The long CLI argument name specifing the output format to write the
+         * reports to.
+         */
+        public static final String OUTPUT_FORMAT = "format";
+        /**
+         * The short CLI argument name specifing the output format to write the
+         * reports to.
+         */
+        public static final String OUTPUT_FORMAT_SHORT = "f";
         /**
          * The long CLI argument name specifing the name of the application to
          * be scanned.

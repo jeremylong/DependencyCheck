@@ -112,7 +112,7 @@ public class App {
         if (cli.isGetVersion()) {
             cli.printVersionInfo();
         } else if (cli.isRunScan()) {
-            runScan(cli.getReportDirectory(), cli.getApplicationName(), cli.getScanFiles(), cli.isAutoUpdate());
+            runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles(), cli.isAutoUpdate());
         } else {
             cli.printHelp();
         }
@@ -125,10 +125,11 @@ public class App {
      *
      * @param reportDirectory the path to the directory where the reports will
      * be written.
+     * @param outputFormat the output format of the report.
      * @param applicationName the application name for the report.
      * @param files the files/directories to scan.
      */
-    private void runScan(String reportDirectory, String applicationName, String[] files, boolean autoUpdate) {
+    private void runScan(String reportDirectory, String outputFormat, String applicationName, String[] files, boolean autoUpdate) {
         Engine scanner = new Engine(autoUpdate);
         for (String file : files) {
             scanner.scan(file);
@@ -138,7 +139,7 @@ public class App {
 
         ReportGenerator report = new ReportGenerator(applicationName, dependencies, scanner.getAnalyzers());
         try {
-            report.generateReports(reportDirectory);
+            report.generateReports(reportDirectory, outputFormat);
         } catch (IOException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
