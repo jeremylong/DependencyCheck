@@ -186,7 +186,7 @@ public class Engine {
      * Runs the analyzers against all of the dependencies.
      */
     public void analyzeDependencies() {
-        //phase one initilize
+        //phase one initialize
         for (AnalysisPhase phase : AnalysisPhase.values()) {
             List<Analyzer> analyzerList = analyzers.get(phase);
             for (Analyzer a : analyzerList) {
@@ -194,7 +194,7 @@ public class Engine {
                     a.initialize();
                 } catch (Exception ex) {
                     Logger.getLogger(Engine.class.getName()).log(Level.SEVERE,
-                            "Exception occured initializing " + a.getName() + ".", ex);
+                            "Exception occurred initializing " + a.getName() + ".", ex);
                     try {
                         a.close();
                     } catch (Exception ex1) {

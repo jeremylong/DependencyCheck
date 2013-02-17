@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 public class CweDB {
 
     private CweDB() {
-        //empty contructor for utility class
+        //empty constructor for utility class
     }
     private static final HashMap<String, String> CWE = loadData();
 

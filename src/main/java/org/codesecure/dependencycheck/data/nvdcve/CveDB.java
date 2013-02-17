@@ -343,7 +343,7 @@ public class CveDB {
      */
     public void updateVulnerability(Vulnerability vuln) throws DatabaseException {
         try {
-            // first delete any existing vulnerabilty info.
+            // first delete any existing vulnerability info.
             deleteReferences.setString(1, vuln.getName());
             deleteReferences.execute();
             deleteSoftware.setString(1, vuln.getName());

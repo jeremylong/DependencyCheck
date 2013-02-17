@@ -139,7 +139,7 @@ public class Downloader {
                     writer = null;
                 } catch (Exception ex) {
                     Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
-                            "Error closing the writter in Downloader.", ex);
+                            "Error closing the writer in Downloader.", ex);
                 }
             }
             if (reader != null) {

@@ -190,9 +190,9 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             analyzePOM(dependency);
             addPredefinedData(dependency);
         } catch (IOException ex) {
-            throw new AnalysisException("Exception occured reading the JAR file.", ex);
+            throw new AnalysisException("Exception occurred reading the JAR file.", ex);
         } catch (JAXBException ex) {
-            throw new AnalysisException("Exception occured reading the POM within the JAR file.", ex);
+            throw new AnalysisException("Exception occurred reading the POM within the JAR file.", ex);
         }
 
     }
