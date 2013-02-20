@@ -9,8 +9,11 @@ Usage
 -
 
 > $ mvn package
+
 > $ cd target
+
 > $ java -jar dependency-check-0.2.6.0.jar -h
+
 > $ java -jar dependency-check-0.2.6.0.jar -a Testing -out . -scan ./test-classes -scan ./lib
 
 Then load the resulting 'DependencyCheck-Report.html' into your favorite browser.
