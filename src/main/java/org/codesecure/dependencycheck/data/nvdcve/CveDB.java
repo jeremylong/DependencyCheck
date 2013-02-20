@@ -197,7 +197,7 @@ public class CveDB {
     }
 
     /**
-     * Cleansup the object and ensures that "close" has been called.
+     * Cleans up the object and ensures that "close" has been called.
      * @throws Throwable thrown if there is a problem
      */
     @Override
@@ -228,7 +228,7 @@ public class CveDB {
      * @return a list of Vulnerabilities
      * @throws DatabaseException thrown if there is an exception retrieving data
      */
-    public List<Vulnerability> getVulnerablilities(String cpeStr) throws DatabaseException {
+    public List<Vulnerability> getVulnerabilities(String cpeStr) throws DatabaseException {
         ResultSet rs = null;
         final Entry cpe = new Entry();
         try {
