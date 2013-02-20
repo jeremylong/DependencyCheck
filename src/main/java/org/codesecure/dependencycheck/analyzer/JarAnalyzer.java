@@ -154,7 +154,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * Returns whether or not this analyzer can process the given extension.
      *
      * @param extension the file extension to test for support.
-     * @return whether or not the specified file extension is supported by tihs
+     * @return whether or not the specified file extension is supported by this
      * analyzer.
      */
     public boolean supportsExtension(String extension) {

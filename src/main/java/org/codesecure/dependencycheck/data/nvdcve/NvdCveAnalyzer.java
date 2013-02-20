@@ -103,7 +103,7 @@ public class NvdCveAnalyzer implements org.codesecure.dependencycheck.analyzer.A
             if ("cpe".equals(id.getType())) {
                 try {
                     String value = id.getValue();
-                    List<Vulnerability> vulns = cveDB.getVulnerablilities(value);
+                    List<Vulnerability> vulns = cveDB.getVulnerabilities(value);
                     for (Vulnerability v : vulns) {
                         dependency.addVulnerability(v);
                     }
