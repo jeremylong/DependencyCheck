@@ -19,7 +19,7 @@
 package org.codesecure.dependencycheck.data.nvdcve.xml;
 
 /**
- * An InvalidataDataException is a generic exception used when trying to load
+ * An InvalidDataDataException is a generic exception used when trying to load
  * the nvd cve meta data.
  *
  * @author Jeremy

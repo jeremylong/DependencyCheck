@@ -28,7 +28,7 @@ import java.util.ServiceLoader;
 public class UpdateService {
 
     private static UpdateService service;
-    private ServiceLoader<CachedWebDataSource> loader;
+    private final ServiceLoader<CachedWebDataSource> loader;
 
     /**
      * Creates a new instance of UpdateService

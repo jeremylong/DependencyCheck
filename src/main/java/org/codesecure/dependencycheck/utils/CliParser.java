@@ -209,7 +209,7 @@ public final class CliParser {
      * @return whether or not the 'version' command line argument was passed in
      */
     public boolean isGetVersion() {
-        return (line != null) ? line.hasOption(ArgumentName.VERSION) : false;
+        return (line != null) && line.hasOption(ArgumentName.VERSION);
     }
 
     /**
@@ -218,7 +218,7 @@ public final class CliParser {
      * @return whether or not the 'help' command line argument was passed in
      */
     public boolean isGetHelp() {
-        return (line != null) ? line.hasOption(ArgumentName.HELP) : false;
+        return (line != null) && line.hasOption(ArgumentName.HELP);
     }
 
     /**
@@ -227,7 +227,7 @@ public final class CliParser {
      * @return whether or not the 'scan' command line argument was passed in
      */
     public boolean isRunScan() {
-        return (line != null) ? isValid && line.hasOption(ArgumentName.SCAN) : false;
+        return (line != null) && isValid && line.hasOption(ArgumentName.SCAN);
     }
 
     /**
@@ -319,7 +319,7 @@ public final class CliParser {
      * @return if auto-update is allowed.
      */
     public boolean isAutoUpdate() {
-        return (line != null) ? !line.hasOption(ArgumentName.DISABLE_AUTO_UPDATE) : true;
+        return (line == null) || !line.hasOption(ArgumentName.DISABLE_AUTO_UPDATE);
     }
 
     /**
@@ -329,50 +329,50 @@ public final class CliParser {
     public static class ArgumentName {
 
         /**
-         * The long CLI argument name specifing the directory/file to scan
+         * The long CLI argument name specifying the directory/file to scan
          */
         public static final String SCAN = "scan";
         /**
-         * The short CLI argument name specifing the directory/file to scan
+         * The short CLI argument name specifying the directory/file to scan
          */
         public static final String SCAN_SHORT = "s";
         /**
-         * The long CLI argument name specifing that the CPE/CVE/etc. data
+         * The long CLI argument name specifying that the CPE/CVE/etc. data
          * should not be automatically updated.
          */
         public static final String DISABLE_AUTO_UPDATE = "noupdate";
         /**
-         * The short CLI argument name specifing that the CPE/CVE/etc. data
+         * The short CLI argument name specifying that the CPE/CVE/etc. data
          * should not be automatically updated.
          */
         public static final String DISABLE_AUTO_UPDATE_SHORT = "n";
         /**
-         * The long CLI argument name specifing the directory to write the
+         * The long CLI argument name specifying the directory to write the
          * reports to.
          */
         public static final String OUT = "out";
         /**
-         * The short CLI argument name specifing the directory to write the
+         * The short CLI argument name specifying the directory to write the
          * reports to.
          */
         public static final String OUT_SHORT = "o";
         /**
-         * The long CLI argument name specifing the output format to write the
+         * The long CLI argument name specifying the output format to write the
          * reports to.
          */
         public static final String OUTPUT_FORMAT = "format";
         /**
-         * The short CLI argument name specifing the output format to write the
+         * The short CLI argument name specifying the output format to write the
          * reports to.
          */
         public static final String OUTPUT_FORMAT_SHORT = "f";
         /**
-         * The long CLI argument name specifing the name of the application to
+         * The long CLI argument name specifying the name of the application to
          * be scanned.
          */
         public static final String APPNAME = "app";
         /**
-         * The short CLI argument name specifing the name of the application to
+         * The short CLI argument name specifying the name of the application to
          * be scanned.
          */
         public static final String APPNAME_SHORT = "a";

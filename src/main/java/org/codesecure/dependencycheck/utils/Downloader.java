@@ -64,7 +64,7 @@ public class Downloader {
      * @param url the URL of the file to download.
      * @param outputPath the path to the save the file to.
      * @param unzip true/false indicating that the file being retrieved is
-     * gzipped and if true, should be uncompressed before writting to the file.
+     * gzipped and if true, should be uncompressed before writing to the file.
      * @throws DownloadFailedException is thrown if there is an error
      * downloading the file.
      */
@@ -91,7 +91,7 @@ public class Downloader {
      * @param url the URL of the file to download.
      * @param outputPath the path to the save the file to.
      * @param unzip true/false indicating that the file being retrieved is
-     * gzipped and if true, should be uncompressed before writting to the file.
+     * gzipped and if true, should be uncompressed before writing to the file.
      * @throws DownloadFailedException is thrown if there is an error
      * downloading the file.
      */
@@ -190,7 +190,7 @@ public class Downloader {
     }
 
     /**
-     * Utility method to get an HttpURLConnectoin. If the app is configured to
+     * Utility method to get an HttpURLConnection. If the app is configured to
      * use a proxy this method will retrieve the proxy settings and use them
      * when setting up the connection.
      *

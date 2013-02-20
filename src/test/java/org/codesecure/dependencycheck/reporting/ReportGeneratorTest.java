@@ -15,11 +15,7 @@ import org.junit.Test;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class ReportGeneratorTest extends BaseIndexTestCase {
-
-    public ReportGeneratorTest(String testName) {
-        super(testName);
-    }
+public class ReportGeneratorTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -30,12 +26,10 @@ public class ReportGeneratorTest extends BaseIndexTestCase {
     }
 
     @Before
-    @Override
     public void setUp() {
     }
 
     @After
-    @Override
     public void tearDown() {
     }
 

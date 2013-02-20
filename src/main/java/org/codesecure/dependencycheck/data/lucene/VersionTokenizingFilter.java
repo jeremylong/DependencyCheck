@@ -39,7 +39,7 @@ public final class VersionTokenizingFilter extends TokenFilter {
     protected LinkedList<String> tokens = null;
 
     /**
-     * Consructs a new VersionTokenizingFilter
+     * Constructs a new VersionTokenizingFilter
      * @param stream the TokenStream that this filter will process
      */
     public VersionTokenizingFilter(TokenStream stream) {
@@ -48,8 +48,8 @@ public final class VersionTokenizingFilter extends TokenFilter {
     }
 
     /**
-     * Increments the underlying TokenStream and sets CharTermAtttributes to
-     * construct an expanded set of tokens by concatenting tokens with the
+     * Increments the underlying TokenStream and sets CharTermAttributes to
+     * construct an expanded set of tokens by concatenating tokens with the
      * previous token.
      *
      * @return whether or not we have hit the end of the TokenStream
@@ -65,8 +65,8 @@ public final class VersionTokenizingFilter extends TokenFilter {
     }
 
     /**
-     * Adds a term, if one exists, from the tokens collection..
-     * @return
+     * Adds a term, if one exists, from the tokens collection.
+     * @return whether or not a new term was added
      */
     private boolean addTerm() {
         boolean termAdded = tokens.size() > 0;
@@ -84,8 +84,7 @@ public final class VersionTokenizingFilter extends TokenFilter {
         //  to incorporate the dash or underscore back in...
         String[] versionParts = version.split("\\.");
         String dottedVersion = null;
-        for (int x = 0; x < versionParts.length; x++) {
-            String current = versionParts[x];
+        for (String current : versionParts) {
             if (!current.matches("^/d+$")) {
                 tokens.add(current);
             }

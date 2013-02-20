@@ -11,31 +11,28 @@ import java.io.IOException;
 import java.io.PrintStream;
 import junit.framework.TestCase;
 import org.apache.commons.cli.ParseException;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
  *
  * @author jeremy
  */
-public class CliParserTest extends TestCase {
+public class CliParserTest {
 
-    public CliParserTest(String testName) {
-        super(testName);
+    @Before
+    public void setUp() throws Exception {
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
     }
 
     /**
      * Test of parse method, of class CliParser.
-     * @throws Exception thrown when an excpetion occurs.
+     * @throws Exception thrown when an exception occurs.
      */
     @Test
     public void testParse() throws Exception {
@@ -50,14 +47,14 @@ public class CliParserTest extends TestCase {
         CliParser instance = new CliParser();
         instance.parse(args);
 
-        assertFalse(instance.isGetVersion());
-        assertFalse(instance.isGetHelp());
-        assertFalse(instance.isRunScan());
+        Assert.assertFalse(instance.isGetVersion());
+        Assert.assertFalse(instance.isGetHelp());
+        Assert.assertFalse(instance.isRunScan());
     }
 
     /**
      * Test of parse method with help arg, of class CliParser.
-     * @throws Exception thrown when an excpetion occurs.
+     * @throws Exception thrown when an exception occurs.
      */
     @Test
     public void testParse_help() throws Exception {
@@ -69,14 +66,14 @@ public class CliParserTest extends TestCase {
         CliParser instance = new CliParser();
         instance.parse(args);
 
-        assertFalse(instance.isGetVersion());
-        assertTrue(instance.isGetHelp());
-        assertFalse(instance.isRunScan());
+        Assert.assertFalse(instance.isGetVersion());
+        Assert.assertTrue(instance.isGetHelp());
+        Assert.assertFalse(instance.isRunScan());
     }
 
     /**
      * Test of parse method with version arg, of class CliParser.
-     * @throws Exception thrown when an excpetion occurs.
+     * @throws Exception thrown when an exception occurs.
      */
     @Test
     public void testParse_version() throws Exception {
@@ -86,15 +83,15 @@ public class CliParserTest extends TestCase {
 
         CliParser instance = new CliParser();
         instance.parse(args);
-        assertTrue(instance.isGetVersion());
-        assertFalse(instance.isGetHelp());
-        assertFalse(instance.isRunScan());
+        Assert.assertTrue(instance.isGetVersion());
+        Assert.assertFalse(instance.isGetHelp());
+        Assert.assertFalse(instance.isRunScan());
 
     }
 
     /**
      * Test of parse method with jar and cpe args, of class CliParser.
-     * @throws Exception thrown when an excpetion occurs.
+     * @throws Exception thrown when an exception occurs.
      */
     @Test
     public void testParse_unknown() throws Exception {
@@ -114,16 +111,16 @@ public class CliParserTest extends TestCase {
         try {
             instance.parse(args);
         } catch (ParseException ex) {
-            assertTrue(ex.getMessage().contains("Unrecognized option"));
+            Assert.assertTrue(ex.getMessage().contains("Unrecognized option"));
         }
-        assertFalse(instance.isGetVersion());
-        assertFalse(instance.isGetHelp());
-        assertFalse(instance.isRunScan());
+        Assert.assertFalse(instance.isGetVersion());
+        Assert.assertFalse(instance.isGetHelp());
+        Assert.assertFalse(instance.isRunScan());
     }
 
     /**
      * Test of parse method with scan arg, of class CliParser.
-     * @throws Exception thrown when an excpetion occurs.
+     * @throws Exception thrown when an exception occurs.
      */
     @Test
     public void testParse_scan() throws Exception {
@@ -136,17 +133,17 @@ public class CliParserTest extends TestCase {
         try {
             instance.parse(args);
         } catch (ParseException ex) {
-            assertTrue(ex.getMessage().contains("Missing argument"));
+            Assert.assertTrue(ex.getMessage().contains("Missing argument"));
         }
 
-        assertFalse(instance.isGetVersion());
-        assertFalse(instance.isGetHelp());
-        assertFalse(instance.isRunScan());
+        Assert.assertFalse(instance.isGetVersion());
+        Assert.assertFalse(instance.isGetHelp());
+        Assert.assertFalse(instance.isRunScan());
     }
 
     /**
      * Test of parse method with jar arg, of class CliParser.
-     * @throws Exception thrown when an excpetion occurs.
+     * @throws Exception thrown when an exception occurs.
      */
     @Test
     public void testParse_scan_unknownFile() throws Exception {
@@ -158,17 +155,17 @@ public class CliParserTest extends TestCase {
         try {
             instance.parse(args);
         } catch (FileNotFoundException ex) {
-            assertTrue(ex.getMessage().contains("Invalid file argument"));
+            Assert.assertTrue(ex.getMessage().contains("Invalid file argument"));
         }
 
-        assertFalse(instance.isGetVersion());
-        assertFalse(instance.isGetHelp());
-        assertFalse(instance.isRunScan());
+        Assert.assertFalse(instance.isGetVersion());
+        Assert.assertFalse(instance.isGetHelp());
+        Assert.assertFalse(instance.isRunScan());
     }
 
     /**
      * Test of parse method with jar arg, of class CliParser.
-     * @throws Exception thrown when an excpetion occurs.
+     * @throws Exception thrown when an exception occurs.
      */
     @Test
     public void testParse_scan_withFileExists() throws Exception {
@@ -179,16 +176,16 @@ public class CliParserTest extends TestCase {
         CliParser instance = new CliParser();
         instance.parse(args);
 
-        assertEquals(path.getCanonicalPath(), instance.getScanFiles()[0]);
+        Assert.assertEquals(path.getCanonicalPath(), instance.getScanFiles()[0]);
 
-        assertFalse(instance.isGetVersion());
-        assertFalse(instance.isGetHelp());
-        assertTrue(instance.isRunScan());
+        Assert.assertFalse(instance.isGetVersion());
+        Assert.assertFalse(instance.isGetHelp());
+        Assert.assertTrue(instance.isRunScan());
     }
 
     /**
      * Test of printVersionInfo, of class CliParser.
-     * @throws Exception thrown when an excpetion occurs.
+     * @throws Exception thrown when an exception occurs.
      */
     @Test
     public void testParse_printVersionInfo() throws Exception {
@@ -204,12 +201,12 @@ public class CliParserTest extends TestCase {
             baos.flush();
             String text = (new String(baos.toByteArray())).toLowerCase();
             String[] lines = text.split(System.getProperty("line.separator"));
-            assertEquals(1, lines.length);
-            assertTrue(text.contains("version"));
-            assertTrue(!text.contains("unknown"));
+            Assert.assertEquals(1, lines.length);
+            Assert.assertTrue(text.contains("version"));
+            Assert.assertTrue(!text.contains("unknown"));
         } catch (IOException ex) {
             System.setOut(out);
-            fail("CliParser.printVersionInfo did not write anything to system.out.");
+            Assert.fail("CliParser.printVersionInfo did not write anything to system.out.");
         } finally {
             System.setOut(out);
         }
@@ -217,7 +214,7 @@ public class CliParserTest extends TestCase {
 
     /**
      * Test of printHelp, of class CliParser.
-     * @throws Exception thrown when an excpetion occurs.
+     * @throws Exception thrown when an exception occurs.
      */
     @Test
     public void testParse_printHelp() throws Exception {
@@ -238,11 +235,11 @@ public class CliParserTest extends TestCase {
             baos.flush();
             String text = (new String(baos.toByteArray()));
             String[] lines = text.split(System.getProperty("line.separator"));
-            assertTrue(lines[0].startsWith("usage: "));
-            assertTrue((lines.length > 2));
+            Assert.assertTrue(lines[0].startsWith("usage: "));
+            Assert.assertTrue((lines.length > 2));
         } catch (IOException ex) {
             System.setOut(out);
-            fail("CliParser.printVersionInfo did not write anything to system.out.");
+            Assert.fail("CliParser.printVersionInfo did not write anything to system.out.");
         } finally {
             System.setOut(out);
         }

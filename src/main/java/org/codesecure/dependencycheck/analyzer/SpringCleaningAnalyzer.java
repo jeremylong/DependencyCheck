@@ -69,8 +69,8 @@ public class SpringCleaningAnalyzer extends AbstractAnalyzer {
     /**
      * Returns whether or not this analyzer can process the given extension.
      *
-     * @param extension the file extension to test for support.
-     * @return whether or not the specified file extension is supported by tihs
+     * @param extension the file extension to test for support
+     * @return whether or not the specified file extension is supported by this
      * analyzer.
      */
     public boolean supportsExtension(String extension) {
@@ -104,7 +104,7 @@ public class SpringCleaningAnalyzer extends AbstractAnalyzer {
     private List<Identifier> springVersions = null;
 
     /**
-     * Determines if several "spring" libraries were scanned and trimes the
+     * Determines if several "spring" libraries were scanned and trims the
      * cpe:/a:springsource:spring_framework:[version] from the none "core" framework
      * if the core framework was part of the scan.
      *

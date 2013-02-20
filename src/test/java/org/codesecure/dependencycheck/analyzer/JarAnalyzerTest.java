@@ -44,8 +44,8 @@ public class JarAnalyzerTest {
     }
 
     /**
-     * Test of insepct method, of class JarAnalyzer.
-     * @throws Exception is thrown when an excpetion occurs.
+     * Test of inspect method, of class JarAnalyzer.
+     * @throws Exception is thrown when an exception occurs.
      */
     @Test
     public void testAnalyze() throws Exception {

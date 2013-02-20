@@ -8,26 +8,23 @@ import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
  *
  * @author jeremy
  */
-public class ChecksumTest extends TestCase {
+public class ChecksumTest {
 
-    public ChecksumTest(String testName) {
-        super(testName);
+    @Before
+    public void setUp() throws Exception {
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
     }
 
     /**
@@ -47,14 +44,14 @@ public class ChecksumTest extends TestCase {
                 arraysAreEqual = result[i] == expResult[i];
             }
         } else {
-            fail("Checksum results do not match expected results.");
+            Assert.fail("Checksum results do not match expected results.");
         }
-        assertTrue(arraysAreEqual);
+        Assert.assertTrue(arraysAreEqual);
     }
 
     /**
      * Test of getChecksum method, of class Checksum. This checks that an
-     * excpetion is thrown when an invalid path is specified.
+     * exception is thrown when an invalid path is specified.
      *
      * @throws Exception is thrown when an exception occurs.
      */
@@ -69,7 +66,7 @@ public class ChecksumTest extends TestCase {
         } catch (IOException ex) {
             exceptionThrown = true;
         }
-        assertTrue(exceptionThrown);
+        Assert.assertTrue(exceptionThrown);
     }
 
     /**
@@ -89,7 +86,7 @@ public class ChecksumTest extends TestCase {
         } catch (NoSuchAlgorithmException ex) {
             exceptionThrown = true;
         }
-        assertTrue(exceptionThrown);
+        Assert.assertTrue(exceptionThrown);
     }
 
     /**
@@ -102,7 +99,7 @@ public class ChecksumTest extends TestCase {
         File file = new File(this.getClass().getClassLoader().getResource("checkSumTest.file").getPath());
         String expResult = "F0915C5F46B8CFA283E5AD67A09B3793";
         String result = Checksum.getMD5Checksum(file);
-        assertEquals(expResult, result);
+        Assert.assertEquals(expResult, result);
     }
 
     /**
@@ -115,7 +112,7 @@ public class ChecksumTest extends TestCase {
         File file = new File(this.getClass().getClassLoader().getResource("checkSumTest.file").getPath());
         String expResult = "B8A9FF28B21BCB1D0B50E24A5243D8B51766851A";
         String result = Checksum.getSHA1Checksum(file);
-        assertEquals(expResult, result);
+        Assert.assertEquals(expResult, result);
     }
 
     /**
@@ -127,6 +124,6 @@ public class ChecksumTest extends TestCase {
         byte[] raw = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
         String expResult = "000102030405060708090A0B0C0D0E0F10";
         String result = Checksum.getHex(raw);
-        assertEquals(expResult, result);
+        Assert.assertEquals(expResult, result);
     }
 }

@@ -40,7 +40,7 @@ import org.codesecure.dependencycheck.dependency.EvidenceCollection;
 
 /**
  * CPEAnalyzer is a utility class that takes a project dependency and attempts
- * to decern if there is an associated CPE. It uses the evidence contained
+ * to discern if there is an associated CPE. It uses the evidence contained
  * within the dependency to search the Lucene index.
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
@@ -78,7 +78,7 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
     /**
      * Opens the data source.
      *
-     * @throws IOException when the Lucene directory to be querried does not
+     * @throws IOException when the Lucene directory to be queried does not
      * exist or is corrupt.
      */
     public void open() throws IOException {
@@ -99,7 +99,7 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
      * @return true or false.
      */
     public boolean isOpen() {
-        return (cpe == null) ? false : cpe.isOpen();
+        return (cpe != null) && cpe.isOpen();
     }
 
     /**
@@ -118,7 +118,7 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
     /**
      * Searches the data store of CPE entries, trying to identify the CPE for
      * the given dependency based on the evidence contained within. The
-     * depencency passed in is updated with any identified CPE values.
+     * dependency passed in is updated with any identified CPE values.
      *
      * @param dependency the dependency to search for CPE entries on.
      * @throws CorruptIndexException is thrown when the Lucene index is corrupt.
@@ -194,7 +194,7 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
      * @param text the base text.
      * @param ec an EvidenceCollection
      * @param confidenceFilter a Confidence level to filter the evidence by.
-     * @return
+     * @return the new evidence text
      */
     private String addEvidenceWithoutDuplicateTerms(final String text, final EvidenceCollection ec, Confidence confidenceFilter) {
         String txt = (text == null) ? "" : text;
@@ -286,12 +286,12 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
      * @param version text to search the version field.
      * @param vendorWeighting a list of strings to apply to the vendor to boost
      * the terms weight.
-     * @param produdctWeightings a list of strings to apply to the product to
+     * @param productWeightings a list of strings to apply to the product to
      * boost the terms weight.
      * @return the Lucene query.
      */
     protected String buildSearch(String vendor, String product, String version,
-            Set<String> vendorWeighting, Set<String> produdctWeightings) {
+            Set<String> vendorWeighting, Set<String> productWeightings) {
 
         StringBuilder sb = new StringBuilder(vendor.length() + product.length()
                 + version.length() + Fields.PRODUCT.length() + Fields.VERSION.length()
@@ -301,7 +301,7 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
             return null;
         }
 
-        if (!appendWeightedSearch(sb, Fields.PRODUCT, product, produdctWeightings)) {
+        if (!appendWeightedSearch(sb, Fields.PRODUCT, product, productWeightings)) {
             return null;
         }
         sb.append(" AND ");
@@ -332,7 +332,7 @@ public class CPEAnalyzer implements org.codesecure.dependencycheck.analyzer.Anal
 
     /**
      * This method constructs a Lucene query for a given field. The searchText
-     * is split into seperate words and if the word is within the list of
+     * is split into separate words and if the word is within the list of
      * weighted words then an additional weighting is applied to the term as it
      * is appended into the query.
      *

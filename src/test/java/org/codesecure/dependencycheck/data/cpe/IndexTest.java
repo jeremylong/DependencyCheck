@@ -7,22 +7,15 @@ package org.codesecure.dependencycheck.data.cpe;
 import java.io.File;
 import java.io.IOException;
 import org.apache.lucene.store.Directory;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
+
 import static org.junit.Assert.*;
 
 /**
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class IndexTest extends BaseIndexTestCase {
-
-    public IndexTest(String testCase) {
-        super(testCase);
-    }
+public class IndexTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -50,7 +43,7 @@ public class IndexTest extends BaseIndexTestCase {
         try {
             instance.open();
         } catch (IOException ex) {
-            fail(ex.getMessage());
+            Assert.fail(ex.getMessage());
         }
         instance.close();
     }
@@ -65,6 +58,6 @@ public class IndexTest extends BaseIndexTestCase {
         Directory result = index.getDirectory();
 
         String exp = File.separatorChar + "target" + File.separatorChar + "data" + File.separatorChar + "cpe";
-        assertTrue(result.toString().contains(exp));
+        Assert.assertTrue(result.toString().contains(exp));
     }
 }

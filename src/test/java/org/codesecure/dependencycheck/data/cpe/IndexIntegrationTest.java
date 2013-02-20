@@ -18,11 +18,7 @@ import static org.junit.Assert.*;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class IndexIntegrationTest extends BaseIndexTestCase {
-
-    public IndexIntegrationTest(String testCase) {
-        super(testCase);
-    }
+public class IndexIntegrationTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {

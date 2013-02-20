@@ -293,7 +293,7 @@ public class Dependency {
         return this.versionEvidence;
     }
     /**
-     * A list of exceptions that occured during analysis of this dependency.
+     * A list of exceptions that occurred during analysis of this dependency.
      */
     protected List<Exception> analysisExceptions = new ArrayList<Exception>();
 

@@ -19,15 +19,15 @@
 package org.codesecure.dependencycheck.data.lucene;
 
 /**
- * <p>Lucene utils is a set of utilitize written to make constructing Lucene
- * queries simplier.</p>
+ * <p>Lucene utils is a set of utilize written to make constructing Lucene
+ * queries simpler.</p>
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public final class LuceneUtils {
 
     /**
-     * Provate contructor as this is a utility class.
+     * Private constructor as this is a utility class.
      */
     private LuceneUtils() {
     }
