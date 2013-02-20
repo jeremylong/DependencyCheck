@@ -116,10 +116,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      */
     private static final String BUNDLE_VENDOR = "Bundle-Vendor"; //: Apache Software Foundation
     /**
-     * The JAXB Contexts used to unmarshall the pom.xml from a JAR file.
-     */
-    private JAXBContext jaxbContext = null;
-    /**
      * The unmarshaller used to parse the pom.xml from a JAR file.
      */
     private Unmarshaller pomUnmarshaller = null;
@@ -129,7 +125,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      */
     public JarAnalyzer() {
         try {
-            jaxbContext = JAXBContext.newInstance("org.codesecure.dependencycheck.analyzer.pom.generated");
+            JAXBContext jaxbContext = JAXBContext.newInstance("org.codesecure.dependencycheck.analyzer.pom.generated");
             pomUnmarshaller = jaxbContext.createUnmarshaller();
         } catch (JAXBException ex) { //guess we will just have a null pointer exception later...
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, null, ex);

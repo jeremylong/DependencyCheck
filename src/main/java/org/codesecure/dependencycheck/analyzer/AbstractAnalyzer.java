@@ -18,6 +18,7 @@
  */
 package org.codesecure.dependencycheck.analyzer;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,10 +40,7 @@ public abstract class AbstractAnalyzer implements Analyzer {
     protected static Set<String> newHashSet(String... strings) {
         Set<String> set = new HashSet<String>();
 
-        //yes, in Java7 we could use Array.toList(...) - but I'm trying to keep this Java 6 compliant.
-        for (String s : strings) {
-            set.add(s);
-        }
+        Collections.addAll(set, strings);
         return set;
     }
 }

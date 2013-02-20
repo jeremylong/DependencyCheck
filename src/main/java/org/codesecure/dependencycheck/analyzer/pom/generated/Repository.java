@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * 
- *         A repository contains the information needed for establishing connections with remote repoistory.
+ *         A repository contains the information needed for establishing connections with remote repository.
  *       
  * 
  * <p>Java class for Repository complex type.

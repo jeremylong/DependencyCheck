@@ -88,7 +88,7 @@ public class ReportGenerator {
 
     /**
      * Creates a new Velocity Context initialized with escape and date tools.
-     * @return a Velcotiy Context.
+     * @return a Velocity Context.
      */
     private Context createContext() {
         ToolManager manager = new ToolManager();
@@ -106,7 +106,7 @@ public class ReportGenerator {
      * @param outputDir the path where the reports should be written.
      * @param outputFormat the format the report should be written in.
      * @throws IOException is thrown when the template file does not exist.
-     * @throws Exception is thrown if there is an error writting out the
+     * @throws Exception is thrown if there is an error writing out the
      * reports.
      */
     public void generateReports(String outputDir, String outputFormat) throws IOException, Exception {

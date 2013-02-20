@@ -23,7 +23,7 @@ public class Checksum {
 
     /**
      * <p>Creates the cryptographic checksum of a given file using the specified
-     * alogirhtm.</p> <p>This algorithm was copied and heavily modified from
+     * algorithm.</p> <p>This algorithm was copied and heavily modified from
      * Real's How To: http://www.rgagnon.com/javadetails/java-0416.html</p>
      *
      * @param algorithm the algorithm to use to calculate the checksum

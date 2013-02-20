@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * 
- *         Repository contains the information needed for deploying to the remote repoistory.
+ *         Repository contains the information needed for deploying to the remote repository.
  *       
  * 
  * <p>Java class for DeploymentRepository complex type.

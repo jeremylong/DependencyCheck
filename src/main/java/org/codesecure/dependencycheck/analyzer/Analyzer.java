@@ -33,7 +33,7 @@ public interface Analyzer {
 
     /**
      * Analyzes the given dependency. The analysis could be anything from
-     * identifying an Idenifier for the dependency, to finding vulnerabilities,
+     * identifying an Identifier for the dependency, to finding vulnerabilities,
      * etc. Additionally, if the analyzer collects enough information to add a
      * description or license information for the dependency it should be added.
      *
@@ -71,7 +71,7 @@ public interface Analyzer {
      * Returns whether or not this analyzer can process the given extension.
      *
      * @param extension the file extension to test for support.
-     * @return whether or not the specified file extension is supported by tihs
+     * @return whether or not the specified file extension is supported by this
      * analyzer.
      */
     boolean supportsExtension(String extension);

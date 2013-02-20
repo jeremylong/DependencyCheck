@@ -39,7 +39,7 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
     private LinkedList<String> words = null;
 
     /**
-     * Consructs a new TokenPairConcatenatingFilter
+     * Constructs a new TokenPairConcatenatingFilter
      * @param stream the TokenStream that this filter will process
      */
     public TokenPairConcatenatingFilter(TokenStream stream) {
@@ -48,8 +48,8 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
     }
 
     /**
-     * Increments the underlying TokenStream and sets CharTermAtttributes to
-     * construct an expanded set of tokens by concatenting tokens with the
+     * Increments the underlying TokenStream and sets CharTermAttributes to
+     * construct an expanded set of tokens by concatenating tokens with the
      * previous token.
      *
      * @return whether or not we have hit the end of the TokenStream

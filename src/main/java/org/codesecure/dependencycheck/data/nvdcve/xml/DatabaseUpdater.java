@@ -209,7 +209,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
      * Writes a properties file containing the last updated date to the
      * VULNERABLE_CPE directory.
      *
-     * @param timeStamp the timestamp to write.
+     * @param updated a map of the updated nvdcve.
      */
     private void writeLastUpdatedPropertyFile(Map<String, NvdCveUrl> updated) throws UpdateException {
         String dir;
@@ -321,8 +321,8 @@ public class DatabaseUpdater implements CachedWebDataSource {
                         FileUtils.delete(f);
 
                         //this importer also updates the CPE index and it is also using an old version
-                        org.codesecure.dependencycheck.data.cpe.Index cpeidx = new org.codesecure.dependencycheck.data.cpe.Index();
-                        File cpeDir = cpeidx.getDataDirectory();
+                        org.codesecure.dependencycheck.data.cpe.Index cpeid = new org.codesecure.dependencycheck.data.cpe.Index();
+                        File cpeDir = cpeid.getDataDirectory();
                         FileUtils.delete(cpeDir);
                         return currentlyPublished;
                     }

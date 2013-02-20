@@ -50,7 +50,7 @@ public class Identifier {
         this.description = description;
     }
     /**
-     * The value of the identifeir
+     * The value of the identifier
      */
     protected String value;
 
@@ -73,7 +73,7 @@ public class Identifier {
     }
 
     /**
-     * The url for the identifeir
+     * The url for the identifier
      */
     protected String url;
 
@@ -95,7 +95,7 @@ public class Identifier {
         this.url = url;
     }
     /**
-     * The type of the identifeir
+     * The type of the identifier
      */
     protected String type;
 

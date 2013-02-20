@@ -8,26 +8,23 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
  *
  * @author jeremy
  */
-public class SettingsTest extends TestCase {
+public class SettingsTest {
 
-    public SettingsTest(String testName) {
-        super(testName);
+    @Before
+    public void setUp() throws Exception {
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
     }
 
     /**
@@ -39,7 +36,7 @@ public class SettingsTest extends TestCase {
         String key = Settings.KEYS.CPE_INDEX;
         String expResult = "target/data/cpe";
         String result = Settings.getString(key);
-        assertTrue(result.endsWith(expResult));
+        Assert.assertTrue(result.endsWith(expResult));
     }
 
     /**
@@ -54,7 +51,7 @@ public class SettingsTest extends TestCase {
         //InputStream in = this.getClass().getClassLoader().getResourceAsStream("test.properties");
         Settings.mergeProperties(f.getAbsolutePath());
         String result = Settings.getString(key);
-        assertTrue("setting didn't change?", (expResult == null && result != null) || !expResult.equals(result));
+        Assert.assertTrue("setting didn't change?", (expResult == null && result != null) || !expResult.equals(result));
     }
 
     /**
@@ -67,7 +64,7 @@ public class SettingsTest extends TestCase {
         String value = "someValue";
         Settings.setString(key, value);
         String expResults = Settings.getString(key);
-        assertEquals(expResults, value);
+        Assert.assertEquals(expResults, value);
     }
 
     /**
@@ -80,9 +77,9 @@ public class SettingsTest extends TestCase {
         String defaultValue = "blue bunny";
         String expResult = "blue bunny";
         String result = Settings.getString(key);
-        assertTrue(result == null);
+        Assert.assertTrue(result == null);
         result = Settings.getString(key, defaultValue);
-        assertEquals(expResult, result);
+        Assert.assertEquals(expResult, result);
     }
 
     /**
@@ -93,7 +90,7 @@ public class SettingsTest extends TestCase {
         System.out.println("getString");
         String key = Settings.KEYS.CONNECTION_TIMEOUT;
         String result = Settings.getString(key);
-        assertTrue(result == null);
+        Assert.assertTrue(result == null);
     }
 
     /**
@@ -106,7 +103,7 @@ public class SettingsTest extends TestCase {
         int expResult = 85;
         Settings.setString(key, "85");
         int result = Settings.getInt(key);
-        assertEquals(expResult, result);
+        Assert.assertEquals(expResult, result);
     }
 
     /**
@@ -119,7 +116,7 @@ public class SettingsTest extends TestCase {
         long expResult = 300L;
         Settings.setString(key, "300");
         long result = Settings.getLong(key);
-        assertEquals(expResult, result);
+        Assert.assertEquals(expResult, result);
     }
 
     /**
@@ -132,6 +129,6 @@ public class SettingsTest extends TestCase {
         Settings.setString(key, "false");
         boolean expResult = false;
         boolean result = Settings.getBoolean(key);
-        assertEquals(expResult, result);
+        Assert.assertEquals(expResult, result);
     }
 }

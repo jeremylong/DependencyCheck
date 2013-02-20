@@ -28,7 +28,7 @@ import java.util.ServiceLoader;
 public class AnalyzerService {
 
     private static AnalyzerService service;
-    private ServiceLoader<Analyzer> loader;
+    private final ServiceLoader<Analyzer> loader;
 
     /**
      * Creates a new instance of AnalyzerService

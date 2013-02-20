@@ -43,7 +43,7 @@ public class CweDBTest {
     }
 
     /**
-     * Method to serlize the CWE HashMap. This is not used in
+     * Method to serialize the CWE HashMap. This is not used in
      * production; this is only used once during dev to create
      * the serialized hashmap.
      */

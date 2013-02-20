@@ -248,7 +248,7 @@ public class NvdCve20Handler extends DefaultHandler {
         /**
          * A node type in the NVD CVE Schema 2.0
          */
-        public static final String VULN_REFERNCES = "vuln:references";
+        public static final String VULN_REFERENCES = "vuln:references";
         /**
          * A node type in the NVD CVE Schema 2.0
          */
@@ -256,7 +256,7 @@ public class NvdCve20Handler extends DefaultHandler {
         /**
          * A node type in the NVD CVE Schema 2.0
          */
-        public static final String VULN_REFERNCE = "vuln:reference";
+        public static final String VULN_REFERENCE = "vuln:reference";
         /**
          * A node type in the NVD CVE Schema 2.0
          */
@@ -348,7 +348,7 @@ public class NvdCve20Handler extends DefaultHandler {
          * @return true or false
          */
         public boolean isVulnReferencesNode() {
-            return VULN_REFERNCES.equals(node);
+            return VULN_REFERENCES.equals(node);
         }
 
         /**
@@ -357,7 +357,7 @@ public class NvdCve20Handler extends DefaultHandler {
          * @return true or false
          */
         public boolean isVulnReferenceNode() {
-            return VULN_REFERNCE.equals(node);
+            return VULN_REFERENCE.equals(node);
         }
 
         /**

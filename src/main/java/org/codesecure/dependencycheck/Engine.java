@@ -200,7 +200,6 @@ public class Engine {
                     } catch (Exception ex1) {
                         Logger.getLogger(Engine.class.getName()).log(Level.FINER, null, ex1);
                     }
-                    continue;
                 }
             }
         }

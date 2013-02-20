@@ -35,7 +35,7 @@ public class VulnerableSoftware extends Entry implements Serializable {
     private static final long serialVersionUID = 307319490326651052L;
 
     /**
-     * Parse a CPE entry from the cpe string repesentation
+     * Parse a CPE entry from the cpe string representation
      *
      * @param cpe a cpe entry (e.g. cpe:/a:vendor:software:version)
      */

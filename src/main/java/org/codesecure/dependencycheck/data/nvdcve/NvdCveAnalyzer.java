@@ -31,7 +31,7 @@ import org.codesecure.dependencycheck.dependency.Identifier;
 
 /**
  * NvdCveAnalyzer is a utility class that takes a project dependency and
- * attempts to decern if there is an associated CVEs. It uses the the
+ * attempts to discern if there is an associated CVEs. It uses the the
  * identifiers found by other analyzers to lookup the CVE data.
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
@@ -50,7 +50,7 @@ public class NvdCveAnalyzer implements org.codesecure.dependencycheck.analyzer.A
     /**
      * Opens the data source.
      *
-     * @throws SQLException thrown wwhen there is a SQL Exception
+     * @throws SQLException thrown when there is a SQL Exception
      * @throws IOException thrown when there is an IO Exception
      * @throws DatabaseException thrown when there is a database exceptions
      */

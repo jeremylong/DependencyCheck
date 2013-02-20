@@ -39,7 +39,7 @@ public class Settings {
     public static class KEYS {
 
         /**
-         * private contructor because this is a "utility" class containing constants
+         * private constructor because this is a "utility" class containing constants
          */
         private KEYS() {
             //do nothing

@@ -39,7 +39,7 @@ public class DownloaderIntegrationTest {
 
     /**
      * Test of fetchFile method, of class Downloader.
-     * @throws Exception thrown when an excpetion occurs.
+     * @throws Exception thrown when an exception occurs.
      */
     @Test
     public void testFetchFile() throws Exception {
