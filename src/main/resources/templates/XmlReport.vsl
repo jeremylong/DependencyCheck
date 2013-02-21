@@ -1,0 +1,121 @@
+#**
+This file is part of DependencyCheck.
+
+DependencyCheck is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+DependencyCheck is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with DependencyCheck. If not, see http://www.gnu.org/licenses/.
+
+Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+
+@author Jeremy Long
+@version 1
+*#
+<?xml version="1.0"?>
+<analysis>
+    <projectInfo>
+        <name>$esc.html($applicationName)</name>
+        <reportDate>$date</reportDate>
+    </projectInfo>
+    <dependencies>
+    #foreach($dependency in $dependencies)
+        <dependency>
+            <fileName>$esc.html($dependency.FileName)</fileName>
+            <filePath>$esc.html($dependency.FilePath)</filePath>
+            <md5>$esc.html($dependency.Md5sum)</md5>
+            <sha1>$esc.html($dependency.Sha1sum)</sha1>
+        #if ($dependency.description)
+            <description>$esc.html($dependency.description)</description>
+        #end
+        #if ($dependency.license)
+            <license>$esc.html($dependency.license)</license>
+        #end
+        #if ( $dependency.analysisExceptions.size() != 0 )
+            <analysisExceptions>
+            #foreach($ex in $dependency.analysisExceptions)
+                <exception>
+                    <message>$esc.html($ex.message)</message>
+                     #if ( $ex.stackTrace )
+                        <stackTrace>
+                        #foreach ($st in $ex.stackTrace)
+                            <trace>$esc.html($st)</trace>
+                        #end
+                        </stackTrace>
+                    #end
+
+                    #if ( $ex.cause )
+                        <innerException>
+                            <message>$esc.html($ex.cause.message)</message>
+                            #if ( $ex.cause.stackTrace )
+                                <stackTrace>
+                                    #foreach ($st in $ex.cause.stackTrace)
+                                        <trace>$esc.html($st)</trace>
+                                    #end
+                                </stackTrace>
+                            #end
+                        </innerException>
+                    #end
+                </exception>
+            #end
+            </analysisExceptions>
+            #end
+            <evidenceCollected>
+            #foreach($evidence in $dependency.getEvidenceUsed())
+                <evidence>
+                    <source>$esc.html($evidence.getSource())</source>
+                    <name>$esc.html($evidence.getName())</name>
+                    <value>$esc.html($evidence.getValue())</value>
+                </evidence>
+            #end
+            </evidenceCollected>
+            <identifiers>
+            #foreach($id in $dependency.getIdentifiers())
+                <identifier type="$esc.html($id.type)">
+                    <name>$esc.html($id.value)</name>
+                    <url>$esc.html($id.url)</url>
+                    #if( $id.descrription )
+                    <description>$esc.html($id.description)</description>>
+                    #end
+                </identifier>
+            #end
+            </identifiers>
+            <vulnerabilities>
+            #foreach($vuln in $dependency.getVulnerabilities())
+                <vulnerability>
+                    <name>$esc.html($vuln.name)</name>
+                    <cvssScore>$vuln.cvssScore</cvssScore>
+                    #if ($vuln.cvssScore<4.0)
+                        <severity>Low</severity>
+                    #elseif ($vuln.cvssScore>=7.0)
+                        <severity>High</severity>
+                    #else
+                        <severity>Medium</severity>
+                    #end
+                    #if ($vuln.cwe)
+                        <cwe>$esc.html($vuln.cwe)</cwe>
+                    #end
+                    <description>$esc.html($vuln.description)</description>
+                    <references>
+                    #foreach($ref in $vuln.getReferences())
+                        <reference>
+                            <source>$esc.html($ref.source)</source>
+                            <url>$esc.html($ref.url)</url>
+                            <name>$ref.name</name>
+                        </reference>
+                    #end
+                    </references>
+                </vulnerability>
+            #end
+            </vulnerabilities>
+        #end
+        </dependency>
+    </dependencies>
+</analysis>
