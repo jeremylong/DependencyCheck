@@ -26,45 +26,45 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         <reportDate>$date</reportDate>
     </projectInfo>
     <dependencies>
-    #foreach($dependency in $dependencies)
+        #foreach($dependency in $dependencies)
         <dependency>
             <fileName>$esc.html($dependency.FileName)</fileName>
             <filePath>$esc.html($dependency.FilePath)</filePath>
             <md5>$esc.html($dependency.Md5sum)</md5>
             <sha1>$esc.html($dependency.Sha1sum)</sha1>
-        #if ($dependency.description)
+            #if ($dependency.description)
             <description>$esc.html($dependency.description)</description>
-        #end
-        #if ($dependency.license)
+            #end
+            #if ($dependency.license)
             <license>$esc.html($dependency.license)</license>
-        #end
-        #if ( $dependency.analysisExceptions.size() != 0 )
+            #end
+            #if ( $dependency.analysisExceptions.size() != 0 )
             <analysisExceptions>
             #foreach($ex in $dependency.analysisExceptions)
                 <exception>
                     <message>$esc.html($ex.message)</message>
-                     #if ( $ex.stackTrace )
-                        <stackTrace>
-                        #foreach ($st in $ex.stackTrace)
-                            <trace>$esc.html($st)</trace>
-                        #end
-                        </stackTrace>
+                    #if ( $ex.stackTrace )
+                    <stackTrace>
+                    #foreach ($st in $ex.stackTrace)
+                        <trace>$esc.html($st)</trace>
+                    #end
+                    </stackTrace>
                     #end
 
                     #if ( $ex.cause )
-                        <innerException>
-                            <message>$esc.html($ex.cause.message)</message>
-                            #if ( $ex.cause.stackTrace )
-                                <stackTrace>
-                                    #foreach ($st in $ex.cause.stackTrace)
-                                        <trace>$esc.html($st)</trace>
-                                    #end
-                                </stackTrace>
-                            #end
-                        </innerException>
+                    <innerException>
+                        <message>$esc.html($ex.cause.message)</message>
+                        #if ( $ex.cause.stackTrace )
+                        <stackTrace>
+                        #foreach ($st in $ex.cause.stackTrace)
+                            <trace>$esc.html($st)</trace>
+                        #end
+                        </stackTrace>
+                        #end
+                    </innerException>
                     #end
                 </exception>
-            #end
+                #end
             </analysisExceptions>
             #end
             <evidenceCollected>
@@ -74,10 +74,10 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <name>$esc.html($evidence.getName())</name>
                     <value>$esc.html($evidence.getValue())</value>
                 </evidence>
-            #end
+                #end
             </evidenceCollected>
             <identifiers>
-            #foreach($id in $dependency.getIdentifiers())
+                #foreach($id in $dependency.getIdentifiers())
                 <identifier type="$esc.html($id.type)">
                     <name>$esc.html($id.value)</name>
                     <url>$esc.html($id.url)</url>
@@ -85,37 +85,37 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <description>$esc.html($id.description)</description>>
                     #end
                 </identifier>
-            #end
+                #end
             </identifiers>
             <vulnerabilities>
-            #foreach($vuln in $dependency.getVulnerabilities())
+                #foreach($vuln in $dependency.getVulnerabilities())
                 <vulnerability>
                     <name>$esc.html($vuln.name)</name>
                     <cvssScore>$vuln.cvssScore</cvssScore>
                     #if ($vuln.cvssScore<4.0)
-                        <severity>Low</severity>
+                    <severity>Low</severity>
                     #elseif ($vuln.cvssScore>=7.0)
-                        <severity>High</severity>
+                    <severity>High</severity>
                     #else
-                        <severity>Medium</severity>
+                    <severity>Medium</severity>
                     #end
                     #if ($vuln.cwe)
-                        <cwe>$esc.html($vuln.cwe)</cwe>
+                    <cwe>$esc.html($vuln.cwe)</cwe>
                     #end
                     <description>$esc.html($vuln.description)</description>
                     <references>
-                    #foreach($ref in $vuln.getReferences())
+                        #foreach($ref in $vuln.getReferences())
                         <reference>
                             <source>$esc.html($ref.source)</source>
                             <url>$esc.html($ref.url)</url>
                             <name>$ref.name</name>
                         </reference>
-                    #end
+                        #end
                     </references>
                 </vulnerability>
-            #end
+                #end
             </vulnerabilities>
-        #end
+            #end
         </dependency>
     </dependencies>
 </analysis>
