@@ -50,7 +50,7 @@ public class CPEAnalyzer implements org.owasp.dependencycheck.analyzer.Analyzer 
     /**
      * The maximum number of query results to return.
      */
-    static final int MAX_QUERY_RESULTS = 10;
+    static final int MAX_QUERY_RESULTS = 25;
     /**
      * The weighting boost to give terms when constructing the Lucene query.
      */
@@ -211,7 +211,7 @@ public class CPEAnalyzer implements org.owasp.dependencycheck.analyzer.Analyzer 
             if (value.startsWith("https://")) {
                 value = value.substring(8).replaceAll("\\.", " ");
             }
-            if (sb.indexOf(value) < 0) {
+            if (sb.indexOf(" " + value + " ") < 0) {
                 sb.append(value).append(' ');
             }
         }
@@ -261,6 +261,7 @@ public class CPEAnalyzer implements org.owasp.dependencycheck.analyzer.Analyzer 
         if (searchString == null) {
             return ret;
         }
+        
         TopDocs docs = cpe.search(searchString, MAX_QUERY_RESULTS);
         for (ScoreDoc d : docs.scoreDocs) {
             Document doc = cpe.getDocument(d.doc);
