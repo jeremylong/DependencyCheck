@@ -9,4 +9,4 @@ set XJC="%JAVA_HOME%\bin\xjc.exe"
 goto LAUNCH
 
 :LAUNCH
-%XJC% -extension -d ..\..\..\java -p "org.codesecure.dependencycheck.analyzer.pom.generated" -mark-generated "maven-v4_0_0.xsd"
+%XJC% -extension -d ..\..\..\java -p "org.owasp.dependencycheck.analyzer.pom.generated" -mark-generated "maven-v4_0_0.xsd"

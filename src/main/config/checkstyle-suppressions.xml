@@ -6,10 +6,10 @@
 
 <suppressions>
     <suppress checks=".*" files=".*[\\/]package-info\.java" />
-    <suppress checks=".*" files=".*org[\\/]codesecure[\\/]dependencycheck[\\/]utils[\\/]Filter.java" />
-    <suppress checks=".*" files=".*org[\\/]codesecure[\\/]dependencycheck[\\/]utils[\\/]Checksum.java" />
+    <suppress checks=".*" files=".*org[\\/]owasp[\\/]dependencycheck[\\/]utils[\\/]Filter.java" />
+    <suppress checks=".*" files=".*org[\\/]owasp[\\/]dependencycheck[\\/]utils[\\/]Checksum.java" />
     <suppress checks=".*" files=".*[\\/]generated[\\/].*.java" />
     <suppress checks="MagicNumberCheck"
-              files="org[\\/]codesecure[\\/]dependencycheck[\\/]data[\\/]cpe/Entry.java"
+              files="org[\\/]owasp[\\/]dependencycheck[\\/]data[\\/]cpe/Entry.java"
               lines="376"/>
 </suppressions>
