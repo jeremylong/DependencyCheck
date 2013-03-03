@@ -1,0 +1,5 @@
+org.owasp.dependencycheck.analyzer.JarAnalyzer
+org.owasp.dependencycheck.analyzer.FileNameAnalyzer
+org.owasp.dependencycheck.analyzer.SpringCleaningAnalyzer
+org.owasp.dependencycheck.data.cpe.CPEAnalyzer
+org.owasp.dependencycheck.data.nvdcve.NvdCveAnalyzer
