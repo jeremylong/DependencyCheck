@@ -261,7 +261,7 @@ public class CPEAnalyzer implements org.owasp.dependencycheck.analyzer.Analyzer 
         if (searchString == null) {
             return ret;
         }
-        
+
         TopDocs docs = cpe.search(searchString, MAX_QUERY_RESULTS);
         for (ScoreDoc d : docs.scoreDocs) {
             Document doc = cpe.getDocument(d.doc);
