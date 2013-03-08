@@ -59,7 +59,13 @@ public final class VersionTokenizingFilter extends TokenFilter {
     public boolean incrementToken() throws IOException {
         if (tokens.size() == 0 && input.incrementToken()) {
             String version = new String(termAtt.buffer(), 0, termAtt.length());
-            analyzeVersion(version);
+            String[] toAnalyze = version.split("[_-]");
+            if (toAnalyze.length > 1) { //ensure we analyze the whole string as one too
+                analyzeVersion(version);
+            }
+            for (String str : toAnalyze) {
+                analyzeVersion(version);
+            }
         }
         return addTerm();
     }
