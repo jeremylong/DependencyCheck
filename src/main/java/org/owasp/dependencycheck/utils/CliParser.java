@@ -160,6 +160,9 @@ public final class CliParser {
         Option advancedHelp = new Option(ArgumentName.ADVANCED_HELP_SHORT, ArgumentName.ADVANCED_HELP, false,
                 "shows additional help regarding properties file.");
 
+        Option deepScan = new Option(ArgumentName.PERFORM_DEEP_SCAN_SHORT, ArgumentName.PERFORM_DEEP_SCAN, false,
+                "extracts extra information from dependencies that may increase false positives, but also decrease false negatives.");
+
         Option version = new Option(ArgumentName.VERSION_SHORT, ArgumentName.VERSION,
                 false, "print the version information.");
 
@@ -199,6 +202,7 @@ public final class CliParser {
         opts.addOption(version);
         opts.addOption(help);
         opts.addOption(noupdate);
+        opts.addOption(deepScan);
         opts.addOption(props);
         opts.addOption(advancedHelp);
         return opts;
@@ -238,7 +242,7 @@ public final class CliParser {
         HelpFormatter formatter = new HelpFormatter();
         String nl = System.getProperty("line.separator");
         String advancedHelp = null;
-        if (line.hasOption(ArgumentName.ADVANCED_HELP)) {
+        if (line != null && line.hasOption(ArgumentName.ADVANCED_HELP)) {
             advancedHelp = nl + nl
                     + "Additionally, the following properties are supported and can be specified either"
                     + "using the -p <file> argument or by passing them in as system properties." + nl
@@ -324,6 +328,13 @@ public final class CliParser {
     }
 
     /**
+     * Checks if a deep scan of the dependencies was requested.
+     * @return whether a deep scan of the evidence within the dependencies was requested.
+     */
+    public boolean isDeepScan() {
+        return (line != null) && line.hasOption(ArgumentName.PERFORM_DEEP_SCAN);
+    }
+    /**
      * A collection of static final strings that represent the possible command
      * line arguments.
      */
@@ -401,6 +412,16 @@ public final class CliParser {
          * The short CLI argument name asking for advanced help.
          */
         public static final String ADVANCED_HELP = "advancedhelp";
+        /*
+         * The short CLI argument name indicating a deep scan of the dependencies
+         * should be performed.
+         */
+        public static final String PERFORM_DEEP_SCAN_SHORT = "d";
+        /*
+         * The CLI argument name indicating a deep scan of the dependencies
+         * should be performed.
+         */
+        public static final String PERFORM_DEEP_SCAN = "deepscan";
         /**
          * The short CLI argument name for setting the location of an additional
          * properties file.

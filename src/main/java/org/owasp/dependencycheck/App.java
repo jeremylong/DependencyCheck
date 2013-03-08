@@ -29,6 +29,7 @@ import org.apache.commons.cli.ParseException;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.CliParser;
+import org.owasp.dependencycheck.utils.Settings;
 
 /*
  * This file is part of App.
@@ -112,11 +113,10 @@ public class App {
         if (cli.isGetVersion()) {
             cli.printVersionInfo();
         } else if (cli.isRunScan()) {
-            runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles(), cli.isAutoUpdate());
+            runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles(), cli.isAutoUpdate(), cli.isDeepScan());
         } else {
             cli.printHelp();
         }
-
     }
 
     /**
@@ -124,16 +124,21 @@ public class App {
      * reportDirectory.
      *
      * @param reportDirectory the path to the directory where the reports will
-     * be written.
-     * @param outputFormat the output format of the report.
-     * @param applicationName the application name for the report.
-     * @param files the files/directories to scan.
+     * be written
+     * @param outputFormat the output format of the report
+     * @param applicationName the application name for the report
+     * @param files the files/directories to scan
+     * @param autoUpdate whether to auto-update the cached data from the Internet
+     * @param deepScan whether to perform a deep scan of the evidence in the project dependencies
      */
-    private void runScan(String reportDirectory, String outputFormat, String applicationName, String[] files, boolean autoUpdate) {
+    private void runScan(String reportDirectory, String outputFormat, String applicationName, String[] files, boolean autoUpdate, boolean deepScan) {
         Engine scanner = new Engine(autoUpdate);
+        Settings.setBoolean(Settings.KEYS.PERFORM_DEEP_SCAN, deepScan);
+
         for (String file : files) {
             scanner.scan(file);
         }
+
         scanner.analyzeDependencies();
         List<Dependency> dependencies = scanner.getDependencies();
 
@@ -145,6 +150,5 @@ public class App {
         } catch (Exception ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 }

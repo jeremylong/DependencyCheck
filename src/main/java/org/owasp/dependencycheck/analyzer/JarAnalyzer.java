@@ -47,6 +47,7 @@ import org.owasp.dependencycheck.analyzer.pom.generated.License;
 import org.owasp.dependencycheck.analyzer.pom.generated.Model;
 import org.owasp.dependencycheck.analyzer.pom.generated.Organization;
 import org.owasp.dependencycheck.utils.NonClosingStream;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
@@ -182,7 +183,9 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
         try {
             parseManifest(dependency);
-            analyzePackageNames(dependency);
+            if (Settings.getBoolean(Settings.KEYS.PERFORM_DEEP_SCAN)) {
+                analyzePackageNames(dependency);
+            }
             analyzePOM(dependency);
             //addPredefinedData(dependency); //this has been moved to its own analyzer (HintAnalyzer)
         } catch (IOException ex) {
