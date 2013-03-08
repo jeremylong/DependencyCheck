@@ -117,6 +117,10 @@ public class Settings {
          * The properties key for the connection timeout.
          */
         public static final String CONNECTION_TIMEOUT = "connection.timeout";
+        /**
+         * The properties key indicating a deep scan should be performed.
+         */
+        public static final String PERFORM_DEEP_SCAN = "perform.deepscan";
     }
     private static final String PROPERTIES_FILE = "configuration/dependencycheck.properties";
     private static final Settings INSTANCE = new Settings();
@@ -144,6 +148,19 @@ public class Settings {
      */
     public static void setString(String key, String value) {
         INSTANCE.props.setProperty(key, value);
+    }
+    /**
+     * Sets a property value.
+     *
+     * @param key the key for the property.
+     * @param value the value for the property.
+     */
+    public static void setBoolean(String key, boolean value) {
+        if (value) {
+            INSTANCE.props.setProperty(key, Boolean.TRUE.toString());
+        } else {
+            INSTANCE.props.setProperty(key, Boolean.FALSE.toString());
+        }
     }
 
     /**
