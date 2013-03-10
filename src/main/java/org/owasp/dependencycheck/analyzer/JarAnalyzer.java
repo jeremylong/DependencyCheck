@@ -171,6 +171,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         return ANALYSIS_PHASE;
     }
 
+    private boolean evidenceFound;
     /**
      * Loads a specified JAR file and collects information from the manifest and
      * checksums to identify the correct CPE information.
@@ -181,13 +182,16 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * file.
      */
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
+        evidenceFound = false;
         try {
-            parseManifest(dependency);
-            if (Settings.getBoolean(Settings.KEYS.PERFORM_DEEP_SCAN)) {
+            evidenceFound |= parseManifest(dependency);
+            evidenceFound |= analyzePOM(dependency);
+            if (Settings.getBoolean(Settings.KEYS.PERFORM_DEEP_SCAN) ||
+                    !evidenceFound) {
+                //if no evidence was found - "they" likely stripped stuff, package names may be all we have.
                 analyzePackageNames(dependency);
             }
-            analyzePOM(dependency);
-            //addPredefinedData(dependency); //this has been moved to its own analyzer (HintAnalyzer)
+
         } catch (IOException ex) {
             throw new AnalysisException("Exception occurred reading the JAR file.", ex);
         } catch (JAXBException ex) {
@@ -205,9 +209,10 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * @throws IOException is thrown if there is an error reading the zip file.
      * @throws JAXBException is thrown if there is an error extracting the model (aka pom).
      * @throws AnalysisException is thrown if there is an exception parsing the pom.
+     * @return whether or not evidence was added to the dependency
      */
-    protected void analyzePOM(Dependency dependency) throws IOException, JAXBException, AnalysisException {
-
+    protected boolean analyzePOM(Dependency dependency) throws IOException, JAXBException, AnalysisException {
+        boolean foundSomething = false;
         Properties pomProperties = null;
         Model pom = null;
         FileInputStream fs = null;
@@ -259,33 +264,39 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             //group id
             String groupid = interpolateString(pom.getGroupId(), pomProperties);
             if (groupid != null) {
+                foundSomething = true;
                 dependency.getVendorEvidence().addEvidence("pom", "groupid", groupid, Evidence.Confidence.HIGH);
                 dependency.getProductEvidence().addEvidence("pom", "groupid", groupid, Evidence.Confidence.LOW);
             }
             //artifact id
             String artifactid = interpolateString(pom.getArtifactId(), pomProperties);
             if (artifactid != null) {
+                foundSomething = true;
                 dependency.getProductEvidence().addEvidence("pom", "artifactid", artifactid, Evidence.Confidence.HIGH);
             }
             //version
             String version = interpolateString(pom.getVersion(), pomProperties);
             if (version != null) {
+                foundSomething = true;
                 dependency.getVersionEvidence().addEvidence("pom", "version", version, Evidence.Confidence.HIGH);
             }
             // org name
             Organization org = pom.getOrganization();
             if (org != null && org.getName() != null) {
+                foundSomething = true;
                 String orgName = interpolateString(org.getName(), pomProperties);
                 dependency.getVendorEvidence().addEvidence("pom", "organization name", orgName, Evidence.Confidence.HIGH);
             }
             //pom name
             String pomName = interpolateString(pom.getName(), pomProperties);
             if (pomName != null) {
+                foundSomething = true;
                 dependency.getProductEvidence().addEvidence("pom", "name", pomName, Evidence.Confidence.HIGH);
             }
 
             //Description
             if (pom.getDescription() != null) {
+                foundSomething = true;
                 String description = interpolateString(pom.getDescription(), pomProperties);
                 dependency.setDescription(description);
                 dependency.getProductEvidence().addEvidence("pom", "description", description, Evidence.Confidence.MEDIUM);
@@ -321,6 +332,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 }
             }
         }
+        return foundSomething;
     }
 
     /**
@@ -492,9 +504,11 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * However, all but a handful of specific entries are read in.
      *
      * @param dependency A reference to the dependency.
+     * @return whether evidence was identified parsing the manifest.
      * @throws IOException if there is an issue reading the JAR file.
      */
-    protected void parseManifest(Dependency dependency) throws IOException {
+    protected boolean parseManifest(Dependency dependency) throws IOException {
+        boolean foundSomething = false;
         JarFile jar = null;
         try {
             jar = new JarFile(dependency.getActualFilePath());
@@ -504,7 +518,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE,
                         "Jar file '{0}' does not contain a manifest.",
                         dependency.getFileName());
-                return;
+                return false;
             }
             Attributes atts = manifest.getMainAttributes();
 
@@ -518,23 +532,32 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 String key = entry.getKey().toString();
                 String value = atts.getValue(key);
                 if (key.equals(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {
+                    foundSomething = true;
                     productEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
                 } else if (key.equals(Attributes.Name.IMPLEMENTATION_VERSION.toString())) {
+                    foundSomething = true;
                     versionEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
                 } else if (key.equals(Attributes.Name.IMPLEMENTATION_VENDOR.toString())) {
+                    foundSomething = true;
                     vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
                 } else if (key.equals(Attributes.Name.IMPLEMENTATION_VENDOR_ID.toString())) {
+                    foundSomething = true;
                     vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
                 } else if (key.equals(BUNDLE_DESCRIPTION)) {
+                    foundSomething = true;
                     productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
                     dependency.setDescription(value);
                 } else if (key.equals(BUNDLE_NAME)) {
+                    foundSomething = true;
                     productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
                 } else if (key.equals(BUNDLE_VENDOR)) {
+                    foundSomething = true;
                     vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
                 } else if (key.equals(BUNDLE_VERSION)) {
+                    foundSomething = true;
                     versionEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
                 } else if (key.equals(Attributes.Name.MAIN_CLASS.toString())) {
+                    foundSomething = true;
                     productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
                     vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
                 } else {
@@ -543,6 +566,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                     if (!IGNORE_LIST.contains(key) && !key.endsWith("jdk")
                             && !key.contains("lastmodified") && !key.endsWith("package")) {
 
+                        foundSomething = true;
                         if (key.contains("version")) {
                             versionEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
                         } else if (key.contains("title")) {
@@ -579,6 +603,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 jar.close();
             }
         }
+        return foundSomething;
     }
 
     private void addDescription(Dependency d, String description) {
