@@ -116,7 +116,7 @@ public class CPEAnalyzerTest extends BaseIndexTestCase {
         instance.determineCPE(spring);
         instance.determineCPE(spring3);
         instance.close();
-        Assert.assertTrue("Incorrect match size - struts", depends.getIdentifiers().size() == 1);
+        Assert.assertTrue("Incorrect match size - struts", depends.getIdentifiers().size() >= 1);
         Assert.assertTrue("Incorrect match - struts", depends.getIdentifiers().get(0).getValue().equals(expResult));
         //the following two only work if the HintAnalyzer is used.
         //Assert.assertTrue("Incorrect match size - spring", spring.getIdentifiers().size() == 1);
