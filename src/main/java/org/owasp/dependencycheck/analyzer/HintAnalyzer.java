@@ -80,6 +80,13 @@ public class HintAnalyzer implements Analyzer {
         return ANALYSIS_PHASE;
     }
 
+    /**
+     * The HintAnalyzer uses knowledge about a dependency to add additional information
+     * to help in identification of identifiers or vulnerabilities.
+     * @param dependency The dependency being analyzed
+     * @param engine The scanning engine
+     * @throws AnalysisException is thrown if there is an exception analyzing the dependency.
+     */
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
         Evidence springTest1 = new Evidence("Manifest",
                 "Implementation-Title",

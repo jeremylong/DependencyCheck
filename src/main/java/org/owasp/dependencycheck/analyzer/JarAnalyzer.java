@@ -171,7 +171,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         return ANALYSIS_PHASE;
     }
 
-    private boolean evidenceFound;
     /**
      * Loads a specified JAR file and collects information from the manifest and
      * checksums to identify the correct CPE information.
@@ -182,16 +181,12 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * file.
      */
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
-        evidenceFound = false;
+        boolean addPackagesAsEvidence = false;
         try {
-            evidenceFound |= parseManifest(dependency);
-            evidenceFound |= analyzePOM(dependency);
-            if (Settings.getBoolean(Settings.KEYS.PERFORM_DEEP_SCAN) ||
-                    !evidenceFound) {
-                //if no evidence was found - "they" likely stripped stuff, package names may be all we have.
-                analyzePackageNames(dependency);
-            }
-
+            addPackagesAsEvidence ^= parseManifest(dependency);
+            addPackagesAsEvidence ^= analyzePOM(dependency);
+            addPackagesAsEvidence ^= Settings.getBoolean(Settings.KEYS.PERFORM_DEEP_SCAN);
+            analyzePackageNames(dependency, addPackagesAsEvidence);
         } catch (IOException ex) {
             throw new AnalysisException("Exception occurred reading the JAR file.", ex);
         } catch (JAXBException ex) {
@@ -342,9 +337,11 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * hashSets.
      *
      * @param dependency A reference to the dependency.
+     * @param addPackagesAsEvidence a flag indicating whether or not package names should be added as evidence.
      * @throws IOException is thrown if there is an error reading the JAR file.
      */
-    protected void analyzePackageNames(Dependency dependency) throws IOException {
+    protected void analyzePackageNames(Dependency dependency, boolean addPackagesAsEvidence)
+            throws IOException {
 
         JarFile jar = null;
         try {
@@ -415,8 +412,10 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 if (!"org".equals(s) && !"com".equals(s)) {
                     vendor.addWeighting(s);
                     product.addWeighting(s);
-                    vendor.addEvidence("jar", "package", s, Evidence.Confidence.LOW);
-                    product.addEvidence("jar", "package", s, Evidence.Confidence.LOW);
+                    if (addPackagesAsEvidence) {
+                        vendor.addEvidence("jar", "package", s, Evidence.Confidence.LOW);
+                        product.addEvidence("jar", "package", s, Evidence.Confidence.LOW);
+                    }
                 }
             }
             for (String s : level1.keySet()) {
@@ -426,12 +425,16 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                     String[] parts = s.split("/");
                     if ("org".equals(parts[0]) || "com".equals(parts[0])) {
                         vendor.addWeighting(parts[1]);
-                        vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
+                        if (addPackagesAsEvidence) {
+                            vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
+                        }
                     } else {
                         vendor.addWeighting(parts[0]);
                         product.addWeighting(parts[1]);
-                        vendor.addEvidence("jar", "package", parts[0], Evidence.Confidence.LOW);
-                        product.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
+                        if (addPackagesAsEvidence) {
+                            vendor.addEvidence("jar", "package", parts[0], Evidence.Confidence.LOW);
+                            product.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
+                        }
                     }
                 }
             }
@@ -443,17 +446,21 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                     if ("org".equals(parts[0]) || "com".equals(parts[0])) {
                         vendor.addWeighting(parts[1]);
                         product.addWeighting(parts[2]);
-                        vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
-                        product.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
+                        if (addPackagesAsEvidence) {
+                            vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
+                            product.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
+                        }
                     } else {
                         vendor.addWeighting(parts[0]);
                         vendor.addWeighting(parts[1]);
                         product.addWeighting(parts[1]);
                         product.addWeighting(parts[2]);
-                        vendor.addEvidence("jar", "package", parts[0], Evidence.Confidence.LOW);
-                        vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
-                        product.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
-                        product.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
+                        if (addPackagesAsEvidence) {
+                            vendor.addEvidence("jar", "package", parts[0], Evidence.Confidence.LOW);
+                            vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
+                            product.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
+                            product.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
+                        }
                     }
                 }
             }
@@ -467,11 +474,12 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                         vendor.addWeighting(parts[2]);
                         product.addWeighting(parts[2]);
                         product.addWeighting(parts[3]);
-                        vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
-                        vendor.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
-                        product.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
-                        product.addEvidence("jar", "package", parts[3], Evidence.Confidence.LOW);
-
+                        if (addPackagesAsEvidence) {
+                            vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
+                            vendor.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
+                            product.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
+                            product.addEvidence("jar", "package", parts[3], Evidence.Confidence.LOW);
+                        }
                     } else {
                         vendor.addWeighting(parts[0]);
                         vendor.addWeighting(parts[1]);
@@ -479,12 +487,14 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                         product.addWeighting(parts[1]);
                         product.addWeighting(parts[2]);
                         product.addWeighting(parts[3]);
-                        vendor.addEvidence("jar", "package", parts[0], Evidence.Confidence.LOW);
-                        vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
-                        vendor.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
-                        product.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
-                        product.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
-                        product.addEvidence("jar", "package", parts[3], Evidence.Confidence.LOW);
+                        if (addPackagesAsEvidence) {
+                            vendor.addEvidence("jar", "package", parts[0], Evidence.Confidence.LOW);
+                            vendor.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
+                            vendor.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
+                            product.addEvidence("jar", "package", parts[1], Evidence.Confidence.LOW);
+                            product.addEvidence("jar", "package", parts[2], Evidence.Confidence.LOW);
+                            product.addEvidence("jar", "package", parts[3], Evidence.Confidence.LOW);
+                        }
                     }
                 }
             }
@@ -670,7 +680,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         sb.append(text.substring(end + 1));
         return interpolateString(sb.toString(), properties); //yes yes, this should be a loop...
     }
-
 //    private void addPredefinedData(Dependency dependency) {
 //        Evidence springTest1 = new Evidence("Manifest",
 //                "Implementation-Title",

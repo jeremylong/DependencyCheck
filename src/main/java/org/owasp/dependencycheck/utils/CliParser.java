@@ -412,12 +412,12 @@ public final class CliParser {
          * The short CLI argument name asking for advanced help.
          */
         public static final String ADVANCED_HELP = "advancedhelp";
-        /*
+        /**
          * The short CLI argument name indicating a deep scan of the dependencies
          * should be performed.
          */
         public static final String PERFORM_DEEP_SCAN_SHORT = "d";
-        /*
+        /**
          * The CLI argument name indicating a deep scan of the dependencies
          * should be performed.
          */

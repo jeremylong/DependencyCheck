@@ -113,7 +113,8 @@ public class App {
         if (cli.isGetVersion()) {
             cli.printVersionInfo();
         } else if (cli.isRunScan()) {
-            runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles(), cli.isAutoUpdate(), cli.isDeepScan());
+            runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(),
+                    cli.getScanFiles(), cli.isAutoUpdate(), cli.isDeepScan());
         } else {
             cli.printHelp();
         }
