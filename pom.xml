@@ -22,7 +22,7 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses />.
 
     <groupId>org.owasp.dependency-check</groupId>
     <artifactId>dependency-check</artifactId>
-    <version>0.2.6.0</version>
+    <version>0.2.6.1</version>
     <packaging>jar</packaging>
 
     <name>DependencyCheck</name>
@@ -49,8 +49,7 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses />.
         <connection>scm:git:git@github.com:jeremylong/DependencyCheck.git</connection>
         <url>https://github.com/jeremylong/DependencyCheck.git</url>
         <developerConnection>scm:git:git@github.com:jeremylong/DependencyCheck.git</developerConnection>
-      <tag>dependency-check-0.2.6.0</tag>
-  </scm>
+    </scm>
     <issueManagement>
         <system>github</system>
         <url>https://github.com/jeremylong/DependencyCheck/issues</url>
