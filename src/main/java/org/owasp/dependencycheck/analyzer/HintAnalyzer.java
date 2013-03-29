@@ -88,17 +88,17 @@ public class HintAnalyzer implements Analyzer {
      * @throws AnalysisException is thrown if there is an exception analyzing the dependency.
      */
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
-        Evidence springTest1 = new Evidence("Manifest",
+        final Evidence springTest1 = new Evidence("Manifest",
                 "Implementation-Title",
                 "Spring Framework",
                 Evidence.Confidence.HIGH);
 
-        Evidence springTest2 = new Evidence("Manifest",
+        final Evidence springTest2 = new Evidence("Manifest",
                 "Implementation-Title",
                 "org.springframework.core",
                 Evidence.Confidence.HIGH);
 
-        Set<Evidence> evidence = dependency.getProductEvidence().getEvidence();
+        final Set<Evidence> evidence = dependency.getProductEvidence().getEvidence();
         if (evidence.contains(springTest1) || evidence.contains(springTest2)) {
             dependency.getProductEvidence().addEvidence("a priori", "product", "springsource_spring_framework", Evidence.Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("a priori", "vendor", "SpringSource", Evidence.Confidence.HIGH);
@@ -108,14 +108,14 @@ public class HintAnalyzer implements Analyzer {
     }
 
     /**
-     * The initialize method does nothing for this Analyzer
+     * The initialize method does nothing for this Analyzer.
      */
     public void initialize() {
         //do nothing
     }
 
     /**
-     * The close method does nothing for this Analyzer
+     * The close method does nothing for this Analyzer.
      */
     public void close() {
         //do nothing

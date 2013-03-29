@@ -119,14 +119,14 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     /**
      * The unmarshaller used to parse the pom.xml from a JAR file.
      */
-    private Unmarshaller pomUnmarshaller = null;
+    private Unmarshaller pomUnmarshaller;
 
     /**
      * Constructs a new JarAnalyzer.
      */
     public JarAnalyzer() {
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance("org.owasp.dependencycheck.analyzer.pom.generated");
+            final JAXBContext jaxbContext = JAXBContext.newInstance("org.owasp.dependencycheck.analyzer.pom.generated");
             pomUnmarshaller = jaxbContext.createUnmarshaller();
         } catch (JAXBException ex) { //guess we will just have a null pointer exception later...
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
@@ -196,14 +196,16 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * Attempts to find a pom.xml within the JAR file. If found it extracts information
-     * and adds it to the evidence. This will attempt to interpolate the strings contained
-     * within the pom.properties if one exists.
+     * Attempts to find a pom.xml within the JAR file. If found it extracts
+     * information and adds it to the evidence. This will attempt to interpolate
+     * the strings contained within the pom.properties if one exists.
      *
      * @param dependency the dependency being analyzed.
      * @throws IOException is thrown if there is an error reading the zip file.
-     * @throws JAXBException is thrown if there is an error extracting the model (aka pom).
-     * @throws AnalysisException is thrown if there is an exception parsing the pom.
+     * @throws JAXBException is thrown if there is an error extracting the model
+     * (aka pom).
+     * @throws AnalysisException is thrown if there is an exception parsing the
+     * pom.
      * @return whether or not evidence was added to the dependency
      */
     protected boolean analyzePOM(Dependency dependency) throws IOException, JAXBException, AnalysisException {
@@ -213,16 +215,16 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         FileInputStream fs = null;
         try {
             fs = new FileInputStream(dependency.getActualFilePath());
-            ZipInputStream zin = new ZipInputStream(fs);
+            final ZipInputStream zin = new ZipInputStream(fs);
             ZipEntry entry = zin.getNextEntry();
 
             while (entry != null) {
-                String entryName = (new File(entry.getName())).getName().toLowerCase();
+                final String entryName = (new File(entry.getName())).getName().toLowerCase();
 
                 if (!entry.isDirectory() && "pom.xml".equals(entryName)) {
                     if (pom == null) {
-                        NonClosingStream stream = new NonClosingStream(zin);
-                        JAXBElement obj = (JAXBElement) pomUnmarshaller.unmarshal(stream);
+                        final NonClosingStream stream = new NonClosingStream(zin);
+                        final JAXBElement obj = (JAXBElement) pomUnmarshaller.unmarshal(stream);
                         pom = (org.owasp.dependencycheck.analyzer.pom.generated.Model) obj.getValue();
                         zin.closeEntry();
                     } else {
@@ -257,33 +259,33 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
 
         if (pom != null) {
             //group id
-            String groupid = interpolateString(pom.getGroupId(), pomProperties);
+            final String groupid = interpolateString(pom.getGroupId(), pomProperties);
             if (groupid != null) {
                 foundSomething = true;
                 dependency.getVendorEvidence().addEvidence("pom", "groupid", groupid, Evidence.Confidence.HIGH);
                 dependency.getProductEvidence().addEvidence("pom", "groupid", groupid, Evidence.Confidence.LOW);
             }
             //artifact id
-            String artifactid = interpolateString(pom.getArtifactId(), pomProperties);
+            final String artifactid = interpolateString(pom.getArtifactId(), pomProperties);
             if (artifactid != null) {
                 foundSomething = true;
                 dependency.getProductEvidence().addEvidence("pom", "artifactid", artifactid, Evidence.Confidence.HIGH);
             }
             //version
-            String version = interpolateString(pom.getVersion(), pomProperties);
+            final String version = interpolateString(pom.getVersion(), pomProperties);
             if (version != null) {
                 foundSomething = true;
                 dependency.getVersionEvidence().addEvidence("pom", "version", version, Evidence.Confidence.HIGH);
             }
             // org name
-            Organization org = pom.getOrganization();
+            final Organization org = pom.getOrganization();
             if (org != null && org.getName() != null) {
                 foundSomething = true;
-                String orgName = interpolateString(org.getName(), pomProperties);
+                final String orgName = interpolateString(org.getName(), pomProperties);
                 dependency.getVendorEvidence().addEvidence("pom", "organization name", orgName, Evidence.Confidence.HIGH);
             }
             //pom name
-            String pomName = interpolateString(pom.getName(), pomProperties);
+            final String pomName = interpolateString(pom.getName(), pomProperties);
             if (pomName != null) {
                 foundSomething = true;
                 dependency.getProductEvidence().addEvidence("pom", "name", pomName, Evidence.Confidence.HIGH);
@@ -292,7 +294,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             //Description
             if (pom.getDescription() != null) {
                 foundSomething = true;
-                String description = interpolateString(pom.getDescription(), pomProperties);
+                final String description = interpolateString(pom.getDescription(), pomProperties);
                 dependency.setDescription(description);
                 dependency.getProductEvidence().addEvidence("pom", "description", description, Evidence.Confidence.MEDIUM);
                 dependency.getVendorEvidence().addEvidence("pom", "description", description, Evidence.Confidence.MEDIUM);
@@ -337,7 +339,8 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * hashSets.
      *
      * @param dependency A reference to the dependency.
-     * @param addPackagesAsEvidence a flag indicating whether or not package names should be added as evidence.
+     * @param addPackagesAsEvidence a flag indicating whether or not package
+     * names should be added as evidence.
      * @throws IOException is thrown if there is an error reading the JAR file.
      */
     protected void analyzePackageNames(Dependency dependency, boolean addPackagesAsEvidence)
@@ -347,17 +350,17 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         try {
             jar = new JarFile(dependency.getActualFilePath());
 
-            java.util.Enumeration en = jar.entries();
+            final java.util.Enumeration en = jar.entries();
 
-            HashMap<String, Integer> level0 = new HashMap<String, Integer>();
-            HashMap<String, Integer> level1 = new HashMap<String, Integer>();
-            HashMap<String, Integer> level2 = new HashMap<String, Integer>();
-            HashMap<String, Integer> level3 = new HashMap<String, Integer>();
+            final HashMap<String, Integer> level0 = new HashMap<String, Integer>();
+            final HashMap<String, Integer> level1 = new HashMap<String, Integer>();
+            final HashMap<String, Integer> level2 = new HashMap<String, Integer>();
+            final HashMap<String, Integer> level3 = new HashMap<String, Integer>();
             int count = 0;
             while (en.hasMoreElements()) {
-                java.util.jar.JarEntry entry = (java.util.jar.JarEntry) en.nextElement();
+                final java.util.jar.JarEntry entry = (java.util.jar.JarEntry) en.nextElement();
                 if (entry.getName().endsWith(".class") && entry.getName().contains("/")) {
-                    String[] path = entry.getName().toLowerCase().split("/");
+                    final String[] path = entry.getName().toLowerCase().split("/");
 
                     if ("java".equals(path[0])
                             || "javax".equals(path[0])
@@ -405,8 +408,8 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             if (count == 0) {
                 return;
             }
-            EvidenceCollection vendor = dependency.getVendorEvidence();
-            EvidenceCollection product = dependency.getProductEvidence();
+            final EvidenceCollection vendor = dependency.getVendorEvidence();
+            final EvidenceCollection product = dependency.getProductEvidence();
 
             for (String s : level0.keySet()) {
                 if (!"org".equals(s) && !"com".equals(s)) {
@@ -422,7 +425,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 float ratio = level1.get(s);
                 ratio /= count;
                 if (ratio > 0.5) {
-                    String[] parts = s.split("/");
+                    final String[] parts = s.split("/");
                     if ("org".equals(parts[0]) || "com".equals(parts[0])) {
                         vendor.addWeighting(parts[1]);
                         if (addPackagesAsEvidence) {
@@ -442,7 +445,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 float ratio = level2.get(s);
                 ratio /= count;
                 if (ratio > 0.4) {
-                    String[] parts = s.split("/");
+                    final String[] parts = s.split("/");
                     if ("org".equals(parts[0]) || "com".equals(parts[0])) {
                         vendor.addWeighting(parts[1]);
                         product.addWeighting(parts[2]);
@@ -468,7 +471,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 float ratio = level3.get(s);
                 ratio /= count;
                 if (ratio > 0.3) {
-                    String[] parts = s.split("/");
+                    final String[] parts = s.split("/");
                     if ("org".equals(parts[0]) || "com".equals(parts[0])) {
                         vendor.addWeighting(parts[1]);
                         vendor.addWeighting(parts[2]);
@@ -523,24 +526,24 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         try {
             jar = new JarFile(dependency.getActualFilePath());
 
-            Manifest manifest = jar.getManifest();
+            final Manifest manifest = jar.getManifest();
             if (manifest == null) {
                 Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE,
                         "Jar file '{0}' does not contain a manifest.",
                         dependency.getFileName());
                 return false;
             }
-            Attributes atts = manifest.getMainAttributes();
+            final Attributes atts = manifest.getMainAttributes();
 
-            EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
-            EvidenceCollection productEvidence = dependency.getProductEvidence();
-            EvidenceCollection versionEvidence = dependency.getVersionEvidence();
+            final EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
+            final EvidenceCollection productEvidence = dependency.getProductEvidence();
+            final EvidenceCollection versionEvidence = dependency.getVersionEvidence();
 
-            String source = "Manifest";
+            final String source = "Manifest";
 
             for (Entry<Object, Object> entry : atts.entrySet()) {
                 String key = entry.getKey().toString();
-                String value = atts.getValue(key);
+                final String value = atts.getValue(key);
                 if (key.equals(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {
                     foundSomething = true;
                     productEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
@@ -595,9 +598,9 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                             productEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
                             vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
                             if (value.matches(".*\\d.*")) {
-                                StringTokenizer tokenizer = new StringTokenizer(value, " ");
+                                final StringTokenizer tokenizer = new StringTokenizer(value, " ");
                                 while (tokenizer.hasMoreElements()) {
-                                    String s = tokenizer.nextToken();
+                                    final String s = tokenizer.nextToken();
                                     if (s.matches("^[0-9.]+$")) {
                                         versionEvidence.addEvidence(source, key, s, Evidence.Confidence.LOW);
                                     }
@@ -616,12 +619,24 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         return foundSomething;
     }
 
+    /**
+     * Adds a description to the given dependency.
+     *
+     * @param d a dependency
+     * @param description the description
+     */
     private void addDescription(Dependency d, String description) {
         if (d.getDescription() == null) {
             d.setDescription(description);
         }
     }
 
+    /**
+     * Adds a license to the given dependency.
+     *
+     * @param d a dependency
+     * @param license the license
+     */
     private void addLicense(Dependency d, String license) {
         if (d.getLicense() == null) {
             d.setLicense(license);
@@ -631,27 +646,28 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * The initialize method does nothing for this Analyzer
+     * The initialize method does nothing for this Analyzer.
      */
     public void initialize() {
         //do nothing
     }
 
     /**
-     * The close method does nothing for this Analyzer
+     * The close method does nothing for this Analyzer.
      */
     public void close() {
         //do nothing
     }
 
     /**
-     * A utiltiy function that will interpolate strings based on values given
-     * in the properties file. It will also interpolate the strings contained
+     * A utility function that will interpolate strings based on values given in
+     * the properties file. It will also interpolate the strings contained
      * within the properties file so that properties can reference other
      * properties.
      *
      * @param text the string that contains references to properties.
-     * @param properties a collection of properties that may be referenced within the text.
+     * @param properties a collection of properties that may be referenced
+     * within the text.
      * @return the interpolated text.
      */
     protected String interpolateString(String text, Properties properties) {
@@ -660,21 +676,21 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             return text;
         }
 
-        int pos = text.indexOf("${");
+        final int pos = text.indexOf("${");
         if (pos < 0) {
             return text;
         }
-        int end = text.indexOf("}");
+        final int end = text.indexOf("}");
         if (end < pos) {
             return text;
         }
 
-        String propName = text.substring(pos + 2, end);
+        final String propName = text.substring(pos + 2, end);
         String propValue = interpolateString(properties.getProperty(propName), properties);
         if (propValue == null) {
             propValue = "";
         }
-        StringBuilder sb = new StringBuilder(propValue.length() + text.length());
+        final StringBuilder sb = new StringBuilder(propValue.length() + text.length());
         sb.append(text.subSequence(0, pos));
         sb.append(propValue);
         sb.append(text.substring(end + 1));

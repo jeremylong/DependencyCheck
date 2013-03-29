@@ -36,6 +36,7 @@
 
   <module name="NewlineAtEndOfFile">
   <property name="fileExtensions" value="java"/>
+  <property name="lineSeparator" value="lf"/>
   </module>
 
   <module name="RegexpHeader">
@@ -180,7 +181,7 @@
     <module name="GenericWhitespace"/>
     <module name="FinalClass"/>
     <module name="MissingSwitchDefault"/>
-    <module name="MagicNumber"/>
+    <!--module name="MagicNumber"/-->
     <module name="Indentation">
       <property name="basicOffset" value="4"/>
       <property name="braceAdjustment" value="0"/>

@@ -93,7 +93,7 @@ public class FileNameAnalyzer implements Analyzer {
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
 
         String fileName = dependency.getFileName();
-        int pos = fileName.lastIndexOf(".");
+        final int pos = fileName.lastIndexOf(".");
         if (pos > 0) {
             fileName = fileName.substring(0, pos);
         }
@@ -111,14 +111,14 @@ public class FileNameAnalyzer implements Analyzer {
     }
 
     /**
-     * The initialize method does nothing for this Analyzer
+     * The initialize method does nothing for this Analyzer.
      */
     public void initialize() {
         //do nothing
     }
 
     /**
-     * The close method does nothing for this Analyzer
+     * The close method does nothing for this Analyzer.
      */
     public void close() {
         //do nothing

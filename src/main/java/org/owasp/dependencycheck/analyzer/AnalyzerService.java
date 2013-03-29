@@ -25,13 +25,19 @@ import java.util.ServiceLoader;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class AnalyzerService {
+public final class AnalyzerService {
 
+    /**
+     * The analyzer service singleton.
+     */
     private static AnalyzerService service;
+    /**
+     * The service loader for analyzers.
+     */
     private final ServiceLoader<Analyzer> loader;
 
     /**
-     * Creates a new instance of AnalyzerService
+     * Creates a new instance of AnalyzerService.
      */
     private AnalyzerService() {
         loader = ServiceLoader.load(Analyzer.class);
