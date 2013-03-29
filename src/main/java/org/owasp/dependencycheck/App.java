@@ -55,17 +55,25 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 public class App {
 
+    /**
+     * The location of the log properties configuration file.
+     */
     private static final String LOG_PROPERTIES_FILE = "configuration/log.properties";
 
     /**
+     * The main method for the application.
+     *
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         prepareLogger();
-        App app = new App();
+        final App app = new App();
         app.run(args);
     }
 
+    /**
+     * Configures the logger for use by the application.
+     */
     private static void prepareLogger() {
         //while java doc for JUL says to use preferences api - it throws an exception...
         //Preferences.systemRoot().put("java.util.logging.config.file", "log.properties");
@@ -77,7 +85,7 @@ public class App {
 //            dir.mkdir();
 //        }
         try {
-            InputStream in = App.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
+            final InputStream in = App.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
             LogManager.getLogManager().reset();
             LogManager.getLogManager().readConfiguration(in);
         } catch (IOException ex) {
@@ -89,13 +97,13 @@ public class App {
     }
 
     /**
-     * main CLI entry-point into the application.
+     * Main CLI entry-point into the application.
      *
      * @param args the command line arguments
      */
     public void run(String[] args) {
 
-        CliParser cli = new CliParser();
+        final CliParser cli = new CliParser();
         try {
             cli.parse(args);
         } catch (FileNotFoundException ex) {
@@ -133,7 +141,7 @@ public class App {
      * @param deepScan whether to perform a deep scan of the evidence in the project dependencies
      */
     private void runScan(String reportDirectory, String outputFormat, String applicationName, String[] files, boolean autoUpdate, boolean deepScan) {
-        Engine scanner = new Engine(autoUpdate);
+        final Engine scanner = new Engine(autoUpdate);
         Settings.setBoolean(Settings.KEYS.PERFORM_DEEP_SCAN, deepScan);
 
         for (String file : files) {
@@ -141,9 +149,9 @@ public class App {
         }
 
         scanner.analyzeDependencies();
-        List<Dependency> dependencies = scanner.getDependencies();
+        final List<Dependency> dependencies = scanner.getDependencies();
 
-        ReportGenerator report = new ReportGenerator(applicationName, dependencies, scanner.getAnalyzers());
+        final ReportGenerator report = new ReportGenerator(applicationName, dependencies, scanner.getAnalyzers());
         try {
             report.generateReports(reportDirectory, outputFormat);
         } catch (IOException ex) {

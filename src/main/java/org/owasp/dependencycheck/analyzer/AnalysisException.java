@@ -25,6 +25,9 @@ package org.owasp.dependencycheck.analyzer;
  */
 public class AnalysisException extends Exception {
 
+    /**
+     * The serial version UID for serialization.
+     */
     private static final long serialVersionUID = 1L;
 
     /**

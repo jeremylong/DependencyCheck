@@ -50,16 +50,16 @@ public class Engine {
     /**
      * The list of dependencies.
      */
-    protected List<Dependency> dependencies = new ArrayList<Dependency>();
+    private List<Dependency> dependencies = new ArrayList<Dependency>();
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-    protected EnumMap<AnalysisPhase, List<Analyzer>> analyzers =
+    private EnumMap<AnalysisPhase, List<Analyzer>> analyzers =
             new EnumMap<AnalysisPhase, List<Analyzer>>(AnalysisPhase.class);
     /**
      * A set of extensions supported by the analyzers.
      */
-    protected Set<String> extensions = new HashSet<String>();
+    private Set<String> extensions = new HashSet<String>();
 
     /**
      * Creates a new Engine.
@@ -70,7 +70,7 @@ public class Engine {
     }
 
     /**
-     * Creates a new Engine
+     * Creates a new Engine.
      *
      * @param autoUpdate indicates whether or not data should be updated from
      * the Internet.
@@ -92,10 +92,10 @@ public class Engine {
             analyzers.put(phase, new ArrayList<Analyzer>());
         }
 
-        AnalyzerService service = AnalyzerService.getInstance();
-        Iterator<Analyzer> iterator = service.getAnalyzers();
+        final AnalyzerService service = AnalyzerService.getInstance();
+        final Iterator<Analyzer> iterator = service.getAnalyzers();
         while (iterator.hasNext()) {
-            Analyzer a = iterator.next();
+            final Analyzer a = iterator.next();
             analyzers.get(a.getAnalysisPhase()).add(a);
             if (a.getSupportedExtensions() != null) {
                 extensions.addAll(a.getSupportedExtensions());
@@ -114,7 +114,7 @@ public class Engine {
     }
 
     /**
-     * Get the dependencies identified
+     * Get the dependencies identified.
      *
      * @return the dependencies identified
      */
@@ -130,7 +130,7 @@ public class Engine {
      * @param path the path to a file or directory to be analyzed.
      */
     public void scan(String path) {
-        File file = new File(path);
+        final File file = new File(path);
         if (file.exists()) {
             if (file.isDirectory()) {
                 scanDirectory(file);
@@ -147,7 +147,7 @@ public class Engine {
      * @param dir the directory to scan.
      */
     protected void scanDirectory(File dir) {
-        File[] files = dir.listFiles();
+        final File[] files = dir.listFiles();
         for (File f : files) {
             if (f.isDirectory()) {
                 scanDirectory(f);
@@ -165,18 +165,18 @@ public class Engine {
      */
     protected void scanFile(File file) {
         if (!file.isFile()) {
-            String msg = String.format("Path passed to scanFile(File) is not a file: %s.", file.toString());
+            final String msg = String.format("Path passed to scanFile(File) is not a file: %s.", file.toString());
             Logger.getLogger(Engine.class.getName()).log(Level.WARNING, msg);
         }
-        String fileName = file.getName();
-        String extension = FileUtils.getFileExtension(fileName);
+        final String fileName = file.getName();
+        final String extension = FileUtils.getFileExtension(fileName);
         if (extension != null) {
             if (extensions.contains(extension)) {
-                Dependency dependency = new Dependency(file);
+                final Dependency dependency = new Dependency(file);
                 dependencies.add(dependency);
             }
         } else {
-            String msg = String.format("No file extension found on file '%s'. The file was not analyzed.",
+            final String msg = String.format("No file extension found on file '%s'. The file was not analyzed.",
                     file.toString());
             Logger.getLogger(Engine.class.getName()).log(Level.FINEST, msg);
         }
@@ -188,7 +188,7 @@ public class Engine {
     public void analyzeDependencies() {
         //phase one initialize
         for (AnalysisPhase phase : AnalysisPhase.values()) {
-            List<Analyzer> analyzerList = analyzers.get(phase);
+            final List<Analyzer> analyzerList = analyzers.get(phase);
             for (Analyzer a : analyzerList) {
                 try {
                     a.initialize();
@@ -206,7 +206,7 @@ public class Engine {
 
         // analysis phases
         for (AnalysisPhase phase : AnalysisPhase.values()) {
-            List<Analyzer> analyzerList = analyzers.get(phase);
+            final List<Analyzer> analyzerList = analyzers.get(phase);
 
             for (Analyzer a : analyzerList) {
                 for (Dependency d : dependencies) {
@@ -223,7 +223,7 @@ public class Engine {
 
         //close/cleanup
         for (AnalysisPhase phase : AnalysisPhase.values()) {
-            List<Analyzer> analyzerList = analyzers.get(phase);
+            final List<Analyzer> analyzerList = analyzers.get(phase);
             for (Analyzer a : analyzerList) {
                 try {
                     a.close();
@@ -238,10 +238,10 @@ public class Engine {
      *
      */
     private void doUpdates() {
-        UpdateService service = UpdateService.getInstance();
-        Iterator<CachedWebDataSource> iterator = service.getDataSources();
+        final UpdateService service = UpdateService.getInstance();
+        final Iterator<CachedWebDataSource> iterator = service.getDataSources();
         while (iterator.hasNext()) {
-            CachedWebDataSource source = iterator.next();
+            final CachedWebDataSource source = iterator.next();
             try {
                 source.update();
             } catch (UpdateException ex) {
@@ -257,9 +257,9 @@ public class Engine {
      * @return a list of Analyzers
      */
     public List<Analyzer> getAnalyzers() {
-        List<Analyzer> ret = new ArrayList<Analyzer>();
+        final List<Analyzer> ret = new ArrayList<Analyzer>();
         for (AnalysisPhase phase : AnalysisPhase.values()) {
-            List<Analyzer> analyzerList = analyzers.get(phase);
+            final List<Analyzer> analyzerList = analyzers.get(phase);
             ret.addAll(analyzerList);
         }
         return ret;

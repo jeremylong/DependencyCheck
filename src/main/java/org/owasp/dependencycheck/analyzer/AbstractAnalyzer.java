@@ -38,7 +38,7 @@ public abstract class AbstractAnalyzer implements Analyzer {
      * @return a Set of strings.
      */
     protected static Set<String> newHashSet(String... strings) {
-        Set<String> set = new HashSet<String>();
+        final Set<String> set = new HashSet<String>();
 
         Collections.addAll(set, strings);
         return set;
