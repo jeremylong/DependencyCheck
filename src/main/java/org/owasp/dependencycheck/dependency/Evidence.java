@@ -67,10 +67,10 @@ public class Evidence {
     /**
      * The name of the evidence.
      */
-    protected String name;
+    private String name;
 
     /**
-     * Get the value of name
+     * Get the value of name.
      *
      * @return the value of name
      */
@@ -79,7 +79,7 @@ public class Evidence {
     }
 
     /**
-     * Set the value of name
+     * Set the value of name.
      *
      * @param name new value of name
      */
@@ -89,10 +89,10 @@ public class Evidence {
     /**
      * The source of the evidence.
      */
-    protected String source;
+    private String source;
 
     /**
-     * Get the value of source
+     * Get the value of source.
      *
      * @return the value of source
      */
@@ -101,7 +101,7 @@ public class Evidence {
     }
 
     /**
-     * Set the value of source
+     * Set the value of source.
      *
      * @param source new value of source
      */
@@ -111,10 +111,10 @@ public class Evidence {
     /**
      * The value of the evidence.
      */
-    protected String value;
+    private String value;
 
     /**
-     * Get the value of value
+     * Get the value of value.
      *
      * @return the value of value
      */
@@ -124,7 +124,7 @@ public class Evidence {
     }
 
     /**
-     * Set the value of value
+     * Set the value of value.
      *
      * @param value new value of value
      */
@@ -134,10 +134,10 @@ public class Evidence {
     /**
      * A value indicating if the Evidence has been "used" (aka read).
      */
-    protected boolean used;
+    private boolean used;
 
     /**
-     * Get the value of used
+     * Get the value of used.
      *
      * @return the value of used
      */
@@ -146,7 +146,7 @@ public class Evidence {
     }
 
     /**
-     * Set the value of used
+     * Set the value of used.
      *
      * @param used new value of used
      */
@@ -156,10 +156,10 @@ public class Evidence {
     /**
      * The confidence level for the evidence.
      */
-    protected Confidence confidence;
+    private Confidence confidence;
 
     /**
-     * Get the value of confidence
+     * Get the value of confidence.
      *
      * @return the value of confidence
      */
@@ -168,7 +168,7 @@ public class Evidence {
     }
 
     /**
-     * Set the value of confidence
+     * Set the value of confidence.
      *
      * @param confidence new value of confidence
      */
@@ -205,7 +205,7 @@ public class Evidence {
         if (!(that instanceof Evidence)) {
             return false;
         }
-        Evidence e = (Evidence) that;
+        final Evidence e = (Evidence) that;
 
         return testEquality(name, e.name) && testEquality(source, e.source) && testEquality(value, e.value)
                 && (confidence == null ? e.confidence == null : confidence == e.confidence);

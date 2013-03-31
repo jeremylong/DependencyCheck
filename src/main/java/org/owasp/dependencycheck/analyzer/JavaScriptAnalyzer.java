@@ -97,10 +97,16 @@ public class JavaScriptAnalyzer extends AbstractAnalyzer implements Analyzer {
      * file.
      */
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
-        Pattern extractComments = Pattern.compile("(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)|(//.*)");
+        final Pattern extractComments = Pattern.compile("(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)|(//.*)");
 
     }
 
+    /**
+     * Adds license information to the given dependency.
+     *
+     * @param d the dependency
+     * @param license the license
+     */
     private void addLicense(Dependency d, String license) {
         if (d.getLicense() == null) {
             d.setLicense(license);
@@ -110,14 +116,14 @@ public class JavaScriptAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * The initialize method does nothing for this Analyzer
+     * The initialize method does nothing for this Analyzer.
      */
     public void initialize() {
         //do nothing
     }
 
     /**
-     * The close method does nothing for this Analyzer
+     * The close method does nothing for this Analyzer.
      */
     public void close() {
         //do nothing

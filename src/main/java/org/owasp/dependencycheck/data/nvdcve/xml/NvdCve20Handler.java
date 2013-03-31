@@ -42,12 +42,30 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class NvdCve20Handler extends DefaultHandler {
 
+    /**
+     * the current supported schema version.
+     */
     private static final String CURRENT_SCHEMA_VERSION = "2.0";
+    /**
+     * the current element.
+     */
     private Element current = new Element();
-    StringBuilder nodeText = null;
-    Vulnerability vulnerability = null;
-    Reference reference = null;
-    boolean hasApplicationCpe = false;
+    /**
+     * the text of the node.
+     */
+    private StringBuilder nodeText;
+    /**
+     * the vulnerability.
+     */
+    private Vulnerability vulnerability;
+    /**
+     * a reference for the cve.
+     */
+    private Reference reference;
+    /**
+     * flag indicating whether the application has a cpe.
+     */
+    private boolean hasApplicationCpe = false;
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -59,7 +77,7 @@ public class NvdCve20Handler extends DefaultHandler {
         } else if (current.isVulnProductNode()) {
             nodeText = new StringBuilder(100);
         } else if (current.isVulnReferencesNode()) {
-            String lang = attributes.getValue("xml:lang");
+            final String lang = attributes.getValue("xml:lang");
             if ("en".equals(lang)) {
                 reference = new Reference();
             } else {
@@ -73,7 +91,7 @@ public class NvdCve20Handler extends DefaultHandler {
         } else if (current.isVulnSummaryNode()) {
             nodeText = new StringBuilder(500);
         } else if (current.isNVDNode()) {
-            String nvdVer = attributes.getValue("nvd_xml_version");
+            final String nvdVer = attributes.getValue("nvd_xml_version");
             if (!CURRENT_SCHEMA_VERSION.equals(nvdVer)) {
                 throw new SAXNotSupportedException("Schema version " + nvdVer + " is not supported");
             }
@@ -121,7 +139,7 @@ public class NvdCve20Handler extends DefaultHandler {
             vulnerability = null;
         } else if (current.isCVSSScoreNode()) {
             try {
-                float score = Float.parseFloat(nodeText.toString());
+                final float score = Float.parseFloat(nodeText.toString());
                 vulnerability.setCvssScore(score);
             } catch (NumberFormatException ex) {
                 Logger.getLogger(NvdCve20Handler.class.getName()).log(Level.SEVERE, null, ex);
@@ -146,7 +164,7 @@ public class NvdCve20Handler extends DefaultHandler {
             vulnerability.setCvssIntegrityImpact(nodeText.toString());
             nodeText = null;
         } else if (current.isVulnProductNode()) {
-            String cpe = nodeText.toString();
+            final String cpe = nodeText.toString();
             if (cpe.startsWith("cpe:/a:")) {
                 hasApplicationCpe = true;
                 vulnerability.addVulnerableSoftware(cpe);
@@ -166,10 +184,14 @@ public class NvdCve20Handler extends DefaultHandler {
             nodeText = null;
         }
     }
-    private CveDB cveDB = null;
+    /**
+     * the cve database.
+     */
+    private CveDB cveDB;
 
     /**
-     * Sets the cveDB
+     * Sets the cveDB.
+     *
      * @param db a reference to the CveDB
      */
     public void setCveDB(CveDB db) {
@@ -179,7 +201,7 @@ public class NvdCve20Handler extends DefaultHandler {
      * A list of CVE entries and associated VulnerableSoftware entries that contain
      * previous entries.
      */
-    private Map<String, List<VulnerableSoftware>> prevVersionVulnMap = null;
+    private Map<String, List<VulnerableSoftware>> prevVersionVulnMap;
 
     /**
      * Sets the prevVersionVulnMap.
@@ -202,9 +224,9 @@ public class NvdCve20Handler extends DefaultHandler {
         if (cveDB == null) {
             return;
         }
-        String cveName = vuln.getName();
+        final String cveName = vuln.getName();
         if (prevVersionVulnMap.containsKey(cveName)) {
-            List<VulnerableSoftware> vulnSoftware = prevVersionVulnMap.get(cveName);
+            final List<VulnerableSoftware> vulnSoftware = prevVersionVulnMap.get(cveName);
             for (VulnerableSoftware vs : vulnSoftware) {
                 vuln.updateVulnerableSoftware(vs);
             }
@@ -216,10 +238,14 @@ public class NvdCve20Handler extends DefaultHandler {
         }
         cveDB.updateVulnerability(vuln);
     }
-    private Index cpeIndex = null;
+    /**
+     * the cpe index.
+     */
+    private Index cpeIndex;
 
     /**
-     * Sets the cpe index
+     * Sets the cpe index.
+     *
      * @param index the CPE Lucene Index
      */
     void setCpeIndex(Index index) {
@@ -261,7 +287,6 @@ public class NvdCve20Handler extends DefaultHandler {
          * A node type in the NVD CVE Schema 2.0
          */
         public static final String VULN_SUMMARY = "vuln:summary";
-
         /**
          * A node type in the NVD CVE Schema 2.0
          */
@@ -295,10 +320,13 @@ public class NvdCve20Handler extends DefaultHandler {
          */
         public static final String CVSS_AVAILABILITY_IMPACT = "cvss:availability-impact";
 
-        private String node = null;
+        /**
+         * The current node.
+         */
+        private String node;
 
         /**
-         * Gets the value of node
+         * Gets the value of node.
          *
          * @return the value of node
          */
@@ -307,7 +335,7 @@ public class NvdCve20Handler extends DefaultHandler {
         }
 
         /**
-         * Sets the value of node
+         * Sets the value of node.
          *
          * @param node new value of node
          */
@@ -316,7 +344,7 @@ public class NvdCve20Handler extends DefaultHandler {
         }
 
         /**
-         * Checks if the handler is at the NVD node
+         * Checks if the handler is at the NVD node.
          *
          * @return true or false
          */
@@ -325,7 +353,7 @@ public class NvdCve20Handler extends DefaultHandler {
         }
 
         /**
-         * Checks if the handler is at the ENTRY node
+         * Checks if the handler is at the ENTRY node.
          *
          * @return true or false
          */
@@ -334,7 +362,7 @@ public class NvdCve20Handler extends DefaultHandler {
         }
 
         /**
-         * Checks if the handler is at the VULN_PRODUCT node
+         * Checks if the handler is at the VULN_PRODUCT node.
          *
          * @return true or false
          */
@@ -343,7 +371,7 @@ public class NvdCve20Handler extends DefaultHandler {
         }
 
         /**
-         * Checks if the handler is at the REFERENCES node
+         * Checks if the handler is at the REFERENCES node.
          *
          * @return true or false
          */
@@ -352,7 +380,7 @@ public class NvdCve20Handler extends DefaultHandler {
         }
 
         /**
-         * Checks if the handler is at the REFERENCE node
+         * Checks if the handler is at the REFERENCE node.
          *
          * @return true or false
          */
@@ -361,7 +389,7 @@ public class NvdCve20Handler extends DefaultHandler {
         }
 
         /**
-         * Checks if the handler is at the VULN_SOURCE node
+         * Checks if the handler is at the VULN_SOURCE node.
          *
          * @return true or false
          */
@@ -370,7 +398,7 @@ public class NvdCve20Handler extends DefaultHandler {
         }
 
         /**
-         * Checks if the handler is at the VULN_SUMMARY node
+         * Checks if the handler is at the VULN_SUMMARY node.
          *
          * @return true or false
          */
@@ -379,7 +407,7 @@ public class NvdCve20Handler extends DefaultHandler {
         }
 
         /**
-         * Checks if the handler is at the VULN_CWE node
+         * Checks if the handler is at the VULN_CWE node.
          *
          * @return true or false
          */
@@ -387,7 +415,7 @@ public class NvdCve20Handler extends DefaultHandler {
             return VULN_CWE.equals(node);
         }
         /**
-         * Checks if the handler is at the CVSS_SCORE node
+         * Checks if the handler is at the CVSS_SCORE node.
          *
          * @return true or false
          */
@@ -395,7 +423,7 @@ public class NvdCve20Handler extends DefaultHandler {
             return CVSS_SCORE.equals(node);
         }
         /**
-         * Checks if the handler is at the CVSS_ACCESS_VECTOR node
+         * Checks if the handler is at the CVSS_ACCESS_VECTOR node.
          *
          * @return true or false
          */
@@ -403,7 +431,7 @@ public class NvdCve20Handler extends DefaultHandler {
             return CVSS_ACCESS_VECTOR.equals(node);
         }
         /**
-         * Checks if the handler is at the CVSS_ACCESS_COMPLEXITY node
+         * Checks if the handler is at the CVSS_ACCESS_COMPLEXITY node.
          *
          * @return true or false
          */
@@ -411,7 +439,7 @@ public class NvdCve20Handler extends DefaultHandler {
             return CVSS_ACCESS_COMPLEXITY.equals(node);
         }
         /**
-         * Checks if the handler is at the CVSS_AUTHENTICATION node
+         * Checks if the handler is at the CVSS_AUTHENTICATION node.
          *
          * @return true or false
          */
@@ -419,7 +447,7 @@ public class NvdCve20Handler extends DefaultHandler {
             return CVSS_AUTHENTICATION.equals(node);
         }
         /**
-         * Checks if the handler is at the CVSS_CONFIDENTIALITY_IMPACT node
+         * Checks if the handler is at the CVSS_CONFIDENTIALITY_IMPACT node.
          *
          * @return true or false
          */
@@ -427,7 +455,7 @@ public class NvdCve20Handler extends DefaultHandler {
             return CVSS_CONFIDENTIALITY_IMPACT.equals(node);
         }
         /**
-         * Checks if the handler is at the CVSS_INTEGRITY_IMPACT node
+         * Checks if the handler is at the CVSS_INTEGRITY_IMPACT node.
          *
          * @return true or false
          */
@@ -435,7 +463,7 @@ public class NvdCve20Handler extends DefaultHandler {
             return CVSS_INTEGRITY_IMPACT.equals(node);
         }
         /**
-         * Checks if the handler is at the CVSS_AVAILABILITY_IMPACT node
+         * Checks if the handler is at the CVSS_AVAILABILITY_IMPACT node.
          *
          * @return true or false
          */

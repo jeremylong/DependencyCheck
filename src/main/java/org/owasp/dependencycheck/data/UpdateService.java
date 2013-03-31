@@ -25,9 +25,15 @@ import java.util.ServiceLoader;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class UpdateService {
+public final class UpdateService {
 
+    /**
+     * the singleton reference to the service.
+     */
     private static UpdateService service;
+    /**
+     * the service loader for CachedWebDataSource.
+     */
     private final ServiceLoader<CachedWebDataSource> loader;
 
     /**

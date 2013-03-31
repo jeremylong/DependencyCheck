@@ -48,7 +48,7 @@ public final class LuceneUtils {
         }
 
         for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
+            final char c = text.charAt(i);
             switch (c) {
                 case '+':
                 case '-':
@@ -91,7 +91,7 @@ public final class LuceneUtils {
 
         int size = text.length();
         size = size >> 1;
-        StringBuilder buf = new StringBuilder(size);
+        final StringBuilder buf = new StringBuilder(size);
 
         appendEscapedLuceneQuery(buf, text);
 

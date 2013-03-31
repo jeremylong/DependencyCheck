@@ -27,6 +27,9 @@ import java.io.IOException;
  */
 public class UpdateException extends IOException {
 
+    /**
+     * The serial version uid.
+     */
     private static final long serialVersionUID = 1L;
 
     /**

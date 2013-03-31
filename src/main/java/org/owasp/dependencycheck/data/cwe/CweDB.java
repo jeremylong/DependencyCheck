@@ -29,21 +29,32 @@ import java.util.logging.Logger;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class CweDB {
+public final class CweDB {
 
+    /**
+     * Empty private constructor as this is a utility class.
+     */
     private CweDB() {
-        //empty constructor for utility class
+        //empty
     }
+    /**
+     * A hashmap of the CWE data.
+     */
     private static final HashMap<String, String> CWE = loadData();
 
+    /**
+     * Loads a hashmap containing the CWE data from a resource found in the jar.
+     *
+     * @return a hashmap of CWE data
+     */
     private static HashMap<String, String> loadData() {
         ObjectInputStream oin = null;
         try {
-            String filePath = "data/cwe.hashmap.serialized";
-            InputStream input = CweDB.class.getClassLoader().getResourceAsStream(filePath);
+            final String filePath = "data/cwe.hashmap.serialized";
+            final InputStream input = CweDB.class.getClassLoader().getResourceAsStream(filePath);
             oin = new ObjectInputStream(input);
             @SuppressWarnings("unchecked")
-            HashMap<String, String> data = (HashMap<String, String>) oin.readObject();
+            final HashMap<String, String> data = (HashMap<String, String>) oin.readObject();
             return data;
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(CweDB.class.getName()).log(Level.SEVERE, null, ex);
@@ -63,7 +74,7 @@ public class CweDB {
 
     /**
      * <p>Returns the full CWE name from the CWE ID.</p>
-     * @param cweId te CWE ID
+     * @param cweId the CWE ID
      * @return the full name of the CWE
      */
     public static String getCweName(String cweId) {

@@ -27,7 +27,7 @@ import java.io.IOException;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class FileUtils {
+public final class FileUtils {
 
     /**
      * Private constructor for a utility class.
@@ -43,7 +43,7 @@ public class FileUtils {
      */
     public static String getFileExtension(String fileName) {
         String ret = null;
-        int pos = fileName.lastIndexOf(".");
+        final int pos = fileName.lastIndexOf(".");
         if (pos >= 0) {
             ret = fileName.substring(pos + 1, fileName.length()).toLowerCase();
         }

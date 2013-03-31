@@ -40,15 +40,15 @@ public final class CliParser {
     /**
      * The command line.
      */
-    private CommandLine line = null;
+    private CommandLine line;
     /**
      * The options for the command line parser.
      */
     private Options options = createCommandLineOptions();
     /**
-     * indicates whether the arguments are valid.
+     * Indicates whether the arguments are valid.
      */
-    boolean isValid = true;
+    private boolean isValid = true;
 
     /**
      * Parses the arguments passed in and captures the results for later use.
@@ -74,8 +74,8 @@ public final class CliParser {
      * @throws ParseException if the arguments are invalid
      */
     private CommandLine parseArgs(String[] args) throws ParseException {
-        CommandLineParser parser = new PosixParser();
-        CommandLine ln = parser.parse(options, args);
+        final CommandLineParser parser = new PosixParser();
+        final CommandLine ln = parser.parse(options, args);
         return ln;
     }
 
@@ -84,6 +84,7 @@ public final class CliParser {
      *
      * @throws FileNotFoundException if there is a file specified by either the
      * SCAN or CPE command line arguments that does not exist.
+     * @throws ParseException is thrown if there is an exception parsing the command line.
      */
     private void validateArgs() throws FileNotFoundException, ParseException {
         if (isRunScan()) {
@@ -93,8 +94,8 @@ public final class CliParser {
                 throw new ParseException("Scan cannot be run without specifying a directory "
                         + "to write the reports to via the 'out' argument.");
             } else {
-                String p = line.getOptionValue(ArgumentName.OUT, "");
-                File f = new File(p);
+                final String p = line.getOptionValue(ArgumentName.OUT, "");
+                final File f = new File(p);
                 if ("".equals(p) || !(f.exists() && f.isDirectory())) {
                     //TODO - need a new exception type here, this isn't really a ParseException.
                     throw new ParseException("A valid directory name must be specified for "
@@ -106,8 +107,8 @@ public final class CliParser {
                         + "name via the 'app' argument.");
             }
             if (line.hasOption(ArgumentName.OUTPUT_FORMAT)) {
-                String format = line.getOptionValue(ArgumentName.OUTPUT_FORMAT);
-                if (!(format.equalsIgnoreCase("XML") || format.equalsIgnoreCase("HTML"))) {
+                final String format = line.getOptionValue(ArgumentName.OUTPUT_FORMAT);
+                if (!("XML".equalsIgnoreCase(format) || "HTML".equalsIgnoreCase(format))) {
                     throw new ParseException("Supported output formats are XML and HTML");
                 }
             }
@@ -139,7 +140,7 @@ public final class CliParser {
      * not exist.
      */
     private void validatePathExists(String path) throws FileNotFoundException {
-        File f = new File(path);
+        final File f = new File(path);
         if (!f.exists()) {
             isValid = false;
             throw new FileNotFoundException("Invalid file argument: " + path);
@@ -154,47 +155,47 @@ public final class CliParser {
      */
     @SuppressWarnings("static-access")
     private Options createCommandLineOptions() {
-        Option help = new Option(ArgumentName.HELP_SHORT, ArgumentName.HELP, false,
+        final Option help = new Option(ArgumentName.HELP_SHORT, ArgumentName.HELP, false,
                 "print this message.");
 
-        Option advancedHelp = new Option(ArgumentName.ADVANCED_HELP_SHORT, ArgumentName.ADVANCED_HELP, false,
+        final Option advancedHelp = new Option(ArgumentName.ADVANCED_HELP_SHORT, ArgumentName.ADVANCED_HELP, false,
                 "shows additional help regarding properties file.");
 
-        Option deepScan = new Option(ArgumentName.PERFORM_DEEP_SCAN_SHORT, ArgumentName.PERFORM_DEEP_SCAN, false,
+        final Option deepScan = new Option(ArgumentName.PERFORM_DEEP_SCAN_SHORT, ArgumentName.PERFORM_DEEP_SCAN, false,
                 "extracts extra information from dependencies that may increase false positives, but also decrease false negatives.");
 
-        Option version = new Option(ArgumentName.VERSION_SHORT, ArgumentName.VERSION,
+        final Option version = new Option(ArgumentName.VERSION_SHORT, ArgumentName.VERSION,
                 false, "print the version information.");
 
-        Option noupdate = new Option(ArgumentName.DISABLE_AUTO_UPDATE_SHORT, ArgumentName.DISABLE_AUTO_UPDATE,
+        final Option noupdate = new Option(ArgumentName.DISABLE_AUTO_UPDATE_SHORT, ArgumentName.DISABLE_AUTO_UPDATE,
                 false, "disables the automatic updating of the CPE data.");
 
-        Option appname = OptionBuilder.withArgName("name").hasArg().withLongOpt(ArgumentName.APPNAME)
+        final Option appname = OptionBuilder.withArgName("name").hasArg().withLongOpt(ArgumentName.APPNAME)
                 .withDescription("the name of the application being scanned.")
                 .create(ArgumentName.APPNAME_SHORT);
 
-        Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.SCAN)
+        final Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.SCAN)
                 .withDescription("the path to scan - this option can be specified multiple times.")
                 .create(ArgumentName.SCAN_SHORT);
 
-        Option props = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.PROP)
+        final Option props = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.PROP)
                 .withDescription("a property file to load.")
                 .create(ArgumentName.PROP_SHORT);
 
-        Option out = OptionBuilder.withArgName("folder").hasArg().withLongOpt(ArgumentName.OUT)
+        final Option out = OptionBuilder.withArgName("folder").hasArg().withLongOpt(ArgumentName.OUT)
                 .withDescription("the folder to write reports to.")
                 .create(ArgumentName.OUT_SHORT);
 
-        Option outputformat = OptionBuilder.withArgName("format").hasArg().withLongOpt(ArgumentName.OUTPUT_FORMAT)
+        final Option outputformat = OptionBuilder.withArgName("format").hasArg().withLongOpt(ArgumentName.OUTPUT_FORMAT)
                 .withDescription("the output format to write to.")
                 .create(ArgumentName.OUTPUT_FORMAT_SHORT);
 
         //TODO add the ability to load a properties file to override the defaults...
 
-        OptionGroup og = new OptionGroup();
+        final OptionGroup og = new OptionGroup();
         og.addOption(path);
 
-        Options opts = new Options();
+        final Options opts = new Options();
         opts.addOptionGroup(og);
         opts.addOption(out);
         opts.addOption(outputformat);
@@ -205,6 +206,7 @@ public final class CliParser {
         opts.addOption(deepScan);
         opts.addOption(props);
         opts.addOption(advancedHelp);
+
         return opts;
     }
 
@@ -239,8 +241,8 @@ public final class CliParser {
      * Displays the command line help message to the standard output.
      */
     public void printHelp() {
-        HelpFormatter formatter = new HelpFormatter();
-        String nl = System.getProperty("line.separator");
+        final HelpFormatter formatter = new HelpFormatter();
+        final String nl = System.getProperty("line.separator");
         String advancedHelp = null;
         if (line != null && line.hasOption(ArgumentName.ADVANCED_HELP)) {
             advancedHelp = nl + nl
@@ -273,11 +275,10 @@ public final class CliParser {
      */
     public String[] getScanFiles() {
         return line.getOptionValues(ArgumentName.SCAN);
-
     }
 
     /**
-     * returns the directory to write the reports to specified on the command
+     * Returns the directory to write the reports to specified on the command
      * line.
      *
      * @return the path to the reports directory.
@@ -306,12 +307,12 @@ public final class CliParser {
     }
 
     /**
-     * <p>Prints the manifest information to standard output:</p>
+     * <p>Prints the manifest information to standard output.</p>
      * <ul><li>Implementation-Title: ${pom.name}</li>
      * <li>Implementation-Version: ${pom.version}</li></ul>
      */
     public void printVersionInfo() {
-        String version = String.format("%s version %s",
+        final String version = String.format("%s version %s",
                 Settings.getString("application.name", "DependencyCheck"),
                 Settings.getString("application.version", "Unknown"));
         System.out.println(version);
@@ -341,11 +342,11 @@ public final class CliParser {
     public static class ArgumentName {
 
         /**
-         * The long CLI argument name specifying the directory/file to scan
+         * The long CLI argument name specifying the directory/file to scan.
          */
         public static final String SCAN = "scan";
         /**
-         * The short CLI argument name specifying the directory/file to scan
+         * The short CLI argument name specifying the directory/file to scan.
          */
         public static final String SCAN_SHORT = "s";
         /**

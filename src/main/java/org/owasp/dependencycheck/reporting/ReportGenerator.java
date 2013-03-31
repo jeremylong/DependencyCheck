@@ -51,11 +51,11 @@ public class ReportGenerator {
     /**
      * The Velocity Engine.
      */
-    private VelocityEngine engine = null;
+    private VelocityEngine engine;
     /**
      * The Velocity Engine Context.
      */
-    private Context context = null;
+    private Context context;
 
     /**
      * Constructs a new ReportGenerator.
@@ -77,10 +77,11 @@ public class ReportGenerator {
 
     /**
      * Creates a new Velocity Engine.
+     *
      * @return a velocity engine.
      */
     private VelocityEngine createVelocityEngine() {
-        VelocityEngine ve = new VelocityEngine();
+        final VelocityEngine ve = new VelocityEngine();
         ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
         ve.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
         return ve;
@@ -88,12 +89,13 @@ public class ReportGenerator {
 
     /**
      * Creates a new Velocity Context initialized with escape and date tools.
+     *
      * @return a Velocity Context.
      */
     private Context createContext() {
-        ToolManager manager = new ToolManager();
-        Context c = manager.createContext();
-        EasyFactoryConfiguration config = new EasyFactoryConfiguration();
+        final ToolManager manager = new ToolManager();
+        final Context c = manager.createContext();
+        final EasyFactoryConfiguration config = new EasyFactoryConfiguration();
         config.addDefaultTools();
         config.toolbox("application").tool("esc", "org.apache.velocity.tools.generic.EscapeTool").tool("org.apache.velocity.tools.generic.DateTool");
         manager.configure(config);
@@ -110,7 +112,7 @@ public class ReportGenerator {
      * reports.
      */
     public void generateReports(String outputDir, String outputFormat) throws IOException, Exception {
-        if (outputFormat.equalsIgnoreCase("XML")) {
+        if ("XML".equalsIgnoreCase(outputFormat)) {
             generateReport("XmlReport", outputDir + File.separator + "DependencyCheck-Report.xml");
         } else {
             generateReport("HtmlReport", outputDir + File.separator + "DependencyCheck-Report.html");
@@ -130,7 +132,7 @@ public class ReportGenerator {
     public void generateReport(String templateName, String outFileName) throws IOException, Exception {
         InputStream input = null;
         String templatePath = null;
-        File f = new File(templateName);
+        final File f = new File(templateName);
         if (f.exists() && f.isFile()) {
             try {
                 templatePath = templateName;
@@ -146,7 +148,7 @@ public class ReportGenerator {
             throw new IOException("Template file doesn't exist");
         }
 
-        InputStreamReader reader = new InputStreamReader(input, "UTF-8");
+        final InputStreamReader reader = new InputStreamReader(input, "UTF-8");
         OutputStreamWriter writer = null;
         OutputStream outputStream = null;
 

@@ -225,7 +225,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                     if (pom == null) {
                         final NonClosingStream stream = new NonClosingStream(zin);
                         final JAXBElement obj = (JAXBElement) pomUnmarshaller.unmarshal(stream);
-                        pom = (org.owasp.dependencycheck.analyzer.pom.generated.Model) obj.getValue();
+                        pom = (Model) obj.getValue();
                         zin.closeEntry();
                     } else {
                         throw new AnalysisException("JAR file contains multiple pom.xml files - unable to process POM");

@@ -40,12 +40,13 @@ public class SearchVersionAnalyzer extends Analyzer {
     // http://www.codewrecks.com/blog/index.php/2012/08/25/index-your-blog-using-tags-and-lucene-net/
 
     /**
-     * The Lucene Version used
+     * The Lucene Version used.
      */
-    private Version version = null;
+    private Version version;
 
     /**
-     * Creates a new SearchVersionAnalyzer
+     * Creates a new SearchVersionAnalyzer.
+     *
      * @param version the Lucene version
      */
     public SearchVersionAnalyzer(Version version) {
@@ -61,7 +62,7 @@ public class SearchVersionAnalyzer extends Analyzer {
      */
     @Override
     protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
-        Tokenizer source = new WhitespaceTokenizer(version, reader);
+        final Tokenizer source = new WhitespaceTokenizer(version, reader);
         TokenStream stream = source;
         stream = new LowerCaseFilter(version, stream);
         stream = new VersionTokenizingFilter(stream);

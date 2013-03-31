@@ -26,20 +26,35 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 
 /**
- * <p>Takes a TokenStream and adds additional tokens by concatenating pairs of words.</p>
- * <p><b>Example:</b> "Spring Framework Core" -> "Spring SpringFramework Framework FrameworkCore Core".</p>
+ * <p>Takes a TokenStream and adds additional tokens by concatenating pairs of
+ * words.</p>
+ * <p><b>Example:</b> "Spring Framework Core" -> "Spring SpringFramework
+ * Framework FrameworkCore Core".</p>
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public final class TokenPairConcatenatingFilter extends TokenFilter {
 
+    /**
+     * The char term attribute.
+     */
     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
+    /**
+     * The position increment attribute.
+     */
     private final PositionIncrementAttribute posIncAtt = addAttribute(PositionIncrementAttribute.class);
-    private String previousWord = null;
-    private LinkedList<String> words = null;
+    /**
+     * The previous word parsed.
+     */
+    private String previousWord;
+    /**
+     * A list of words parsed.
+     */
+    private LinkedList<String> words;
 
     /**
-     * Constructs a new TokenPairConcatenatingFilter
+     * Constructs a new TokenPairConcatenatingFilter.
+     *
      * @param stream the TokenStream that this filter will process
      */
     public TokenPairConcatenatingFilter(TokenStream stream) {
@@ -60,14 +75,14 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
 
         //collect all the terms into the words collection
         while (input.incrementToken()) {
-            String word = new String(termAtt.buffer(), 0, termAtt.length());
+            final String word = new String(termAtt.buffer(), 0, termAtt.length());
             words.add(word);
         }
 
         //if we have a previousTerm - write it out as its own token concatenated
         // with the current word (if one is available).
         if (previousWord != null && words.size() > 0) {
-            String word = words.getFirst();
+            final String word = words.getFirst();
             clearAttributes();
             termAtt.append(previousWord).append(word);
             posIncAtt.setPositionIncrement(0);
@@ -76,7 +91,7 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
         }
         //if we have words, write it out as a single token
         if (words.size() > 0) {
-            String word = words.removeFirst();
+            final String word = words.removeFirst();
             clearAttributes();
             termAtt.append(word);
             previousWord = word;
@@ -86,9 +101,10 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
     }
 
     /**
-     * <p>Resets the Filter and clears any internal state data that may
-     * have been left-over from previous uses of the Filter.</p>
-     * <p><b>If this Filter is re-used this method must be called between uses.</b></p>
+     * <p>Resets the Filter and clears any internal state data that may have
+     * been left-over from previous uses of the Filter.</p>
+     * <p><b>If this Filter is re-used this method must be called between
+     * uses.</b></p>
      */
     public void clear() {
         previousWord = null;

@@ -25,6 +25,10 @@ package org.owasp.dependencycheck.data.nvdcve;
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 class CorruptDatabaseException extends DatabaseException {
+
+    /**
+     * the serial version uid.
+     */
     private static final long serialVersionUID = 1L;
 
     /**

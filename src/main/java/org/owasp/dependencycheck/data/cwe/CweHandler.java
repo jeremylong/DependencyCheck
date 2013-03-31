@@ -30,6 +30,9 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class CweHandler extends DefaultHandler {
 
+    /**
+     * a hashmap containing the CWE data.
+     */
     private HashMap<String, String> cwe = new HashMap<String, String>();
 
     /**
@@ -44,8 +47,8 @@ public class CweHandler extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
         if ("Weakness".equals(qName) || "Category".equals(qName)) {
-            String id = "CWE-" + attributes.getValue("ID");
-            String name = attributes.getValue("Name");
+            final String id = "CWE-" + attributes.getValue("ID");
+            final String name = attributes.getValue("Name");
             cwe.put(id, name);
         }
     }

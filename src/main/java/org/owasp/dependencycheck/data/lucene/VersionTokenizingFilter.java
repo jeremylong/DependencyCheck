@@ -25,21 +25,27 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
 /**
- * <p>Takes a TokenStream and splits or adds tokens to correctly index version numbers.</p>
- * <p><b>Example:</b> "3.0.0.RELEASE" -> "3 3.0 3.0.0 RELEASE 3.0.0.RELEASE".</p>
+ * <p>Takes a TokenStream and splits or adds tokens to correctly index version
+ * numbers.</p>
+ * <p><b>Example:</b> "3.0.0.RELEASE" -> "3 3.0 3.0.0 RELEASE
+ * 3.0.0.RELEASE".</p>
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public final class VersionTokenizingFilter extends TokenFilter {
 
+    /**
+     * The char term attribute.
+     */
     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
     /**
      * A collection of tokens to add to the stream.
      */
-    protected LinkedList<String> tokens = null;
+    private LinkedList<String> tokens;
 
     /**
-     * Constructs a new VersionTokenizingFilter
+     * Constructs a new VersionTokenizingFilter.
+     *
      * @param stream the TokenStream that this filter will process
      */
     public VersionTokenizingFilter(TokenStream stream) {
@@ -58,8 +64,8 @@ public final class VersionTokenizingFilter extends TokenFilter {
     @Override
     public boolean incrementToken() throws IOException {
         if (tokens.size() == 0 && input.incrementToken()) {
-            String version = new String(termAtt.buffer(), 0, termAtt.length());
-            String[] toAnalyze = version.split("[_-]");
+            final String version = new String(termAtt.buffer(), 0, termAtt.length());
+            final String[] toAnalyze = version.split("[_-]");
             if (toAnalyze.length > 1) { //ensure we analyze the whole string as one too
                 analyzeVersion(version);
             }
@@ -72,23 +78,34 @@ public final class VersionTokenizingFilter extends TokenFilter {
 
     /**
      * Adds a term, if one exists, from the tokens collection.
+     *
      * @return whether or not a new term was added
      */
     private boolean addTerm() {
-        boolean termAdded = tokens.size() > 0;
+        final boolean termAdded = tokens.size() > 0;
         if (termAdded) {
-            String version = tokens.pop();
+            final String version = tokens.pop();
             clearAttributes();
             termAtt.append(version);
         }
         return termAdded;
     }
 
-    //major.minor[.maintenance[.build]]
+    /**
+     * <p>Analyzes the version and adds several copies of the version as
+     * different tokens. For example, the version 1.2.7 would create the tokens
+     * 1 1.2 1.2.7. This is useful in discovering the correct version -
+     * sometimes a maintenance or build number will throw off the version
+     * identification.</p>
+     *
+     * <p>expected&nbsp;format:&nbps;major.minor[.maintenance[.build]]</p>
+     *
+     * @param version the version to analyze
+     */
     private void analyzeVersion(String version) {
         //todo should we also be splitting on dash or underscore? we would need
         //  to incorporate the dash or underscore back in...
-        String[] versionParts = version.split("\\.");
+        final String[] versionParts = version.split("\\.");
         String dottedVersion = null;
         for (String current : versionParts) {
             if (!current.matches("^/d+$")) {
