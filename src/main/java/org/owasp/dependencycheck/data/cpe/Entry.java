@@ -32,6 +32,9 @@ import org.apache.lucene.document.Document;
  */
 public class Entry implements Serializable {
 
+    /**
+     * the serial version uid.
+     */
     static final long serialVersionUID = 8011924485946326934L;
 
     /**
@@ -42,7 +45,7 @@ public class Entry implements Serializable {
      * @return a CPE Entry.
      */
     public static Entry parse(Document doc) {
-        Entry entry = new Entry();
+        final Entry entry = new Entry();
         try {
             entry.parseName(doc.get(Fields.NAME));
         } catch (UnsupportedEncodingException ex) {
@@ -54,10 +57,10 @@ public class Entry implements Serializable {
     /**
      * The name of the CPE entry.
      */
-    protected String name;
+    private String name;
 
     /**
-     * Get the value of name
+     * Get the value of name.
      *
      * @return the value of name
      */
@@ -66,7 +69,7 @@ public class Entry implements Serializable {
     }
 
     /**
-     * Set the value of name
+     * Set the value of name.
      *
      * @param name new value of name
      */
@@ -76,10 +79,10 @@ public class Entry implements Serializable {
     /**
      * The vendor name.
      */
-    protected String vendor;
+    private String vendor;
 
     /**
-     * Get the value of vendor
+     * Get the value of vendor.
      *
      * @return the value of vendor
      */
@@ -88,7 +91,7 @@ public class Entry implements Serializable {
     }
 
     /**
-     * Set the value of vendor
+     * Set the value of vendor.
      *
      * @param vendor new value of vendor
      */
@@ -98,10 +101,10 @@ public class Entry implements Serializable {
     /**
      * The product name.
      */
-    protected String product;
+    private String product;
 
     /**
-     * Get the value of product
+     * Get the value of product.
      *
      * @return the value of product
      */
@@ -110,7 +113,7 @@ public class Entry implements Serializable {
     }
 
     /**
-     * Set the value of product
+     * Set the value of product.
      *
      * @param product new value of product
      */
@@ -120,10 +123,10 @@ public class Entry implements Serializable {
     /**
      * The product version.
      */
-    protected String version;
+    private String version;
 
     /**
-     * Get the value of version
+     * Get the value of version.
      *
      * @return the value of version
      */
@@ -132,7 +135,7 @@ public class Entry implements Serializable {
     }
 
     /**
-     * Set the value of version
+     * Set the value of version.
      *
      * @param version new value of version
      */
@@ -142,10 +145,10 @@ public class Entry implements Serializable {
     /**
      * The product revision.
      */
-    protected String revision;
+    private String revision;
 
     /**
-     * Get the value of revision
+     * Get the value of revision.
      *
      * @return the value of revision
      */
@@ -154,7 +157,7 @@ public class Entry implements Serializable {
     }
 
     /**
-     * Set the value of revision
+     * Set the value of revision.
      *
      * @param revision new value of revision
      */
@@ -164,10 +167,10 @@ public class Entry implements Serializable {
     /**
      * The search score.
      */
-    protected float searchScore;
+    private float searchScore;
 
     /**
-     * Get the value of searchScore
+     * Get the value of searchScore.
      *
      * @return the value of searchScore
      */
@@ -176,7 +179,7 @@ public class Entry implements Serializable {
     }
 
     /**
-     * Set the value of searchScore
+     * Set the value of searchScore.
      *
      * @param searchScore new value of searchScore
      */
@@ -199,7 +202,7 @@ public class Entry implements Serializable {
     public void parseName(String cpeName) throws UnsupportedEncodingException {
         this.name = cpeName;
         if (cpeName != null && cpeName.length() > 7) {
-            String[] data = cpeName.substring(7).split(":");
+            final String[] data = cpeName.substring(7).split(":");
             if (data.length >= 1) {
                 vendor = URLDecoder.decode(data[0], "UTF-8").replaceAll("[_-]", " ");
                 if (data.length >= 2) {

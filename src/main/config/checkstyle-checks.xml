@@ -83,7 +83,7 @@
     </module>
 
     <module name="LeftCurly">
-      <property name="option" value="nlow"/>
+      <property name="option" value="eol"/>
       <property name="tokens" value="CLASS_DEF"/>
       <property name="tokens" value="CTOR_DEF"/>
       <property name="tokens" value="INTERFACE_DEF"/>
@@ -107,7 +107,7 @@
     </module>
 
     <module name="MethodCount">
-      <property name="maxTotal" value="30"/>
+      <property name="maxTotal" value="35"/>
     </module>
 
     <module name="LocalFinalVariableName"/>
@@ -115,7 +115,10 @@
     <module name="MemberName">
       <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
     </module>
-    <module name="MethodLength"/>
+    <module name="MethodLength">
+        <property name="max" value="160"/>
+        <property name="countEmpty" value="false"/>
+    </module>
     <module name="MethodName"/>
     <module name="MethodParamPad"/>
     <module name="ModifierOrder"/>
@@ -182,11 +185,11 @@
     <module name="FinalClass"/>
     <module name="MissingSwitchDefault"/>
     <!--module name="MagicNumber"/-->
-    <module name="Indentation">
+    <!--module name="Indentation">
       <property name="basicOffset" value="4"/>
       <property name="braceAdjustment" value="0"/>
       <property name="caseIndent" value="0"/>
-    </module>
+    </module-->
     <module name="ArrayTrailingComma"/>
     <module name="FinalLocalVariable"/>
     <module name="EqualsAvoidNull"/>
@@ -201,10 +204,12 @@
       <property name="max" value="2"/>
     </module>
     <module name="NestedIfDepth">
-      <property name="max" value="3"/>
+      <property name="max" value="4"/>
     </module>
-    <module name="NestedTryDepth"/>
-    <module name="ExplicitInitialization"/>
+    <module name="NestedTryDepth">
+        <property name="max" value="2"/>
+    </module>
+    <!--module name="ExplicitInitialization"/-->
     <module name="AnnotationUseStyle"/>
     <module name="MissingDeprecated"/>
     <module name="MissingOverride">

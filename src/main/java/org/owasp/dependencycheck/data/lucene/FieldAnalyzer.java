@@ -39,12 +39,13 @@ import org.apache.lucene.util.Version;
 public class FieldAnalyzer extends Analyzer {
 
     /**
-     * The Lucene Version used
+     * The Lucene Version used.
      */
-    private Version version = null;
+    private Version version;
 
     /**
-     * Creates a new FieldAnalyzer
+     * Creates a new FieldAnalyzer.
+     *
      * @param version the Lucene version
      */
     public FieldAnalyzer(Version version) {
@@ -60,7 +61,7 @@ public class FieldAnalyzer extends Analyzer {
      */
     @Override
     protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
-        Tokenizer source = new WhitespaceTokenizer(version, reader);
+        final Tokenizer source = new WhitespaceTokenizer(version, reader);
 
         TokenStream stream = source;
 

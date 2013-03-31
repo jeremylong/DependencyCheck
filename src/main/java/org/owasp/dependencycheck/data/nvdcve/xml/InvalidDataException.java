@@ -25,10 +25,13 @@ package org.owasp.dependencycheck.data.nvdcve.xml;
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public class InvalidDataException extends Exception {
+    /**
+     * the serial version uid.
+     */
     private static final long serialVersionUID = 1L;
 
     /**
-     * Creates an InvalidDataException
+     * Creates an InvalidDataException.
      *
      * @param msg the exception message
      */
@@ -37,7 +40,7 @@ public class InvalidDataException extends Exception {
     }
 
     /**
-     * Creates an InvalidDataException
+     * Creates an InvalidDataException.
      *
      * @param msg the exception message
      * @param ex the cause of the exception

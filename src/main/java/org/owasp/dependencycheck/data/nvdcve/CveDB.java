@@ -48,131 +48,131 @@ public class CveDB {
 
     //<editor-fold defaultstate="collapsed" desc="Constants to create, maintain, and retrieve data from the CVE Database">
     /**
-     * SQL Statement to create an index on the reference table
+     * SQL Statement to create an index on the reference table.
      */
     public static final String CREATE_INDEX_IDXREFERENCE = "CREATE INDEX IF NOT EXISTS idxReference ON reference(cveid)";
     /**
-     * SQL Statement to create an index on the software for finding CVE entries based on CPE data
+     * SQL Statement to create an index on the software for finding CVE entries based on CPE data.
      */
     public static final String CREATE_INDEX_IDXSOFTWARE = "CREATE INDEX IF NOT EXISTS idxSoftware ON software(product, vendor, version)";
     /**
-     * SQL Statement to create an index for retrieving software by CVEID
+     * SQL Statement to create an index for retrieving software by CVEID.
      */
     public static final String CREATE_INDEX_IDXSOFTWARECVE = "CREATE INDEX IF NOT EXISTS idxSoftwareCve ON software(cveid)";
     /**
-     * SQL Statement to create an index on the vulnerability table
+     * SQL Statement to create an index on the vulnerability table.
      */
     public static final String CREATE_INDEX_IDXVULNERABILITY = "CREATE INDEX IF NOT EXISTS idxVulnerability ON vulnerability(cveid)";
     /**
-     * SQL Statement to create the reference table
+     * SQL Statement to create the reference table.
      */
     public static final String CREATE_TABLE_REFERENCE = "CREATE TABLE IF NOT EXISTS reference (cveid CHAR(13), "
             + "name varchar(1000), url varchar(1000), source varchar(255))";
     /**
-     * SQL Statement to create the software table
+     * SQL Statement to create the software table.
      */
     public static final String CREATE_TABLE_SOFTWARE = "CREATE TABLE IF NOT EXISTS software (cveid CHAR(13), cpe varchar(500), "
             + "vendor varchar(255), product varchar(255), version varchar(50), previousVersion varchar(50))";
     /**
-     * SQL Statement to create the vulnerability table
+     * SQL Statement to create the vulnerability table.
      */
     public static final String CREATE_TABLE_VULNERABILITY = "CREATE TABLE IF NOT EXISTS vulnerability (cveid CHAR(13) PRIMARY KEY, "
             + "description varchar(8000), cwe varchar(10), cvssScore DECIMAL(3,1), cvssAccessVector varchar(20), "
             + "cvssAccessComplexity varchar(20), cvssAuthentication varchar(20), cvssConfidentialityImpact varchar(20), "
             + "cvssIntegrityImpact varchar(20), cvssAvailabilityImpact varchar(20))";
     /**
-     * SQL Statement to delete references by CVEID
+     * SQL Statement to delete references by CVEID.
      */
     public static final String DELETE_REFERENCE = "DELETE FROM reference WHERE cveid = ?";
     /**
-     * SQL Statement to delete software by CVEID
+     * SQL Statement to delete software by CVEID.
      */
     public static final String DELETE_SOFTWARE = "DELETE FROM software WHERE cveid = ?";
     /**
-     * SQL Statement to delete a vulnerability by CVEID
+     * SQL Statement to delete a vulnerability by CVEID.
      */
     public static final String DELETE_VULNERABILITY = "DELETE FROM vulnerability WHERE cveid = ?";
     /**
-     * SQL Statement to insert a new reference
+     * SQL Statement to insert a new reference.
      */
     public static final String INSERT_REFERENCE = "INSERT INTO reference (cveid, name, url, source) VALUES (?, ?, ?, ?)";
     /**
-     * SQL Statement to insert a new software
+     * SQL Statement to insert a new software.
      */
     public static final String INSERT_SOFTWARE = "INSERT INTO software (cveid, cpe, vendor, product, version, previousVersion) "
             + "VALUES (?, ?, ?, ?, ?, ?)";
     /**
-     * SQL Statement to insert a new vulnerability
+     * SQL Statement to insert a new vulnerability.
      */
     public static final String INSERT_VULNERABILITY = "INSERT INTO vulnerability (cveid, description, cwe, cvssScore, cvssAccessVector, "
             + "cvssAccessComplexity, cvssAuthentication, cvssConfidentialityImpact, cvssIntegrityImpact, cvssAvailabilityImpact) "
             + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     /**
-     * SQL Statement to find CVE entries based on CPE data
+     * SQL Statement to find CVE entries based on CPE data.
      */
     public static final String SELECT_CVE_FROM_SOFTWARE = "SELECT cveid FROM software WHERE Vendor = ? AND Product = ? AND "
             + "(version = '-' OR previousVersion IS NOT NULL OR version=?)";
     /**
-     * SQL Statement to select references by CVEID
+     * SQL Statement to select references by CVEID.
      */
     public static final String SELECT_REFERENCE = "SELECT source, name, url FROM reference WHERE cveid = ?";
     /**
-     * SQL Statement to select software by CVEID
+     * SQL Statement to select software by CVEID.
      */
     public static final String SELECT_SOFTWARE = "SELECT cpe, previousVersion FROM software WHERE cveid = ?";
     /**
-     * SQL Statement to select a vulnerability by CVEID
+     * SQL Statement to select a vulnerability by CVEID.
      */
     public static final String SELECT_VULNERABILITY = "SELECT cveid, description, cwe, cvssScore, cvssAccessVector, cvssAccessComplexity, "
             + "cvssAuthentication, cvssConfidentialityImpact, cvssIntegrityImpact, cvssAvailabilityImpact FROM vulnerability WHERE cveid = ?";
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Collection of CallableStatements to work with the DB">
     /**
-     * delete reference - parameters (cveid)
+     * delete reference - parameters (cveid).
      */
-    private CallableStatement deleteReferences = null;
+    private CallableStatement deleteReferences;
     /**
-     * delete software - parameters (cveid)
+     * delete software - parameters (cveid).
      */
-    private CallableStatement deleteSoftware = null;
+    private CallableStatement deleteSoftware;
     /**
-     * delete vulnerability - parameters (cveid)
+     * delete vulnerability - parameters (cveid).
      */
-    private CallableStatement deleteVulnerabilities = null;
+    private CallableStatement deleteVulnerabilities;
     /**
-     * insert reference - parameters (cveid, name, url, source)
+     * insert reference - parameters (cveid, name, url, source).
      */
-    private CallableStatement insertReference = null;
+    private CallableStatement insertReference;
     /**
-     * insert software - parameters (cveid, cpe, vendor, product, version, previousVersion)
+     * insert software - parameters (cveid, cpe, vendor, product, version, previousVersion).
      */
-    private CallableStatement insertSoftware = null;
+    private CallableStatement insertSoftware;
     /**
      * insert vulnerability - parameters (cveid, description, cwe, cvssScore, cvssAccessVector,
-     * cvssAccessComplexity, cvssAuthentication, cvssConfidentialityImpact, cvssIntegrityImpact, cvssAvailabilityImpact)
+     * cvssAccessComplexity, cvssAuthentication, cvssConfidentialityImpact, cvssIntegrityImpact, cvssAvailabilityImpact).
      */
-    private CallableStatement insertVulnerability = null;
+    private CallableStatement insertVulnerability;
     /**
-     * select cve from software - parameters (vendor, product, version)
+     * select cve from software - parameters (vendor, product, version).
      */
-    private CallableStatement selectCveFromSoftware = null;
+    private CallableStatement selectCveFromSoftware;
     /**
-     * select vulnerability - parameters (cveid)
+     * select vulnerability - parameters (cveid).
      */
-    private CallableStatement selectVulnerability = null;
+    private CallableStatement selectVulnerability;
     /**
-     * select reference - parameters (cveid)
+     * select reference - parameters (cveid).
      */
-    private CallableStatement selectReferences = null;
+    private CallableStatement selectReferences;
     /**
-     * select software - parameters (cveid)
+     * select software - parameters (cveid).
      */
-    private CallableStatement selectSoftware = null;
+    private CallableStatement selectSoftware;
     //</editor-fold>
     /**
      * Database connection
      */
-    protected Connection conn = null;
+    private Connection conn;
 
     /**
      * Opens the database connection. If the database does not exist, it will
@@ -183,12 +183,12 @@ public class CveDB {
      * @throws DatabaseException thrown if there is an error initializing a new database
      */
     public void open() throws IOException, SQLException, DatabaseException {
-        String fileName = CveDB.getDataDirectory().getCanonicalPath()
+        final String fileName = CveDB.getDataDirectory().getCanonicalPath()
                 + File.separator
                 + "cve";
-        File f = new File(fileName);
-        boolean createTables = !f.exists();
-        String connStr = "jdbc:h2:file:" + fileName;
+        final File f = new File(fileName);
+        final boolean createTables = !f.exists();
+        final String connStr = "jdbc:h2:file:" + fileName;
         conn = DriverManager.getConnection(connStr, "sa", "");
         if (createTables) {
             createTables();
@@ -236,7 +236,7 @@ public class CveDB {
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, null, ex);
         }
-        List<Vulnerability> vulnerabilities = new ArrayList<Vulnerability>();
+        final List<Vulnerability> vulnerabilities = new ArrayList<Vulnerability>();
 
         try {
             selectCveFromSoftware.setString(1, cpe.getVendor());
@@ -244,7 +244,7 @@ public class CveDB {
             selectCveFromSoftware.setString(3, cpe.getVersion());
             rs = selectCveFromSoftware.executeQuery();
             while (rs.next()) {
-                Vulnerability v = getVulnerability(rs.getString("cveid"));
+                final Vulnerability v = getVulnerability(rs.getString("cveid"));
                 vulnerabilities.add(v);
             }
         } catch (SQLException ex) {
@@ -261,6 +261,13 @@ public class CveDB {
         return vulnerabilities;
     }
 
+    /**
+     * Gets a vulnerability for the provided CVE.
+     *
+     * @param cve the CVE to lookup
+     * @return a vulnerability object
+     * @throws DatabaseException if an exception occurs
+     */
     private Vulnerability getVulnerability(String cve) throws DatabaseException {
         ResultSet rsV = null;
         ResultSet rsR = null;
@@ -275,7 +282,7 @@ public class CveDB {
                 vuln.setDescription(rsV.getString(2));
                 String cwe = rsV.getString(3);
                 if (cwe != null) {
-                    String name = CweDB.getCweName(cwe);
+                    final String name = CweDB.getCweName(cwe);
                     if (name != null) {
                         cwe += " " + name;
                     }
@@ -297,8 +304,8 @@ public class CveDB {
                 selectSoftware.setString(1, cve);
                 rsS = selectSoftware.executeQuery();
                 while (rsS.next()) {
-                    String cpe = rsS.getString(1);
-                    String prevVers = rsS.getString(2);
+                    final String cpe = rsS.getString(1);
+                    final String prevVers = rsS.getString(2);
                     if (prevVers == null) {
                         vuln.addVulnerableSoftware(cpe);
                     } else {
@@ -399,9 +406,9 @@ public class CveDB {
      * @throws IOException is thrown if an IOException occurs of course...
      */
     public static File getDataDirectory() throws IOException {
-        String fileName = Settings.getString(Settings.KEYS.CVE_INDEX);
-        String filePath = CveDB.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        String decodedPath = URLDecoder.decode(filePath, "UTF-8");
+        final String fileName = Settings.getString(Settings.KEYS.CVE_INDEX);
+        final String filePath = CveDB.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        final String decodedPath = URLDecoder.decode(filePath, "UTF-8");
         File exePath = new File(decodedPath);
 
         if (exePath.getName().toLowerCase().endsWith(".jar")) {
@@ -450,7 +457,7 @@ public class CveDB {
 
     /**
      * Builds the CallableStatements used by the application.
-     * @throws DatabaseException
+     * @throws DatabaseException thrown if there is a database exception
      */
     private void buildStatements() throws DatabaseException {
         try {

@@ -60,7 +60,7 @@ public class CPEAnalyzer implements org.owasp.dependencycheck.analyzer.Analyzer 
      * utilized within the CPE Names.
      */
     static final String CLEANSE_CHARACTER_RX = "[^A-Za-z0-9 ._-]";
-    /*
+    /**
      * A string representation of a regular expression used to remove all but
      * alpha characters.
      */
@@ -73,7 +73,7 @@ public class CPEAnalyzer implements org.owasp.dependencycheck.analyzer.Analyzer 
     /**
      * The CPE Index.
      */
-    protected Index cpe = null;
+    private Index cpe;
 
     /**
      * Opens the data source.
@@ -137,7 +137,7 @@ public class CPEAnalyzer implements org.owasp.dependencycheck.analyzer.Analyzer 
         boolean found = false;
         int ctr = 0;
         do {
-            List<Entry> entries = searchCPE(vendors, products, versions, dependency.getProductEvidence().getWeighting(),
+            final List<Entry> entries = searchCPE(vendors, products, versions, dependency.getProductEvidence().getWeighting(),
                     dependency.getVendorEvidence().getWeighting());
 
 
@@ -197,8 +197,8 @@ public class CPEAnalyzer implements org.owasp.dependencycheck.analyzer.Analyzer 
      * @return the new evidence text
      */
     private String addEvidenceWithoutDuplicateTerms(final String text, final EvidenceCollection ec, Confidence confidenceFilter) {
-        String txt = (text == null) ? "" : text;
-        StringBuilder sb = new StringBuilder(txt.length() + (20 * ec.size()));
+        final String txt = (text == null) ? "" : text;
+        final StringBuilder sb = new StringBuilder(txt.length() + (20 * ec.size()));
         sb.append(txt);
         for (Evidence e : ec.iterator(confidenceFilter)) {
             String value = e.getValue();
@@ -255,17 +255,17 @@ public class CPEAnalyzer implements org.owasp.dependencycheck.analyzer.Analyzer 
     protected List<Entry> searchCPE(String vendor, String product, String version,
             Set<String> vendorWeightings, Set<String> productWeightings)
             throws CorruptIndexException, IOException, ParseException {
-        ArrayList<Entry> ret = new ArrayList<Entry>(MAX_QUERY_RESULTS);
+        final ArrayList<Entry> ret = new ArrayList<Entry>(MAX_QUERY_RESULTS);
 
-        String searchString = buildSearch(vendor, product, version, vendorWeightings, productWeightings);
+        final String searchString = buildSearch(vendor, product, version, vendorWeightings, productWeightings);
         if (searchString == null) {
             return ret;
         }
 
-        TopDocs docs = cpe.search(searchString, MAX_QUERY_RESULTS);
+        final TopDocs docs = cpe.search(searchString, MAX_QUERY_RESULTS);
         for (ScoreDoc d : docs.scoreDocs) {
-            Document doc = cpe.getDocument(d.doc);
-            Entry entry = Entry.parse(doc);
+            final Document doc = cpe.getDocument(d.doc);
+            final Entry entry = Entry.parse(doc);
             entry.setSearchScore(d.score);
             if (!ret.contains(entry)) {
                 ret.add(entry);
@@ -294,7 +294,7 @@ public class CPEAnalyzer implements org.owasp.dependencycheck.analyzer.Analyzer 
     protected String buildSearch(String vendor, String product, String version,
             Set<String> vendorWeighting, Set<String> productWeightings) {
 
-        StringBuilder sb = new StringBuilder(vendor.length() + product.length()
+        final StringBuilder sb = new StringBuilder(vendor.length() + product.length()
                 + version.length() + Fields.PRODUCT.length() + Fields.VERSION.length()
                 + Fields.VENDOR.length() + STRING_BUILDER_BUFFER);
 
@@ -349,7 +349,7 @@ public class CPEAnalyzer implements org.owasp.dependencycheck.analyzer.Analyzer 
         //TODO add a mutator or special analyzer that combines words next to each other and adds them as a key.
         sb.append(" ").append(field).append(":( ");
 
-        String cleanText = cleanseText(searchText);
+        final String cleanText = cleanseText(searchText);
 
         if ("".equals(cleanText)) {
             return false;
@@ -358,12 +358,12 @@ public class CPEAnalyzer implements org.owasp.dependencycheck.analyzer.Analyzer 
         if (weightedText == null || weightedText.isEmpty()) {
             LuceneUtils.appendEscapedLuceneQuery(sb, cleanText);
         } else {
-            StringTokenizer tokens = new StringTokenizer(cleanText);
+            final StringTokenizer tokens = new StringTokenizer(cleanText);
             while (tokens.hasMoreElements()) {
-                String word = tokens.nextToken();
+                final String word = tokens.nextToken();
                 String temp = null;
                 for (String weighted : weightedText) {
-                    String weightedStr = cleanseText(weighted);
+                    final String weightedStr = cleanseText(weighted);
                     if (equalsIgnoreCaseAndNonAlpha(word, weightedStr)) {
                         temp = LuceneUtils.escapeLuceneQuery(word) + WEIGHTING_BOOST;
                         if (!word.equalsIgnoreCase(weightedStr)) {
@@ -405,8 +405,8 @@ public class CPEAnalyzer implements org.owasp.dependencycheck.analyzer.Analyzer 
             return false;
         }
 
-        String left = l.replaceAll(CLEANSE_NONALPHA_RX, "");
-        String right = r.replaceAll(CLEANSE_NONALPHA_RX, "");
+        final String left = l.replaceAll(CLEANSE_NONALPHA_RX, "");
+        final String right = r.replaceAll(CLEANSE_NONALPHA_RX, "");
         return left.equalsIgnoreCase(right);
     }
 
@@ -422,16 +422,23 @@ public class CPEAnalyzer implements org.owasp.dependencycheck.analyzer.Analyzer 
     private boolean verifyEntry(final Entry entry, final Dependency dependency) {
         boolean isValid = false;
 
-        if (collectionContainsStrings(dependency.getProductEvidence(), entry.getProduct())
-                && collectionContainsStrings(dependency.getVendorEvidence(), entry.getVendor())
-                && collectionContainsStrings(dependency.getVersionEvidence(), entry.getVersion())) {
+        if (collectionContainsString(dependency.getProductEvidence(), entry.getProduct())
+                && collectionContainsString(dependency.getVendorEvidence(), entry.getVendor())
+                && collectionContainsString(dependency.getVersionEvidence(), entry.getVersion())) {
             isValid = true;
         }
         return isValid;
     }
 
-    private boolean collectionContainsStrings(EvidenceCollection ec, String text) {
-        String[] words = text.split("[\\s_-]");
+    /**
+     * Used to determine if the EvidenceCollection contains a specific string.
+     *
+     * @param ec an EvidenceCollection
+     * @param text the text to search for
+     * @return whether or not the EvidenceCollection contains the string
+     */
+    private boolean collectionContainsString(EvidenceCollection ec, String text) {
+        final String[] words = text.split("[\\s_-]");
         boolean contains = true;
         for (String word : words) {
             contains &= ec.containsUsedString(word);

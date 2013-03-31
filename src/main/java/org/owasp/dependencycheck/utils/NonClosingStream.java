@@ -22,17 +22,17 @@ import java.io.FilterInputStream;
 import java.io.InputStream;
 
 /**
- * NonClosingStream is a stream filter which prevents
- * another class that processes the stream from closing
- * it. This is necessary when dealing with things like
- * JAXB and zipInputStreams.
+ * NonClosingStream is a stream filter which prevents another class that
+ * processes the stream from closing it. This is necessary when dealing with
+ * things like JAXB and zipInputStreams.
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
 public class NonClosingStream extends FilterInputStream {
 
     /**
-     * Constructs a new NonClosingStream
+     * Constructs a new NonClosingStream.
+     *
      * @param in an input stream.
      */
     public NonClosingStream(InputStream in) {

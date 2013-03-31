@@ -52,10 +52,10 @@ public class Identifier {
     /**
      * The value of the identifier
      */
-    protected String value;
+    private String value;
 
     /**
-     * Get the value of value
+     * Get the value of value.
      *
      * @return the value of value
      */
@@ -64,7 +64,7 @@ public class Identifier {
     }
 
     /**
-     * Set the value of value
+     * Set the value of value.
      *
      * @param value new value of value
      */
@@ -73,12 +73,12 @@ public class Identifier {
     }
 
     /**
-     * The url for the identifier
+     * The url for the identifier.
      */
-    protected String url;
+    private String url;
 
     /**
-     * Get the value of url
+     * Get the value of url.
      *
      * @return the value of url
      */
@@ -87,7 +87,7 @@ public class Identifier {
     }
 
     /**
-     * Set the value of url
+     * Set the value of url.
      *
      * @param url new value of url
      */
@@ -95,12 +95,12 @@ public class Identifier {
         this.url = url;
     }
     /**
-     * The type of the identifier
+     * The type of the identifier.
      */
-    protected String type;
+    private String type;
 
     /**
-     * Get the value of type
+     * Get the value of type.
      *
      * @return the value of type
      */
@@ -119,10 +119,10 @@ public class Identifier {
     /**
      * A description of the identifier.
      */
-    protected String description;
+    private String description;
 
     /**
-     * Get the value of description
+     * Get the value of description.
      *
      * @return the value of description
      */
@@ -131,7 +131,7 @@ public class Identifier {
     }
 
     /**
-     * Set the value of description
+     * Set the value of description.
      *
      * @param description new value of description
      */

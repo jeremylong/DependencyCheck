@@ -75,7 +75,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
      */
     private static final String LAST_UPDATED_BASE = "lastupdated.";
     /**
-     * The current version of the database
+     * The current version of the database.
      */
     public static final String DATABASE_VERSION = "2.2";
 
@@ -87,7 +87,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
      */
     public void update() throws UpdateException {
         try {
-            Map<String, NvdCveUrl> update = updateNeeded();
+            final Map<String, NvdCveUrl> update = updateNeeded();
             int maxUpdates = 0;
             for (NvdCveUrl cve : update.values()) {
                 if (cve.getNeedsUpdate()) {
@@ -164,6 +164,11 @@ public class DatabaseUpdater implements CachedWebDataSource {
      *
      * @param file the file containing the NVD CVE XML
      * @param oldVersion contains the file containing the NVD CVE XML 1.2
+     * @throws ParserConfigurationException is thrown if there is a parserconfigurationexception
+     * @throws SAXException is thrown if there is a saxexception
+     * @throws IOException is thrown if there is a ioexception
+     * @throws SQLException is thrown if there is a sql exception
+     * @throws DatabaseException is thrown if there is a database exception
      */
     private void importXML(File file, File oldVersion)
             throws ParserConfigurationException, SAXException, IOException, SQLException, DatabaseException {
@@ -177,12 +182,12 @@ public class DatabaseUpdater implements CachedWebDataSource {
             cpeIndex = new Index();
             cpeIndex.openIndexWriter();
 
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            SAXParser saxParser = factory.newSAXParser();
+            final SAXParserFactory factory = SAXParserFactory.newInstance();
+            final SAXParser saxParser = factory.newSAXParser();
 
             NvdCve12Handler cve12Handler = new NvdCve12Handler();
             saxParser.parse(oldVersion, cve12Handler);
-            Map<String, List<VulnerableSoftware>> prevVersionVulnMap = cve12Handler.getVulnerabilities();
+            final Map<String, List<VulnerableSoftware>> prevVersionVulnMap = cve12Handler.getVulnerabilities();
             cve12Handler = null;
 
             NvdCve20Handler cve20Handler = new NvdCve20Handler();
@@ -209,19 +214,19 @@ public class DatabaseUpdater implements CachedWebDataSource {
      * Writes a properties file containing the last updated date to the
      * VULNERABLE_CPE directory.
      *
-     * @param updated a map of the updated nvdcve.
+     * @param updated a map of the updated nvdcve
+     * @throws UpdateException is thrown if there is an update exception
      */
     private void writeLastUpdatedPropertyFile(Map<String, NvdCveUrl> updated) throws UpdateException {
         String dir;
         try {
-
             dir = CveDB.getDataDirectory().getCanonicalPath();
         } catch (IOException ex) {
             Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.SEVERE, null, ex);
             throw new UpdateException("Unable to locate last updated properties file.", ex);
         }
-        File cveProp = new File(dir + File.separatorChar + UPDATE_PROPERTIES_FILE);
-        Properties prop = new Properties();
+        final File cveProp = new File(dir + File.separatorChar + UPDATE_PROPERTIES_FILE);
+        final Properties prop = new Properties();
         prop.put("version", DATABASE_VERSION);
         for (NvdCveUrl cve : updated.values()) {
             prop.put(LAST_UPDATED_BASE + cve.id, String.valueOf(cve.getTimestamp()));
@@ -288,11 +293,11 @@ public class DatabaseUpdater implements CachedWebDataSource {
             throw new UpdateException("Unable to locate last updated properties file.", ex);
         }
 
-        File f = new File(dir);
+        final File f = new File(dir);
         if (f.exists()) {
-            File cveProp = new File(dir + File.separatorChar + UPDATE_PROPERTIES_FILE);
+            final File cveProp = new File(dir + File.separatorChar + UPDATE_PROPERTIES_FILE);
             if (cveProp.exists()) {
-                Properties prop = new Properties();
+                final Properties prop = new Properties();
                 InputStream is = null;
                 try {
                     is = new FileInputStream(cveProp);
@@ -306,7 +311,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
                     } else {
                         try {
                             version = Float.parseFloat(prop.getProperty("version"));
-                            float currentVersion = Float.parseFloat(DATABASE_VERSION);
+                            final float currentVersion = Float.parseFloat(DATABASE_VERSION);
                             if (currentVersion > version) {
                                 deleteAndRecreate = true;
                             }
@@ -321,16 +326,16 @@ public class DatabaseUpdater implements CachedWebDataSource {
                         FileUtils.delete(f);
 
                         //this importer also updates the CPE index and it is also using an old version
-                        org.owasp.dependencycheck.data.cpe.Index cpeid = new org.owasp.dependencycheck.data.cpe.Index();
-                        File cpeDir = cpeid.getDataDirectory();
+                        final org.owasp.dependencycheck.data.cpe.Index cpeid = new org.owasp.dependencycheck.data.cpe.Index();
+                        final File cpeDir = cpeid.getDataDirectory();
                         FileUtils.delete(cpeDir);
                         return currentlyPublished;
                     }
 
-                    long lastUpdated = Long.parseLong(prop.getProperty(LAST_UPDATED_MODIFIED));
-                    Date now = new Date();
-                    int days = Settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS);
-                    int maxEntries = Settings.getInt(Settings.KEYS.CVE_URL_COUNT);
+                    final long lastUpdated = Long.parseLong(prop.getProperty(LAST_UPDATED_MODIFIED));
+                    final Date now = new Date();
+                    final int days = Settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS);
+                    final int maxEntries = Settings.getInt(Settings.KEYS.CVE_URL_COUNT);
                     if (lastUpdated == currentlyPublished.get("modified").timestamp) {
                         currentlyPublished.clear(); //we don't need to update anything.
                     } else if (withinRange(lastUpdated, now.getTime(), days)) {
@@ -341,7 +346,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
                     } else { //we figure out which of the several XML files need to be downloaded.
                         currentlyPublished.get("modified").setNeedsUpdate(false);
                         for (int i = 1; i <= maxEntries; i++) {
-                            NvdCveUrl cve = currentlyPublished.get(String.valueOf(i));
+                            final NvdCveUrl cve = currentlyPublished.get(String.valueOf(i));
                             long currentTimestamp = 0;
                             try {
                                 currentTimestamp = Long.parseLong(prop.getProperty(LAST_UPDATED_BASE + String.valueOf(i), "0"));
@@ -386,7 +391,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
      * @return whether or not the date is within the range.
      */
     private boolean withinRange(long date, long compareTo, int range) {
-        double differenceInDays = (compareTo - date) / 1000.0 / 60.0 / 60.0 / 24.0;
+        final double differenceInDays = (compareTo - date) / 1000.0 / 60.0 / 60.0 / 24.0;
         return differenceInDays < range;
     }
 
@@ -405,7 +410,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
     protected Map<String, NvdCveUrl> retrieveCurrentTimestampsFromWeb()
             throws MalformedURLException, DownloadFailedException, InvalidDataException, InvalidSettingException {
 
-        Map<String, NvdCveUrl> map = new HashMap<String, NvdCveUrl>();
+        final Map<String, NvdCveUrl> map = new HashMap<String, NvdCveUrl>();
         String retrieveUrl = Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL);
 
         NvdCveUrl item = new NvdCveUrl();
@@ -417,7 +422,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
         item.timestamp = Downloader.getLastModified(new URL(retrieveUrl));
         map.put("modified", item);
 
-        int max = Settings.getInt(Settings.KEYS.CVE_URL_COUNT);
+        final int max = Settings.getInt(Settings.KEYS.CVE_URL_COUNT);
         for (int i = 1; i <= max; i++) {
             retrieveUrl = Settings.getString(Settings.KEYS.CVE_BASE_URL + Settings.KEYS.CVE_SCHEMA_2_0 + i);
             item = new NvdCveUrl();
@@ -442,7 +447,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
         private String id;
 
         /**
-         * Get the value of id
+         * Get the value of id.
          *
          * @return the value of id
          */
@@ -451,7 +456,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
         }
 
         /**
-         * Set the value of id
+         * Set the value of id.
          *
          * @param id new value of id
          */
@@ -464,7 +469,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
         private String url;
 
         /**
-         * Get the value of url
+         * Get the value of url.
          *
          * @return the value of url
          */
@@ -473,7 +478,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
         }
 
         /**
-         * Set the value of url
+         * Set the value of url.
          *
          * @param url new value of url
          */
@@ -481,12 +486,12 @@ public class DatabaseUpdater implements CachedWebDataSource {
             this.url = url;
         }
         /**
-         * The 1.2 schema URL
+         * The 1.2 schema URL.
          */
-        protected String oldSchemaVersionUrl;
+        private String oldSchemaVersionUrl;
 
         /**
-         * Get the value of oldSchemaVersionUrl
+         * Get the value of oldSchemaVersionUrl.
          *
          * @return the value of oldSchemaVersionUrl
          */
@@ -495,7 +500,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
         }
 
         /**
-         * Set the value of oldSchemaVersionUrl
+         * Set the value of oldSchemaVersionUrl.
          *
          * @param oldSchemaVersionUrl new value of oldSchemaVersionUrl
          */
@@ -510,7 +515,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
         private long timestamp;
 
         /**
-         * Get the value of timestamp - epoch time
+         * Get the value of timestamp - epoch time.
          *
          * @return the value of timestamp - epoch time
          */
@@ -519,7 +524,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
         }
 
         /**
-         * Set the value of timestamp - epoch time
+         * Set the value of timestamp - epoch time.
          *
          * @param timestamp new value of timestamp - epoch time
          */
@@ -532,7 +537,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
         private boolean needsUpdate = true;
 
         /**
-         * Get the value of needsUpdate
+         * Get the value of needsUpdate.
          *
          * @return the value of needsUpdate
          */
@@ -541,7 +546,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
         }
 
         /**
-         * Set the value of needsUpdate
+         * Set the value of needsUpdate.
          *
          * @param needsUpdate new value of needsUpdate
          */

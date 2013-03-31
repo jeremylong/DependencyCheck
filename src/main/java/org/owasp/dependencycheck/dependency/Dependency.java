@@ -44,43 +44,43 @@ public class Dependency {
     /**
      * The actual file path of the dependency on disk.
      */
-    private String actualFilePath = null;
+    private String actualFilePath;
     /**
      * The file path to display.
      */
-    private String filePath = null;
+    private String filePath;
     /**
      * The file name of the dependency.
      */
-    private String fileName = null;
+    private String fileName;
     /**
      * The file extension of the dependency.
      */
-    private String fileExtension = null;
+    private String fileExtension;
     /**
      * The md5 hash of the dependency.
      */
-    private String md5sum = null;
+    private String md5sum;
     /**
      * The SHA1 hash of the dependency.
      */
-    private String sha1sum = null;
+    private String sha1sum;
     /**
      * A list of Identifiers.
      */
-    private List<Identifier> identifiers = null;
+    private List<Identifier> identifiers;
     /**
      * A collection of vendor evidence.
      */
-    protected EvidenceCollection vendorEvidence = null;
+    private EvidenceCollection vendorEvidence;
     /**
      * A collection of product evidence.
      */
-    protected EvidenceCollection productEvidence = null;
+    private EvidenceCollection productEvidence;
     /**
      * A collection of version evidence.
      */
-    protected EvidenceCollection versionEvidence = null;
+    private EvidenceCollection versionEvidence;
 
     /**
      * Constructs a new Dependency object.
@@ -244,7 +244,7 @@ public class Dependency {
      * @param url the URL of the identifier.
      */
     public void addIdentifier(String type, String value, String url) {
-        Identifier i = new Identifier(type, value, url);
+        final Identifier i = new Identifier(type, value, url);
         this.identifiers.add(i);
     }
 
@@ -295,10 +295,10 @@ public class Dependency {
     /**
      * A list of exceptions that occurred during analysis of this dependency.
      */
-    protected List<Exception> analysisExceptions = new ArrayList<Exception>();
+    private List<Exception> analysisExceptions = new ArrayList<Exception>();
 
     /**
-     * Get the value of analysisExceptions
+     * Get the value of analysisExceptions.
      *
      * @return the value of analysisExceptions
      */
@@ -307,7 +307,7 @@ public class Dependency {
     }
 
     /**
-     * Set the value of analysisExceptions
+     * Set the value of analysisExceptions.
      *
      * @param analysisExceptions new value of analysisExceptions
      */
@@ -326,10 +326,10 @@ public class Dependency {
     /**
      * The description of the JAR file.
      */
-    protected String description;
+    private String description;
 
     /**
-     * Get the value of description
+     * Get the value of description.
      *
      * @return the value of description
      */
@@ -338,7 +338,7 @@ public class Dependency {
     }
 
     /**
-     * Set the value of description
+     * Set the value of description.
      *
      * @param description new value of description
      */
@@ -351,7 +351,7 @@ public class Dependency {
     private String license;
 
     /**
-     * Get the value of license
+     * Get the value of license.
      *
      * @return the value of license
      */
@@ -360,7 +360,7 @@ public class Dependency {
     }
 
     /**
-     * Set the value of license
+     * Set the value of license.
      *
      * @param license new value of license
      */
@@ -392,12 +392,12 @@ public class Dependency {
         return false;
     }
     /**
-     * A list of vulnerabilities for this dependency
+     * A list of vulnerabilities for this dependency.
      */
     private SortedSet<Vulnerability> vulnerabilities;
 
     /**
-     * Get the list of vulnerabilities
+     * Get the list of vulnerabilities.
      *
      * @return the list of vulnerabilities
      */
@@ -406,7 +406,7 @@ public class Dependency {
     }
 
     /**
-     * Set the value of vulnerabilities
+     * Set the value of vulnerabilities.
      *
      * @param vulnerabilities new value of vulnerabilities
      */
@@ -414,6 +414,11 @@ public class Dependency {
         this.vulnerabilities = vulnerabilities;
     }
 
+    /**
+     * Determines the sha1 and md5 sum for the given file.
+     *
+     * @param file the file to create checksums for
+     */
     private void determineHashes(File file) {
         String md5 = null;
         String sha1 = null;

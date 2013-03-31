@@ -57,9 +57,8 @@ public class Index extends AbstractIndex {
      * @throws IOException is thrown if an IOException occurs.
      */
     public Directory getDirectory() throws IOException {
-        File path = getDataDirectory();
-        Directory dir = FSDirectory.open(path);
-
+        final File path = getDataDirectory();
+        final Directory dir = FSDirectory.open(path);
         return dir;
     }
 
@@ -71,9 +70,9 @@ public class Index extends AbstractIndex {
      * @throws IOException is thrown if an IOException occurs of course...
      */
     public File getDataDirectory() throws IOException {
-        String fileName = Settings.getString(Settings.KEYS.CPE_INDEX);
-        String filePath = Index.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        String decodedPath = URLDecoder.decode(filePath, "UTF-8");
+        final String fileName = Settings.getString(Settings.KEYS.CPE_INDEX);
+        final String filePath = Index.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        final String decodedPath = URLDecoder.decode(filePath, "UTF-8");
         File exePath = new File(decodedPath);
         if (exePath.getName().toLowerCase().endsWith(".jar")) {
             exePath = exePath.getParentFile();
@@ -97,19 +96,25 @@ public class Index extends AbstractIndex {
      */
     @SuppressWarnings("unchecked")
     public Analyzer createIndexingAnalyzer() {
-        Map fieldAnalyzers = new HashMap();
+        final Map fieldAnalyzers = new HashMap();
 
         //fieldAnalyzers.put(Fields.VERSION, new KeywordAnalyzer());
         fieldAnalyzers.put(Fields.VERSION, new VersionAnalyzer(Version.LUCENE_40));
         fieldAnalyzers.put(Fields.NAME, new KeywordAnalyzer());
 
-        PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(
+        final PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(
                 new FieldAnalyzer(Version.LUCENE_40), fieldAnalyzers);
 
         return wrapper;
     }
-    private SearchFieldAnalyzer productSearchFieldAnalyzer = null;
-    private SearchFieldAnalyzer vendorSearchFieldAnalyzer = null;
+    /**
+     * The search field analyzer for the product field.
+     */
+    private SearchFieldAnalyzer productSearchFieldAnalyzer;
+    /**
+     * The search field analyzer for the vendor field.
+     */
+    private SearchFieldAnalyzer vendorSearchFieldAnalyzer;
 
     /**
      * Creates an Analyzer for searching the CPE Index.
@@ -118,7 +123,7 @@ public class Index extends AbstractIndex {
      */
     @SuppressWarnings("unchecked")
     public Analyzer createSearchingAnalyzer() {
-        Map fieldAnalyzers = new HashMap();
+        final Map fieldAnalyzers = new HashMap();
 
         fieldAnalyzers.put(Fields.NAME, new KeywordAnalyzer());
         //fieldAnalyzers.put(Fields.VERSION, new KeywordAnalyzer());
@@ -128,14 +133,15 @@ public class Index extends AbstractIndex {
         fieldAnalyzers.put(Fields.PRODUCT, productSearchFieldAnalyzer);
         fieldAnalyzers.put(Fields.VENDOR, vendorSearchFieldAnalyzer);
 
-        PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(
+        final PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(
                 new FieldAnalyzer(Version.LUCENE_40), fieldAnalyzers);
 
         return wrapper;
     }
 
     /**
-     * Creates the Lucene QueryParser used when querying the index
+     * Creates the Lucene QueryParser used when querying the index.
+     *
      * @return a QueryParser.
      */
     public QueryParser createQueryParser() {
@@ -162,10 +168,10 @@ public class Index extends AbstractIndex {
      * @throws IOException is thrown if an IOException occurs.
      */
     public void saveEntry(Entry entry) throws CorruptIndexException, IOException {
-        Document doc = convertEntryToDoc(entry);
+        final Document doc = convertEntryToDoc(entry);
         //Term term = new Term(Fields.NVDID, LuceneUtils.escapeLuceneQuery(entry.getNvdId()));
-        Term term = new Term(Fields.NAME, entry.getName());
-        indexWriter.updateDocument(term, doc);
+        final Term term = new Term(Fields.NAME, entry.getName());
+        getIndexWriter().updateDocument(term, doc);
     }
 
     /**
@@ -175,16 +181,16 @@ public class Index extends AbstractIndex {
      * @return a Lucene Document containing a CPE Entry.
      */
     protected Document convertEntryToDoc(Entry entry) {
-        Document doc = new Document();
+        final Document doc = new Document();
 
-        Field name = new StoredField(Fields.NAME, entry.getName());
+        final Field name = new StoredField(Fields.NAME, entry.getName());
         doc.add(name);
 
-        Field vendor = new TextField(Fields.VENDOR, entry.getVendor(), Field.Store.NO);
+        final Field vendor = new TextField(Fields.VENDOR, entry.getVendor(), Field.Store.NO);
         vendor.setBoost(5.0F);
         doc.add(vendor);
 
-        Field product = new TextField(Fields.PRODUCT, entry.getProduct(), Field.Store.NO);
+        final Field product = new TextField(Fields.PRODUCT, entry.getProduct(), Field.Store.NO);
         product.setBoost(5.0F);
         doc.add(product);
 

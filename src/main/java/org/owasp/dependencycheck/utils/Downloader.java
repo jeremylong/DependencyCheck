@@ -38,7 +38,7 @@ import java.util.zip.InflaterInputStream;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class Downloader {
+public final class Downloader {
 
     /**
      * Private constructor for utility class.
@@ -69,7 +69,7 @@ public class Downloader {
      * downloading the file.
      */
     public static void fetchFile(URL url, String outputPath, boolean unzip) throws DownloadFailedException {
-        File f = new File(outputPath);
+        final File f = new File(outputPath);
         fetchFile(url, f, unzip);
     }
 
@@ -111,7 +111,7 @@ public class Downloader {
             }
             throw new DownloadFailedException("Error downloading file.", ex);
         }
-        String encoding = conn.getContentEncoding();
+        final String encoding = conn.getContentEncoding();
 
         BufferedOutputStream writer = null;
         InputStream reader = null;
@@ -125,7 +125,7 @@ public class Downloader {
             }
 
             writer = new BufferedOutputStream(new FileOutputStream(outputPath));
-            byte[] buffer = new byte[4096];
+            final byte[] buffer = new byte[4096];
             int bytesRead = 0;
             while ((bytesRead = reader.read(buffer)) > 0) {
                 writer.write(buffer, 0, bytesRead);
@@ -201,18 +201,18 @@ public class Downloader {
     private static HttpURLConnection getConnection(URL url) throws DownloadFailedException {
         HttpURLConnection conn = null;
         Proxy proxy = null;
-        String proxyUrl = Settings.getString(Settings.KEYS.PROXY_URL);
+        final String proxyUrl = Settings.getString(Settings.KEYS.PROXY_URL);
         try {
             if (proxyUrl != null) {
-                int proxyPort = Settings.getInt(Settings.KEYS.PROXY_PORT);
-                SocketAddress addr = new InetSocketAddress(proxyUrl, proxyPort);
+                final int proxyPort = Settings.getInt(Settings.KEYS.PROXY_PORT);
+                final SocketAddress addr = new InetSocketAddress(proxyUrl, proxyPort);
                 proxy = new Proxy(Proxy.Type.HTTP, addr);
                 conn = (HttpURLConnection) url.openConnection(proxy);
             } else {
                 conn = (HttpURLConnection) url.openConnection();
             }
             if (Settings.getString(Settings.KEYS.CONNECTION_TIMEOUT) != null) {
-                int timeout = Settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT);
+                final int timeout = Settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT);
                 conn.setConnectTimeout(timeout);
             }
         } catch (IOException ex) {

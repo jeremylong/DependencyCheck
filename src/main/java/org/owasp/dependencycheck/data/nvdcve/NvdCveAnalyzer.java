@@ -45,7 +45,7 @@ public class NvdCveAnalyzer implements org.owasp.dependencycheck.analyzer.Analyz
     /**
      * The CVE Index.
      */
-    protected CveDB cveDB = null;
+    private CveDB cveDB;
 
     /**
      * Opens the data source.
@@ -102,8 +102,8 @@ public class NvdCveAnalyzer implements org.owasp.dependencycheck.analyzer.Analyz
         for (Identifier id : dependency.getIdentifiers()) {
             if ("cpe".equals(id.getType())) {
                 try {
-                    String value = id.getValue();
-                    List<Vulnerability> vulns = cveDB.getVulnerabilities(value);
+                    final String value = id.getValue();
+                    final List<Vulnerability> vulns = cveDB.getVulnerabilities(value);
                     for (Vulnerability v : vulns) {
                         dependency.addVulnerability(v);
                     }

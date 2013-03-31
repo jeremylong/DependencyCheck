@@ -38,18 +38,45 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class NvdCve12Handler extends DefaultHandler {
 
+    /**
+     * the supported schema version.
+     */
     private static final String CURRENT_SCHEMA_VERSION = "1.2";
-    private String vulnerability = null;
-    private List<VulnerableSoftware> software = null;
-    private String vendor = null;
-    private String product = null;
+    /**
+     * the current vulnerability.
+     */
+    private String vulnerability;
+    /**
+     * a list of vulnerable software.
+     */
+    private List<VulnerableSoftware> software;
+    /**
+     * the vendor name.
+     */
+    private String vendor;
+    /**
+     * the product name.
+     */
+    private String product;
+    /**
+     * if the nvd cve should be skipped because it was rejected.
+     */
     private boolean skip = false;
+    /**
+     * flag indicating if there is a previous version.
+     */
     private boolean hasPreviousVersion = false;
+    /**
+     * The current element.
+     */
     private Element current = new Element();
-    private Map<String, List<VulnerableSoftware>> vulnerabilities = null;
+    /**
+     * a map of vulnerabilities.
+     */
+    private Map<String, List<VulnerableSoftware>> vulnerabilities;
 
     /**
-     * Get the value of vulnerabilities
+     * Get the value of vulnerabilities.
      *
      * @return the value of vulnerabilities
      */
@@ -64,8 +91,8 @@ public class NvdCve12Handler extends DefaultHandler {
             vendor = null;
             product = null;
             hasPreviousVersion = false;
-            String reject = attributes.getValue("reject");
-            skip = (reject != null && reject.equals("1"));
+            final String reject = attributes.getValue("reject");
+            skip = "1".equals(reject);
             if (!skip) {
                 vulnerability = attributes.getValue("name");
                 software = new ArrayList<VulnerableSoftware>();
@@ -78,11 +105,11 @@ public class NvdCve12Handler extends DefaultHandler {
             vendor = attributes.getValue("vendor");
             product = attributes.getValue("name");
         } else if (!skip && current.isVersNode()) {
-            String prev = attributes.getValue("prev");
+            final String prev = attributes.getValue("prev");
             if (prev != null && "1".equals(prev)) {
                 hasPreviousVersion = true;
-                String edition = attributes.getValue("edition");
-                String num = attributes.getValue("num");
+                final String edition = attributes.getValue("edition");
+                final String num = attributes.getValue("num");
 
                 /*yes yes, this may not actually be an "a" - it could be an OS, etc. but for our
                 purposes this is good enough as we won't use this if we don't find a corresponding "a"
@@ -94,13 +121,13 @@ public class NvdCve12Handler extends DefaultHandler {
                 if (edition != null) {
                     cpe += ":" + edition;
                 }
-                VulnerableSoftware vs = new VulnerableSoftware();
+                final VulnerableSoftware vs = new VulnerableSoftware();
                 vs.setCpe(cpe);
                 vs.setPreviousVersion(prev);
                 software.add(vs);
             }
         } else if (current.isNVDNode()) {
-            String nvdVer = attributes.getValue("nvd_xml_version");
+            final String nvdVer = attributes.getValue("nvd_xml_version");
             if (!CURRENT_SCHEMA_VERSION.equals(nvdVer)) {
                 throw new SAXNotSupportedException("Schema version " + nvdVer + " is not supported");
             }
@@ -128,29 +155,32 @@ public class NvdCve12Handler extends DefaultHandler {
     protected static class Element {
 
         /**
-         * A node type in the NVD CVE Schema 1.2
+         * A node type in the NVD CVE Schema 1.2.
          */
         public static final String NVD = "nvd";
         /**
-         * A node type in the NVD CVE Schema 1.2
+         * A node type in the NVD CVE Schema 1.2.
          */
         public static final String ENTRY = "entry";
         /**
-         * A node type in the NVD CVE Schema 1.2
+         * A node type in the NVD CVE Schema 1.2.
          */
         public static final String VULN_SOFTWARE = "vuln_soft";
         /**
-         * A node type in the NVD CVE Schema 1.2
+         * A node type in the NVD CVE Schema 1.2.
          */
         public static final String PROD = "prod";
         /**
-         * A node type in the NVD CVE Schema 1.2
+         * A node type in the NVD CVE Schema 1.2.
          */
         public static final String VERS = "vers";
-        private String node = null;
+        /**
+         * The name of the current node.
+         */
+        private String node;
 
         /**
-         * Gets the value of node
+         * Gets the value of node.
          *
          * @return the value of node
          */
@@ -159,7 +189,7 @@ public class NvdCve12Handler extends DefaultHandler {
         }
 
         /**
-         * Sets the value of node
+         * Sets the value of node.
          *
          * @param node new value of node
          */
@@ -168,7 +198,7 @@ public class NvdCve12Handler extends DefaultHandler {
         }
 
         /**
-         * Checks if the handler is at the NVD node
+         * Checks if the handler is at the NVD node.
          *
          * @return true or false
          */
@@ -177,7 +207,7 @@ public class NvdCve12Handler extends DefaultHandler {
         }
 
         /**
-         * Checks if the handler is at the ENTRY node
+         * Checks if the handler is at the ENTRY node.
          *
          * @return true or false
          */
@@ -186,7 +216,7 @@ public class NvdCve12Handler extends DefaultHandler {
         }
 
         /**
-         * Checks if the handler is at the VULN_SOFTWARE node
+         * Checks if the handler is at the VULN_SOFTWARE node.
          *
          * @return true or false
          */
@@ -195,7 +225,7 @@ public class NvdCve12Handler extends DefaultHandler {
         }
 
         /**
-         * Checks if the handler is at the PROD node
+         * Checks if the handler is at the PROD node.
          *
          * @return true or false
          */
@@ -204,7 +234,7 @@ public class NvdCve12Handler extends DefaultHandler {
         }
 
         /**
-         * Checks if the handler is at the VERS node
+         * Checks if the handler is at the VERS node.
          *
          * @return true or false
          */

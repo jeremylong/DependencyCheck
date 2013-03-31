@@ -87,7 +87,8 @@ public class SpringCleaningAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * The initialize method does nothing for this Analyzer
+     * The initialize method does nothing for this Analyzer.
+     *
      * @throws Exception never thrown by this analyzer
      */
     public void initialize() throws Exception {
@@ -95,13 +96,17 @@ public class SpringCleaningAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * The close method does nothing for this Analyzer
+     * The close method does nothing for this Analyzer.
+     *
      * @throws Exception never thrown by this analyzer
      */
     public void close() throws Exception {
         //do nothing
     }
-    private List<Identifier> springVersions = null;
+    /**
+     * a list of spring versions.
+     */
+    private List<Identifier> springVersions;
 
     /**
      * Determines if several "spring" libraries were scanned and trims the
@@ -117,7 +122,7 @@ public class SpringCleaningAnalyzer extends AbstractAnalyzer {
 
         collectSpringFrameworkIdentifiers(engine);
 
-        List<Identifier> identifiersToRemove = new ArrayList<Identifier>();
+        final List<Identifier> identifiersToRemove = new ArrayList<Identifier>();
         for (Identifier identifier : dependency.getIdentifiers()) {
             if (springVersions.contains(identifier) && !isCoreFramework(dependency.getFileName())) {
                 identifiersToRemove.add(identifier);
@@ -129,6 +134,11 @@ public class SpringCleaningAnalyzer extends AbstractAnalyzer {
         }
     }
 
+    /**
+     * Cycles through the dependencies and creates a collection of the spring identifiers.
+     *
+     * @param engine the core engine.
+     */
     private void collectSpringFrameworkIdentifiers(Engine engine) {
         //check to see if any of the libs are the core framework
         if (springVersions == null) {
@@ -147,12 +157,24 @@ public class SpringCleaningAnalyzer extends AbstractAnalyzer {
         }
     }
 
+    /**
+     * Attempts to determine if the identifier is for the spring framework.
+     *
+     * @param identifier an identifier
+     * @return whether or not it is believed to be a spring identifier
+     */
     private boolean isSpringFrameworkCpe(Identifier identifier) {
         return "cpe".equals(identifier.getType())
                 && (identifier.getValue().startsWith("cpe:/a:springsource:spring_framework:")
                 || identifier.getValue().startsWith("cpe:/a:vmware:springsource_spring_framework"));
     }
 
+    /**
+     * Attempts to determine if the file name passed in is for the core spring-framework.
+     *
+     * @param filename a file name
+     * @return whether or not it is believed the file name is for the core spring framework
+     */
     private boolean isCoreFramework(String filename) {
         return filename.toLowerCase().matches("^spring([ _-]?core)?[ _-]?\\d.*");
     }

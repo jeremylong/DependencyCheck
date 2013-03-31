@@ -37,17 +37,18 @@ import org.apache.lucene.util.Version;
 public class SearchFieldAnalyzer extends Analyzer {
 
     /**
-     * The Lucene Version used
+     * The Lucene Version used.
      */
-    private Version version = null;
+    private Version version;
     /**
      * A local reference to the TokenPairConcatenatingFilter so that we
      * can clear any left over state if this analyzer is re-used.
      */
-    private TokenPairConcatenatingFilter concatenatingFilter = null;
+    private TokenPairConcatenatingFilter concatenatingFilter;
 
     /**
-     * Constructs a new SearchFieldAnalyzer
+     * Constructs a new SearchFieldAnalyzer.
+     *
      * @param version the Lucene version
      */
     public SearchFieldAnalyzer(Version version) {
@@ -62,7 +63,7 @@ public class SearchFieldAnalyzer extends Analyzer {
      */
     @Override
     protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
-        Tokenizer source = new WhitespaceTokenizer(version, reader);
+        final Tokenizer source = new WhitespaceTokenizer(version, reader);
 
         TokenStream stream = source;
 

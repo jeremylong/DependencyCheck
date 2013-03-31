@@ -27,6 +27,9 @@ import java.io.IOException;
  */
 public class DownloadFailedException extends IOException {
 
+    /**
+     * The serial version UID.
+     */
     private static final long serialVersionUID = 1L;
 
     /**

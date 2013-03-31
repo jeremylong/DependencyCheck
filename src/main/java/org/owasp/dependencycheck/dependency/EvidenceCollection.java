@@ -52,7 +52,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
                     return evidence.getConfidence() == Evidence.Confidence.MEDIUM;
                 }
             };
-    /*
+    /**
      * Used to iterate over low confidence evidence contained in the collection.
      */
     private static final Filter<Evidence> LOW_CONFIDENCE =
@@ -90,8 +90,14 @@ public class EvidenceCollection implements Iterable<Evidence> {
             return EvidenceCollection.LOW_CONFIDENCE.filter(this.list);
         }
     }
-    private Set<Evidence> list = null;
-    private Set<String> weightedStrings = null;
+    /**
+     * A collection of evidence.
+     */
+    private Set<Evidence> list;
+    /**
+     * A collection of strings used to adjust lucene's term weighting.
+     */
+    private Set<String> weightedStrings;
 
     /**
      * Creates a new EvidenceCollection.
@@ -120,7 +126,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
      * @param confidence the confidence of the Evidence.
      */
     public void addEvidence(String source, String name, String value, Evidence.Confidence confidence) {
-        Evidence e = new Evidence(source, name, value, confidence);
+        final Evidence e = new Evidence(source, name, value, confidence);
         addEvidence(e);
     }
 
@@ -181,10 +187,10 @@ public class EvidenceCollection implements Iterable<Evidence> {
         if (text == null) {
             return false;
         }
-        text = text.toLowerCase();
+        final String textToTest = text.toLowerCase();
 
         for (Evidence e : this.list) {
-            if (e.used && e.value.toLowerCase().contains(text)) {
+            if (e.isUsed() && e.getValue().toLowerCase().contains(textToTest)) {
                 return true;
             }
         }
@@ -200,7 +206,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
      */
     public boolean contains(Evidence.Confidence confidence) {
         for (Evidence e : list) {
-            if (e.confidence == confidence) {
+            if (e.getConfidence().equals(confidence)) {
                 return true;
             }
         }
@@ -215,7 +221,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
      * @return a new EvidenceCollection containing the used evidence.
      */
     public static EvidenceCollection mergeUsed(EvidenceCollection... ec) {
-        EvidenceCollection ret = new EvidenceCollection();
+        final EvidenceCollection ret = new EvidenceCollection();
         for (EvidenceCollection col : ec) {
             for (Evidence e : col.list) {
                 if (e.isUsed()) {
@@ -233,7 +239,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
      * @return a new EvidenceCollection.
      */
     public static EvidenceCollection merge(EvidenceCollection... ec) {
-        EvidenceCollection ret = new EvidenceCollection();
+        final EvidenceCollection ret = new EvidenceCollection();
         for (EvidenceCollection col : ec) {
             ret.list.addAll(col.list);
             ret.weightedStrings.addAll(col.weightedStrings);
@@ -248,7 +254,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
      */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         for (Evidence e : this.list) {
             sb.append(e.getValue()).append(' ');
         }

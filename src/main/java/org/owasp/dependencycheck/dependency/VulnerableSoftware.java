@@ -32,10 +32,13 @@ import org.owasp.dependencycheck.data.cpe.Entry;
  */
 public class VulnerableSoftware extends Entry implements Serializable {
 
+    /**
+     * The serial version UID.
+     */
     private static final long serialVersionUID = 307319490326651052L;
 
     /**
-     * Parse a CPE entry from the cpe string representation
+     * Parse a CPE entry from the cpe string representation.
      *
      * @param cpe a cpe entry (e.g. cpe:/a:vendor:software:version)
      */
@@ -49,12 +52,12 @@ public class VulnerableSoftware extends Entry implements Serializable {
     }
 
     /**
-     * If present, indicates that previous version are vulnerable
+     * If present, indicates that previous version are vulnerable.
      */
-    protected String previousVersion = null;
+    private String previousVersion;
 
     /**
-     * Indicates if previous versions of this software are vulnerable
+     * Indicates if previous versions of this software are vulnerable.
      *
      * @return if previous versions of this software are vulnerable
      */
@@ -63,7 +66,7 @@ public class VulnerableSoftware extends Entry implements Serializable {
     }
 
     /**
-     * Get the value of previousVersion
+     * Get the value of previousVersion.
      *
      * @return the value of previousVersion
      */
@@ -72,7 +75,7 @@ public class VulnerableSoftware extends Entry implements Serializable {
     }
 
     /**
-     * Set the value of previousVersion
+     * Set the value of previousVersion.
      *
      * @param previousVersion new value of previousVersion
      */
@@ -89,7 +92,7 @@ public class VulnerableSoftware extends Entry implements Serializable {
             return false;
         }
         final VulnerableSoftware other = (VulnerableSoftware) obj;
-        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+        if ((this.getName() == null) ? (other.getName() != null) : !this.getName().equals(other.getName())) {
             return false;
         }
         return true;
@@ -98,7 +101,7 @@ public class VulnerableSoftware extends Entry implements Serializable {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 83 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 83 * hash + (this.getName() != null ? this.getName().hashCode() : 0);
         return hash;
     }
 }

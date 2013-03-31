@@ -31,12 +31,12 @@ import java.util.logging.Logger;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class Settings {
+public final class Settings {
 
     /**
      * The collection of keys used within the properties file.
      */
-    public static class KEYS {
+    public static final class KEYS {
 
         /**
          * private constructor because this is a "utility" class containing constants
@@ -95,11 +95,11 @@ public class Settings {
          */
         public static final String CVE_BASE_URL = "cve.url-";
         /**
-         * The properties key for the CVE schema version 1.2
+         * The properties key for the CVE schema version 1.2.
          */
         public static final String CVE_SCHEMA_1_2 = "1.2.";
         /**
-         * The properties key for the CVE schema version 2.0
+         * The properties key for the CVE schema version 2.0.
          */
         public static final String CVE_SCHEMA_2_0 = "2.0.";
 
@@ -122,8 +122,17 @@ public class Settings {
          */
         public static final String PERFORM_DEEP_SCAN = "perform.deepscan";
     }
+    /**
+     * The properties file location.
+     */
     private static final String PROPERTIES_FILE = "configuration/dependencycheck.properties";
+    /**
+     * The singleton instance variable.
+     */
     private static final Settings INSTANCE = new Settings();
+    /**
+     * The properties.
+     */
     private Properties props = null;
 
     /**
@@ -131,7 +140,7 @@ public class Settings {
      * properties files.
      */
     private Settings() {
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);
+        final InputStream in = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);
         props = new Properties();
         try {
             props.load(in);
@@ -176,7 +185,7 @@ public class Settings {
      * the properties.
      */
     public static void mergeProperties(String filePath) throws FileNotFoundException, IOException {
-        FileInputStream fis = new FileInputStream(filePath);
+        final FileInputStream fis = new FileInputStream(filePath);
         mergeProperties(fis);
     }
 

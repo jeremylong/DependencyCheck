@@ -28,6 +28,9 @@ import java.io.Serializable;
  */
 public class Reference implements Serializable {
 
+    /**
+     * the serial version uid.
+     */
     private static final long serialVersionUID = -3444464824563008021L;
     /**
      * The name of the reference.
@@ -35,7 +38,7 @@ public class Reference implements Serializable {
     private String name;
 
     /**
-     * Get the value of name
+     * Get the value of name.
      *
      * @return the value of name
      */
@@ -44,7 +47,7 @@ public class Reference implements Serializable {
     }
 
     /**
-     * Set the value of name
+     * Set the value of name.
      *
      * @param name new value of name
      */
@@ -52,12 +55,12 @@ public class Reference implements Serializable {
         this.name = name;
     }
     /**
-     * the url for the reference
+     * the url for the reference.
      */
     private String url;
 
     /**
-     * Get the value of url
+     * Get the value of url.
      *
      * @return the value of url
      */
@@ -66,7 +69,7 @@ public class Reference implements Serializable {
     }
 
     /**
-     * Set the value of url
+     * Set the value of url.
      *
      * @param url new value of url
      */
@@ -79,7 +82,7 @@ public class Reference implements Serializable {
     private String source;
 
     /**
-     * Get the value of source
+     * Get the value of source.
      *
      * @return the value of source
      */
@@ -88,7 +91,7 @@ public class Reference implements Serializable {
     }
 
     /**
-     * Set the value of source
+     * Set the value of source.
      *
      * @param source new value of source
      */

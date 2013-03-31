@@ -48,31 +48,31 @@ public abstract class AbstractIndex {
     /**
      * The Lucene directory containing the index.
      */
-    protected Directory directory = null;
+    private Directory directory;
     /**
      * The IndexWriter for the Lucene index.
      */
-    protected IndexWriter indexWriter = null;
+    private IndexWriter indexWriter;
     /**
      * The Lucene IndexReader.
      */
-    private IndexReader indexReader = null;
+    private IndexReader indexReader;
     /**
      * The Lucene IndexSearcher.
      */
-    private IndexSearcher indexSearcher = null;
+    private IndexSearcher indexSearcher;
     /**
      * The Lucene Analyzer used for Indexing.
      */
-    private Analyzer indexingAnalyzer = null;
+    private Analyzer indexingAnalyzer;
     /**
-     * The Lucene Analyzer used for Searching
+     * The Lucene Analyzer used for Searching.
      */
-    private Analyzer searchingAnalyzer = null;
+    private Analyzer searchingAnalyzer;
     /**
-     * The Lucene QueryParser used for Searching
+     * The Lucene QueryParser used for Searching.
      */
-    private QueryParser queryParser = null;
+    private QueryParser queryParser;
     /**
      * Indicates whether or not the Lucene Index is open.
      */
@@ -155,7 +155,7 @@ public abstract class AbstractIndex {
         if (!isOpen()) {
             open();
         }
-        IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_40, indexingAnalyzer);
+        final IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_40, indexingAnalyzer);
         indexWriter = new IndexWriter(directory, conf);
     }
 
@@ -241,7 +241,8 @@ public abstract class AbstractIndex {
     }
 
     /**
-     * Searches the index using the given search string
+     * Searches the index using the given search string.
+     *
      * @param searchString the query text
      * @param maxQueryResults the maximum number of documents to return
      * @return the TopDocs found by the search
@@ -250,21 +251,18 @@ public abstract class AbstractIndex {
      */
     public TopDocs search(String searchString, int maxQueryResults) throws ParseException, IOException {
 
-        QueryParser parser = getQueryParser();
-
-        Query query = parser.parse(searchString);
-
+        final QueryParser parser = getQueryParser();
+        final Query query = parser.parse(searchString);
         resetSearchingAnalyzer();
-
-        IndexSearcher is = getIndexSearcher();
-
-        TopDocs docs = is.search(query, maxQueryResults);
+        final IndexSearcher is = getIndexSearcher();
+        final TopDocs docs = is.search(query, maxQueryResults);
 
         return docs;
     }
 
     /**
-     * Searches the index using the given query
+     * Searches the index using the given query.
+     *
      * @param query the query used to search the index
      * @param maxQueryResults the max number of results to return
      * @return the TopDocs found be the query
@@ -272,23 +270,24 @@ public abstract class AbstractIndex {
      * @throws IOException thrown if there is an IOException
      */
     public TopDocs search(Query query, int maxQueryResults) throws CorruptIndexException, IOException {
-        IndexSearcher is = getIndexSearcher();
+        final IndexSearcher is = getIndexSearcher();
         return is.search(query, maxQueryResults);
     }
 
     /**
-     * Retrieves a document from the Index
+     * Retrieves a document from the Index.
+     *
      * @param documentId the id of the document to retrieve
      * @return the Document
      * @throws IOException thrown if there is an IOException
      */
     public Document getDocument(int documentId) throws IOException {
-        IndexSearcher is = getIndexSearcher();
+        final IndexSearcher is = getIndexSearcher();
         return is.doc(documentId);
     }
 
     /**
-     * Gets the directory that contains the Lucene Index
+     * Gets the directory that contains the Lucene Index.
      *
      * @return a Lucene Directory
      * @throws IOException is thrown when an IOException occurs
@@ -296,21 +295,21 @@ public abstract class AbstractIndex {
     public abstract Directory getDirectory() throws IOException;
 
     /**
-     * Creates the Lucene Analyzer used when indexing
+     * Creates the Lucene Analyzer used when indexing.
      *
      * @return a Lucene Analyzer
      */
     public abstract Analyzer createIndexingAnalyzer();
 
     /**
-     * Creates the Lucene Analyzer used when querying the index
+     * Creates the Lucene Analyzer used when querying the index.
      *
      * @return a Lucene Analyzer
      */
     public abstract Analyzer createSearchingAnalyzer();
 
     /**
-     * Creates the Lucene QueryParser used when querying the index
+     * Creates the Lucene QueryParser used when querying the index.
      * @return a QueryParser
      */
     public abstract QueryParser createQueryParser();
