@@ -83,7 +83,8 @@ public class DatabaseUpdater implements CachedWebDataSource {
      * <p>Downloads the latest NVD CVE XML file from the web and imports it into
      * the current CVE Database.</p>
      *
-     * @throws UpdateException is thrown if there is an error updating the database
+     * @throws UpdateException is thrown if there is an error updating the
+     * database
      */
     public void update() throws UpdateException {
         try {
@@ -164,7 +165,8 @@ public class DatabaseUpdater implements CachedWebDataSource {
      *
      * @param file the file containing the NVD CVE XML
      * @param oldVersion contains the file containing the NVD CVE XML 1.2
-     * @throws ParserConfigurationException is thrown if there is a parserconfigurationexception
+     * @throws ParserConfigurationException is thrown if there is a
+     * parserconfigurationexception
      * @throws SAXException is thrown if there is a saxexception
      * @throws IOException is thrown if there is a ioexception
      * @throws SQLException is thrown if there is a sql exception
@@ -195,6 +197,12 @@ public class DatabaseUpdater implements CachedWebDataSource {
             cve20Handler.setPrevVersionVulnMap(prevVersionVulnMap);
             cve20Handler.setCpeIndex(cpeIndex);
             saxParser.parse(file, cve20Handler);
+
+//            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.WARNING,
+//                    String.format("%d out of %d entries processed were application specific CVEs.",
+//                    cve20Handler.getTotalNumberOfApplicationEntries(),
+//                    cve20Handler.getTotalNumberOfEntries()));
+
             cve20Handler = null;
         } finally {
             if (cpeIndex != null) {
@@ -209,7 +217,6 @@ public class DatabaseUpdater implements CachedWebDataSource {
     }
 
     //<editor-fold defaultstate="collapsed" desc="Code to read/write properties files regarding the last update dates">
-
     /**
      * Writes a properties file containing the last updated date to the
      * VULNERABLE_CPE directory.
@@ -266,7 +273,8 @@ public class DatabaseUpdater implements CachedWebDataSource {
      * data is incorrect.
      * @throws DownloadFailedException is thrown if there is an error.
      * downloading the nvd cve download data file.
-     * @throws UpdateException Is thrown if there is an issue with the last updated properties file.
+     * @throws UpdateException Is thrown if there is an issue with the last
+     * updated properties file.
      */
     public Map<String, NvdCveUrl> updateNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
 
@@ -399,12 +407,12 @@ public class DatabaseUpdater implements CachedWebDataSource {
      * Retrieves the timestamps from the NVD CVE meta data file.
      *
      * @return the timestamp from the currently published nvdcve downloads page
-     * @throws MalformedURLException thrown if the URL for the NVD CCE Meta
-     * data is incorrect.
-     * @throws DownloadFailedException thrown if there is an error
-     * downloading the nvd cve meta data file
-     * @throws InvalidDataException thrown if there is an exception parsing
-     * the timestamps
+     * @throws MalformedURLException thrown if the URL for the NVD CCE Meta data
+     * is incorrect.
+     * @throws DownloadFailedException thrown if there is an error downloading
+     * the nvd cve meta data file
+     * @throws InvalidDataException thrown if there is an exception parsing the
+     * timestamps
      * @throws InvalidSettingException thrown if the settings are invalid
      */
     protected Map<String, NvdCveUrl> retrieveCurrentTimestampsFromWeb()
@@ -507,8 +515,6 @@ public class DatabaseUpdater implements CachedWebDataSource {
         public void setOldSchemaVersionUrl(String oldSchemaVersionUrl) {
             this.oldSchemaVersionUrl = oldSchemaVersionUrl;
         }
-
-
         /**
          * a timestamp - epoch time.
          */
