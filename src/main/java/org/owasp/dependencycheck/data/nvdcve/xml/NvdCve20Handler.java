@@ -67,6 +67,34 @@ public class NvdCve20Handler extends DefaultHandler {
      */
     private boolean hasApplicationCpe = false;
 
+    /**
+     * The total number of entries parsed.
+     */
+    private int totalNumberOfEntries;
+
+    /**
+     * Get the value of totalNumberOfEntries.
+     *
+     * @return the value of totalNumberOfEntries
+     */
+    public int getTotalNumberOfEntries() {
+        return totalNumberOfEntries;
+    }
+
+    /**
+     * The total number of application entries parsed.
+     */
+    private int totalNumberOfApplicationEntries;
+
+    /**
+     * Get the value of totalNumberOfApplicationEntries.
+     *
+     * @return the value of totalNumberOfApplicationEntries
+     */
+    public int getTotalNumberOfApplicationEntries() {
+        return totalNumberOfApplicationEntries;
+    }
+
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         current.setNode(qName);
@@ -125,7 +153,9 @@ public class NvdCve20Handler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         current.setNode(qName);
         if (current.isEntryNode()) {
+            totalNumberOfEntries += 1;
             if (hasApplicationCpe) {
+                totalNumberOfApplicationEntries += 1;
                 try {
                     saveEntry(vulnerability);
                 } catch (DatabaseException ex) {
