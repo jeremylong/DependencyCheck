@@ -21,6 +21,7 @@ package org.owasp.dependencycheck.dependency;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 import org.owasp.dependencycheck.utils.Filter;
 
 /**
@@ -103,7 +104,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
      * Creates a new EvidenceCollection.
      */
     public EvidenceCollection() {
-        list = new HashSet<Evidence>();
+        list = new TreeSet<Evidence>();
         weightedStrings = new HashSet<String>();
     }
 

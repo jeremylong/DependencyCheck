@@ -23,7 +23,7 @@ package org.owasp.dependencycheck.dependency;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class Evidence {
+public class Evidence implements Comparable<Evidence> {
 
     /**
      * The confidence that the evidence is "high" quality.
@@ -221,5 +221,30 @@ public class Evidence {
      */
     private boolean testEquality(String l, String r) {
         return l == null ? r == null : l.equalsIgnoreCase(r);
+    }
+
+    /**
+     * Implementation of the comparable interface.
+     * @param o the evidence being compared
+     * @return an integer indicating the ordering of the two objects
+     */
+    public int compareTo(Evidence o) {
+        if (source.equals(o.source)) {
+            if (name.equals(o.name)) {
+                if (value.equals(o.value)) {
+                    if (confidence.equals(o.confidence)) {
+                        return 0; //they are equal
+                    } else {
+                        return confidence.compareTo(o.confidence);
+                    }
+                } else {
+                    return value.compareToIgnoreCase(o.value);
+                }
+            } else {
+                return name.compareToIgnoreCase(o.name);
+            }
+        } else {
+            return source.compareToIgnoreCase(o.source);
+        }
     }
 }

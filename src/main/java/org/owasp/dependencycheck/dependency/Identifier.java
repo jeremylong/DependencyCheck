@@ -22,7 +22,7 @@ package org.owasp.dependencycheck.dependency;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class Identifier {
+public class Identifier implements Comparable<Identifier> {
 
     /**
      * Constructs a new Identifier with the specified data.
@@ -165,4 +165,14 @@ public class Identifier {
         return hash;
     }
 
+    /**
+     * Implementation of the comparator interface. This compares the
+     * value of the identifier only.
+     *
+     * @param o the object being compared
+     * @return an integer indicating the ordering
+     */
+    public int compareTo(Identifier o) {
+        return this.value.compareTo(o.value);
+    }
 }
