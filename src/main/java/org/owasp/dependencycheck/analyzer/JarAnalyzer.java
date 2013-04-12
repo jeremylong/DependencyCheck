@@ -202,8 +202,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      *
      * @param dependency the dependency being analyzed.
      * @throws IOException is thrown if there is an error reading the zip file.
-     * @throws JAXBException is thrown if there is an error extracting the model
-     * (aka pom).
      * @throws AnalysisException is thrown if there is an exception parsing the
      * pom.
      * @return whether or not evidence was added to the dependency
@@ -211,7 +209,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     protected boolean analyzePOM(Dependency dependency) throws IOException, AnalysisException {
         boolean foundSomething = false;
         Properties pomProperties = null;
-        List<Model> poms = new ArrayList<Model>();
+        final List<Model> poms = new ArrayList<Model>();
         FileInputStream fs = null;
         try {
             fs = new FileInputStream(dependency.getActualFilePath());
@@ -228,9 +226,9 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                         final JAXBElement obj = (JAXBElement) pomUnmarshaller.unmarshal(stream);
                         p = (Model) obj.getValue();
                     } catch (JAXBException ex) {
-                        String msg = String.format("Unable to parse POM '%s' in '%s'",
+                        final String msg = String.format("Unable to parse POM '%s' in '%s'",
                                 entry.getName(), dependency.getFilePath());
-                        AnalysisException ax = new AnalysisException(msg, ex);
+                        final AnalysisException ax = new AnalysisException(msg, ex);
                         dependency.getAnalysisExceptions().add(ax);
                         Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO, msg);
                     }
@@ -254,8 +252,8 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                             zin.closeEntry();
                         }
                     } else {
-                        String msg = "JAR file contains multiple pom.properties files - unable to process POM";
-                        AnalysisException ax = new AnalysisException(msg);
+                        final String msg = "JAR file contains multiple pom.properties files - unable to process POM";
+                        final AnalysisException ax = new AnalysisException(msg);
                         dependency.getAnalysisExceptions().add(ax);
                         Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO, msg);
                     }
@@ -717,6 +715,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     /**
      * Determines if the key value pair from the manifest is for an "import" type
      * entry for package names.
+     * 
      * @param key the key from the manifest
      * @param value the value from the manifest
      * @return true or false depending on if it is believed the entry is an "import" entry
@@ -724,11 +723,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     private boolean isImportPackage(String key, String value) {
         final Pattern packageRx = Pattern.compile("^((([a-zA-Z_#\\$0-9]\\.)+)\\s*\\;\\s*)+$");
         if (packageRx.matcher(value).matches()) {
-            if (key.contains("import") || key.contains("include")) {
-                return true;
-            } else {
-                return false;
-            }
+            return (key.contains("import") || key.contains("include"));
         }
         return false;
     }

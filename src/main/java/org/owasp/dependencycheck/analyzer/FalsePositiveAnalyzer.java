@@ -119,6 +119,10 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         removeVersions(dependency);
     }
 
+    /**
+     * Intended to remove spurious CPE entries.
+     * @param dependency the dependency being analyzed
+     */
     private void removeVersions(Dependency dependency) {
         //todo implement this so that the following is corrected?
         //cpe: cpe:/a:apache:axis2:1.4
@@ -139,10 +143,10 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      * @param dependency the dependency to remove JRE CPEs from
      */
     private void removeJreEntries(Dependency dependency) {
-        List<Identifier> identifiers = dependency.getIdentifiers();
-        Iterator<Identifier> itr = identifiers.iterator();
+        final List<Identifier> identifiers = dependency.getIdentifiers();
+        final Iterator<Identifier> itr = identifiers.iterator();
         while (itr.hasNext()) {
-            Identifier i = itr.next();
+            final Identifier i = itr.next();
             if ((i.getValue().startsWith("cpe:/a:sun:java:")
                     || i.getValue().startsWith("cpe:/a:oracle:jre")
                     || i.getValue().startsWith("cpe:/a:oracle:jdk"))
