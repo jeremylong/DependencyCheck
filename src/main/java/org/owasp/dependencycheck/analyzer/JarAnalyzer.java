@@ -30,7 +30,9 @@ import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
@@ -38,6 +40,7 @@ import java.util.StringTokenizer;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.xml.bind.JAXBContext;
@@ -189,10 +192,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             analyzePackageNames(dependency, addPackagesAsEvidence);
         } catch (IOException ex) {
             throw new AnalysisException("Exception occurred reading the JAR file.", ex);
-        } catch (JAXBException ex) {
-            throw new AnalysisException("Exception occurred reading the POM within the JAR file.", ex);
         }
-
     }
 
     /**
@@ -208,10 +208,10 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * pom.
      * @return whether or not evidence was added to the dependency
      */
-    protected boolean analyzePOM(Dependency dependency) throws IOException, JAXBException, AnalysisException {
+    protected boolean analyzePOM(Dependency dependency) throws IOException, AnalysisException {
         boolean foundSomething = false;
         Properties pomProperties = null;
-        Model pom = null;
+        List<Model> poms = new ArrayList<Model>();
         FileInputStream fs = null;
         try {
             fs = new FileInputStream(dependency.getActualFilePath());
@@ -222,17 +222,28 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 final String entryName = (new File(entry.getName())).getName().toLowerCase();
 
                 if (!entry.isDirectory() && "pom.xml".equals(entryName)) {
-                    if (pom == null) {
-                        final NonClosingStream stream = new NonClosingStream(zin);
+                    final NonClosingStream stream = new NonClosingStream(zin);
+                    Model p = null;
+                    try {
                         final JAXBElement obj = (JAXBElement) pomUnmarshaller.unmarshal(stream);
-                        pom = (Model) obj.getValue();
-                        zin.closeEntry();
-                    } else {
-                        throw new AnalysisException("JAR file contains multiple pom.xml files - unable to process POM");
+                        p = (Model) obj.getValue();
+                    } catch (JAXBException ex) {
+                        String msg = String.format("Unable to parse POM '%s' in '%s'",
+                                entry.getName(), dependency.getFilePath());
+                        AnalysisException ax = new AnalysisException(msg, ex);
+                        dependency.getAnalysisExceptions().add(ax);
+                        Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO, msg);
                     }
+                    if (p != null) {
+                        poms.add(p);
+                    }
+                    zin.closeEntry();
                 } else if (!entry.isDirectory() && "pom.properties".equals(entryName)) {
+                    //TODO what if there is more then one pom.properties?
+                    // need to find the POM, then look to see if there is a sibling
+                    // pom.properties and use those together.
                     if (pomProperties == null) {
-                        Reader reader = null;
+                        Reader reader;
                         try {
                             reader = new InputStreamReader(zin, "UTF-8");
                             pomProperties = new Properties();
@@ -243,7 +254,10 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                             zin.closeEntry();
                         }
                     } else {
-                        throw new AnalysisException("JAR file contains multiple pom.properties files - unable to process POM");
+                        String msg = "JAR file contains multiple pom.properties files - unable to process POM";
+                        AnalysisException ax = new AnalysisException(msg);
+                        dependency.getAnalysisExceptions().add(ax);
+                        Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO, msg);
                     }
                 }
 
@@ -257,7 +271,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             }
         }
 
-        if (pom != null) {
+        for (Model pom : poms) {
             //group id
             final String groupid = interpolateString(pom.getGroupId(), pomProperties);
             if (groupid != null) {
@@ -576,8 +590,11 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 } else {
                     key = key.toLowerCase();
 
-                    if (!IGNORE_LIST.contains(key) && !key.endsWith("jdk")
-                            && !key.contains("lastmodified") && !key.endsWith("package")) {
+                    if (!IGNORE_LIST.contains(key)
+                            && !key.endsWith("jdk")
+                            && !key.contains("lastmodified")
+                            && !key.endsWith("package")
+                            && !isImportPackage(key, value)) {
 
                         foundSomething = true;
                         if (key.contains("version")) {
@@ -696,22 +713,23 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         sb.append(text.substring(end + 1));
         return interpolateString(sb.toString(), properties); //yes yes, this should be a loop...
     }
-//    private void addPredefinedData(Dependency dependency) {
-//        Evidence springTest1 = new Evidence("Manifest",
-//                "Implementation-Title",
-//                "Spring Framework",
-//                Evidence.Confidence.HIGH);
-//
-//        Evidence springTest2 = new Evidence("Manifest",
-//                "Implementation-Title",
-//                "org.springframework.core",
-//                Evidence.Confidence.HIGH);
-//
-//        Set<Evidence> evidence = dependency.getProductEvidence().getEvidence();
-//        if (evidence.contains(springTest1) || evidence.contains(springTest2)) {
-//            dependency.getProductEvidence().addEvidence("a priori", "product", "springsource_spring_framework", Evidence.Confidence.HIGH);
-//            dependency.getVendorEvidence().addEvidence("a priori", "vendor", "SpringSource", Evidence.Confidence.HIGH);
-//            dependency.getVendorEvidence().addEvidence("a priori", "vendor", "vmware", Evidence.Confidence.HIGH);
-//        }
-//    }
+
+    /**
+     * Determines if the key value pair from the manifest is for an "import" type
+     * entry for package names.
+     * @param key the key from the manifest
+     * @param value the value from the manifest
+     * @return true or false depending on if it is believed the entry is an "import" entry
+     */
+    private boolean isImportPackage(String key, String value) {
+        final Pattern packageRx = Pattern.compile("^((([a-zA-Z_#\\$0-9]\\.)+)\\s*\\;\\s*)+$");
+        if (packageRx.matcher(value).matches()) {
+            if (key.contains("import") || key.contains("include")) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
 }
