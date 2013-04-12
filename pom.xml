@@ -22,7 +22,7 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses />.
 
     <groupId>org.owasp.dependency-check</groupId>
     <artifactId>dependency-check</artifactId>
-    <version>0.2.6.1</version>
+    <version>0.2.6.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>DependencyCheck</name>
