@@ -30,7 +30,7 @@ import org.owasp.dependencycheck.data.cpe.Entry;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class VulnerableSoftware extends Entry implements Serializable {
+public class VulnerableSoftware extends Entry implements Serializable, Comparable {
 
     /**
      * The serial version UID.
@@ -103,5 +103,14 @@ public class VulnerableSoftware extends Entry implements Serializable {
         int hash = 7;
         hash = 83 * hash + (this.getName() != null ? this.getName().hashCode() : 0);
         return hash;
+    }
+
+    /**
+     * Implementation of the comparable interface.
+     * @param vs the VulnerableSoftware to compare
+     * @return an integer indicating the ordering of the two objects
+     */
+    public int compareTo(VulnerableSoftware vs) {
+        return this.getName().compareTo(vs.getName());
     }
 }
