@@ -75,17 +75,20 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 </evidence>
 #end
             </evidenceCollected>
+#if($dependency.getIdentifiers().size()>0)
             <identifiers>
 #foreach($id in $dependency.getIdentifiers())
                 <identifier type="$esc.html($id.type)">
                     <name>$esc.html($id.value)</name>
                     <url>$esc.html($id.url)</url>
-                    #if( $id.descrription )
-                    <description>$esc.html($id.description)</description>>
-                    #end
+#if( $id.description )
+                    <description>$esc.html($id.description)</description>
+#end
                 </identifier>
 #end
             </identifiers>
+#end
+#if($dependency.getVulnerabilities().size()>0)
             <vulnerabilities>
 #foreach($vuln in $dependency.getVulnerabilities())
                 <vulnerability>
@@ -121,5 +124,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             </vulnerabilities>
 #end
         </dependency>
+#end
     </dependencies>
 </analysis>
