@@ -30,7 +30,7 @@ import org.owasp.dependencycheck.data.cpe.Entry;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class VulnerableSoftware extends Entry implements Serializable, Comparable {
+public class VulnerableSoftware extends Entry implements Serializable, Comparable<VulnerableSoftware> {
 
     /**
      * The serial version UID.
