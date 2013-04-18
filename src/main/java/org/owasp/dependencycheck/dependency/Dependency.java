@@ -401,7 +401,7 @@ public class Dependency {
      *
      * @return the list of vulnerabilities
      */
-    public Set<Vulnerability> getVulnerabilities() {
+    public SortedSet<Vulnerability> getVulnerabilities() {
         return vulnerabilities;
     }
 
