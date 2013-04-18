@@ -129,12 +129,12 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         //cpe: cpe:/a:apache:axis2:1.4
         //cpe: cpe:/a:apache:axis:1.4
         /* the above was identified from the evidence below:
-         Source	Name            Value
-         Manifest	Bundle-Vendor	Apache Software Foundation
-         Manifest	Bundle-Version	1.4
-         file	name            axis2-kernel-1.4.1
-         pom         artifactid	axis2-kernel
-         pom         name            Apache Axis2 - Kernel
+         Source    Name            Value
+         Manifest  Bundle-Vendor   Apache Software Foundation
+         Manifest  Bundle-Version  1.4
+         file      name            axis2-kernel-1.4.1
+         pom       artifactid      axis2-kernel
+         pom       name            Apache Axis2 - Kernel
          */
     }
 
