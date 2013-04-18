@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -440,5 +441,36 @@ public class Dependency {
      */
     public void addVulnerability(Vulnerability vulnerability) {
         this.vulnerabilities.add(vulnerability);
+    }
+    /**
+     * A collection of related dependencies.
+     */
+    private Set<Dependency> relatedDependencies = new TreeSet<Dependency>();
+
+    /**
+     * Get the value of relatedDependencies.
+     *
+     * @return the value of relatedDependencies
+     */
+    public Set<Dependency> getRelatedDependencies() {
+        return relatedDependencies;
+    }
+
+    /**
+     * Set the value of relatedDependencies.
+     *
+     * @param relatedDependencies new value of relatedDependencies
+     */
+    public void setRelatedDependencies(Set<Dependency> relatedDependencies) {
+        this.relatedDependencies = relatedDependencies;
+    }
+
+    /**
+     * Adds a related dependency.
+     *
+     * @param dependency a reference to the related dependency
+     */
+    public void addRelatedDependency(Dependency dependency) {
+        relatedDependencies.add(dependency);
     }
 }
