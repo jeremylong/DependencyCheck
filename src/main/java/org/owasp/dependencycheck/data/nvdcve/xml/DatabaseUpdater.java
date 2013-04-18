@@ -334,7 +334,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
                         FileUtils.delete(f);
 
                         //this importer also updates the CPE index and it is also using an old version
-                        final org.owasp.dependencycheck.data.cpe.Index cpeid = new org.owasp.dependencycheck.data.cpe.Index();
+                        final Index cpeid = new Index();
                         final File cpeDir = cpeid.getDataDirectory();
                         FileUtils.delete(cpeDir);
                         return currentlyPublished;
