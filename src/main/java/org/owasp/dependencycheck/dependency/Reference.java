@@ -128,7 +128,11 @@ public class Reference implements Serializable, Comparable<Reference> {
         hash = 67 * hash + (this.source != null ? this.source.hashCode() : 0);
         return hash;
     }
-
+    /**
+     * Implementation of the comparable interface.
+     * @param o the Reference being compared
+     * @return an integer indicating the ordering of the two objects
+     */
     public int compareTo(Reference o) {
         if (source.equals(o.source)) {
             if (name.equals(o.name)) {

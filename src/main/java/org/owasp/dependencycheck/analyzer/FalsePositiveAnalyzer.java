@@ -26,8 +26,8 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 
 /**
- * This analyzer attempts to remove some well known false positives - specifically
- * regarding the java runtime.
+ * This analyzer attempts to remove some well known false positives -
+ * specifically regarding the java runtime.
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
@@ -121,6 +121,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
 
     /**
      * Intended to remove spurious CPE entries.
+     *
      * @param dependency the dependency being analyzed
      */
     private void removeVersions(Dependency dependency) {
@@ -128,17 +129,18 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         //cpe: cpe:/a:apache:axis2:1.4
         //cpe: cpe:/a:apache:axis:1.4
         /* the above was identified from the evidence below:
-            Source	Name            Value
-            Manifest	Bundle-Vendor	Apache Software Foundation
-            Manifest	Bundle-Version	1.4
-            file	name            axis2-kernel-1.4.1
-            pom         artifactid	axis2-kernel
-            pom         name            Apache Axis2 - Kernel
+         Source	Name            Value
+         Manifest	Bundle-Vendor	Apache Software Foundation
+         Manifest	Bundle-Version	1.4
+         file	name            axis2-kernel-1.4.1
+         pom         artifactid	axis2-kernel
+         pom         name            Apache Axis2 - Kernel
          */
     }
 
     /**
-     * Removes any CPE entries for the JDK/JRE unless the filename ends with rt.jar
+     * Removes any CPE entries for the JDK/JRE unless the filename ends with
+     * rt.jar
      *
      * @param dependency the dependency to remove JRE CPEs from
      */

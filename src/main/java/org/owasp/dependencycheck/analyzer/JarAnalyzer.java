@@ -715,7 +715,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     /**
      * Determines if the key value pair from the manifest is for an "import" type
      * entry for package names.
-     * 
      * @param key the key from the manifest
      * @param value the value from the manifest
      * @return true or false depending on if it is believed the entry is an "import" entry
