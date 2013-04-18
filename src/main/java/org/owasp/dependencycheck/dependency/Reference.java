@@ -26,7 +26,7 @@ import java.io.Serializable;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class Reference implements Serializable {
+public class Reference implements Serializable, Comparable<Reference> {
 
     /**
      * the serial version uid.
@@ -129,4 +129,19 @@ public class Reference implements Serializable {
         return hash;
     }
 
+    public int compareTo(Reference o) {
+        if (source.equals(o.source)) {
+            if (name.equals(o.name)) {
+                if (url.equals(o.url)) {
+                    return 0; //they are equal
+                } else {
+                    return url.compareTo(o.url);
+                }
+            } else {
+                return name.compareTo(o.name);
+            }
+        } else {
+            return source.compareTo(o.source);
+        }
+    }
 }
