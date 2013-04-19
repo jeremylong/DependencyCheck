@@ -43,4 +43,28 @@ public abstract class AbstractAnalyzer implements Analyzer {
         Collections.addAll(set, strings);
         return set;
     }
+
+
+    /**
+     * The initialize method does nothing for this Analyzer.
+     */
+    public void initialize() {
+        //do nothing
+    }
+
+    /**
+     * The close method does nothing for this Analyzer.
+     */
+    public void close() {
+        //do nothing
+    }
+    
+    /**
+     * Used to indicate if any steps should be taken after the analysis. The
+     * abstract implementation returns NOTHING.
+     * @return NOTHING
+     */
+    public PostAnalysisAction getPostAnalysisAction() {
+        return PostAnalysisAction.NOTHING;
+    }
 }

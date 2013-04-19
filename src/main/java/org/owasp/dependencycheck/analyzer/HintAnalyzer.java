@@ -27,7 +27,7 @@ import org.owasp.dependencycheck.dependency.Evidence;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class HintAnalyzer implements Analyzer {
+public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
 
     /**
      * The name of the analyzer.
@@ -105,19 +105,5 @@ public class HintAnalyzer implements Analyzer {
             dependency.getVendorEvidence().addEvidence("a priori", "vendor", "vmware", Evidence.Confidence.HIGH);
         }
 
-    }
-
-    /**
-     * The initialize method does nothing for this Analyzer.
-     */
-    public void initialize() {
-        //do nothing
-    }
-
-    /**
-     * The close method does nothing for this Analyzer.
-     */
-    public void close() {
-        //do nothing
     }
 }

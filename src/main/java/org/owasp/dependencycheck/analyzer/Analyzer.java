@@ -99,4 +99,11 @@ public interface Analyzer {
      * @throws Exception is thrown if an exception occurs closing the analyzer.
      */
     void close() throws Exception;
+
+    public enum PostAnalysisAction {
+        NOTHING,
+        REMOVE_JAR
+    }
+    
+    PostAnalysisAction getPostAnalysisAction();
 }

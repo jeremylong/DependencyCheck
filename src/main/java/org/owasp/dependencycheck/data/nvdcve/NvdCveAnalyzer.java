@@ -28,7 +28,7 @@ import org.owasp.dependencycheck.analyzer.AnalysisPhase;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.Identifier;
-
+import org.owasp.dependencycheck.analyzer.Analyzer;
 /**
  * NvdCveAnalyzer is a utility class that takes a project dependency and
  * attempts to discern if there is an associated CVEs. It uses the the
@@ -36,7 +36,7 @@ import org.owasp.dependencycheck.dependency.Identifier;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class NvdCveAnalyzer implements org.owasp.dependencycheck.analyzer.Analyzer {
+public class NvdCveAnalyzer implements Analyzer {
 
     /**
      * The maximum number of query results to return.
@@ -158,5 +158,14 @@ public class NvdCveAnalyzer implements org.owasp.dependencycheck.analyzer.Analyz
      */
     public void initialize() throws Exception {
         this.open();
+    }
+
+    /**
+     * Used to indicate if any steps should be taken after the analysis. The
+     * abstract implementation returns NOTHING.
+     * @return NOTHING
+     */
+    public PostAnalysisAction getPostAnalysisAction() {
+        return PostAnalysisAction.NOTHING;
     }
 }

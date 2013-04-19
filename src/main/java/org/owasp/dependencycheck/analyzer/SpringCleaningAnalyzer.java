@@ -33,7 +33,7 @@ import org.owasp.dependencycheck.dependency.Identifier;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class SpringCleaningAnalyzer extends AbstractAnalyzer {
+public class SpringCleaningAnalyzer extends AbstractAnalyzer implements Analyzer {
 
     /**
      * The set of file extensions supported by this analyzer.
@@ -87,23 +87,6 @@ public class SpringCleaningAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * The initialize method does nothing for this Analyzer.
-     *
-     * @throws Exception never thrown by this analyzer
-     */
-    public void initialize() throws Exception {
-        //do nothing
-    }
-
-    /**
-     * The close method does nothing for this Analyzer.
-     *
-     * @throws Exception never thrown by this analyzer
-     */
-    public void close() throws Exception {
-        //do nothing
-    }
-    /**
      * a list of spring versions.
      */
     private List<Identifier> springVersions;
@@ -119,7 +102,6 @@ public class SpringCleaningAnalyzer extends AbstractAnalyzer {
      * file.
      */
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
-
         collectSpringFrameworkIdentifiers(engine);
 
         final List<Identifier> identifiersToRemove = new ArrayList<Identifier>();
