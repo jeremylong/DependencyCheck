@@ -39,7 +39,7 @@ import org.owasp.dependencycheck.utils.FileUtils;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class Dependency {
+public class Dependency implements Comparable<Dependency> {
 
     /**
      * The actual file path of the dependency on disk.
@@ -472,5 +472,9 @@ public class Dependency {
      */
     public void addRelatedDependency(Dependency dependency) {
         relatedDependencies.add(dependency);
+    }
+
+    public int compareTo(Dependency o) {
+        return this.getFileName().compareToIgnoreCase(o.getFileName());
     }
 }

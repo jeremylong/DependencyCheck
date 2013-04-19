@@ -37,7 +37,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.dependency.Evidence.Confidence;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
-
+import org.owasp.dependencycheck.analyzer.Analyzer;
 /**
  * CPEAnalyzer is a utility class that takes a project dependency and attempts
  * to discern if there is an associated CPE. It uses the evidence contained
@@ -45,7 +45,7 @@ import org.owasp.dependencycheck.dependency.EvidenceCollection;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class CPEAnalyzer implements org.owasp.dependencycheck.analyzer.Analyzer {
+public class CPEAnalyzer implements Analyzer {
 
     /**
      * The maximum number of query results to return.
@@ -511,5 +511,13 @@ public class CPEAnalyzer implements org.owasp.dependencycheck.analyzer.Analyzer 
      */
     public void initialize() throws Exception {
         this.open();
+    }
+    /**
+     * Used to indicate if any steps should be taken after the analysis. The
+     * abstract implementation returns NOTHING.
+     * @return NOTHING
+     */
+    public PostAnalysisAction getPostAnalysisAction() {
+        return PostAnalysisAction.NOTHING;
     }
 }

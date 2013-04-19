@@ -85,23 +85,6 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * The initialize method does nothing for this Analyzer.
-     *
-     * @throws Exception never thrown by this analyzer
-     */
-    public void initialize() throws Exception {
-        //do nothing
-    }
-
-    /**
-     * The close method does nothing for this Analyzer.
-     *
-     * @throws Exception never thrown by this analyzer
-     */
-    public void close() throws Exception {
-        //do nothing
-    }
-    /**
      * a list of spring versions.
      */
     private List<Identifier> springVersions;

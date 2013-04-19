@@ -29,7 +29,7 @@ import org.owasp.dependencycheck.Engine;
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class FileNameAnalyzer implements Analyzer {
+public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
 
     /**
      * The name of the analyzer.
@@ -108,19 +108,5 @@ public class FileNameAnalyzer implements Analyzer {
             dependency.getVersionEvidence().addEvidence("file", "name",
                     fileName, Evidence.Confidence.HIGH);
         }
-    }
-
-    /**
-     * The initialize method does nothing for this Analyzer.
-     */
-    public void initialize() {
-        //do nothing
-    }
-
-    /**
-     * The close method does nothing for this Analyzer.
-     */
-    public void close() {
-        //do nothing
     }
 }
