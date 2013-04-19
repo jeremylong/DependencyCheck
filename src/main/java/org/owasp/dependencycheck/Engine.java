@@ -209,10 +209,16 @@ public class Engine {
             final List<Analyzer> analyzerList = analyzers.get(phase);
 
             for (Analyzer a : analyzerList) {
-                for (Dependency d : dependencies) {
+                Iterator<Dependency> itrDependencies = dependencies.iterator();
+                while (itrDependencies.hasNext()) {
+                    Dependency d = itrDependencies.next();
                     if (a.supportsExtension(d.getFileExtension())) {
                         try {
                             a.analyze(d, this);
+                            //the following is mainly to deal with the DependencyBundlingAnalyzer
+                            if (a.getPostAnalysisAction() == Analyzer.PostAnalysisAction.REMOVE_JAR) {
+                                itrDependencies.remove();
+                            }
                         } catch (AnalysisException ex) {
                             d.addAnalysisException(ex);
                         }
