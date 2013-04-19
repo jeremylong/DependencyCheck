@@ -112,9 +112,10 @@ public class ReportGenerator {
      * reports.
      */
     public void generateReports(String outputDir, String outputFormat) throws IOException, Exception {
-        if ("XML".equalsIgnoreCase(outputFormat)) {
+        if ("XML".equalsIgnoreCase(outputFormat) || "ALL".equalsIgnoreCase(outputFormat)) {
             generateReport("XmlReport", outputDir + File.separator + "DependencyCheck-Report.xml");
-        } else {
+        }
+        if ("HTML".equalsIgnoreCase(outputFormat) || "ALL".equalsIgnoreCase(outputFormat)) {
             generateReport("HtmlReport", outputDir + File.separator + "DependencyCheck-Report.html");
         }
     }

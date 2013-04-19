@@ -108,8 +108,10 @@ public final class CliParser {
             }
             if (line.hasOption(ArgumentName.OUTPUT_FORMAT)) {
                 final String format = line.getOptionValue(ArgumentName.OUTPUT_FORMAT);
-                if (!("XML".equalsIgnoreCase(format) || "HTML".equalsIgnoreCase(format))) {
-                    throw new ParseException("Supported output formats are XML and HTML");
+                if (!("ALL".equalsIgnoreCase(format)
+                        || "XML".equalsIgnoreCase(format)
+                        || "HTML".equalsIgnoreCase(format))) {
+                    throw new ParseException("Supported output formats are XML, HTML, or ALL");
                 }
             }
         }
@@ -187,7 +189,7 @@ public final class CliParser {
                 .create(ArgumentName.OUT_SHORT);
 
         final Option outputformat = OptionBuilder.withArgName("format").hasArg().withLongOpt(ArgumentName.OUTPUT_FORMAT)
-                .withDescription("the output format to write to.")
+                .withDescription("the output format to write to (XML, HTML, ALL).")
                 .create(ArgumentName.OUTPUT_FORMAT_SHORT);
 
         //TODO add the ability to load a properties file to override the defaults...
