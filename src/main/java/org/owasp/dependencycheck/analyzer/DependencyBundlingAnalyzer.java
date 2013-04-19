@@ -18,24 +18,26 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Identifier;
 
 /**
- * <p>This analyzer ensures dependencies that should be grouped together, to remove
- * excess noise from the report, are grouped. An example would be Spring, Spring
- * Beans, Spring MVC, etc. If they are all for the same version and have the same
- * relative path then these should be grouped into a single dependency under the
- * core/main library.</p>
- * <p>Note, this grouping only works on dependencies with identified CVE entries</p>
+ * <p>This analyzer ensures dependencies that should be grouped together, to
+ * remove excess noise from the report, are grouped. An example would be Spring,
+ * Spring Beans, Spring MVC, etc. If they are all for the same version and have
+ * the same relative path then these should be grouped into a single dependency
+ * under the core/main library.</p>
+ * <p>Note, this grouping only works on dependencies with identified CVE
+ * entries</p>
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
-public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
+public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Analyzer {
 
     /**
      * The set of file extensions supported by this analyzer.
@@ -87,34 +89,113 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
+    private PostAnalysisAction action;
 
     /**
-     * The initialize method does nothing for this Analyzer.
+     * Analyzes a set of dependencies. If they have been found to have the same
+     * base path and the same set of identifiers they are likely related. The
+     * related dependencies are bundled into a single reportable item.
      *
-     * @throws Exception never thrown by this analyzer
-     */
-    public void initialize() throws Exception {
-        //do nothing
-    }
-
-    /**
-     * The close method does nothing for this Analyzer.
-     *
-     * @throws Exception never thrown by this analyzer
-     */
-    public void close() throws Exception {
-        //do nothing
-    }
-    /**
-     *
-     *
-     * @param dependency the dependency to analyze.
+     * @param dependency the dependency being analyzed
      * @param engine the engine that is scanning the dependencies
      * @throws AnalysisException is thrown if there is an error reading the JAR
      * file.
      */
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
-        
+        action = PostAnalysisAction.NOTHING;
+        if (dependency.getIdentifiers().size() > 0) {
+            for (Dependency dependencyToCheck : engine.getDependencies()) {
+                if (dependency.equals(dependencyToCheck)) {
+                    return;
+                }
+                if (identifiersMatch(dependencyToCheck, dependency)
+                        && hasSameBasePath(dependencyToCheck, dependency)
+                        && isCore(dependency, dependencyToCheck)) {
+                    //move this dependency to be a related dependency
+                    action = PostAnalysisAction.REMOVE_JAR;
+                    dependencyToCheck.addRelatedDependency(dependency);
+                    //move any "related dependencies" to the new "parent" dependency
+                    Iterator<Dependency> i = dependency.getRelatedDependencies().iterator();
+                    while (i.hasNext()) {
+                        Dependency d = i.next();
+                        dependencyToCheck.addRelatedDependency(d);
+                        i.remove();
+                    }
+                    return;
+                }
+            }
+        }
     }
 
+    /**
+     * Returns true if the identifiers in the two supplied dependencies are equal.
+     * @param dependency1 a dependency2 to compare
+     * @param dependency2 a dependency2 to compare
+     * @return true if the identifiers in the two supplied dependencies are equal
+     */
+    private boolean identifiersMatch(Dependency dependency1, Dependency dependency2) {
+        if (dependency1 == null || dependency1.getIdentifiers() == null
+                || dependency2 == null || dependency2.getIdentifiers() == null) {
+            return false;
+        }
+        return dependency1.getIdentifiers().size() > 0
+                && dependency2.getIdentifiers().equals(dependency1.getIdentifiers());
+    }
+
+    private boolean hasSameBasePath(Dependency dependency1, Dependency dependency2) {
+        if (dependency1 == null || dependency2 == null) {
+            return false;
+        }
+        File lFile = new File(dependency1.getFilePath());
+        String left = lFile.getParent();
+        File rFile = new File(dependency2.getFilePath());
+        String right = rFile.getParent();
+        if (left == null) {
+            if (right == null) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return left.equalsIgnoreCase(right);
+    }
+
+    /**
+     * This is likely a very broken attempt at determining if the 'left'
+     * dependency is the 'core' library in comparison to the 'right' library.
+     *
+     * @param left the dependency to test
+     * @param right the dependency to test against
+     * @return a boolean indicating whether or not the left dependency should be
+     * considered the "core" version.
+     */
+    private boolean isCore(Dependency left, Dependency right) {
+        String leftName = left.getFileName().toLowerCase();
+        String rightName = right.getFileName().toLowerCase();
+
+        if (rightName.contains("core") && !leftName.contains("core")) {
+            return false;
+        } else if (!rightName.contains("core") && leftName.contains("core")) {
+            return true;
+        } else {
+            //TODO should we be splitting the name on [-_(.\d)+] and seeing if the
+            //  parts are contained in the other side?
+            if (leftName.length() > rightName.length()) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    /**
+     * Returns whether or not the dependency should be removed from the parent
+     * list of dependencies.
+     *
+     * @return a PostAnalysisAction of REMOVE or NOTHING
+     */
+    @Override
+    public PostAnalysisAction getPostAnalysisAction() {
+        return action;
+    }
 }
