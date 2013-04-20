@@ -36,7 +36,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     /**
      * The set of file extensions supported by this analyzer.
      */
-    private static final Set<String> EXTENSIONS = null; //newHashSet("jar");
+    private static final Set<String> EXTENSIONS = null;
     /**
      * The name of the analyzer.
      */
@@ -83,11 +83,6 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
-
-    /**
-     * a list of spring versions.
-     */
-    private List<Identifier> springVersions;
 
     /**
      *

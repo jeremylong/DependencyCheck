@@ -19,9 +19,7 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -89,6 +87,9 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
+    /**
+     * The Post Analysis Action that will be set after analyzing a dependency.
+     */
     private PostAnalysisAction action;
 
     /**
@@ -112,13 +113,12 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                         && hasSameBasePath(dependencyToCheck, dependency)
                         && isCore(dependency, dependencyToCheck)) {
                     //move this dependency to be a related dependency
-                    action = PostAnalysisAction.REMOVE_JAR;
+                    action = PostAnalysisAction.REMOVE_DEPENDENCY;
                     dependencyToCheck.addRelatedDependency(dependency);
                     //move any "related dependencies" to the new "parent" dependency
-                    Iterator<Dependency> i = dependency.getRelatedDependencies().iterator();
+                    final Iterator<Dependency> i = dependency.getRelatedDependencies().iterator();
                     while (i.hasNext()) {
-                        Dependency d = i.next();
-                        dependencyToCheck.addRelatedDependency(d);
+                        dependencyToCheck.addRelatedDependency(i.next());
                         i.remove();
                     }
                     return;
@@ -142,20 +142,25 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                 && dependency2.getIdentifiers().equals(dependency1.getIdentifiers());
     }
 
+    /**
+     * Determines if the two dependencies have the same base path.
+     * @param dependency1 a Dependency object
+     * @param dependency2 a Dependency object
+     * @return true if the base paths of the dependencies are identical
+     */
     private boolean hasSameBasePath(Dependency dependency1, Dependency dependency2) {
         if (dependency1 == null || dependency2 == null) {
             return false;
         }
-        File lFile = new File(dependency1.getFilePath());
-        String left = lFile.getParent();
-        File rFile = new File(dependency2.getFilePath());
-        String right = rFile.getParent();
+        final File lFile = new File(dependency1.getFilePath());
+        final String left = lFile.getParent();
+        final File rFile = new File(dependency2.getFilePath());
+        final String right = rFile.getParent();
         if (left == null) {
             if (right == null) {
                 return true;
-            } else {
-                return false;
             }
+            return false;
         }
         return left.equalsIgnoreCase(right);
     }
@@ -170,8 +175,8 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      * considered the "core" version.
      */
     private boolean isCore(Dependency left, Dependency right) {
-        String leftName = left.getFileName().toLowerCase();
-        String rightName = right.getFileName().toLowerCase();
+        final String leftName = left.getFileName().toLowerCase();
+        final String rightName = right.getFileName().toLowerCase();
 
         if (rightName.contains("core") && !leftName.contains("core")) {
             return false;
@@ -182,9 +187,8 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             //  parts are contained in the other side?
             if (leftName.length() > rightName.length()) {
                 return false;
-            } else {
-                return true;
             }
+            return true;
         }
     }
 
