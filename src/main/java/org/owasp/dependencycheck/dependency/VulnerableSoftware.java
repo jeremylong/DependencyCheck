@@ -50,7 +50,6 @@ public class VulnerableSoftware extends Entry implements Serializable, Comparabl
             setName(cpe);
         }
     }
-
     /**
      * If present, indicates that previous version are vulnerable.
      */
@@ -111,6 +110,72 @@ public class VulnerableSoftware extends Entry implements Serializable, Comparabl
      * @return an integer indicating the ordering of the two objects
      */
     public int compareTo(VulnerableSoftware vs) {
-        return this.getName().compareTo(vs.getName());
+        int result = 0;
+        String[] left = this.getName().split(":");
+        String[] right = vs.getName().split(":");
+        int max = (left.length <= right.length) ? left.length : right.length;
+        if (max > 0) {
+            for (int i = 0; result == 0 && i < max; i++) {
+                String[] subLeft = left[i].split("\\.");
+                String[] subRight = right[i].split("\\.");
+                int subMax = (subLeft.length <= subRight.length) ? subLeft.length : subRight.length;
+                if (subMax > 0) {
+                    for (int x = 0; result == 0 && x < subMax; x++) {
+                        if (isPositiveInteger(subLeft[x]) && isPositiveInteger(subRight[x])) {
+                            int iLeft = Integer.parseInt(subLeft[x]);
+                            int iRight = Integer.parseInt(subRight[x]);
+                            if (iLeft != iRight) {
+                                if (iLeft>iRight) {
+                                    result = 2;
+                                } else {
+                                    result = -2;
+                                }
+                            }
+                        } else {
+                            result = subLeft[x].compareToIgnoreCase(subRight[x]);
+                        }
+                    }
+                    if (result == 0) {
+                        if (subLeft.length > subRight.length) {
+                            result = 2;
+                        }
+                        if (subRight.length > subLeft.length) {
+                            result = -2;
+                        }
+                    }
+                } else {
+                    result = left[i].compareToIgnoreCase(right[i]);
+                }
+            }
+            if (result == 0) {
+                if (left.length > right.length) {
+                    result = 2;
+                }
+                if (right.length > left.length) {
+                    result = -2;
+                }
+            }
+        } else {
+            result = this.getName().compareToIgnoreCase(vs.getName());
+        }
+        return result;
+    }
+
+    /**
+     * Determines if the string passed in is a positive integer.
+     * @param str the string to test
+     * @return true if the string only contains 0-9, otherwise false.
+     */
+    private static final boolean isPositiveInteger(final String str) {
+        if (str == null || str.isEmpty()) {
+            return false;
+        }
+        for (int i = 0; i < str.length(); i++) {
+            final char c = str.charAt(i);
+            if (c < '0' || c > '9') {
+                return false;
+            }
+        }
+        return true;
     }
 }
