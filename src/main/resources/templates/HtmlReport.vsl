@@ -288,10 +288,13 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 #set($lnkcnt=0)
                 #foreach($dependency in $dependencies)
                     #set($lnkcnt=$lnkcnt+1)
-                    #if($dependency.getVulnerabilities().size()>0)
-                        <a href="#l${lnkcnt}_$esc.html($esc.url($dependency.Sha1sum))">$esc.html($dependency.FileName)</a>&nbsp;<b style="color:#ff0000;">&#8226;</b><br/>
-                    #else
-                        <a href="#l${lnkcnt}_$esc.html($esc.url($dependency.Sha1sum))">$esc.html($dependency.FileName)</a><br/>
+                    <a href="#l${lnkcnt}_$esc.html($esc.url($dependency.Sha1sum))">$esc.html($dependency.FileName)</a>#if($dependency.getVulnerabilities().size()>0)&nbsp;<b style="color:#ff0000;">&#8226;</b>#end<br/>
+                    #if($dependency.getRelatedDependencies().size()>0)
+                        <ul>
+                        #foreach($related in $dependency.getRelatedDependencies())
+                        <li>$esc.html($related.FileName)</li>
+                        #end
+                        </ul>
                     #end
                 #end
                 </div>
