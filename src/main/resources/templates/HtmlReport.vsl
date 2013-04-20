@@ -283,7 +283,11 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 ]]#
             <h2 class="sectionheader white">Project:&nbsp;$esc.html($applicationName)</h2>
             <div class="sectioncontent">Report Generated On: $date<br/><br/>
-                Dependencies Scanned:&nbsp;$dependencies.size()<br/><br/>
+                #set($depCount=$dependencies.size())
+                #foreach($dependency in $dependencies)
+                    #set($depCount=$depCount+$dependency.getRelatedDependencies().size())
+                #end
+                Dependencies Scanned:&nbsp;$depCount<br/><br/>
                 <div class="indent">
                 #set($lnkcnt=0)
                 #foreach($dependency in $dependencies)
@@ -356,6 +360,23 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                                 #end
                             </table>
                         </div>
+                        #if($dependency.getRelatedDependencies().size()>0)
+                            #set($cnt=$cnt+1)
+                            <h4 id="header$cnt" class="subsectionheader expandable expandablesubsection white">Related Dependencies</h4>
+                            <div id="content$cnt" class="subsectioncontent standardsubsection hidden">
+                            <ul>
+                            #foreach($related in $dependency.getRelatedDependencies())
+                                <li>$esc.html($related.FileName)
+                                    <ul>
+                                        <li>File Path:&nbsp;$esc.html($dependency.FilePath)</li>
+                                        <li>SHA1:&nbsp;$esc.html($related.Sha1sum)</li>
+                                        <li>MD5:&nbsp;$esc.html($related.Md5sum)</li>
+                                     </ul>
+                                </li>
+                            #end
+                            </ul>
+                            </div>
+                        #end
                         #set($cnt=$cnt+1)
                         #set($cpeCount=0)
                         #foreach($id in $dependency.getIdentifiers())

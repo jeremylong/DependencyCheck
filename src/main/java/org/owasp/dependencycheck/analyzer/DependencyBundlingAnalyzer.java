@@ -89,7 +89,6 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
-
     /**
      * a flag indicating if this analyzer has run. This analyzer only runs once.
      */
@@ -113,13 +112,13 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             //for (Dependency dependencyToCheck : engine.getDependencies()) {
             while (mainIterator.hasNext()) {
                 final Dependency dependency = mainIterator.next();
-                System.out.println("START " + dependency.getFileName() + "----------------------");
                 if (mainIterator.hasNext()) {
                     ListIterator<Dependency> subIterator = engine.getDependencies().listIterator(mainIterator.nextIndex());
                     while (subIterator.hasNext()) {
                         final Dependency dependencyToCheck = subIterator.next();
+
                         if (identifiersMatch(dependency, dependencyToCheck)
-                            && hasSameBasePath(dependency, dependencyToCheck)) {
+                                && hasSameBasePath(dependency, dependencyToCheck)) {
 
                             if (isCore(dependency, dependencyToCheck)) {
                                 dependency.addRelatedDependency(dependencyToCheck);
@@ -145,7 +144,6 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                         }
                     }
                 }
-                System.out.println("END " + dependency.getFileName() + "----------------------");
             }
             //removing dependencies here as ensuring correctness and avoiding ConcurrentUpdateExceptions
             // was difficult because of the inner iterator.
@@ -162,13 +160,10 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      * @return true if the identifiers in the two supplied dependencies are equal
      */
     private boolean identifiersMatch(Dependency dependency1, Dependency dependency2) {
-        System.out.println("Checking Identifiers: " + dependency1.getFileName() + " and " + dependency2.getFileName());
         if (dependency1 == null || dependency1.getIdentifiers() == null
                 || dependency2 == null || dependency2.getIdentifiers() == null) {
             return false;
         }
-        System.out.println("Result = " + (dependency1.getIdentifiers().size() > 0
-                && dependency2.getIdentifiers().equals(dependency1.getIdentifiers())));
         return dependency1.getIdentifiers().size() > 0
                 && dependency2.getIdentifiers().equals(dependency1.getIdentifiers());
     }
@@ -200,30 +195,28 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      * This is likely a very broken attempt at determining if the 'left'
      * dependency is the 'core' library in comparison to the 'right' library.
      *
+     * TODO - consider spliting on /\._-\s/ and checking if all of one side is fully contained in the other
+     *  With the exception of the word "core". This might work even on groups when we don't have a CVE.
+     *
      * @param left the dependency to test
      * @param right the dependency to test against
      * @return a boolean indicating whether or not the left dependency should be
      * considered the "core" version.
      */
     private boolean isCore(Dependency left, Dependency right) {
-        System.out.println("Checking iscore: " + left.getFileName() + " and " + right.getFileName());
         final String leftName = left.getFileName().toLowerCase();
         final String rightName = right.getFileName().toLowerCase();
 
         if (rightName.contains("core") && !leftName.contains("core")) {
-            System.out.println("core False 1");
             return false;
         } else if (!rightName.contains("core") && leftName.contains("core")) {
-            System.out.println("core true 1");
             return true;
         } else {
             //TODO should we be splitting the name on [-_(.\d)+] and seeing if the
             //  parts are contained in the other side?
             if (leftName.length() > rightName.length()) {
-                System.out.println("core false 2");
                 return false;
             }
-            System.out.println("core true 2");
             return true;
         }
     }
