@@ -107,35 +107,35 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     public void analyze(Dependency ignore, Engine engine) throws AnalysisException {
         if (!analyzed) {
             analyzed = true;
-            Set<Dependency> dependenciesToRemove = new HashSet<Dependency>();
-            ListIterator<Dependency> mainIterator = engine.getDependencies().listIterator();
-            //for (Dependency dependencyToCheck : engine.getDependencies()) {
+            final Set<Dependency> dependenciesToRemove = new HashSet<Dependency>();
+            final ListIterator<Dependency> mainIterator = engine.getDependencies().listIterator();
+            //for (Dependency nextDependency : engine.getDependencies()) {
             while (mainIterator.hasNext()) {
                 final Dependency dependency = mainIterator.next();
                 if (mainIterator.hasNext()) {
-                    ListIterator<Dependency> subIterator = engine.getDependencies().listIterator(mainIterator.nextIndex());
+                    final ListIterator<Dependency> subIterator = engine.getDependencies().listIterator(mainIterator.nextIndex());
                     while (subIterator.hasNext()) {
-                        final Dependency dependencyToCheck = subIterator.next();
+                        final Dependency nextDependency = subIterator.next();
 
-                        if (identifiersMatch(dependency, dependencyToCheck)
-                                && hasSameBasePath(dependency, dependencyToCheck)) {
+                        if (identifiersMatch(dependency, nextDependency)
+                                && hasSameBasePath(dependency, nextDependency)) {
 
-                            if (isCore(dependency, dependencyToCheck)) {
-                                dependency.addRelatedDependency(dependencyToCheck);
+                            if (isCore(dependency, nextDependency)) {
+                                dependency.addRelatedDependency(nextDependency);
                                 //move any "related dependencies" to the new "parent" dependency
-                                final Iterator<Dependency> i = dependencyToCheck.getRelatedDependencies().iterator();
+                                final Iterator<Dependency> i = nextDependency.getRelatedDependencies().iterator();
                                 while (i.hasNext()) {
                                     dependency.addRelatedDependency(i.next());
                                     i.remove();
                                 }
-                                dependenciesToRemove.add(dependencyToCheck);
+                                dependenciesToRemove.add(nextDependency);
                             } else {
-                                if (isCore(dependencyToCheck, dependency)) {
-                                    dependencyToCheck.addRelatedDependency(dependency);
+                                if (isCore(nextDependency, dependency)) {
+                                    nextDependency.addRelatedDependency(dependency);
                                     //move any "related dependencies" to the new "parent" dependency
                                     final Iterator<Dependency> i = dependency.getRelatedDependencies().iterator();
                                     while (i.hasNext()) {
-                                        dependencyToCheck.addRelatedDependency(i.next());
+                                        nextDependency.addRelatedDependency(i.next());
                                         i.remove();
                                     }
                                     dependenciesToRemove.add(dependency);
