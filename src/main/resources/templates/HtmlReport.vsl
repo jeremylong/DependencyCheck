@@ -407,7 +407,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                             </p>
                             <p>Vulnerably Software:<ul>
                             #foreach($vs in $vuln.getVulnerableSoftware())
-                                <li><a href="http://web.nvd.nist.gov/view/vuln/search-results?cpe=$esc.url($vs.name)">$esc.html($vs.name)</a> #if($vs.hasPreviousVersion()) and all previous versions.#end</li>
+                                <li><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/search-results?cpe=$esc.url($vs.name)">$esc.html($vs.name)</a> #if($vs.hasPreviousVersion()) and all previous versions.#end</li>
                             #end
                             </ul></p>
                         #end
