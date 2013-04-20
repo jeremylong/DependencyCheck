@@ -99,23 +99,4 @@ public interface Analyzer {
      * @throws Exception is thrown if an exception occurs closing the analyzer.
      */
     void close() throws Exception;
-
-    /**
-     * An enumeration of Post Analysis Actions.
-     */
-    public enum PostAnalysisAction {
-        /**
-         * No action should be taken.
-         */
-        NOTHING,
-        /**
-         * The dependency should be removed from the list of dependencies scanned.
-         */
-        REMOVE_DEPENDENCY
-    }
-    /**
-     * Returns the post analysis action.
-     * @return the post analysis action
-     */
-    PostAnalysisAction getPostAnalysisAction();
 }

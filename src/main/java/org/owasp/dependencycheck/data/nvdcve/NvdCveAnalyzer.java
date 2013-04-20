@@ -159,13 +159,4 @@ public class NvdCveAnalyzer implements Analyzer {
     public void initialize() throws Exception {
         this.open();
     }
-
-    /**
-     * Used to indicate if any steps should be taken after the analysis. The
-     * abstract implementation returns NOTHING.
-     * @return NOTHING
-     */
-    public PostAnalysisAction getPostAnalysisAction() {
-        return PostAnalysisAction.NOTHING;
-    }
 }
