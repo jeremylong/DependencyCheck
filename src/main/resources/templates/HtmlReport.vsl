@@ -412,5 +412,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 #end
             </div>
         </div>
+        <div><br/><br/>This report contains data retrieved from the <a href="nvd.nist.gov">National Vulnerability Database</a>.</div>
     </body>
 </html>
