@@ -16,14 +16,14 @@ along with DependencyCheck. If not, see http://www.gnu.org/licenses/.
 
 Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 
-* @author Jeremy Long (jeremy.long@gmail.com)
+@author Jeremy Long (jeremy.long@gmail.com)
 @version 1
-*#
-<?xml version="1.0"?>
-<analysis>
+*#<?xml version="1.0"?>
+<analysis xmlns="https://www.owasp.org/index.php/OWASP_Dependency_Check">
     <projectInfo>
         <name>$esc.html($applicationName)</name>
         <reportDate>$date</reportDate>
+        <credits>This report contains data retrieved from the National Vulnerability Database: http://nvd.nist.gov</credits>
     </projectInfo>
     <dependencies>
 #foreach($dependency in $dependencies)
@@ -37,6 +37,17 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 #end
 #if ($dependency.license)
             <license>$esc.html($dependency.license)</license>
+#end
+#if ($dependency.getRelatedDependencies().size()>0)
+            <relatedDependencies>
+#foreach($related in $dependency.getRelatedDependencies())
+                <relatedDependency>
+                    <filePath>$esc.html($related.FilePath)</filePath>
+                    <sha1>$esc.html($related.Sha1sum)</sha1>
+                    <md5>$esc.html($related.Md5sum)</md5>
+                </relatedDependency>
+#end
+            </relatedDependencies>
 #end
 #if ( $dependency.analysisExceptions.size() != 0 )
             <analysisExceptions>
@@ -71,7 +82,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 <evidence>
                     <source>$esc.html($evidence.getSource())</source>
                     <name>$esc.html($evidence.getName())</name>
-                    <value>$esc.html($evidence.getValue())</value>
+                    <value>$esc.html($evidence.getValue().trim())</value>
                 </evidence>
 #end
             </evidenceCollected>
@@ -110,7 +121,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         <reference>
                             <source>$esc.html($ref.source)</source>
                             <url>$esc.html($ref.url)</url>
-                            <name>$ref.name</name>
+                            <name>$esc.html($ref.name)</name>
                         </reference>
 #end
                     </references>
