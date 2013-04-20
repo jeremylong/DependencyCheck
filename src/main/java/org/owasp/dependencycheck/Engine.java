@@ -209,17 +209,15 @@ public class Engine {
             final List<Analyzer> analyzerList = analyzers.get(phase);
 
             for (Analyzer a : analyzerList) {
-                final Iterator<Dependency> itrDependencies = dependencies.iterator();
-                while (itrDependencies.hasNext()) {
-                    final Dependency d = itrDependencies.next();
+                //need to create a copy of the collection because some of the
+                // analyzers may modify it. This prevents ConcurrentModificationExceptions.
+                final Set<Dependency> dependencySet = new HashSet<Dependency>();
+                dependencySet.addAll(dependencies);
+                for (Dependency d : dependencySet) {
                     if (a.supportsExtension(d.getFileExtension())) {
                         try {
                             a.analyze(d, this);
-                            //the following is mainly to deal with the DependencyBundlingAnalyzer
-                            if (a.getPostAnalysisAction() == Analyzer.PostAnalysisAction.REMOVE_DEPENDENCY) {
-                                itrDependencies.remove();
-                            }
-                        } catch (AnalysisException ex) {
+                          } catch (AnalysisException ex) {
                             d.addAnalysisException(ex);
                         }
                     }
