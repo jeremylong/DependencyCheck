@@ -190,6 +190,11 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             addPackagesAsEvidence ^= analyzePOM(dependency);
             addPackagesAsEvidence ^= Settings.getBoolean(Settings.KEYS.PERFORM_DEEP_SCAN);
             analyzePackageNames(dependency, addPackagesAsEvidence);
+            if (!hasClasses
+                    || (dependency.getFileName().toLowerCase().endsWith("-sources.jar")
+                    || dependency.getFileName().toLowerCase().endsWith("-javadoc.jar"))) {
+                engine.getDependencies().remove(dependency);
+            }
         } catch (IOException ex) {
             throw new AnalysisException("Exception occurred reading the JAR file.", ex);
         }
@@ -345,6 +350,10 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
+     * flag indicating whether any class files were found (weeding out javadoc and sources JAR files)
+     */
+    private boolean hasClasses = false;
+    /**
      * Analyzes the path information of the classes contained within the
      * JarAnalyzer to try and determine possible vendor or product names. If any
      * are found they are stored in the packageVendor and packageProduct
@@ -371,13 +380,17 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             int count = 0;
             while (en.hasMoreElements()) {
                 final java.util.jar.JarEntry entry = (java.util.jar.JarEntry) en.nextElement();
-                if (entry.getName().endsWith(".class") && entry.getName().contains("/")) {
-                    final String[] path = entry.getName().toLowerCase().split("/");
+                if (entry.getName().endsWith(".class")) {
+                    hasClasses = true;
+                    String[] path = null;
+                    if (entry.getName().contains("/")) {
+                        path = entry.getName().toLowerCase().split("/");
 
-                    if ("java".equals(path[0])
-                            || "javax".equals(path[0])
-                            || ("com".equals(path[0]) && "sun".equals(path[0]))) {
-                        continue;
+                        if ("java".equals(path[0])
+                                || "javax".equals(path[0])
+                                || ("com".equals(path[0]) && "sun".equals(path[0]))) {
+                            continue;
+                        }
                     }
 
                     count += 1;
