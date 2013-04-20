@@ -58,7 +58,7 @@ public abstract class AbstractAnalyzer implements Analyzer {
     public void close() {
         //do nothing
     }
-    
+
     /**
      * Used to indicate if any steps should be taken after the analysis. The
      * abstract implementation returns NOTHING.

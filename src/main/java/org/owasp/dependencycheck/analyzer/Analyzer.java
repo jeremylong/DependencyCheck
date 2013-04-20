@@ -100,10 +100,22 @@ public interface Analyzer {
      */
     void close() throws Exception;
 
+    /**
+     * An enumeration of Post Analysis Actions.
+     */
     public enum PostAnalysisAction {
+        /**
+         * No action should be taken.
+         */
         NOTHING,
-        REMOVE_JAR
+        /**
+         * The dependency should be removed from the list of dependencies scanned.
+         */
+        REMOVE_DEPENDENCY
     }
-    
+    /**
+     * Returns the post analysis action.
+     * @return the post analysis action
+     */
     PostAnalysisAction getPostAnalysisAction();
 }

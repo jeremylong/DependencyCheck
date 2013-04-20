@@ -66,11 +66,10 @@ public final class VersionTokenizingFilter extends TokenFilter {
         if (tokens.size() == 0 && input.incrementToken()) {
             final String version = new String(termAtt.buffer(), 0, termAtt.length());
             final String[] toAnalyze = version.split("[_-]");
-            if (toAnalyze.length > 1) { //ensure we analyze the whole string as one too
-                analyzeVersion(version);
-            }
+            //ensure we analyze the whole string as one too
+            analyzeVersion(version);
             for (String str : toAnalyze) {
-                analyzeVersion(version);
+                analyzeVersion(str);
             }
         }
         return addTerm();

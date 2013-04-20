@@ -111,21 +111,21 @@ public class VulnerableSoftware extends Entry implements Serializable, Comparabl
      */
     public int compareTo(VulnerableSoftware vs) {
         int result = 0;
-        String[] left = this.getName().split(":");
-        String[] right = vs.getName().split(":");
-        int max = (left.length <= right.length) ? left.length : right.length;
+        final String[] left = this.getName().split(":");
+        final String[] right = vs.getName().split(":");
+        final int max = (left.length <= right.length) ? left.length : right.length;
         if (max > 0) {
             for (int i = 0; result == 0 && i < max; i++) {
-                String[] subLeft = left[i].split("\\.");
-                String[] subRight = right[i].split("\\.");
-                int subMax = (subLeft.length <= subRight.length) ? subLeft.length : subRight.length;
+                final String[] subLeft = left[i].split("\\.");
+                final String[] subRight = right[i].split("\\.");
+                final int subMax = (subLeft.length <= subRight.length) ? subLeft.length : subRight.length;
                 if (subMax > 0) {
                     for (int x = 0; result == 0 && x < subMax; x++) {
                         if (isPositiveInteger(subLeft[x]) && isPositiveInteger(subRight[x])) {
-                            int iLeft = Integer.parseInt(subLeft[x]);
-                            int iRight = Integer.parseInt(subRight[x]);
+                            final int iLeft = Integer.parseInt(subLeft[x]);
+                            final int iRight = Integer.parseInt(subRight[x]);
                             if (iLeft != iRight) {
-                                if (iLeft>iRight) {
+                                if (iLeft > iRight) {
                                     result = 2;
                                 } else {
                                     result = -2;
@@ -166,7 +166,7 @@ public class VulnerableSoftware extends Entry implements Serializable, Comparabl
      * @param str the string to test
      * @return true if the string only contains 0-9, otherwise false.
      */
-    private static final boolean isPositiveInteger(final String str) {
+    private static boolean isPositiveInteger(final String str) {
         if (str == null || str.isEmpty()) {
             return false;
         }

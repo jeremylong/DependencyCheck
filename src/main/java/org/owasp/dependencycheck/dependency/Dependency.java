@@ -473,7 +473,12 @@ public class Dependency implements Comparable<Dependency> {
     public void addRelatedDependency(Dependency dependency) {
         relatedDependencies.add(dependency);
     }
-
+    /**
+     * Implemenation of the Comparable<Dependency> interface. The comparison
+     * is solely based on the file name.
+     * @param o a dependency to compare
+     * @return an integer representing the natural ordering
+     */
     public int compareTo(Dependency o) {
         return this.getFileName().compareToIgnoreCase(o.getFileName());
     }
