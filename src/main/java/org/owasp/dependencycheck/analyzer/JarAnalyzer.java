@@ -191,8 +191,10 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             addPackagesAsEvidence ^= Settings.getBoolean(Settings.KEYS.PERFORM_DEEP_SCAN);
             analyzePackageNames(dependency, addPackagesAsEvidence);
             if (!hasClasses
-                    || (dependency.getFileName().toLowerCase().endsWith("-sources.jar")
-                    || dependency.getFileName().toLowerCase().endsWith("-javadoc.jar"))) {
+                    && (dependency.getFileName().toLowerCase().endsWith("-sources.jar")
+                    || dependency.getFileName().toLowerCase().endsWith("-javadoc.jar")
+                    || dependency.getFileName().toLowerCase().endsWith("-src.jar")
+                    || dependency.getFileName().toLowerCase().endsWith("-doc.jar"))) {
                 engine.getDependencies().remove(dependency);
             }
         } catch (IOException ex) {
