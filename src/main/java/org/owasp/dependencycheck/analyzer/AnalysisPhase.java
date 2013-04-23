@@ -26,31 +26,39 @@ package org.owasp.dependencycheck.analyzer;
 public enum AnalysisPhase {
 
     /**
-     * The first phase of analysis.
+     * Initialization phase.
      */
     INITIAL,
     /**
-     * The second phase of analysis.
+     * Information collection phase.
      */
     INFORMATION_COLLECTION,
     /**
-     * The third phase of analysis.
+     * Pre identifier analysis phase.
      */
     PRE_IDENTIFIER_ANALYSIS,
     /**
-     * The fourth phase of analysis.
+     * Identifier analysis phase.
      */
     IDENTIFIER_ANALYSIS,
     /**
-     * The fifth phase of analysis.
+     * Post identifier analysis phase.
      */
     POST_IDENTIFIER_ANALYSIS,
     /**
-     * The sixth phase of analysis.
+     * Pre finding analysis phase.
+     */
+    PRE_FINDING_ANALYSIS,
+    /**
+     * Finding analysis phase.
      */
     FINDING_ANALYSIS,
     /**
-     * The seventh and final phase of analysis.
+     * Post analysis phase.
+     */
+    POST_FINDING_ANALYSIS,
+    /**
+     * The final analysis phase.
      */
     FINAL
 }
