@@ -50,7 +50,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     /**
      * The phase that this analyzer is intended to run in.
      */
-    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.POST_IDENTIFIER_ANALYSIS;
+    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.PRE_FINDING_ANALYSIS;
 
     /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
