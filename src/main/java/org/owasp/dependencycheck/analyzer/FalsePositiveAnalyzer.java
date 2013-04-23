@@ -18,12 +18,20 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.data.cpe.Entry;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * This analyzer attempts to remove some well known false positives -
@@ -94,7 +102,15 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      */
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
         removeJreEntries(dependency);
-        removeVersions(dependency);
+        boolean deepScan = false;
+        try {
+            deepScan = Settings.getBoolean(Settings.KEYS.PERFORM_DEEP_SCAN);
+        } catch (InvalidSettingException ex) {
+            Logger.getLogger(FalsePositiveAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (!deepScan) {
+            removeSpuriousCPE(dependency);
+        }
     }
 
     /**
@@ -102,18 +118,71 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      *
      * @param dependency the dependency being analyzed
      */
-    private void removeVersions(Dependency dependency) {
-        //todo implement this so that the following is corrected?
-        //cpe: cpe:/a:apache:axis2:1.4
-        //cpe: cpe:/a:apache:axis:1.4
-        /* the above was identified from the evidence below:
-         Source    Name            Value
-         Manifest  Bundle-Vendor   Apache Software Foundation
-         Manifest  Bundle-Version  1.4
-         file      name            axis2-kernel-1.4.1
-         pom       artifactid      axis2-kernel
-         pom       name            Apache Axis2 - Kernel
+    private void removeSpuriousCPE(Dependency dependency) {
+        List<Identifier> ids = new ArrayList<Identifier>();
+        ids.addAll(dependency.getIdentifiers());
+        ListIterator<Identifier> mainItr = ids.listIterator();
+        while (mainItr.hasNext()) {
+            Identifier currentId = mainItr.next();
+            Entry currentCpe = parseCpe(currentId.getType(), currentId.getValue());
+            if (currentCpe == null) {
+                continue;
+            }
+            ListIterator<Identifier> subItr = ids.listIterator(mainItr.nextIndex());
+            while (subItr.hasNext()) {
+                Identifier nextId = subItr.next();
+                Entry nextCpe = parseCpe(nextId.getType(), nextId.getValue());
+                if (nextCpe == null) {
+                    continue;
+                }
+                if (currentCpe.getVendor().equals(nextCpe.getVendor())) {
+                    if (currentCpe.getProduct().equals(nextCpe.getProduct())) {
+                        // see if one is contained in the other.. remove the contained one from dependency.getIdentifier
+                        String mainVersion = currentCpe.getVersion();
+                        String nextVersion = nextCpe.getVersion();
+                        if (mainVersion.length() < nextVersion.length()) {
+                            if (nextVersion.startsWith(mainVersion)) {
+                                //remove mainVersion
+                                dependency.getIdentifiers().remove(currentId);
+                            }
+                        } else {
+                            if (mainVersion.startsWith(nextVersion)) {
+                                //remove nextVersion
+                                dependency.getIdentifiers().remove(nextId);
+                            }
+                        }
+                    } else {
+                        if (currentCpe.getVersion().equals(nextCpe.getVersion())) {
+                            //same vendor and version - but different products
+                            // are we dealing with something like Axis & Axis2
+                            String currentProd = currentCpe.getProduct();
+                            String nextProd = nextCpe.getProduct();
+                            if (currentProd.startsWith(nextProd)) {
+                                dependency.getIdentifiers().remove(nextId);
+                            }
+                            if (nextProd.startsWith(currentProd)) {
+                                dependency.getIdentifiers().remove(currentId);
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+
+         /*
+         * NOTE - don't remove the two different vendors.
+         *
+            currentCpe: currentCpe:/a:mortbay:jetty:4.2.27
+            currentCpe: currentCpe:/a:mortbay_jetty:jetty:4.2
+            currentCpe: currentCpe:/a:mortbay:jetty:4.2
+         *
+            Source   Name	            Value
+            file     name                   org.mortbay.jetty
+            Manifest Implementation-Vendor  Mort Bay Consulting, Pty. Ltd.
+            Manifest Implementation-Version 4.2.27
          */
+
     }
 
     /**
@@ -134,5 +203,19 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                 itr.remove();
             }
         }
+    }
+
+    private Entry parseCpe(String type, String value) {
+        if (!"cpe".equals(type)) {
+            return null;
+        }
+        Entry cpe = new Entry();
+        try {
+            cpe.parseName(value);
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(FalsePositiveAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+            return null;
+        }
+        return cpe;
     }
 }
