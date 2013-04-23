@@ -185,11 +185,16 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      */
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
         boolean addPackagesAsEvidence = false;
+        //todo - catch should be more granular here, one for each call likely
+        //todo - think about sources/javadoc jars, should we remove or move to related dependency?
         try {
-            addPackagesAsEvidence ^= parseManifest(dependency);
-            addPackagesAsEvidence ^= analyzePOM(dependency);
-            addPackagesAsEvidence ^= Settings.getBoolean(Settings.KEYS.PERFORM_DEEP_SCAN);
-            analyzePackageNames(dependency, addPackagesAsEvidence);
+            boolean hasManifest = parseManifest(dependency);
+            boolean hasPOM = analyzePOM(dependency);
+            boolean deepScan = Settings.getBoolean(Settings.KEYS.PERFORM_DEEP_SCAN);
+            if ((!hasManifest && !hasPOM) || deepScan) {
+                addPackagesAsEvidence = true;
+            }
+            boolean hasClasses = analyzePackageNames(dependency, addPackagesAsEvidence);
             if (!hasClasses
                     && (dependency.getFileName().toLowerCase().endsWith("-sources.jar")
                     || dependency.getFileName().toLowerCase().endsWith("-javadoc.jar")
@@ -352,10 +357,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * flag indicating whether any class files were found (weeding out javadoc and sources JAR files)
-     */
-    private boolean hasClasses = false;
-    /**
      * Analyzes the path information of the classes contained within the
      * JarAnalyzer to try and determine possible vendor or product names. If any
      * are found they are stored in the packageVendor and packageProduct
@@ -364,11 +365,12 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * @param dependency A reference to the dependency.
      * @param addPackagesAsEvidence a flag indicating whether or not package
      * names should be added as evidence.
+     * @return returns true or false depending on whether classses were identified in the JAR
      * @throws IOException is thrown if there is an error reading the JAR file.
      */
-    protected void analyzePackageNames(Dependency dependency, boolean addPackagesAsEvidence)
+    protected boolean analyzePackageNames(Dependency dependency, boolean addPackagesAsEvidence)
             throws IOException {
-
+        boolean hasClasses = false;
         JarFile jar = null;
         try {
             jar = new JarFile(dependency.getActualFilePath());
@@ -433,7 +435,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             }
 
             if (count == 0) {
-                return;
+                return hasClasses;
             }
             final EvidenceCollection vendor = dependency.getVendorEvidence();
             final EvidenceCollection product = dependency.getProductEvidence();
@@ -533,6 +535,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 jar.close();
             }
         }
+        return hasClasses;
     }
 
     /**
@@ -556,8 +559,8 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             final Manifest manifest = jar.getManifest();
             if (manifest == null) {
                 Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE,
-                        "Jar file '{0}' does not contain a manifest.",
-                        dependency.getFileName());
+                        String.format("Jar file '%s' does not contain a manifest.",
+                        dependency.getFileName()));
                 return false;
             }
             final Attributes atts = manifest.getMainAttributes();
