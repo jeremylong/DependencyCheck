@@ -19,7 +19,6 @@
 package org.owasp.dependencycheck.utils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -63,7 +62,7 @@ public class DependencyVersion implements Iterable {
         versionParts = new ArrayList<String>();
         if (version != null) {
             final Pattern rx = Pattern.compile("(\\d+|[a-z]+\\d+)");
-            Matcher matcher = rx.matcher(version.toLowerCase());
+            final Matcher matcher = rx.matcher(version.toLowerCase());
             while (matcher.find()) {
                 versionParts.add(matcher.group());
             }
@@ -78,7 +77,7 @@ public class DependencyVersion implements Iterable {
     private List<String> versionParts;
 
     /**
-     * Get the value of versionParts
+     * Get the value of versionParts.
      *
      * @return the value of versionParts
      */
@@ -87,7 +86,7 @@ public class DependencyVersion implements Iterable {
     }
 
     /**
-     * Set the value of versionParts
+     * Set the value of versionParts.
      *
      * @param versionParts new value of versionParts
      */

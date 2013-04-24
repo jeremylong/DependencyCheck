@@ -32,7 +32,9 @@ import org.owasp.dependencycheck.dependency.Identifier;
  * to the CPE values (if there are any for the version of spring being used).
  *
  * @author Jeremy Long (jeremy.long@gmail.com)
+ * @deprecated This class has been deprecated as it has been replaced by the BundlingAnalyzer
  */
+@Deprecated
 public class SpringCleaningAnalyzer extends AbstractAnalyzer implements Analyzer {
 
     /**
