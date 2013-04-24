@@ -232,14 +232,14 @@ public class Engine {
                 try {
                     a.close();
                 } catch (Exception ex) {
-                    Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Engine.class.getName()).log(Level.WARNING, null, ex);
                 }
             }
         }
     }
 
     /**
-     *
+     * Cycles through the cached web data sources and calls update on all of them.
      */
     private void doUpdates() {
         final UpdateService service = UpdateService.getInstance();
@@ -249,7 +249,7 @@ public class Engine {
             try {
                 source.update();
             } catch (UpdateException ex) {
-                Logger.getLogger(Engine.class.getName()).log(Level.SEVERE,
+                Logger.getLogger(Engine.class.getName()).log(Level.WARNING,
                         "Unable to update " + source.getClass().getName(), ex);
             }
         }
