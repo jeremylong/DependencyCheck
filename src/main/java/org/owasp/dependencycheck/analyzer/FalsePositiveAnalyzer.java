@@ -119,27 +119,27 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      * @param dependency the dependency being analyzed
      */
     private void removeSpuriousCPE(Dependency dependency) {
-        List<Identifier> ids = new ArrayList<Identifier>();
+        final List<Identifier> ids = new ArrayList<Identifier>();
         ids.addAll(dependency.getIdentifiers());
-        ListIterator<Identifier> mainItr = ids.listIterator();
+        final ListIterator<Identifier> mainItr = ids.listIterator();
         while (mainItr.hasNext()) {
-            Identifier currentId = mainItr.next();
-            Entry currentCpe = parseCpe(currentId.getType(), currentId.getValue());
+            final Identifier currentId = mainItr.next();
+            final Entry currentCpe = parseCpe(currentId.getType(), currentId.getValue());
             if (currentCpe == null) {
                 continue;
             }
-            ListIterator<Identifier> subItr = ids.listIterator(mainItr.nextIndex());
+            final ListIterator<Identifier> subItr = ids.listIterator(mainItr.nextIndex());
             while (subItr.hasNext()) {
-                Identifier nextId = subItr.next();
-                Entry nextCpe = parseCpe(nextId.getType(), nextId.getValue());
+                final Identifier nextId = subItr.next();
+                final Entry nextCpe = parseCpe(nextId.getType(), nextId.getValue());
                 if (nextCpe == null) {
                     continue;
                 }
                 if (currentCpe.getVendor().equals(nextCpe.getVendor())) {
                     if (currentCpe.getProduct().equals(nextCpe.getProduct())) {
                         // see if one is contained in the other.. remove the contained one from dependency.getIdentifier
-                        String mainVersion = currentCpe.getVersion();
-                        String nextVersion = nextCpe.getVersion();
+                        final String mainVersion = currentCpe.getVersion();
+                        final String nextVersion = nextCpe.getVersion();
                         if (mainVersion.length() < nextVersion.length()) {
                             if (nextVersion.startsWith(mainVersion)) {
                                 //remove mainVersion
@@ -155,8 +155,8 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         if (currentCpe.getVersion().equals(nextCpe.getVersion())) {
                             //same vendor and version - but different products
                             // are we dealing with something like Axis & Axis2
-                            String currentProd = currentCpe.getProduct();
-                            String nextProd = nextCpe.getProduct();
+                            final String currentProd = currentCpe.getProduct();
+                            final String nextProd = nextCpe.getProduct();
                             if (currentProd.startsWith(nextProd)) {
                                 dependency.getIdentifiers().remove(nextId);
                             }
@@ -169,20 +169,6 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                 }
             }
         }
-
-         /*
-         * NOTE - don't remove the two different vendors.
-         *
-            currentCpe: currentCpe:/a:mortbay:jetty:4.2.27
-            currentCpe: currentCpe:/a:mortbay_jetty:jetty:4.2
-            currentCpe: currentCpe:/a:mortbay:jetty:4.2
-         *
-            Source   Name	            Value
-            file     name                   org.mortbay.jetty
-            Manifest Implementation-Vendor  Mort Bay Consulting, Pty. Ltd.
-            Manifest Implementation-Version 4.2.27
-         */
-
     }
 
     /**
@@ -205,11 +191,17 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         }
     }
 
+    /**
+     * Parses a CPE string into an Entry.
+     * @param type the type of identifier
+     * @param value the cpe identifier to parse
+     * @return an Entry constructed from the identifier
+     */
     private Entry parseCpe(String type, String value) {
         if (!"cpe".equals(type)) {
             return null;
         }
-        Entry cpe = new Entry();
+        final Entry cpe = new Entry();
         try {
             cpe.parseName(value);
         } catch (UnsupportedEncodingException ex) {

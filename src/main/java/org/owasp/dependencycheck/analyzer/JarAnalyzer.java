@@ -188,13 +188,13 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         //todo - catch should be more granular here, one for each call likely
         //todo - think about sources/javadoc jars, should we remove or move to related dependency?
         try {
-            boolean hasManifest = parseManifest(dependency);
-            boolean hasPOM = analyzePOM(dependency);
-            boolean deepScan = Settings.getBoolean(Settings.KEYS.PERFORM_DEEP_SCAN);
+            final boolean hasManifest = parseManifest(dependency);
+            final boolean hasPOM = analyzePOM(dependency);
+            final boolean deepScan = Settings.getBoolean(Settings.KEYS.PERFORM_DEEP_SCAN);
             if ((!hasManifest && !hasPOM) || deepScan) {
                 addPackagesAsEvidence = true;
             }
-            boolean hasClasses = analyzePackageNames(dependency, addPackagesAsEvidence);
+            final boolean hasClasses = analyzePackageNames(dependency, addPackagesAsEvidence);
             if (!hasClasses
                     && (dependency.getFileName().toLowerCase().endsWith("-sources.jar")
                     || dependency.getFileName().toLowerCase().endsWith("-javadoc.jar")
@@ -389,14 +389,15 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                     String[] path = null;
                     if (entry.getName().contains("/")) {
                         path = entry.getName().toLowerCase().split("/");
-
                         if ("java".equals(path[0])
                                 || "javax".equals(path[0])
                                 || ("com".equals(path[0]) && "sun".equals(path[0]))) {
                             continue;
                         }
+                    } else {
+                        path = new String[1];
+                        path[0] = entry.getName();
                     }
-
                     count += 1;
                     String temp = path[0];
                     if (level0.containsKey(temp)) {
@@ -404,7 +405,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                     } else {
                         level0.put(temp, 1);
                     }
-
                     if (path.length > 2) {
                         temp += "/" + path[1];
                         if (level1.containsKey(temp)) {
@@ -421,7 +421,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                             level2.put(temp, 1);
                         }
                     }
-
                     if (path.length > 4) {
                         temp += "/" + path[3];
                         if (level3.containsKey(temp)) {
@@ -430,10 +429,8 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                             level3.put(temp, 1);
                         }
                     }
-
                 }
             }
-
             if (count == 0) {
                 return hasClasses;
             }
