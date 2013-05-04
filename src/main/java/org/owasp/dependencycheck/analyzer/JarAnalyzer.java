@@ -294,6 +294,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             if (artifactid != null) {
                 foundSomething = true;
                 dependency.getProductEvidence().addEvidence("pom", "artifactid", artifactid, Evidence.Confidence.HIGH);
+                dependency.getVendorEvidence().addEvidence("pom", "artifactid", artifactid, Evidence.Confidence.LOW);
             }
             //version
             final String version = interpolateString(pom.getVersion(), pomProperties);
@@ -313,6 +314,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             if (pomName != null) {
                 foundSomething = true;
                 dependency.getProductEvidence().addEvidence("pom", "name", pomName, Evidence.Confidence.HIGH);
+                dependency.getVendorEvidence().addEvidence("pom", "name", pomName, Evidence.Confidence.HIGH);
             }
 
             //Description
