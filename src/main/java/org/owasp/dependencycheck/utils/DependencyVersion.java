@@ -33,7 +33,7 @@ import org.apache.commons.lang.StringUtils;
  * versionParts[2] = 3;
  * </code></p>
  * <p>Note, the parser contained in this class expects the version numbers to be
- * seperated by periods. If a different seperator is used the parser will likely
+ * separated by periods. If a different seperator is used the parser will likely
  * fail.</p>
  * @author Jeremy Long (jeremy.long@gmail.com)
  */
@@ -105,7 +105,7 @@ public class DependencyVersion implements Iterable {
 
     /**
      * Reconstructs the version string from the split version parts.
-     * @return a string reprenting the version.
+     * @return a string representing the version.
      */
     @Override
     public String toString() {

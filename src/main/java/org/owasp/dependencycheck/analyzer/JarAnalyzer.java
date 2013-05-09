@@ -367,7 +367,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * @param dependency A reference to the dependency.
      * @param addPackagesAsEvidence a flag indicating whether or not package
      * names should be added as evidence.
-     * @return returns true or false depending on whether classses were identified in the JAR
+     * @return returns true or false depending on whether classes were identified in the JAR
      * @throws IOException is thrown if there is an error reading the JAR file.
      */
     protected boolean analyzePackageNames(Dependency dependency, boolean addPackagesAsEvidence)

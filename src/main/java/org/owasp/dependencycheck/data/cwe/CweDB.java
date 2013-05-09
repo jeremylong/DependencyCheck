@@ -38,14 +38,14 @@ public final class CweDB {
         //empty
     }
     /**
-     * A hashmap of the CWE data.
+     * A HashMap of the CWE data.
      */
     private static final HashMap<String, String> CWE = loadData();
 
     /**
-     * Loads a hashmap containing the CWE data from a resource found in the jar.
+     * Loads a HashMap containing the CWE data from a resource found in the jar.
      *
-     * @return a hashmap of CWE data
+     * @return a HashMap of CWE data
      */
     private static HashMap<String, String> loadData() {
         ObjectInputStream oin = null;
