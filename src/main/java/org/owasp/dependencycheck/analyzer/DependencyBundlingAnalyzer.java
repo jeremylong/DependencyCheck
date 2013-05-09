@@ -195,7 +195,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      * This is likely a very broken attempt at determining if the 'left'
      * dependency is the 'core' library in comparison to the 'right' library.
      *
-     * TODO - consider spliting on /\._-\s/ and checking if all of one side is fully contained in the other
+     * TODO - consider splitting on /\._-\s/ and checking if all of one side is fully contained in the other
      *  With the exception of the word "core". This might work even on groups when we don't have a CVE.
      *
      * @param left the dependency to test

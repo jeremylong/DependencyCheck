@@ -31,7 +31,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class CweHandler extends DefaultHandler {
 
     /**
-     * a hashmap containing the CWE data.
+     * a HashMap containing the CWE data.
      */
     private HashMap<String, String> cwe = new HashMap<String, String>();
 

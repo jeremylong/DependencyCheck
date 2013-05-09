@@ -96,7 +96,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
      */
     private Set<Evidence> list;
     /**
-     * A collection of strings used to adjust lucene's term weighting.
+     * A collection of strings used to adjust Lucene's term weighting.
      */
     private Set<String> weightedStrings;
 
