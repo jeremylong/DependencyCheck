@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
@@ -357,6 +358,10 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         }
         return foundSomething;
     }
+    /**
+     * Tracks whether the jar being analyzed contains classes.
+     */
+    private boolean hasClasses = false;
 
     /**
      * Analyzes the path information of the classes contained within the
@@ -372,7 +377,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      */
     protected boolean analyzePackageNames(Dependency dependency, boolean addPackagesAsEvidence)
             throws IOException {
-        boolean hasClasses = false;
+        hasClasses = false;
         JarFile jar = null;
         try {
             jar = new JarFile(dependency.getActualFilePath());
@@ -381,56 +386,8 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             final HashMap<String, Integer> level1 = new HashMap<String, Integer>();
             final HashMap<String, Integer> level2 = new HashMap<String, Integer>();
             final HashMap<String, Integer> level3 = new HashMap<String, Integer>();
-            int count = 0;
-            while (en.hasMoreElements()) {
-                final java.util.jar.JarEntry entry = (java.util.jar.JarEntry) en.nextElement();
-                if (entry.getName().endsWith(".class")) {
-                    hasClasses = true;
-                    String[] path = null;
-                    if (entry.getName().contains("/")) {
-                        path = entry.getName().toLowerCase().split("/");
-                        if ("java".equals(path[0])
-                                || "javax".equals(path[0])
-                                || ("com".equals(path[0]) && "sun".equals(path[0]))) {
-                            continue;
-                        }
-                    } else {
-                        path = new String[1];
-                        path[0] = entry.getName();
-                    }
-                    count += 1;
-                    String temp = path[0];
-                    if (level0.containsKey(temp)) {
-                        level0.put(temp, level0.get(temp) + 1);
-                    } else {
-                        level0.put(temp, 1);
-                    }
-                    if (path.length > 2) {
-                        temp += "/" + path[1];
-                        if (level1.containsKey(temp)) {
-                            level1.put(temp, level1.get(temp) + 1);
-                        } else {
-                            level1.put(temp, 1);
-                        }
-                    }
-                    if (path.length > 3) {
-                        temp += "/" + path[2];
-                        if (level2.containsKey(temp)) {
-                            level2.put(temp, level2.get(temp) + 1);
-                        } else {
-                            level2.put(temp, 1);
-                        }
-                    }
-                    if (path.length > 4) {
-                        temp += "/" + path[3];
-                        if (level3.containsKey(temp)) {
-                            level3.put(temp, level3.get(temp) + 1);
-                        } else {
-                            level3.put(temp, 1);
-                        }
-                    }
-                }
-            }
+            final int count = collectPackageNameInformation(en, level0, level1, level2, level3);
+
             if (count == 0) {
                 return hasClasses;
             }
@@ -739,5 +696,73 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             return (key.contains("import") || key.contains("include"));
         }
         return false;
+    }
+
+    /**
+     * Cycles through an enumeration of JarEntries and collects level 0-3 directory
+     * structure names. This is helpful when analyzing vendor/product as many times
+     * this is included in the package name. This does not analyze core Java package
+     * names.
+     *
+     * @param en an Enumeration of JarEntries
+     * @param level0 HashMap of level 0 package names (e.g. org)
+     * @param level1 HashMap of level 1 package names (e.g. owasp)
+     * @param level2 HashMap of level 2 package names (e.g. dependencycheck)
+     * @param level3 HashMap of level 3 package names (e.g. analyzer)
+     * @return the number of entries processed that were included in the above HashMaps
+     */
+    private int collectPackageNameInformation(Enumeration en, HashMap<String, Integer> level0,
+            HashMap<String, Integer> level1, HashMap<String, Integer> level2, HashMap<String, Integer> level3) {
+        int count = 0;
+        while (en.hasMoreElements()) {
+            final java.util.jar.JarEntry entry = (java.util.jar.JarEntry) en.nextElement();
+            if (entry.getName().endsWith(".class")) {
+                hasClasses = true;
+                String[] path = null;
+                if (entry.getName().contains("/")) {
+                    path = entry.getName().toLowerCase().split("/");
+                    if ("java".equals(path[0])
+                            || "javax".equals(path[0])
+                            || ("com".equals(path[0]) && "sun".equals(path[0]))) {
+                        continue;
+                    }
+                } else {
+                    path = new String[1];
+                    path[0] = entry.getName();
+                }
+                count += 1;
+                String temp = path[0];
+                if (level0.containsKey(temp)) {
+                    level0.put(temp, level0.get(temp) + 1);
+                } else {
+                    level0.put(temp, 1);
+                }
+                if (path.length > 2) {
+                    temp += "/" + path[1];
+                    if (level1.containsKey(temp)) {
+                        level1.put(temp, level1.get(temp) + 1);
+                    } else {
+                        level1.put(temp, 1);
+                    }
+                }
+                if (path.length > 3) {
+                    temp += "/" + path[2];
+                    if (level2.containsKey(temp)) {
+                        level2.put(temp, level2.get(temp) + 1);
+                    } else {
+                        level2.put(temp, 1);
+                    }
+                }
+                if (path.length > 4) {
+                    temp += "/" + path[3];
+                    if (level3.containsKey(temp)) {
+                        level3.put(temp, level3.get(temp) + 1);
+                    } else {
+                        level3.put(temp, 1);
+                    }
+                }
+            }
+        }
+        return count;
     }
 }

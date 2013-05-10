@@ -152,7 +152,7 @@ public class ReportGenerator {
             generateReports(outputDir, Format.XML);
         }
         if ("HTML".equalsIgnoreCase(outputFormat)) {
-            generateReports(outputDir, Format.XML);
+            generateReports(outputDir, Format.HTML);
         }
         if ("ALL".equalsIgnoreCase(outputFormat)) {
             generateReports(outputDir, Format.ALL);
