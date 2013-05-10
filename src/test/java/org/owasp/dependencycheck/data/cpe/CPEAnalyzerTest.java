@@ -31,6 +31,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.analyzer.JarAnalyzer;
 import org.junit.Assert;
 import org.junit.Test;
+import org.owasp.dependencycheck.dependency.Identifier;
 
 /**
  *
@@ -110,6 +111,7 @@ public class CPEAnalyzerTest extends BaseIndexTestCase {
         CPEAnalyzer instance = new CPEAnalyzer();
         instance.open();
         String expResult = "cpe:/a:apache:struts:2.1.2";
+        Identifier expIdentifier = new Identifier("cpe", expResult, expResult);
         String expResultSpring = "cpe:/a:springsource:spring_framework:2.5.5";
         String expResultSpring3 = "cpe:/a:vmware:springsource_spring_framework:3.0.0";
         instance.determineCPE(depends);
@@ -117,7 +119,9 @@ public class CPEAnalyzerTest extends BaseIndexTestCase {
         instance.determineCPE(spring3);
         instance.close();
         Assert.assertTrue("Incorrect match size - struts", depends.getIdentifiers().size() >= 1);
-        Assert.assertTrue("Incorrect match - struts", depends.getIdentifiers().get(0).getValue().equals(expResult));
+
+
+        Assert.assertTrue("Incorrect match - struts", depends.getIdentifiers().contains(expIdentifier));
         //the following two only work if the HintAnalyzer is used.
         //Assert.assertTrue("Incorrect match size - spring", spring.getIdentifiers().size() == 1);
         //Assert.assertTrue("Incorrect match - spring", spring.getIdentifiers().get(0).getValue().equals(expResultSpring));

@@ -1,5 +1,6 @@
 package org.owasp.dependencycheck.dependency;
 
+import java.util.Set;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -208,7 +209,7 @@ public class DependencyTest {
     public void testGetIdentifiers() {
         Dependency instance = new Dependency();
         List expResult = null;
-        List result = instance.getIdentifiers();
+        Set<Identifier> result = instance.getIdentifiers();
 
         assertTrue(true); //this is just a getter setter pair.
     }
@@ -218,7 +219,7 @@ public class DependencyTest {
      */
     @Test
     public void testSetIdentifiers() {
-        List<Identifier> identifiers = null;
+        Set<Identifier> identifiers = null;
         Dependency instance = new Dependency();
         instance.setIdentifiers(identifiers);
         assertTrue(true); //this is just a getter setter pair.
@@ -232,13 +233,12 @@ public class DependencyTest {
         String type = "cpe";
         String value = "cpe:/a:apache:struts:2.1.2";
         String url = "http://somewhere";
+        Identifier expResult = new Identifier(type,value,url);
+
         Dependency instance = new Dependency();
         instance.addIdentifier(type, value, url);
         assertEquals(1,instance.getIdentifiers().size());
-        Identifier i = instance.getIdentifiers().get(0);
-        assertEquals(type,i.getType());
-        assertEquals(value, i.getValue());
-        assertEquals(url, i.getUrl());
+        assertTrue("Identifier doesn't contain expected result.", instance.getIdentifiers().contains(expResult));
     }
 
     /**

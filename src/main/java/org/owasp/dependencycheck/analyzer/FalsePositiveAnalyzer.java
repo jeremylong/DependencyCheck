@@ -178,7 +178,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      * @param dependency the dependency to remove JRE CPEs from
      */
     private void removeJreEntries(Dependency dependency) {
-        final List<Identifier> identifiers = dependency.getIdentifiers();
+        final Set<Identifier> identifiers = dependency.getIdentifiers();
         final Iterator<Identifier> itr = identifiers.iterator();
         while (itr.hasNext()) {
             final Identifier i = itr.next();

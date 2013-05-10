@@ -98,10 +98,22 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
                 "org.springframework.core",
                 Evidence.Confidence.HIGH);
 
-        final Set<Evidence> evidence = dependency.getProductEvidence().getEvidence();
+        final Evidence springTest3 = new Evidence("Manifest",
+                "Bundle-Vendor",
+                "SpringSource",
+                Evidence.Confidence.HIGH);
+
+
+        Set<Evidence> evidence = dependency.getProductEvidence().getEvidence();
         if (evidence.contains(springTest1) || evidence.contains(springTest2)) {
             dependency.getProductEvidence().addEvidence("a priori", "product", "springsource_spring_framework", Evidence.Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("a priori", "vendor", "SpringSource", Evidence.Confidence.HIGH);
+            dependency.getVendorEvidence().addEvidence("a priori", "vendor", "vmware", Evidence.Confidence.HIGH);
+        }
+
+        evidence = dependency.getVendorEvidence().getEvidence();
+        if (evidence.contains(springTest3)) {
+            dependency.getProductEvidence().addEvidence("a priori", "product", "springsource_spring_framework", Evidence.Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("a priori", "vendor", "vmware", Evidence.Confidence.HIGH);
         }
 

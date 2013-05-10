@@ -31,7 +31,7 @@ public class Identifier implements Comparable<Identifier> {
      * @param value the identifier value.
      * @param url the identifier url.
      */
-    Identifier(String type, String value, String url) {
+    public Identifier(String type, String value, String url) {
         this.type = type;
         this.value = value;
         this.url = url;
@@ -45,7 +45,7 @@ public class Identifier implements Comparable<Identifier> {
      * @param url the identifier url.
      * @param description the description of the identifier.
      */
-    Identifier(String type, String value, String url, String description) {
+    public Identifier(String type, String value, String url, String description) {
         this(type, value, url);
         this.description = description;
     }

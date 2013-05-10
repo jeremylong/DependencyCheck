@@ -48,6 +48,12 @@ import org.owasp.dependencycheck.dependency.Dependency;
  */
 public class ReportGenerator {
 
+    public enum Format {
+        ALL,
+        XML,
+        HTML
+    }
+
     /**
      * The Velocity Engine.
      */
@@ -105,18 +111,39 @@ public class ReportGenerator {
     /**
      * Generates the Dependency Reports for the identified dependencies.
      *
-     * @param outputDir the path where the reports should be written.
-     * @param outputFormat the format the report should be written in.
-     * @throws IOException is thrown when the template file does not exist.
+     * @param outputDir the path where the reports should be written
+     * @param format the format the report should be written in
+     * @throws IOException is thrown when the template file does not exist
+     * @throws Exception is thrown if there is an error writing out the
+     * reports.
+     */
+    public void generateReports(String outputDir, Format format) throws IOException, Exception {
+        if (format == Format.XML || format == Format.ALL) {
+            generateReport("XmlReport", outputDir + File.separator + "DependencyCheck-Report.xml");
+        }
+        if (format == Format.HTML || format == Format.ALL) {
+            generateReport("HtmlReport", outputDir + File.separator + "DependencyCheck-Report.html");
+        }
+    }
+
+    /**
+     * Generates the Dependency Reports for the identified dependencies.
+     *
+     * @param outputDir the path where the reports should be written
+     * @param outputFormat the format the report should be written in (XML, HTML, ALL)
+     * @throws IOException is thrown when the template file does not exist
      * @throws Exception is thrown if there is an error writing out the
      * reports.
      */
     public void generateReports(String outputDir, String outputFormat) throws IOException, Exception {
-        if ("XML".equalsIgnoreCase(outputFormat) || "ALL".equalsIgnoreCase(outputFormat)) {
-            generateReport("XmlReport", outputDir + File.separator + "DependencyCheck-Report.xml");
+        if ("XML".equalsIgnoreCase(outputFormat)) {
+            generateReports(outputDir, Format.XML);
         }
-        if ("HTML".equalsIgnoreCase(outputFormat) || "ALL".equalsIgnoreCase(outputFormat)) {
-            generateReport("HtmlReport", outputDir + File.separator + "DependencyCheck-Report.html");
+        if ("HTML".equalsIgnoreCase(outputFormat)) {
+            generateReports(outputDir, Format.XML);
+        }
+        if ("ALL".equalsIgnoreCase(outputFormat)) {
+            generateReports(outputDir, Format.ALL);
         }
     }
 
@@ -130,7 +157,7 @@ public class ReportGenerator {
      * @throws IOException is thrown when the template file does not exist.
      * @throws Exception is thrown when an exception occurs.
      */
-    public void generateReport(String templateName, String outFileName) throws IOException, Exception {
+    protected void generateReport(String templateName, String outFileName) throws IOException, Exception {
         InputStream input = null;
         String templatePath = null;
         final File f = new File(templateName);
