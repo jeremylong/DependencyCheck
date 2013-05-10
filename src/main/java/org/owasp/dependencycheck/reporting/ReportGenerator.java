@@ -48,9 +48,21 @@ import org.owasp.dependencycheck.dependency.Dependency;
  */
 public class ReportGenerator {
 
+    /**
+     * An enumeration of the report formats.
+     */
     public enum Format {
+        /**
+         * Generate all reports.
+         */
         ALL,
+        /**
+         * Generate XML report.
+         */
         XML,
+        /**
+         * Generate HTML report.
+         */
         HTML
     }
 
