@@ -161,19 +161,19 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      * @return a string representing the base path.
      */
     private String getBaseRepoPath(final String path) {
-        int pos = path.indexOf("repository") + 10;
-        if (pos<0) {
+        int pos = path.indexOf("repository" + File.separator) + 11;
+        if (pos < 0) {
             return path;
         }
         int tmp = path.indexOf(File.separator, pos);
-        if (tmp<=0) {
+        if (tmp <= 0) {
             return path;
         }
-        if (tmp>0) {
+        if (tmp > 0) {
             pos = tmp + 1;
         }
         tmp = path.indexOf(File.separator, pos);
-        if (tmp>0) {
+        if (tmp > 0) {
             pos = tmp + 1;
         }
         return path.substring(0, pos);
