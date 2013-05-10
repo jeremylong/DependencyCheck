@@ -217,16 +217,9 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
         if (left.equalsIgnoreCase(right)) {
             return true;
         }
-        if (dependency1.getFileName().contains("RELEASE") && dependency2.getFileName().contains("RELEASE")) {
-            System.out.println(dependency1.getFilePath());
-            System.out.println(dependency2.getFilePath());
-            System.out.println("Path=" + left.equalsIgnoreCase(right));
-            System.out.println();
-        }
         if (left.matches(".*[/\\\\]repository[/\\\\].*") && right.matches(".*[/\\\\]repository[/\\\\].*")) {
             left = getBaseRepoPath(left);
             right = getBaseRepoPath(right);
-            System.out.println("found a repo");
         }
         return left.equalsIgnoreCase(right);
     }
