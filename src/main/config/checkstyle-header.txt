@@ -1,12 +1,12 @@
 ^/\*\s*$
-^ \* This file is part of DependencyCheck\.\s*$
+^ \* This file is part of Dependency-Check\.\s*$
 ^ \*\s*$
-^ \* DependencyCheck is free software\: you can redistribute it and/or modify it\s*$
+^ \* Dependency-Check is free software\: you can redistribute it and/or modify it\s*$
 ^ \* under the terms of the GNU General Public License as published by the Free\s*$
 ^ \* Software Foundation, either version 3 of the License, or \(at your option\) any\s*$
 ^ \* later version\.
 ^ \*\s*$
-^ \* DependencyCheck is distributed in the hope that it will be useful, but\s*$
+^ \* Dependency-Check is distributed in the hope that it will be useful, but\s*$
 ^ \* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or\s*$
 ^ \* FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more\s*$
 ^ \* details\.\s*$
