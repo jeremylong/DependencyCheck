@@ -154,6 +154,32 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     }
 
     /**
+     * Attempts to trim a maven repo to a common base path. This is typically
+     * [drive]\[repolocation\repository\[path1]\[path2].
+     *
+     * @param path the path to trim
+     * @return a string representing the base path.
+     */
+    private String getBaseRepoPath(final String path) {
+        int pos = path.indexOf("repository") + 10;
+        if (pos<0) {
+            return path;
+        }
+        int tmp = path.indexOf(File.separator, pos);
+        if (tmp<=0) {
+            return path;
+        }
+        if (tmp>0) {
+            pos = tmp + 1;
+        }
+        tmp = path.indexOf(File.separator, pos);
+        if (tmp>0) {
+            pos = tmp + 1;
+        }
+        return path.substring(0, pos);
+    }
+
+    /**
      * Returns true if the identifiers in the two supplied dependencies are equal.
      * @param dependency1 a dependency2 to compare
      * @param dependency2 a dependency2 to compare
@@ -179,14 +205,28 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             return false;
         }
         final File lFile = new File(dependency1.getFilePath());
-        final String left = lFile.getParent();
+        String left = lFile.getParent();
         final File rFile = new File(dependency2.getFilePath());
-        final String right = rFile.getParent();
+        String right = rFile.getParent();
         if (left == null) {
             if (right == null) {
                 return true;
             }
             return false;
+        }
+        if (left.equalsIgnoreCase(right)) {
+            return true;
+        }
+        if (dependency1.getFileName().contains("RELEASE") && dependency2.getFileName().contains("RELEASE")) {
+            System.out.println(dependency1.getFilePath());
+            System.out.println(dependency2.getFilePath());
+            System.out.println("Path=" + left.equalsIgnoreCase(right));
+            System.out.println();
+        }
+        if (left.matches(".*[/\\\\]repository[/\\\\].*") && right.matches(".*[/\\\\]repository[/\\\\].*")) {
+            left = getBaseRepoPath(left);
+            right = getBaseRepoPath(right);
+            System.out.println("found a repo");
         }
         return left.equalsIgnoreCase(right);
     }
