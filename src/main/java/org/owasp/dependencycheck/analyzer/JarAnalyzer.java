@@ -376,9 +376,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         JarFile jar = null;
         try {
             jar = new JarFile(dependency.getActualFilePath());
-
             final java.util.Enumeration en = jar.entries();
-
             final HashMap<String, Integer> level0 = new HashMap<String, Integer>();
             final HashMap<String, Integer> level1 = new HashMap<String, Integer>();
             final HashMap<String, Integer> level2 = new HashMap<String, Integer>();
@@ -438,7 +436,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             }
             final EvidenceCollection vendor = dependency.getVendorEvidence();
             final EvidenceCollection product = dependency.getProductEvidence();
-
             for (String s : level0.keySet()) {
                 if (!"org".equals(s) && !"com".equals(s)) {
                     vendor.addWeighting(s);
