@@ -68,7 +68,7 @@ public class Dependency implements Comparable<Dependency> {
     /**
      * A list of Identifiers.
      */
-    private List<Identifier> identifiers;
+    private Set<Identifier> identifiers;
     /**
      * A collection of vendor evidence.
      */
@@ -89,7 +89,7 @@ public class Dependency implements Comparable<Dependency> {
         vendorEvidence = new EvidenceCollection();
         productEvidence = new EvidenceCollection();
         versionEvidence = new EvidenceCollection();
-        identifiers = new ArrayList<Identifier>();
+        identifiers = new TreeSet<Identifier>();
         vulnerabilities = new TreeSet<Vulnerability>(new VulnerabilityComparator());
     }
 
@@ -222,7 +222,7 @@ public class Dependency implements Comparable<Dependency> {
      *
      * @return an ArrayList of Identifiers.
      */
-    public List<Identifier> getIdentifiers() {
+    public Set<Identifier> getIdentifiers() {
         return this.identifiers;
     }
 
@@ -231,7 +231,7 @@ public class Dependency implements Comparable<Dependency> {
      *
      * @param identifiers A list of Identifiers.
      */
-    public void setIdentifiers(List<Identifier> identifiers) {
+    public void setIdentifiers(Set<Identifier> identifiers) {
         this.identifiers = identifiers;
     }
 

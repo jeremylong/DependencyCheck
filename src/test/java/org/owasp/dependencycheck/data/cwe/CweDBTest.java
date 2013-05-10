@@ -54,7 +54,7 @@ public class CweDBTest {
     /**
      * Method to serialize the CWE HashMap. This is not used in
      * production; this is only used once during dev to create
-     * the serialized hashmap.
+     * the serialized HashMap.
      */
 //    @Test
 //    public void testUpdate() throws Exception {
