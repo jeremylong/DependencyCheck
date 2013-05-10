@@ -12,7 +12,7 @@
  * details.
  *
  * You should have received a copy of the GNU General Public License along with
- * DependencyCheck. If not, see http://www.gnu.org/licenses/.
+ * Dependency-Check. If not, see http://www.gnu.org/licenses/.
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
