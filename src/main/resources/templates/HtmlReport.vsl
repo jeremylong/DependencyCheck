@@ -25,7 +25,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 <!DOCTYPE html>
 <html>
     <head>
-        <title></title>
+        <title>Dependency-Check Report</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="shortcut icon" href="data:;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAANVJREFUOE9jYKAi+A80Cxn/APLnA7EQsXaANB9BUiwJZD8C4ktAzEKMIegGgPRYQl0VTq4BfFADJpBlgIHjfxNV45P/gTQMnwOyPXAZhuIFoEJHkEZB8ej/DIysR4FsDiAugRqG1UtwA4CKWID4hZ7997VQL0wlyQtAzaYgm5QN9rSTFYhAzeEgA/hFAs5Bo5LoaAQnJAGxcHCgCYpHbSclIcG9CdRsBw2sFGL8jqEGFohAegVZBoA0waIRSEdDDUSOxgSiDAYlJCAGJR6iEhJRhqIrAgDHLHfYX71qMgAAAABJRU5ErkJggg==" />
         <script type="text/javascript">
