@@ -250,9 +250,9 @@ public class Engine {
                 source.update();
             } catch (UpdateException ex) {
                 Logger.getLogger(Engine.class.getName()).log(Level.WARNING,
-                        "Unable to update {0}", source.getClass().getName());
+                        "Unable to update Cached Web DataSource, using local data instead. Results may not include recent vulnerabilities.");
                 Logger.getLogger(Engine.class.getName()).log(Level.INFO,
-                        String.format("Unable to update details for {0}",
+                        String.format("Unable to update details for %s",
                         source.getClass().getName()), ex);
             }
         }
