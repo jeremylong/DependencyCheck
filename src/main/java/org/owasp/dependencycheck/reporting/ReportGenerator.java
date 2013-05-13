@@ -52,6 +52,7 @@ public class ReportGenerator {
      * An enumeration of the report formats.
      */
     public enum Format {
+
         /**
          * Generate all reports.
          */
@@ -65,7 +66,6 @@ public class ReportGenerator {
          */
         HTML
     }
-
     /**
      * The Velocity Engine.
      */
