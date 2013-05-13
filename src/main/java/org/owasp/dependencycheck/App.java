@@ -75,17 +75,9 @@ public class App {
      * Configures the logger for use by the application.
      */
     private static void prepareLogger() {
-        //while java doc for JUL says to use preferences api - it throws an exception...
-        //Preferences.systemRoot().put("java.util.logging.config.file", "log.properties");
-        //System.getProperties().put("java.util.logging.config.file", "configuration/log.properties");
-
-        //removed the file handler. since this is a console app - just write to console.
-//        File dir = new File("logs");
-//        if (!dir.exists()) {
-//            dir.mkdir();
-//        }
+        InputStream in = null;
         try {
-            final InputStream in = App.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
+            in = App.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
             LogManager.getLogManager().reset();
             LogManager.getLogManager().readConfiguration(in);
         } catch (IOException ex) {
@@ -93,6 +85,12 @@ public class App {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SecurityException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                in.close();
+            } catch (Exception ex) {
+                //ignore
+            }
         }
     }
 
