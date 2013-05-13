@@ -250,9 +250,10 @@ public class Engine {
                 source.update();
             } catch (UpdateException ex) {
                 Logger.getLogger(Engine.class.getName()).log(Level.WARNING,
-                        "Unable to update " + source.getClass().getName());
+                        "Unable to update {0}", source.getClass().getName());
                 Logger.getLogger(Engine.class.getName()).log(Level.INFO,
-                        "Unable to update details for " + source.getClass().getName(), ex);
+                        String.format("Unable to update details for {0}",
+                        source.getClass().getName()), ex);
             }
         }
     }
