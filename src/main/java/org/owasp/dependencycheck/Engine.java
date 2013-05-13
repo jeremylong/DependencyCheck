@@ -217,7 +217,7 @@ public class Engine {
                     if (a.supportsExtension(d.getFileExtension())) {
                         try {
                             a.analyze(d, this);
-                          } catch (AnalysisException ex) {
+                        } catch (AnalysisException ex) {
                             d.addAnalysisException(ex);
                         }
                     }
