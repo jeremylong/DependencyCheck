@@ -193,6 +193,11 @@ public class ReportGenerator {
         OutputStream outputStream = null;
 
         try {
+            File foutDir = new File(outFileName).getParentFile();
+            if (!foutDir.exists()) {
+                foutDir.mkdirs();
+            }
+
             outputStream = new FileOutputStream(outFileName);
             writer = new OutputStreamWriter(outputStream, "UTF-8");
             //writer = new BufferedWriter(oswriter);
