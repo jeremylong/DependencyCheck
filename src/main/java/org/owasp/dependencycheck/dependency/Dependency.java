@@ -482,4 +482,91 @@ public class Dependency implements Comparable<Dependency> {
     public int compareTo(Dependency o) {
         return this.getFileName().compareToIgnoreCase(o.getFileName());
     }
+
+    /**
+     * Implementation of the equals method.
+     * @param obj the object to compare
+     * @return true if the objects are equal, otherwise false
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Dependency other = (Dependency) obj;
+        if ((this.actualFilePath == null) ? (other.actualFilePath != null) : !this.actualFilePath.equals(other.actualFilePath)) {
+            return false;
+        }
+        if ((this.filePath == null) ? (other.filePath != null) : !this.filePath.equals(other.filePath)) {
+            return false;
+        }
+        if ((this.fileName == null) ? (other.fileName != null) : !this.fileName.equals(other.fileName)) {
+            return false;
+        }
+        if ((this.fileExtension == null) ? (other.fileExtension != null) : !this.fileExtension.equals(other.fileExtension)) {
+            return false;
+        }
+        if ((this.md5sum == null) ? (other.md5sum != null) : !this.md5sum.equals(other.md5sum)) {
+            return false;
+        }
+        if ((this.sha1sum == null) ? (other.sha1sum != null) : !this.sha1sum.equals(other.sha1sum)) {
+            return false;
+        }
+        if (this.identifiers != other.identifiers && (this.identifiers == null || !this.identifiers.equals(other.identifiers))) {
+            return false;
+        }
+        if (this.vendorEvidence != other.vendorEvidence && (this.vendorEvidence == null || !this.vendorEvidence.equals(other.vendorEvidence))) {
+            return false;
+        }
+        if (this.productEvidence != other.productEvidence && (this.productEvidence == null || !this.productEvidence.equals(other.productEvidence))) {
+            return false;
+        }
+        if (this.versionEvidence != other.versionEvidence && (this.versionEvidence == null || !this.versionEvidence.equals(other.versionEvidence))) {
+            return false;
+        }
+        if (this.analysisExceptions != other.analysisExceptions && (this.analysisExceptions == null || !this.analysisExceptions.equals(other.analysisExceptions))) {
+            return false;
+        }
+        if ((this.description == null) ? (other.description != null) : !this.description.equals(other.description)) {
+            return false;
+        }
+        if ((this.license == null) ? (other.license != null) : !this.license.equals(other.license)) {
+            return false;
+        }
+        if (this.vulnerabilities != other.vulnerabilities && (this.vulnerabilities == null || !this.vulnerabilities.equals(other.vulnerabilities))) {
+            return false;
+        }
+        if (this.relatedDependencies != other.relatedDependencies && (this.relatedDependencies == null || !this.relatedDependencies.equals(other.relatedDependencies))) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Generates the HashCode.
+     * @return the HashCode
+     */
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 47 * hash + (this.actualFilePath != null ? this.actualFilePath.hashCode() : 0);
+        hash = 47 * hash + (this.filePath != null ? this.filePath.hashCode() : 0);
+        hash = 47 * hash + (this.fileName != null ? this.fileName.hashCode() : 0);
+        hash = 47 * hash + (this.fileExtension != null ? this.fileExtension.hashCode() : 0);
+        hash = 47 * hash + (this.md5sum != null ? this.md5sum.hashCode() : 0);
+        hash = 47 * hash + (this.sha1sum != null ? this.sha1sum.hashCode() : 0);
+        hash = 47 * hash + (this.identifiers != null ? this.identifiers.hashCode() : 0);
+        hash = 47 * hash + (this.vendorEvidence != null ? this.vendorEvidence.hashCode() : 0);
+        hash = 47 * hash + (this.productEvidence != null ? this.productEvidence.hashCode() : 0);
+        hash = 47 * hash + (this.versionEvidence != null ? this.versionEvidence.hashCode() : 0);
+        hash = 47 * hash + (this.analysisExceptions != null ? this.analysisExceptions.hashCode() : 0);
+        hash = 47 * hash + (this.description != null ? this.description.hashCode() : 0);
+        hash = 47 * hash + (this.license != null ? this.license.hashCode() : 0);
+        hash = 47 * hash + (this.vulnerabilities != null ? this.vulnerabilities.hashCode() : 0);
+        hash = 47 * hash + (this.relatedDependencies != null ? this.relatedDependencies.hashCode() : 0);
+        return hash;
+    }
 }
