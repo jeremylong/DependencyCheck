@@ -150,7 +150,7 @@ public final class Settings {
         try {
             props.load(in);
         } catch (IOException ex) {
-            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, "Unable to load default settings.", ex);
         }
     }
 
