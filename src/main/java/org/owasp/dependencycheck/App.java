@@ -90,6 +90,7 @@ public class App {
                 in.close();
             } catch (Exception ex) {
                 //ignore
+                in = null;
             }
         }
     }
@@ -119,8 +120,8 @@ public class App {
         if (cli.isGetVersion()) {
             cli.printVersionInfo();
         } else if (cli.isRunScan()) {
-            runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(),
-                    cli.getScanFiles(), cli.isAutoUpdate(), cli.isDeepScan());
+            updateSettings(cli.isAutoUpdate(), cli.isDeepScan(), cli.getConnectionTimeout(), cli.getProxyUrl(), cli.getProxyPort());
+            runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles());
         } else {
             cli.printHelp();
         }
@@ -135,12 +136,9 @@ public class App {
      * @param outputFormat the output format of the report
      * @param applicationName the application name for the report
      * @param files the files/directories to scan
-     * @param autoUpdate whether to auto-update the cached data from the Internet
-     * @param deepScan whether to perform a deep scan of the evidence in the project dependencies
      */
-    private void runScan(String reportDirectory, String outputFormat, String applicationName, String[] files, boolean autoUpdate, boolean deepScan) {
-        final Engine scanner = new Engine(autoUpdate);
-        Settings.setBoolean(Settings.KEYS.PERFORM_DEEP_SCAN, deepScan);
+    private void runScan(String reportDirectory, String outputFormat, String applicationName, String[] files) {
+        final Engine scanner = new Engine();
 
         for (String file : files) {
             scanner.scan(file);
@@ -156,6 +154,28 @@ public class App {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * Updates the global Settings.
+     * @param autoUpdate whether or not to update cached web data sources
+     * @param deepScan whether or not to perform a deep scan (increases false positives, but may reduce false negatives)
+     * @param connectionTimeout the timeout to use when downloading resources (null or blank will use default)
+     * @param proxyUrl the proxy url (null or blank means no proxy will be used)
+     * @param proxyPort the proxy port (null or blank means no port will be used)
+     */
+    private void updateSettings(boolean autoUpdate, boolean deepScan, String connectionTimeout, String proxyUrl, String proxyPort) {
+        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
+        Settings.setBoolean(Settings.KEYS.PERFORM_DEEP_SCAN, deepScan);
+        if (proxyUrl != null && !proxyUrl.isEmpty()) {
+            Settings.setString(Settings.KEYS.PROXY_URL, proxyUrl);
+        }
+        if (proxyPort != null && !proxyPort.isEmpty()) {
+            Settings.setString(Settings.KEYS.PROXY_PORT, proxyPort);
+        }
+        if (connectionTimeout != null && !connectionTimeout.isEmpty()) {
+            Settings.setString(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
         }
     }
 }

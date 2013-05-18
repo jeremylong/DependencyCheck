@@ -36,6 +36,8 @@ import org.owasp.dependencycheck.data.UpdateException;
 import org.owasp.dependencycheck.data.UpdateService;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.FileUtils;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * Scans files, directories, etc. for Dependencies. Analyzers are loaded and
@@ -65,7 +67,15 @@ public class Engine {
      * Creates a new Engine.
      */
     public Engine() {
-        doUpdates();
+        boolean autoupdate = true;
+        try {
+            autoupdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
+        } catch (InvalidSettingException ex) {
+            Logger.getLogger(Engine.class.getName()).log(Level.WARNING, "Invalid setting for auto-update.");
+        }
+        if (autoupdate) {
+            doUpdates();
+        }
         loadAnalyzers();
     }
 
@@ -74,7 +84,10 @@ public class Engine {
      *
      * @param autoUpdate indicates whether or not data should be updated from
      * the Internet.
+     * @deprecated this function should no longer be used; the autoupdate flag should be set using
+     * <code>Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, value);</code>
      */
+    @Deprecated
     public Engine(boolean autoUpdate) {
         if (autoUpdate) {
             doUpdates();
