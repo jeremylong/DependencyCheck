@@ -22,7 +22,7 @@ package org.owasp.dependencycheck.data.nvdcve.xml;
  * An InvalidDataDataException is a generic exception used when trying to load
  * the nvd cve meta data.
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class InvalidDataException extends Exception {
     /**

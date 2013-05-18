@@ -22,7 +22,7 @@ package org.owasp.dependencycheck.data.lucene;
  * <p>Lucene utils is a set of utilize written to make constructing Lucene
  * queries simpler.</p>
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public final class LuceneUtils {
 

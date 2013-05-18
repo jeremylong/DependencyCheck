@@ -27,7 +27,7 @@ import org.owasp.dependencycheck.Engine;
  *
  * Takes a dependency and analyzes the filename and determines the hashes.
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
 

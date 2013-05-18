@@ -28,7 +28,7 @@ import org.owasp.dependencycheck.data.cpe.Entry;
  * A record containing information about vulnerable software. This
  * is referenced from a vulnerability.
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class VulnerableSoftware extends Entry implements Serializable, Comparable<VulnerableSoftware> {
 

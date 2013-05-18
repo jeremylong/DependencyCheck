@@ -43,7 +43,7 @@ import org.owasp.dependencycheck.analyzer.Analyzer;
  * to discern if there is an associated CPE. It uses the evidence contained
  * within the dependency to search the Lucene index.
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class CPEAnalyzer implements Analyzer {
 

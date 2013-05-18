@@ -54,7 +54,7 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 
 /**
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class DatabaseUpdater implements CachedWebDataSource {
 

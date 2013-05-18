@@ -36,7 +36,7 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses />.
     <developers>
         <developer>
             <name>Jeremy Long</name>
-            <email>jeremy.long@gmail.com</email>
+            <email>jeremy.long@owasp.org</email>
             <organization>owasp</organization>
             <organizationUrl>https://www.owasp.org/index.php/OWASP_Dependency_Check</organizationUrl>
             <roles>
@@ -331,6 +331,25 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses />.
                             <groupId>org.codehaus.mojo</groupId>
                             <artifactId>taglist-maven-plugin</artifactId>
                             <version>2.4</version>
+                            <configuration>
+                                <tagListOptions>
+                                    <tagClasses>
+                                        <tagClass>
+                                            <displayName>Todo Work</displayName>
+                                            <tags>
+                                                <tag>
+                                                    <matchString>todo</matchString>
+                                                    <matchType>ignoreCase</matchType>
+                                                </tag>
+                                                <tag>
+                                                    <matchString>FIXME</matchString>
+                                                    <matchType>exact</matchType>
+                                                </tag>
+                                            </tags>
+                                        </tagClass>
+                                    </tagClasses>
+                                </tagListOptions>
+                            </configuration>
                         </plugin>
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>

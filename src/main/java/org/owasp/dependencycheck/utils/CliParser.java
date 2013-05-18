@@ -33,7 +33,7 @@ import org.apache.commons.cli.PosixParser;
 /**
  * A utility to parse command line arguments for the DependencyCheck.
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public final class CliParser {
 

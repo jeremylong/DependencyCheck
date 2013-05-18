@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class NvdCve_1_2_HandlerTest {
 

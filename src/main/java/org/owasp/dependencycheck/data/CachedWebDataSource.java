@@ -22,7 +22,7 @@ package org.owasp.dependencycheck.data;
  * Defines an Index who's data is retrieved from the Internet. This data can be
  * downloaded and the index updated.
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public interface CachedWebDataSource {
 

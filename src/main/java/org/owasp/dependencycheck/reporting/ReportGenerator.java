@@ -44,7 +44,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
  * the generator uses the Velocity Templating Engine. The ReportGenerator exposes
  * a list of Dependencies to the template when generating the report.
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class ReportGenerator {
 

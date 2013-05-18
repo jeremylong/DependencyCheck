@@ -35,7 +35,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
  * <p>Note, this grouping only works on dependencies with identified CVE
  * entries</p>
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Analyzer {
 

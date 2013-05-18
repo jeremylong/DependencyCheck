@@ -25,7 +25,7 @@ import java.io.IOException;
 /**
  * A collection of utilities for processing information about files.
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public final class FileUtils {
 

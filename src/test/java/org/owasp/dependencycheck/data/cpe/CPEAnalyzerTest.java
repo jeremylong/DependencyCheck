@@ -35,7 +35,7 @@ import org.owasp.dependencycheck.dependency.Identifier;
 
 /**
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class CPEAnalyzerTest extends BaseIndexTestCase {
 

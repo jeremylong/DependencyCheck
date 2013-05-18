@@ -29,7 +29,7 @@ import org.apache.lucene.util.Version;
 /**
  * VersionAnalyzer is a Lucene Analyzer used to analyze version information.
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class VersionAnalyzer extends Analyzer {
     //TODO consider implementing payloads/custom attributes...
