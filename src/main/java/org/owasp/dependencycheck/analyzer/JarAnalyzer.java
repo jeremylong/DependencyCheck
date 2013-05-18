@@ -381,7 +381,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         JarFile jar = null;
         try {
             jar = new JarFile(dependency.getActualFilePath());
-            final java.util.Enumeration en = jar.entries();
+            final Enumeration en = jar.entries();
             final HashMap<String, Integer> level0 = new HashMap<String, Integer>();
             final HashMap<String, Integer> level1 = new HashMap<String, Integer>();
             final HashMap<String, Integer> level2 = new HashMap<String, Integer>();
