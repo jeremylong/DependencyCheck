@@ -41,7 +41,7 @@ import org.apache.lucene.util.Version;
  * The base Index for other index objects. Implements the open and close
  * methods.
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public abstract class AbstractIndex {
 

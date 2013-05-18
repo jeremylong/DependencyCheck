@@ -26,7 +26,7 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * A SAX Handler that will parse the CWE XML.
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class CweHandler extends DefaultHandler {
 

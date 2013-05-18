@@ -34,7 +34,7 @@ import org.apache.lucene.util.Version;
  * LowerCaseFilter, and StopFilter. The intended purpose of this Analyzer is
  * to index the CPE fields vendor and product.</p>
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class FieldAnalyzer extends Analyzer {
 

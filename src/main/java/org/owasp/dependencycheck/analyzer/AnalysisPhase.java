@@ -21,7 +21,7 @@ package org.owasp.dependencycheck.analyzer;
 /**
  * An enumeration defining the phases of analysis.
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public enum AnalysisPhase {
 

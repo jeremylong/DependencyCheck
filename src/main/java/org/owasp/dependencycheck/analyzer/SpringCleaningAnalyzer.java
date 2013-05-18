@@ -31,7 +31,7 @@ import org.owasp.dependencycheck.dependency.Identifier;
  * spring-core is in the scanned dependencies then only the spring-core will have a reference
  * to the CPE values (if there are any for the version of spring being used).
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  * @deprecated This class has been deprecated as it has been replaced by the BundlingAnalyzer
  */
 @Deprecated

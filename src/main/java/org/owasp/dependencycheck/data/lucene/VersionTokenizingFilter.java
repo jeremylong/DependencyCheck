@@ -30,7 +30,7 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
  * <p><b>Example:</b> "3.0.0.RELEASE" -> "3 3.0 3.0.0 RELEASE
  * 3.0.0.RELEASE".</p>
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public final class VersionTokenizingFilter extends TokenFilter {
 

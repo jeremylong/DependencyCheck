@@ -46,7 +46,7 @@ import org.owasp.dependencycheck.data.lucene.VersionAnalyzer;
 /**
  * The Index class is used to utilize and maintain the CPE Index.
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class Index extends AbstractIndex {
 

@@ -27,7 +27,7 @@ import org.owasp.dependencycheck.utils.Filter;
 /**
  * Used to maintain a collection of Evidence.
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class EvidenceCollection implements Iterable<Evidence> {
 

@@ -31,7 +31,7 @@ import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
  * <p><b>Example:</b> "Spring Framework Core" -> "Spring SpringFramework
  * Framework FrameworkCore Core".</p>
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public final class TokenPairConcatenatingFilter extends TokenFilter {
 

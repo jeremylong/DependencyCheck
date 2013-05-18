@@ -36,7 +36,7 @@ import java.util.zip.InflaterInputStream;
 /**
  * A utility to download files from the Internet.
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public final class Downloader {
 

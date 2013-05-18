@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
  * <p>A utility class to extract version numbers from file names (or other strings
  * containing version numbers.</p>
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public final class DependencyVersionUtil {
     /**

@@ -37,7 +37,7 @@ import org.owasp.dependencycheck.utils.Settings;
  * This analyzer attempts to remove some well known false positives -
  * specifically regarding the java runtime.
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class FalsePositiveAnalyzer extends AbstractAnalyzer {
 

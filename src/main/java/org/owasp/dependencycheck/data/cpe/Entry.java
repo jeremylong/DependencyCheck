@@ -28,7 +28,7 @@ import org.apache.lucene.document.Document;
 /**
  * A CPE entry containing the name, vendor, product, and version.
  *
- * @author Jeremy Long (jeremy.long@gmail.com)
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class Entry implements Serializable {
 
