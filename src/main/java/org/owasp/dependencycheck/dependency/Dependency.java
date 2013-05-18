@@ -527,7 +527,8 @@ public class Dependency implements Comparable<Dependency> {
         if (this.versionEvidence != other.versionEvidence && (this.versionEvidence == null || !this.versionEvidence.equals(other.versionEvidence))) {
             return false;
         }
-        if (this.analysisExceptions != other.analysisExceptions && (this.analysisExceptions == null || !this.analysisExceptions.equals(other.analysisExceptions))) {
+        if (this.analysisExceptions != other.analysisExceptions
+                && (this.analysisExceptions == null || !this.analysisExceptions.equals(other.analysisExceptions))) {
             return false;
         }
         if ((this.description == null) ? (other.description != null) : !this.description.equals(other.description)) {
@@ -539,7 +540,8 @@ public class Dependency implements Comparable<Dependency> {
         if (this.vulnerabilities != other.vulnerabilities && (this.vulnerabilities == null || !this.vulnerabilities.equals(other.vulnerabilities))) {
             return false;
         }
-        if (this.relatedDependencies != other.relatedDependencies && (this.relatedDependencies == null || !this.relatedDependencies.equals(other.relatedDependencies))) {
+        if (this.relatedDependencies != other.relatedDependencies
+                && (this.relatedDependencies == null || !this.relatedDependencies.equals(other.relatedDependencies))) {
             return false;
         }
         return true;
