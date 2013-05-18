@@ -160,9 +160,6 @@ public final class CliParser {
         final Option help = new Option(ArgumentName.HELP_SHORT, ArgumentName.HELP, false,
                 "print this message.");
 
-        final Option advancedHelp = new Option(ArgumentName.ADVANCED_HELP_SHORT, ArgumentName.ADVANCED_HELP, false,
-                "shows additional help regarding properties file.");
-
         final Option deepScan = new Option(ArgumentName.PERFORM_DEEP_SCAN_SHORT, ArgumentName.PERFORM_DEEP_SCAN, false,
                 "extracts extra information from dependencies that may increase false positives, but also decrease false negatives.");
 
@@ -175,6 +172,18 @@ public final class CliParser {
         final Option appname = OptionBuilder.withArgName("name").hasArg().withLongOpt(ArgumentName.APPNAME)
                 .withDescription("the name of the application being scanned.")
                 .create(ArgumentName.APPNAME_SHORT);
+
+        final Option connectionTimeout = OptionBuilder.withArgName("timeout").hasArg().withLongOpt(ArgumentName.CONNECTION_TIMEOUT)
+                .withDescription("the connection timeout (in milliseconds) to use when downloading resources.")
+                .create(ArgumentName.CONNECTION_TIMEOUT_SHORT);
+
+        final Option proxyUrl = OptionBuilder.withArgName("url").hasArg().withLongOpt(ArgumentName.PROXY_URL)
+                .withDescription("the proxy url to use when downloading resources.")
+                .create(ArgumentName.PROXY_URL_SHORT);
+
+        final Option proxyPort = OptionBuilder.withArgName("port").hasArg().withLongOpt(ArgumentName.PROXY_PORT)
+                .withDescription("the proxy port to use when downloading resources.")
+                .create(ArgumentName.PROXY_PORT_SHORT);
 
         final Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.SCAN)
                 .withDescription("the path to scan - this option can be specified multiple times.")
@@ -192,8 +201,6 @@ public final class CliParser {
                 .withDescription("the output format to write to (XML, HTML, ALL).")
                 .create(ArgumentName.OUTPUT_FORMAT_SHORT);
 
-        //TODO add the ability to load a properties file to override the defaults...
-
         final OptionGroup og = new OptionGroup();
         og.addOption(path);
 
@@ -207,7 +214,9 @@ public final class CliParser {
         opts.addOption(noupdate);
         opts.addOption(deepScan);
         opts.addOption(props);
-        opts.addOption(advancedHelp);
+        opts.addOption(proxyPort);
+        opts.addOption(proxyUrl);
+        opts.addOption(connectionTimeout);
 
         return opts;
     }
@@ -245,16 +254,6 @@ public final class CliParser {
     public void printHelp() {
         final HelpFormatter formatter = new HelpFormatter();
         final String nl = System.getProperty("line.separator");
-        String advancedHelp = null;
-        if (line != null && line.hasOption(ArgumentName.ADVANCED_HELP)) {
-            advancedHelp = nl + nl
-                    + "Additionally, the following properties are supported and can be specified either"
-                    + "using the -p <file> argument or by passing them in as system properties." + nl
-                    + nl + " " + Settings.KEYS.PROXY_URL + "\t\t    the proxy URL to use when downloading resources."
-                    + nl + " " + Settings.KEYS.PROXY_PORT + "\t\t    the proxy port to use when downloading resources."
-                    + nl + " " + Settings.KEYS.CONNECTION_TIMEOUT + "\t    the connection timeout (in milliseconds) to use"
-                    + nl + "\t\t\t    when downloading resources.";
-        }
 
         formatter.printHelp(Settings.getString("application.name", "DependencyCheck"),
                 nl + Settings.getString("application.name", "DependencyCheck")
@@ -264,9 +263,6 @@ public final class CliParser {
                 options,
                 "",
                 true);
-        if (advancedHelp != null) {
-            System.out.println(advancedHelp);
-        }
     }
 
     /**
@@ -306,6 +302,30 @@ public final class CliParser {
      */
     public String getApplicationName() {
         return line.getOptionValue(ArgumentName.APPNAME);
+    }
+
+    /**
+     * Returns the connection timeout.
+     * @return the connection timeout
+     */
+    public String getConnectionTimeout() {
+        return line.getOptionValue(ArgumentName.CONNECTION_TIMEOUT);
+    }
+
+    /**
+     * Returns the proxy url.
+     * @return the proxy url
+     */
+    public String getProxyUrl() {
+        return line.getOptionValue(ArgumentName.PROXY_URL);
+    }
+
+    /**
+     * Returns the proxy port.
+     * @return the proxy port
+     */
+    public String getProxyPort() {
+        return line.getOptionValue(ArgumentName.PROXY_PORT);
     }
 
     /**
@@ -408,13 +428,29 @@ public final class CliParser {
          */
         public static final String VERSION = "version";
         /**
-         * The CLI argument name asking for advanced help.
+         * The short CLI argument name indicating the proxy port.
          */
-        public static final String ADVANCED_HELP_SHORT = "ah";
+        public static final String PROXY_PORT_SHORT = "p";
         /**
-         * The short CLI argument name asking for advanced help.
+         * The CLI argument name indicating the proxy port.
          */
-        public static final String ADVANCED_HELP = "advancedhelp";
+        public static final String PROXY_PORT = "proxyport";
+        /**
+         * The short CLI argument name indicating the proxy url.
+         */
+        public static final String PROXY_URL_SHORT = "u";
+        /**
+         * The CLI argument name indicating the proxy url.
+         */
+        public static final String PROXY_URL = "proxyurl";
+        /**
+         * The short CLI argument name indicating the proxy url.
+         */
+        public static final String CONNECTION_TIMEOUT_SHORT = "c";
+        /**
+         * The CLI argument name indicating the proxy url.
+         */
+        public static final String CONNECTION_TIMEOUT = "connectiontimeout";
         /**
          * The short CLI argument name indicating a deep scan of the dependencies
          * should be performed.

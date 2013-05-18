@@ -37,13 +37,18 @@ public final class Settings {
      * The collection of keys used within the properties file.
      */
     public static final class KEYS {
-
         /**
          * private constructor because this is a "utility" class containing constants
          */
         private KEYS() {
             //do nothing
         }
+
+        /**
+         * The properties key indicating whether or not the cached data sources
+         * should be updated.
+         */
+        public static final String AUTO_UPDATE = "autoupdate";
 
         /**
          * The properties key for the path where the CPE Lucene Index will be
