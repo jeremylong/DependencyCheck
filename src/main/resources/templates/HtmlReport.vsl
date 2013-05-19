@@ -368,7 +368,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                             #foreach($related in $dependency.getRelatedDependencies())
                                 <li>$esc.html($related.FileName)
                                     <ul>
-                                        <li>File Path:&nbsp;$esc.html($dependency.FilePath)</li>
+                                        <li>File Path:&nbsp;$esc.html($related.FilePath)</li>
                                         <li>SHA1:&nbsp;$esc.html($related.Sha1sum)</li>
                                         <li>MD5:&nbsp;$esc.html($related.Md5sum)</li>
                                      </ul>
