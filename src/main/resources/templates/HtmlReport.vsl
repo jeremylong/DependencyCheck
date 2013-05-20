@@ -314,7 +314,11 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         #end
                         <p>
                         #if ($dependency.license)
+                            #if ($dependency.license.startsWith("http://"))
+                            <b>License:</b><pre class="indent"><a href="$esc.html($dependency.license)">$esc.html($dependency.license)</a></pre>
+                            #else
                             <b>License:</b><pre class="indent">$esc.html($dependency.license)</pre>
+                            #end
                         #end
                             <b>File&nbsp;Path:</b>&nbsp;$esc.html($dependency.FilePath)<br/>
                             <b>MD5:</b>&nbsp;$esc.html($dependency.Md5sum)<br/>
@@ -394,7 +398,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                             #foreach($id in $dependency.getIdentifiers())
                                 ##yes, we are HTML Encoding the href. this is okay. We can't URL encode as we have to trust the analyzer here...
                                 <li><b>$esc.html($id.type):</b>&nbsp;<a href="$esc.html($id.url)" target="_blank">$esc.html($id.value)</a>
-                                #if( $id.descrription )
+                                #if( $id.description )
                                     <br/>$esc.html($id.description)
                                 #end
                                 </li>
