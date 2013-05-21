@@ -193,7 +193,7 @@ public class ReportGenerator {
         OutputStream outputStream = null;
 
         try {
-            File outDir = new File(outFileName).getParentFile();
+            final File outDir = new File(outFileName).getParentFile();
             if (!outDir.exists()) {
                 outDir.mkdirs();
             }
