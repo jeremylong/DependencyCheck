@@ -53,9 +53,7 @@ public final class CweDB {
             final String filePath = "data/cwe.hashmap.serialized";
             final InputStream input = CweDB.class.getClassLoader().getResourceAsStream(filePath);
             oin = new ObjectInputStream(input);
-            @SuppressWarnings("unchecked")
-            final HashMap<String, String> data = (HashMap<String, String>) oin.readObject();
-            return data;
+            return (HashMap<String, String>) oin.readObject();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(CweDB.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {

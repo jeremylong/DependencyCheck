@@ -155,7 +155,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
 
     /**
      * Attempts to trim a maven repo to a common base path. This is typically
-     * [drive]\[repolocation\repository\[path1]\[path2].
+     * [drive]\[repo_location]\repository\[path1]\[path2].
      *
      * @param path the path to trim
      * @return a string representing the base path.

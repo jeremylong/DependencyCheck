@@ -147,6 +147,15 @@ public class DatabaseUpdater implements CachedWebDataSource {
                                 outputPath.deleteOnExit();
                             }
                         }
+                        try {
+                            if (outputPath12 != null && outputPath12.exists()) {
+                                outputPath12.delete();
+                            }
+                        } finally {
+                            if (outputPath12 != null && outputPath12.exists()) {
+                                outputPath12.deleteOnExit();
+                            }
+                        }
                     }
                 }
             }
@@ -167,7 +176,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
      * @param oldVersion contains the file containing the NVD CVE XML 1.2
      * @throws ParserConfigurationException is thrown if there is a parser configuration exception
      * @throws SAXException is thrown if there is a SAXException
-     * @throws IOException is thrown if there is a IOException
+     * @throws IOException is thrown if there is a ioexception
      * @throws SQLException is thrown if there is a sql exception
      * @throws DatabaseException is thrown if there is a database exception
      */
@@ -255,7 +264,14 @@ public class DatabaseUpdater implements CachedWebDataSource {
                 try {
                     out.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINEST, null, ex);
+                }
+            }
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINEST, null, ex);
                 }
             }
         }
@@ -311,7 +327,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
                     prop.load(is);
 
                     boolean deleteAndRecreate = false;
-                    float version = 0;
+                    float version;
 
                     if (prop.getProperty("version") == null) {
                         deleteAndRecreate = true;
@@ -333,8 +349,8 @@ public class DatabaseUpdater implements CachedWebDataSource {
                         FileUtils.delete(f);
 
                         //this importer also updates the CPE index and it is also using an old version
-                        final Index cpeid = new Index();
-                        final File cpeDir = cpeid.getDataDirectory();
+                        final Index cpeId = new Index();
+                        final File cpeDir = cpeId.getDataDirectory();
                         FileUtils.delete(cpeDir);
                         return currentlyPublished;
                     }

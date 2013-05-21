@@ -58,8 +58,7 @@ public class Index extends AbstractIndex {
      */
     public Directory getDirectory() throws IOException {
         final File path = getDataDirectory();
-        final Directory dir = FSDirectory.open(path);
-        return dir;
+        return FSDirectory.open(path);
     }
 
     /**
@@ -102,10 +101,7 @@ public class Index extends AbstractIndex {
         fieldAnalyzers.put(Fields.VERSION, new VersionAnalyzer(Version.LUCENE_40));
         fieldAnalyzers.put(Fields.NAME, new KeywordAnalyzer());
 
-        final PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(
-                new FieldAnalyzer(Version.LUCENE_40), fieldAnalyzers);
-
-        return wrapper;
+        return new PerFieldAnalyzerWrapper(new FieldAnalyzer(Version.LUCENE_40), fieldAnalyzers);
     }
     /**
      * The search field analyzer for the product field.
@@ -133,10 +129,7 @@ public class Index extends AbstractIndex {
         fieldAnalyzers.put(Fields.PRODUCT, productSearchFieldAnalyzer);
         fieldAnalyzers.put(Fields.VENDOR, vendorSearchFieldAnalyzer);
 
-        final PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(
-                new FieldAnalyzer(Version.LUCENE_40), fieldAnalyzers);
-
-        return wrapper;
+        return new PerFieldAnalyzerWrapper(new FieldAnalyzer(Version.LUCENE_40), fieldAnalyzers);
     }
 
     /**
@@ -169,7 +162,6 @@ public class Index extends AbstractIndex {
      */
     public void saveEntry(Entry entry) throws CorruptIndexException, IOException {
         final Document doc = convertEntryToDoc(entry);
-        //Term term = new Term(Fields.NVDID, LuceneUtils.escapeLuceneQuery(entry.getNvdId()));
         final Term term = new Term(Fields.NAME, entry.getName());
         getIndexWriter().updateDocument(term, doc);
     }
@@ -196,7 +188,7 @@ public class Index extends AbstractIndex {
 
         //TODO revision should likely be its own field
         if (entry.getVersion() != null) {
-            Field version = null;
+            Field version;
             if (entry.getRevision() != null) {
                 version = new TextField(Fields.VERSION, entry.getVersion() + " "
                         + entry.getRevision(), Field.Store.NO);

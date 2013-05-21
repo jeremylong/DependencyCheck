@@ -718,7 +718,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             final java.util.jar.JarEntry entry = (java.util.jar.JarEntry) en.nextElement();
             if (entry.getName().endsWith(".class")) {
                 hasClasses = true;
-                String[] path = null;
+                String[] path;
                 if (entry.getName().contains("/")) {
                     path = entry.getName().toLowerCase().split("/");
                     if ("java".equals(path[0])

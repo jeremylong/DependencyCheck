@@ -193,14 +193,13 @@ public class ReportGenerator {
         OutputStream outputStream = null;
 
         try {
-            File foutDir = new File(outFileName).getParentFile();
-            if (!foutDir.exists()) {
-                foutDir.mkdirs();
+            File outDir = new File(outFileName).getParentFile();
+            if (!outDir.exists()) {
+                outDir.mkdirs();
             }
 
             outputStream = new FileOutputStream(outFileName);
             writer = new OutputStreamWriter(outputStream, "UTF-8");
-            //writer = new BufferedWriter(oswriter);
 
             if (!engine.evaluate(context, writer, templatePath, reader)) {
                 throw new Exception("Failed to convert the template into html.");

@@ -305,11 +305,11 @@ public class CveDB {
                 rsS = selectSoftware.executeQuery();
                 while (rsS.next()) {
                     final String cpe = rsS.getString(1);
-                    final String prevVers = rsS.getString(2);
-                    if (prevVers == null) {
+                    final String prevVersion = rsS.getString(2);
+                    if (prevVersion == null) {
                         vuln.addVulnerableSoftware(cpe);
                     } else {
-                        vuln.addVulnerableSoftware(cpe, prevVers);
+                        vuln.addVulnerableSoftware(cpe, prevVersion);
                     }
                 }
             }
