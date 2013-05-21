@@ -250,14 +250,11 @@ public abstract class AbstractIndex {
      * @throws IOException is thrown if there is an issue with the underlying Index
      */
     public TopDocs search(String searchString, int maxQueryResults) throws ParseException, IOException {
-
         final QueryParser parser = getQueryParser();
         final Query query = parser.parse(searchString);
         resetSearchingAnalyzer();
         final IndexSearcher is = getIndexSearcher();
-        final TopDocs docs = is.search(query, maxQueryResults);
-
-        return docs;
+        return is.search(query, maxQueryResults);
     }
 
     /**

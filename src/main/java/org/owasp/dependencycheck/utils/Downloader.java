@@ -126,7 +126,7 @@ public final class Downloader {
 
             writer = new BufferedOutputStream(new FileOutputStream(outputPath));
             final byte[] buffer = new byte[4096];
-            int bytesRead = 0;
+            int bytesRead;
             while ((bytesRead = reader.read(buffer)) > 0) {
                 writer.write(buffer, 0, bytesRead);
             }

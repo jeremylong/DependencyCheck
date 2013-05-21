@@ -75,8 +75,7 @@ public final class CliParser {
      */
     private CommandLine parseArgs(String[] args) throws ParseException {
         final CommandLineParser parser = new PosixParser();
-        final CommandLine ln = parser.parse(options, args);
-        return ln;
+        return parser.parse(options, args);
     }
 
     /**
@@ -102,7 +101,7 @@ public final class CliParser {
                             + "the 'out' argument.");
                 }
             }
-            if (!line.hasOption(ArgumentName.APPNAME)) {
+            if (!line.hasOption(ArgumentName.APP_NAME)) {
                 throw new ParseException("Scan cannot be run without specifying an application "
                         + "name via the 'app' argument.");
             }
@@ -166,12 +165,12 @@ public final class CliParser {
         final Option version = new Option(ArgumentName.VERSION_SHORT, ArgumentName.VERSION,
                 false, "print the version information.");
 
-        final Option noupdate = new Option(ArgumentName.DISABLE_AUTO_UPDATE_SHORT, ArgumentName.DISABLE_AUTO_UPDATE,
+        final Option noUpdate = new Option(ArgumentName.DISABLE_AUTO_UPDATE_SHORT, ArgumentName.DISABLE_AUTO_UPDATE,
                 false, "disables the automatic updating of the CPE data.");
 
-        final Option appname = OptionBuilder.withArgName("name").hasArg().withLongOpt(ArgumentName.APPNAME)
+        final Option appName = OptionBuilder.withArgName("name").hasArg().withLongOpt(ArgumentName.APP_NAME)
                 .withDescription("the name of the application being scanned.")
-                .create(ArgumentName.APPNAME_SHORT);
+                .create(ArgumentName.APP_NAME_SHORT);
 
         final Option connectionTimeout = OptionBuilder.withArgName("timeout").hasArg().withLongOpt(ArgumentName.CONNECTION_TIMEOUT)
                 .withDescription("the connection timeout (in milliseconds) to use when downloading resources.")
@@ -197,7 +196,7 @@ public final class CliParser {
                 .withDescription("the folder to write reports to.")
                 .create(ArgumentName.OUT_SHORT);
 
-        final Option outputformat = OptionBuilder.withArgName("format").hasArg().withLongOpt(ArgumentName.OUTPUT_FORMAT)
+        final Option outputFormat = OptionBuilder.withArgName("format").hasArg().withLongOpt(ArgumentName.OUTPUT_FORMAT)
                 .withDescription("the output format to write to (XML, HTML, ALL).")
                 .create(ArgumentName.OUTPUT_FORMAT_SHORT);
 
@@ -207,11 +206,11 @@ public final class CliParser {
         final Options opts = new Options();
         opts.addOptionGroup(og);
         opts.addOption(out);
-        opts.addOption(outputformat);
-        opts.addOption(appname);
+        opts.addOption(outputFormat);
+        opts.addOption(appName);
         opts.addOption(version);
         opts.addOption(help);
-        opts.addOption(noupdate);
+        opts.addOption(noUpdate);
         opts.addOption(deepScan);
         opts.addOption(props);
         opts.addOption(proxyPort);
@@ -301,7 +300,7 @@ public final class CliParser {
      * @return the application name.
      */
     public String getApplicationName() {
-        return line.getOptionValue(ArgumentName.APPNAME);
+        return line.getOptionValue(ArgumentName.APP_NAME);
     }
 
     /**
@@ -405,12 +404,12 @@ public final class CliParser {
          * The long CLI argument name specifying the name of the application to
          * be scanned.
          */
-        public static final String APPNAME = "app";
+        public static final String APP_NAME = "app";
         /**
          * The short CLI argument name specifying the name of the application to
          * be scanned.
          */
-        public static final String APPNAME_SHORT = "a";
+        public static final String APP_NAME_SHORT = "a";
         /**
          * The long CLI argument name asking for help.
          */

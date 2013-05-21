@@ -67,13 +67,13 @@ public class Engine {
      * Creates a new Engine.
      */
     public Engine() {
-        boolean autoupdate = true;
+        boolean autoUpdate = true;
         try {
-            autoupdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
+            autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
         } catch (InvalidSettingException ex) {
             Logger.getLogger(Engine.class.getName()).log(Level.WARNING, "Invalid setting for auto-update.");
         }
-        if (autoupdate) {
+        if (autoUpdate) {
             doUpdates();
         }
         loadAnalyzers();
