@@ -69,11 +69,11 @@ public class ReportGenerator {
     /**
      * The Velocity Engine.
      */
-    private VelocityEngine engine;
+    private final VelocityEngine engine;
     /**
      * The Velocity Engine Context.
      */
-    private Context context;
+    private final Context context;
 
     /**
      * Constructs a new ReportGenerator.

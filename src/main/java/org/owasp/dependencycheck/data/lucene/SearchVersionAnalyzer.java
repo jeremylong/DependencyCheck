@@ -42,7 +42,7 @@ public class SearchVersionAnalyzer extends Analyzer {
     /**
      * The Lucene Version used.
      */
-    private Version version;
+    private final Version version;
 
     /**
      * Creates a new SearchVersionAnalyzer.

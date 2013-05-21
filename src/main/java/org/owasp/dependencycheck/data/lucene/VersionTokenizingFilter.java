@@ -41,7 +41,7 @@ public final class VersionTokenizingFilter extends TokenFilter {
     /**
      * A collection of tokens to add to the stream.
      */
-    private LinkedList<String> tokens;
+    private final LinkedList<String> tokens;
 
     /**
      * Constructs a new VersionTokenizingFilter.

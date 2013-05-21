@@ -69,7 +69,7 @@ public class NvdCve12Handler extends DefaultHandler {
     /**
      * The current element.
      */
-    private Element current = new Element();
+    private final Element current = new Element();
     /**
      * a map of vulnerabilities.
      */

@@ -39,7 +39,7 @@ public class SearchFieldAnalyzer extends Analyzer {
     /**
      * The Lucene Version used.
      */
-    private Version version;
+    private final Version version;
     /**
      * A local reference to the TokenPairConcatenatingFilter so that we
      * can clear any left over state if this analyzer is re-used.

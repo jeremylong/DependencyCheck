@@ -50,7 +50,7 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
     /**
      * A list of words parsed.
      */
-    private LinkedList<String> words;
+    private final LinkedList<String> words;
 
     /**
      * Constructs a new TokenPairConcatenatingFilter.

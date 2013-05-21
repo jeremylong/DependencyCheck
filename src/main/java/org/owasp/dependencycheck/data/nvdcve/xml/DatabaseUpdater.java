@@ -166,8 +166,8 @@ public class DatabaseUpdater implements CachedWebDataSource {
      * @param file the file containing the NVD CVE XML
      * @param oldVersion contains the file containing the NVD CVE XML 1.2
      * @throws ParserConfigurationException is thrown if there is a parser configuration exception
-     * @throws SAXException is thrown if there is a saxexception
-     * @throws IOException is thrown if there is a ioexception
+     * @throws SAXException is thrown if there is a SAXException
+     * @throws IOException is thrown if there is a IOException
      * @throws SQLException is thrown if there is a sql exception
      * @throws DatabaseException is thrown if there is a database exception
      */
