@@ -72,15 +72,15 @@ public class Dependency implements Comparable<Dependency> {
     /**
      * A collection of vendor evidence.
      */
-    private EvidenceCollection vendorEvidence;
+    private final EvidenceCollection vendorEvidence;
     /**
      * A collection of product evidence.
      */
-    private EvidenceCollection productEvidence;
+    private final EvidenceCollection productEvidence;
     /**
      * A collection of version evidence.
      */
-    private EvidenceCollection versionEvidence;
+    private final EvidenceCollection versionEvidence;
 
     /**
      * Constructs a new Dependency object.
@@ -379,8 +379,8 @@ public class Dependency implements Comparable<Dependency> {
         if (str == null) {
             return false;
         }
-
-        if (vendorEvidence.containsUsedString(str)) {
+        return versionEvidence.containsUsedString(str) || productEvidence.containsUsedString(str) || vendorEvidence.containsUsedString(str);
+        /*if (vendorEvidence.containsUsedString(str)) {
             return true;
         }
         if (productEvidence.containsUsedString(str)) {
@@ -390,6 +390,7 @@ public class Dependency implements Comparable<Dependency> {
             return true;
         }
         return false;
+        */
     }
     /**
      * A list of vulnerabilities for this dependency.

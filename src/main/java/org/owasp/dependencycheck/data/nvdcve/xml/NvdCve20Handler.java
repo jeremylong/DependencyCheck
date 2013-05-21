@@ -49,7 +49,7 @@ public class NvdCve20Handler extends DefaultHandler {
     /**
      * the current element.
      */
-    private Element current = new Element();
+    private final Element current = new Element();
     /**
      * the text of the node.
      */

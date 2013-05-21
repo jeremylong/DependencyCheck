@@ -44,7 +44,7 @@ public final class CliParser {
     /**
      * The options for the command line parser.
      */
-    private Options options = createCommandLineOptions();
+    private final Options options = createCommandLineOptions();
     /**
      * Indicates whether the arguments are valid.
      */

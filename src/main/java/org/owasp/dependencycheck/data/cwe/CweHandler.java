@@ -33,7 +33,7 @@ public class CweHandler extends DefaultHandler {
     /**
      * a HashMap containing the CWE data.
      */
-    private HashMap<String, String> cwe = new HashMap<String, String>();
+    private final HashMap<String, String> cwe = new HashMap<String, String>();
 
     /**
      * Returns the HashMap of CWE entries (CWE-ID, Full CWE Name).

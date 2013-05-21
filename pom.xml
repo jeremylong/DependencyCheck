@@ -37,11 +37,20 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses />.
         <developer>
             <name>Jeremy Long</name>
             <email>jeremy.long@owasp.org</email>
-            <organization>owasp</organization>
+            <organization>OWASP</organization>
             <organizationUrl>https://www.owasp.org/index.php/OWASP_Dependency_Check</organizationUrl>
             <roles>
                 <role>architect</role>
                 <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Steve Springett</name>
+            <email>Steve.Springett@owasp.org</email>
+            <organization>OWASP</organization>
+            <organizationUrl>https://www.owasp.org/index.php/OWASP_Dependency_Check</organizationUrl>
+            <roles>
+                <role>contributor</role>
             </roles>
         </developer>
     </developers>

@@ -41,7 +41,7 @@ public class FieldAnalyzer extends Analyzer {
     /**
      * The Lucene Version used.
      */
-    private Version version;
+    private final Version version;
 
     /**
      * Creates a new FieldAnalyzer.

@@ -28,6 +28,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 
 /**
@@ -61,7 +62,8 @@ public class IndexTest {
         try {
             instance.open();
         } catch (IOException ex) {
-            Assert.fail(ex.getMessage());
+            assertNull(ex.getMessage(), ex);
+            //Assert.fail(ex.getMessage());
         }
         instance.close();
     }
@@ -76,6 +78,6 @@ public class IndexTest {
         Directory result = index.getDirectory();
 
         String exp = File.separatorChar + "target" + File.separatorChar + "data" + File.separatorChar + "cpe";
-        Assert.assertTrue(result.toString().contains(exp));
+        assertTrue(result.toString().contains(exp));
     }
 }

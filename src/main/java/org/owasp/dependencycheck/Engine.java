@@ -52,16 +52,16 @@ public class Engine {
     /**
      * The list of dependencies.
      */
-    private List<Dependency> dependencies = new ArrayList<Dependency>();
+    private final List<Dependency> dependencies = new ArrayList<Dependency>();
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-    private EnumMap<AnalysisPhase, List<Analyzer>> analyzers =
+    private final EnumMap<AnalysisPhase, List<Analyzer>> analyzers =
             new EnumMap<AnalysisPhase, List<Analyzer>>(AnalysisPhase.class);
     /**
      * A set of extensions supported by the analyzers.
      */
-    private Set<String> extensions = new HashSet<String>();
+    private final Set<String> extensions = new HashSet<String>();
 
     /**
      * Creates a new Engine.
@@ -161,11 +161,13 @@ public class Engine {
      */
     protected void scanDirectory(File dir) {
         final File[] files = dir.listFiles();
-        for (File f : files) {
-            if (f.isDirectory()) {
-                scanDirectory(f);
-            } else {
-                scanFile(f);
+        if (files != null) {
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    scanDirectory(f);
+                } else {
+                    scanFile(f);
+                }
             }
         }
     }

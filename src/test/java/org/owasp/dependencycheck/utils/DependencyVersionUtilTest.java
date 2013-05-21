@@ -72,9 +72,9 @@ public class DependencyVersionUtilTest {
 
         String[] failingNames = { "no-version-identified.jar", "somelib-04aug2000r7-dev.jar", "no.version15.jar",
             "lib_1.0_spec-1.1.jar", "lib-api_1.0_spec-1.0.1.jar" };
-        for (int i = 0; i < failingNames.length; i++) {
-            final DependencyVersion version = DependencyVersionUtil.parseVersionFromFileName(failingNames[i]);
-            assertNull("Found version in name that should have failed \"" + failingNames[i] + "\".", version);
+        for (String failingName : failingNames) {
+            final DependencyVersion version = DependencyVersionUtil.parseVersionFromFileName(failingName);
+            assertNull("Found version in name that should have failed \"" + failingName + "\".", version);
         }
     }
 }
