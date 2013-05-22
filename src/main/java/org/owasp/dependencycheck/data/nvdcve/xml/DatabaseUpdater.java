@@ -137,6 +137,8 @@ public class DatabaseUpdater implements CachedWebDataSource {
                         throw new UpdateException(ex);
                     } catch (DatabaseException ex) {
                         throw new UpdateException(ex);
+                    } catch (ClassNotFoundException ex) {
+                        throw new UpdateException(ex);
                     } finally {
                         try {
                             if (outputPath != null && outputPath.exists()) {
@@ -181,7 +183,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
      * @throws DatabaseException is thrown if there is a database exception
      */
     private void importXML(File file, File oldVersion)
-            throws ParserConfigurationException, SAXException, IOException, SQLException, DatabaseException {
+            throws ParserConfigurationException, SAXException, IOException, SQLException, DatabaseException, ClassNotFoundException {
         CveDB cveDB = null;
         Index cpeIndex = null;
 
