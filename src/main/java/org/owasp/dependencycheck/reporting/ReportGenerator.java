@@ -100,6 +100,7 @@ public class ReportGenerator {
      */
     private VelocityEngine createVelocityEngine() {
         final VelocityEngine ve = new VelocityEngine();
+        ve.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, VelocityLoggerRedirect.class.getName());
         ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
         ve.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
         return ve;
