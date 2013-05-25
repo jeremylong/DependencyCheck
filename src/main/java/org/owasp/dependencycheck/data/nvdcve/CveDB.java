@@ -21,7 +21,6 @@ package org.owasp.dependencycheck.data.nvdcve;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -37,6 +36,7 @@ import org.owasp.dependencycheck.data.cwe.CweDB;
 import org.owasp.dependencycheck.dependency.Reference;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
+import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -408,9 +408,7 @@ public class CveDB {
      */
     public static File getDataDirectory() throws IOException {
         final String fileName = Settings.getString(Settings.KEYS.CVE_INDEX);
-        final String filePath = CveDB.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        final String decodedPath = URLDecoder.decode(filePath, "UTF-8");
-        File exePath = new File(decodedPath);
+        File exePath = FileUtils.getDataDirectory(fileName, CveDB.class);
 
         if (exePath.getName().toLowerCase().endsWith(".jar")) {
             exePath = exePath.getParentFile();

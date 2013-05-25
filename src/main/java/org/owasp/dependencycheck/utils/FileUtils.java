@@ -21,6 +21,7 @@ package org.owasp.dependencycheck.utils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URLDecoder;
 
 /**
  * A collection of utilities for processing information about files.
@@ -67,4 +68,26 @@ public final class FileUtils {
             throw new FileNotFoundException("Failed to delete file: " + file);
         }
     }
+
+    /**
+     * Returns the data directory. If a path was specified in dependencycheck.properties
+     * or was specified using the Settings object, and the path exists, that path will be
+     * returned as a File object. If it does not exist, then a File object will be created
+     * based on the file location of the JAR containing the specified class.
+     *
+     * @param configuredFilePath the configured relative or absolute path
+     * @param clazz the class whos path will be resolved
+     * @return a File object
+     * @throws IOException is thrown if the path could not be decoded
+     */
+    public static File getDataDirectory(String configuredFilePath, Class clazz) throws IOException {
+        File file = new File(configuredFilePath);
+        if (file.exists() && file.isDirectory() && file.canWrite()) {
+            return file;
+        } else {
+            String filePath = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
+            return new File(URLDecoder.decode(filePath, "UTF-8"));
+        }
+    }
+
 }

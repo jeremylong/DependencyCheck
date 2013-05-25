@@ -20,7 +20,6 @@ package org.owasp.dependencycheck.data.cpe;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.lucene.analysis.Analyzer;
@@ -37,6 +36,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import org.owasp.dependencycheck.data.lucene.AbstractIndex;
+import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.data.lucene.FieldAnalyzer;
 import org.owasp.dependencycheck.data.lucene.SearchFieldAnalyzer;
@@ -70,9 +70,7 @@ public class Index extends AbstractIndex {
      */
     public File getDataDirectory() throws IOException {
         final String fileName = Settings.getString(Settings.KEYS.CPE_INDEX);
-        final String filePath = Index.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        final String decodedPath = URLDecoder.decode(filePath, "UTF-8");
-        File exePath = new File(decodedPath);
+        File exePath = FileUtils.getDataDirectory(fileName, Index.class);
         if (exePath.getName().toLowerCase().endsWith(".jar")) {
             exePath = exePath.getParentFile();
         } else {
