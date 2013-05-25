@@ -182,13 +182,14 @@ public class CveDB {
      * @throws SQLException thrown if there is a SQL Exception
      * @throws DatabaseException thrown if there is an error initializing a new database
      */
-    public void open() throws IOException, SQLException, DatabaseException {
+    public void open() throws IOException, SQLException, DatabaseException, ClassNotFoundException {
         final String fileName = CveDB.getDataDirectory().getCanonicalPath()
                 + File.separator
                 + "cve";
         final File f = new File(fileName);
         final boolean createTables = !f.exists();
         final String connStr = "jdbc:h2:file:" + fileName;
+        Class.forName("org.h2.Driver");
         conn = DriverManager.getConnection(connStr, "sa", "");
         if (createTables) {
             createTables();

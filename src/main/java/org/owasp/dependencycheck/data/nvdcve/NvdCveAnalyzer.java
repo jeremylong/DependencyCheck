@@ -54,7 +54,7 @@ public class NvdCveAnalyzer implements Analyzer {
      * @throws IOException thrown when there is an IO Exception
      * @throws DatabaseException thrown when there is a database exceptions
      */
-    public void open() throws SQLException, IOException, DatabaseException {
+    public void open() throws SQLException, IOException, DatabaseException, ClassNotFoundException {
         cveDB = new CveDB();
         cveDB.open();
     }
