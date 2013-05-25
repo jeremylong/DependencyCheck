@@ -25,10 +25,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import junit.framework.TestCase;
+import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -49,9 +49,7 @@ public abstract class BaseDBTestCase extends TestCase {
 
     protected static File getDataDirectory() throws IOException {
         String fileName = Settings.getString(Settings.KEYS.CVE_INDEX);
-        String filePath = Index.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        String decodedPath = URLDecoder.decode(filePath, "UTF-8");
-        File exePath = new File(decodedPath);
+        File exePath = FileUtils.getDataDirectory(fileName, Index.class);
         if (exePath.getName().toLowerCase().endsWith(".jar")) {
             exePath = exePath.getParentFile();
         } else {

@@ -18,20 +18,19 @@
  */
 package org.owasp.dependencycheck.data.cpe;
 
-import org.owasp.dependencycheck.data.cpe.Index;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -59,9 +58,7 @@ public abstract class BaseIndexTestCase {
 
     protected static File getDataDirectory() throws IOException {
         String fileName = Settings.getString(Settings.KEYS.CPE_INDEX);
-        String filePath = Index.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        String decodedPath = URLDecoder.decode(filePath, "UTF-8");
-        File exePath = new File(decodedPath);
+        File exePath = FileUtils.getDataDirectory(fileName, Index.class);
         if (exePath.getName().toLowerCase().endsWith(".jar")) {
             exePath = exePath.getParentFile();
         } else {
