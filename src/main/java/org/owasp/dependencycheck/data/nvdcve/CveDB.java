@@ -408,16 +408,7 @@ public class CveDB {
      */
     public static File getDataDirectory() throws IOException {
         final String fileName = Settings.getString(Settings.KEYS.CVE_INDEX);
-        File exePath = FileUtils.getDataDirectory(fileName, CveDB.class);
-
-        if (exePath.getName().toLowerCase().endsWith(".jar")) {
-            exePath = exePath.getParentFile();
-        } else {
-            exePath = new File(".");
-        }
-        File path = new File(exePath.getCanonicalFile() + File.separator + fileName);
-        path = new File(path.getCanonicalPath());
-
+        File path = FileUtils.getDataDirectory(fileName, CveDB.class);
         if (!path.exists()) {
             if (!path.mkdirs()) {
                 throw new IOException("Unable to create NVD CVE Data directory");

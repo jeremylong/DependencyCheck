@@ -83,10 +83,18 @@ public final class FileUtils {
     public static File getDataDirectory(String configuredFilePath, Class clazz) throws IOException {
         File file = new File(configuredFilePath);
         if (file.exists() && file.isDirectory() && file.canWrite()) {
-            return file;
+             return new File(file.getCanonicalPath());
         } else {
-            String filePath = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
-            return new File(URLDecoder.decode(filePath, "UTF-8"));
+            final String filePath = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
+            final String decodedPath = URLDecoder.decode(filePath, "UTF-8");
+            File exePath = new File(decodedPath);
+            if (exePath.getName().toLowerCase().endsWith(".jar")) {
+                exePath = exePath.getParentFile();
+            } else {
+                exePath = new File(".");
+            }
+            File path = new File(exePath.getCanonicalFile() + File.separator + configuredFilePath);
+            return new File(path.getCanonicalPath());
         }
     }
 
