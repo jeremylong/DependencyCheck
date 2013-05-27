@@ -219,6 +219,9 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * pom.
      * @return whether or not evidence was added to the dependency
      */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+    value = "OS_OPEN_STREAM",
+    justification = "The reader on line 259 is closed by closing the zipEntry")
     protected boolean analyzePOM(Dependency dependency) throws IOException, AnalysisException {
         boolean foundSomething = false;
         Properties pomProperties = null;
