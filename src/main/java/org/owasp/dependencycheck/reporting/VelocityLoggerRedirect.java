@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with
  * Dependency-Check. If not, see http://www.gnu.org/licenses/.
  *
- * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2013 Steve Springett. All Rights Reserved.
  */
 package org.owasp.dependencycheck.reporting;
 
@@ -26,15 +26,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * DependencyCheck uses {@link java.util.logging.Logger} as a logging framework,
+ * <p>DependencyCheck uses {@link java.util.logging.Logger} as a logging framework,
  * and Apache Velocity uses a custom logging implementation that outputs to a
  * file named velocity.log by default. This class is an implementation of a
  * custom Velocity logger that redirects all velocity logging to the Java Logger
  * class.
- * <p/>
- * This class was written to address permission issues when using DependencyCheck
+ * </p><p>
+ * This class was written to address permission issues when using Dependency-Check
  * in a server environment (such as the Jenkins plugin). In some circumstances,
- * Velocity would attempt to create velocity.log in an un-writable directory.
+ * Velocity would attempt to create velocity.log in an un-writable directory.</p>
  *
  * @author Steve Springett (steve.springett@owasp.org)
  */
@@ -42,6 +42,7 @@ public class VelocityLoggerRedirect implements LogChute {
 
     /**
      * This will be invoked once by the LogManager
+     * @param rsvc the RuntimeServices
      */
     public void init(RuntimeServices rsvc) {
         // do nothing
@@ -50,6 +51,8 @@ public class VelocityLoggerRedirect implements LogChute {
     /**
      * Given a Velocity log level and message, this method will
      * call the appropriate Logger level and log the specified values.
+     * @param level the logging level
+     * @param message the message to be logged
      */
     public void log(int level, String message) {
         Logger.getLogger(Velocity.class.getName()).log(getLevel(level), message);
@@ -58,6 +61,9 @@ public class VelocityLoggerRedirect implements LogChute {
     /**
      * Given a Velocity log level, message and Throwable, this method will
      * call the appropriate Logger level and log the specified values.
+     * @param level the logging level
+     * @param message the message to be logged
+     * @param t a throwable to log
      */
     public void log(int level, String message, Throwable t) {
         Logger.getLogger(Velocity.class.getName()).log(getLevel(level), message, t);
@@ -65,6 +71,7 @@ public class VelocityLoggerRedirect implements LogChute {
 
     /**
      * Will always return true. The property file will decide what level to log.
+     * @param level the logging level
      */
     public boolean isLevelEnabled(int level) {
         return true;
@@ -72,6 +79,7 @@ public class VelocityLoggerRedirect implements LogChute {
 
     /**
      * Maps Velocity log levels to {@link Logger} values.
+     * @param velocityLevel the logging level
      */
     private Level getLevel(int velocityLevel) {
         switch (velocityLevel) {
