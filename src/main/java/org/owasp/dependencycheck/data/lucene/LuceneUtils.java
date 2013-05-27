@@ -40,6 +40,9 @@ public final class LuceneUtils {
      * @param text the data to be escaped
      */
     @SuppressWarnings("fallthrough")
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+    value = "SF_SWITCH_NO_DEFAULT",
+    justification = "The switch below does have a default.")
     public static void appendEscapedLuceneQuery(StringBuilder buf,
             final CharSequence text) {
 
