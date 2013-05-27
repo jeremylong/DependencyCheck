@@ -70,11 +70,9 @@ public class Index extends AbstractIndex {
      */
     public File getDataDirectory() throws IOException {
         final String fileName = Settings.getString(Settings.KEYS.CPE_INDEX);
-        File path = FileUtils.getDataDirectory(fileName, Index.class);
-        if (!path.exists()) {
-            if (!path.mkdirs()) {
-                throw new IOException("Unable to create CPE Data directory");
-            }
+        final File path = FileUtils.getDataDirectory(fileName, Index.class);
+        if (!path.exists() && !path.mkdirs()) {
+            throw new IOException("Unable to create CPE Data directory");
         }
         return path;
     }
