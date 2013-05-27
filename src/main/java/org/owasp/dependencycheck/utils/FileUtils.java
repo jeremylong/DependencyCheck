@@ -81,7 +81,7 @@ public final class FileUtils {
      * @throws IOException is thrown if the path could not be decoded
      */
     public static File getDataDirectory(String configuredFilePath, Class clazz) throws IOException {
-        File file = new File(configuredFilePath);
+        final File file = new File(configuredFilePath);
         if (file.exists() && file.isDirectory() && file.canWrite()) {
              return new File(file.getCanonicalPath());
         } else {
@@ -93,7 +93,7 @@ public final class FileUtils {
             } else {
                 exePath = new File(".");
             }
-            File path = new File(exePath.getCanonicalFile() + File.separator + configuredFilePath);
+            final File path = new File(exePath.getCanonicalFile() + File.separator + configuredFilePath);
             return new File(path.getCanonicalPath());
         }
     }
