@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 public class VelocityLoggerRedirect implements LogChute {
 
     /**
-     * This will be invoked once by the LogManager
+     * This will be invoked once by the LogManager.
      * @param rsvc the RuntimeServices
      */
     public void init(RuntimeServices rsvc) {
@@ -72,6 +72,7 @@ public class VelocityLoggerRedirect implements LogChute {
     /**
      * Will always return true. The property file will decide what level to log.
      * @param level the logging level
+     * @return true
      */
     public boolean isLevelEnabled(int level) {
         return true;
@@ -80,6 +81,7 @@ public class VelocityLoggerRedirect implements LogChute {
     /**
      * Maps Velocity log levels to {@link Logger} values.
      * @param velocityLevel the logging level
+     * @return the logging level
      */
     private Level getLevel(int velocityLevel) {
         switch (velocityLevel) {
