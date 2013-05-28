@@ -185,7 +185,7 @@ public class CveDB {
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings(
     value = "DMI_EMPTY_DB_PASSWORD",
-    justification = "Yes, I know... Blank password. With the embedded DB the password doesn't have any affect.")
+    justification = "Yes, I know... Blank password.")
     public void open() throws IOException, SQLException, DatabaseException, ClassNotFoundException {
         final String fileName = CveDB.getDataDirectory().getCanonicalPath()
                 + File.separator
@@ -194,7 +194,7 @@ public class CveDB {
         final boolean createTables = !f.exists();
         final String connStr = "jdbc:h2:file:" + fileName;
         Class.forName("org.h2.Driver");
-        conn = DriverManager.getConnection(connStr, "local", "");
+        conn = DriverManager.getConnection(connStr, "sa", "");
         if (createTables) {
             createTables();
         }
