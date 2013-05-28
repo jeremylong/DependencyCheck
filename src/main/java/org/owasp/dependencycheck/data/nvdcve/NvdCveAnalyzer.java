@@ -53,6 +53,7 @@ public class NvdCveAnalyzer implements Analyzer {
      * @throws SQLException thrown when there is a SQL Exception
      * @throws IOException thrown when there is an IO Exception
      * @throws DatabaseException thrown when there is a database exceptions
+     * @throws ClassNotFoundException thrown if the h2 database driver cannot be loaded
      */
     public void open() throws SQLException, IOException, DatabaseException, ClassNotFoundException {
         cveDB = new CveDB();
