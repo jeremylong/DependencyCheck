@@ -181,7 +181,11 @@ public class CveDB {
      * @throws IOException thrown if there is an IO Exception
      * @throws SQLException thrown if there is a SQL Exception
      * @throws DatabaseException thrown if there is an error initializing a new database
+     * @throws ClassNotFoundException thrown if the h2 database driver cannot be loaded
      */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+    value = "DMI_EMPTY_DB_PASSWORD",
+    justification = "Yes, I know... Blank password. With the embedded DB the password doesn't have any affect.")
     public void open() throws IOException, SQLException, DatabaseException, ClassNotFoundException {
         final String fileName = CveDB.getDataDirectory().getCanonicalPath()
                 + File.separator
@@ -190,7 +194,7 @@ public class CveDB {
         final boolean createTables = !f.exists();
         final String connStr = "jdbc:h2:file:" + fileName;
         Class.forName("org.h2.Driver");
-        conn = DriverManager.getConnection(connStr, "sa", "");
+        conn = DriverManager.getConnection(connStr, "local", "");
         if (createTables) {
             createTables();
         }
@@ -408,7 +412,7 @@ public class CveDB {
      */
     public static File getDataDirectory() throws IOException {
         final String fileName = Settings.getString(Settings.KEYS.CVE_INDEX);
-        File path = FileUtils.getDataDirectory(fileName, CveDB.class);
+        final File path = FileUtils.getDataDirectory(fileName, CveDB.class);
         if (!path.exists()) {
             if (!path.mkdirs()) {
                 throw new IOException("Unable to create NVD CVE Data directory");
