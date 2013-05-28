@@ -181,6 +181,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
      * @throws IOException is thrown if there is a ioexception
      * @throws SQLException is thrown if there is a sql exception
      * @throws DatabaseException is thrown if there is a database exception
+     * @throws ClassNotFoundException thrown if the h2 database driver cannot be loaded
      */
     private void importXML(File file, File oldVersion)
             throws ParserConfigurationException, SAXException, IOException, SQLException, DatabaseException, ClassNotFoundException {
