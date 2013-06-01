@@ -29,6 +29,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.analyzer.Analyzer;
+import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 /**
  * NvdCveAnalyzer is a utility class that takes a project dependency and
  * attempts to discern if there is an associated CVEs. It uses the the
@@ -106,7 +107,9 @@ public class NvdCveAnalyzer implements Analyzer {
                     final String value = id.getValue();
                     final List<Vulnerability> vulns = cveDB.getVulnerabilities(value);
                     for (Vulnerability v : vulns) {
-                        dependency.addVulnerability(v);
+                        if (isValidMatch(dependency, v)) {
+                            dependency.addVulnerability(v);
+                        }
                     }
                 } catch (DatabaseException ex) {
                     throw new AnalysisException(ex);
@@ -159,5 +162,44 @@ public class NvdCveAnalyzer implements Analyzer {
      */
     public void initialize() throws Exception {
         this.open();
+    }
+
+    private boolean isValidMatch(final Dependency dependency, final Vulnerability v) {
+        //right now I only know of the issue with Struts1/2
+        // start with fixing this problem.
+
+        //TODO extend this solution to do better version matching for the vulnerable software.
+        boolean struts1 = false;
+        boolean struts2 = false;
+        for (Identifier i : dependency.getIdentifiers()) {
+            if (i.getValue().startsWith("cpe:/a:apache:struts:")) {
+                char version = i.getValue().charAt(21);
+                if (version == '1') {
+                    struts1 = true;
+                }
+                if (version == '2') {
+                    struts2 = true;
+                }
+            }
+        }
+        if (!struts1 && !struts2) {
+            return true; //we are not looking at struts, so return true.
+        }
+        if (struts1 && struts2) {
+            return true; //there is a mismatch here, but we can't solve it here so we return valid.
+        }
+        if (struts1) {
+            boolean hasStruts1Vuln = false;
+            boolean hasStruts2PreviousVersion = false;
+            for (VulnerableSoftware vs : v.getVulnerableSoftware()) {
+                hasStruts2PreviousVersion |= vs.hasPreviousVersion() && vs.getName().charAt(21) == '2';
+                hasStruts1Vuln |= vs.getName().charAt(21) == '1';
+            }
+            if (!hasStruts1Vuln && hasStruts2PreviousVersion) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
