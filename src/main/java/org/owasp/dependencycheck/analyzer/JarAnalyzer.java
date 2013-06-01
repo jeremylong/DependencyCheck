@@ -360,10 +360,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         }
         return foundSomething;
     }
-    /**
-     * Tracks whether the jar being analyzed contains classes.
-     */
-    private boolean hasClasses = false;
 
     /**
      * Analyzes the path information of the classes contained within the
@@ -379,7 +375,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      */
     protected boolean analyzePackageNames(Dependency dependency, boolean addPackagesAsEvidence)
             throws IOException {
-        hasClasses = false;
         JarFile jar = null;
         try {
             jar = new JarFile(dependency.getActualFilePath());
@@ -391,7 +386,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             final int count = collectPackageNameInformation(en, level0, level1, level2, level3);
 
             if (count == 0) {
-                return hasClasses;
+                return false;
             }
             final EvidenceCollection vendor = dependency.getVendorEvidence();
             final EvidenceCollection product = dependency.getProductEvidence();
@@ -490,7 +485,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 jar.close();
             }
         }
-        return hasClasses;
+        return true;
     }
 
     /**
@@ -725,7 +720,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         while (en.hasMoreElements()) {
             final java.util.jar.JarEntry entry = (java.util.jar.JarEntry) en.nextElement();
             if (entry.getName().endsWith(".class")) {
-                hasClasses = true;
                 String[] path;
                 if (entry.getName().contains("/")) {
                     path = entry.getName().toLowerCase().split("/");
