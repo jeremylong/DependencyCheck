@@ -227,9 +227,9 @@ public class CveDB {
     }
 
     /**
-     * Retrieves the vulnerabilities associated with the specified CPE ID.
+     * Retrieves the vulnerabilities associated with the specified CPE.
      *
-     * @param cpeStr the CPE cpe name
+     * @param cpeStr the CPE name
      * @return a list of Vulnerabilities
      * @throws DatabaseException thrown if there is an exception retrieving data
      */
