@@ -567,6 +567,8 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                             && !key.endsWith("jdk")
                             && !key.contains("lastmodified")
                             && !key.endsWith("package")
+                            && !key.endsWith("classpath")
+                            && !key.endsWith("class-path")
                             && !isImportPackage(key, value)) {
 
                         foundSomething = true;
