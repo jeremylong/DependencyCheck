@@ -219,8 +219,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * pom.
      * @return whether or not evidence was added to the dependency
      */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings(
-    value = "OS_OPEN_STREAM",
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "OS_OPEN_STREAM",
     justification = "The reader on line 259 is closed by closing the zipEntry")
     protected boolean analyzePOM(Dependency dependency) throws IOException, AnalysisException {
         boolean foundSomething = false;
@@ -514,9 +513,15 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
 
             final Manifest manifest = jar.getManifest();
             if (manifest == null) {
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE,
-                        String.format("Jar file '%s' does not contain a manifest.",
-                        dependency.getFileName()));
+                //don't log this for javadoc or sources jar files
+                if (!dependency.getFileName().toLowerCase().endsWith("-sources.jar")
+                        && !dependency.getFileName().toLowerCase().endsWith("-javadoc.jar")
+                        && !dependency.getFileName().toLowerCase().endsWith("-src.jar")
+                        && !dependency.getFileName().toLowerCase().endsWith("-doc.jar")) {
+                    Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE,
+                            String.format("Jar file '%s' does not contain a manifest.",
+                            dependency.getFileName()));
+                }
                 return false;
             }
             final Attributes atts = manifest.getMainAttributes();
