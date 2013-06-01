@@ -99,7 +99,8 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             "class-path",
             "tool",
             "bundle-manifestversion",
-            "bundlemanifestversion");
+            "bundlemanifestversion",
+            "include-resource");
     /**
      * The set of file extensions supported by this analyzer.
      */
