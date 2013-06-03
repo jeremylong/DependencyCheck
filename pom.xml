@@ -503,6 +503,12 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses />.
             <artifactId>h2</artifactId>
             <version>1.3.172</version>
         </dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.7.2</version>
+            <type>jar</type>
+        </dependency>
 
         <!-- The following dependencies are only scanned during integration testing -->
         <!--<dependency>
