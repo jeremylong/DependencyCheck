@@ -102,6 +102,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      */
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
         removeJreEntries(dependency);
+        removeBadMatches(dependency);
         boolean deepScan = false;
         try {
             deepScan = Settings.getBoolean(Settings.KEYS.PERFORM_DEEP_SCAN);
@@ -182,7 +183,10 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         final Iterator<Identifier> itr = identifiers.iterator();
         while (itr.hasNext()) {
             final Identifier i = itr.next();
+
             if ((i.getValue().startsWith("cpe:/a:sun:java:")
+                    || i.getValue().startsWith("cpe:/a:sun:java_se")
+                    || i.getValue().startsWith("cpe:/a:oracle:java_se")
                     || i.getValue().startsWith("cpe:/a:oracle:jre")
                     || i.getValue().startsWith("cpe:/a:oracle:jdk"))
                     && !dependency.getFileName().toLowerCase().endsWith("rt.jar")) {
@@ -209,5 +213,19 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
             return null;
         }
         return cpe;
+    }
+
+    private void removeBadMatches(Dependency dependency) {
+        final Set<Identifier> identifiers = dependency.getIdentifiers();
+        final Iterator<Identifier> itr = identifiers.iterator();
+        while (itr.hasNext()) {
+            final Identifier i = itr.next();
+            //TODO move this startswith expression to a configuration file?
+            if (i.getValue().startsWith("cpe:/a:apache:xerces-c++:")
+                    && dependency.getFileName().toLowerCase().endsWith(".jar")) {
+                itr.remove();
+            }
+        }
+
     }
 }
