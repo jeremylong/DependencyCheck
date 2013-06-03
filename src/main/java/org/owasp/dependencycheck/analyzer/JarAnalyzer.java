@@ -39,6 +39,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.regex.Pattern;
@@ -47,6 +48,7 @@ import java.util.zip.ZipInputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
+import org.jsoup.Jsoup;
 import org.owasp.dependencycheck.analyzer.pom.generated.License;
 import org.owasp.dependencycheck.analyzer.pom.generated.Model;
 import org.owasp.dependencycheck.analyzer.pom.generated.Organization;
@@ -208,6 +210,10 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             throw new AnalysisException("Exception occurred reading the JAR file.", ex);
         }
     }
+    /**
+     * A pattern to detect HTML within text.
+     */
+    final Pattern htmlDetection = Pattern.compile("\\<[a-z]+.*/?\\>", Pattern.CASE_INSENSITIVE);
 
     /**
      * Attempts to find a pom.xml within the JAR file. If found it extracts
@@ -215,148 +221,203 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * the strings contained within the pom.properties if one exists.
      *
      * @param dependency the dependency being analyzed.
-     * @throws IOException is thrown if there is an error reading the zip file.
-     * @throws AnalysisException is thrown if there is an exception parsing the
-     * pom.
+     * @throws AnalysisException is thrown if there is an exception parsing the pom.
      * @return whether or not evidence was added to the dependency
      */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "OS_OPEN_STREAM",
-    justification = "The reader on line 259 is closed by closing the zipEntry")
-    protected boolean analyzePOM(Dependency dependency) throws IOException, AnalysisException {
+    //@edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "OS_OPEN_STREAM",
+    //justification = "The reader on line 259 is closed by closing the zipEntry")
+    protected boolean analyzePOM(Dependency dependency) throws AnalysisException {
         boolean foundSomething = false;
-        Properties pomProperties = null;
-        final List<Model> poms = new ArrayList<Model>();
-        FileInputStream fs = null;
+        final JarFile jar;
         try {
-            fs = new FileInputStream(dependency.getActualFilePath());
-            final ZipInputStream zin = new ZipInputStream(fs);
-            ZipEntry entry = zin.getNextEntry();
-
-            while (entry != null) {
-                final String entryName = (new File(entry.getName())).getName().toLowerCase();
-
-                if (!entry.isDirectory() && "pom.xml".equals(entryName)) {
-                    final NonClosingStream stream = new NonClosingStream(zin);
-                    Model p = null;
-                    try {
-                        final JAXBElement obj = (JAXBElement) pomUnmarshaller.unmarshal(stream);
-                        p = (Model) obj.getValue();
-                    } catch (JAXBException ex) {
-                        final String msg = String.format("Unable to parse POM '%s' in '%s'",
-                                entry.getName(), dependency.getFilePath());
-                        final AnalysisException ax = new AnalysisException(msg, ex);
-                        dependency.getAnalysisExceptions().add(ax);
-                        Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO, msg);
-                    }
-                    if (p != null) {
-                        poms.add(p);
-                    }
-                    zin.closeEntry();
-                } else if (!entry.isDirectory() && "pom.properties".equals(entryName)) {
-                    //TODO what if there is more then one pom.properties?
-                    // need to find the POM, then look to see if there is a sibling
-                    // pom.properties and use those together.
-                    if (pomProperties == null) {
-                        Reader reader;
-                        try {
-                            reader = new InputStreamReader(zin, "UTF-8");
-                            pomProperties = new Properties();
-                            pomProperties.load(reader);
-                        } finally {
-                            //zin.closeEntry closes the reader
-                            //reader.close();
-                            zin.closeEntry();
-                        }
-                    } else {
-                        final String msg = "JAR file contains multiple pom.properties files - unable to process POM";
-                        final AnalysisException ax = new AnalysisException(msg);
-                        dependency.getAnalysisExceptions().add(ax);
-                        Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO, msg);
-                    }
-                }
-
-                entry = zin.getNextEntry();
-            }
+            jar = new JarFile(dependency.getActualFilePath());
         } catch (IOException ex) {
-            throw new AnalysisException("Error reading JAR file as zip.", ex);
-        } finally {
-            if (fs != null) {
-                fs.close();
-            }
+            final String msg = String.format("Unable to read JarFile '%s'.", dependency.getActualFilePath());
+            final AnalysisException ax = new AnalysisException(msg, ex);
+            dependency.getAnalysisExceptions().add(ax);
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg, ex);
+            return foundSomething;
+        }
+        final List<Model> poms = new ArrayList<Model>();
+        List<String> pomEntries;
+        try {
+            pomEntries = retrievePomListing(jar);
+        } catch (IOException ex) {
+            final String msg = String.format("Unable to read JarEntries in '%s'.", dependency.getActualFilePath());
+            final AnalysisException ax = new AnalysisException(msg, ex);
+            dependency.getAnalysisExceptions().add(ax);
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg, ex);
+            return foundSomething;
         }
 
-        for (Model pom : poms) {
-            //group id
-            final String groupid = interpolateString(pom.getGroupId(), pomProperties);
-            if (groupid != null) {
-                foundSomething = true;
-                dependency.getVendorEvidence().addEvidence("pom", "groupid", groupid, Evidence.Confidence.HIGH);
-                dependency.getProductEvidence().addEvidence("pom", "groupid", groupid, Evidence.Confidence.LOW);
+        for (String path : pomEntries) {
+            Properties pomProperties = null;
+            try {
+                pomProperties = retrievePomProperties(path, jar);
+            } catch (IOException ex) {
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINEST, "ignore this, failed reading a non-existent pom.properties", ex);
             }
-            //artifact id
-            final String artifactid = interpolateString(pom.getArtifactId(), pomProperties);
-            if (artifactid != null) {
-                foundSomething = true;
-                dependency.getProductEvidence().addEvidence("pom", "artifactid", artifactid, Evidence.Confidence.HIGH);
-                dependency.getVendorEvidence().addEvidence("pom", "artifactid", artifactid, Evidence.Confidence.LOW);
+            Model pom = null;
+            try {
+                pom = retrievePom(path, jar);
+            } catch (JAXBException ex) {
+                final String msg = String.format("Unable to parse POM '%s' in '%s'",
+                        path, dependency.getFilePath());
+                final AnalysisException ax = new AnalysisException(msg, ex);
+                dependency.getAnalysisExceptions().add(ax);
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, msg, ax);
+            } catch (IOException ex) {
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
             }
-            //version
-            final String version = interpolateString(pom.getVersion(), pomProperties);
-            if (version != null) {
-                foundSomething = true;
-                dependency.getVersionEvidence().addEvidence("pom", "version", version, Evidence.Confidence.HIGH);
-            }
-            // org name
-            final Organization org = pom.getOrganization();
-            if (org != null && org.getName() != null) {
-                foundSomething = true;
-                final String orgName = interpolateString(org.getName(), pomProperties);
-                dependency.getVendorEvidence().addEvidence("pom", "organization name", orgName, Evidence.Confidence.HIGH);
-            }
-            //pom name
-            final String pomName = interpolateString(pom.getName(), pomProperties);
-            if (pomName != null) {
-                foundSomething = true;
-                dependency.getProductEvidence().addEvidence("pom", "name", pomName, Evidence.Confidence.HIGH);
-                dependency.getVendorEvidence().addEvidence("pom", "name", pomName, Evidence.Confidence.HIGH);
+            foundSomething |= setPomEvidence(dependency, pom, pomProperties);
+        }
+        return foundSomething;
+    }
+
+    /**
+     * Given a path to a pom.xml within a JarFile, this method attempts to load
+     * a sibling pom.properties if one exists.
+     * @param path the path to the pom.xml within the JarFile
+     * @param jar the JarFile to load the pom.properties from
+     * @return a Properties object or null if no pom.properties was found
+     * @throws IOException thrown if there is an exception reading the pom.properties
+     */
+    private Properties retrievePomProperties(String path, final JarFile jar) throws IOException {
+        Properties pomProperties = null;
+        String propPath = path.substring(0, path.length() - 7) + "pom.properies";
+        ZipEntry propEntry = jar.getEntry(propPath);
+        if (propEntry != null) {
+            Reader reader = new InputStreamReader(jar.getInputStream(propEntry), "UTF-8");
+            pomProperties = new Properties();
+            pomProperties.load(reader);
+        }
+        return pomProperties;
+    }
+    /**
+     * Searches a JarFile for pom.xml entries and returns a listing of these entries.
+     * @param jar the JarFile to search
+     * @return a list of pom.xml entries
+     * @throws IOException thrown if there is an exception reading a JarEntry
+     */
+    private List<String> retrievePomListing(final JarFile jar) throws IOException {
+        List<String> pomEntries = new ArrayList<String>();
+        JarEntry entry = jar.entries().nextElement();
+        while (entry != null) {
+            final String entryName = (new File(entry.getName())).getName().toLowerCase();
+                if (!entry.isDirectory() && "pom.xml".equals(entryName)) {
+                    pomEntries.add(entry.getName());
+                }
+            entry = jar.entries().nextElement();
+        }
+        return pomEntries;
+    }
+    /**
+     * Retrieves the specified POM from a jar file and converts it to a Model.
+     * @param path the path to the pom.xml file within the jar file
+     * @param jar the jar file to extract the pom from
+     * @return returns a {@link org.owasp.dependencycheck.analyzer.pom.generated.Model} object
+     * @throws JAXBException is thrown if there is an exception parsing the pom
+     * @throws IOException is thrown if there is an exception reading the jar
+     */
+    private Model retrievePom(String path, JarFile jar) throws JAXBException, IOException {
+        ZipEntry entry = jar.getEntry(path);
+        if (entry != null) { //should never be null
+            NonClosingStream stream = new NonClosingStream(jar.getInputStream(entry));
+            Model p = null;
+                final JAXBElement obj = (JAXBElement) pomUnmarshaller.unmarshal(stream);
+                return (Model) obj.getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Sets evidence from the pom on the supplied dependency.
+     * @param dependency the dependency to set data on
+     * @param pom the information from the pom
+     * @param pomProperties the pom properties file (null if none exists)
+     * @return true if there was evidence within the pom that we could use; otherwise false
+     */
+    private boolean setPomEvidence(Dependency dependency, Model pom, Properties pomProperties) {
+        boolean foundSomething = false;
+        //group id
+        final String groupid = interpolateString(pom.getGroupId(), pomProperties);
+        if (groupid != null) {
+            foundSomething = true;
+            dependency.getVendorEvidence().addEvidence("pom", "groupid", groupid, Evidence.Confidence.HIGH);
+            dependency.getProductEvidence().addEvidence("pom", "groupid", groupid, Evidence.Confidence.LOW);
+        }
+        //artifact id
+        final String artifactid = interpolateString(pom.getArtifactId(), pomProperties);
+        if (artifactid != null) {
+            foundSomething = true;
+            dependency.getProductEvidence().addEvidence("pom", "artifactid", artifactid, Evidence.Confidence.HIGH);
+            dependency.getVendorEvidence().addEvidence("pom", "artifactid", artifactid, Evidence.Confidence.LOW);
+        }
+        //version
+        final String version = interpolateString(pom.getVersion(), pomProperties);
+        if (version != null) {
+            foundSomething = true;
+            dependency.getVersionEvidence().addEvidence("pom", "version", version, Evidence.Confidence.HIGH);
+        }
+        // org name
+        final Organization org = pom.getOrganization();
+        if (org != null && org.getName() != null) {
+            foundSomething = true;
+            final String orgName = interpolateString(org.getName(), pomProperties);
+            dependency.getVendorEvidence().addEvidence("pom", "organization name", orgName, Evidence.Confidence.HIGH);
+        }
+        //pom name
+        final String pomName = interpolateString(pom.getName(), pomProperties);
+        if (pomName != null) {
+            foundSomething = true;
+            dependency.getProductEvidence().addEvidence("pom", "name", pomName, Evidence.Confidence.HIGH);
+            dependency.getVendorEvidence().addEvidence("pom", "name", pomName, Evidence.Confidence.HIGH);
+        }
+
+        //Description
+        if (pom.getDescription() != null) {
+            foundSomething = true;
+            String description = interpolateString(pom.getDescription(), pomProperties);
+
+            if (htmlDetection.matcher(description).find()) {
+                description = Jsoup.parse(description).text();
             }
 
-            //Description
-            if (pom.getDescription() != null) {
-                foundSomething = true;
-                final String description = interpolateString(pom.getDescription(), pomProperties);
-                dependency.setDescription(description);
-                dependency.getProductEvidence().addEvidence("pom", "description", description, Evidence.Confidence.MEDIUM);
-                dependency.getVendorEvidence().addEvidence("pom", "description", description, Evidence.Confidence.MEDIUM);
-            }
+            dependency.setDescription(description);
+            dependency.getProductEvidence().addEvidence("pom", "description", description, Evidence.Confidence.MEDIUM);
+            dependency.getVendorEvidence().addEvidence("pom", "description", description, Evidence.Confidence.MEDIUM);
+        }
 
-            //license
-            if (pom.getLicenses() != null) {
-                String license = null;
-                for (License lic : pom.getLicenses().getLicense()) {
-                    String tmp = null;
-                    if (lic.getName() != null) {
-                        tmp = interpolateString(lic.getName(), pomProperties);
-                    }
-                    if (lic.getUrl() != null) {
-                        if (tmp == null) {
-                            tmp = interpolateString(lic.getUrl(), pomProperties);
-                        } else {
-                            tmp += ": " + interpolateString(lic.getUrl(), pomProperties);
-                        }
-                    }
+        //license
+        if (pom.getLicenses() != null) {
+            String license = null;
+            for (License lic : pom.getLicenses().getLicense()) {
+                String tmp = null;
+                if (lic.getName() != null) {
+                    tmp = interpolateString(lic.getName(), pomProperties);
+                }
+                if (lic.getUrl() != null) {
                     if (tmp == null) {
-                        continue;
-                    }
-                    if (license == null) {
-                        license = tmp;
+                        tmp = interpolateString(lic.getUrl(), pomProperties);
                     } else {
-                        license += "\n" + tmp;
+                        tmp += ": " + interpolateString(lic.getUrl(), pomProperties);
                     }
                 }
-                if (license != null) {
-                    dependency.setLicense(license);
+                if (tmp == null) {
+                    continue;
                 }
+                if (htmlDetection.matcher(tmp).find()) {
+                    tmp = Jsoup.parse(tmp).text();
+                }
+                if (license == null) {
+                    license = tmp;
+                } else {
+                    license += "\n" + tmp;
+                }
+            }
+            if (license != null) {
+                dependency.setLicense(license);
             }
         }
         return foundSomething;
@@ -530,7 +591,10 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
 
             for (Entry<Object, Object> entry : atts.entrySet()) {
                 String key = entry.getKey().toString();
-                final String value = atts.getValue(key);
+                String value = atts.getValue(key);
+                if (htmlDetection.matcher(value).find()) {
+                    value = Jsoup.parse(value).text();
+                }
                 if (key.equals(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {
                     foundSomething = true;
                     productEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
@@ -662,7 +726,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * within the text.
      * @return the interpolated text.
      */
-    protected String interpolateString(String text, Properties properties) {
+    private String interpolateString(String text, Properties properties) {
         //${project.build.directory}
         if (properties == null || text == null) {
             return text;
