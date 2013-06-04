@@ -265,7 +265,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             } catch (IOException ex) {
                 Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
             }
-            foundSomething |= setPomEvidence(dependency, pom, pomProperties);
+            foundSomething = setPomEvidence(dependency, pom, pomProperties) || foundSomething;
         }
         return foundSomething;
     }
@@ -299,13 +299,13 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      */
     private List<String> retrievePomListing(final JarFile jar) throws IOException {
         final List<String> pomEntries = new ArrayList<String>();
-        JarEntry entry = jar.entries().nextElement();
-        while (entry != null) {
+        final Enumeration<JarEntry> entries = jar.entries();
+        while (entries.hasMoreElements()) {
+            JarEntry entry = entries.nextElement();
             final String entryName = (new File(entry.getName())).getName().toLowerCase();
                 if (!entry.isDirectory() && "pom.xml".equals(entryName)) {
                     pomEntries.add(entry.getName());
                 }
-            entry = jar.entries().nextElement();
         }
         return pomEntries;
     }
