@@ -224,8 +224,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * @throws AnalysisException is thrown if there is an exception parsing the pom.
      * @return whether or not evidence was added to the dependency
      */
-    //@edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "OS_OPEN_STREAM",
-    //justification = "The reader on line 259 is closed by closing the zipEntry")
     protected boolean analyzePOM(Dependency dependency) throws AnalysisException {
         boolean foundSomething = false;
         final JarFile jar;
@@ -238,7 +236,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg, ex);
             return foundSomething;
         }
-        final List<Model> poms = new ArrayList<Model>();
         List<String> pomEntries;
         try {
             pomEntries = retrievePomListing(jar);
@@ -283,6 +280,8 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * @return a Properties object or null if no pom.properties was found
      * @throws IOException thrown if there is an exception reading the pom.properties
      */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "OS_OPEN_STREAM",
+    justification = "The reader is closed by closing the zipEntry")
     private Properties retrievePomProperties(String path, final JarFile jar) throws IOException {
         Properties pomProperties = null;
         String propPath = path.substring(0, path.length() - 7) + "pom.properies";
@@ -726,7 +725,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * within the text.
      * @return the interpolated text.
      */
-    private String interpolateString(String text, Properties properties) {
+    protected String interpolateString(String text, Properties properties) {
         //${project.build.directory}
         if (properties == null || text == null) {
             return text;
