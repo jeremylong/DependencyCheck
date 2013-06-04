@@ -164,6 +164,15 @@ public class NvdCveAnalyzer implements Analyzer {
         this.open();
     }
 
+    /**
+     * <p>Determines if this is a valid vulnerability match for the given dependency.
+     * Specifically, this is concerned with ensuring the version numbers are correct.</p>
+     * <p>Currently, this is focused on the issues with the versions for Struts 1 and Struts 2.
+     * In the future this will due better matching on more version numbers.</p>
+     * @param dependency
+     * @param v
+     * @return
+     */
     private boolean isValidMatch(final Dependency dependency, final Vulnerability v) {
         //right now I only know of the issue with Struts1/2
         // start with fixing this problem.
@@ -173,7 +182,7 @@ public class NvdCveAnalyzer implements Analyzer {
         boolean struts2 = false;
         for (Identifier i : dependency.getIdentifiers()) {
             if (i.getValue().startsWith("cpe:/a:apache:struts:")) {
-                char version = i.getValue().charAt(21);
+                final char version = i.getValue().charAt(21);
                 if (version == '1') {
                     struts1 = true;
                 }
