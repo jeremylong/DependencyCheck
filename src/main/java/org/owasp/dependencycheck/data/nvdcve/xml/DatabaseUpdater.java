@@ -140,21 +140,23 @@ public class DatabaseUpdater implements CachedWebDataSource {
                     } catch (ClassNotFoundException ex) {
                         throw new UpdateException(ex);
                     } finally {
+                        boolean deleted = false;
                         try {
                             if (outputPath != null && outputPath.exists()) {
-                                outputPath.delete();
+                                deleted = outputPath.delete();
                             }
                         } finally {
-                            if (outputPath != null && outputPath.exists()) {
+                            if (outputPath != null && (outputPath.exists() || !deleted)) {
                                 outputPath.deleteOnExit();
                             }
                         }
                         try {
+                            deleted = false;
                             if (outputPath12 != null && outputPath12.exists()) {
-                                outputPath12.delete();
+                                deleted = outputPath12.delete();
                             }
                         } finally {
-                            if (outputPath12 != null && outputPath12.exists()) {
+                            if (outputPath12 != null && (outputPath12.exists() || !deleted)) {
                                 outputPath12.deleteOnExit();
                             }
                         }
