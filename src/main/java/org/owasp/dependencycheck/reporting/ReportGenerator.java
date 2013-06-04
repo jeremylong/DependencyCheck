@@ -111,6 +111,8 @@ public class ReportGenerator {
      *
      * @return a Velocity Context.
      */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "RV_RETURN_VALUE_IGNORED_INFERRED",
+    justification = "No plan to fix this style issue")
     private Context createContext() {
         final ToolManager manager = new ToolManager();
         final Context c = manager.createContext();
@@ -196,7 +198,10 @@ public class ReportGenerator {
         try {
             final File outDir = new File(outFileName).getParentFile();
             if (!outDir.exists()) {
-                outDir.mkdirs();
+                boolean created = outDir.mkdirs();
+                if (!created) {
+                   throw new Exception("Unable to create directory '" + outDir.getAbsolutePath() + "'.");
+                }
             }
 
             outputStream = new FileOutputStream(outFileName);
