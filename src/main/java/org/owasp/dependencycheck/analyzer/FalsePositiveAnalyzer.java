@@ -215,6 +215,12 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         return cpe;
     }
 
+    /**
+     * Removes bad CPE matches for a dependency. Unfortunately, right now
+     * these are hard-coded patches for specific problems identified when
+     * testing this ona LARGE volume of jar files.
+     * @param dependency the dependency to analyze
+     */
     private void removeBadMatches(Dependency dependency) {
         final Set<Identifier> identifiers = dependency.getIdentifiers();
         final Iterator<Identifier> itr = identifiers.iterator();

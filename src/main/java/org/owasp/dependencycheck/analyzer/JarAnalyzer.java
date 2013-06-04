@@ -19,7 +19,6 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,7 +43,6 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
@@ -213,7 +211,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     /**
      * A pattern to detect HTML within text.
      */
-    final Pattern htmlDetection = Pattern.compile("\\<[a-z]+.*/?\\>", Pattern.CASE_INSENSITIVE);
+    final private Pattern htmlDetection = Pattern.compile("\\<[a-z]+.*/?\\>", Pattern.CASE_INSENSITIVE);
 
     /**
      * Attempts to find a pom.xml within the JAR file. If found it extracts
@@ -284,10 +282,10 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     justification = "The reader is closed by closing the zipEntry")
     private Properties retrievePomProperties(String path, final JarFile jar) throws IOException {
         Properties pomProperties = null;
-        String propPath = path.substring(0, path.length() - 7) + "pom.properies";
-        ZipEntry propEntry = jar.getEntry(propPath);
+        final String propPath = path.substring(0, path.length() - 7) + "pom.properies";
+        final ZipEntry propEntry = jar.getEntry(propPath);
         if (propEntry != null) {
-            Reader reader = new InputStreamReader(jar.getInputStream(propEntry), "UTF-8");
+            final Reader reader = new InputStreamReader(jar.getInputStream(propEntry), "UTF-8");
             pomProperties = new Properties();
             pomProperties.load(reader);
         }
@@ -300,7 +298,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * @throws IOException thrown if there is an exception reading a JarEntry
      */
     private List<String> retrievePomListing(final JarFile jar) throws IOException {
-        List<String> pomEntries = new ArrayList<String>();
+        final List<String> pomEntries = new ArrayList<String>();
         JarEntry entry = jar.entries().nextElement();
         while (entry != null) {
             final String entryName = (new File(entry.getName())).getName().toLowerCase();
@@ -322,10 +320,9 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     private Model retrievePom(String path, JarFile jar) throws JAXBException, IOException {
         ZipEntry entry = jar.getEntry(path);
         if (entry != null) { //should never be null
-            NonClosingStream stream = new NonClosingStream(jar.getInputStream(entry));
-            Model p = null;
-                final JAXBElement obj = (JAXBElement) pomUnmarshaller.unmarshal(stream);
-                return (Model) obj.getValue();
+            final NonClosingStream stream = new NonClosingStream(jar.getInputStream(entry));
+            final JAXBElement obj = (JAXBElement) pomUnmarshaller.unmarshal(stream);
+            return (Model) obj.getValue();
         }
         return null;
     }
