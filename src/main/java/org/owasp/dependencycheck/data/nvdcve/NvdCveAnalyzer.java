@@ -169,9 +169,9 @@ public class NvdCveAnalyzer implements Analyzer {
      * Specifically, this is concerned with ensuring the version numbers are correct.</p>
      * <p>Currently, this is focused on the issues with the versions for Struts 1 and Struts 2.
      * In the future this will due better matching on more version numbers.</p>
-     * @param dependency
-     * @param v
-     * @return
+     * @param dependency the dependency
+     * @param v the vulnerability
+     * @return returns true if the vulnerability is for the given dependency
      */
     private boolean isValidMatch(final Dependency dependency, final Vulnerability v) {
         //right now I only know of the issue with Struts1/2

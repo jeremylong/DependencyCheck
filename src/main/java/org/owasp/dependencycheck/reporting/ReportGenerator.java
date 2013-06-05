@@ -198,7 +198,7 @@ public class ReportGenerator {
         try {
             final File outDir = new File(outFileName).getParentFile();
             if (!outDir.exists()) {
-                boolean created = outDir.mkdirs();
+                final boolean created = outDir.mkdirs();
                 if (!created) {
                    throw new Exception("Unable to create directory '" + outDir.getAbsolutePath() + "'.");
                 }
