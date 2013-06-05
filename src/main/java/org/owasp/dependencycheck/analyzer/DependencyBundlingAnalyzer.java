@@ -23,8 +23,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.DependencyVersion;
+import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 
 /**
  * <p>This analyzer ensures dependencies that should be grouped together, to
@@ -51,6 +55,11 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      * The phase that this analyzer is intended to run in.
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.PRE_FINDING_ANALYSIS;
+
+    /**
+     * A pattern for obtaining the first part of a filename.
+     */
+    private static final Pattern STARTING_TEXT_PATTERN = Pattern.compile("^[a-zA-Z]*");
 
     /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
@@ -118,7 +127,8 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                         final Dependency nextDependency = subIterator.next();
 
                         if (identifiersMatch(dependency, nextDependency)
-                                && hasSameBasePath(dependency, nextDependency)) {
+                                && hasSameBasePath(dependency, nextDependency)
+                                && fileNameMatch(dependency, nextDependency)) {
 
                             if (isCore(dependency, nextDependency)) {
                                 dependency.addRelatedDependency(nextDependency);
@@ -177,6 +187,37 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             pos = tmp + 1;
         }
         return path.substring(0, pos);
+    }
+
+    /**
+     * Returns true if the file names (and version if it exists) of the two
+     * dependencies are sufficiently similiar.
+     * @param dependency1 a dependency2 to compare
+     * @param dependency2 a dependency2 to compare
+     * @return true if the identifiers in the two supplied dependencies are equal
+     */
+    private boolean fileNameMatch(Dependency dependency1, Dependency dependency2) {
+        if (dependency1 == null || dependency1.getFileName() == null
+                || dependency2 == null || dependency2.getFileName() == null) {
+            return false;
+        }
+        String fileName1 = dependency1.getFileName();
+        String fileName2 = dependency2.getFileName();
+        //version check
+        DependencyVersion version1 = DependencyVersionUtil.parseVersionFromFileName(fileName1);
+        DependencyVersion version2 = DependencyVersionUtil.parseVersionFromFileName(fileName2);
+        if (version1 != null && version2 != null) {
+            if (!version1.equals(version2)) {
+                return false;
+            }
+        }
+        Matcher match1 = STARTING_TEXT_PATTERN.matcher(fileName1);
+        Matcher match2 = STARTING_TEXT_PATTERN.matcher(fileName2);
+        if (match1.find() && match2.find()) {
+            return match1.group().equals(match2.group());
+        }
+
+        return false;
     }
 
     /**
