@@ -47,7 +47,6 @@ import java.util.zip.ZipEntry;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.UnmarshallerHandler;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
@@ -311,7 +310,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         final List<String> pomEntries = new ArrayList<String>();
         final Enumeration<JarEntry> entries = jar.entries();
         while (entries.hasMoreElements()) {
-            JarEntry entry = entries.nextElement();
+            final JarEntry entry = entries.nextElement();
             final String entryName = (new File(entry.getName())).getName().toLowerCase();
                 if (!entry.isDirectory() && "pom.xml".equals(entryName)) {
                     pomEntries.add(entry.getName());
@@ -332,16 +331,16 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         if (entry != null) { //should never be null
             Model m = null;
             try {
-                XMLFilter filter = new MavenNamespaceFilter();
-                SAXParserFactory spf = SAXParserFactory.newInstance();
-                SAXParser sp = spf.newSAXParser();
-                XMLReader xr = sp.getXMLReader();
+                final XMLFilter filter = new MavenNamespaceFilter();
+                final SAXParserFactory spf = SAXParserFactory.newInstance();
+                final SAXParser sp = spf.newSAXParser();
+                final XMLReader xr = sp.getXMLReader();
                 filter.setParent(xr);
-                NonClosingStream stream = new NonClosingStream(jar.getInputStream(entry));
-                InputStreamReader reader = new InputStreamReader(stream);
-                InputSource xml = new InputSource(reader);
-                SAXSource source = new SAXSource(filter, xml);
-                JAXBElement<Model> el = pomUnmarshaller.unmarshal(source, Model.class);
+                final NonClosingStream stream = new NonClosingStream(jar.getInputStream(entry));
+                final InputStreamReader reader = new InputStreamReader(stream);
+                final InputSource xml = new InputSource(reader);
+                final SAXSource source = new SAXSource(filter, xml);
+                final JAXBElement<Model> el = pomUnmarshaller.unmarshal(source, Model.class);
                 m = el.getValue();
             } catch (ParserConfigurationException ex) {
                 Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
