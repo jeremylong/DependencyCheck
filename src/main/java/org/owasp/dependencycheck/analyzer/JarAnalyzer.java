@@ -220,7 +220,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     /**
      * A pattern to detect HTML within text.
      */
-    final private Pattern htmlDetection = Pattern.compile("\\<[a-z]+.*/?\\>", Pattern.CASE_INSENSITIVE);
+    private static final Pattern HTML_DETECTION_PATTERN = Pattern.compile("\\<[a-z]+.*/?\\>", Pattern.CASE_INSENSITIVE);
 
     /**
      * Attempts to find a pom.xml within the JAR file. If found it extracts
@@ -327,7 +327,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * @throws IOException is thrown if there is an exception reading the jar
      */
     private Model retrievePom(String path, JarFile jar) throws JAXBException, IOException {
-        ZipEntry entry = jar.getEntry(path);
+        final ZipEntry entry = jar.getEntry(path);
         if (entry != null) { //should never be null
             Model m = null;
             try {
@@ -405,7 +405,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             foundSomething = true;
             String description = interpolateString(pom.getDescription(), pomProperties);
 
-            if (htmlDetection.matcher(description).find()) {
+            if (HTML_DETECTION_PATTERN.matcher(description).find()) {
                 description = Jsoup.parse(description).text();
             }
 
@@ -432,7 +432,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 if (tmp == null) {
                     continue;
                 }
-                if (htmlDetection.matcher(tmp).find()) {
+                if (HTML_DETECTION_PATTERN.matcher(tmp).find()) {
                     tmp = Jsoup.parse(tmp).text();
                 }
                 if (license == null) {
@@ -617,7 +617,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             for (Entry<Object, Object> entry : atts.entrySet()) {
                 String key = entry.getKey().toString();
                 String value = atts.getValue(key);
-                if (htmlDetection.matcher(value).find()) {
+                if (HTML_DETECTION_PATTERN.matcher(value).find()) {
                     value = Jsoup.parse(value).text();
                 }
                 if (key.equals(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {
