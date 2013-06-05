@@ -1,6 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of Dependency-Check.
+ *
+ * Dependency-Check is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Dependency-Check is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * Dependency-Check. If not, see http://www.gnu.org/licenses/.
+ *
+ * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.analyzer.pom;
 
@@ -63,7 +77,7 @@ public class MavenNamespaceFilter extends XMLFilterImpl {
     }
 
     /**
-     * Called when prefix mapping
+     * Called when prefix mapping is started.
      * @param prefix the prefix
      * @param url the url
      * @throws SAXException thrown if there is a SAXException

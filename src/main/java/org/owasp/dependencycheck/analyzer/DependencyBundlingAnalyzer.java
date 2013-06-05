@@ -55,7 +55,6 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      * The phase that this analyzer is intended to run in.
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.PRE_FINDING_ANALYSIS;
-
     /**
      * A pattern for obtaining the first part of a filename.
      */
@@ -201,18 +200,19 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                 || dependency2 == null || dependency2.getFileName() == null) {
             return false;
         }
-        String fileName1 = dependency1.getFileName();
-        String fileName2 = dependency2.getFileName();
+        final String fileName1 = dependency1.getFileName();
+        final String fileName2 = dependency2.getFileName();
         //version check
-        DependencyVersion version1 = DependencyVersionUtil.parseVersionFromFileName(fileName1);
-        DependencyVersion version2 = DependencyVersionUtil.parseVersionFromFileName(fileName2);
+        final DependencyVersion version1 = DependencyVersionUtil.parseVersionFromFileName(fileName1);
+        final DependencyVersion version2 = DependencyVersionUtil.parseVersionFromFileName(fileName2);
         if (version1 != null && version2 != null) {
             if (!version1.equals(version2)) {
                 return false;
             }
         }
-        Matcher match1 = STARTING_TEXT_PATTERN.matcher(fileName1);
-        Matcher match2 = STARTING_TEXT_PATTERN.matcher(fileName2);
+        //filename check
+        final Matcher match1 = STARTING_TEXT_PATTERN.matcher(fileName1);
+        final Matcher match2 = STARTING_TEXT_PATTERN.matcher(fileName2);
         if (match1.find() && match2.find()) {
             return match1.group().equals(match2.group());
         }
