@@ -111,4 +111,35 @@ public class DependencyVersion implements Iterable {
     public String toString() {
         return StringUtils.join(versionParts.toArray(), ".");
     }
+
+    /**
+     * Compares the equality of this object to the one passed in as a parameter.
+     * @param obj the object to compare equality
+     * @return returns true only if the two objects are equal, otherwise false
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DependencyVersion other = (DependencyVersion) obj;
+        if (this.versionParts != other.versionParts && (this.versionParts == null || !this.versionParts.equals(other.versionParts))) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Calculates the hashCode for this object.
+     * @return the hashCode
+     */
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 71 * hash + (this.versionParts != null ? this.versionParts.hashCode() : 0);
+        return hash;
+    }
 }
