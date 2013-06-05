@@ -810,7 +810,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             HashMap<String, Integer> level1, HashMap<String, Integer> level2, HashMap<String, Integer> level3) {
         int count = 0;
         while (en.hasMoreElements()) {
-            final java.util.jar.JarEntry entry = (java.util.jar.JarEntry) en.nextElement();
+            final JarEntry entry = (JarEntry) en.nextElement();
             if (entry.getName().endsWith(".class")) {
                 String[] path;
                 if (entry.getName().contains("/")) {
