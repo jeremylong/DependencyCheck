@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
@@ -46,12 +47,21 @@ import java.util.zip.ZipEntry;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.UnmarshallerHandler;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.sax.SAXSource;
 import org.jsoup.Jsoup;
+import org.owasp.dependencycheck.analyzer.pom.MavenNamespaceFilter;
 import org.owasp.dependencycheck.analyzer.pom.generated.License;
 import org.owasp.dependencycheck.analyzer.pom.generated.Model;
 import org.owasp.dependencycheck.analyzer.pom.generated.Organization;
 import org.owasp.dependencycheck.utils.NonClosingStream;
 import org.owasp.dependencycheck.utils.Settings;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLFilter;
+import org.xml.sax.XMLReader;
 
 /**
  *
@@ -320,9 +330,29 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     private Model retrievePom(String path, JarFile jar) throws JAXBException, IOException {
         ZipEntry entry = jar.getEntry(path);
         if (entry != null) { //should never be null
-            final NonClosingStream stream = new NonClosingStream(jar.getInputStream(entry));
-            final JAXBElement obj = (JAXBElement) pomUnmarshaller.unmarshal(stream);
-            return (Model) obj.getValue();
+            Model m = null;
+            try {
+                XMLFilter filter = new MavenNamespaceFilter();
+                SAXParserFactory spf = SAXParserFactory.newInstance();
+                SAXParser sp = spf.newSAXParser();
+                XMLReader xr = sp.getXMLReader();
+                filter.setParent(xr);
+                NonClosingStream stream = new NonClosingStream(jar.getInputStream(entry));
+                InputStreamReader reader = new InputStreamReader(stream);
+                InputSource xml = new InputSource(reader);
+                SAXSource source = new SAXSource(filter, xml);
+                JAXBElement<Model> el = pomUnmarshaller.unmarshal(source, Model.class);
+                m = el.getValue();
+            } catch (ParserConfigurationException ex) {
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SAXException ex) {
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (JAXBException ex) {
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINEST, "failure reading pom via jaxb path:'"
+                        + path + "' jar:'" + jar.getName() + "'", ex);
+            }
+
+            return m;
         }
         return null;
     }
