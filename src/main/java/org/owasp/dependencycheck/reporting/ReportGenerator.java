@@ -158,7 +158,7 @@ public class ReportGenerator {
      * reports.
      */
     public void generateReports(String outputDir, String outputFormat) throws IOException, Exception {
-        String format = outputFormat.toUpperCase();
+        final String format = outputFormat.toUpperCase();
         if (format.matches("^(XML|HTML|VULN|ALL)$")) {
             if ("XML".equalsIgnoreCase(format)) {
                 generateReports(outputDir, Format.XML);
