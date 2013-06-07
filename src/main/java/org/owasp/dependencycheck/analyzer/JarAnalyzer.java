@@ -337,7 +337,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 final XMLReader xr = sp.getXMLReader();
                 filter.setParent(xr);
                 final NonClosingStream stream = new NonClosingStream(jar.getInputStream(entry));
-                final InputStreamReader reader = new InputStreamReader(stream);
+                final InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
                 final InputSource xml = new InputSource(reader);
                 final SAXSource source = new SAXSource(filter, xml);
                 final JAXBElement<Model> el = pomUnmarshaller.unmarshal(source, Model.class);
