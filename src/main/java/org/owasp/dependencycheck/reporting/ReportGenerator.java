@@ -64,7 +64,11 @@ public class ReportGenerator {
         /**
          * Generate HTML report.
          */
-        HTML
+        HTML,
+        /**
+         * Generate HTML Vulnerability report.
+         */
+        VULN
     }
     /**
      * The Velocity Engine.
@@ -139,6 +143,9 @@ public class ReportGenerator {
         if (format == Format.HTML || format == Format.ALL) {
             generateReport("HtmlReport", outputDir + File.separator + "DependencyCheck-Report.html");
         }
+        if (format == Format.VULN || format == Format.ALL) {
+            generateReport("VulnerabilityReport", outputDir + File.separator + "DependencyCheck-Vulnerability.html");
+        }
     }
 
     /**
@@ -151,14 +158,20 @@ public class ReportGenerator {
      * reports.
      */
     public void generateReports(String outputDir, String outputFormat) throws IOException, Exception {
-        if ("XML".equalsIgnoreCase(outputFormat)) {
-            generateReports(outputDir, Format.XML);
-        }
-        if ("HTML".equalsIgnoreCase(outputFormat)) {
-            generateReports(outputDir, Format.HTML);
-        }
-        if ("ALL".equalsIgnoreCase(outputFormat)) {
-            generateReports(outputDir, Format.ALL);
+        String format = outputFormat.toUpperCase();
+        if (format.matches("^(XML|HTML|VULN|ALL)$")) {
+            if ("XML".equalsIgnoreCase(format)) {
+                generateReports(outputDir, Format.XML);
+            }
+            if ("HTML".equalsIgnoreCase(format)) {
+                generateReports(outputDir, Format.HTML);
+            }
+            if ("VULN".equalsIgnoreCase(format)) {
+                generateReports(outputDir, Format.VULN);
+            }
+            if ("ALL".equalsIgnoreCase(format)) {
+                generateReports(outputDir, Format.ALL);
+            }
         }
     }
 
