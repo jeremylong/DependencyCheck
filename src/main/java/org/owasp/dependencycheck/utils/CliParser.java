@@ -109,8 +109,9 @@ public final class CliParser {
                 final String format = line.getOptionValue(ArgumentName.OUTPUT_FORMAT);
                 if (!("ALL".equalsIgnoreCase(format)
                         || "XML".equalsIgnoreCase(format)
-                        || "HTML".equalsIgnoreCase(format))) {
-                    throw new ParseException("Supported output formats are XML, HTML, or ALL");
+                        || "HTML".equalsIgnoreCase(format)
+                        || "VULN".equalsIgnoreCase(format))) {
+                    throw new ParseException("Supported output formats are XML, HTML, VULN, or ALL");
                 }
             }
         }
@@ -157,47 +158,47 @@ public final class CliParser {
     @SuppressWarnings("static-access")
     private Options createCommandLineOptions() {
         final Option help = new Option(ArgumentName.HELP_SHORT, ArgumentName.HELP, false,
-                "print this message.");
+                "Print this message.");
 
         final Option deepScan = new Option(ArgumentName.PERFORM_DEEP_SCAN_SHORT, ArgumentName.PERFORM_DEEP_SCAN, false,
-                "extracts extra information from dependencies that may increase false positives, but also decrease false negatives.");
+                "Extracts extra information from dependencies that may increase false positives, but also decrease false negatives.");
 
         final Option version = new Option(ArgumentName.VERSION_SHORT, ArgumentName.VERSION,
-                false, "print the version information.");
+                false, "Print the version information.");
 
         final Option noUpdate = new Option(ArgumentName.DISABLE_AUTO_UPDATE_SHORT, ArgumentName.DISABLE_AUTO_UPDATE,
-                false, "disables the automatic updating of the CPE data.");
+                false, "Disables the automatic updating of the CPE data.");
 
         final Option appName = OptionBuilder.withArgName("name").hasArg().withLongOpt(ArgumentName.APP_NAME)
-                .withDescription("the name of the application being scanned.")
+                .withDescription("The name of the application being scanned.")
                 .create(ArgumentName.APP_NAME_SHORT);
 
         final Option connectionTimeout = OptionBuilder.withArgName("timeout").hasArg().withLongOpt(ArgumentName.CONNECTION_TIMEOUT)
-                .withDescription("the connection timeout (in milliseconds) to use when downloading resources.")
+                .withDescription("The connection timeout (in milliseconds) to use when downloading resources.")
                 .create(ArgumentName.CONNECTION_TIMEOUT_SHORT);
 
         final Option proxyUrl = OptionBuilder.withArgName("url").hasArg().withLongOpt(ArgumentName.PROXY_URL)
-                .withDescription("the proxy url to use when downloading resources.")
+                .withDescription("The proxy url to use when downloading resources.")
                 .create(ArgumentName.PROXY_URL_SHORT);
 
         final Option proxyPort = OptionBuilder.withArgName("port").hasArg().withLongOpt(ArgumentName.PROXY_PORT)
-                .withDescription("the proxy port to use when downloading resources.")
+                .withDescription("The proxy port to use when downloading resources.")
                 .create(ArgumentName.PROXY_PORT_SHORT);
 
         final Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.SCAN)
-                .withDescription("the path to scan - this option can be specified multiple times.")
+                .withDescription("The path to scan - this option can be specified multiple times.")
                 .create(ArgumentName.SCAN_SHORT);
 
         final Option props = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.PROP)
-                .withDescription("a property file to load.")
+                .withDescription("A property file to load.")
                 .create(ArgumentName.PROP_SHORT);
 
         final Option out = OptionBuilder.withArgName("folder").hasArg().withLongOpt(ArgumentName.OUT)
-                .withDescription("the folder to write reports to.")
+                .withDescription("The folder to write reports to.")
                 .create(ArgumentName.OUT_SHORT);
 
         final Option outputFormat = OptionBuilder.withArgName("format").hasArg().withLongOpt(ArgumentName.OUTPUT_FORMAT)
-                .withDescription("the output format to write to (XML, HTML, ALL).")
+                .withDescription("The output format to write to (XML, HTML, VULN, ALL).")
                 .create(ArgumentName.OUTPUT_FORMAT_SHORT);
 
         final OptionGroup og = new OptionGroup();
