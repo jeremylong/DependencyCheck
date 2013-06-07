@@ -284,10 +284,16 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <h2 class="sectionheader white">Project:&nbsp;$esc.html($applicationName)</h2>
             <div class="sectioncontent">Report Generated On: $date<br/><br/>
                 #set($depCount=$dependencies.size())
+                #set($vulnCount=0)
+
                 #foreach($dependency in $dependencies)
                     #set($depCount=$depCount+$dependency.getRelatedDependencies().size())
+                    #if($dependency.getVulnerabilities().size()>0)
+                        #set($vulnCount=$vulnCount+1)
+                    #end
                 #end
-                Dependencies Scanned:&nbsp;$depCount<br/><br/>
+                Dependencies Scanned:&nbsp;$depCount<br/>
+                Vulnerable Dependencies:&nbsp;$vulnCount<br/><br/>
                 <div class="indent">
                 #set($lnkcnt=0)
                 #foreach($dependency in $dependencies)
