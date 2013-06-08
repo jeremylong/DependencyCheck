@@ -71,18 +71,11 @@ import org.xml.sax.XMLReader;
  */
 public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
 
+    //<editor-fold defaultstate="collapsed" desc="Constants and Member Variables">
     /**
      * The system independent newline character.
      */
     private static final String NEWLINE = System.getProperty("line.separator");
-    /**
-     * The name of the analyzer.
-     */
-    private static final String ANALYZER_NAME = "Jar Analyzer";
-    /**
-     * The phase that this analyzer is intended to run in.
-     */
-    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
     /**
      * A list of elements in the manifest to ignore.
      */
@@ -110,10 +103,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             "bundle-manifestversion",
             "bundlemanifestversion",
             "include-resource");
-    /**
-     * The set of file extensions supported by this analyzer.
-     */
-    private static final Set<String> EXTENSIONS = newHashSet("jar");
+
     /**
      * item in some manifest, should be considered medium confidence.
      */
@@ -131,9 +121,14 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      */
     private static final String BUNDLE_VENDOR = "Bundle-Vendor"; //: Apache Software Foundation
     /**
+     * A pattern to detect HTML within text.
+     */
+    private static final Pattern HTML_DETECTION_PATTERN = Pattern.compile("\\<[a-z]+.*/?\\>", Pattern.CASE_INSENSITIVE);
+    /**
      * The unmarshaller used to parse the pom.xml from a JAR file.
      */
     private Unmarshaller pomUnmarshaller;
+    //</editor-fold>
 
     /**
      * Constructs a new JarAnalyzer.
@@ -147,27 +142,35 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         }
     }
 
+    //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
+    /**
+     * The name of the analyzer.
+     */
+    private static final String ANALYZER_NAME = "Jar Analyzer";
+    /**
+     * The phase that this analyzer is intended to run in.
+     */
+    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
+    /**
+     * The set of file extensions supported by this analyzer.
+     */
+    private static final Set<String> EXTENSIONS = newHashSet("jar");
     /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
-     *
      * @return a list of file EXTENSIONS supported by this analyzer.
      */
     public Set<String> getSupportedExtensions() {
         return EXTENSIONS;
     }
-
     /**
      * Returns the name of the analyzer.
-     *
      * @return the name of the analyzer.
      */
     public String getName() {
         return ANALYZER_NAME;
     }
-
     /**
      * Returns whether or not this analyzer can process the given extension.
-     *
      * @param extension the file extension to test for support.
      * @return whether or not the specified file extension is supported by this
      * analyzer.
@@ -175,7 +178,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     public boolean supportsExtension(String extension) {
         return EXTENSIONS.contains(extension);
     }
-
     /**
      * Returns the phase that the analyzer is intended to run in.
      *
@@ -184,6 +186,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
+    //</editor-fold>
 
     /**
      * Loads a specified JAR file and collects information from the manifest and
@@ -217,10 +220,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             throw new AnalysisException("Exception occurred reading the JAR file.", ex);
         }
     }
-    /**
-     * A pattern to detect HTML within text.
-     */
-    private static final Pattern HTML_DETECTION_PATTERN = Pattern.compile("\\<[a-z]+.*/?\\>", Pattern.CASE_INSENSITIVE);
 
     /**
      * Attempts to find a pom.xml within the JAR file. If found it extracts
