@@ -48,14 +48,14 @@ public abstract class AbstractAnalyzer implements Analyzer {
     /**
      * The initialize method does nothing for this Analyzer.
      */
-    public void initialize() {
+    public void initialize() throws Exception {
         //do nothing
     }
 
     /**
      * The close method does nothing for this Analyzer.
      */
-    public void close() {
+    public void close() throws Exception {
         //do nothing
     }
 }
