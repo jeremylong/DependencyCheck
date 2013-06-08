@@ -43,6 +43,18 @@ import org.owasp.dependencycheck.utils.DependencyVersionUtil;
  */
 public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Analyzer {
 
+    //<editor-fold defaultstate="collapsed" desc="Constants and Member Variables">
+    /**
+     * A pattern for obtaining the first part of a filename.
+     */
+    private static final Pattern STARTING_TEXT_PATTERN = Pattern.compile("^[a-zA-Z]*");
+    /**
+     * a flag indicating if this analyzer has run. This analyzer only runs once.
+     */
+    private boolean analyzed = false;
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
     /**
      * The set of file extensions supported by this analyzer.
      */
@@ -56,13 +68,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.PRE_FINDING_ANALYSIS;
     /**
-     * A pattern for obtaining the first part of a filename.
-     */
-    private static final Pattern STARTING_TEXT_PATTERN = Pattern.compile("^[a-zA-Z]*");
-
-    /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
-     *
      * @return a list of file EXTENSIONS supported by this analyzer.
      */
     public Set<String> getSupportedExtensions() {
@@ -71,7 +77,6 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
 
     /**
      * Returns the name of the analyzer.
-     *
      * @return the name of the analyzer.
      */
     public String getName() {
@@ -80,7 +85,6 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
 
     /**
      * Returns whether or not this analyzer can process the given extension.
-     *
      * @param extension the file extension to test for support
      * @return whether or not the specified file extension is supported by this
      * analyzer.
@@ -91,16 +95,12 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
 
     /**
      * Returns the phase that the analyzer is intended to run in.
-     *
      * @return the phase that the analyzer is intended to run in.
      */
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
-    /**
-     * a flag indicating if this analyzer has run. This analyzer only runs once.
-     */
-    private boolean analyzed = false;
+    //</editor-fold>
 
     /**
      * Analyzes a set of dependencies. If they have been found to have the same

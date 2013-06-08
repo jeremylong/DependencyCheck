@@ -41,6 +41,7 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 public class FalsePositiveAnalyzer extends AbstractAnalyzer {
 
+    //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
     /**
      * The set of file extensions supported by this analyzer.
      */
@@ -56,7 +57,6 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
 
     /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
-     *
      * @return a list of file EXTENSIONS supported by this analyzer.
      */
     public Set<String> getSupportedExtensions() {
@@ -65,7 +65,6 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
 
     /**
      * Returns the name of the analyzer.
-     *
      * @return the name of the analyzer.
      */
     public String getName() {
@@ -74,27 +73,26 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
 
     /**
      * Returns whether or not this analyzer can process the given extension.
-     *
      * @param extension the file extension to test for support
      * @return whether or not the specified file extension is supported by this
      * analyzer.
      */
     public boolean supportsExtension(String extension) {
-        return true; //EXTENSIONS.contains(extension);
+        return true;
     }
 
     /**
      * Returns the phase that the analyzer is intended to run in.
-     *
      * @return the phase that the analyzer is intended to run in.
      */
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
+    //</editor-fold>
 
     /**
-     *
-     *
+     * Analyzes the dependencies and removes bad/incorrect CPE associations
+     * based on various heuristics.
      * @param dependency the dependency to analyze.
      * @param engine the engine that is scanning the dependencies
      * @throws AnalysisException is thrown if there is an error reading the JAR
@@ -232,6 +230,5 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                 itr.remove();
             }
         }
-
     }
 }

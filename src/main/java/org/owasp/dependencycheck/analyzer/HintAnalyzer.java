@@ -29,6 +29,7 @@ import org.owasp.dependencycheck.dependency.Evidence;
  */
 public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
 
+    //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
     /**
      * The name of the analyzer.
      */
@@ -41,10 +42,8 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
      * The set of file extensions supported by this analyzer.
      */
     private static final Set<String> EXTENSIONS = null;
-
     /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
-     *
      * @return a list of file EXTENSIONS supported by this analyzer.
      */
     public Set<String> getSupportedExtensions() {
@@ -53,7 +52,6 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
 
     /**
      * Returns the name of the analyzer.
-     *
      * @return the name of the analyzer.
      */
     public String getName() {
@@ -62,7 +60,6 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
 
     /**
      * Returns whether or not this analyzer can process the given extension.
-     *
      * @param extension the file extension to test for support.
      * @return whether or not the specified file extension is supported by this
      * analyzer.
@@ -73,12 +70,12 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
 
     /**
      * Returns the phase that the analyzer is intended to run in.
-     *
      * @return the phase that the analyzer is intended to run in.
      */
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
+    //</editor-fold>
 
     /**
      * The HintAnalyzer uses knowledge about a dependency to add additional information
