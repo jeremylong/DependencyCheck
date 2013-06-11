@@ -47,6 +47,7 @@ public abstract class AbstractAnalyzer implements Analyzer {
 
     /**
      * The initialize method does nothing for this Analyzer.
+     * @throws Exception thrown if there is an exception
      */
     public void initialize() throws Exception {
         //do nothing
@@ -54,6 +55,7 @@ public abstract class AbstractAnalyzer implements Analyzer {
 
     /**
      * The close method does nothing for this Analyzer.
+     * @throws Exception thrown if there is an exception
      */
     public void close() throws Exception {
         //do nothing
