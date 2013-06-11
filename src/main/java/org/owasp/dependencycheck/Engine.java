@@ -83,8 +83,9 @@ public class Engine {
      * Creates a new Engine.
      *
      * @param autoUpdate indicates whether or not data should be updated from
-     * the Internet.
-     * @deprecated this function should no longer be used; the autoupdate flag should be set using
+     * the Internet
+     * @deprecated This function should no longer be used;
+     * the autoupdate flag should be set using:
      * <code>Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, value);</code>
      */
     @Deprecated
@@ -144,6 +145,18 @@ public class Engine {
      */
     public void scan(String path) {
         final File file = new File(path);
+        scan(file);
+    }
+    /**
+     * Scans a given file or directory. If a directory is specified, it will be
+     * scanned recursively. Any dependencies identified are added to the
+     * dependency collection.
+     *
+     * @since v0.3.2.4
+     *
+     * @param file the path to a file or directory to be analyzed.
+     */
+    public void scan(File file) {
         if (file.exists()) {
             if (file.isDirectory()) {
                 scanDirectory(file);
@@ -152,7 +165,6 @@ public class Engine {
             }
         }
     }
-
     /**
      * Recursively scans files and directories. Any dependencies identified are
      * added to the dependency collection.
@@ -224,8 +236,10 @@ public class Engine {
             final List<Analyzer> analyzerList = analyzers.get(phase);
 
             for (Analyzer a : analyzerList) {
-                //need to create a copy of the collection because some of the
-                // analyzers may modify it. This prevents ConcurrentModificationExceptions.
+                /* need to create a copy of the collection because some of the
+                 * analyzers may modify it. This prevents ConcurrentModificationExceptions.
+                 * This is okay for adds/deletes because it happens per analyzer.
+                 */
                 final Set<Dependency> dependencySet = new HashSet<Dependency>();
                 dependencySet.addAll(dependencies);
                 for (Dependency d : dependencySet) {
