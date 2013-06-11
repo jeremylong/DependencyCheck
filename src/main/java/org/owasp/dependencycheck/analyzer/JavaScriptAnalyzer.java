@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class JavaScriptAnalyzer extends AbstractAnalyzer implements Analyzer {
-    
+
     //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
     /**
      * The name of the analyzer.
@@ -48,6 +48,7 @@ public class JavaScriptAnalyzer extends AbstractAnalyzer implements Analyzer {
 
     /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
+     *
      * @return a list of file EXTENSIONS supported by this analyzer.
      */
     public Set<String> getSupportedExtensions() {
@@ -56,6 +57,7 @@ public class JavaScriptAnalyzer extends AbstractAnalyzer implements Analyzer {
 
     /**
      * Returns the name of the analyzer.
+     *
      * @return the name of the analyzer.
      */
     public String getName() {
@@ -64,6 +66,7 @@ public class JavaScriptAnalyzer extends AbstractAnalyzer implements Analyzer {
 
     /**
      * Returns whether or not this analyzer can process the given extension.
+     *
      * @param extension the file extension to test for support.
      * @return whether or not the specified file extension is supported by this
      * analyzer.
@@ -74,17 +77,13 @@ public class JavaScriptAnalyzer extends AbstractAnalyzer implements Analyzer {
 
     /**
      * Returns the phase that the analyzer is intended to run in.
+     *
      * @return the phase that the analyzer is intended to run in.
      */
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
     //</editor-fold>
-
-    /**
-     * The system independent newline character.
-     */
-    private static final String NEWLINE = System.getProperty("line.separator");
 
     /**
      * Loads a specified JAR file and collects information from the manifest and
@@ -101,31 +100,22 @@ public class JavaScriptAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * Adds license information to the given dependency.
-     *
-     * @param d the dependency
-     * @param license the license
-     */
-    private void addLicense(Dependency d, String license) {
-        if (d.getLicense() == null) {
-            d.setLicense(license);
-        } else if (!d.getLicense().contains(license)) {
-            d.setLicense(d.getLicense() + NEWLINE + license);
-        }
-    }
-
-    /**
      * The initialize method does nothing for this Analyzer.
+     *
+     * @throws Exception thrown if there is an exception
      */
-    public void initialize() {
+    @Override
+    public void initialize() throws Exception {
         //do nothing
     }
 
     /**
      * The close method does nothing for this Analyzer.
+     *
+     * @throws Exception thrown if there is an exception
      */
-    public void close() {
+    @Override
+    public void close() throws Exception {
         //do nothing
     }
-
 }
