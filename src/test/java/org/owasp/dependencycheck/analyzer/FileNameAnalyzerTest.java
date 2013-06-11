@@ -116,7 +116,7 @@ public class FileNameAnalyzerTest {
      * Test of initialize method, of class FileNameAnalyzer.
      */
     @Test
-    public void testInitialize() {
+    public void testInitialize() throws Exception {
         FileNameAnalyzer instance = new FileNameAnalyzer();
         instance.initialize();
         assertTrue(true); //initialize does nothing.
@@ -126,7 +126,7 @@ public class FileNameAnalyzerTest {
      * Test of close method, of class FileNameAnalyzer.
      */
     @Test
-    public void testClose() {
+    public void testClose() throws Exception {
         FileNameAnalyzer instance = new FileNameAnalyzer();
         instance.close();
         assertTrue(true); //close does nothing.
