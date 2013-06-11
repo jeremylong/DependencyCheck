@@ -7,3 +7,5 @@
 # Eclipse project files
 .classpath
 .project
+# Netbeans configuration
+nb-configuration.xml
