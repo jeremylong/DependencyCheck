@@ -126,6 +126,11 @@ public final class Settings {
          * The properties key indicating a deep scan should be performed.
          */
         public static final String PERFORM_DEEP_SCAN = "perform.deepscan";
+        /**
+         * The location of the temporary directory.
+         */
+        public static final String TEMP_DIRECTORY = "temp.directory";
+
     }
     /**
      * The properties file location.
@@ -157,8 +162,8 @@ public final class Settings {
     /**
      * Sets a property value.
      *
-     * @param key the key for the property.
-     * @param value the value for the property.
+     * @param key the key for the property
+     * @param value the value for the property
      */
     public static void setString(String key, String value) {
         INSTANCE.props.setProperty(key, value);
@@ -166,8 +171,8 @@ public final class Settings {
     /**
      * Sets a property value.
      *
-     * @param key the key for the property.
-     * @param value the value for the property.
+     * @param key the key for the property
+     * @param value the value for the property
      */
     public static void setBoolean(String key, boolean value) {
         if (value) {
@@ -185,9 +190,9 @@ public final class Settings {
      *
      * @param filePath the path to the properties file to merge.
      * @throws FileNotFoundException is thrown when the filePath points to a
-     * non-existent file.
+     * non-existent file
      * @throws IOException is thrown when there is an exception loading/merging
-     * the properties.
+     * the properties
      */
     public static void mergeProperties(String filePath) throws FileNotFoundException, IOException {
         final FileInputStream fis = new FileInputStream(filePath);
@@ -200,7 +205,7 @@ public final class Settings {
      * Note: even if using this method - system properties will be loaded before
      * properties loaded from files.
      *
-     * @param stream an Input Stream pointing at a properties file to merge.
+     * @param stream an Input Stream pointing at a properties file to merge
      * @throws IOException is thrown when there is an exception loading/merging
      * the properties
      */
@@ -214,9 +219,9 @@ public final class Settings {
      * will return the value from the system properties before the values in the
      * contained configuration file.
      *
-     * @param key the key to lookup within the properties file.
-     * @param defaultValue the default value for the requested property.
-     * @return the property from the properties file.
+     * @param key the key to lookup within the properties file
+     * @param defaultValue the default value for the requested property
+     * @return the property from the properties file
      */
     public static String getString(String key, String defaultValue) {
         String str = System.getProperty(key, INSTANCE.props.getProperty(key));
@@ -232,8 +237,8 @@ public final class Settings {
      * will return the value from the system properties before the values in the
      * contained configuration file.
      *
-     * @param key the key to lookup within the properties file.
-     * @return the property from the properties file.
+     * @param key the key to lookup within the properties file
+     * @return the property from the properties file
      */
     public static String getString(String key) {
         return System.getProperty(key, INSTANCE.props.getProperty(key));
@@ -245,10 +250,10 @@ public final class Settings {
      * method will return the value from the system properties before the values
      * in the contained configuration file.
      *
-     * @param key the key to lookup within the properties file.
-     * @return the property from the properties file.
+     * @param key the key to lookup within the properties file
+     * @return the property from the properties file
      * @throws InvalidSettingException is thrown if there is an error retrieving
-     * the setting.
+     * the setting
      */
     public static int getInt(String key) throws InvalidSettingException {
         int value;
@@ -259,17 +264,37 @@ public final class Settings {
         }
         return value;
     }
-
+    /**
+     * Returns an int value from the properties file. If the value was specified
+     * as a system property or passed in via the -Dprop=value argument - this
+     * method will return the value from the system properties before the values
+     * in the contained configuration file.
+     *
+     * @param key the key to lookup within the properties file
+     * @param defaultValue the default value to return
+     * @return the property from the properties file or the defaultValue if the property does
+     * not exist or cannot be converted to an integer
+     */
+    public static int getInt(String key, int defaultValue) {
+        int value;
+        try {
+            value = Integer.parseInt(Settings.getString(key));
+        } catch (NumberFormatException ex) {
+            Logger.getLogger(Settings.class.getName()).log(Level.FINEST, "Could not convert property '" + key + "' to an int.", ex);
+            value = defaultValue;
+        }
+        return value;
+    }
     /**
      * Returns a long value from the properties file. If the value was specified
      * as a system property or passed in via the -Dprop=value argument - this
      * method will return the value from the system properties before the values
      * in the contained configuration file.
      *
-     * @param key the key to lookup within the properties file.
-     * @return the property from the properties file.
+     * @param key the key to lookup within the properties file
+     * @return the property from the properties file
      * @throws InvalidSettingException is thrown if there is an error retrieving
-     * the setting.
+     * the setting
      */
     public static long getLong(String key) throws InvalidSettingException {
         long value;
@@ -283,14 +308,14 @@ public final class Settings {
 
     /**
      * Returns a boolean value from the properties file. If the value was
-     * specified as a system property or passed in via the -Dprop=value argument
-     * - this method will return the value from the system properties before the
-     * values in the contained configuration file.
+     * specified as a system property or passed in via the <code>-Dprop=value</code>
+     * argument this method will return the value from the system properties before
+     * the values in the contained configuration file.
      *
-     * @param key the key to lookup within the properties file.
-     * @return the property from the properties file.
+     * @param key the key to lookup within the properties file
+     * @return the property from the properties file
      * @throws InvalidSettingException is thrown if there is an error retrieving
-     * the setting.
+     * the setting
      */
     public static boolean getBoolean(String key) throws InvalidSettingException {
         boolean value;
