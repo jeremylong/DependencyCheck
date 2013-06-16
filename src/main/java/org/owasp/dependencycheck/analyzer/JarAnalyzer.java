@@ -364,6 +364,9 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      */
     private boolean setPomEvidence(Dependency dependency, Model pom, Properties pomProperties) {
         boolean foundSomething = false;
+        if (pom == null) {
+            return foundSomething;
+        }
         //group id
         final String groupid = interpolateString(pom.getGroupId(), pomProperties);
         if (groupid != null) {
@@ -599,7 +602,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                         && !dependency.getFileName().toLowerCase().endsWith("-javadoc.jar")
                         && !dependency.getFileName().toLowerCase().endsWith("-src.jar")
                         && !dependency.getFileName().toLowerCase().endsWith("-doc.jar")) {
-                    Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE,
+                    Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO,
                             String.format("Jar file '%s' does not contain a manifest.",
                             dependency.getFileName()));
                 }
