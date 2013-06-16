@@ -195,7 +195,7 @@ public class ReportGenerator {
                 input = new FileInputStream(f);
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, "Unable to generate the report, the report template file could not be found.");
-                Logger.getLogger(ReportGenerator.class.getName()).log(Level.FINE, "Unable to generate the report, the report template file could not be found.", ex);
+                Logger.getLogger(ReportGenerator.class.getName()).log(Level.FINE, null, ex);
             }
         } else {
             templatePath = "templates/" + templateName + ".vsl";

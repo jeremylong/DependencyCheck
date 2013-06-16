@@ -296,11 +296,12 @@ public class DatabaseUpdater implements CachedWebDataSource {
         try {
             currentlyPublished = retrieveCurrentTimestampsFromWeb();
         } catch (InvalidDataException ex) {
-            //Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.SEVERE, null, ex);
-            throw new DownloadFailedException("Unable to retrieve valid timestamp from nvd cve downloads page", ex);
+            final String msg = "Unable to retrieve valid timestamp from nvd cve downloads page";
+            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINE, msg, ex);
+            throw new DownloadFailedException(msg, ex);
 
         } catch (InvalidSettingException ex) {
-            ///Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINE, "Invalid setting found when retrieving timestamps", ex);
             throw new DownloadFailedException("Invalid settings", ex);
         }
 
@@ -311,7 +312,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
         try {
             dir = CveDB.getDataDirectory().getCanonicalPath();
         } catch (IOException ex) {
-            //Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINE, "CveDB data directory doesn't exist?", ex);
             throw new UpdateException("Unable to locate last updated properties file.", ex);
         }
 
