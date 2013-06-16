@@ -46,7 +46,9 @@ public class VulnerableSoftware extends Entry implements Serializable, Comparabl
         try {
             parseName(cpe);
         } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(VulnerableSoftware.class.getName()).log(Level.SEVERE, null, ex);
+            final String msg = String.format("Character encoding is unsupported for CPE '%s'.", cpe);
+            Logger.getLogger(VulnerableSoftware.class.getName()).log(Level.WARNING, msg);
+            Logger.getLogger(VulnerableSoftware.class.getName()).log(Level.FINE, msg, ex);
             setName(cpe);
         }
     }

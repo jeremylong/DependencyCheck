@@ -155,7 +155,8 @@ public final class Settings {
         try {
             props.load(in);
         } catch (IOException ex) {
-            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, "Unable to load default settings.", ex);
+            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, "Unable to load default settings.");
+            Logger.getLogger(Settings.class.getName()).log(Level.FINE, "Unable to load default settings.", ex);
         }
     }
 
@@ -280,7 +281,8 @@ public final class Settings {
         try {
             value = Integer.parseInt(Settings.getString(key));
         } catch (NumberFormatException ex) {
-            Logger.getLogger(Settings.class.getName()).log(Level.FINEST, "Could not convert property '" + key + "' to an int.", ex);
+            final String msg = String.format("Could not convert property '%s' to an int.", key);
+            Logger.getLogger(Settings.class.getName()).log(Level.FINEST, msg, ex);
             value = defaultValue;
         }
         return value;

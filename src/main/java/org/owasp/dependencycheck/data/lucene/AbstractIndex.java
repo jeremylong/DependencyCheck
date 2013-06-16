@@ -98,16 +98,24 @@ public abstract class AbstractIndex {
             try {
                 indexWriter.commit();
             } catch (CorruptIndexException ex) {
-                Logger.getLogger(AbstractIndex.class.getName()).log(Level.SEVERE, null, ex);
+                final String msg = "Unable to update database, there is a corrupt index.";
+                Logger.getLogger(AbstractIndex.class.getName()).log(Level.SEVERE, msg);
+                Logger.getLogger(AbstractIndex.class.getName()).log(Level.FINE, msg, ex);
             } catch (IOException ex) {
-                Logger.getLogger(AbstractIndex.class.getName()).log(Level.SEVERE, null, ex);
+                final String msg = "Unable to update database due to an IO error.";
+                Logger.getLogger(AbstractIndex.class.getName()).log(Level.SEVERE, msg);
+                Logger.getLogger(AbstractIndex.class.getName()).log(Level.FINE, msg, ex);
             }
             try {
                 indexWriter.close(true);
             } catch (CorruptIndexException ex) {
-                Logger.getLogger(AbstractIndex.class.getName()).log(Level.SEVERE, null, ex);
+                final String msg = "Unable to update database, there is a corrupt index.";
+                Logger.getLogger(AbstractIndex.class.getName()).log(Level.SEVERE, msg);
+                Logger.getLogger(AbstractIndex.class.getName()).log(Level.FINE, msg, ex);
             } catch (IOException ex) {
-                Logger.getLogger(AbstractIndex.class.getName()).log(Level.SEVERE, null, ex);
+                final String msg = "Unable to update database due to an IO error.";
+                Logger.getLogger(AbstractIndex.class.getName()).log(Level.SEVERE, msg);
+                Logger.getLogger(AbstractIndex.class.getName()).log(Level.FINE, msg, ex);
             } finally {
                 indexWriter = null;
             }
@@ -129,7 +137,9 @@ public abstract class AbstractIndex {
         try {
             directory.close();
         } catch (IOException ex) {
-            Logger.getLogger(AbstractIndex.class.getName()).log(Level.SEVERE, null, ex);
+            final String msg = "Unable to update database due to an IO error.";
+            Logger.getLogger(AbstractIndex.class.getName()).log(Level.SEVERE, msg);
+            Logger.getLogger(AbstractIndex.class.getName()).log(Level.FINE, msg, ex);
         } finally {
             directory = null;
         }

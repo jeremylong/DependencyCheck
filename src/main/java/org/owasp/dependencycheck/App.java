@@ -81,16 +81,16 @@ public class App {
             LogManager.getLogManager().reset();
             LogManager.getLogManager().readConfiguration(in);
         } catch (IOException ex) {
-            System.err.println(ex.toString());
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(App.class.getName()).log(Level.FINE, "IO Error preparing the logger", ex);
         } catch (SecurityException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(App.class.getName()).log(Level.FINE, "Error preparing the logger", ex);
         } finally {
-            try {
-                in.close();
-            } catch (Exception ex) {
-                //ignore
-                in = null;
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (Exception ex) {
+                    Logger.getLogger(App.class.getName()).log(Level.FINEST, null, ex);
+                }
             }
         }
     }
@@ -108,12 +108,10 @@ public class App {
         } catch (FileNotFoundException ex) {
             System.err.println(ex.getMessage());
             cli.printHelp();
-            Logger.getLogger(App.class.getName()).log(Level.WARNING, null, ex);
             return;
         } catch (ParseException ex) {
             System.err.println(ex.getMessage());
             cli.printHelp();
-            Logger.getLogger(App.class.getName()).log(Level.INFO, null, ex);
             return;
         }
 
@@ -151,9 +149,11 @@ public class App {
         try {
             report.generateReports(reportDirectory, outputFormat);
         } catch (IOException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, "There was an IO error while attempting to generate the report.");
+            Logger.getLogger(App.class.getName()).log(Level.INFO, null, ex);
         } catch (Exception ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, "There was an error while attempting to generate the report.");
+            Logger.getLogger(App.class.getName()).log(Level.INFO, null, ex);
         }
     }
 

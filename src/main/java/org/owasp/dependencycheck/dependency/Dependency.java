@@ -427,9 +427,13 @@ public class Dependency implements Comparable<Dependency> {
             md5 = Checksum.getMD5Checksum(file);
             sha1 = Checksum.getSHA1Checksum(file);
         } catch (IOException ex) {
-            Logger.getLogger(Dependency.class.getName()).log(Level.SEVERE, null, ex);
+            final String msg = String.format("Unable to read '%s' to determine hashes.", file.getName());
+            Logger.getLogger(Dependency.class.getName()).log(Level.WARNING, msg);
+            Logger.getLogger(Dependency.class.getName()).log(Level.FINE, msg, ex);
         } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(Dependency.class.getName()).log(Level.SEVERE, null, ex);
+            final String msg = "Unable to use MD5 of SHA1 checksums.";
+            Logger.getLogger(Dependency.class.getName()).log(Level.WARNING, msg);
+            Logger.getLogger(Dependency.class.getName()).log(Level.FINE, msg, ex);
         }
         this.setMd5sum(md5);
         this.setSha1sum(sha1);

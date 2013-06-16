@@ -239,17 +239,19 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             final String msg = String.format("Unable to read JarFile '%s'.", dependency.getActualFilePath());
             final AnalysisException ax = new AnalysisException(msg, ex);
             dependency.getAnalysisExceptions().add(ax);
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg, ex);
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO, msg, ex);
             return foundSomething;
         }
         List<String> pomEntries;
         try {
             pomEntries = retrievePomListing(jar);
         } catch (IOException ex) {
-            final String msg = String.format("Unable to read JarEntries in '%s'.", dependency.getActualFilePath());
+            final String msg = String.format("Unable to read Jar file entries in '%s'.", dependency.getActualFilePath());
             final AnalysisException ax = new AnalysisException(msg, ex);
             dependency.getAnalysisExceptions().add(ax);
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg, ex);
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO, msg, ex);
             return foundSomething;
         }
 
@@ -268,10 +270,11 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                         path, dependency.getFilePath());
                 final AnalysisException ax = new AnalysisException(msg, ex);
                 dependency.getAnalysisExceptions().add(ax);
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, msg, ax);
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO, msg, ax);
             } catch (IOException ex) {
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+                final String msg = String.format("Unable to retrieve POM '%s' in '%s'",
+                        path, dependency.getFilePath());
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO, msg, ex);
             }
             foundSomething = setPomEvidence(dependency, pom, pomProperties) || foundSomething;
         }

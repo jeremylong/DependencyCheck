@@ -96,20 +96,20 @@ public class DatabaseUpdater implements CachedWebDataSource {
                 }
             }
             if (maxUpdates > 3) {
-                Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.WARNING,
+                Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.INFO,
                         "NVD CVE requires several updates; this could take a couple of minutes.");
             }
             int count = 0;
             for (NvdCveUrl cve : update.values()) {
                 if (cve.getNeedsUpdate()) {
                     count += 1;
-                    Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.WARNING,
+                    Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.INFO,
                             "Updating NVD CVE ({0} of {1})", new Object[]{count, maxUpdates});
                     URL url = new URL(cve.getUrl());
                     File outputPath = null;
                     File outputPath12 = null;
                     try {
-                        Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.WARNING,
+                        Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.INFO,
                                 "Downloading {0}", cve.getUrl());
 
                         outputPath = File.createTempFile("cve" + cve.getId() + "_", ".xml");
@@ -119,11 +119,11 @@ public class DatabaseUpdater implements CachedWebDataSource {
                         outputPath12 = File.createTempFile("cve_1_2_" + cve.getId() + "_", ".xml");
                         Downloader.fetchFile(url, outputPath12, false);
 
-                        Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.WARNING,
+                        Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.INFO,
                                 "Processing {0}", cve.getUrl());
                         importXML(outputPath, outputPath12);
 
-                        Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.WARNING,
+                        Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.INFO,
                                 "Completed updated {0} of {1}", new Object[]{count, maxUpdates});
                     } catch (FileNotFoundException ex) {
                         throw new UpdateException(ex);
@@ -210,12 +210,6 @@ public class DatabaseUpdater implements CachedWebDataSource {
             cve20Handler.setPrevVersionVulnMap(prevVersionVulnMap);
             cve20Handler.setCpeIndex(cpeIndex);
             saxParser.parse(file, cve20Handler);
-
-//            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.WARNING,
-//                    String.format("%d out of %d entries processed were application specific CVEs.",
-//                    cve20Handler.getTotalNumberOfApplicationEntries(),
-//                    cve20Handler.getTotalNumberOfEntries()));
-
             cve20Handler = null;
         } finally {
             if (cpeIndex != null) {
@@ -242,7 +236,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
         try {
             dir = CveDB.getDataDirectory().getCanonicalPath();
         } catch (IOException ex) {
-            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINE, "Error updating the databases propterty file.", ex);
             throw new UpdateException("Unable to locate last updated properties file.", ex);
         }
         final File cveProp = new File(dir + File.separatorChar + UPDATE_PROPERTIES_FILE);
@@ -259,10 +253,10 @@ public class DatabaseUpdater implements CachedWebDataSource {
             out = new OutputStreamWriter(os, "UTF-8");
             prop.store(out, dir);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINE, null, ex);
             throw new UpdateException("Unable to find last updated properties file.", ex);
         } catch (IOException ex) {
-            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINE, null, ex);
             throw new UpdateException("Unable to update last updated properties file.", ex);
         } finally {
             if (out != null) {
@@ -302,11 +296,11 @@ public class DatabaseUpdater implements CachedWebDataSource {
         try {
             currentlyPublished = retrieveCurrentTimestampsFromWeb();
         } catch (InvalidDataException ex) {
-            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.SEVERE, null, ex);
             throw new DownloadFailedException("Unable to retrieve valid timestamp from nvd cve downloads page", ex);
 
         } catch (InvalidSettingException ex) {
-            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.SEVERE, null, ex);
+            ///Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.SEVERE, null, ex);
             throw new DownloadFailedException("Invalid settings", ex);
         }
 
@@ -317,7 +311,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
         try {
             dir = CveDB.getDataDirectory().getCanonicalPath();
         } catch (IOException ex) {
-            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.SEVERE, null, ex);
             throw new UpdateException("Unable to locate last updated properties file.", ex);
         }
 
@@ -348,7 +342,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
                         }
                     }
                     if (deleteAndRecreate) {
-                        Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.WARNING, "Index version is old. Rebuilding the index.");
+                        Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.INFO, "The database version is old. Rebuilding the database.");
                         is.close();
                         //this is an old version of the lucene index - just delete it
                         FileUtils.delete(f);
@@ -398,7 +392,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
                         try {
                             is.close();
                         } catch (IOException ex) {
-                            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINEST, null, ex);
                         }
                     }
                 }

@@ -51,7 +51,7 @@ public class Checksum {
                 try {
                     fis.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(Checksum.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Checksum.class.getName()).log(Level.FINEST, "Error closing file '" + file.getName() + "'.", ex);
                 }
             }
         }
