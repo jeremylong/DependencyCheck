@@ -49,7 +49,7 @@ public class Entry implements Serializable {
         try {
             entry.parseName(doc.get(Fields.NAME));
         } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(Entry.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Entry.class.getName()).log(Level.FINE, null, ex);
             entry.name = doc.get(Fields.NAME);
         }
         return entry;

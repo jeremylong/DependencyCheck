@@ -172,7 +172,8 @@ public class NvdCve20Handler extends DefaultHandler {
                 final float score = Float.parseFloat(nodeText.toString());
                 vulnerability.setCvssScore(score);
             } catch (NumberFormatException ex) {
-                Logger.getLogger(NvdCve20Handler.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(NvdCve20Handler.class.getName()).log(Level.SEVERE, "Error parsing CVSS Score.");
+                Logger.getLogger(NvdCve20Handler.class.getName()).log(Level.FINE, "Error parsing CVSS Score.", ex);
             }
             nodeText = null;
         } else if (current.isCVSSAccessVectorNode()) {

@@ -71,7 +71,7 @@ public class Engine {
         try {
             autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
         } catch (InvalidSettingException ex) {
-            Logger.getLogger(Engine.class.getName()).log(Level.WARNING, "Invalid setting for auto-update.");
+            Logger.getLogger(Engine.class.getName()).log(Level.FINE, "Invalid setting for auto-update; using true.");
         }
         if (autoUpdate) {
             doUpdates();
@@ -192,8 +192,9 @@ public class Engine {
      */
     protected void scanFile(File file) {
         if (!file.isFile()) {
-            final String msg = String.format("Path passed to scanFile(File) is not a file: %s.", file.toString());
-            Logger.getLogger(Engine.class.getName()).log(Level.WARNING, msg);
+            final String msg = String.format("Path passed to scanFile(File) is not a file: %s. Skipping the file.", file.toString());
+            Logger.getLogger(Engine.class.getName()).log(Level.FINE, msg);
+            return;
         }
         final String fileName = file.getName();
         final String extension = FileUtils.getFileExtension(fileName);
@@ -220,12 +221,13 @@ public class Engine {
                 try {
                     a.initialize();
                 } catch (Exception ex) {
-                    Logger.getLogger(Engine.class.getName()).log(Level.SEVERE,
-                            "Exception occurred initializing " + a.getName() + ".", ex);
+                    final String msg = String.format("\"Exception occurred initializing \"%s\".\"", a.getName());
+                    Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, msg);
+                    Logger.getLogger(Engine.class.getName()).log(Level.INFO, msg, ex);
                     try {
                         a.close();
                     } catch (Exception ex1) {
-                        Logger.getLogger(Engine.class.getName()).log(Level.FINER, null, ex1);
+                        Logger.getLogger(Engine.class.getName()).log(Level.FINEST, null, ex1);
                     }
                 }
             }
@@ -261,7 +263,7 @@ public class Engine {
                 try {
                     a.close();
                 } catch (Exception ex) {
-                    Logger.getLogger(Engine.class.getName()).log(Level.WARNING, null, ex);
+                    Logger.getLogger(Engine.class.getName()).log(Level.FINEST, null, ex);
                 }
             }
         }
@@ -280,9 +282,10 @@ public class Engine {
             } catch (UpdateException ex) {
                 Logger.getLogger(Engine.class.getName()).log(Level.WARNING,
                         "Unable to update Cached Web DataSource, using local data instead. Results may not include recent vulnerabilities.");
-                Logger.getLogger(Engine.class.getName()).log(Level.INFO,
-                        String.format("Unable to update details for %s",
-                        source.getClass().getName()), ex);
+                Logger.getLogger(Engine.class.getName()).log(Level.FINE,
+                String.format("Unable to update Cached Web DataSource, using local data instead. Results may not include recent "
+                    + "vulnerabilities. Unable to update details for %s",
+                source.getClass().getName()), ex);
             }
         }
     }

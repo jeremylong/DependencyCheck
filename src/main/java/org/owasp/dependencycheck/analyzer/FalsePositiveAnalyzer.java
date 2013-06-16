@@ -105,7 +105,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         try {
             deepScan = Settings.getBoolean(Settings.KEYS.PERFORM_DEEP_SCAN);
         } catch (InvalidSettingException ex) {
-            Logger.getLogger(FalsePositiveAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FalsePositiveAnalyzer.class.getName()).log(Level.INFO, "deepscan setting is incorrect; expected a boolean.", ex);
         }
         if (!deepScan) {
             removeSpuriousCPE(dependency);
