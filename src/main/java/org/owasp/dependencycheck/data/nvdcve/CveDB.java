@@ -220,7 +220,9 @@ public class CveDB {
             try {
                 conn.close();
             } catch (SQLException ex) {
-                Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, null, ex);
+                final String msg = "There was an error attempting to close the CveDB, see the log for more details.";
+                Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, msg, ex);
+                Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
             }
             conn = null;
         }
@@ -239,7 +241,9 @@ public class CveDB {
         try {
             cpe.parseName(cpeStr);
         } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, null, ex);
+            final String msg = "There was an encoding error parsing a vulerability, see the log for more details.";
+            Logger.getLogger(CveDB.class.getName()).log(Level.WARNING, msg);
+            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, String.format("Error parsing '%s'", cpeStr), ex);
         }
         final List<Vulnerability> vulnerabilities = new ArrayList<Vulnerability>();
 
@@ -259,7 +263,7 @@ public class CveDB {
                 try {
                     rs.close();
                 } catch (SQLException ex) {
-                    Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Error closing RecordSet", ex);
                 }
             }
         }
@@ -325,21 +329,21 @@ public class CveDB {
                 try {
                     rsV.close();
                 } catch (SQLException ex) {
-                    Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Error closing RecordSet", ex);
                 }
             }
             if (rsR != null) {
                 try {
                     rsR.close();
                 } catch (SQLException ex) {
-                    Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Error closing RecordSet", ex);
                 }
             }
             if (rsS != null) {
                 try {
                     rsS.close();
                 } catch (SQLException ex) {
-                    Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Error closing RecordSet", ex);
                 }
             }
         }
@@ -398,8 +402,9 @@ public class CveDB {
             }
 
         } catch (SQLException ex) {
-            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, null, ex);
-            throw new DatabaseException("Error updating '" + vuln.getName() + "'", ex);
+            final String msg = String.format("Error updating '%s'", vuln.getName());
+            Logger.getLogger(CveDB.class.getName()).log(Level.INFO, null, ex);
+            throw new DatabaseException(msg, ex);
         }
     }
 
@@ -443,7 +448,7 @@ public class CveDB {
                 try {
                     statement.close();
                 } catch (SQLException ex) {
-                    Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Error closing Statement", ex);
                 }
             }
         }

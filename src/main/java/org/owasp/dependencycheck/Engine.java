@@ -283,9 +283,7 @@ public class Engine {
                 Logger.getLogger(Engine.class.getName()).log(Level.WARNING,
                         "Unable to update Cached Web DataSource, using local data instead. Results may not include recent vulnerabilities.");
                 Logger.getLogger(Engine.class.getName()).log(Level.FINE,
-                String.format("Unable to update Cached Web DataSource, using local data instead. Results may not include recent "
-                    + "vulnerabilities. Unable to update details for %s",
-                source.getClass().getName()), ex);
+                String.format("Unable to update details for %s", source.getClass().getName()), ex);
             }
         }
     }

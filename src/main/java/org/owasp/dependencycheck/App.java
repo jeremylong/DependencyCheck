@@ -89,7 +89,7 @@ public class App {
                 try {
                     in.close();
                 } catch (Exception ex) {
-                    Logger.getLogger(App.class.getName()).log(Level.FINEST, null, ex);
+                    Logger.getLogger(App.class.getName()).log(Level.FINEST, "Error closing resource stream", ex);
                 }
             }
         }

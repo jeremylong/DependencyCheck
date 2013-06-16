@@ -100,22 +100,22 @@ public abstract class AbstractIndex {
             } catch (CorruptIndexException ex) {
                 final String msg = "Unable to update database, there is a corrupt index.";
                 Logger.getLogger(AbstractIndex.class.getName()).log(Level.SEVERE, msg);
-                Logger.getLogger(AbstractIndex.class.getName()).log(Level.FINE, msg, ex);
+                Logger.getLogger(AbstractIndex.class.getName()).log(Level.FINE, null, ex);
             } catch (IOException ex) {
                 final String msg = "Unable to update database due to an IO error.";
                 Logger.getLogger(AbstractIndex.class.getName()).log(Level.SEVERE, msg);
-                Logger.getLogger(AbstractIndex.class.getName()).log(Level.FINE, msg, ex);
+                Logger.getLogger(AbstractIndex.class.getName()).log(Level.FINE, null, ex);
             }
             try {
                 indexWriter.close(true);
             } catch (CorruptIndexException ex) {
                 final String msg = "Unable to update database, there is a corrupt index.";
                 Logger.getLogger(AbstractIndex.class.getName()).log(Level.SEVERE, msg);
-                Logger.getLogger(AbstractIndex.class.getName()).log(Level.FINE, msg, ex);
+                Logger.getLogger(AbstractIndex.class.getName()).log(Level.FINE, null, ex);
             } catch (IOException ex) {
                 final String msg = "Unable to update database due to an IO error.";
                 Logger.getLogger(AbstractIndex.class.getName()).log(Level.SEVERE, msg);
-                Logger.getLogger(AbstractIndex.class.getName()).log(Level.FINE, msg, ex);
+                Logger.getLogger(AbstractIndex.class.getName()).log(Level.FINE, null, ex);
             } finally {
                 indexWriter = null;
             }
@@ -139,7 +139,7 @@ public abstract class AbstractIndex {
         } catch (IOException ex) {
             final String msg = "Unable to update database due to an IO error.";
             Logger.getLogger(AbstractIndex.class.getName()).log(Level.SEVERE, msg);
-            Logger.getLogger(AbstractIndex.class.getName()).log(Level.FINE, msg, ex);
+            Logger.getLogger(AbstractIndex.class.getName()).log(Level.FINE, null, ex);
         } finally {
             directory = null;
         }

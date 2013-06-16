@@ -138,7 +138,8 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             final JAXBContext jaxbContext = JAXBContext.newInstance("org.owasp.dependencycheck.analyzer.pom.generated");
             pomUnmarshaller = jaxbContext.createUnmarshaller();
         } catch (JAXBException ex) { //guess we will just have a null pointer exception later...
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, "Unable to load parser. See the log for more details.");
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
         }
     }
 
@@ -345,14 +346,12 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 final JAXBElement<Model> el = pomUnmarshaller.unmarshal(source, Model.class);
                 m = el.getValue();
             } catch (ParserConfigurationException ex) {
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+                final String msg = String.format("Unable to parse pom '%s' in jar '%s'", path, jar.getName());
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, msg, ex);
             } catch (SAXException ex) {
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (JAXBException ex) {
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINEST, "failure reading pom via jaxb path:'"
-                        + path + "' jar:'" + jar.getName() + "'", ex);
+                final String msg = String.format("Unable to parse pom '%s' in jar '%s'", path, jar.getName());
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, msg, ex);
             }
-
             return m;
         }
         return null;

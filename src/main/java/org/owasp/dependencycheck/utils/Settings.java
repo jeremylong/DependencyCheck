@@ -37,19 +37,19 @@ public final class Settings {
      * The collection of keys used within the properties file.
      */
     public static final class KEYS {
+
         /**
-         * private constructor because this is a "utility" class containing constants
+         * private constructor because this is a "utility" class containing
+         * constants
          */
         private KEYS() {
             //do nothing
         }
-
         /**
          * The properties key indicating whether or not the cached data sources
          * should be updated.
          */
         public static final String AUTO_UPDATE = "autoupdate";
-
         /**
          * The properties key for the path where the CPE Lucene Index will be
          * stored.
@@ -107,8 +107,6 @@ public final class Settings {
          * The properties key for the CVE schema version 2.0.
          */
         public static final String CVE_SCHEMA_2_0 = "2.0.";
-
-
         /**
          * The properties key for the proxy url.
          */
@@ -130,7 +128,6 @@ public final class Settings {
          * The location of the temporary directory.
          */
         public static final String TEMP_DIRECTORY = "temp.directory";
-
     }
     /**
      * The properties file location.
@@ -156,7 +153,7 @@ public final class Settings {
             props.load(in);
         } catch (IOException ex) {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, "Unable to load default settings.");
-            Logger.getLogger(Settings.class.getName()).log(Level.FINE, "Unable to load default settings.", ex);
+            Logger.getLogger(Settings.class.getName()).log(Level.FINE, null, ex);
         }
     }
 
@@ -169,6 +166,7 @@ public final class Settings {
     public static void setString(String key, String value) {
         INSTANCE.props.setProperty(key, value);
     }
+
     /**
      * Sets a property value.
      *
@@ -265,6 +263,7 @@ public final class Settings {
         }
         return value;
     }
+
     /**
      * Returns an int value from the properties file. If the value was specified
      * as a system property or passed in via the -Dprop=value argument - this
@@ -273,8 +272,8 @@ public final class Settings {
      *
      * @param key the key to lookup within the properties file
      * @param defaultValue the default value to return
-     * @return the property from the properties file or the defaultValue if the property does
-     * not exist or cannot be converted to an integer
+     * @return the property from the properties file or the defaultValue if the
+     * property does not exist or cannot be converted to an integer
      */
     public static int getInt(String key, int defaultValue) {
         int value;
@@ -287,6 +286,7 @@ public final class Settings {
         }
         return value;
     }
+
     /**
      * Returns a long value from the properties file. If the value was specified
      * as a system property or passed in via the -Dprop=value argument - this
@@ -310,9 +310,10 @@ public final class Settings {
 
     /**
      * Returns a boolean value from the properties file. If the value was
-     * specified as a system property or passed in via the <code>-Dprop=value</code>
-     * argument this method will return the value from the system properties before
-     * the values in the contained configuration file.
+     * specified as a system property or passed in via the
+     * <code>-Dprop=value</code> argument this method will return the value from
+     * the system properties before the values in the contained configuration
+     * file.
      *
      * @param key the key to lookup within the properties file
      * @return the property from the properties file
