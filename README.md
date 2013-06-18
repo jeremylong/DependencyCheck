@@ -5,6 +5,11 @@ Dependency-Check is a utility that attempts to detect publicly disclosed vulnera
 
 More information can be found on the [wiki].
 
+Notice
+-
+
+A very big release of new functionality and plugins will be made available during the BlackHat Arsenal on July 31st, 2013. If you are at BlackHat stop by and see the demos!
+
 Usage
 -
 
