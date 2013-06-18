@@ -403,7 +403,7 @@ public class CveDB {
 
         } catch (SQLException ex) {
             final String msg = String.format("Error updating '%s'", vuln.getName());
-            Logger.getLogger(CveDB.class.getName()).log(Level.INFO, null, ex);
+            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
             throw new DatabaseException(msg, ex);
         }
     }

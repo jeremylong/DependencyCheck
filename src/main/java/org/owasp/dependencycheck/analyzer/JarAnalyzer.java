@@ -241,7 +241,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             final AnalysisException ax = new AnalysisException(msg, ex);
             dependency.getAnalysisExceptions().add(ax);
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO, msg, ex);
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
             return foundSomething;
         }
         List<String> pomEntries;
@@ -271,11 +271,11 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                         path, dependency.getFilePath());
                 final AnalysisException ax = new AnalysisException(msg, ex);
                 dependency.getAnalysisExceptions().add(ax);
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO, msg, ax);
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, msg, ax);
             } catch (IOException ex) {
                 final String msg = String.format("Unable to retrieve POM '%s' in '%s'",
                         path, dependency.getFilePath());
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO, msg, ex);
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, msg, ex);
             }
             foundSomething = setPomEvidence(dependency, pom, pomProperties) || foundSomething;
         }
