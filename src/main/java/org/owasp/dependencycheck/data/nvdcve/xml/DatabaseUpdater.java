@@ -374,8 +374,8 @@ public class DatabaseUpdater implements CachedWebDataSource {
                             try {
                                 currentTimestamp = Long.parseLong(prop.getProperty(LAST_UPDATED_BASE + String.valueOf(i), "0"));
                             } catch (NumberFormatException ex) {
-                                Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINEST, "Error parsing " + LAST_UPDATED_BASE
-                                        + String.valueOf(i) + " from nvdcve.lastupdated", ex);
+                                final String msg = String.format("Error parsing '%s' '%s' from nvdcve.lastupdated", LAST_UPDATED_BASE, String.valueOf(i));
+                                Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINEST, msg, ex);
                             }
                             if (currentTimestamp == cve.getTimestamp()) {
                                 cve.setNeedsUpdate(false); //they default to true.
