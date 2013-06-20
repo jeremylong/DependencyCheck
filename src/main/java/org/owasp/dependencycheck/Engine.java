@@ -301,4 +301,24 @@ public class Engine {
         }
         return ret;
     }
+
+    /**
+     * Checks all analyzers to see if an extension is supported.
+     * @param ext a file extension
+     * @return true or false depending on whether or not the file extension is supported
+     */
+    public boolean supportsExtension(String ext) {
+        if (ext == null) {
+            return false;
+        }
+        for (AnalysisPhase phase : AnalysisPhase.values()) {
+            final List<Analyzer> analyzerList = analyzers.get(phase);
+            for (Analyzer a : analyzerList) {
+                if (a.getSupportedExtensions() != null && a.supportsExtension(ext)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
