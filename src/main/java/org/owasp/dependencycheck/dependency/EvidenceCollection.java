@@ -18,11 +18,17 @@
  */
 package org.owasp.dependencycheck.dependency;
 
+import java.net.MalformedURLException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.owasp.dependencycheck.utils.Filter;
+import org.owasp.dependencycheck.utils.UrlStringUtils;
 
 /**
  * Used to maintain a collection of Evidence.
@@ -35,45 +41,37 @@ public class EvidenceCollection implements Iterable<Evidence> {
      * Used to iterate over high confidence evidence contained in the
      * collection.
      */
-    private static final Filter<Evidence> HIGH_CONFIDENCE =
-            new Filter<Evidence>() {
-
-                public boolean passes(Evidence evidence) {
-                    return evidence.getConfidence() == Evidence.Confidence.HIGH;
-                }
-            };
+    private static final Filter<Evidence> HIGH_CONFIDENCE = new Filter<Evidence>() {
+        public boolean passes(Evidence evidence) {
+            return evidence.getConfidence() == Evidence.Confidence.HIGH;
+        }
+    };
     /**
      * Used to iterate over medium confidence evidence contained in the
      * collection.
      */
-    private static final Filter<Evidence> MEDIUM_CONFIDENCE =
-            new Filter<Evidence>() {
-
-                public boolean passes(Evidence evidence) {
-                    return evidence.getConfidence() == Evidence.Confidence.MEDIUM;
-                }
-            };
+    private static final Filter<Evidence> MEDIUM_CONFIDENCE = new Filter<Evidence>() {
+        public boolean passes(Evidence evidence) {
+            return evidence.getConfidence() == Evidence.Confidence.MEDIUM;
+        }
+    };
     /**
      * Used to iterate over low confidence evidence contained in the collection.
      */
-    private static final Filter<Evidence> LOW_CONFIDENCE =
-            new Filter<Evidence>() {
-
-                public boolean passes(Evidence evidence) {
-                    return evidence.getConfidence() == Evidence.Confidence.LOW;
-                }
-            };
+    private static final Filter<Evidence> LOW_CONFIDENCE = new Filter<Evidence>() {
+        public boolean passes(Evidence evidence) {
+            return evidence.getConfidence() == Evidence.Confidence.LOW;
+        }
+    };
     /**
      * Used to iterate over evidence that has was used (aka read) from the
      * collection.
      */
-    private static final Filter<Evidence> EVIDENCE_USED =
-            new Filter<Evidence>() {
-
-                public boolean passes(Evidence evidence) {
-                    return evidence.isUsed();
-                }
-            };
+    private static final Filter<Evidence> EVIDENCE_USED = new Filter<Evidence>() {
+        public boolean passes(Evidence evidence) {
+            return evidence.isUsed();
+        }
+    };
 
     /**
      * Used to iterate over evidence of the specified confidence.
@@ -191,8 +189,11 @@ public class EvidenceCollection implements Iterable<Evidence> {
         final String textToTest = text.toLowerCase();
 
         for (Evidence e : this.list) {
-            if (e.isUsed() && e.getValue().toLowerCase().contains(textToTest)) {
-                return true;
+            if (e.isUsed()) {
+                final String value = urlCorrection(e.getValue().toLowerCase());
+                if (value.contains(textToTest)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -269,5 +270,43 @@ public class EvidenceCollection implements Iterable<Evidence> {
      */
     public int size() {
         return list.size();
+    }
+
+    /**
+     * <p>Takes a string that may contain a fully qualified domain and it will
+     * return the string having removed the query string, the protocol, the
+     * sub-domain of 'www', and the file extension of the path.</p>
+     * <p>This is useful for checking if the evidence contains a specific
+     * string. The presence of the protocol, file extension, etc. may produce
+     * false positives.
+     *
+     * <p>Example, given the following input:</p>
+     * <code>'Please visit https://www.somedomain.com/path1/path2/file.php?id=439'</code>
+     * <p>The function would return:</p>
+     * <code>'Please visit somedomain path1 path2 file'</code>
+     *
+     * @param value the value that may contain a url
+     * @return the modified string
+     */
+    private String urlCorrection(String value) {
+        if (value == null || !UrlStringUtils.containsUrl(value)) {
+            return value;
+        }
+        final StringBuilder sb = new StringBuilder(value.length());
+        final String[] parts = value.split("\\s");
+        for (String part : parts) {
+            if (UrlStringUtils.isUrl(part)) {
+                try {
+                    final List<String> data = UrlStringUtils.extractImportantUrlData(part);
+                    sb.append(' ').append(StringUtils.join(data, ' '));
+                } catch (MalformedURLException ex) {
+                    Logger.getLogger(EvidenceCollection.class.getName()).log(Level.INFO, "error parsing " + part, ex);
+                    sb.append(' ').append(part);
+                }
+            } else {
+                sb.append(' ').append(part);
+            }
+        }
+        return sb.toString().trim();
     }
 }
