@@ -199,7 +199,7 @@ public class CPEAnalyzer implements Analyzer {
     private String addEvidenceWithoutDuplicateTerms(final String text, final EvidenceCollection ec, Confidence confidenceFilter) {
         final String txt = (text == null) ? "" : text;
         final StringBuilder sb = new StringBuilder(txt.length() + (20 * ec.size()));
-        sb.append(txt);
+        sb.append(' ').append(txt).append(' ');
         for (Evidence e : ec.iterator(confidenceFilter)) {
             String value = e.getValue();
 
@@ -215,7 +215,7 @@ public class CPEAnalyzer implements Analyzer {
                 sb.append(value).append(' ');
             }
         }
-        return sb.toString();
+        return sb.toString().trim();
     }
 
     /**
