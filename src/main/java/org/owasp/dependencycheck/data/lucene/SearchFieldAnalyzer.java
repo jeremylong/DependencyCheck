@@ -76,6 +76,7 @@ public class SearchFieldAnalyzer extends Analyzer {
                 | WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE, null);
 
         stream = new LowerCaseFilter(version, stream);
+        stream = new UrlTokenizingFilter(stream);
         concatenatingFilter = new TokenPairConcatenatingFilter(stream);
         stream = concatenatingFilter;
         stream = new StopFilter(version, stream, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
