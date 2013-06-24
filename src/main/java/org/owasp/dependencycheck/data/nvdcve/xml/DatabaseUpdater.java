@@ -178,12 +178,14 @@ public class DatabaseUpdater implements CachedWebDataSource {
      *
      * @param file the file containing the NVD CVE XML
      * @param oldVersion contains the file containing the NVD CVE XML 1.2
-     * @throws ParserConfigurationException is thrown if there is a parser configuration exception
+     * @throws ParserConfigurationException is thrown if there is a parser
+     * configuration exception
      * @throws SAXException is thrown if there is a SAXException
      * @throws IOException is thrown if there is a ioexception
      * @throws SQLException is thrown if there is a sql exception
      * @throws DatabaseException is thrown if there is a database exception
-     * @throws ClassNotFoundException thrown if the h2 database driver cannot be loaded
+     * @throws ClassNotFoundException thrown if the h2 database driver cannot be
+     * loaded
      */
     private void importXML(File file, File oldVersion)
             throws ParserConfigurationException, SAXException, IOException, SQLException, DatabaseException, ClassNotFoundException {
@@ -374,7 +376,8 @@ public class DatabaseUpdater implements CachedWebDataSource {
                             try {
                                 currentTimestamp = Long.parseLong(prop.getProperty(LAST_UPDATED_BASE + String.valueOf(i), "0"));
                             } catch (NumberFormatException ex) {
-                                final String msg = String.format("Error parsing '%s' '%s' from nvdcve.lastupdated", LAST_UPDATED_BASE, String.valueOf(i));
+                                final String msg = String.format("Error parsing '%s' '%s' from nvdcve.lastupdated",
+                                        LAST_UPDATED_BASE, String.valueOf(i));
                                 Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINEST, msg, ex);
                             }
                             if (currentTimestamp == cve.getTimestamp()) {
