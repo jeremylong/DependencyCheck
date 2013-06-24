@@ -100,6 +100,10 @@ public class CPEAnalyzerTest extends BaseIndexTestCase {
         Dependency depends = new Dependency(file);
         jarAnalyzer.analyze(depends, null);
 
+        File fileCommonValidator = new File(this.getClass().getClassLoader().getResource("commons-validator-1.4.0.jar").getPath());
+        Dependency commonValidator = new Dependency(fileCommonValidator);
+        jarAnalyzer.analyze(commonValidator, null);
+
         File fileSpring = new File(this.getClass().getClassLoader().getResource("spring-core-2.5.5.jar").getPath());
         Dependency spring = new Dependency(fileSpring);
         jarAnalyzer.analyze(spring, null);
@@ -110,23 +114,26 @@ public class CPEAnalyzerTest extends BaseIndexTestCase {
 
         CPEAnalyzer instance = new CPEAnalyzer();
         instance.open();
-        String expResult = "cpe:/a:apache:struts:2.1.2";
-        Identifier expIdentifier = new Identifier("cpe", expResult, expResult);
-        String expResultSpring = "cpe:/a:springsource:spring_framework:2.5.5";
-        String expResultSpring3 = "cpe:/a:vmware:springsource_spring_framework:3.0.0";
+        instance.determineCPE(commonValidator);
         instance.determineCPE(depends);
         instance.determineCPE(spring);
         instance.determineCPE(spring3);
         instance.close();
+
+        String expResult = "cpe:/a:apache:struts:2.1.2";
+        Identifier expIdentifier = new Identifier("cpe", expResult, expResult);
+        String expResultSpring = "cpe:/a:springsource:spring_framework:2.5.5";
+        String expResultSpring3 = "cpe:/a:vmware:springsource_spring_framework:3.0.0";
+
+        Assert.assertTrue("Apache Common Validator - found an identifier?", commonValidator.getIdentifiers().isEmpty());
         Assert.assertTrue("Incorrect match size - struts", depends.getIdentifiers().size() >= 1);
-
-
         Assert.assertTrue("Incorrect match - struts", depends.getIdentifiers().contains(expIdentifier));
+        Assert.assertTrue("Incorrect match size - spring3 - " + spring3.getIdentifiers().size(), spring3.getIdentifiers().size() >= 1);
+
         //the following two only work if the HintAnalyzer is used.
         //Assert.assertTrue("Incorrect match size - spring", spring.getIdentifiers().size() == 1);
         //Assert.assertTrue("Incorrect match - spring", spring.getIdentifiers().get(0).getValue().equals(expResultSpring));
-        Assert.assertTrue("Incorrect match size - spring3 - " + spring3.getIdentifiers().size(), spring3.getIdentifiers().size() >= 1);
-        //assertTrue("Incorrect match - spring3", spring3.getIdentifiers().get(0).getValue().equals(expResultSpring3));
+
     }
 
     /**
