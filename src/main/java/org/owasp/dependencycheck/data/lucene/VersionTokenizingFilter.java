@@ -20,7 +20,6 @@ package org.owasp.dependencycheck.data.lucene;
 
 import java.io.IOException;
 import java.util.LinkedList;
-import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
@@ -32,16 +31,7 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public final class VersionTokenizingFilter extends TokenFilter {
-
-    /**
-     * The char term attribute.
-     */
-    private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
-    /**
-     * A collection of tokens to add to the stream.
-     */
-    private final LinkedList<String> tokens;
+public final class VersionTokenizingFilter extends AbstractTokenizingFilter {
 
     /**
      * Constructs a new VersionTokenizingFilter.
@@ -50,7 +40,6 @@ public final class VersionTokenizingFilter extends TokenFilter {
      */
     public VersionTokenizingFilter(TokenStream stream) {
         super(stream);
-        tokens = new LinkedList<String>();
     }
 
     /**
@@ -63,6 +52,8 @@ public final class VersionTokenizingFilter extends TokenFilter {
      */
     @Override
     public boolean incrementToken() throws IOException {
+        final LinkedList<String> tokens = getTokens();
+        final CharTermAttribute termAtt = getTermAtt();
         if (tokens.size() == 0 && input.incrementToken()) {
             final String version = new String(termAtt.buffer(), 0, termAtt.length());
             final String[] toAnalyze = version.split("[_-]");
@@ -73,21 +64,6 @@ public final class VersionTokenizingFilter extends TokenFilter {
             }
         }
         return addTerm();
-    }
-
-    /**
-     * Adds a term, if one exists, from the tokens collection.
-     *
-     * @return whether or not a new term was added
-     */
-    private boolean addTerm() {
-        final boolean termAdded = tokens.size() > 0;
-        if (termAdded) {
-            final String version = tokens.pop();
-            clearAttributes();
-            termAtt.append(version);
-        }
-        return termAdded;
     }
 
     /**
@@ -104,6 +80,7 @@ public final class VersionTokenizingFilter extends TokenFilter {
     private void analyzeVersion(String version) {
         //todo should we also be splitting on dash or underscore? we would need
         //  to incorporate the dash or underscore back in...
+        final LinkedList<String> tokens = getTokens();
         final String[] versionParts = version.split("\\.");
         String dottedVersion = null;
         for (String current : versionParts) {
