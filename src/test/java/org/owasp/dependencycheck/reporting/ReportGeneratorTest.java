@@ -104,7 +104,6 @@ public class ReportGeneratorTest {
 //
 //        ReportGenerator instance = new ReportGenerator();
 //        instance.generateReport(templateName, writeTo, properties);
-        //TODO add an assertion here...
         //assertTrue("need to add a real check here", false);
     }
 }

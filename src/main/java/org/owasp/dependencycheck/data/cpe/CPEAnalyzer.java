@@ -346,7 +346,6 @@ public class CPEAnalyzer implements Analyzer {
      * @return if the append was successful.
      */
     private boolean appendWeightedSearch(StringBuilder sb, String field, String searchText, Set<String> weightedText) {
-        //TODO add a mutator or special analyzer that combines words next to each other and adds them as a key.
         sb.append(" ").append(field).append(":( ");
 
         final String cleanText = cleanseText(searchText);
