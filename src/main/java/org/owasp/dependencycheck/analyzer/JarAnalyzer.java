@@ -51,10 +51,10 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 import org.jsoup.Jsoup;
-import org.owasp.dependencycheck.analyzer.pom.MavenNamespaceFilter;
-import org.owasp.dependencycheck.analyzer.pom.generated.License;
-import org.owasp.dependencycheck.analyzer.pom.generated.Model;
-import org.owasp.dependencycheck.analyzer.pom.generated.Organization;
+import org.owasp.dependencycheck.jaxb.pom.MavenNamespaceFilter;
+import org.owasp.dependencycheck.jaxb.pom.generated.License;
+import org.owasp.dependencycheck.jaxb.pom.generated.Model;
+import org.owasp.dependencycheck.jaxb.pom.generated.Organization;
 import org.owasp.dependencycheck.utils.NonClosingStream;
 import org.owasp.dependencycheck.utils.Settings;
 import org.xml.sax.InputSource;
@@ -135,7 +135,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      */
     public JarAnalyzer() {
         try {
-            final JAXBContext jaxbContext = JAXBContext.newInstance("org.owasp.dependencycheck.analyzer.pom.generated");
+            final JAXBContext jaxbContext = JAXBContext.newInstance("org.owasp.dependencycheck.jaxb.pom.generated");
             pomUnmarshaller = jaxbContext.createUnmarshaller();
         } catch (JAXBException ex) { //guess we will just have a null pointer exception later...
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, "Unable to load parser. See the log for more details.");
