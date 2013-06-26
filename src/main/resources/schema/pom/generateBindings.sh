@@ -7,4 +7,4 @@ else
     XJC=xjc.exe
 fi
 
-exec "$XJC" -extension -d ../../../java -p "org.owasp.dependencycheck.analyzer.pom.generated" -mark-generated "maven-v4_0_0.xsd"
+exec "$XJC" -extension -d ../../../java -p "org.owasp.dependencycheck.jaxb.pom.generated" -mark-generated "maven-v4_0_0.xsd"
