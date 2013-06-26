@@ -55,6 +55,7 @@ import org.owasp.dependencycheck.jaxb.pom.MavenNamespaceFilter;
 import org.owasp.dependencycheck.jaxb.pom.generated.License;
 import org.owasp.dependencycheck.jaxb.pom.generated.Model;
 import org.owasp.dependencycheck.jaxb.pom.generated.Organization;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.NonClosingStream;
 import org.owasp.dependencycheck.utils.Settings;
 import org.xml.sax.InputSource;
@@ -199,13 +200,18 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * file.
      */
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
-        boolean addPackagesAsEvidence = false;
-        //todo - catch should be more granular here, one for each call likely
-        //todo - think about sources/javadoc jars, should we remove or move to related dependency?
         try {
+            boolean addPackagesAsEvidence = false;
             final boolean hasManifest = parseManifest(dependency);
             final boolean hasPOM = analyzePOM(dependency);
-            final boolean deepScan = Settings.getBoolean(Settings.KEYS.PERFORM_DEEP_SCAN);
+            boolean deepScan;
+            try {
+                deepScan = Settings.getBoolean(Settings.KEYS.PERFORM_DEEP_SCAN);
+            } catch (InvalidSettingException ex) {
+                deepScan = false;
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, "The deep scan configuration is invalid, defaulting to false.");
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
+            }
             if ((!hasManifest && !hasPOM) || deepScan) {
                 addPackagesAsEvidence = true;
             }
