@@ -1,9 +1,9 @@
 <!--
 Copyright (c) 2012 - Jeremy Long
 
-This file is part of DependencyCheck.
+This file is part of Dependency-Check.
 
-DependencyCheck is free software: you can redistribute it and/or modify
+Dependency-Check is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
@@ -14,23 +14,36 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with DependencyCheck.  If not, see <http://www.gnu.org/licenses />.
+along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.owasp</groupId>
-    <artifactId>dependency-check</artifactId>
+    <artifactId>dependency-check-parent</artifactId>
     <version>0.3.2.5-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
-    <name>DependencyCheck</name>
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+    <modules>
+        <module>dependency-check-core</module>
+        <module>dependency-check-cli</module>
+        <module>dependency-check-ant</module>
+        <module>dependency-check-maven</module>
+    </modules>
+    <name>dependency-check-parent</name>
     <url>https://github.com/jeremylong/DependencyCheck.git</url>
-    <description>Dependency-Check is a utility that attempts to detect publicly disclosed vulnerabilities contained within project dependencies. It does this by determining if there is a Common Platform Enumeration (CPE) identifier for a given dependency. If found, it will generate a report linking to the associated CVE entries.</description>
+    <description>Dependency-check is a utility that attempts to detect publicly disclosed vulnerabilities contained within project dependencies. It does this by determining if there is a Common Platform Enumeration (CPE) identifier for a given dependency. If found, it will generate a report linking to the associated CVE entries.</description>
     <inceptionYear>2012</inceptionYear>
+
     <organization>
-        <name>owasp</name>
+        <name>OWASP</name>
+        <url>http://www.owasp.org</url>
     </organization>
 
     <developers>
@@ -43,6 +56,10 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses />.
                 <role>architect</role>
                 <role>developer</role>
             </roles>
+            <properties>
+                <picUrl>https://plus.google.com/s2/photos/profile/108968019311857145023</picUrl>
+                <twitter>@ctxt</twitter>
+            </properties>
         </developer>
         <developer>
             <name>Steve Springett</name>
@@ -54,6 +71,10 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses />.
             </roles>
         </developer>
     </developers>
+    <contributors>
+        <contributor>
+        </contributor>
+    </contributors>
     <scm>
         <connection>scm:git:git@github.com:jeremylong/DependencyCheck.git</connection>
         <url>https://github.com/jeremylong/DependencyCheck.git</url>
@@ -75,38 +96,24 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses />.
     <licenses>
         <license>
             <name>GNU General Public License version 3</name>
-            <url>http://www.gnu.org/licenses/</url>
+            <url>https://raw.github.com/jeremylong/DependencyCheck/master/LICENSE.txt</url>
         </license>
     </licenses>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <github.global.server>github</github.global.server>
     </properties>
-
+    <!-- begin copy from http://minds.coremedia.com/2012/09/11/problem-solved-deploy-multi-module-maven-project-site-as-github-pages/ -->
+    <distributionManagement>
+        <site>
+            <id>github-pages-site</id>
+            <name>Deployment through GitHub's site deployment plugin</name>
+            <url>${project.build.directory}/site/${project.version}</url>
+        </site>
+    </distributionManagement>
+    <!-- end copy -->
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/*.properties</include>
-                </includes>
-                <filtering>true</filtering>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>**/*.properties</exclude>
-                    <exclude>**/*.gif</exclude>
-                    <exclude>**/*.js</exclude>
-                    <exclude>**/schema/**/*.xsd</exclude>
-                    <exclude>**/schema/**/*.xml</exclude>
-                    <exclude>**/schema/**/*.bat</exclude>
-                    <exclude>**/schema/**/*.sh</exclude>
-                </excludes>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -115,156 +122,39 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses />.
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.9</version>
                 <configuration>
-                    <bottom>Copyright© 2012 Jeremy Long. All Rights Reserved.</bottom>
+                    <bottom>Copyright© 2012-13 Jeremy Long. All Rights Reserved.</bottom>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.7</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                            <excludeScope>provided</excludeScope>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>org.owasp.dependencycheck.App</mainClass>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                        </manifest>
-                    </archive>
-                    <excludes>
-                        <exclude>**/checkstyle*</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.5.2</version>
-                <configuration>
-                    <instrumentation>
-                        <ignores>
-                            <ignore>*$KEYS.class</ignore>
-                            <ignore>*$Element.class</ignore>
-                        </ignores>
-                        <excludes>
-                            <exclude>*$KEYS.class</exclude>
-                            <exclude>*$Element.class</exclude>
-                        </excludes>
-                    </instrumentation>
-                    <check>
-                        <branchRate>85</branchRate>
-                        <lineRate>85</lineRate>
-                        <haltOnFailure>false</haltOnFailure>
-                        <totalBranchRate>85</totalBranchRate>
-                        <totalLineRate>85</totalLineRate>
-                        <packageLineRate>85</packageLineRate>
-                        <packageBranchRate>85</packageBranchRate>
-                        <regexes>
-                            <regex>
-                                <pattern>.*\$.*</pattern>
-                                <branchRate>0</branchRate>
-                                <lineRate>0</lineRate>
-                            </regex>
-                            <regex>
-                                <pattern>org.owasp.dependencycheck.data.cpe.Fields</pattern>
-                                <branchRate>0</branchRate>
-                                <lineRate>0</lineRate>
-                            </regex>
-                            <regex>
-                                <pattern>org.owasp.dependencycheck.App</pattern>
-                                <branchRate>0</branchRate>
-                                <lineRate>0</lineRate>
-                            </regex>
-                        </regexes>
-                    </check>
-                </configuration>
-
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.14</version>
-                <configuration>
-                    <systemProperties>
-                        <property>
-                            <name>net.sourceforge.cobertura.datafile</name>
-                            <value>${project.build.directory}/cobertura/cobertura.ser</value>
-                            <workingDirectory>target</workingDirectory>
-                        </property>
-                        <property>
-                            <name>cve</name>
-                            <value>target/data/cve</value>
-                        </property>
-                        <property>
-                            <name>cpe</name>
-                            <value>target/data/cpe</value>
-                        </property>
-                    </systemProperties>
-                    <excludes>
-                        <exclude>**/*IntegrationTest.java</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.14</version>
-                <configuration>
-                    <systemProperties>
-                        <property>
-                            <name>cve</name>
-                            <value>target/data/cve</value>
-                        </property>
-                        <property>
-                            <name>cpe</name>
-                            <value>target/data/cpe</value>
-                        </property>
-                    </systemProperties>
-                    <includes>
-                        <include>**/*IntegrationTest.java</include>
-                    </includes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            <!-- begin copy from http://minds.coremedia.com/2012/09/11/problem-solved-deploy-multi-module-maven-project-site-as-github-pages/ -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.2</version>
+                <version>3.3</version>
+                <dependencies>
+                    <dependency>
+                        <!--
+                        | allows markdown syntax for site generation. To use it place files below
+                        | src/site/markdown/[filename].md
+                        -->
+                        <groupId>org.apache.maven.doxia</groupId>
+                        <artifactId>doxia-module-markdown</artifactId>
+                        <version>1.4</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
+                    <skipDeploy>true</skipDeploy>
                     <reportPlugins>
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
@@ -273,160 +163,54 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses />.
                             <reportSets>
                                 <reportSet>
                                     <reports>
-                                        <report>mailing-list</report>
-                                  <!--<report>cim</report>-->
+                                        <!--
+                                        <report>cim</report>
+                                        <report>dependencies</report>
+                                        <report>dependency-convergence</report>
+                                        <report>dependency-info</report>
+                                        <report>dependency-management</report>
+                                        <report>distribution-management</report>
+                                        -->
                                         <report>index</report>
                                         <report>summary</report>
-                                        <report>license</report>
-                                        <report>scm</report>
+                                        <report>mailing-list</report>
                                         <report>issue-tracking</report>
-                                        <report>dependencies</report>
-                                        <report>plugin-management</report>
+                                        <report>modules</report>
                                         <report>project-team</report>
+                                        <report>scm</report>
+                                        <report>license</report>
+                                        <report>help</report>
                                     </reports>
                                 </reportSet>
                             </reportSets>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>versions-maven-plugin</artifactId>
-                            <version>2.0</version>
-                            <reportSets>
-                                <reportSet>
-                                    <reports>
-                                        <report>dependency-updates-report</report>
-                                        <report>plugin-updates-report</report>
-                                    </reports>
-                                </reportSet>
-                            </reportSets>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-jxr-plugin</artifactId>
-                            <version>2.3</version>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-surefire-report-plugin</artifactId>
-                            <version>2.14</version>
-                            <reportSets>
-                                <reportSet>
-                                    <reports>
-                                        <report>report-only</report>
-                                    </reports>
-                                </reportSet>
-                            </reportSets>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>cobertura-maven-plugin</artifactId>
-                            <version>2.5.2</version>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-pmd-plugin</artifactId>
-                            <version>3.0.1</version>
-                            <configuration>
-                                <targetJdk>1.6</targetJdk>
-                                <linkXref>true</linkXref>
-                                <sourceEncoding>utf-8</sourceEncoding>
-                                <excludes>
-                                    <exclude>**/generated/*.java</exclude>
-                                </excludes>
-                            </configuration>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>taglist-maven-plugin</artifactId>
-                            <version>2.4</version>
-                            <configuration>
-                                <tagListOptions>
-                                    <tagClasses>
-                                        <tagClass>
-                                            <displayName>Todo Work</displayName>
-                                            <tags>
-                                                <tag>
-                                                    <matchString>todo</matchString>
-                                                    <matchType>ignoreCase</matchType>
-                                                </tag>
-                                                <tag>
-                                                    <matchString>FIXME</matchString>
-                                                    <matchType>exact</matchType>
-                                                </tag>
-                                            </tags>
-                                        </tagClass>
-                                    </tagClasses>
-                                </tagListOptions>
-                            </configuration>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-javadoc-plugin</artifactId>
-                            <version>2.9</version>
-                            <reportSets>
-                                <reportSet>
-                                    <id>default</id>
-                                    <reports>
-                                        <report>javadoc</report><!-- using this to exclude "test-javadoc", I just don't see the point of generating this -->
-                                    </reports>
-                                </reportSet>
-                            </reportSets>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-checkstyle-plugin</artifactId>
-                            <version>2.10</version>
-                            <configuration>
-                                <enableRulesSummary>false</enableRulesSummary>
-                                <configLocation>src/main/config/checkstyle-checks.xml</configLocation>
-                            </configuration>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-surefire-report-plugin</artifactId>
-                            <version>2.14</version>
-                            <reportSets>
-                                <reportSet>
-                                    <id>integration-tests</id>
-                                    <reports>
-                                        <report>report-only</report>
-                                        <report>failsafe-report-only</report>
-                                    </reports>
-                                </reportSet>
-                            </reportSets>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>findbugs-maven-plugin</artifactId>
-                            <version>2.5.2</version>
                         </plugin>
                     </reportPlugins>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.7</version>
+                <configuration>
+                    <message>Creating site for ${project.artifactId}, ${project.version}</message>
+                    <!-- this does the trick to place every module in the correct subfolder -->
+                    <path>${project.distributionManagement.site.url}</path>
+                    <merge>true</merge>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>github-site</id>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>site-deploy</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- end copy -->
         </plugins>
     </build>
     <dependencies>
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>annotations</artifactId>
-            <version>2.0.1</version>
-            <scope>provided</scope><!-- don't include this in the libs-->
-        </dependency>
-        <dependency>
-            <groupId>commons-cli</groupId>
-            <artifactId>commons-cli</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.5</version>
-        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -434,89 +218,5 @@ along with DependencyCheck.  If not, see <http://www.gnu.org/licenses />.
             <scope>test</scope>
             <type>jar</type>
         </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-core</artifactId>
-            <version>4.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-analyzers-common</artifactId>
-            <version>4.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-queryparser</artifactId>
-            <version>4.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
-            <version>1.7</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity-tools</artifactId>
-            <version>2.0</version>
-            <!-- very limited use of the velocity-tools, not all of the dependencies are needed-->
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-chain</groupId>
-                    <artifactId>commons-chain</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-validator</groupId>
-                    <artifactId>commons-validator</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>dom4j</groupId>
-                    <artifactId>dom4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>sslext</groupId>
-                    <artifactId>sslext</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.struts</groupId>
-                    <artifactId>struts-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>antlr</groupId>
-                    <artifactId>antlr</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.struts</groupId>
-                    <artifactId>struts-taglib</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.struts</groupId>
-                    <artifactId>struts-tiles</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.3.172</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>1.7.2</version>
-            <type>jar</type>
-        </dependency>
-
-        <!-- The following dependencies are only scanned during integration testing -->
-        <!--<dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>2.5.5</version>
-            <scope>test</scope>
-        </dependency>-->
-
     </dependencies>
 </project>

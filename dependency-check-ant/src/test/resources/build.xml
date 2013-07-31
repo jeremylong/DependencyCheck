@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Dependency-Check Test Build" default="test.fileset" basedir=".">
+
+    <taskdef name="dependency-check" classname="org.owasp.dependencycheck.taskdefs.DependencyCheckTask" />
+
+    <target name="test.fileset">
+        <dependency-check
+            applicationName="My Project"
+            reportOutputDirectory="${project.build.directory}"
+            autoupdate="false"
+            reportFormat="HTML">
+
+            <!-- Scan a single file -->
+            <fileset dir="${project.build.directory}/test-classes/jars">
+                <include name="axis-1.4.jar"/>
+            </fileset>
+
+            <!-- Scan for all jar/war/ear in the webroot dir and all sub directories -->
+            <fileset dir="${project.build.directory}/test-classes/webroot">
+                <include name="**/*.jar"/>
+                <include name="**/*.war"/>
+                <include name="**/*.ear"/>
+            </fileset>
+        </dependency-check>
+    </target>
+    <target name="test.filelist">
+        <dependency-check
+            applicationName="My Project"
+            reportOutputDirectory="${project.build.directory}"
+            autoupdate="false"
+            reportFormat="XML">
+            <!-- Scan specific files -->
+            <filelist
+                dir="${project.build.directory}/test-classes/list"
+                files="jetty-6.1.0.jar,org.mortbay.jetty.jar"/>
+        </dependency-check>
+    </target>
+    <target name="test.dirset">
+        <dependency-check
+            applicationName="My Project"
+            reportOutputDirectory="${project.build.directory}"
+            autoupdate="false"
+            reportFormat="VULN">
+
+            <!-- Scan a specific directory -->
+            <dirset dir="${project.build.directory}/test-classes">
+                <include name="lib"/>
+            </dirset>
+
+        </dependency-check>
+    </target>
+
+    <target name="formatBAD">
+        <dependency-check
+            applicationName="test formatBAD"
+            reportOutputDirectory="${project.build.directory}"
+            autoupdate="false"
+            reportFormat="BAD">
+        </dependency-check>
+    </target>
+
+    <target name="failCVSS">
+        <dependency-check
+            applicationName="test formatBAD"
+            reportOutputDirectory="${project.build.directory}"
+            reportFormat="XML"
+            autoupdate="false"
+            failBuildOnCVSS="8">
+        </dependency-check>
+    </target>
+</project>

@@ -1,0 +1,76 @@
+Usage
+======================
+Dependency-check-maven is very simple to utilize and can be used as a stand-alone
+plugin or as part of the site plugin.
+
+It is important to understand that the first time this task is executed it may
+take 20 minutes or more as it downloads and processes the data from the National
+Vulnerability Database (NVD) hosted by NIST: https://nvd.nist.gov
+
+After the first batch download, as long as the plugin is executed at least once every
+seven days the update will only take a few seconds.
+
+### Create the DependencyCheck-report.html in the target directory
+
+```xml
+<project>
+    <build>
+        <plugins>
+            ...
+            <plugin>
+              <groupId>org.owasp</groupId>
+              <artifactId>dependency-check-maven</artifactId>
+              <version>${project.version}</version>
+              <configuration>
+                  <failBuildOnCVSS>8</failBuildOnCVSS>
+              </configuration>
+              <executions>
+                  <execution>
+                      <goals>
+                          <goal>check</goal>
+                      </goals>
+                  </execution>
+              </executions>
+            </plugin>
+            ...
+        </plugins>
+        ...
+    </build>
+    ...
+</project>
+```
+
+Note, the above configuration will fail the build if any dependencies are found
+to have vulnerabilities with a CVSS score greater then 8. If you do not wish to
+fail the build for CVSS scores do not specify the failBuildOnCVSS element.
+
+### Create the dependency-check report within the site
+
+```xml
+<project>
+    <build>
+        <plugins>
+            ...
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <reportPlugins>
+                        <plugin>
+                            <groupId>org.owasp</groupId>
+                            <artifactId>dependency-check-maven</artifactId>
+                            <version>${project.version}</version>
+                            <configuration>
+                                <externalReport>false</externalReport>
+                            </configuration>
+                        </plugin>
+                    </reportPlugins>
+                </configuration>
+            </plugin>
+            ...
+        </plugins>
+        ...
+    </build>
+    ...
+</project>
+```
