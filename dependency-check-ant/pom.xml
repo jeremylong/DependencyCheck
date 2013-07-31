@@ -22,7 +22,7 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>0.3.2.5-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>dependency-check-ant</artifactId>
@@ -161,7 +161,7 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
                 <version>2.1</version>
                 <configuration>
                     <transformers>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
                         <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                             <resource>META-INF/NOTICE.txt</resource>
                         </transformer>
