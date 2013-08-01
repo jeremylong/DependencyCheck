@@ -1,6 +1,6 @@
 Installation & Usage
 --------------------
-Downlod the dependency-check command line tool [here](http://dl.bintray.com/jeremy-long/owasp/dependency-check-1.0.0-release.zip).
+Downlod the dependency-check command line tool [here](http://dl.bintray.com/jeremy-long/owasp/dependency-check-1.0.1-release.zip).
 Extract the zip file to a location on your computer and put the 'bin' directory into the
 path environment variable. On \*nix systems you will likely need to make the shell
 script executable:
