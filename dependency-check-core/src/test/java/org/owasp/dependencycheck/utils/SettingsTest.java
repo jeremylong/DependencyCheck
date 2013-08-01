@@ -67,7 +67,7 @@ public class SettingsTest {
      * Test of getFile method, of class Settings.
      */
     @Test
-    public void testGetFile() {
+    public void testGetFile() throws IOException {
         String key = Settings.KEYS.CPE_DATA_DIRECTORY;
         String expResult = "data" + File.separator + "cpe";
         File result = Settings.getFile(key);

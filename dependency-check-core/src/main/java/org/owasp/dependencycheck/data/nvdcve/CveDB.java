@@ -523,9 +523,7 @@ public class CveDB {
      * @throws IOException is thrown if an IOException occurs of course...
      */
     public static File getDataDirectory() throws IOException {
-        final String fileName = Settings.getString(Settings.KEYS.CVE_DATA_DIRECTORY);
-        final String dataDirectory = Settings.getString(Settings.KEYS.DATA_DIRECTORY);
-        final File path = new File(dataDirectory, fileName);
+        final File path = Settings.getFile(Settings.KEYS.CVE_DATA_DIRECTORY);
         if (!path.exists()) {
             if (!path.mkdirs()) {
                 throw new IOException("Unable to create NVD CVE Data directory");

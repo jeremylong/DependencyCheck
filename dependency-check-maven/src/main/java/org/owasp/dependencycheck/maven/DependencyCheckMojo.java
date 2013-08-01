@@ -68,6 +68,10 @@ import org.owasp.dependencycheck.utils.Settings;
 public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageReport {
 
     /**
+     * The properties file location.
+     */
+    private static final String PROPERTIES_FILE = "mojo.properties";
+    /**
      * Name of the logging properties file.
      */
     private static final String LOG_PROPERTIES_FILE = "log.properties";
@@ -619,6 +623,23 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * proxy url, port, and connection timeout.
      */
     private void populateSettings() {
+        InputStream mojoProperties = null;
+        try {
+            mojoProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);
+            Settings.mergeProperties(mojoProperties);
+        } catch (IOException ex) {
+            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.WARNING, "Unable to load the dependency-check ant task.properties file.");
+            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINE, null, ex);
+        } finally {
+            if (mojoProperties != null) {
+                try {
+                    mojoProperties.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINEST, null, ex);
+                }
+            }
+        }
+
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
 
         if (proxyUrl != null && !proxyUrl.isEmpty()) {
