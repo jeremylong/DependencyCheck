@@ -67,7 +67,7 @@ public class DownloaderIntegrationTest {
         String outputPath = "target/downloaded_cpe.xml";
         Downloader.fetchFile(url, outputPath, true);
 
-        url = new URL("http://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-2010.xml");
+        url = new URL(Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL));
         outputPath = "target/downloaded_cve.xml";
         Downloader.fetchFile(url, outputPath, false);
 

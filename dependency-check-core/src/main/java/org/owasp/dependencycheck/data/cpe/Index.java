@@ -66,12 +66,11 @@ public class Index extends AbstractIndex {
      * @throws IOException is thrown if an IOException occurs of course...
      */
     public File getDataDirectory() throws IOException {
-        final String fileName = Settings.getString(Settings.KEYS.CPE_DATA_DIRECTORY);
-        final String dataDirectory = Settings.getString(Settings.KEYS.DATA_DIRECTORY);
-        //final File path = FileUtils.getDataDirectory(fileName, Index.class);
-        final File path = new File(dataDirectory, fileName);
-        if (!path.exists() && !path.mkdirs()) {
-            throw new IOException("Unable to create CPE Data directory");
+        final File path = Settings.getFile(Settings.KEYS.CPE_DATA_DIRECTORY);
+        if (!path.exists()) {
+            if (!path.mkdirs()) {
+                throw new IOException("Unable to create CPE Data directory");
+            }
         }
         return path;
     }

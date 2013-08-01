@@ -23,6 +23,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -252,16 +254,48 @@ public final class Settings {
      * argument - this method will return the value from the system properties
      * before the values in the contained configuration file.
      *
+     * This method will also replace a leading "[JAR]\" sequence with the path
+     * to the folder containing the JAR file containing this class.
+     *
      * @param key the key to lookup within the properties file
      * @return the property from the properties file converted to a File object
+     * @throws IOException thrown if the file path to the JAR cannot be found
      */
-    public static File getFile(String key) {
+    public static File getFile(String key) throws IOException {
+        final String file = getString(key);
         final String baseDir = getString(Settings.KEYS.DATA_DIRECTORY);
-        final String tmp = getString(key);
         if (baseDir != null) {
-            return new File(baseDir, tmp);
+            if (baseDir.startsWith("[JAR]/")) {
+                final File jarPath = getJarPath();
+                final File newBase = new File(jarPath.getCanonicalPath(), baseDir.substring(6));
+                return new File(newBase, file);
+            }
+            return new File(baseDir, file);
         }
-        return new File(tmp);
+        return new File(file);
+    }
+
+    /**
+     * Attempts to retrieve the folder containing the Jar file containing the
+     * Settings class.
+     *
+     * @return a File object
+     */
+    private static File getJarPath() {
+        final String jarPath = Settings.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String decodedPath = ".";
+        try {
+            decodedPath = URLDecoder.decode(jarPath, "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(Settings.class.getName()).log(Level.FINEST, null, ex);
+        }
+
+        final File path = new File(decodedPath);
+        if (path.getName().toLowerCase().endsWith(".jar")) {
+            return path.getParentFile();
+        } else {
+            return new File(".");
+        }
     }
 
     /**
