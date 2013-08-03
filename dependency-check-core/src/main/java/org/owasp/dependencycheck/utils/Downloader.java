@@ -27,6 +27,7 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.SocketAddress;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -162,7 +163,8 @@ public final class Downloader {
 
     /**
      * Makes an HTTP Head request to retrieve the last modified date of the
-     * given URL.
+     * given URL. If the file:// protocol is specified, then the lastTimestamp
+     * of the file is returned.
      *
      * @param url the URL to retrieve the timestamp from
      * @return an epoch timestamp
@@ -170,21 +172,33 @@ public final class Downloader {
      * the HTTP request
      */
     public static long getLastModified(URL url) throws DownloadFailedException {
-        HttpURLConnection conn = null;
         long timestamp = 0;
-        try {
-            conn = Downloader.getConnection(url);
-            conn.setRequestMethod("HEAD");
-            conn.connect();
-            timestamp = conn.getLastModified();
-        } catch (Exception ex) {
-            throw new DownloadFailedException("Error making HTTP HEAD request.", ex);
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.disconnect();
-                } finally {
-                    conn = null;
+        //TODO add the FPR protocol?
+        if ("file:".equalsIgnoreCase(url.getProtocol())) {
+            File f;
+            try {
+                f = new File(url.toURI());
+            } catch (URISyntaxException ex) {
+                final String msg = String.format("Unable to locate '%s'; is the cve.url-2.0.modified property set correctly?", url.toString());
+                throw new DownloadFailedException(msg);
+            }
+            timestamp = f.lastModified();
+        } else {
+            HttpURLConnection conn = null;
+            try {
+                conn = Downloader.getConnection(url);
+                conn.setRequestMethod("HEAD");
+                conn.connect();
+                timestamp = conn.getLastModified();
+            } catch (Exception ex) {
+                throw new DownloadFailedException("Error making HTTP HEAD request.", ex);
+            } finally {
+                if (conn != null) {
+                    try {
+                        conn.disconnect();
+                    } finally {
+                        conn = null;
+                    }
                 }
             }
         }
