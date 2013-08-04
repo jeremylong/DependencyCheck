@@ -18,6 +18,7 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import java.io.File;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.Downloader;
 import java.net.URL;
@@ -70,8 +71,8 @@ public class DownloaderIntegrationTest {
 //        Downloader.fetchFile(url, outputPath, true);
 
         URL url = new URL(Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL));
-        String outputPath = "target/downloaded_cve.xml";
-        Downloader.fetchFile(url, outputPath, false);
+        File outputPath = new File("target/downloaded_cve.xml");
+        Downloader.fetchFile(url, outputPath);
 
     }
 
