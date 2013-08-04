@@ -88,6 +88,11 @@ public class DatabaseUpdater implements CachedWebDataSource {
      */
     private Index cpeIndex = null;
 
+    public DatabaseUpdater() {
+        batchUpdateMode = !Settings.getString(Settings.KEYS.BATCH_UPDATE_URL, "").isEmpty();
+        doBatchUpdate = false;
+    }
+
     /**
      * <p>Downloads the latest NVD CVE XML file from the web and imports it into
      * the current CVE Database.</p>
@@ -95,6 +100,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
      * @throws UpdateException is thrown if there is an error updating the
      * database
      */
+    @Override
     public void update() throws UpdateException {
         try {
             final Map<String, NvdCveUrl> update = updateNeeded();
@@ -111,6 +117,15 @@ public class DatabaseUpdater implements CachedWebDataSource {
             if (maxUpdates > 0) {
                 openDataStores();
             }
+
+            if (isBatchUpdateMode() && isDoBatchUpdate()) {
+                try {
+                    performBatchUpdate();
+                } catch (IOException ex) {
+                    throw new UpdateException("Unable to perform batch update", ex);
+                }
+            }
+
             int count = 0;
 
             for (NvdCveUrl cve : update.values()) {
@@ -126,11 +141,11 @@ public class DatabaseUpdater implements CachedWebDataSource {
                                 "Downloading {0}", cve.getUrl());
 
                         outputPath = File.createTempFile("cve" + cve.getId() + "_", ".xml");
-                        Downloader.fetchFile(url, outputPath, false);
+                        Downloader.fetchFile(url, outputPath);
 
                         url = new URL(cve.getOldSchemaVersionUrl());
                         outputPath12 = File.createTempFile("cve_1_2_" + cve.getId() + "_", ".xml");
-                        Downloader.fetchFile(url, outputPath12, false);
+                        Downloader.fetchFile(url, outputPath12);
 
                         Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.INFO,
                                 "Processing {0}", cve.getUrl());
@@ -203,8 +218,8 @@ public class DatabaseUpdater implements CachedWebDataSource {
      * @throws ParserConfigurationException is thrown if there is a parser
      * configuration exception
      * @throws SAXException is thrown if there is a SAXException
-     * @throws IOException is thrown if there is a ioexception
-     * @throws SQLException is thrown if there is a sql exception
+     * @throws IOException is thrown if there is a IO Exception
+     * @throws SQLException is thrown if there is a SQL exception
      * @throws DatabaseException is thrown if there is a database exception
      * @throws ClassNotFoundException thrown if the h2 database driver cannot be
      * loaded
@@ -381,17 +396,25 @@ public class DatabaseUpdater implements CachedWebDataSource {
         if (currentlyPublished == null) {
             throw new DownloadFailedException("Unable to retrieve valid timestamp from nvd cve downloads page");
         }
-        String dir;
-        try {
-            dir = CveDB.getDataDirectory().getCanonicalPath();
-        } catch (IOException ex) {
-            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINE, "CveDB data directory doesn't exist?", ex);
-            throw new UpdateException("Unable to locate last updated properties file.", ex);
-        }
 
-        final File f = new File(dir);
-        if (f.exists()) {
-            final File cveProp = new File(dir, UPDATE_PROPERTIES_FILE);
+        final File cpeDataDirectory;
+        try {
+            cpeDataDirectory = CveDB.getDataDirectory();
+        } catch (IOException ex) {
+            String msg;
+            try {
+                msg = String.format("Unable to create the CVE Data Directory '%s'",
+                        Settings.getFile(Settings.KEYS.CVE_DATA_DIRECTORY).getCanonicalPath());
+            } catch (IOException ex1) {
+                msg = String.format("Unable to create the CVE Data Directory, this is likely a configuration issue: '%s%s%s'",
+                        Settings.getString(Settings.KEYS.DATA_DIRECTORY, ""),
+                        File.separator,
+                        Settings.getString(Settings.KEYS.CVE_DATA_DIRECTORY, ""));
+            }
+            throw new UpdateException(msg, ex);
+        }
+        if (cpeDataDirectory.exists()) {
+            final File cveProp = new File(cpeDataDirectory, UPDATE_PROPERTIES_FILE);
             if (cveProp.exists()) {
                 final Properties prop = new Properties();
                 InputStream is = null;
@@ -416,15 +439,10 @@ public class DatabaseUpdater implements CachedWebDataSource {
                         }
                     }
                     if (deleteAndRecreate) {
-                        Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.INFO, "The database version is old. Rebuilding the database.");
                         is.close();
-                        //this is an old version of the lucene index - just delete it
-                        FileUtils.delete(f);
-
-                        //this importer also updates the CPE index and it is also using an old version
-                        final Index cpeId = new Index();
-                        final File cpeDir = cpeId.getDataDirectory();
-                        FileUtils.delete(cpeDir);
+                        is = null;
+                        deleteExistingData();
+                        setDoBatchUpdate(isBatchUpdateMode());
                         return currentlyPublished;
                     }
 
@@ -435,11 +453,19 @@ public class DatabaseUpdater implements CachedWebDataSource {
                     final int end = Calendar.getInstance().get(Calendar.YEAR);
                     if (lastUpdated == currentlyPublished.get(MODIFIED).timestamp) {
                         currentlyPublished.clear(); //we don't need to update anything.
+                        setDoBatchUpdate(batchUpdateMode);
                     } else if (withinRange(lastUpdated, now.getTime(), days)) {
                         currentlyPublished.get(MODIFIED).setNeedsUpdate(true);
-                        for (int i = start; i <= end; i++) {
-                            currentlyPublished.get(String.valueOf(i)).setNeedsUpdate(false);
+                        if (isBatchUpdateMode()) {
+                            setDoBatchUpdate(false);
+                        } else {
+                            for (int i = start; i <= end; i++) {
+                                currentlyPublished.get(String.valueOf(i)).setNeedsUpdate(false);
+                            }
                         }
+                    } else if (isBatchUpdateMode()) {
+                        currentlyPublished.get(MODIFIED).setNeedsUpdate(true);
+                        setDoBatchUpdate(true);
                     } else { //we figure out which of the several XML files need to be downloaded.
                         currentlyPublished.get(MODIFIED).setNeedsUpdate(false);
                         for (int i = start; i <= end; i++) {
@@ -492,6 +518,49 @@ public class DatabaseUpdater implements CachedWebDataSource {
         final double differenceInDays = (compareTo - date) / 1000.0 / 60.0 / 60.0 / 24.0;
         return differenceInDays < range;
     }
+    /**
+     * Indicates whether or not the updates are using a batch update mode or
+     * not.
+     */
+    private boolean batchUpdateMode;
+
+    /**
+     * Get the value of batchUpdateMode.
+     *
+     * @return the value of batchUpdateMode
+     */
+    protected boolean isBatchUpdateMode() {
+        return batchUpdateMode;
+    }
+
+    /**
+     * Set the value of batchUpdateMode.
+     *
+     * @param batchUpdateMode new value of batchUpdateMode
+     */
+    protected void setBatchUpdateMode(boolean batchUpdateMode) {
+        this.batchUpdateMode = batchUpdateMode;
+    }
+    //flag indicating whether or not the batch update should be performed.
+    protected boolean doBatchUpdate;
+
+    /**
+     * Get the value of doBatchUpdate
+     *
+     * @return the value of doBatchUpdate
+     */
+    protected boolean isDoBatchUpdate() {
+        return doBatchUpdate;
+    }
+
+    /**
+     * Set the value of doBatchUpdate
+     *
+     * @param doBatchUpdate new value of doBatchUpdate
+     */
+    protected void setDoBatchUpdate(boolean doBatchUpdate) {
+        this.doBatchUpdate = doBatchUpdate;
+    }
 
     /**
      * Retrieves the timestamps from the NVD CVE meta data file.
@@ -520,18 +589,21 @@ public class DatabaseUpdater implements CachedWebDataSource {
         item.timestamp = Downloader.getLastModified(new URL(retrieveUrl));
         map.put(MODIFIED, item);
 
-        final int start = Settings.getInt(Settings.KEYS.CVE_START_YEAR);
-        final int end = Calendar.getInstance().get(Calendar.YEAR);
-        final String baseUrl20 = Settings.getString(Settings.KEYS.CVE_SCHEMA_2_0);
-        final String baseUrl12 = Settings.getString(Settings.KEYS.CVE_SCHEMA_1_2);
-        for (int i = start; i <= end; i++) {
-            retrieveUrl = String.format(baseUrl20, i);
-            item = new NvdCveUrl();
-            item.setId(Integer.toString(i));
-            item.setUrl(retrieveUrl);
-            item.setOldSchemaVersionUrl(String.format(baseUrl12, i));
-            item.setTimestamp(Downloader.getLastModified(new URL(retrieveUrl)));
-            map.put(item.id, item);
+        //only add these urls if we are not in batch mode
+        if (!isBatchUpdateMode()) {
+            final int start = Settings.getInt(Settings.KEYS.CVE_START_YEAR);
+            final int end = Calendar.getInstance().get(Calendar.YEAR);
+            final String baseUrl20 = Settings.getString(Settings.KEYS.CVE_SCHEMA_2_0);
+            final String baseUrl12 = Settings.getString(Settings.KEYS.CVE_SCHEMA_1_2);
+            for (int i = start; i <= end; i++) {
+                retrieveUrl = String.format(baseUrl20, i);
+                item = new NvdCveUrl();
+                item.setId(Integer.toString(i));
+                item.setUrl(retrieveUrl);
+                item.setOldSchemaVersionUrl(String.format(baseUrl12, i));
+                item.setTimestamp(Downloader.getLastModified(new URL(retrieveUrl)));
+                map.put(item.id, item);
+            }
         }
         return map;
     }
@@ -547,6 +619,33 @@ public class DatabaseUpdater implements CachedWebDataSource {
             writeLastUpdatedPropertyFile(update.get(MODIFIED));
         } catch (UpdateException ex) {
             Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINE, null, ex);
+        }
+    }
+
+    /**
+     * Deletes the existing data directories.
+     *
+     * @throws IOException thrown if the directory cannot be deleted
+     */
+    private void deleteExistingData() throws IOException {
+        Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.INFO, "The database version is old. Rebuilding the database.");
+
+        final File cveDir = CveDB.getDataDirectory();
+        FileUtils.delete(cveDir);
+
+        final File cpeDir = Index.getDataDirectory();
+        FileUtils.delete(cpeDir);
+    }
+
+    private void performBatchUpdate() throws IOException {
+        if (batchUpdateMode && doBatchUpdate) {
+            deleteExistingData();
+            String batchSrc = Settings.getString(Settings.KEYS.BATCH_UPDATE_URL);
+            File dataDirectory = CveDB.getDataDirectory().getParentFile();
+            URL batchUrl = new URL(batchSrc);
+            File tmp = File.createTempFile("batch_", ".zip");
+            Downloader.fetchFile(batchUrl, tmp);
+            FileUtils.extractFiles(tmp, dataDirectory);
         }
     }
 
