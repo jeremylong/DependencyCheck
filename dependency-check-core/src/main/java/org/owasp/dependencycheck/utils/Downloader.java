@@ -55,48 +55,7 @@ public final class Downloader {
      * @throws DownloadFailedException is thrown if there is an error
      * downloading the file.
      */
-    public static void fetchFile(URL url, String outputPath) throws DownloadFailedException {
-        fetchFile(url, outputPath, false);
-    }
-
-    /**
-     * Retrieves a file from a given URL and saves it to the outputPath.
-     *
-     * @param url the URL of the file to download.
-     * @param outputPath the path to the save the file to.
-     * @param unzip true/false indicating that the file being retrieved is
-     * gzipped and if true, should be uncompressed before writing to the file.
-     * @throws DownloadFailedException is thrown if there is an error
-     * downloading the file.
-     */
-    public static void fetchFile(URL url, String outputPath, boolean unzip) throws DownloadFailedException {
-        final File f = new File(outputPath);
-        fetchFile(url, f, unzip);
-    }
-
-    /**
-     * Retrieves a file from a given URL and saves it to the outputPath.
-     *
-     * @param url the URL of the file to download.
-     * @param outputPath the path to the save the file to.
-     * @throws DownloadFailedException is thrown if there is an error
-     * downloading the file.
-     */
     public static void fetchFile(URL url, File outputPath) throws DownloadFailedException {
-        fetchFile(url, outputPath, false);
-    }
-
-    /**
-     * Retrieves a file from a given URL and saves it to the outputPath.
-     *
-     * @param url the URL of the file to download.
-     * @param outputPath the path to the save the file to.
-     * @param unzip true/false indicating that the file being retrieved is
-     * gzipped and if true, should be uncompressed before writing to the file.
-     * @throws DownloadFailedException is thrown if there is an error
-     * downloading the file.
-     */
-    public static void fetchFile(URL url, File outputPath, boolean unzip) throws DownloadFailedException {
         HttpURLConnection conn = null;
         try {
             conn = Downloader.getConnection(url);
@@ -117,7 +76,7 @@ public final class Downloader {
         BufferedOutputStream writer = null;
         InputStream reader = null;
         try {
-            if (unzip || (encoding != null && "gzip".equalsIgnoreCase(encoding))) {
+            if (encoding != null && "gzip".equalsIgnoreCase(encoding)) {
                 reader = new GZIPInputStream(conn.getInputStream());
             } else if (encoding != null && "deflate".equalsIgnoreCase(encoding)) {
                 reader = new InflaterInputStream(conn.getInputStream());
@@ -137,7 +96,6 @@ public final class Downloader {
             if (writer != null) {
                 try {
                     writer.close();
-                    writer = null;
                 } catch (Exception ex) {
                     Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
                             "Error closing the writer in Downloader.", ex);
@@ -146,9 +104,7 @@ public final class Downloader {
             if (reader != null) {
                 try {
                     reader.close();
-                    reader = null;
                 } catch (Exception ex) {
-
                     Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
                             "Error closing the reader in Downloader.", ex);
                 }
