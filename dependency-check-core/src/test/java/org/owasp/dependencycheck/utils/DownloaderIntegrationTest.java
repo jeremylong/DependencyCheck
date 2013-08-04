@@ -82,4 +82,12 @@ public class DownloaderIntegrationTest {
         long timestamp = Downloader.getLastModified(url);
         assertTrue("timestamp equal to zero?", timestamp > 0);
     }
+
+    @Test
+    public void testGetLastModified_file() throws Exception {
+        File f = new File("target/test-classes/nvdcve-2.0-2012.xml");
+        URL url = new URL("file://" + f.getCanonicalPath());
+        long timestamp = Downloader.getLastModified(url);
+        assertTrue("timestamp equal to zero?", timestamp > 0);
+    }
 }
