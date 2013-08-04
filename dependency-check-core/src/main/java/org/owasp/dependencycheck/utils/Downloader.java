@@ -130,10 +130,19 @@ public final class Downloader {
     public static long getLastModified(URL url) throws DownloadFailedException {
         long timestamp = 0;
         //TODO add the FPR protocol?
-        if ("file:".equalsIgnoreCase(url.getProtocol())) {
+        if ("file".equalsIgnoreCase(url.getProtocol())) {
             File f;
             try {
-                f = new File(url.toURI());
+                if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+                    String filePath = url.toString();
+                    if (filePath.matches("file://[a-zA-Z]:.*")) {
+                        f = new File(filePath.substring(7));
+                    } else {
+                        f = new File(url.toURI());
+                    }
+                } else {
+                    f = new File(url.toURI());
+                }
             } catch (URISyntaxException ex) {
                 final String msg = String.format("Unable to locate '%s'; is the cve.url-2.0.modified property set correctly?", url.toString());
                 throw new DownloadFailedException(msg);
