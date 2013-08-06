@@ -131,23 +131,23 @@ public final class Downloader {
         long timestamp = 0;
         //TODO add the FPR protocol?
         if ("file".equalsIgnoreCase(url.getProtocol())) {
-            File f;
+            File lastModifiedFile;
             try {
-                if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
-                    String filePath = url.toString();
-                    if (filePath.matches("file://[a-zA-Z]:.*")) {
-                        f = new File(filePath.substring(7));
-                    } else {
-                        f = new File(url.toURI());
-                    }
-                } else {
-                    f = new File(url.toURI());
-                }
+//                if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+//                    String filePath = url.toString();
+//                    if (filePath.matches("file://[a-zA-Z]:.*")) {
+//                        f = new File(filePath.substring(7));
+//                    } else {
+//                        f = new File(url.toURI());
+//                    }
+//                } else {
+                lastModifiedFile = new File(url.toURI());
+//                }
             } catch (URISyntaxException ex) {
                 final String msg = String.format("Unable to locate '%s'; is the cve.url-2.0.modified property set correctly?", url.toString());
                 throw new DownloadFailedException(msg);
             }
-            timestamp = f.lastModified();
+            timestamp = lastModifiedFile.lastModified();
         } else {
             HttpURLConnection conn = null;
             try {
@@ -192,11 +192,8 @@ public final class Downloader {
             } else {
                 conn = (HttpURLConnection) url.openConnection();
             }
-            //added a default timeout of 20000
-            //if (Settings.getString(Settings.KEYS.CONNECTION_TIMEOUT) != null) {
             final int timeout = Settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT, 60000);
             conn.setConnectTimeout(timeout);
-            //}
         } catch (IOException ex) {
             if (conn != null) {
                 try {

@@ -200,7 +200,7 @@ public final class FileUtils {
             while ((entry = zis.getNextEntry()) != null) {
                 if (entry.isDirectory()) {
                     final File d = new File(extractTo, entry.getName());
-                    if (!d.mkdirs()) {
+                    if (!d.exists() && !d.mkdirs()) {
                         final String msg = String.format("Unable to create '%s'.", d.getAbsolutePath());
                         throw new ExtractionException(msg);
                     }

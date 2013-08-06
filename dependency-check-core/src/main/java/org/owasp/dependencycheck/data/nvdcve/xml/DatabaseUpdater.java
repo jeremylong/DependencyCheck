@@ -29,6 +29,7 @@ import java.io.OutputStreamWriter;
 import javax.xml.parsers.ParserConfigurationException;
 import org.owasp.dependencycheck.data.CachedWebDataSource;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -114,13 +115,14 @@ public class DatabaseUpdater implements CachedWebDataSource {
                 Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.INFO,
                         "NVD CVE requires several updates; this could take a couple of minutes.");
             }
-            if (maxUpdates > 0) {
+            if (maxUpdates > 0 && !isDoBatchUpdate()) {
                 openDataStores();
             }
 
             if (isBatchUpdateMode() && isDoBatchUpdate()) {
                 try {
                     performBatchUpdate();
+                    openDataStores();
                 } catch (IOException ex) {
                     throw new UpdateException("Unable to perform batch update", ex);
                 }
@@ -498,7 +500,12 @@ public class DatabaseUpdater implements CachedWebDataSource {
                         }
                     }
                 }
+            } else {
+                //properties file does not exist - check about batch update
+                setDoBatchUpdate(isBatchUpdateMode());
             }
+        } else { //this condition will likely never exist - but just in case we need to handle batch updates
+            setDoBatchUpdate(isBatchUpdateMode());
         }
         return currentlyPublished;
     }
@@ -627,7 +634,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
      *
      * @throws IOException thrown if the directory cannot be deleted
      */
-    private void deleteExistingData() throws IOException {
+    protected void deleteExistingData() throws IOException {
         Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.INFO, "The database version is old. Rebuilding the database.");
 
         final File cveDir = CveDB.getDataDirectory();
@@ -637,15 +644,37 @@ public class DatabaseUpdater implements CachedWebDataSource {
         FileUtils.delete(cpeDir);
     }
 
-    private void performBatchUpdate() throws IOException {
+    private void performBatchUpdate() throws UpdateException {
         if (batchUpdateMode && doBatchUpdate) {
-            deleteExistingData();
-            String batchSrc = Settings.getString(Settings.KEYS.BATCH_UPDATE_URL);
-            File dataDirectory = CveDB.getDataDirectory().getParentFile();
-            URL batchUrl = new URL(batchSrc);
-            File tmp = File.createTempFile("batch_", ".zip");
-            Downloader.fetchFile(batchUrl, tmp);
-            FileUtils.extractFiles(tmp, dataDirectory);
+            final String batchSrc = Settings.getString(Settings.KEYS.BATCH_UPDATE_URL);
+            File tmp = null;
+            try {
+                deleteExistingData();
+                final File dataDirectory = CveDB.getDataDirectory().getParentFile();
+                final URL batchUrl = new URL(batchSrc);
+                if ("file".equals(batchUrl.getProtocol())) {
+                    try {
+                        tmp = new File(batchUrl.toURI());
+                    } catch (URISyntaxException ex) {
+                        final String msg = String.format("Invalid batch update URI: %s", batchSrc);
+                        throw new UpdateException(msg, ex);
+                    }
+                } else if ("http".equals(batchUrl.getProtocol())
+                        || "https".equals(batchUrl.getProtocol())) {
+                    tmp = File.createTempFile("batch_", ".zip");
+                    Downloader.fetchFile(batchUrl, tmp);
+                }
+                //TODO add FTP?
+                FileUtils.extractFiles(tmp, dataDirectory);
+
+            } catch (IOException ex) {
+                final String msg = String.format("IO Exception Occured performing batch update using: %s", batchSrc);
+                throw new UpdateException(msg, ex);
+            } finally {
+                if (tmp != null && !tmp.delete()) {
+                    tmp.deleteOnExit();
+                }
+            }
         }
     }
 
