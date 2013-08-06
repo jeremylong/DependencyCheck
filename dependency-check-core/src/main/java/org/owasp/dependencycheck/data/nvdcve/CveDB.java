@@ -176,7 +176,7 @@ public class CveDB {
         final File f = new File(fileName, "cve." + DB_SCHEMA_VERSION);
         final File check = new File(f.getAbsolutePath() + ".h2.db");
         final boolean createTables = !check.exists();
-        final String connStr = "jdbc:h2:file:" + f.getAbsolutePath();
+        final String connStr = String.format("jdbc:h2:file:%s;AUTO_SERVER=TRUE", f.getAbsolutePath());
         Class.forName("org.h2.Driver");
         conn = DriverManager.getConnection(connStr, "sa", "");
         if (createTables) {
