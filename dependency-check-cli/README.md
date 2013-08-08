@@ -5,18 +5,6 @@ Dependency-Check is a utility that attempts to detect publicly disclosed vulnera
 
 Documentation and links to production binary releases can be found on the [github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-cli/installation.html).
 
-Usage
-------------
-
-```
-$ mvn package
-$ cd target/release/bin
-$ dependency-check-[version].sh -h
-$ dependency-check-[version].sh -a Testing -scan ../../test-classes
-```
-
-Then load the resulting 'DependencyCheck-Report.html' into your favorite browser.
-
 Mailing List
 ------------
 

@@ -1,25 +1,12 @@
 Dependency-Check-Ant
-=========
+===================
 
 Dependency-Check is a utility that attempts to detect publicly disclosed vulnerabilities contained within project dependencies. It does this by determining if there is a Common Platform Enumeration (CPE) identifier for a given dependency. If found, it will generate a report linking to the associated CVE entries.
 
 Documentation and links to production binary releases can be found on the [github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-ant/installation.html).
 
-Usage
--
-
-> $ mvn package
-
-> $ cd target
-
-> $ java -jar dependency-check-[version].jar -h
-
-> $ java -jar dependency-check-[version].jar -a Testing -out . -scan ./test-classes -scan ./lib
-
-Then load the resulting 'DependencyCheck-Report.html' into your favorite browser.
-
 Mailing List
--
+------------
 
 Subscribe: [dependency-check+subscribe@googlegroups.com] [subscribe]
 
