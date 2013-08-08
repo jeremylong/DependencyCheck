@@ -65,7 +65,7 @@ public class Index extends AbstractIndex {
      * @return the data directory for this index.
      * @throws IOException is thrown if an IOException occurs of course...
      */
-    public static File getDataDirectory() throws IOException {
+    public File getDataDirectory() throws IOException {
         final File path = Settings.getFile(Settings.KEYS.CPE_DATA_DIRECTORY);
         if (!path.exists()) {
             if (!path.mkdirs()) {

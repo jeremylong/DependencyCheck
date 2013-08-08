@@ -18,7 +18,6 @@
  */
 package org.owasp.dependencycheck.utils;
 
-import java.io.File;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.Downloader;
 import java.net.URL;
@@ -64,15 +63,13 @@ public class DownloaderIntegrationTest {
 //        Settings.setString(Settings.KEYS.PROXY_PORT, "8080");
 //        Settings.setString(Settings.KEYS.PROXY_URL, "127.0.0.1");
 
+        URL url = new URL(Settings.getString(Settings.KEYS.CPE_URL));
+        String outputPath = "target/downloaded_cpe.xml";
+        Downloader.fetchFile(url, outputPath, true);
 
-//        Removed as the actual CPE is no longer used.
-//        URL url = new URL(Settings.getString(Settings.KEYS.CPE_URL));
-//        String outputPath = "target/downloaded_cpe.xml";
-//        Downloader.fetchFile(url, outputPath, true);
-
-        URL url = new URL(Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL));
-        File outputPath = new File("target/downloaded_cve.xml");
-        Downloader.fetchFile(url, outputPath);
+        url = new URL(Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL));
+        outputPath = "target/downloaded_cve.xml";
+        Downloader.fetchFile(url, outputPath, false);
 
     }
 

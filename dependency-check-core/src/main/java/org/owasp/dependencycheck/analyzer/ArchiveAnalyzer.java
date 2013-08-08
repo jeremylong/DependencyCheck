@@ -18,16 +18,25 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import org.h2.store.fs.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.utils.ExtractionException;
-import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -48,6 +57,10 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
 
+    /**
+     * The buffer size to use when extracting files from the archive.
+     */
+    private static final int BUFFER_SIZE = 4096;
     /**
      * The count of directories created during analysis. This is used for
      * creating temporary directories.
@@ -147,7 +160,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
     @Override
     public void close() throws Exception {
         if (tempFileLocation != null && tempFileLocation.exists()) {
-            FileUtils.delete(tempFileLocation, true);
+            FileUtils.deleteRecursive(tempFileLocation.getAbsolutePath(), true);
         }
     }
 
@@ -164,12 +177,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
         final File f = new File(dependency.getActualFilePath());
         final File tmpDir = getNextTempDirectory();
-        try {
-            org.owasp.dependencycheck.utils.FileUtils.extractFiles(f, tmpDir, engine);
-        } catch (ExtractionException ex) {
-            final String msg = String.format("Unable to extract files from '%s'; this file is being skipped.", dependency.getActualFilePath());
-            throw new AnalysisException(msg, ex);
-        }
+        extractFiles(f, tmpDir, engine);
 
         //make a copy
         final List<Dependency> dependencies = new ArrayList<Dependency>(engine.getDependencies());
@@ -219,5 +227,82 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
             throw new AnalysisException("Unable to create temp directory '" + directory.getAbsolutePath() + "'.");
         }
         return directory;
+    }
+
+    /**
+     * Extracts the contents of an archive into the specified directory.
+     *
+     * @param archive an archive file such as a WAR or EAR
+     * @param extractTo a directory to extract the contents to
+     * @param engine the scanning engine
+     * @throws AnalysisException thrown if the archive is not found
+     */
+    private void extractFiles(File archive, File extractTo, Engine engine) throws AnalysisException {
+        if (archive == null || extractTo == null) {
+            return;
+        }
+
+        FileInputStream fis = null;
+        ZipInputStream zis = null;
+
+        try {
+            fis = new FileInputStream(archive);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.INFO, null, ex);
+            throw new AnalysisException("Archive file was not found.", ex);
+        }
+        zis = new ZipInputStream(new BufferedInputStream(fis));
+        ZipEntry entry;
+        try {
+            while ((entry = zis.getNextEntry()) != null) {
+                if (entry.isDirectory()) {
+                    final File d = new File(extractTo, entry.getName());
+                    if (!d.mkdirs()) {
+                        throw new AnalysisException("Unable to create '" + d.getAbsolutePath() + "'.");
+                    }
+                } else {
+                    final File file = new File(extractTo, entry.getName());
+                    final String ext = org.owasp.dependencycheck.utils.FileUtils.getFileExtension(file.getName());
+                    if (engine.supportsExtension(ext)) {
+                        BufferedOutputStream bos = null;
+                        FileOutputStream fos;
+                        try {
+                            fos = new FileOutputStream(file);
+                            bos = new BufferedOutputStream(fos, BUFFER_SIZE);
+                            int count;
+                            final byte data[] = new byte[BUFFER_SIZE];
+                            while ((count = zis.read(data, 0, BUFFER_SIZE)) != -1) {
+                                bos.write(data, 0, count);
+                            }
+                            bos.flush();
+                        } catch (FileNotFoundException ex) {
+                            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, null, ex);
+                            throw new AnalysisException("Unable to find file '" + file.getName() + "'.", ex);
+                        } catch (IOException ex) {
+                            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, null, ex);
+                            throw new AnalysisException("IO Exception while parsing file '" + file.getName() + "'.", ex);
+                        } finally {
+                            if (bos != null) {
+                                try {
+                                    bos.close();
+                                } catch (IOException ex) {
+                                    Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            final String msg = String.format("Exception reading archive '%s'.", archive.getName());
+            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, msg, ex);
+            throw new AnalysisException(msg, ex);
+        } finally {
+            try {
+                zis.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+            }
+        }
     }
 }
