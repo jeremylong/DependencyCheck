@@ -1,14 +1,9 @@
-Dependency-Check
+Dependency-Check-Ant
 =========
 
 Dependency-Check is a utility that attempts to detect publicly disclosed vulnerabilities contained within project dependencies. It does this by determining if there is a Common Platform Enumeration (CPE) identifier for a given dependency. If found, it will generate a report linking to the associated CVE entries.
 
-More information can be found on the [wiki].
-
-Notice
--
-
-A very big release of new functionality and plugins will be made available during the BlackHat Arsenal on July 31st, 2013. If you are at BlackHat stop by and see the demos!
+Documentation and links to production binary releases can be found on the [github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-ant/installation.html).
 
 Usage
 -
