@@ -3,23 +3,17 @@ Dependency-Check
 
 Dependency-Check is a utility that attempts to detect publicly disclosed vulnerabilities contained within project dependencies. It does this by determining if there is a Common Platform Enumeration (CPE) identifier for a given dependency. If found, it will generate a report linking to the associated CVE entries.
 
-More information can be found on the [wiki].
+Documentation and links to production binary releases can be found on the [github pages](http://jeremylong.github.io/DependencyCheck/). Additionally, more information about the architecture and ways to extend dependency-check can be found on the [wiki].
 
-Notice
+Initial Usage
 -
 
-A very big release of new functionality and plugins will be made available during the BlackHat Arsenal on July 31st, 2013. If you are at BlackHat stop by and see the demos!
-
-Usage
--
-
-> $ mvn package
-
-> $ cd target
-
-> $ java -jar dependency-check-[version].jar -h
-
-> $ java -jar dependency-check-[version].jar -a Testing -out . -scan ./test-classes -scan ./lib
+```
+$ mvn install
+$ cd target
+$ java -jar dependency-check-[version].jar -h
+$ java -jar dependency-check-[version].jar -a Testing -out . -scan ./test-classes -scan ./lib
+```
 
 Then load the resulting 'DependencyCheck-Report.html' into your favorite browser.
 

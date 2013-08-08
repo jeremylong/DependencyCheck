@@ -68,11 +68,6 @@ public final class Settings {
          */
         public static final String DATA_DIRECTORY = "data.directory";
         /**
-         * The location of the batch update URL. This is a zip file that
-         * contains the contents of the data directory.
-         */
-        public static final String BATCH_UPDATE_URL = "batch.update.url";
-        /**
          * The properties key for the path where the CPE Lucene Index will be
          * stored.
          */
@@ -82,6 +77,14 @@ public final class Settings {
          * stored.
          */
         public static final String CVE_DATA_DIRECTORY = "data.cve";
+        /**
+         * The properties key for the URL to the CPE.
+         */
+        public static final String CPE_URL = "cpe.url";
+        /**
+         * The properties key for the URL to the CPE.
+         */
+        public static final String CPE_META_URL = "cpe.meta.url";
         /**
          * The properties key for the URL to retrieve the "meta" data from about
          * the CVE entries.

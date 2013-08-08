@@ -18,22 +18,11 @@
  */
 package org.owasp.dependencycheck.utils;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.analyzer.AnalysisException;
-import org.owasp.dependencycheck.analyzer.ArchiveAnalyzer;
 
 /**
  * A collection of utilities for processing information about files.
@@ -41,11 +30,6 @@ import org.owasp.dependencycheck.analyzer.ArchiveAnalyzer;
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public final class FileUtils {
-
-    /**
-     * The buffer size to use when extracting files from the archive.
-     */
-    private static final int BUFFER_SIZE = 4096;
 
     /**
      * Private constructor for a utility class.
@@ -83,31 +67,6 @@ public final class FileUtils {
         }
         if (!file.delete()) {
             throw new FileNotFoundException("Failed to delete file: " + file);
-        }
-    }
-
-    /**
-     * Deletes a file. If the File is a directory it will recursively delete the
-     * contents.
-     *
-     * @param file the File to delete
-     * @param deleteOnExit setting this to true will cause errors to be ignored
-     * and if there is an error deleting the file it will be setup to be deleted
-     * when the JVM exits.
-     * @throws IOException is thrown if the file could not be deleted
-     */
-    public static void delete(File file, boolean deleteOnExit) throws IOException {
-        if (file.isDirectory()) {
-            for (File c : file.listFiles()) {
-                delete(c);
-            }
-        }
-        if (!file.delete()) {
-            if (deleteOnExit) {
-                file.deleteOnExit();
-            } else {
-                throw new FileNotFoundException("Failed to delete file: " + file);
-            }
         }
     }
 
@@ -154,101 +113,5 @@ public final class FileUtils {
         final String decodedPath = URLDecoder.decode(filePath, "UTF-8");
         final File jarPath = new File(decodedPath);
         return jarPath.getParentFile();
-    }
-
-    /**
-     * Extracts the contents of an archive into the specified directory.
-     *
-     * @param archive an archive file such as a WAR or EAR
-     * @param extractTo a directory to extract the contents to
-     * @throws ExtractionException thrown if an exception occurs while
-     * extracting the files
-     */
-    public static void extractFiles(File archive, File extractTo) throws ExtractionException {
-        extractFiles(archive, extractTo, null);
-    }
-
-    /**
-     * Extracts the contents of an archive into the specified directory. The
-     * files are only extracted if they are supported by the analyzers loaded
-     * into the specified engine. If the engine is specified as null then all
-     * files are extracted.
-     *
-     * @param archive an archive file such as a WAR or EAR
-     * @param extractTo a directory to extract the contents to
-     * @param engine the scanning engine
-     * @throws ExtractionException thrown if there is an error extracting the
-     * files
-     */
-    public static void extractFiles(File archive, File extractTo, Engine engine) throws ExtractionException {
-        if (archive == null || extractTo == null) {
-            return;
-        }
-
-        FileInputStream fis = null;
-        ZipInputStream zis = null;
-
-        try {
-            fis = new FileInputStream(archive);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.INFO, null, ex);
-            throw new ExtractionException("Archive file was not found.", ex);
-        }
-        zis = new ZipInputStream(new BufferedInputStream(fis));
-        ZipEntry entry;
-        try {
-            while ((entry = zis.getNextEntry()) != null) {
-                if (entry.isDirectory()) {
-                    final File d = new File(extractTo, entry.getName());
-                    if (!d.mkdirs()) {
-                        final String msg = String.format("Unable to create '%s'.", d.getAbsolutePath());
-                        throw new ExtractionException(msg);
-                    }
-                } else {
-                    final File file = new File(extractTo, entry.getName());
-                    final String ext = getFileExtension(file.getName());
-                    if (engine == null || engine.supportsExtension(ext)) {
-                        BufferedOutputStream bos = null;
-                        FileOutputStream fos;
-                        try {
-                            fos = new FileOutputStream(file);
-                            bos = new BufferedOutputStream(fos, BUFFER_SIZE);
-                            int count;
-                            final byte data[] = new byte[BUFFER_SIZE];
-                            while ((count = zis.read(data, 0, BUFFER_SIZE)) != -1) {
-                                bos.write(data, 0, count);
-                            }
-                            bos.flush();
-                        } catch (FileNotFoundException ex) {
-                            Logger.getLogger(FileUtils.class.getName()).log(Level.FINE, null, ex);
-                            final String msg = String.format("Unable to find file '%s'.", file.getName());
-                            throw new ExtractionException(msg, ex);
-                        } catch (IOException ex) {
-                            Logger.getLogger(FileUtils.class.getName()).log(Level.FINE, null, ex);
-                            final String msg = String.format("IO Exception while parsing file '%s'.", file.getName());
-                            throw new ExtractionException(msg, ex);
-                        } finally {
-                            if (bos != null) {
-                                try {
-                                    bos.close();
-                                } catch (IOException ex) {
-                                    Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINEST, null, ex);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (IOException ex) {
-            final String msg = String.format("Exception reading archive '%s'.", archive.getName());
-            Logger.getLogger(FileUtils.class.getName()).log(Level.FINE, msg, ex);
-            throw new ExtractionException(msg, ex);
-        } finally {
-            try {
-                zis.close();
-            } catch (IOException ex) {
-                Logger.getLogger(FileUtils.class.getName()).log(Level.FINEST, null, ex);
-            }
-        }
     }
 }
