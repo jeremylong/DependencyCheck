@@ -275,7 +275,18 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 margin-top:3px;
                 margin-bottom:3px;
             }
+            .vulnerable {
+            	color: #f00;
+            }
+            .vulnerable li {
+            	color: #000;
+            }
         </style>
+        <script>
+        	function toggleVuln() {
+        		$(".indent > li").not(".vulnerable").toggle();
+        	}
+        </script>
     </head>
     <body>
         <div class="wrapper">
@@ -293,12 +304,13 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     #end
                 #end
                 Dependencies Scanned:&nbsp;$depCount<br/>
-                Vulnerable Dependencies:&nbsp;$vulnCount<br/><br/>
-                <div class="indent">
+                Vulnerable Dependencies:&nbsp;<a href="#" onclick="toggleVuln()">$vulnCount</a><br/><br/>
+                <ul class="indent">
                 #set($lnkcnt=0)
                 #foreach($dependency in $dependencies)
                     #set($lnkcnt=$lnkcnt+1)
-                    <a href="#l${lnkcnt}_$esc.html($esc.url($dependency.Sha1sum))">$esc.html($dependency.FileName)</a>#if($dependency.getVulnerabilities().size()>0)&nbsp;<b style="color:#ff0000;">&#8226;</b>#end<br/>
+                    <li class="#if($dependency.getVulnerabilities().size()>0)vulnerable#end">
+                    <a href="#l${lnkcnt}_$esc.html($esc.url($dependency.Sha1sum))">$esc.html($dependency.FileName)</a>
                     #if($dependency.getRelatedDependencies().size()>0)
                         <ul>
                         #foreach($related in $dependency.getRelatedDependencies())
@@ -306,8 +318,9 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         #end
                         </ul>
                     #end
+                    </li>
                 #end
-                </div>
+                </ul>
                 <h2>Dependencies</h2>
                 #set($lnkcnt=0)
                 #set($cnt=0)
