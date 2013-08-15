@@ -154,4 +154,29 @@ public class ArchiveAnalyzerTest {
             instance.close();
         }
     }
+
+    /**
+     * Test of analyze method, of class ArchiveAnalyzer.
+     */
+    @Test
+    public void testAnalyze_badZip() throws Exception {
+        ArchiveAnalyzer instance = new ArchiveAnalyzer();
+        try {
+            instance.initialize();
+
+            File file = new File(this.getClass().getClassLoader().getResource("test.zip").getPath());
+            Dependency dependency = new Dependency(file);
+            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            Engine engine = new Engine();
+
+            int initial_size = engine.getDependencies().size();
+            instance.analyze(dependency, engine);
+            int ending_size = engine.getDependencies().size();
+
+            assertTrue(initial_size == ending_size);
+
+        } finally {
+            instance.close();
+        }
+    }
 }
