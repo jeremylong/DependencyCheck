@@ -461,6 +461,11 @@ along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
             <version>1.7.2</version>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.5</version>
+        </dependency>
         <!-- The following dependencies are only scanned during integration testing -->
         <!--<dependency>
             <groupId>org.springframework</groupId>
@@ -468,5 +473,11 @@ along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
             <version>2.5.5</version>
             <scope>test</scope>
         </dependency>-->
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast</artifactId>
+            <version>2.5</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

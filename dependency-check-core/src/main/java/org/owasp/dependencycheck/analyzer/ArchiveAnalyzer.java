@@ -32,8 +32,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+//import java.util.zip.ZipEntry;
+//import java.util.zip.ZipException;
+//import java.util.zip.ZipInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.h2.store.fs.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -243,7 +246,8 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
         }
 
         FileInputStream fis = null;
-        ZipInputStream zis = null;
+        //ZipInputStream zis = null;
+        ZipArchiveInputStream zis = null;
 
         try {
             fis = new FileInputStream(archive);
@@ -251,10 +255,11 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
             Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.INFO, null, ex);
             throw new AnalysisException("Archive file was not found.", ex);
         }
-        zis = new ZipInputStream(new BufferedInputStream(fis));
-        ZipEntry entry;
+        zis = new ZipArchiveInputStream(new BufferedInputStream(fis));
+        ZipArchiveEntry entry;
+
         try {
-            while ((entry = zis.getNextEntry()) != null) {
+            while ((entry = zis.getNextZipEntry()) != null) {
                 if (entry.isDirectory()) {
                     final File d = new File(extractTo, entry.getName());
                     if (!d.mkdirs()) {
@@ -295,7 +300,13 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
             }
         } catch (IOException ex) {
             final String msg = String.format("Exception reading archive '%s'.", archive.getName());
-            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, msg, ex);
+            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.WARNING, msg);
+            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, null, ex);
+            throw new AnalysisException(msg, ex);
+        } catch (Throwable ex) {
+            final String msg = String.format("Exception reading archive '%s'.", archive.getName());
+            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.WARNING, msg);
+            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.WARNING, null, ex);
             throw new AnalysisException(msg, ex);
         } finally {
             try {
