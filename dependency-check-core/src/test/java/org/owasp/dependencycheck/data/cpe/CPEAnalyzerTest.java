@@ -124,6 +124,7 @@ public class CPEAnalyzerTest extends BaseIndexTestCase {
      */
     @Test
     public void testDetermineCPE_full() throws Exception {
+        callDetermineCPE_full("hazelcast-2.5.jar", null);
         callDetermineCPE_full("spring-context-support-2.5.5.jar", "cpe:/a:vmware:springsource_spring_framework:2.5.5");
         callDetermineCPE_full("spring-core-3.0.0.RELEASE.jar", "cpe:/a:vmware:springsource_spring_framework:3.0.0");
         callDetermineCPE_full("org.mortbay.jetty.jar", "cpe:/a:mortbay_jetty:jetty:4.2");
@@ -139,6 +140,7 @@ public class CPEAnalyzerTest extends BaseIndexTestCase {
     public void callDetermineCPE_full(String depName, String expResult) throws Exception {
 
         File file = new File(this.getClass().getClassLoader().getResource(depName).getPath());
+
         Dependency dep = new Dependency(file);
 
         FileNameAnalyzer fnAnalyzer = new FileNameAnalyzer();
@@ -163,8 +165,10 @@ public class CPEAnalyzerTest extends BaseIndexTestCase {
         if (expResult != null) {
             Identifier expIdentifier = new Identifier("cpe", expResult, expResult);
             Assert.assertTrue("Incorrect match: { dep:'" + dep.getFileName() + "' }", dep.getIdentifiers().contains(expIdentifier));
-        } else {
+        } else if (dep.getIdentifiers().isEmpty()) {
             Assert.assertTrue("Match found when an Identifier should not have been found: { dep:'" + dep.getFileName() + "' }", dep.getIdentifiers().isEmpty());
+        } else {
+            Assert.assertTrue("Match found when an Identifier should not have been found: { dep:'" + dep.getFileName() + "', identifier:'" + dep.getIdentifiers().iterator().next().getValue() + "' }", dep.getIdentifiers().isEmpty());
         }
     }
 
