@@ -59,10 +59,8 @@ public class EngineIntegrationTest {
     @Test
     public void testScan() throws Exception {
         String testClasses = "target/test-classes";
-        String lib = "target/lib";
         Engine instance = new Engine();
         instance.scan(testClasses);
-        instance.scan(lib);
         assertTrue(instance.getDependencies().size() > 0);
         instance.analyzeDependencies();
         ReportGenerator rg = new ReportGenerator("DependencyCheck",
