@@ -275,13 +275,22 @@ public class CPEAnalyzer implements Analyzer {
 
         final TopDocs docs = cpe.search(searchString, MAX_QUERY_RESULTS);
         for (ScoreDoc d : docs.scoreDocs) {
-            final Document doc = cpe.getDocument(d.doc);
-            final IndexEntry entry = new IndexEntry();
-            entry.setVendor(doc.get(Fields.VENDOR));
-            entry.setProduct(doc.get(Fields.PRODUCT));
-            entry.setSearchScore(d.score);
-            if (!ret.contains(entry)) {
-                ret.add(entry);
+            if (d.score >= 0.08) {
+                final Document doc = cpe.getDocument(d.doc);
+                final IndexEntry entry = new IndexEntry();
+                entry.setVendor(doc.get(Fields.VENDOR));
+                entry.setProduct(doc.get(Fields.PRODUCT));
+//                if (d.score < 0.08) {
+//                    System.out.print(entry.getVendor());
+//                    System.out.print(":");
+//                    System.out.print(entry.getProduct());
+//                    System.out.print(":");
+//                    System.out.println(d.score);
+//                }
+                entry.setSearchScore(d.score);
+                if (!ret.contains(entry)) {
+                    ret.add(entry);
+                }
             }
         }
         return ret;
@@ -454,9 +463,10 @@ public class CPEAnalyzer implements Analyzer {
                 list.add(word);
             }
         }
-//        if (tempWord != null) {
-//            //for now ignore any last single letter words...
-//        }
+        if (tempWord != null) {
+            String tmp = list.get(list.size() - 1) + tempWord;
+            list.add(tmp);
+        }
         boolean contains = true;
         for (String word : list) {
             contains &= ec.containsUsedString(word);
