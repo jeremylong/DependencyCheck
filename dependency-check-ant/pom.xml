@@ -146,8 +146,27 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
                                     <directory>${basedir}/../src/test/resources</directory>
                                     <filtering>false</filtering>
                                     <includes>
-                                        <include>jetty-6.1.0.jar</include>
                                         <include>org.mortbay.jetty.jar</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-data</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/test-classes</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/../src/test/resources</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>db.cve.zip</include>
+                                        <include>index.cpe.zip</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -237,6 +256,10 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
                             <name>net.sourceforge.cobertura.datafile</name>
                             <value>${project.build.directory}/cobertura/cobertura.ser</value>
                             <workingDirectory>target</workingDirectory>
+                        </property>
+                        <property>
+                            <name>data.directory</name>
+                            <value>${project.build.directory}/dependency-check-data</value>
                         </property>
                     </systemProperties>
                 </configuration>
@@ -388,6 +411,13 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-core</artifactId>
             <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-core</artifactId>
+            <version>${project.parent.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.ant</groupId>
