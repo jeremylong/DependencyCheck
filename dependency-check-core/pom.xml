@@ -181,6 +181,9 @@ along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
                     <excludes>
                         <exclude>**/*IntegrationTest.java</exclude>
                     </excludes>
+                    <additionalClasspathElements>
+                        <additionalClasspathElement>${project.build.directory}/lib/</additionalClasspathElement>
+                    </additionalClasspathElements>
                 </configuration>
             </plugin>
             <plugin>
