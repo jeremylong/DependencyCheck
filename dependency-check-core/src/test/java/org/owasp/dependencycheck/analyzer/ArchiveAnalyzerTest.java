@@ -139,7 +139,7 @@ public class ArchiveAnalyzerTest {
         try {
             instance.initialize();
 
-            File file = new File(this.getClass().getClassLoader().getResource("opensso.war").getPath());
+            File file = new File(this.getClass().getClassLoader().getResource("daytrader-ear-2.1.7.ear").getPath());
             Dependency dependency = new Dependency(file);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             Engine engine = new Engine();

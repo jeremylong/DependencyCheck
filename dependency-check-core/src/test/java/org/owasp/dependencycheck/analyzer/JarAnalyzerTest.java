@@ -118,6 +118,7 @@ public class JarAnalyzerTest {
         JarAnalyzer instance = new JarAnalyzer();
         Set expResult = new HashSet();
         expResult.add("jar");
+        expResult.add("war");
         Set result = instance.getSupportedExtensions();
         assertEquals(expResult, result);
     }
