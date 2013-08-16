@@ -46,21 +46,24 @@ public abstract class BaseDBTestCase extends TestCase {
         ensureDBExists();
     }
 
-    protected static File getDataDirectory() throws IOException {
-        final String fileName = Settings.getString(Settings.KEYS.CVE_DATA_DIRECTORY);
-        final String dataDirectory = Settings.getString(Settings.KEYS.DATA_DIRECTORY);
-        return new File(dataDirectory, fileName);
+    protected static File getDataDirectory(Class clazz) throws IOException {
+        final File dataDirectory = Settings.getFile(Settings.KEYS.CVE_DATA_DIRECTORY, clazz);
+        return dataDirectory;
     }
 
     public static void ensureDBExists() throws Exception {
-        String indexPath = getDataDirectory().getCanonicalPath();
+        ensureDBExists(BaseDBTestCase.class);
+    }
+
+    public static void ensureDBExists(Class clazz) throws Exception {
+        String indexPath = getDataDirectory(clazz).getAbsolutePath();
         java.io.File f = new File(indexPath);
         if (!f.exists() || (f.isDirectory() && f.listFiles().length == 0)) {
             f.mkdirs();
             FileInputStream fis = null;
             ZipInputStream zin = null;
             try {
-                File path = new File(BaseDBTestCase.class.getClassLoader().getResource("db.cve.zip").getPath());
+                File path = new File(clazz.getClassLoader().getResource("db.cve.zip").getPath());
                 fis = new FileInputStream(path);
                 zin = new ZipInputStream(new BufferedInputStream(fis));
                 ZipEntry entry;

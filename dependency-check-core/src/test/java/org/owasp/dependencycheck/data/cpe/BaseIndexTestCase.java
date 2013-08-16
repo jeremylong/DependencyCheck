@@ -61,16 +61,18 @@ public abstract class BaseIndexTestCase {
     public void tearDown() throws Exception {
     }
 
-    protected static File getDataDirectory() throws IOException {
-        final String fileName = Settings.getString(Settings.KEYS.CPE_DATA_DIRECTORY);
-        final String dataDirectory = Settings.getString(Settings.KEYS.DATA_DIRECTORY);
-        return new File(dataDirectory, fileName);
-        //return FileUtils.getDataDirectory(fileName, Index.class);
+    protected static File getDataDirectory(Class clazz) throws IOException {
+        final File dataDirectory = Settings.getFile(Settings.KEYS.CPE_DATA_DIRECTORY, clazz);
+        return dataDirectory;
     }
 
     public static void ensureIndexExists() throws Exception {
+        ensureIndexExists(BaseIndexTestCase.class);
+    }
+
+    public static void ensureIndexExists(Class clazz) throws Exception {
         //String indexPath = Settings.getString(Settings.KEYS.CPE_DATA_DIRECTORY);
-        String indexPath = getDataDirectory().getCanonicalPath();
+        String indexPath = getDataDirectory(clazz).getAbsolutePath();
         java.io.File f = new File(indexPath);
 
         if (!f.exists() || (f.isDirectory() && f.listFiles().length == 0)) {

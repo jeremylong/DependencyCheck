@@ -46,7 +46,10 @@ public class DependencyCheckTaskTest extends BuildFileTest {
 
     @Before
     @Override
-    public void setUp() {
+    public void setUp() throws Exception {
+        org.owasp.dependencycheck.data.nvdcve.BaseDBTestCase.ensureDBExists(DependencyCheckTaskTest.class);
+        org.owasp.dependencycheck.data.cpe.BaseIndexTestCase.ensureIndexExists(this.getClass());
+
         final String buildFile = this.getClass().getClassLoader().getResource("build.xml").getPath();
         configureProject(buildFile);
     }
