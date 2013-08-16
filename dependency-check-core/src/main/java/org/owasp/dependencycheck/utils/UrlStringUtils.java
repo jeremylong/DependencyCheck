@@ -21,6 +21,8 @@ package org.owasp.dependencycheck.utils;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -64,6 +66,11 @@ public final class UrlStringUtils {
     public static boolean isUrl(String text) {
         return IS_URL_TEST.matcher(text).matches();
     }
+    /**
+     * A listing of domain parts that shold not be used as evidence. Yes, this
+     * is an incomplete list.
+     */
+    private static final HashSet<String> IGNORE_LIST = new HashSet<String>(Arrays.asList("www", "com", "org", "gov", "info", "name", "net", "pro", "tel", "mobi", "xxx"));
 
     /**
      * <p>Takes a URL, in String format, and adds the important parts of the URL
@@ -84,7 +91,7 @@ public final class UrlStringUtils {
         //add the domain except www and the tld.
         for (int i = 0; i < domain.length - 1; i++) {
             final String sub = domain[i];
-            if (!"www".equalsIgnoreCase(sub)) {
+            if (!IGNORE_LIST.contains(sub.toLowerCase())) {
                 importantParts.add(sub);
             }
         }
