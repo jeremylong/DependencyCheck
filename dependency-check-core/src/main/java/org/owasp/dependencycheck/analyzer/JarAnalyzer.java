@@ -159,7 +159,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     /**
      * The set of file extensions supported by this analyzer.
      */
-    private static final Set<String> EXTENSIONS = newHashSet("jar");
+    private static final Set<String> EXTENSIONS = newHashSet("jar", "war");
 
     /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
