@@ -52,6 +52,11 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 });
             });
         </script>
+        <script type="text/javascript">
+            function toggleVuln() {
+                $(".notvulnerable").toggle();
+            }
+        </script>
         <style type="text/css">
 
             .rounded-corners {
@@ -281,12 +286,10 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             .vulnerable li {
             	color: #000;
             }
+            .notvulnerable {
+                display:none;
+            }
         </style>
-        <script>
-        	function toggleVuln() {
-        		$(".indent > li").not(".vulnerable").toggle();
-        	}
-        </script>
     </head>
     <body>
         <div class="wrapper">
@@ -303,13 +306,13 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         #set($vulnCount=$vulnCount+1)
                     #end
                 #end
-                Dependencies Scanned:&nbsp;$depCount<br/>
-                Vulnerable Dependencies:&nbsp;<a href="#" onclick="toggleVuln()">$vulnCount</a><br/><br/>
+                Dependencies Scanned:&nbsp;$depCount&nbsp;(<a href="#" onclick="toggleVuln()">show all</a>)<br/>
+                Vulnerable Dependencies:&nbsp;$vulnCount<br/><br/>
                 <ul class="indent">
                 #set($lnkcnt=0)
                 #foreach($dependency in $dependencies)
                     #set($lnkcnt=$lnkcnt+1)
-                    <li class="#if($dependency.getVulnerabilities().size()>0)vulnerable#end">
+                    <li class="#if($dependency.getVulnerabilities().size()==0)notvulnerable#else vulnerable#end">
                     <a href="#l${lnkcnt}_$esc.html($esc.url($dependency.Sha1sum))">$esc.html($dependency.FileName)</a>
                     #if($dependency.getRelatedDependencies().size()>0)
                         <ul>
@@ -326,8 +329,8 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 #set($cnt=0)
                 #foreach($dependency in $dependencies)
                     #set($lnkcnt=$lnkcnt+1)
-                    <h3 class="subsectionheader standardsubsection"><a name="l${lnkcnt}_$esc.html($dependency.Sha1sum)"></a>$esc.html($dependency.FileName)</h3>
-                    <div class="subsectioncontent">
+                    <h3 class="subsectionheader standardsubsection#if($dependency.getVulnerabilities().size()==0) notvulnerable#end"><a name="l${lnkcnt}_$esc.html($dependency.Sha1sum)"></a>$esc.html($dependency.FileName)</h3>
+                    <div class="subsectioncontent#if($dependency.getVulnerabilities().size()==0) notvulnerable#end">
                         #if ($dependency.description)
                             <p><b>Description:</b>&nbsp;$esc.html($dependency.description)<br/></p>
                         #end
