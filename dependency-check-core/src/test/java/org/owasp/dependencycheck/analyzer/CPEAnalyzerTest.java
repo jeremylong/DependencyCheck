@@ -40,7 +40,6 @@ import org.owasp.dependencycheck.analyzer.FileNameAnalyzer;
 import org.owasp.dependencycheck.analyzer.HintAnalyzer;
 import org.owasp.dependencycheck.data.cpe.BaseIndexTestCase;
 import org.owasp.dependencycheck.data.cpe.IndexEntry;
-import static org.owasp.dependencycheck.data.cpe.BaseIndexTestCase.ensureIndexExists;
 import org.owasp.dependencycheck.dependency.Identifier;
 
 /**
@@ -58,11 +57,13 @@ public class CPEAnalyzerTest extends BaseIndexTestCase {
     }
 
     @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
     }
 
     @After
+    @Override
     public void tearDown() throws Exception {
         super.tearDown();
     }
