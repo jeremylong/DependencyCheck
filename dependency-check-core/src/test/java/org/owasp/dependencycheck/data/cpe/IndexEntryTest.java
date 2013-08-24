@@ -19,6 +19,7 @@
 package org.owasp.dependencycheck.data.cpe;
 
 import org.owasp.dependencycheck.data.cpe.IndexEntry;
+import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -30,7 +31,7 @@ import org.junit.Assert;
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class IndexEntryTest {
+public class IndexEntryTest extends TestCase {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -41,11 +42,15 @@ public class IndexEntryTest {
     }
 
     @Before
-    public void setUp() {
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
     }
 
     @After
-    public void tearDown() {
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
