@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.lucene.index.CorruptIndexException;
-import org.owasp.dependencycheck.data.cpe.Index;
+import org.owasp.dependencycheck.data.cpe.CpeIndexWriter;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Reference;
@@ -274,14 +274,14 @@ public class NvdCve20Handler extends DefaultHandler {
     /**
      * the cpe index.
      */
-    private Index cpeIndex;
+    private CpeIndexWriter cpeIndex;
 
     /**
-     * Sets the cpe index.
+     * Sets the cpe index writer.
      *
      * @param index the CPE Lucene Index
      */
-    void setCpeIndex(Index index) {
+    void setCpeIndex(CpeIndexWriter index) {
         cpeIndex = index;
     }
 
