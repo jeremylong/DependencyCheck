@@ -40,7 +40,7 @@ import java.util.logging.Logger;
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class DirectorySpinLock implements Closeable, AutoCloseable {
+public class DirectorySpinLock implements Closeable /*, AutoCloseable*/ {
 
     /**
      * The name of the lock file.
@@ -224,13 +224,14 @@ public class DirectorySpinLock implements Closeable, AutoCloseable {
     @Override
     public void close() throws IOException {
         release();
-        if (lock != null) {
-            try {
-                lock.close();
-            } catch (IOException ex) {
-                Logger.getLogger(DirectorySpinLock.class.getName()).log(Level.FINEST, "Unable to close file lock due to IO Exception", ex);
-            }
-        }
+// TODO uncomment this once support for 1.6 is dropped.
+//        if (lock != null) {
+//            try {
+//                lock.close();
+//            } catch (IOException ex) {
+//                Logger.getLogger(DirectorySpinLock.class.getName()).log(Level.FINEST, "Unable to close file lock due to IO Exception", ex);
+//            }
+//        }
         if (channel != null) {
             try {
                 channel.close();
