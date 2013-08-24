@@ -44,7 +44,6 @@ public class EngineIntegrationTest {
     @Before
     public void setUp() throws Exception {
         org.owasp.dependencycheck.data.nvdcve.BaseDBTestCase.ensureDBExists();
-        org.owasp.dependencycheck.data.cpe.BaseIndexTestCase.ensureIndexExists();
     }
 
     @After
