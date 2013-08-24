@@ -43,7 +43,8 @@ import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.owasp.dependencycheck.data.UpdateException;
-import org.owasp.dependencycheck.data.cpe.Index;
+import org.owasp.dependencycheck.data.cpe.BaseIndex;
+import org.owasp.dependencycheck.data.cpe.CpeIndexWriter;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
@@ -87,7 +88,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
     /**
      * Reference to the Cpe Index.
      */
-    private Index cpeIndex = null;
+    private CpeIndexWriter cpeIndex = null;
 
     public DatabaseUpdater() {
         batchUpdateMode = !Settings.getString(Settings.KEYS.BATCH_UPDATE_URL, "").isEmpty();
@@ -273,8 +274,8 @@ public class DatabaseUpdater implements CachedWebDataSource {
         try {
             cveDB = new CveDB();
             cveDB.open();
-            cpeIndex = new Index();
-            cpeIndex.openIndexWriter();
+            cpeIndex = new CpeIndexWriter();
+            cpeIndex.open();
         } catch (IOException ex) {
             closeDataStores();
             Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINE, "IO Error opening databases", ex);
@@ -640,7 +641,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
         final File cveDir = CveDB.getDataDirectory();
         FileUtils.delete(cveDir);
 
-        final File cpeDir = Index.getDataDirectory();
+        final File cpeDir = BaseIndex.getDataDirectory();
         FileUtils.delete(cpeDir);
     }
 
