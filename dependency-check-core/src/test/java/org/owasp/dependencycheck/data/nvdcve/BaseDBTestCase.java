@@ -56,11 +56,12 @@ public abstract class BaseDBTestCase extends TestCase {
         String indexPath = getDataDirectory().getCanonicalPath();
         java.io.File f = new File(indexPath);
         if (!f.exists() || (f.isDirectory() && f.listFiles().length == 0)) {
+            f = f.getParentFile();
             f.mkdirs();
             FileInputStream fis = null;
             ZipInputStream zin = null;
             try {
-                File path = new File(BaseDBTestCase.class.getClassLoader().getResource("db.cve.zip").getPath());
+                File path = new File(BaseDBTestCase.class.getClassLoader().getResource("data.zip").getPath());
                 fis = new FileInputStream(path);
                 zin = new ZipInputStream(new BufferedInputStream(fis));
                 ZipEntry entry;
