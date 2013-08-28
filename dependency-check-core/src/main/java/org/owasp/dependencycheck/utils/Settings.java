@@ -232,40 +232,26 @@ public final class Settings {
      * argument - this method will return the value from the system properties
      * before the values in the contained configuration file.
      *
-     * @param key the key to lookup within the properties file
-     * @param defaultValue the default value for the requested property
-     * @return the property from the properties file as a File object
-     */
-    public static File getFile(String key, String defaultValue) {
-        final String baseDir = getString(Settings.KEYS.DATA_DIRECTORY);
-        final String str = getString(key, defaultValue);
-        if (baseDir != null) {
-            return new File(baseDir, str);
-        }
-        return new File(str);
-    }
-
-    /**
-     * Returns a value from the properties file as a File object. If the value
-     * was specified as a system property or passed in via the -Dprop=value
-     * argument - this method will return the value from the system properties
-     * before the values in the contained configuration file.
-     *
      * This method will also replace a leading "[JAR]\" sequence with the path
      * to the folder containing the JAR file containing this class.
      *
      * @param key the key to lookup within the properties file
      * @return the property from the properties file converted to a File object
-     * @throws IOException thrown if the file path to the JAR cannot be found
      */
-    public static File getFile(String key) throws IOException {
+    public static File getFile(String key) {
         final String file = getString(key);
         final String baseDir = getString(Settings.KEYS.DATA_DIRECTORY);
         if (baseDir != null) {
             if (baseDir.startsWith("[JAR]/")) {
                 final File jarPath = getJarPath();
-                final File newBase = new File(jarPath.getCanonicalPath(), baseDir.substring(6));
+                final File newBase = new File(jarPath, baseDir.substring(6));
+                if (Settings.KEYS.DATA_DIRECTORY.equals(key)) {
+                    return newBase;
+                }
                 return new File(newBase, file);
+            }
+            if (Settings.KEYS.DATA_DIRECTORY.equals(key)) {
+                return new File(baseDir);
             }
             return new File(baseDir, file);
         }
