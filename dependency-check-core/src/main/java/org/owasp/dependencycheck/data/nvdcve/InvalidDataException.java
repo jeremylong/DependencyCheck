@@ -16,7 +16,7 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.nvdcve.xml;
+package org.owasp.dependencycheck.data.nvdcve;
 
 /**
  * An InvalidDataDataException is a generic exception used when trying to load

@@ -5,4 +5,4 @@ org.owasp.dependencycheck.analyzer.HintAnalyzer
 org.owasp.dependencycheck.analyzer.DependencyBundlingAnalyzer
 org.owasp.dependencycheck.analyzer.FalsePositiveAnalyzer
 org.owasp.dependencycheck.analyzer.CPEAnalyzer
-org.owasp.dependencycheck.data.nvdcve.NvdCveAnalyzer
+org.owasp.dependencycheck.analyzer.NvdCveAnalyzer

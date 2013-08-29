@@ -16,7 +16,7 @@
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.nvdcve.xml;
+package org.owasp.dependencycheck.data.update;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -135,7 +135,7 @@ public class DataStoreMetaInfo {
      * @param updatedValue the updated nvdcve entry
      * @throws UpdateException is thrown if there is an update exception
      */
-    public void save(NvdCveUrl updatedValue) throws UpdateException {
+    public void save(NvdCveInfo updatedValue) throws UpdateException {
         if (updatedValue == null) {
             return;
         }

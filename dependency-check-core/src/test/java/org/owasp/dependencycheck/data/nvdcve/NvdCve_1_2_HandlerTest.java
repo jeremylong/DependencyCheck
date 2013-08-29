@@ -16,25 +16,29 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.nvdcve.xml;
+package org.owasp.dependencycheck.data.nvdcve;
 
+import org.owasp.dependencycheck.data.nvdcve.NvdCve12Handler;
 import java.io.File;
-import java.net.URL;
-import org.owasp.dependencycheck.data.nvdcve.xml.DatabaseUpdater;
+import java.util.List;
+import java.util.Map;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.owasp.dependencycheck.utils.Settings;
+import static org.junit.Assert.*;
 
 /**
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class DatabaseUpdaterIntegrationTest {
+public class NvdCve_1_2_HandlerTest {
 
-    public DatabaseUpdaterIntegrationTest() {
+    public NvdCve_1_2_HandlerTest() {
     }
 
     @BeforeClass
@@ -53,28 +57,16 @@ public class DatabaseUpdaterIntegrationTest {
     public void tearDown() {
     }
 
-    /**
-     * Test of update method, of class DatabaseUpdater.
-     *
-     * @throws Exception
-     */
     @Test
-    public void testUpdate() throws Exception {
-        DatabaseUpdater instance = new DatabaseUpdater();
-        instance.update();
-    }
+    public void testParse() throws Exception {
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        SAXParser saxParser = factory.newSAXParser();
 
-    /**
-     * Test of update method (when in batch mode), of class DatabaseUpdater.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testBatchUpdate() throws Exception {
-        File file = new File("target/test-classes/nvdcve-2.0-2012.xml");
-        String path = "file:///" + file.getCanonicalPath();
-        Settings.setString(Settings.KEYS.BATCH_UPDATE_URL, path);
-        DatabaseUpdater instance = new DatabaseUpdater();
-        instance.update();
+        File file = new File(this.getClass().getClassLoader().getResource("nvdcve-2012.xml").getPath());
+
+        NvdCve12Handler instance = new NvdCve12Handler();
+        saxParser.parse(file, instance);
+        Map<String, List<VulnerableSoftware>> results = instance.getVulnerabilities();
+        assertTrue("No vulnerable software identified with a previous version in 2012 CVE 1.2?", !results.isEmpty());
     }
 }

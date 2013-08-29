@@ -16,8 +16,11 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.nvdcve.xml;
+package org.owasp.dependencycheck.data.update;
 
+import org.owasp.dependencycheck.data.nvdcve.NvdCve12Handler;
+import org.owasp.dependencycheck.data.nvdcve.NvdCve20Handler;
+import org.owasp.dependencycheck.data.nvdcve.InvalidDataException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -47,7 +50,7 @@ import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
-import static org.owasp.dependencycheck.data.nvdcve.xml.DataStoreMetaInfo.MODIFIED;
+import static org.owasp.dependencycheck.data.update.DataStoreMetaInfo.MODIFIED;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 
 /**
@@ -103,9 +106,9 @@ public class DatabaseUpdater implements CachedWebDataSource {
         doBatchUpdate = false;
         properties = new DataStoreMetaInfo();
         try {
-            final Map<String, NvdCveUrl> update = updateNeeded();
+            final Map<String, NvdCveInfo> update = updateNeeded();
             int maxUpdates = 0;
-            for (NvdCveUrl cve : update.values()) {
+            for (NvdCveInfo cve : update.values()) {
                 if (cve.getNeedsUpdate()) {
                     maxUpdates += 1;
                 }
@@ -128,7 +131,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
             }
 
             int count = 0;
-            for (NvdCveUrl cve : update.values()) {
+            for (NvdCveInfo cve : update.values()) {
                 if (cve.getNeedsUpdate()) {
                     count += 1;
                     Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.INFO,
@@ -354,9 +357,9 @@ public class DatabaseUpdater implements CachedWebDataSource {
      * @throws UpdateException Is thrown if there is an issue with the last
      * updated properties file.
      */
-    private Map<String, NvdCveUrl> updateNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
+    private Map<String, NvdCveInfo> updateNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
 
-        Map<String, NvdCveUrl> currentlyPublished;
+        Map<String, NvdCveInfo> currentlyPublished;
         try {
             currentlyPublished = retrieveCurrentTimestampsFromWeb();
         } catch (InvalidDataException ex) {
@@ -436,7 +439,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
                 } else { //we figure out which of the several XML files need to be downloaded.
                     currentlyPublished.get(MODIFIED).setNeedsUpdate(false);
                     for (int i = start; i <= end; i++) {
-                        final NvdCveUrl cve = currentlyPublished.get(String.valueOf(i));
+                        final NvdCveInfo cve = currentlyPublished.get(String.valueOf(i));
                         long currentTimestamp = 0;
                         try {
                             currentTimestamp = Long.parseLong(properties.getProperty(DataStoreMetaInfo.LAST_UPDATED_BASE + String.valueOf(i), "0"));
@@ -489,13 +492,13 @@ public class DatabaseUpdater implements CachedWebDataSource {
      * timestamps
      * @throws InvalidSettingException thrown if the settings are invalid
      */
-    protected Map<String, NvdCveUrl> retrieveCurrentTimestampsFromWeb()
+    protected Map<String, NvdCveInfo> retrieveCurrentTimestampsFromWeb()
             throws MalformedURLException, DownloadFailedException, InvalidDataException, InvalidSettingException {
 
-        final Map<String, NvdCveUrl> map = new TreeMap<String, NvdCveUrl>();
+        final Map<String, NvdCveInfo> map = new TreeMap<String, NvdCveInfo>();
         String retrieveUrl = Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL);
 
-        NvdCveUrl item = new NvdCveUrl();
+        NvdCveInfo item = new NvdCveInfo();
         item.setNeedsUpdate(false); //the others default to true, to make life easier later this should default to false.
         item.setId(MODIFIED);
         item.setUrl(retrieveUrl);
@@ -512,7 +515,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
             final String baseUrl12 = Settings.getString(Settings.KEYS.CVE_SCHEMA_1_2);
             for (int i = start; i <= end; i++) {
                 retrieveUrl = String.format(baseUrl20, i);
-                item = new NvdCveUrl();
+                item = new NvdCveInfo();
                 item.setId(Integer.toString(i));
                 item.setUrl(retrieveUrl);
                 item.setOldSchemaVersionUrl(String.format(baseUrl12, i));
