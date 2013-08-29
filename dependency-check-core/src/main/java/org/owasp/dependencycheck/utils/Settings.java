@@ -310,6 +310,16 @@ public final class Settings {
     }
 
     /**
+     * Removes a property from the local properties collection. This is mainly
+     * used in test cases.
+     *
+     * @param key the property key to remove
+     */
+    public static void removeProperty(String key) {
+        INSTANCE.props.remove(key);
+    }
+
+    /**
      * Returns an int value from the properties file. If the value was specified
      * as a system property or passed in via the -Dprop=value argument - this
      * method will return the value from the system properties before the values
