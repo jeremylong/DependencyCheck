@@ -250,12 +250,12 @@ public class DatabaseUpdater implements CachedWebDataSource {
      */
     protected void deleteExistingData() throws IOException {
         Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.INFO, "The database version is old. Rebuilding the database.");
-
-        final File cveDir = CveDB.getDataDirectory();
-        FileUtils.delete(cveDir);
-
-        final File cpeDir = BaseIndex.getDataDirectory();
-        FileUtils.delete(cpeDir);
+        final File data = Settings.getFile(Settings.KEYS.DATA_DIRECTORY);
+        FileUtils.delete(data);
+//        final File cveDir = CveDB.getDataDirectory();
+//        FileUtils.delete(cveDir);
+//        final File cpeDir = BaseIndex.getDataDirectory();
+//        FileUtils.delete(cpeDir);
     }
 
     private void performBatchUpdate() throws UpdateException {
