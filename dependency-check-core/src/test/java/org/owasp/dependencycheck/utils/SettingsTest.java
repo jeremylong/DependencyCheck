@@ -73,9 +73,9 @@ public class SettingsTest {
         File result = Settings.getFile(key);
         Assert.assertTrue(result.getAbsolutePath().endsWith(expResult));
 
-        key = "an invalid key!!!";
-        result = Settings.getFile(key, expResult);
-        Assert.assertTrue(result.getAbsolutePath().endsWith(expResult));
+        result = Settings.getFile(Settings.KEYS.DATA_DIRECTORY);
+        String path = result.getPath();
+        Assert.assertTrue(path.endsWith("data") || path.endsWith("data" + File.separator));
     }
 
     /**
