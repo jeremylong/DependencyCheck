@@ -63,19 +63,4 @@ public class DatabaseUpdaterIntegrationTest {
         DatabaseUpdater instance = new DatabaseUpdater();
         instance.update();
     }
-
-    /**
-     * Test of update method (when in batch mode), of class DatabaseUpdater.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testBatchUpdate() throws Exception {
-        File file = new File(this.getClass().getClassLoader().getResource("data.zip").toURI());
-        String path = "file:///" + file.getCanonicalPath();
-        Settings.setString(Settings.KEYS.BATCH_UPDATE_URL, path);
-        DatabaseUpdater instance = new DatabaseUpdater();
-        instance.update();
-        Settings.setString(Settings.KEYS.BATCH_UPDATE_URL, "");
-    }
 }
