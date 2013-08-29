@@ -16,15 +16,12 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.nvdcve.xml;
+package org.owasp.dependencycheck.data.nvdcve;
 
-import org.owasp.dependencycheck.data.nvdcve.xml.NvdCve12Handler;
+import org.owasp.dependencycheck.data.nvdcve.NvdCve20Handler;
 import java.io.File;
-import java.util.List;
-import java.util.Map;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -36,9 +33,9 @@ import static org.junit.Assert.*;
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class NvdCve_1_2_HandlerTest {
+public class NvdCve_2_0_HandlerTest {
 
-    public NvdCve_1_2_HandlerTest() {
+    public NvdCve_2_0_HandlerTest() {
     }
 
     @BeforeClass
@@ -58,15 +55,24 @@ public class NvdCve_1_2_HandlerTest {
     }
 
     @Test
-    public void testParse() throws Exception {
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        SAXParser saxParser = factory.newSAXParser();
+    public void testParse() {
+        Exception results = null;
+        try {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParser saxParser = factory.newSAXParser();
 
-        File file = new File(this.getClass().getClassLoader().getResource("nvdcve-2012.xml").getPath());
+            File file = new File(this.getClass().getClassLoader().getResource("nvdcve-2.0-2012.xml").getPath());
 
-        NvdCve12Handler instance = new NvdCve12Handler();
-        saxParser.parse(file, instance);
-        Map<String, List<VulnerableSoftware>> results = instance.getVulnerabilities();
-        assertTrue("No vulnerable software identified with a previous version in 2012 CVE 1.2?", !results.isEmpty());
+            NvdCve20Handler instance = new NvdCve20Handler();
+
+            saxParser.parse(file, instance);
+        } catch (Exception ex) {
+            results = ex;
+        }
+        assertTrue("Exception thrown during parse of 2012 CVE version 2.0?", results == null);
+        if (results != null) {
+            System.err.println(results);
+        }
+
     }
 }

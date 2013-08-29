@@ -16,7 +16,7 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.nvdcve;
+package org.owasp.dependencycheck.analyzer;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -29,6 +29,8 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.analyzer.Analyzer;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 
 /**
  * NvdCveAnalyzer is a utility class that takes a project dependency and

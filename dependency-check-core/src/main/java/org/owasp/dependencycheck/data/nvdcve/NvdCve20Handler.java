@@ -16,7 +16,7 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.nvdcve.xml;
+package org.owasp.dependencycheck.data.nvdcve;
 
 import java.io.IOException;
 import java.util.List;
@@ -281,7 +281,7 @@ public class NvdCve20Handler extends DefaultHandler {
      *
      * @param index the CPE Lucene Index
      */
-    void setCpeIndex(CpeIndexWriter index) {
+    public void setCpeIndex(CpeIndexWriter index) {
         cpeIndex = index;
     }
 
