@@ -51,15 +51,15 @@ public class DatabaseUpdaterTest {
         old12 = Settings.getString(Settings.KEYS.CVE_MODIFIED_12_URL);
         old20 = Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL);
 
-        File file = new File("target/test-classes/nvdcve-2012.xml");
+        File file = new File(this.getClass().getClassLoader().getResource("nvdcve-2012.xml").toURI());
         String path = "file:///" + file.getCanonicalPath();
         Settings.setString(Settings.KEYS.CVE_MODIFIED_12_URL, path);
 
-        file = new File("target/test-classes/nvdcve-2.0-2012.xml");
+        file = new File(this.getClass().getClassLoader().getResource("nvdcve-2.0-2012.xml").toURI());
         path = "file:///" + file.getCanonicalPath();
         Settings.setString(Settings.KEYS.CVE_MODIFIED_20_URL, path);
 
-        file = new File("target/test-classes/data.zip");
+        file = new File(this.getClass().getClassLoader().getResource("data.zip").toURI());
         path = "file:///" + file.getCanonicalPath();
         Settings.setString(Settings.KEYS.BATCH_UPDATE_URL, path);
     }
@@ -78,8 +78,8 @@ public class DatabaseUpdaterTest {
      */
     @Test
     public void testBatchUpdate() throws Exception {
-//        DatabaseUpdater instance = new DatabaseUpdater();
-//        instance.deleteExistingData();
-//        instance.update();
+        DatabaseUpdater instance = new DatabaseUpdater();
+        instance.deleteExistingData();
+        instance.update();
     }
 }
