@@ -71,10 +71,11 @@ public class DatabaseUpdaterIntegrationTest {
      */
     @Test
     public void testBatchUpdate() throws Exception {
-//        File file = new File("target/test-classes/nvdcve-2.0-2012.xml");
-//        String path = "file:///" + file.getCanonicalPath();
-//        Settings.setString(Settings.KEYS.BATCH_UPDATE_URL, path);
-//        DatabaseUpdater instance = new DatabaseUpdater();
-//        instance.update();
+        File file = new File(this.getClass().getClassLoader().getResource("data.zip").toURI());
+        String path = "file:///" + file.getCanonicalPath();
+        Settings.setString(Settings.KEYS.BATCH_UPDATE_URL, path);
+        DatabaseUpdater instance = new DatabaseUpdater();
+        instance.update();
+        Settings.setString(Settings.KEYS.BATCH_UPDATE_URL, "");
     }
 }
