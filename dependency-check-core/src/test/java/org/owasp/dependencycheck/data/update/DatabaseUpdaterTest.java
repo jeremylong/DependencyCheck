@@ -82,4 +82,26 @@ public class DatabaseUpdaterTest {
         instance.deleteExistingData();
         instance.update();
     }
+
+    /**
+     * Test of update method (when in batch mode), of class DatabaseUpdater.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testBatchUpdateWithoutModified() throws Exception {
+        //setup - consider moving this to its own test case file so it has a different setup/teardown.
+        final String tmp12 = Settings.getString(Settings.KEYS.CVE_MODIFIED_12_URL);
+        final String tmp20 = Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL);
+        Settings.removeProperty(Settings.KEYS.CVE_MODIFIED_12_URL);
+        Settings.removeProperty(Settings.KEYS.CVE_MODIFIED_20_URL);
+
+        DatabaseUpdater instance = new DatabaseUpdater();
+        instance.deleteExistingData();
+        instance.update();
+
+        //restore defaults
+        Settings.setString(Settings.KEYS.CVE_MODIFIED_12_URL, tmp12);
+        Settings.setString(Settings.KEYS.CVE_MODIFIED_20_URL, tmp20);
+    }
 }
