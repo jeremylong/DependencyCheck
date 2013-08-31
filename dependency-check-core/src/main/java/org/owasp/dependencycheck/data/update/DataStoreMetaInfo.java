@@ -40,7 +40,12 @@ import org.owasp.dependencycheck.utils.Settings;
 public class DataStoreMetaInfo {
 
     /**
-     * Modified key word.
+     * Batch key word, used as key to store information about batch mode.
+     */
+    public static final String BATCH = "batch";
+    /**
+     * Modified key word, used as a key to store information about the modified
+     * file (i.e. the containing the last 8 days of updates)..
      */
     public static final String MODIFIED = "modified";
     /**
@@ -99,8 +104,7 @@ public class DataStoreMetaInfo {
      * Loads the data's meta properties.
      */
     private void loadProperties() {
-        final File dataDirectory = Settings.getFile(Settings.KEYS.DATA_DIRECTORY);
-        final File file = new File(dataDirectory, UPDATE_PROPERTIES_FILE);
+        File file = getPropertiesFile();
         if (file.exists()) {
             InputStream is = null;
             try {
@@ -139,8 +143,7 @@ public class DataStoreMetaInfo {
         if (updatedValue == null) {
             return;
         }
-        final File dataDirectory = Settings.getFile(Settings.KEYS.DATA_DIRECTORY);
-        final File cveProp = new File(dataDirectory, UPDATE_PROPERTIES_FILE);
+        final File cveProp = getPropertiesFile();
         final Properties prop = new Properties();
         if (cveProp.exists()) {
             FileInputStream in = null;
@@ -213,5 +216,16 @@ public class DataStoreMetaInfo {
      */
     public String getProperty(String key, String defaultValue) {
         return properties.getProperty(key, defaultValue);
+    }
+
+    /**
+     * Retrieves the properties file.
+     *
+     * @return the properties file
+     */
+    public File getPropertiesFile() {
+        final File dataDirectory = Settings.getFile(Settings.KEYS.DATA_DIRECTORY);
+        final File file = new File(dataDirectory, UPDATE_PROPERTIES_FILE);
+        return file;
     }
 }
