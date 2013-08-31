@@ -41,7 +41,6 @@ import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.owasp.dependencycheck.data.UpdateException;
-import org.owasp.dependencycheck.data.cpe.BaseIndex;
 import org.owasp.dependencycheck.data.cpe.CpeIndexWriter;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
@@ -50,8 +49,9 @@ import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
-import static org.owasp.dependencycheck.data.update.DataStoreMetaInfo.MODIFIED;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
+import static org.owasp.dependencycheck.data.update.DataStoreMetaInfo.BATCH;
+import static org.owasp.dependencycheck.data.update.DataStoreMetaInfo.MODIFIED;
 
 /**
  *
@@ -199,9 +199,12 @@ public class DatabaseUpdater implements CachedWebDataSource {
                     }
                 }
             }
-            if (maxUpdates >= 1) {
+            if (maxUpdates >= 1) { //ensure the modified file date gets written
                 properties.save(update.get(MODIFIED));
                 cveDB.cleanupDatabase();
+            }
+            if (update.get(BATCH) != null) {
+                properties.save(update.get(BATCH));
             }
         } catch (MalformedURLException ex) {
             throw new UpdateException(ex);
@@ -249,13 +252,18 @@ public class DatabaseUpdater implements CachedWebDataSource {
      * @throws IOException thrown if the directory cannot be deleted
      */
     protected void deleteExistingData() throws IOException {
-        Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.INFO, "The database version is old. Rebuilding the database.");
-        final File data = Settings.getFile(Settings.KEYS.DATA_DIRECTORY);
-        FileUtils.delete(data);
-//        final File cveDir = CveDB.getDataDirectory();
-//        FileUtils.delete(cveDir);
-//        final File cpeDir = BaseIndex.getDataDirectory();
-//        FileUtils.delete(cpeDir);
+        File data = Settings.getFile(Settings.KEYS.CVE_DATA_DIRECTORY);
+        if (data.exists()) {
+            FileUtils.delete(data);
+        }
+        data = Settings.getFile(Settings.KEYS.CPE_DATA_DIRECTORY);
+        if (data.exists()) {
+            FileUtils.delete(data);
+        }
+        data = properties.getPropertiesFile();
+        if (data.exists()) {
+            FileUtils.delete(data);
+        }
     }
 
     private void performBatchUpdate() throws UpdateException {
@@ -372,26 +380,25 @@ public class DatabaseUpdater implements CachedWebDataSource {
         }
 
         if (currentlyPublished == null) {
-            //TODO change messages once we have a new batch mode
-            throw new DownloadFailedException("Unable to retrieve valid timestamp from NVD CVE data feeds");
+            throw new DownloadFailedException("Unable to retrieve the timestamps of the currently published NVD CVE data");
         }
 
-        final File cpeDataDirectory;
-        try {
-            cpeDataDirectory = CveDB.getDataDirectory();
-        } catch (IOException ex) {
-            String msg;
-            try {
-                msg = String.format("Unable to create the CVE Data Directory '%s'",
-                        Settings.getFile(Settings.KEYS.CVE_DATA_DIRECTORY).getCanonicalPath());
-            } catch (IOException ex1) {
-                msg = String.format("Unable to create the CVE Data Directory, this is likely a configuration issue: '%s%s%s'",
-                        Settings.getString(Settings.KEYS.DATA_DIRECTORY, ""),
-                        File.separator,
-                        Settings.getString(Settings.KEYS.CVE_DATA_DIRECTORY, ""));
-            }
-            throw new UpdateException(msg, ex);
-        }
+//        final File cpeDataDirectory;
+//        try {
+//            cpeDataDirectory = CveDB.getDataDirectory();
+//        } catch (IOException ex) {
+//            String msg;
+//            try {
+//                msg = String.format("Unable to create the CVE Data Directory '%s'",
+//                        Settings.getFile(Settings.KEYS.CVE_DATA_DIRECTORY).getCanonicalPath());
+//            } catch (IOException ex1) {
+//                msg = String.format("Unable to create the CVE Data Directory, this is likely a configuration issue: '%s%s%s'",
+//                        Settings.getString(Settings.KEYS.DATA_DIRECTORY, ""),
+//                        File.separator,
+//                        Settings.getString(Settings.KEYS.CVE_DATA_DIRECTORY, ""));
+//            }
+//            throw new UpdateException(msg, ex);
+//        }
 
         if (!properties.isEmpty()) {
             try {
@@ -411,8 +418,24 @@ public class DatabaseUpdater implements CachedWebDataSource {
                         deleteAndRecreate = true;
                     }
                 }
+
+                NvdCveInfo batchInfo = currentlyPublished.get(BATCH);
+                if (properties.isBatchUpdateMode() && batchInfo != null) {
+                    final long lastUpdated = Long.parseLong(properties.getProperty(DataStoreMetaInfo.BATCH, "0"));
+                    if (lastUpdated != batchInfo.getTimestamp()) {
+                        deleteAndRecreate = true;
+                    }
+                }
+
                 if (deleteAndRecreate) {
                     setDoBatchUpdate(properties.isBatchUpdateMode());
+                    try {
+                        deleteExistingData();
+                    } catch (IOException ex) {
+                        final String msg = "Unable to delete existing data";
+                        Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.WARNING, msg);
+                        Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINE, null, ex);
+                    }
                     return currentlyPublished;
                 }
 
@@ -492,35 +515,48 @@ public class DatabaseUpdater implements CachedWebDataSource {
      * timestamps
      * @throws InvalidSettingException thrown if the settings are invalid
      */
-    protected Map<String, NvdCveInfo> retrieveCurrentTimestampsFromWeb()
+    private Map<String, NvdCveInfo> retrieveCurrentTimestampsFromWeb()
             throws MalformedURLException, DownloadFailedException, InvalidDataException, InvalidSettingException {
 
         final Map<String, NvdCveInfo> map = new TreeMap<String, NvdCveInfo>();
         String retrieveUrl = Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL);
+        if (retrieveUrl == null && properties.isBatchUpdateMode()) {
+            NvdCveInfo item = new NvdCveInfo();
+            retrieveUrl = Settings.getString(Settings.KEYS.BATCH_UPDATE_URL);
+            if (retrieveUrl == null) {
+                final String msg = "Invalid configuration - neither the modified or batch update URLs are specified in the configuration.";
+                Logger.getLogger(DataStoreMetaInfo.class.getName()).log(Level.SEVERE, msg);
+                throw new InvalidSettingException(msg);
+            }
+            item.setTimestamp(Downloader.getLastModified(new URL(retrieveUrl)));
+            item.setId(BATCH);
+            item.setNeedsUpdate(false);
+            map.put(BATCH, item);
+        } else {
+            NvdCveInfo item = new NvdCveInfo();
+            item.setNeedsUpdate(false); //the others default to true, to make life easier later this should default to false.
+            item.setId(MODIFIED);
+            item.setUrl(retrieveUrl);
+            item.setOldSchemaVersionUrl(Settings.getString(Settings.KEYS.CVE_MODIFIED_12_URL));
 
-        NvdCveInfo item = new NvdCveInfo();
-        item.setNeedsUpdate(false); //the others default to true, to make life easier later this should default to false.
-        item.setId(MODIFIED);
-        item.setUrl(retrieveUrl);
-        item.setOldSchemaVersionUrl(Settings.getString(Settings.KEYS.CVE_MODIFIED_12_URL));
+            item.setTimestamp(Downloader.getLastModified(new URL(retrieveUrl)));
+            map.put(MODIFIED, item);
 
-        item.setTimestamp(Downloader.getLastModified(new URL(retrieveUrl)));
-        map.put(MODIFIED, item);
-
-        //only add these urls if we are not in batch mode
-        if (!properties.isBatchUpdateMode()) {
-            final int start = Settings.getInt(Settings.KEYS.CVE_START_YEAR);
-            final int end = Calendar.getInstance().get(Calendar.YEAR);
-            final String baseUrl20 = Settings.getString(Settings.KEYS.CVE_SCHEMA_2_0);
-            final String baseUrl12 = Settings.getString(Settings.KEYS.CVE_SCHEMA_1_2);
-            for (int i = start; i <= end; i++) {
-                retrieveUrl = String.format(baseUrl20, i);
-                item = new NvdCveInfo();
-                item.setId(Integer.toString(i));
-                item.setUrl(retrieveUrl);
-                item.setOldSchemaVersionUrl(String.format(baseUrl12, i));
-                item.setTimestamp(Downloader.getLastModified(new URL(retrieveUrl)));
-                map.put(item.getId(), item);
+            //only add these urls if we are not in batch mode
+            if (!properties.isBatchUpdateMode()) {
+                final int start = Settings.getInt(Settings.KEYS.CVE_START_YEAR);
+                final int end = Calendar.getInstance().get(Calendar.YEAR);
+                final String baseUrl20 = Settings.getString(Settings.KEYS.CVE_SCHEMA_2_0);
+                final String baseUrl12 = Settings.getString(Settings.KEYS.CVE_SCHEMA_1_2);
+                for (int i = start; i <= end; i++) {
+                    retrieveUrl = String.format(baseUrl20, i);
+                    item = new NvdCveInfo();
+                    item.setId(Integer.toString(i));
+                    item.setUrl(retrieveUrl);
+                    item.setOldSchemaVersionUrl(String.format(baseUrl12, i));
+                    item.setTimestamp(Downloader.getLastModified(new URL(retrieveUrl)));
+                    map.put(item.getId(), item);
+                }
             }
         }
         return map;
