@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import junit.framework.TestCase;
+import org.owasp.dependencycheck.data.update.DataStoreMetaInfo;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -46,18 +47,11 @@ public abstract class BaseDBTestCase extends TestCase {
         ensureDBExists();
     }
 
-    protected static File getDataDirectory() throws IOException {
-        final String fileName = Settings.getString(Settings.KEYS.CVE_DATA_DIRECTORY);
-        final String dataDirectory = Settings.getString(Settings.KEYS.DATA_DIRECTORY);
-        return new File(dataDirectory, fileName);
-    }
-
     public static void ensureDBExists() throws Exception {
-        String indexPath = getDataDirectory().getCanonicalPath();
-        java.io.File f = new File(indexPath);
-        if (!f.exists() || (f.isDirectory() && f.listFiles().length == 0)) {
-            f = f.getParentFile();
-            f.mkdirs();
+
+        java.io.File dataPath = Settings.getFile(Settings.KEYS.DATA_DIRECTORY);
+        if (!dataPath.exists() || (dataPath.isDirectory() && dataPath.listFiles().length == 0)) {
+            dataPath.mkdirs();
             FileInputStream fis = null;
             ZipInputStream zin = null;
             try {
@@ -67,12 +61,14 @@ public abstract class BaseDBTestCase extends TestCase {
                 ZipEntry entry;
                 while ((entry = zin.getNextEntry()) != null) {
                     if (entry.isDirectory()) {
+                        final File d = new File(dataPath, entry.getName());
+                        d.mkdir();
                         continue;
                     }
                     FileOutputStream fos = null;
                     BufferedOutputStream dest = null;
                     try {
-                        File o = new File(indexPath, entry.getName());
+                        File o = new File(dataPath, entry.getName());
                         o.createNewFile();
                         fos = new FileOutputStream(o, false);
                         dest = new BufferedOutputStream(fos, BUFFER_SIZE);
@@ -82,7 +78,7 @@ public abstract class BaseDBTestCase extends TestCase {
                             dest.write(data, 0, count);
                         }
                     } catch (Exception ex) {
-                        Logger.getLogger(BaseDBTestCase.class.getName()).log(Level.FINEST, null, ex);
+                        Logger.getLogger(BaseDBTestCase.class.getName()).log(Level.SEVERE, null, ex);
                     } finally {
                         try {
                             if (dest != null) {
