@@ -79,7 +79,7 @@ public class CpeIndexReader extends BaseIndex {
     public void open() throws IOException {
         //TODO add spinlock (shared)
         super.open();
-        indexReader = DirectoryReader.open(directory);
+        indexReader = DirectoryReader.open(getDirectory());
         indexSearcher = new IndexSearcher(indexReader);
         searchingAnalyzer = createSearchingAnalyzer();
         queryParser = new QueryParser(Version.LUCENE_43, Fields.DOCUMENT_KEY, searchingAnalyzer);

@@ -36,11 +36,20 @@ public abstract class BaseIndex {
     /**
      * The Lucene directory containing the index.
      */
-    protected Directory directory;
+    private Directory directory;
     /**
      * Indicates whether or not the Lucene Index is open.
      */
-    protected boolean indexOpen = false;
+    private boolean indexOpen = false;
+
+    /**
+     * Gets the directory.
+     *
+     * @return the directory
+     */
+    public Directory getDirectory() {
+        return directory;
+    }
 
     /**
      * Opens the CPE Index.

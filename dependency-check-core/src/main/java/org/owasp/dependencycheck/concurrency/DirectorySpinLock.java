@@ -219,7 +219,7 @@ public class DirectorySpinLock implements Closeable /*, AutoCloseable*/ {
     /**
      * Releases any locks and closes the underlying channel.
      *
-     * @throws IOException
+     * @throws IOException if an IO Exception occurs
      */
     @Override
     public void close() throws IOException {

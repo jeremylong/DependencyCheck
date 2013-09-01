@@ -63,7 +63,7 @@ public class CpeIndexWriter extends BaseIndex {
         super.open();
         indexingAnalyzer = createIndexingAnalyzer();
         final IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_43, indexingAnalyzer);
-        indexWriter = new IndexWriter(directory, conf);
+        indexWriter = new IndexWriter(getDirectory(), conf);
     }
 
     /**
