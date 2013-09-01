@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.apache.tools.ant.BuildFileTest;
+import org.owasp.dependencycheck.data.nvdcve.BaseDBTestCase;
 
 /**
  *
@@ -46,7 +47,9 @@ public class DependencyCheckTaskTest extends BuildFileTest {
 
     @Before
     @Override
-    public void setUp() {
+    public void setUp() throws Exception {
+        BaseDBTestCase.ensureDBExists();
+
         final String buildFile = this.getClass().getClassLoader().getResource("build.xml").getPath();
         configureProject(buildFile);
     }
