@@ -77,6 +77,25 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
                 <executions>
                     <!-- the following executions are solely to setup the test environment -->
                     <execution>
+                        <id>copy-test-data.zip</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/test-classes</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/../src/test/resources</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>data.zip</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>copy-test-resources-1</id>
                         <phase>validate</phase>
                         <goals>
@@ -238,6 +257,10 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
                             <value>${project.build.directory}/cobertura/cobertura.ser</value>
                             <workingDirectory>target</workingDirectory>
                         </property>
+                        <property>
+                            <name>data.directory</name>
+                            <value>${project.build.directory}/dependency-check-data</value>
+                        </property>
                     </systemProperties>
                 </configuration>
             </plugin>
@@ -389,6 +412,14 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
             <artifactId>dependency-check-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-core</artifactId>
+            <version>${project.parent.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
