@@ -260,7 +260,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
         if (data.exists()) {
             FileUtils.delete(data);
         }
-        data = properties.getPropertiesFile();
+        data = DataStoreMetaInfo.getPropertiesFile();
         if (data.exists()) {
             FileUtils.delete(data);
         }

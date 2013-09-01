@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.data.update;
 
 import org.owasp.dependencycheck.data.update.DatabaseUpdater;
 import java.io.File;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -31,9 +32,9 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class DatabaseUpdaterTest {
+public class DatabaseUpdater_2_Test {
 
-    public DatabaseUpdaterTest() {
+    public DatabaseUpdater_2_Test() {
     }
 
     @BeforeClass
@@ -50,17 +51,18 @@ public class DatabaseUpdaterTest {
     public void setUp() throws Exception {
         old12 = Settings.getString(Settings.KEYS.CVE_MODIFIED_12_URL);
         old20 = Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL);
+        Settings.removeProperty(Settings.KEYS.CVE_MODIFIED_12_URL);
+        Settings.removeProperty(Settings.KEYS.CVE_MODIFIED_20_URL);
 
-        File file = new File(this.getClass().getClassLoader().getResource("nvdcve-2012.xml").toURI());
-        String path = "file:///" + file.getCanonicalPath();
-        Settings.setString(Settings.KEYS.CVE_MODIFIED_12_URL, path);
+        File tmp = Settings.getFile(Settings.KEYS.TEMP_DIRECTORY);
+        if (!tmp.exists()) {
+            tmp.mkdirs();
+        }
 
-        file = new File(this.getClass().getClassLoader().getResource("nvdcve-2.0-2012.xml").toURI());
-        path = "file:///" + file.getCanonicalPath();
-        Settings.setString(Settings.KEYS.CVE_MODIFIED_20_URL, path);
-
-        file = new File(this.getClass().getClassLoader().getResource("data.zip").toURI());
-        path = "file:///" + file.getCanonicalPath();
+        File dest = new File(tmp, "data.zip");
+        File file = new File(this.getClass().getClassLoader().getResource("data.zip").toURI());
+        FileUtils.copyFile(file, dest);
+        String path = "file:///" + dest.getCanonicalPath();
         Settings.setString(Settings.KEYS.BATCH_UPDATE_URL, path);
     }
 
@@ -68,19 +70,7 @@ public class DatabaseUpdaterTest {
     public void tearDown() {
         Settings.setString(Settings.KEYS.CVE_MODIFIED_12_URL, old12);
         Settings.setString(Settings.KEYS.CVE_MODIFIED_20_URL, old20);
-        Settings.setString(Settings.KEYS.BATCH_UPDATE_URL, "");
-    }
-
-    /**
-     * Test of update method (when in batch mode), of class DatabaseUpdater.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testBatchUpdate() throws Exception {
-        DatabaseUpdater instance = new DatabaseUpdater();
-        instance.deleteExistingData();
-        instance.update();
+        Settings.removeProperty(Settings.KEYS.BATCH_UPDATE_URL);
     }
 
     /**
@@ -90,18 +80,8 @@ public class DatabaseUpdaterTest {
      */
     @Test
     public void testBatchUpdateWithoutModified() throws Exception {
-        //setup - consider moving this to its own test case file so it has a different setup/teardown.
-        final String tmp12 = Settings.getString(Settings.KEYS.CVE_MODIFIED_12_URL);
-        final String tmp20 = Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL);
-        Settings.removeProperty(Settings.KEYS.CVE_MODIFIED_12_URL);
-        Settings.removeProperty(Settings.KEYS.CVE_MODIFIED_20_URL);
-
         DatabaseUpdater instance = new DatabaseUpdater();
         instance.deleteExistingData();
         instance.update();
-
-        //restore defaults
-        Settings.setString(Settings.KEYS.CVE_MODIFIED_12_URL, tmp12);
-        Settings.setString(Settings.KEYS.CVE_MODIFIED_20_URL, tmp20);
     }
 }

@@ -223,7 +223,7 @@ public class DataStoreMetaInfo {
      *
      * @return the properties file
      */
-    public File getPropertiesFile() {
+    public static File getPropertiesFile() {
         final File dataDirectory = Settings.getFile(Settings.KEYS.DATA_DIRECTORY);
         final File file = new File(dataDirectory, UPDATE_PROPERTIES_FILE);
         return file;

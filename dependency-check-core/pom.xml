@@ -177,6 +177,10 @@ along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
                             <name>data.directory</name>
                             <value>${project.build.directory}/data</value>
                         </property>
+                        <property>
+                            <name>temp.directory</name>
+                            <value>${project.build.directory}/temp</value>
+                        </property>
                     </systemProperties>
                     <excludes>
                         <exclude>**/*IntegrationTest.java</exclude>
