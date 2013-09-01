@@ -297,6 +297,15 @@ public final class Settings {
     }
 
     /**
+     * Returns the temporary directory.
+     *
+     * @return the temporary directory
+     */
+    public static File getTempDirectory() {
+        return new File(Settings.getString(Settings.KEYS.TEMP_DIRECTORY, System.getProperty("java.io.tmpdir")));
+    }
+
+    /**
      * Returns a value from the properties file. If the value was specified as a
      * system property or passed in via the -Dprop=value argument - this method
      * will return the value from the system properties before the values in the
