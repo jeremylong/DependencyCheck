@@ -23,12 +23,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.analyzer.AnalysisException;
-import org.owasp.dependencycheck.analyzer.AnalysisPhase;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.Identifier;
-import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 

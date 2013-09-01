@@ -104,7 +104,7 @@ public class DataStoreMetaInfo {
      * Loads the data's meta properties.
      */
     private void loadProperties() {
-        File file = getPropertiesFile();
+        final File file = getPropertiesFile();
         if (file.exists()) {
             InputStream is = null;
             try {

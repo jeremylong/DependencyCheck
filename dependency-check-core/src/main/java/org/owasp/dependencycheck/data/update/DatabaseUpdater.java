@@ -54,6 +54,7 @@ import static org.owasp.dependencycheck.data.update.DataStoreMetaInfo.BATCH;
 import static org.owasp.dependencycheck.data.update.DataStoreMetaInfo.MODIFIED;
 
 /**
+ * Class responsible for updating the CPE and NVDCVE data stores.
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
@@ -74,7 +75,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
     /**
      * A flag indicating whether or not the batch update should be performed.
      */
-    protected boolean doBatchUpdate;
+    private boolean doBatchUpdate;
 
     /**
      * Get the value of doBatchUpdate
@@ -266,6 +267,12 @@ public class DatabaseUpdater implements CachedWebDataSource {
         }
     }
 
+    /**
+     * Performs the batch update based on the configured batch update URL.
+     *
+     * @throws UpdateException thrown if there is an exception during the update
+     * process
+     */
     private void performBatchUpdate() throws UpdateException {
         if (properties.isBatchUpdateMode() && doBatchUpdate) {
             final String batchSrc = Settings.getString(Settings.KEYS.BATCH_UPDATE_URL);
@@ -419,7 +426,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
                     }
                 }
 
-                NvdCveInfo batchInfo = currentlyPublished.get(BATCH);
+                final NvdCveInfo batchInfo = currentlyPublished.get(BATCH);
                 if (properties.isBatchUpdateMode() && batchInfo != null) {
                     final long lastUpdated = Long.parseLong(properties.getProperty(DataStoreMetaInfo.BATCH, "0"));
                     if (lastUpdated != batchInfo.getTimestamp()) {
@@ -477,7 +484,8 @@ public class DatabaseUpdater implements CachedWebDataSource {
                     }
                 }
             } catch (NumberFormatException ex) {
-                Logger.getLogger(DataStoreMetaInfo.class.getName()).log(Level.WARNING, "An invalid schema version or timestamp exists in the data.properties file.");
+                final String msg = "An invalid schema version or timestamp exists in the data.properties file.";
+                Logger.getLogger(DataStoreMetaInfo.class.getName()).log(Level.WARNING, msg);
                 Logger.getLogger(DataStoreMetaInfo.class.getName()).log(Level.FINE, null, ex);
                 setDoBatchUpdate(properties.isBatchUpdateMode());
             }
@@ -521,7 +529,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
         final Map<String, NvdCveInfo> map = new TreeMap<String, NvdCveInfo>();
         String retrieveUrl = Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL);
         if (retrieveUrl == null && properties.isBatchUpdateMode()) {
-            NvdCveInfo item = new NvdCveInfo();
+            final NvdCveInfo item = new NvdCveInfo();
             retrieveUrl = Settings.getString(Settings.KEYS.BATCH_UPDATE_URL);
             if (retrieveUrl == null) {
                 final String msg = "Invalid configuration - neither the modified or batch update URLs are specified in the configuration.";

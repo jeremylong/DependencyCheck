@@ -25,6 +25,9 @@ package org.owasp.dependencycheck.concurrency;
  */
 public class InvalidDirectoryException extends Exception {
 
+    /**
+     * Default serial version UID.
+     */
     private static final long serialVersionUID = 1L;
 
     /**

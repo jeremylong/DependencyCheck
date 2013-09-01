@@ -32,7 +32,6 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.analyzer.AnalysisException;
 import org.owasp.dependencycheck.analyzer.ArchiveAnalyzer;
 
 /**
@@ -81,8 +80,11 @@ public final class FileUtils {
                 delete(c);
             }
         }
-        if (!file.delete()) {
+        if (!org.apache.commons.io.FileUtils.deleteQuietly(file)) {
+            //if (!file.delete()) {
             throw new FileNotFoundException("Failed to delete file: " + file);
+        } else {
+            file.deleteOnExit();
         }
     }
 
@@ -102,7 +104,8 @@ public final class FileUtils {
                 delete(c);
             }
         }
-        if (!file.delete()) {
+        if (!org.apache.commons.io.FileUtils.deleteQuietly(file)) {
+            //if (!file.delete()) {
             if (deleteOnExit) {
                 file.deleteOnExit();
             } else {
