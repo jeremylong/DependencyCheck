@@ -52,7 +52,7 @@ public class DatabaseUpdater_1_Test {
         old12 = Settings.getString(Settings.KEYS.CVE_MODIFIED_12_URL);
         old20 = Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL);
 
-        File tmp = Settings.getFile(Settings.KEYS.TEMP_DIRECTORY);
+        File tmp = Settings.getTempDirectory();
         if (!tmp.exists()) {
             tmp.mkdirs();
         }

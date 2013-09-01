@@ -54,7 +54,7 @@ public class DatabaseUpdater_2_Test {
         Settings.removeProperty(Settings.KEYS.CVE_MODIFIED_12_URL);
         Settings.removeProperty(Settings.KEYS.CVE_MODIFIED_20_URL);
 
-        File tmp = Settings.getFile(Settings.KEYS.TEMP_DIRECTORY);
+        File tmp = Settings.getTempDirectory();
         if (!tmp.exists()) {
             tmp.mkdirs();
         }
