@@ -28,7 +28,7 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
     <artifactId>dependency-check-cli</artifactId>
     <packaging>jar</packaging>
 
-    <name>dependency-check-cli</name>
+    <name>Dependency-Check Command Line</name>
     <description>Dependency-Check-Maven is a Maven Plugin that attempts to detect publicly disclosed vulnerabilities contained within project dependencies. It does this by determining if there is a Common Platform Enumeration (CPE) identifier for a given dependency. If found, it will generate a report linking to the associated CVE entries.</description>
     <!-- begin copy from http://minds.coremedia.com/2012/09/11/problem-solved-deploy-multi-module-maven-project-site-as-github-pages/ -->
     <distributionManagement>
