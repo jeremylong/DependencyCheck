@@ -459,7 +459,7 @@ public class CPEAnalyzer implements Analyzer {
                 list.add(word);
             }
         }
-        if (tempWord != null) {
+        if (tempWord != null && !list.isEmpty()) {
             String tmp = list.get(list.size() - 1) + tempWord;
             list.add(tmp);
         }
