@@ -78,7 +78,7 @@ along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
     </contributors>
     <scm>
         <connection>scm:git:git@github.com:jeremylong/DependencyCheck.git</connection>
-        <url>https://github.com/jeremylong/DependencyCheck.git</url>
+        <url>https://github.com/jeremylong/DependencyCheck</url>
         <developerConnection>scm:git:git@github.com:jeremylong/DependencyCheck.git</developerConnection>
         <tag>dependency-check-1.0.1</tag>
     </scm>

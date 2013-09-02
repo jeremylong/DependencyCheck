@@ -1,47 +1,23 @@
-Dependency-Check
+Dependency-Check Ant Task
 =========
 
-Dependency-Check is a utility that attempts to detect publicly disclosed vulnerabilities contained within project dependencies. It does this by determining if there is a Common Platform Enumeration (CPE) identifier for a given dependency. If found, it will generate a report linking to the associated CVE entries.
-
-More information can be found on the [wiki].
-
-Notice
--
-
-A very big release of new functionality and plugins will be made available during the BlackHat Arsenal on July 31st, 2013. If you are at BlackHat stop by and see the demos!
-
-Usage
--
-
-> $ mvn package
-
-> $ cd target
-
-> $ java -jar dependency-check-[version].jar -h
-
-> $ java -jar dependency-check-[version].jar -a Testing -out . -scan ./test-classes -scan ./lib
-
-Then load the resulting 'DependencyCheck-Report.html' into your favorite browser.
+Dependency-Check Ant Task can be used to check the project dependencies for published security vulnerabilities. The checks
+performed are a "best effort" and as such, there could be false positives as well as false negatives. However,
+vulnerabilities in 3rd party components is a well-known problem and is currently documented in the 2013 OWASP
+Top 10 as [A9 - Using Components with Known Vulnerabilities](https://www.owasp.org/index.php/Top_10_2013-A9-Using_Components_with_Known_Vulnerabilities).
 
 Mailing List
--
+------------
 
-Subscribe: [dependency-check+subscribe@googlegroups.com] [subscribe]
+Subscribe: [dependency-check+subscribe@googlegroups.com](mailto:dependency-check+subscribe@googlegroups.com)
 
-Post: [dependency-check@googlegroups.com] [post]
+Post: [dependency-check@googlegroups.com](mailto:dependency-check@googlegroups.com)
 
 Copyright & License
--
+-------------------
 
 Dependency-Check is Copyright (c) 2012-2013 Jeremy Long. All Rights Reserved.
 
-Permission to modify and redistribute is granted under the terms of the GPLv3 license. See the [LICENSE.txt] [GPLv3] file for the full license.
+Permission to modify and redistribute is granted under the terms of the GPLv3 license. See the [LICENSE.txt](https://github.com/jeremylong/DependencyCheck/dependency-check-ant/blob/master/LICENSE.txt) file for the full license.
 
-Dependency-Check makes use of several other open source libraries. Please see the [NOTICE.txt] [notices] file for more information.
-
-
-  [wiki]: https://github.com/jeremylong/DependencyCheck/wiki
-  [subscribe]: mailto:dependency-check+subscribe@googlegroups.com
-  [post]: mailto:dependency-check@googlegroups.com
-  [GPLv3]: https://github.com/jeremylong/DependencyCheck/blob/master/LICENSE.txt
-  [notices]: https://github.com/jeremylong/DependencyCheck/blob/master/NOTICES.txt
+Dependency-Check-Ant makes use of other open source libraries. Please see the [NOTICE.txt](https://github.com/jeremylong/DependencyCheck/dependency-check-ant/blob/master/NOTICES.txt) file for more information.
