@@ -14,39 +14,54 @@
  * You should have received a copy of the GNU General Public License along with
  * dependency-check-core. If not, see http://www.gnu.org/licenses/.
  *
- * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.nvdcve.xml;
+package org.owasp.dependencycheck.concurrency;
 
 /**
- * An InvalidDataDataException is a generic exception used when trying to load
- * the nvd cve meta data.
+ * If thrown, indicates that there is a problem with a directory.
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class InvalidDataException extends Exception {
+public class InvalidDirectoryException extends Exception {
 
     /**
-     * the serial version uid.
+     * Default serial version UID.
      */
     private static final long serialVersionUID = 1L;
 
     /**
-     * Creates an InvalidDataException.
-     *
-     * @param msg the exception message
+     * Constructs a new Invalid Directory Exception.
      */
-    public InvalidDataException(String msg) {
+    public InvalidDirectoryException() {
+        super();
+    }
+
+    /**
+     * Constructs a new Invalid Directory Exception.
+     *
+     * @param msg the message describing the exception
+     */
+    public InvalidDirectoryException(String msg) {
         super(msg);
     }
 
     /**
-     * Creates an InvalidDataException.
+     * Constructs a new Invalid Directory Exception.
      *
-     * @param msg the exception message
      * @param ex the cause of the exception
      */
-    public InvalidDataException(String msg, Exception ex) {
+    public InvalidDirectoryException(Throwable ex) {
+        super(ex);
+    }
+
+    /**
+     * Constructs a new Invalid Directory Exception.
+     *
+     * @param msg the message describing the exception
+     * @param ex the cause of the exception
+     */
+    public InvalidDirectoryException(String msg, Throwable ex) {
         super(msg, ex);
     }
 }

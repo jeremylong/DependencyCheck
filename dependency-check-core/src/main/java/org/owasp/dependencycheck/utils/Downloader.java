@@ -172,19 +172,33 @@ public final class Downloader {
     public static long getLastModified(URL url) throws DownloadFailedException {
         HttpURLConnection conn = null;
         long timestamp = 0;
-        try {
-            conn = Downloader.getConnection(url);
-            conn.setRequestMethod("HEAD");
-            conn.connect();
-            timestamp = conn.getLastModified();
-        } catch (Exception ex) {
-            throw new DownloadFailedException("Error making HTTP HEAD request.", ex);
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.disconnect();
-                } finally {
-                    conn = null;
+
+        //TODO add the FPR protocol?
+        if ("file".equalsIgnoreCase(url.getProtocol())) {
+            File lastModifiedFile;
+            try {
+                lastModifiedFile = new File(url.toURI());
+            } catch (URISyntaxException ex) {
+                final String msg = String.format("Unable to locate '%s'; is the cve.url-2.0.modified property set correctly?", url.toString());
+                throw new DownloadFailedException(msg);
+            }
+            timestamp = lastModifiedFile.lastModified();
+        } else {
+            HttpURLConnection conn = null;
+            try {
+                conn = Downloader.getConnection(url);
+                conn.setRequestMethod("HEAD");
+                conn.connect();
+                timestamp = conn.getLastModified();
+            } catch (Exception ex) {
+                throw new DownloadFailedException("Error making HTTP HEAD request.", ex);
+            } finally {
+                if (conn != null) {
+                    try {
+                        conn.disconnect();
+                    } finally {
+                        conn = null;
+                    }
                 }
             }
         }
@@ -213,11 +227,8 @@ public final class Downloader {
             } else {
                 conn = (HttpURLConnection) url.openConnection();
             }
-            //added a default timeout of 20000
-            //if (Settings.getString(Settings.KEYS.CONNECTION_TIMEOUT) != null) {
             final int timeout = Settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT, 60000);
             conn.setConnectTimeout(timeout);
-            //}
         } catch (IOException ex) {
             if (conn != null) {
                 try {

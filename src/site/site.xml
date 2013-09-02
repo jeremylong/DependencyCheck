@@ -61,14 +61,17 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             <item name="dependency-check-core" href="./dependency-check-core/index.html">
                 <description>The core dependency-check library</description>
             </item>
-            <item name="dependency-check-cli" href="./dependency-check-cli/index.html">
+            <item name="dependency-check-cli" href="./dependency-check-cli/installation.html">
                 <description>The command line interface for dependency-check.</description>
             </item>
-            <item name="dependency-check-ant" href="./dependency-check-ant/index.html">
+            <item name="dependency-check-ant" href="./dependency-check-ant/installation.html">
                 <description>An Ant task to run dependency-check.</description>
             </item>
-            <item name="dependency-check-maven" href="./dependency-check-maven/index.html">
+            <item name="dependency-check-maven" href="./dependency-check-maven/usage.html">
                 <description>A Maven plugin for dependency-check.</description>
+            </item>
+            <item name="dependency-check-jenkins" href="./dependency-check-jenkins/index.html">
+                <description>A Jenkins plugin for dependency-check.</description>
             </item>
         </menu>
         <footer/>

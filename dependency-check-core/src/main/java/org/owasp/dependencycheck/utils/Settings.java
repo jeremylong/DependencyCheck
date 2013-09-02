@@ -235,42 +235,26 @@ public final class Settings {
      * argument - this method will return the value from the system properties
      * before the values in the contained configuration file.
      *
-     * @param key the key to lookup within the properties file
-     * @param defaultValue the default value for the requested property
-     * @return the property from the properties file as a File object
-     */
-    public static File getFile(String key, String defaultValue) {
-        final String baseDir = getString(Settings.KEYS.DATA_DIRECTORY);
-        final String str = getString(key, defaultValue);
-        if (baseDir != null) {
-            return new File(baseDir, str);
-        }
-        return new File(str);
-    }
-
-    /**
-     * Returns a value from the properties file as a File object. If the value
-     * was specified as a system property or passed in via the -Dprop=value
-     * argument - this method will return the value from the system properties
-     * before the values in the contained configuration file.
-     *
      * This method will also replace a leading "[JAR]\" sequence with the path
      * to the folder containing the JAR file containing this class.
      *
      * @param key the key to lookup within the properties file
-     * @param clazz the class to obtain the base directory from in case "[JAR]\"
-     * exists
      * @return the property from the properties file converted to a File object
-     * @throws IOException thrown if the file path to the JAR cannot be found
      */
-    public static File getFile(String key, Class clazz) throws IOException {
+    public static File getFile(String key) {
         final String file = getString(key);
         final String baseDir = getString(Settings.KEYS.DATA_DIRECTORY);
         if (baseDir != null) {
             if (baseDir.startsWith("[JAR]/")) {
-                final File jarPath = getJarPath(clazz);
-                final File newBase = new File(jarPath.getCanonicalPath(), baseDir.substring(6));
+                final File jarPath = getJarPath();
+                final File newBase = new File(jarPath, baseDir.substring(6));
+                if (Settings.KEYS.DATA_DIRECTORY.equals(key)) {
+                    return newBase;
+                }
                 return new File(newBase, file);
+            }
+            if (Settings.KEYS.DATA_DIRECTORY.equals(key)) {
+                return new File(baseDir);
             }
             return new File(baseDir, file);
         }
@@ -334,6 +318,15 @@ public final class Settings {
     }
 
     /**
+     * Returns the temporary directory.
+     *
+     * @return the temporary directory
+     */
+    public static File getTempDirectory() {
+        return new File(Settings.getString(Settings.KEYS.TEMP_DIRECTORY, System.getProperty("java.io.tmpdir")));
+    }
+
+    /**
      * Returns a value from the properties file. If the value was specified as a
      * system property or passed in via the -Dprop=value argument - this method
      * will return the value from the system properties before the values in the
@@ -344,6 +337,16 @@ public final class Settings {
      */
     public static String getString(String key) {
         return System.getProperty(key, INSTANCE.props.getProperty(key));
+    }
+
+    /**
+     * Removes a property from the local properties collection. This is mainly
+     * used in test cases.
+     *
+     * @param key the property key to remove
+     */
+    public static void removeProperty(String key) {
+        INSTANCE.props.remove(key);
     }
 
     /**

@@ -28,7 +28,7 @@ along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
     <artifactId>dependency-check-core</artifactId>
     <packaging>jar</packaging>
 
-    <name>dependency-check-core</name>
+    <name>Dependency-Check Core</name>
     <!-- begin copy from http://minds.coremedia.com/2012/09/11/problem-solved-deploy-multi-module-maven-project-site-as-github-pages/ -->
     <distributionManagement>
         <site>
@@ -103,28 +103,30 @@ along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
                 <version>2.4</version>
                 <executions>
                     <execution>
+                        <id>jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                    <execution>
                         <id>test-jar</id>
+                        <phase>package</phase>
                         <goals>
                             <goal>test-jar</goal>
                         </goals>
                     </execution>
-                    <execution>
-                        <id>jar</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <archive>
-                                <manifest>
-                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                </manifest>
-                            </archive>
-                            <excludes>
-                                <exclude>**/checkstyle*</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
                 </executions>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                    <excludes>
+                        <exclude>**/checkstyle*</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -190,6 +192,10 @@ along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
                         <property>
                             <name>data.directory</name>
                             <value>${project.build.directory}/data</value>
+                        </property>
+                        <property>
+                            <name>temp.directory</name>
+                            <value>${project.build.directory}/temp</value>
                         </property>
                     </systemProperties>
                     <excludes>

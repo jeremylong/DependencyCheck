@@ -16,48 +16,37 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.nvdcve.xml;
-
-import org.owasp.dependencycheck.data.nvdcve.xml.DatabaseUpdater;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+package org.owasp.dependencycheck.data.nvdcve;
 
 /**
+ * An InvalidDataDataException is a generic exception used when trying to load
+ * the nvd cve meta data.
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class DatabaseUpdaterIntegrationTest {
+public class InvalidDataException extends Exception {
 
-    public DatabaseUpdaterIntegrationTest() {
-    }
+    /**
+     * the serial version uid.
+     */
+    private static final long serialVersionUID = 1L;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
+    /**
+     * Creates an InvalidDataException.
+     *
+     * @param msg the exception message
+     */
+    public InvalidDataException(String msg) {
+        super(msg);
     }
 
     /**
-     * Test of update method, of class DatabaseUpdater.
+     * Creates an InvalidDataException.
      *
-     * @throws Exception
+     * @param msg the exception message
+     * @param ex the cause of the exception
      */
-    @Test
-    public void testUpdate() throws Exception {
-        DatabaseUpdater instance = new DatabaseUpdater();
-        instance.update();
+    public InvalidDataException(String msg, Exception ex) {
+        super(msg, ex);
     }
 }
