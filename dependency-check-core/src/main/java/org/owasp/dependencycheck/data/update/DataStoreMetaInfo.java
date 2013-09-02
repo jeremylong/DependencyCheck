@@ -119,6 +119,16 @@ public class DataStoreMetaInfo {
                 final String msg = String.format("Unable to load properties file '%s'", file.getPath());
                 Logger.getLogger(DataStoreMetaInfo.class.getName()).log(Level.WARNING, msg);
                 Logger.getLogger(DataStoreMetaInfo.class.getName()).log(Level.FINE, null, ex);
+            } finally {
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (IOException ex) {
+                        final String msg = String.format("Unable to close properties file '%s'", file.getPath());
+                        Logger.getLogger(DataStoreMetaInfo.class.getName()).log(Level.WARNING, msg);
+                        Logger.getLogger(DataStoreMetaInfo.class.getName()).log(Level.FINE, null, ex);
+                    }
+                }
             }
         }
     }
