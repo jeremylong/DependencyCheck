@@ -10,8 +10,8 @@
     </parent>
 
     <groupId>org.owasp</groupId>
-	<artifactId>dependency-check-jenkins</artifactId>
-	<name>Dependency-Check Jenkins Plugin</name>
+    <artifactId>dependency-check-jenkins</artifactId>
+    <name>Dependency-Check Jenkins Plugin</name>
     <packaging>jar</packaging>
     <inceptionYear>2012</inceptionYear>
     <organization>
@@ -33,22 +33,13 @@
     </developers>
     <scm>
         <connection>scm:git:git@github.com:jenkinsci/dependency-check-jenkins.git</connection>
-        <url>https://github.com/jenkinsci/dependency-check-jenkins.git</url>
+        <url>https://github.com/jenkinsci/dependency-check-jenkins</url>
         <developerConnection>scm:git:git@github.com:jenkinsci/dependency-check-jenkins.git</developerConnection>
     </scm>
     <issueManagement>
         <system>github</system>
         <url>https://github.com/jenkinsci/dependency-check-jenkins/issues</url>
     </issueManagement>
-    <mailingLists>
-        <mailingList>
-            <name>Dependency Check</name>
-            <subscribe>dependency-check+subscribe@googlegroups.com</subscribe>
-            <unsubscribe>dependency-check+unsubscribe@googlegroups.com</unsubscribe>
-            <post>dependency-check@googlegroups.com</post>
-            <archive>https://groups.google.com/forum/?fromgroups#!forum/dependency-check</archive>
-        </mailingList>
-    </mailingLists>
     <licenses>
         <license>
             <name>GNU General Public License version 3</name>

@@ -28,4 +28,4 @@ Dependency-check's core analysis library is exposed in various forms:
 -  [Command Line Tool](dependency-check-cli/index.html)
 -  [Maven Plugin](dependency-check-maven/usage.html)
 -  [Ant Task](dependency-check-ant/installation.html)
--  Jenkins Plugin
+-  [Jenkins Plugin](dependency-check-jenkins/index.html)
