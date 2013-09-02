@@ -50,7 +50,7 @@ public abstract class BaseDBTestCase extends TestCase {
     public static void ensureDBExists() throws Exception {
 
         java.io.File dataPath = Settings.getFile(Settings.KEYS.DATA_DIRECTORY);
-        if (!dataPath.exists() || (dataPath.isDirectory() && dataPath.listFiles().length == 0)) {
+        if (!dataPath.exists() || (dataPath.isDirectory() && dataPath.listFiles().length < 3)) {
             dataPath.mkdirs();
             FileInputStream fis = null;
             ZipInputStream zin = null;
