@@ -27,6 +27,7 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.SocketAddress;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,48 +55,7 @@ public final class Downloader {
      * @throws DownloadFailedException is thrown if there is an error
      * downloading the file.
      */
-    public static void fetchFile(URL url, String outputPath) throws DownloadFailedException {
-        fetchFile(url, outputPath, false);
-    }
-
-    /**
-     * Retrieves a file from a given URL and saves it to the outputPath.
-     *
-     * @param url the URL of the file to download.
-     * @param outputPath the path to the save the file to.
-     * @param unzip true/false indicating that the file being retrieved is
-     * gzipped and if true, should be uncompressed before writing to the file.
-     * @throws DownloadFailedException is thrown if there is an error
-     * downloading the file.
-     */
-    public static void fetchFile(URL url, String outputPath, boolean unzip) throws DownloadFailedException {
-        final File f = new File(outputPath);
-        fetchFile(url, f, unzip);
-    }
-
-    /**
-     * Retrieves a file from a given URL and saves it to the outputPath.
-     *
-     * @param url the URL of the file to download.
-     * @param outputPath the path to the save the file to.
-     * @throws DownloadFailedException is thrown if there is an error
-     * downloading the file.
-     */
     public static void fetchFile(URL url, File outputPath) throws DownloadFailedException {
-        fetchFile(url, outputPath, false);
-    }
-
-    /**
-     * Retrieves a file from a given URL and saves it to the outputPath.
-     *
-     * @param url the URL of the file to download.
-     * @param outputPath the path to the save the file to.
-     * @param unzip true/false indicating that the file being retrieved is
-     * gzipped and if true, should be uncompressed before writing to the file.
-     * @throws DownloadFailedException is thrown if there is an error
-     * downloading the file.
-     */
-    public static void fetchFile(URL url, File outputPath, boolean unzip) throws DownloadFailedException {
         HttpURLConnection conn = null;
         try {
             conn = Downloader.getConnection(url);
@@ -116,7 +76,7 @@ public final class Downloader {
         BufferedOutputStream writer = null;
         InputStream reader = null;
         try {
-            if (unzip || (encoding != null && "gzip".equalsIgnoreCase(encoding))) {
+            if (encoding != null && "gzip".equalsIgnoreCase(encoding)) {
                 reader = new GZIPInputStream(conn.getInputStream());
             } else if (encoding != null && "deflate".equalsIgnoreCase(encoding)) {
                 reader = new InflaterInputStream(conn.getInputStream());
@@ -136,7 +96,6 @@ public final class Downloader {
             if (writer != null) {
                 try {
                     writer.close();
-                    writer = null;
                 } catch (Exception ex) {
                     Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
                             "Error closing the writer in Downloader.", ex);
@@ -145,9 +104,7 @@ public final class Downloader {
             if (reader != null) {
                 try {
                     reader.close();
-                    reader = null;
                 } catch (Exception ex) {
-
                     Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
                             "Error closing the reader in Downloader.", ex);
                 }
@@ -162,7 +119,8 @@ public final class Downloader {
 
     /**
      * Makes an HTTP Head request to retrieve the last modified date of the
-     * given URL.
+     * given URL. If the file:// protocol is specified, then the lastTimestamp
+     * of the file is returned.
      *
      * @param url the URL to retrieve the timestamp from
      * @return an epoch timestamp
@@ -170,14 +128,21 @@ public final class Downloader {
      * the HTTP request
      */
     public static long getLastModified(URL url) throws DownloadFailedException {
-        HttpURLConnection conn = null;
         long timestamp = 0;
-
         //TODO add the FPR protocol?
         if ("file".equalsIgnoreCase(url.getProtocol())) {
             File lastModifiedFile;
             try {
+//                if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+//                    String filePath = url.toString();
+//                    if (filePath.matches("file://[a-zA-Z]:.*")) {
+//                        f = new File(filePath.substring(7));
+//                    } else {
+//                        f = new File(url.toURI());
+//                    }
+//                } else {
                 lastModifiedFile = new File(url.toURI());
+//                }
             } catch (URISyntaxException ex) {
                 final String msg = String.format("Unable to locate '%s'; is the cve.url-2.0.modified property set correctly?", url.toString());
                 throw new DownloadFailedException(msg);

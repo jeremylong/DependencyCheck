@@ -68,6 +68,11 @@ public final class Settings {
          */
         public static final String DATA_DIRECTORY = "data.directory";
         /**
+         * The location of the batch update URL. This is a zip file that
+         * contains the contents of the data directory.
+         */
+        public static final String BATCH_UPDATE_URL = "batch.update.url";
+        /**
          * The properties key for the path where the CPE Lucene Index will be
          * stored.
          */
@@ -77,14 +82,6 @@ public final class Settings {
          * stored.
          */
         public static final String CVE_DATA_DIRECTORY = "data.cve";
-        /**
-         * The properties key for the URL to the CPE.
-         */
-        public static final String CPE_URL = "cpe.url";
-        /**
-         * The properties key for the URL to the CPE.
-         */
-        public static final String CPE_META_URL = "cpe.meta.url";
         /**
          * The properties key for the URL to retrieve the "meta" data from about
          * the CVE entries.
@@ -262,30 +259,13 @@ public final class Settings {
     }
 
     /**
-     * Returns a value from the properties file as a File object. If the value
-     * was specified as a system property or passed in via the -Dprop=value
-     * argument - this method will return the value from the system properties
-     * before the values in the contained configuration file.
-     *
-     * This method will also replace a leading "[JAR]\" sequence with the path
-     * to the folder containing the JAR file containing this class.
-     *
-     * @param key the key to lookup within the properties file
-     * @return the property from the properties file converted to a File object
-     * @throws IOException thrown if the file path to the JAR cannot be found
-     */
-    public static File getFile(String key) throws IOException {
-        return getFile(key, Settings.class);
-    }
-
-    /**
      * Attempts to retrieve the folder containing the Jar file containing the
      * Settings class.
      *
      * @return a File object
      */
-    private static File getJarPath(Class clazz) {
-        final String jarPath = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
+    private static File getJarPath() {
+        final String jarPath = Settings.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         String decodedPath = ".";
         try {
             decodedPath = URLDecoder.decode(jarPath, "UTF-8");
@@ -294,8 +274,7 @@ public final class Settings {
         }
 
         final File path = new File(decodedPath);
-        //TODO - need to remove the "test-classes" check which is only here to make test cases work.
-        if (path.getName().toLowerCase().endsWith(".jar") || path.getName().equals("test-classes")) {
+        if (path.getName().toLowerCase().endsWith(".jar")) {
             return path.getParentFile();
         } else {
             return new File(".");

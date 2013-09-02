@@ -18,8 +18,12 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -35,6 +39,11 @@ import org.owasp.dependencycheck.Engine;
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public final class FileUtils {
+
+    /**
+     * The buffer size to use when extracting files from the archive.
+     */
+    private static final int BUFFER_SIZE = 4096;
 
     /**
      * Private constructor for a utility class.
@@ -79,8 +88,6 @@ public final class FileUtils {
     }
 
     /**
-<<<<<<< HEAD
-=======
      * Deletes a file. If the File is a directory it will recursively delete the
      * contents.
      *
@@ -107,7 +114,6 @@ public final class FileUtils {
     }
 
     /**
->>>>>>> batch
      * Returns the data directory. If a path was specified in
      * dependencycheck.properties or was specified using the Settings object,
      * and the path exists, that path will be returned as a File object. If it
