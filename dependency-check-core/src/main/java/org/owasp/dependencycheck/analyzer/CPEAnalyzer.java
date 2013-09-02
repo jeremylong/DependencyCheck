@@ -16,7 +16,7 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.cpe;
+package org.owasp.dependencycheck.analyzer;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -35,14 +35,14 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.analyzer.AnalysisException;
-import org.owasp.dependencycheck.analyzer.AnalysisPhase;
 import org.owasp.dependencycheck.data.lucene.LuceneUtils;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.dependency.Evidence.Confidence;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
-import org.owasp.dependencycheck.analyzer.Analyzer;
+import org.owasp.dependencycheck.data.cpe.CpeIndexReader;
+import org.owasp.dependencycheck.data.cpe.Fields;
+import org.owasp.dependencycheck.data.cpe.IndexEntry;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Identifier;
@@ -83,9 +83,9 @@ public class CPEAnalyzer implements Analyzer {
      */
     static final int STRING_BUILDER_BUFFER = 20;
     /**
-     * The CPE Index.
+     * The CPE Index Reader.
      */
-    private Index cpe;
+    private CpeIndexReader cpe;
     /**
      * The CVE Database.
      */
@@ -100,7 +100,7 @@ public class CPEAnalyzer implements Analyzer {
      * usually occurs when the database is in use by another process.
      */
     public void open() throws IOException, DatabaseException {
-        cpe = new Index();
+        cpe = new CpeIndexReader();
         cpe.open();
         cve = new CveDB();
         try {
@@ -119,8 +119,12 @@ public class CPEAnalyzer implements Analyzer {
      */
     @Override
     public void close() {
-        cpe.close();
-        cve.close();
+        if (cpe != null) {
+            cpe.close();
+        }
+        if (cve != null) {
+            cve.close();
+        }
     }
 
     /**
@@ -162,7 +166,6 @@ public class CPEAnalyzer implements Analyzer {
         String vendors = addEvidenceWithoutDuplicateTerms("", dependency.getVendorEvidence(), vendorConf);
         String products = addEvidenceWithoutDuplicateTerms("", dependency.getProductEvidence(), productConf);
 
-        //boolean found = false;
         int ctr = 0;
         do {
             if (!vendors.isEmpty() && !products.isEmpty()) {
@@ -171,27 +174,20 @@ public class CPEAnalyzer implements Analyzer {
 
                 for (IndexEntry e : entries) {
                     if (verifyEntry(e, dependency)) {
-                        //found = true; // we found a vendor/product pair. Now find version from the cve db.
                         final String vendor = e.getVendor();
                         final String product = e.getProduct();
-                        // cve.getVersions(vendor, product);
                         determineIdentifiers(dependency, vendor, product);
                     }
                 }
             }
-            //if (!found) {
             vendorConf = reduceConfidence(vendorConf);
             if (dependency.getVendorEvidence().contains(vendorConf)) {
-                //vendors += " " + dependency.getVendorEvidence().toString(vendorConf);
                 vendors = addEvidenceWithoutDuplicateTerms(vendors, dependency.getVendorEvidence(), vendorConf);
             }
             productConf = reduceConfidence(productConf);
             if (dependency.getProductEvidence().contains(productConf)) {
-                //products += " " + dependency.getProductEvidence().toString(productConf);
                 products = addEvidenceWithoutDuplicateTerms(products, dependency.getProductEvidence(), productConf);
             }
-            //}
-            //} while (!found && (++ctr) < 4);
         } while ((++ctr) < 4);
     }
 

@@ -15,4 +15,4 @@
  * </html>
 */
 
-package org.owasp.dependencycheck.data.nvdcve.xml;
+package org.owasp.dependencycheck.data.update;

@@ -16,10 +16,10 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.cpe;
+package org.owasp.dependencycheck.analyzer;
 
 import org.owasp.dependencycheck.data.cpe.IndexEntry;
-import org.owasp.dependencycheck.data.cpe.CPEAnalyzer;
+import org.owasp.dependencycheck.analyzer.CPEAnalyzer;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -30,15 +30,12 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.analyzer.JarAnalyzer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.owasp.dependencycheck.analyzer.FalsePositiveAnalyzer;
-import org.owasp.dependencycheck.analyzer.FileNameAnalyzer;
-import org.owasp.dependencycheck.analyzer.HintAnalyzer;
-import static org.owasp.dependencycheck.data.cpe.BaseIndexTestCase.ensureIndexExists;
+import org.owasp.dependencycheck.data.cpe.BaseIndexTestCase;
+import org.owasp.dependencycheck.data.cpe.IndexEntry;
 import org.owasp.dependencycheck.dependency.Identifier;
 
 /**
@@ -56,11 +53,13 @@ public class CPEAnalyzerTest extends BaseIndexTestCase {
     }
 
     @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
     }
 
     @After
+    @Override
     public void tearDown() throws Exception {
         super.tearDown();
     }

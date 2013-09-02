@@ -58,7 +58,7 @@ public class CveDB {
     /**
      * The version of the current DB Schema.
      */
-    public static final String DB_SCHEMA_VERSION = "2.5";
+    public static final String DB_SCHEMA_VERSION = "2.6";
     /**
      * Database connection
      */
@@ -162,27 +162,16 @@ public class CveDB {
             value = "DMI_EMPTY_DB_PASSWORD",
             justification = "Yes, I know... Blank password.")
     public void open() throws IOException, SQLException, DatabaseException, ClassNotFoundException {
-        /*
-         * TODO - make it so we can exteralize the database (lucene index is a problem), could I store it as a blob
-         *        and just download it when needed?
-         */
-//        String dbDriver = Settings.getString(Settings.KEYS.DB_DRIVER);
-//        String dbConnStr = Settings.getString(Settings.KEYS.DB_CONNECTION_STRING);
-//        if (dbDriver != null && dbConnStr != null) {
-//            Class.forName(dbDriver);
-//            conn = DriverManager.getConnection(dbConnStr);
-//        } else { //use the embeded version
         final String fileName = CveDB.getDataDirectory().getCanonicalPath();
         final File f = new File(fileName, "cve." + DB_SCHEMA_VERSION);
         final File check = new File(f.getAbsolutePath() + ".h2.db");
         final boolean createTables = !check.exists();
-        final String connStr = "jdbc:h2:file:" + f.getAbsolutePath();
+        final String connStr = String.format("jdbc:h2:file:%s;AUTO_SERVER=TRUE", f.getAbsolutePath());
         Class.forName("org.h2.Driver");
         conn = DriverManager.getConnection(connStr, "sa", "");
         if (createTables) {
             createTables();
         }
-//        }
     }
 
     /**

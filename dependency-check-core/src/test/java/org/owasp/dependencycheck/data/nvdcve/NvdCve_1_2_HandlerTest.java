@@ -16,9 +16,9 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.nvdcve.xml;
+package org.owasp.dependencycheck.data.nvdcve;
 
-import org.owasp.dependencycheck.data.nvdcve.xml.NvdCve12Handler;
+import org.owasp.dependencycheck.data.nvdcve.NvdCve12Handler;
 import java.io.File;
 import java.util.List;
 import java.util.Map;

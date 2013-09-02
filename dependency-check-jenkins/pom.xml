@@ -1,0 +1,94 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <description>This plug-in can independently execute a Dependency-Check analysis and visualize the results.</description>
+    <url>http://wiki.jenkins-ci.org/display/JENKINS/OWASP+Dependency-Check+Plugin</url>
+    <parent>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-parent</artifactId>
+        <version>1.0.2-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.owasp</groupId>
+    <artifactId>dependency-check-jenkins</artifactId>
+    <name>Dependency-Check Jenkins Plugin</name>
+    <packaging>jar</packaging>
+    <inceptionYear>2012</inceptionYear>
+    <organization>
+        <name>OWASP</name>
+        <url>http://www.owasp.org</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <name>Steve Springett</name>
+            <email>steve.springett@owasp.org</email>
+            <organization>OWASP</organization>
+            <organizationUrl>https://www.owasp.org/index.php/OWASP_Dependency_Check</organizationUrl>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+	<!-- begin copy from http://minds.coremedia.com/2012/09/11/problem-solved-deploy-multi-module-maven-project-site-as-github-pages/ -->
+    <distributionManagement>
+        <site>
+            <id>github-pages-site</id>
+            <name>Deployment through GitHub's site deployment plugin</name>
+            <url>${basedir}/../target/site/${project.version}/dependency-check-maven</url>
+        </site>
+    </distributionManagement>
+    <!-- end copy -->
+    <scm>
+        <connection>scm:git:git@github.com:jenkinsci/dependency-check-jenkins.git</connection>
+        <url>https://github.com/jenkinsci/dependency-check-jenkins</url>
+        <developerConnection>scm:git:git@github.com:jenkinsci/dependency-check-jenkins.git</developerConnection>
+    </scm>
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/jenkinsci/dependency-check-jenkins/issues</url>
+    </issueManagement>
+    <licenses>
+        <license>
+            <name>GNU General Public License version 3</name>
+            <url>http://www.gnu.org/licenses/</url>
+        </license>
+    </licenses>
+	<build>
+		<plugins>
+	        <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.3</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.doxia</groupId>
+                        <artifactId>doxia-module-markdown</artifactId>
+                        <version>1.4</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <skipDeploy>true</skipDeploy>
+                    <reportPlugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-project-info-reports-plugin</artifactId>
+                            <version>2.6</version>
+                            <reportSets>
+                                <reportSet>
+                                    <reports>
+                                        <report>index</report>
+                                        <report>summary</report>
+                                        <report>license</report>
+                                        <report>help</report>
+                                    </reports>
+                                </reportSet>
+                            </reportSets>
+                        </plugin>
+					</reportPlugins>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

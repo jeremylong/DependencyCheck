@@ -16,22 +16,26 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.cpe;
+package org.owasp.dependencycheck.data.update;
 
-import org.owasp.dependencycheck.data.cpe.IndexEntry;
-import junit.framework.TestCase;
+import java.io.File;
+import java.net.URL;
+import org.owasp.dependencycheck.data.update.DatabaseUpdater;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.Assert;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class IndexEntryTest extends TestCase {
+public class DatabaseUpdaterIntegrationTest {
+
+    public DatabaseUpdaterIntegrationTest() {
+    }
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -42,30 +46,21 @@ public class IndexEntryTest extends TestCase {
     }
 
     @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    public void setUp() {
     }
 
     @After
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void tearDown() {
     }
 
     /**
-     * Test of setName method, of class IndexEntry.
+     * Test of update method, of class DatabaseUpdater.
      *
-     * @throws Exception is thrown when an exception occurs.
+     * @throws Exception
      */
     @Test
-    public void testSetName() throws Exception {
-        String name = "cpe:/a:apache:struts:1.1:rc2";
-
-        IndexEntry instance = new IndexEntry();
-        instance.parseName(name);
-
-        Assert.assertEquals("apache", instance.getVendor());
-        Assert.assertEquals("struts", instance.getProduct());
+    public void testUpdate() throws Exception {
+        DatabaseUpdater instance = new DatabaseUpdater();
+        instance.update();
     }
 }

@@ -143,8 +143,10 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
      */
     @Override
     public void initialize() throws Exception {
-        final String tmpDir = Settings.getString(Settings.KEYS.TEMP_DIRECTORY, System.getProperty("java.io.tmpdir"));
-        final File baseDir = new File(tmpDir);
+        final File baseDir = Settings.getTempDirectory();
+        if (!baseDir.exists()) {
+            baseDir.mkdirs();
+        }
         tempFileLocation = File.createTempFile("check", "tmp", baseDir);
         if (!tempFileLocation.delete()) {
             throw new AnalysisException("Unable to delete temporary file '" + tempFileLocation.getAbsolutePath() + "'.");

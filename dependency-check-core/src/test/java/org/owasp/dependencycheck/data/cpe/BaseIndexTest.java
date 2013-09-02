@@ -18,20 +18,20 @@
  */
 package org.owasp.dependencycheck.data.cpe;
 
-import org.owasp.dependencycheck.data.cpe.IndexEntry;
-import junit.framework.TestCase;
+import org.owasp.dependencycheck.data.cpe.BaseIndex;
+import java.io.File;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.Assert;
+import static org.junit.Assert.*;
 
 /**
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class IndexEntryTest extends TestCase {
+public class BaseIndexTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -42,30 +42,22 @@ public class IndexEntryTest extends TestCase {
     }
 
     @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    public void setUp() {
     }
 
     @After
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void tearDown() {
     }
 
     /**
-     * Test of setName method, of class IndexEntry.
+     * Test of getDataDirectory method, of class BaseIndex.
      *
-     * @throws Exception is thrown when an exception occurs.
+     * @throws Exception
      */
     @Test
-    public void testSetName() throws Exception {
-        String name = "cpe:/a:apache:struts:1.1:rc2";
-
-        IndexEntry instance = new IndexEntry();
-        instance.parseName(name);
-
-        Assert.assertEquals("apache", instance.getVendor());
-        Assert.assertEquals("struts", instance.getProduct());
+    public void testGetDataDirectory() throws Exception {
+        String file = BaseIndex.getDataDirectory().getPath();
+        String exp = File.separatorChar + "target" + File.separatorChar + "data" + File.separatorChar + "cpe";
+        assertTrue(file.contains(exp));
     }
 }
