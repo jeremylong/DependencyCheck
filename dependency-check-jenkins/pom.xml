@@ -31,6 +31,15 @@
             </roles>
         </developer>
     </developers>
+	<!-- begin copy from http://minds.coremedia.com/2012/09/11/problem-solved-deploy-multi-module-maven-project-site-as-github-pages/ -->
+    <distributionManagement>
+        <site>
+            <id>github-pages-site</id>
+            <name>Deployment through GitHub's site deployment plugin</name>
+            <url>${basedir}/../target/site/${project.version}/dependency-check-maven</url>
+        </site>
+    </distributionManagement>
+    <!-- end copy -->
     <scm>
         <connection>scm:git:git@github.com:jenkinsci/dependency-check-jenkins.git</connection>
         <url>https://github.com/jenkinsci/dependency-check-jenkins</url>
@@ -46,4 +55,40 @@
             <url>http://www.gnu.org/licenses/</url>
         </license>
     </licenses>
+	<build>
+		<plugins>
+	        <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.3</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.doxia</groupId>
+                        <artifactId>doxia-module-markdown</artifactId>
+                        <version>1.4</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <skipDeploy>true</skipDeploy>
+                    <reportPlugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-project-info-reports-plugin</artifactId>
+                            <version>2.6</version>
+                            <reportSets>
+                                <reportSet>
+                                    <reports>
+                                        <report>index</report>
+                                        <report>summary</report>
+                                        <report>license</report>
+                                        <report>help</report>
+                                    </reports>
+                                </reportSet>
+                            </reportSets>
+                        </plugin>
+					</reportPlugins>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
