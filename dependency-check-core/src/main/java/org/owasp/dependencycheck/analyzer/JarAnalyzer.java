@@ -580,38 +580,38 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 }
                 if (IGNORE_VALUES.contains(value)) {
                     continue;
-                } else if (key.equals(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {
+                } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {
                     foundSomething = true;
                     productEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
                     addMatchingValues(classInformation, value, productEvidence);
-                } else if (key.equals(Attributes.Name.IMPLEMENTATION_VERSION.toString())) {
+                } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VERSION.toString())) {
                     foundSomething = true;
                     versionEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
-                } else if (key.equals(Attributes.Name.IMPLEMENTATION_VENDOR.toString())) {
+                } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VENDOR.toString())) {
                     foundSomething = true;
                     vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
                     addMatchingValues(classInformation, value, vendorEvidence);
-                } else if (key.equals(Attributes.Name.IMPLEMENTATION_VENDOR_ID.toString())) {
+                } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VENDOR_ID.toString())) {
                     foundSomething = true;
                     vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
                     addMatchingValues(classInformation, value, vendorEvidence);
-                } else if (key.equals(BUNDLE_DESCRIPTION)) {
+                } else if (key.equalsIgnoreCase(BUNDLE_DESCRIPTION)) {
                     foundSomething = true;
                     addDescription(dependency, value, "manifest", key);
                     //productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
                     addMatchingValues(classInformation, value, productEvidence);
-                } else if (key.equals(BUNDLE_NAME)) {
+                } else if (key.equalsIgnoreCase(BUNDLE_NAME)) {
                     foundSomething = true;
                     productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
                     addMatchingValues(classInformation, value, productEvidence);
-                } else if (key.equals(BUNDLE_VENDOR)) {
+                } else if (key.equalsIgnoreCase(BUNDLE_VENDOR)) {
                     foundSomething = true;
                     vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
                     addMatchingValues(classInformation, value, vendorEvidence);
-                } else if (key.equals(BUNDLE_VERSION)) {
+                } else if (key.equalsIgnoreCase(BUNDLE_VERSION)) {
                     foundSomething = true;
                     versionEvidence.addEvidence(source, key, value, Evidence.Confidence.HIGH);
-                } else if (key.equals(Attributes.Name.MAIN_CLASS.toString())) {
+                } else if (key.equalsIgnoreCase(Attributes.Name.MAIN_CLASS.toString())) {
                     continue;
                     //skipping main class as if this has important information to add
                     // it will be added during class name analysis...  if other fields
@@ -637,13 +637,22 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
 
                         foundSomething = true;
                         if (key.contains("version")) {
-                            versionEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                            if (key.contains("specification")) {
+                                versionEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
+                            } else {
+                                versionEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                            }
+
                         } else if (key.contains("title")) {
                             productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
                             addMatchingValues(classInformation, value, productEvidence);
                         } else if (key.contains("vendor")) {
-                            vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
-                            addMatchingValues(classInformation, value, vendorEvidence);
+                            if (key.contains("specification")) {
+                                vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.LOW);
+                            } else {
+                                vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
+                                addMatchingValues(classInformation, value, vendorEvidence);
+                            }
                         } else if (key.contains("name")) {
                             productEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
                             vendorEvidence.addEvidence(source, key, value, Evidence.Confidence.MEDIUM);
