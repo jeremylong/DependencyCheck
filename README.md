@@ -14,7 +14,7 @@ For instructions on the use of the Jenkins plugin please see the [Jenkins depend
 ### Command Line
 
 More detailed instructions can be found on the [dependency-check github pages](https://jeremylong.github.io/DependencyCheck/dependency-check-cli/installation.html).
-The latest CLI can be downloaded from bintray's (dependency-check page](https://bintray.com/jeremy-long/owasp/dependency-check). 
+The latest CLI can be downloaded from bintray's [dependency-check page](https://bintray.com/jeremy-long/owasp/dependency-check). 
 
 On *nix
 ```
@@ -23,8 +23,8 @@ $ ./bin/dependency-check.sh --app Testing --out . --scan [path to jar files to b
 ```
 On Windows
 ```
-> dependency-check-cli/target/release/bin/dependency-check.bat -h
-> dependency-check-cli/target/release/bin/dependency-check.bat --app Testing --out . --scan ./src/test/resources
+> bin/dependency-check.bat -h
+> bin/dependency-check.bat --app Testing --out . --scan [path to jar files to be scanned]
 ```
 
 ### Maven Plugin
