@@ -5,8 +5,70 @@ Dependency-Check is a utility that attempts to detect publicly disclosed vulnera
 
 Documentation and links to production binary releases can be found on the [github pages](http://jeremylong.github.io/DependencyCheck/). Additionally, more information about the architecture and ways to extend dependency-check can be found on the [wiki].
 
-Initial Usage
+Current Releases
 -------------
+### Jenkins Plugin
+
+For instructions on the use of the Jenkins plugin please see the [Jenkins dependency-check page](http://wiki.jenkins-ci.org/x/CwDgAQ).
+
+### Command Line
+
+More detailed instructions can be found on the [dependency-check github pages](https://jeremylong.github.io/DependencyCheck/dependency-check-cli/installation.html).
+The latest CLI can be downloaded from bintray's (dependency-check page](https://bintray.com/jeremy-long/owasp/dependency-check). 
+
+On *nix
+```
+$ ./bin/dependency-check.sh -h
+$ ./bin/dependency-check.sh --app Testing --out . --scan [path to jar files to be scanned]
+```
+On Windows
+```
+> dependency-check-cli/target/release/bin/dependency-check.bat -h
+> dependency-check-cli/target/release/bin/dependency-check.bat --app Testing --out . --scan ./src/test/resources
+```
+
+### Maven Plugin
+
+More detailed instructions can be found on the [dependency-check-maven github pages](https://jeremylong.github.io/DependencyCheck/dependency-check-maven/installation.html).
+The plugin can be configured using the following:
+
+```xml
+<project>
+    <build>
+        <plugins>
+            ...
+            <plugin>
+              <groupId>org.owasp</groupId>
+              <artifactId>dependency-check-maven</artifactId>
+              <version>1.0.2</version>
+              <executions>
+                  <execution>
+                      <goals>
+                          <goal>check</goal>
+                      </goals>
+                  </execution>
+              </executions>
+            </plugin>
+            ...
+        </plugins>
+        ...
+    </build>
+    ...
+</project>
+```
+
+### Ant Task
+
+For instructions on the use of the Ant Task, please see the [dependency-check-ant github page](https://jeremylong.github.io/DependencyCheck/dependency-check-maven/installation.html).
+
+Development Usage
+-------------
+The following instructions outline how to compile and use the current snapshot. While every intention is to maintain a stable snapshot it is recommended
+that the release versions listed above be used.
+
+Note, currently the install goal may take a long time to execute the integration tests. However, if this takes more then 30 minutes it is likely that the
+download of data from the NVD is having an issue. This issue is still being researched and a solution should be published soon.
+
 On *nix
 ```
 $ mvn install
@@ -20,7 +82,7 @@ On Windows
 > dependency-check-cli/target/release/bin/dependency-check.bat --app Testing --out . --scan ./src/test/resources
 ```
 
-Then load the resulting 'DependencyCheck-Report.html' into your favorite browser.
+Then load the resulting 'DependencyCheck-Report.html' into your favourite browser.
 
 Mailing List
 ------------
@@ -28,6 +90,8 @@ Mailing List
 Subscribe: [dependency-check+subscribe@googlegroups.com] [subscribe]
 
 Post: [dependency-check@googlegroups.com] [post]
+
+Archive: [google group](https://groups.google.com/forum/#!forum/dependency-check)
 
 Copyright & License
 -
