@@ -13,7 +13,7 @@ For instructions on the use of the Jenkins plugin please see the [Jenkins depend
 
 ### Command Line
 
-More detailed instructions can be found on the [dependency-check github pages](https://jeremylong.github.io/DependencyCheck/dependency-check-cli/installation.html).
+More detailed instructions can be found on the [dependency-check github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-cli/installation.html).
 The latest CLI can be downloaded from bintray's [dependency-check page](https://bintray.com/jeremy-long/owasp/dependency-check). 
 
 On *nix
@@ -29,7 +29,7 @@ On Windows
 
 ### Maven Plugin
 
-More detailed instructions can be found on the [dependency-check-maven github pages](https://jeremylong.github.io/DependencyCheck/dependency-check-maven/installation.html).
+More detailed instructions can be found on the [dependency-check-maven github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-maven/installation.html).
 The plugin can be configured using the following:
 
 ```xml
@@ -59,7 +59,7 @@ The plugin can be configured using the following:
 
 ### Ant Task
 
-For instructions on the use of the Ant Task, please see the [dependency-check-ant github page](https://jeremylong.github.io/DependencyCheck/dependency-check-maven/installation.html).
+For instructions on the use of the Ant Task, please see the [dependency-check-ant github page](http://jeremylong.github.io/DependencyCheck/dependency-check-maven/installation.html).
 
 Development Usage
 -------------
