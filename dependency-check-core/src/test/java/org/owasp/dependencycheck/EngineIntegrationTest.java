@@ -64,6 +64,6 @@ public class EngineIntegrationTest {
         instance.analyzeDependencies();
         ReportGenerator rg = new ReportGenerator("DependencyCheck",
                 instance.getDependencies(), instance.getAnalyzers());
-        rg.generateReports("./target/", "HTML");
+        rg.generateReports("./target/", "ALL");
     }
 }
