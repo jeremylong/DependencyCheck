@@ -21,30 +21,30 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 *#<?xml version="1.0"?>
 <analysis xmlns="https://www.owasp.org/index.php/OWASP_Dependency_Check">
     <projectInfo>
-        <name>$esc.html($applicationName)</name>
+        <name>$esc.xml($applicationName)</name>
         <reportDate>$date</reportDate>
         <credits>This report contains data retrieved from the National Vulnerability Database: http://nvd.nist.gov</credits>
     </projectInfo>
     <dependencies>
 #foreach($dependency in $dependencies)
         <dependency>
-            <fileName>$esc.html($dependency.FileName)</fileName>
-            <filePath>$esc.html($dependency.FilePath)</filePath>
-            <md5>$esc.html($dependency.Md5sum)</md5>
-            <sha1>$esc.html($dependency.Sha1sum)</sha1>
+            <fileName>$esc.xml($dependency.FileName)</fileName>
+            <filePath>$esc.xml($dependency.FilePath)</filePath>
+            <md5>$esc.xml($dependency.Md5sum)</md5>
+            <sha1>$esc.xml($dependency.Sha1sum)</sha1>
 #if ($dependency.description)
-            <description>$esc.html($dependency.description)</description>
+            <description>$esc.xml($dependency.description)</description>
 #end
 #if ($dependency.license)
-            <license>$esc.html($dependency.license)</license>
+            <license>$esc.xml($dependency.license)</license>
 #end
 #if ($dependency.getRelatedDependencies().size()>0)
             <relatedDependencies>
 #foreach($related in $dependency.getRelatedDependencies())
                 <relatedDependency>
-                    <filePath>$esc.html($related.FilePath)</filePath>
-                    <sha1>$esc.html($related.Sha1sum)</sha1>
-                    <md5>$esc.html($related.Md5sum)</md5>
+                    <filePath>$esc.xml($related.FilePath)</filePath>
+                    <sha1>$esc.xml($related.Sha1sum)</sha1>
+                    <md5>$esc.xml($related.Md5sum)</md5>
                 </relatedDependency>
 #end
             </relatedDependencies>
@@ -53,21 +53,21 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <analysisExceptions>
 #foreach($ex in $dependency.analysisExceptions)
                 <exception>
-                    <message>$esc.html($ex.message)</message>
+                    <message>$esc.xml($ex.message)</message>
 #if ( $ex.stackTrace )
                     <stackTrace>
 #foreach ($st in $ex.stackTrace)
-                        <trace>$esc.html($st)</trace>
+                        <trace>$esc.xml($st)</trace>
 #end
                     </stackTrace>
 #end
 #if ( $ex.cause )
                     <innerException>
-                        <message>$esc.html($ex.cause.message)</message>
+                        <message>$esc.xml($ex.cause.message)</message>
 #if ( $ex.cause.stackTrace )
                         <stackTrace>
 #foreach ($st in $ex.cause.stackTrace)
-                            <trace>$esc.html($st)</trace>
+                            <trace>$esc.xml($st)</trace>
 #end
                         </stackTrace>
 #end
@@ -80,22 +80,22 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <evidenceCollected>
 #foreach($evidence in $dependency.getEvidenceUsed())
                 <evidence>
-                    <source>$esc.html($evidence.getSource())</source>
-                    <name>$esc.html($evidence.getName())</name>
-                    <value>$esc.html($evidence.getValue().trim())</value>
+                    <source>$esc.xml($evidence.getSource())</source>
+                    <name>$esc.xml($evidence.getName())</name>
+                    <value>$esc.xml($evidence.getValue().trim())</value>
                 </evidence>
 #end
             </evidenceCollected>
 #if($dependency.getIdentifiers().size()>0)
             <identifiers>
 #foreach($id in $dependency.getIdentifiers())
-                <identifier type="$esc.html($id.type)">
-                    <name>$esc.html($id.value)</name>
+                <identifier type="$esc.xml($id.type)">
+                    <name>($id.value)</name>
 #if( $id.url )
-                    <url>$esc.html($id.url)</url>
+                    <url>$esc.xml($id.url)</url>
 #end
 #if( $id.description )
-                    <description>$esc.html($id.description)</description>
+                    <description>$esc.xml($id.description)</description>
 #end
                 </identifier>
 #end
@@ -105,7 +105,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <vulnerabilities>
 #foreach($vuln in $dependency.getVulnerabilities())
                 <vulnerability>
-                    <name>$esc.html($vuln.name)</name>
+                    <name>$esc.xml($vuln.name)</name>
                     <cvssScore>$vuln.cvssScore</cvssScore>
 #if ($vuln.cvssScore<4.0)
                     <severity>Low</severity>
@@ -115,21 +115,21 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <severity>Medium</severity>
 #end
 #if ($vuln.cwe)
-                    <cwe>$esc.html($vuln.cwe)</cwe>
+                    <cwe>$esc.xml($vuln.cwe)</cwe>
 #end
-                    <description>$esc.html($vuln.description)</description>
+                    <description>$esc.xml($vuln.description)</description>
                     <references>
 #foreach($ref in $vuln.getReferences())
                         <reference>
-                            <source>$esc.html($ref.source)</source>
-                            <url>$esc.html($ref.url)</url>
-                            <name>$esc.html($ref.name)</name>
+                            <source>$esc.xml($ref.source)</source>
+                            <url>$esc.xml($ref.url)</url>
+                            <name>$esc.xml($ref.name)</name>
                         </reference>
 #end
                     </references>
                     <vulnerableSoftware>
 #foreach($vs in $vuln.getVulnerableSoftware())
-                        <software#if($vs.hasPreviousVersion()) allPreviousVersion="true"#end>$esc.html($vs.name)</software>
+                        <software#if($vs.hasPreviousVersion()) allPreviousVersion="true"#end>$esc.xml($vs.name)</software>
 #end
                     </vulnerableSoftware>
                 </vulnerability>
