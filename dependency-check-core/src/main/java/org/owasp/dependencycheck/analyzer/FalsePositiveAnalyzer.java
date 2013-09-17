@@ -273,12 +273,15 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                 if ((i.getValue().matches(".*c\\+\\+.*")
                         || i.getValue().startsWith("cpe:/a:jquery:jquery")
                         || i.getValue().startsWith("cpe:/a:prototypejs:prototype")
-                        || i.getValue().startsWith("cpe:/a:yahoo:yui"))
+                        || i.getValue().startsWith("cpe:/a:yahoo:yui")
+                        || i.getValue().startsWith("cpe:/a:file:file")
+                        || i.getValue().startsWith("cpe:/a:mozilla:mozilla")
+                        || i.getValue().startsWith("cpe:/a:cvs:cvs")
+                        || i.getValue().startsWith("cpe:/a:ssh:ssh"))
                         && dependency.getFileName().toLowerCase().endsWith(".jar")) {
                     itr.remove();
-                } else if (i.getValue().startsWith("cpe:/a:file:file")
-                        || i.getValue().startsWith("cpe:/a:mozilla:mozilla")
-                        || i.getValue().startsWith("cpe:/a:ssh:ssh")) {
+                } else if (i.getValue().startsWith("cpe:/a:apache:maven")
+                        && !dependency.getFileName().toLowerCase().matches("maven-core-[\\d\\.]+\\.jar")) {
                     itr.remove();
                 }
             }
