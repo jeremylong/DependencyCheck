@@ -44,6 +44,7 @@ along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>**/*.properties</include>
+                    <include>**/schema/*.xsd</include>
                 </includes>
                 <filtering>true</filtering>
             </resource>

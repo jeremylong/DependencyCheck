@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema id="analysis" xmlns="https://www.owasp.org/index.php/OWASP_Dependency_Check" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema id="analysis" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="https://www.owasp.org/index.php/OWASP_Dependency_Check">
     <xs:element name="analysis">
         <xs:complexType>
             <xs:sequence minOccurs="0" maxOccurs="unbounded">

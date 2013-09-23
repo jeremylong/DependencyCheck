@@ -18,12 +18,21 @@
  */
 package org.owasp.dependencycheck.reporting;
 
+import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.cpe.BaseIndexTestCase;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import javax.xml.XMLConstants;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+import java.io.File;
+import java.io.InputStream;
 
 /**
  *
@@ -106,5 +115,42 @@ public class ReportGeneratorTest {
 //        ReportGenerator instance = new ReportGenerator();
 //        instance.generateReport(templateName, writeTo, properties);
         //assertTrue("need to add a real check here", false);
+    }
+
+    /**
+     * Generates an XML report containing known vulnerabilities and realistic
+     * data and validates the generated XML document against the XSD.
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateXMLReport() throws Exception {
+        String templateName = "XmlReport";
+
+        File f = new File("target/test-reports");
+        if (!f.exists()) {
+            f.mkdir();
+        }
+        String writeTo = "target/test-reports/Report.xml";
+
+        File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
+        File axis = new File(this.getClass().getClassLoader().getResource("axis2-adb-1.4.1.jar").getPath());
+        File jetty = new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath());
+
+        Engine engine = new Engine();
+        engine.scan(struts);
+        engine.scan(axis);
+        engine.scan(jetty);
+        engine.analyzeDependencies();
+
+        ReportGenerator generator = new ReportGenerator("Test Report", engine.getDependencies(), engine.getAnalyzers());
+        generator.generateReport(templateName, writeTo);
+
+        InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/DependencyCheck.xsd");
+        StreamSource xsdSource = new StreamSource(xsdStream);
+        StreamSource xmlSource =  new StreamSource(new File(writeTo));
+        SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        Schema schema = sf.newSchema(xsdSource);
+        Validator validator = schema.newValidator();
+        validator.validate(xmlSource);
     }
 }
