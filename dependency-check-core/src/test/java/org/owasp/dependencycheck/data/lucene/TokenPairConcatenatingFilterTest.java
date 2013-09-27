@@ -6,12 +6,18 @@ package org.owasp.dependencycheck.data.lucene;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.BaseTokenStreamTestCase;
 import static org.apache.lucene.analysis.BaseTokenStreamTestCase.assertAnalyzesTo;
+import static org.apache.lucene.analysis.BaseTokenStreamTestCase.assertTokenStreamContents;
 import static org.apache.lucene.analysis.BaseTokenStreamTestCase.checkOneTerm;
 import org.apache.lucene.analysis.MockTokenizer;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.core.WhitespaceTokenizer;
+import org.apache.lucene.analysis.tokenattributes.TypeAttributeImpl;
+import org.apache.lucene.util.Version;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -24,19 +30,6 @@ import static org.junit.Assert.*;
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class TokenPairConcatenatingFilterTest extends BaseTokenStreamTestCase {
-
-    private Analyzer analyzer;
-
-    public TokenPairConcatenatingFilterTest() {
-        analyzer = new Analyzer() {
-            @Override
-            protected Analyzer.TokenStreamComponents createComponents(String fieldName,
-                    Reader reader) {
-                Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new Analyzer.TokenStreamComponents(source, new TokenPairConcatenatingFilter(source));
-            }
-        };
-    }
 
     @BeforeClass
     public static void setUpClass() {
@@ -60,21 +53,25 @@ public class TokenPairConcatenatingFilterTest extends BaseTokenStreamTestCase {
      * test some examples
      */
     public void testExamples() throws IOException {
-        //TODO figure outwhy I am getting "Failed: incrementtoken() called while in wrong state"
-//        String[] expected = new String[3];
-//        expected[0] = "one";
-//        expected[1] = "onetwo";
-//        expected[2] = "two";
-//        checkOneTerm(analyzer, "one", "one");
-//        assertAnalyzesTo(analyzer, "two", new String[]{"onetwo", "two"});
-        //checkOneTerm(analyzer, "two", "onetwo");
-        //checkOneTerm(analyzer, "three", "two");
+        Tokenizer wsTokenizer = new WhitespaceTokenizer(Version.LUCENE_43, new StringReader("one two three"));
+        TokenStream filter = new TokenPairConcatenatingFilter(wsTokenizer);
+        assertTokenStreamContents(filter,
+                new String[]{"one", "onetwo", "two", "twothree", "three"});
     }
 
     /**
      * Test of clear method, of class TokenPairConcatenatingFilter.
      */
     @Test
-    public void testClear() {
+    public void testClear() throws IOException {
+
+        TokenStream ts = new WhitespaceTokenizer(Version.LUCENE_43, new StringReader("one two three"));
+        TokenPairConcatenatingFilter filter = new TokenPairConcatenatingFilter(ts);
+        assertTokenStreamContents(filter, new String[]{"one", "onetwo", "two", "twothree", "three"});
+
+        assertNotNull(filter.getPreviousWord());
+        filter.clear();
+        assertNull(filter.getPreviousWord());
+        assertTrue(filter.getWords().isEmpty());
     }
 }

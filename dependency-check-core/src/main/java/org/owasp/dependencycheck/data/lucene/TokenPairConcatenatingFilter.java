@@ -48,6 +48,24 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
     private final LinkedList<String> words;
 
     /**
+     * Returns the previous word. This is needed in the test cases.
+     *
+     * @return te previous word
+     */
+    protected String getPreviousWord() {
+        return previousWord;
+    }
+
+    /**
+     * Returns the words list. This is needed in the test cases.
+     *
+     * @return the words list
+     */
+    protected LinkedList<String> getWords() {
+        return words;
+    }
+
+    /**
      * Constructs a new TokenPairConcatenatingFilter.
      *
      * @param stream the TokenStream that this filter will process
