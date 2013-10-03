@@ -38,6 +38,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.Version;
 import org.owasp.dependencycheck.data.lucene.FieldAnalyzer;
 import org.owasp.dependencycheck.data.lucene.SearchFieldAnalyzer;
+import org.owasp.dependencycheck.data.update.BatchUpdate;
 
 /**
  *
@@ -119,6 +120,22 @@ public class CpeIndexReader extends BaseIndex {
      * Index
      */
     public TopDocs search(String searchString, int maxQueryResults) throws ParseException, IOException {
+        if (searchString == null || searchString.trim().isEmpty()) {
+            throw new ParseException("Query is null or empty");
+        }
+        if (queryParser == null) {
+            if (isOpen()) {
+                final String msg = String.format("QueryParser is null for query: '%s'. Attempting to reopen index.", searchString);
+                Logger.getLogger(CpeIndexReader.class.getName()).log(Level.WARNING, msg);
+                close();
+                open();
+            } else {
+                final String msg = String.format("QueryParser is null, but data source is open, for query: '%s'. Attempting to reopen index.", searchString);
+                Logger.getLogger(CpeIndexReader.class.getName()).log(Level.WARNING, msg);
+                close();
+                open();
+            }
+        }
         final Query query = queryParser.parse(searchString);
         return indexSearcher.search(query, maxQueryResults);
     }
