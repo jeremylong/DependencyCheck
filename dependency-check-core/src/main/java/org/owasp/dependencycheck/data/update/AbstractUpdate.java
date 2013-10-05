@@ -64,6 +64,7 @@ public abstract class AbstractUpdate {
     protected CpeIndexWriter cpeIndex = null;
 
     public AbstractUpdate() throws MalformedURLException, DownloadFailedException, UpdateException {
+        this.properties = new DataStoreMetaInfo();
         this.updateable = updatesNeeded();
     }
 
