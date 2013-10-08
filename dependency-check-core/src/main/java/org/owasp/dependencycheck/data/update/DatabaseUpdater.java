@@ -40,11 +40,6 @@ import org.owasp.dependencycheck.utils.Settings;
 public class DatabaseUpdater implements CachedWebDataSource {
 
     /**
-     * Utility to read and write meta-data about the data.
-     */
-    protected DataStoreMetaInfo properties = null;
-
-    /**
      * <p>Downloads the latest NVD CVE XML file from the web and imports it into
      * the current CVE Database.</p>
      *
@@ -53,9 +48,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
      */
     @Override
     public void update() throws UpdateException {
-        properties = new DataStoreMetaInfo();
-        AbstractUpdate store = null;
-        File dataDir = Settings.getFile(Settings.KEYS.DATA_DIRECTORY);
+        final File dataDir = Settings.getFile(Settings.KEYS.DATA_DIRECTORY);
         DirectorySpinLock lock = null;
         try {
             lock = new DirectorySpinLock(dataDir);
@@ -67,15 +60,13 @@ public class DatabaseUpdater implements CachedWebDataSource {
 
         try {
             lock.obtainSharedLock();
-            if (properties.isBatchUpdateMode()) {
-                store = new BatchUpdate();
-            } else {
-                store = new StandardUpdate();
-            }
-            if (store.isUpdateNeeded()) {
+            final UpdateTask task = UpdateTaskFactory.getUpdateTask();
+
+
+            if (task.isUpdateNeeded()) {
                 lock.release();
                 lock.obtainExclusiveLock();
-                if (store.shouldDeleteAndRecreate()) {
+                if (task.shouldDeleteAndRecreate()) {
                     try {
                         deleteExistingData();
                     } catch (IOException ex) {
@@ -83,7 +74,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
                         Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINE, null, ex);
                     }
                 }
-                store.update();
+                task.update();
             }
         } catch (DirectoryLockException ex) {
             Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.WARNING,

@@ -45,10 +45,20 @@ import static org.owasp.dependencycheck.data.update.DataStoreMetaInfo.MODIFIED;
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class StandardUpdate extends AbstractUpdate {
+public class StandardUpdateTask extends AbstractUpdateTask {
 
-    public StandardUpdate() throws MalformedURLException, DownloadFailedException, UpdateException {
-        super();
+    /**
+     * Constructs a new Standard Update Task.
+     *
+     * @param properties information about the data store
+     * @throws MalformedURLException thrown if a configured URL is malformed
+     * @throws DownloadFailedException thrown if a timestamp cannot be checked
+     * on a configured URL
+     * @throws UpdateException thrown if there is an exception generating the
+     * update task
+     */
+    public StandardUpdateTask(DataStoreMetaInfo properties) throws MalformedURLException, DownloadFailedException, UpdateException {
+        super(properties);
     }
 
     /**
@@ -68,7 +78,7 @@ public class StandardUpdate extends AbstractUpdate {
                 }
             }
             if (maxUpdates > 3) {
-                Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO,
+                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
                         "NVD CVE requires several updates; this could take a couple of minutes.");
             }
             if (maxUpdates > 0) {
@@ -79,13 +89,13 @@ public class StandardUpdate extends AbstractUpdate {
             for (NvdCveInfo cve : getUpdateable()) {
                 if (cve.getNeedsUpdate()) {
                     count += 1;
-                    Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO,
+                    Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
                             "Updating NVD CVE ({0} of {1})", new Object[]{count, maxUpdates});
                     URL url = new URL(cve.getUrl());
                     File outputPath = null;
                     File outputPath12 = null;
                     try {
-                        Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO,
+                        Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
                                 "Downloading {0}", cve.getUrl());
                         outputPath = File.createTempFile("cve" + cve.getId() + "_", ".xml");
                         Downloader.fetchFile(url, outputPath);
@@ -94,17 +104,16 @@ public class StandardUpdate extends AbstractUpdate {
                         outputPath12 = File.createTempFile("cve_1_2_" + cve.getId() + "_", ".xml");
                         Downloader.fetchFile(url, outputPath12);
 
-                        Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO,
+                        Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
                                 "Processing {0}", cve.getUrl());
 
                         importXML(outputPath, outputPath12);
 
-                        cveDB.commit();
-                        cpeIndex.commit();
+                        getCveDB().commit();
+                        getCpeIndex().commit();
+                        getProperties().save(cve);
 
-                        properties.save(cve);
-
-                        Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO,
+                        Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
                                 "Completed update {0} of {1}", new Object[]{count, maxUpdates});
                     } catch (FileNotFoundException ex) {
                         throw new UpdateException(ex);
@@ -145,8 +154,8 @@ public class StandardUpdate extends AbstractUpdate {
                 }
             }
             if (maxUpdates >= 1) { //ensure the modified file date gets written
-                properties.save(getUpdateable().get(MODIFIED));
-                cveDB.cleanupDatabase();
+                getProperties().save(getUpdateable().get(MODIFIED));
+                getCveDB().cleanupDatabase();
             }
         } catch (MalformedURLException ex) {
             throw new UpdateException(ex);
@@ -176,17 +185,17 @@ public class StandardUpdate extends AbstractUpdate {
             updates = retrieveCurrentTimestampsFromWeb();
         } catch (InvalidDataException ex) {
             final String msg = "Unable to retrieve valid timestamp from nvd cve downloads page";
-            Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, msg, ex);
+            Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, msg, ex);
             throw new DownloadFailedException(msg, ex);
         } catch (InvalidSettingException ex) {
-            Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Invalid setting found when retrieving timestamps", ex);
+            Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "Invalid setting found when retrieving timestamps", ex);
             throw new DownloadFailedException("Invalid settings", ex);
         }
 
         if (updates == null) {
             throw new DownloadFailedException("Unable to retrieve the timestamps of the currently published NVD CVE data");
         }
-
+        final DataStoreMetaInfo properties = getProperties();
         if (!properties.isEmpty()) {
             try {
                 float version;
@@ -235,7 +244,7 @@ public class StandardUpdate extends AbstractUpdate {
                             } catch (NumberFormatException ex) {
                                 final String msg = String.format("Error parsing '%s' '%s' from nvdcve.lastupdated",
                                         DataStoreMetaInfo.LAST_UPDATED_BASE, entry.getId());
-                                Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, msg, ex);
+                                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, msg, ex);
                             }
                             if (currentTimestamp == entry.getTimestamp()) {
                                 entry.setNeedsUpdate(false);
@@ -245,8 +254,8 @@ public class StandardUpdate extends AbstractUpdate {
                 }
             } catch (NumberFormatException ex) {
                 final String msg = "An invalid schema version or timestamp exists in the data.properties file.";
-                Logger.getLogger(StandardUpdate.class.getName()).log(Level.WARNING, msg);
-                Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, null, ex);
+                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.WARNING, msg);
+                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, null, ex);
             }
         }
         return updates;

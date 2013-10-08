@@ -35,9 +35,9 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class BatchUpdateTest {
+public class BatchUpdateTaskTest {
 
-    public BatchUpdateTest() {
+    public BatchUpdateTaskTest() {
     }
 
     @BeforeClass
@@ -86,24 +86,30 @@ public class BatchUpdateTest {
         Settings.setString(Settings.KEYS.BATCH_UPDATE_URL, "");
     }
 
+    public BatchUpdateTask getBatchUpdateTask() throws MalformedURLException, DownloadFailedException, UpdateException {
+        DataStoreMetaInfo props = new DataStoreMetaInfo();
+        BatchUpdateTask instance = new BatchUpdateTask(props);
+        return instance;
+    }
+
     /**
-     * Test of setDoBatchUpdate method, of class BatchUpdate.
+     * Test of setDoBatchUpdate method, of class BatchUpdateTask.
      */
     @Test
     public void testSetDoBatchUpdate() throws DownloadFailedException, MalformedURLException, UpdateException {
         boolean expected = false;
-        BatchUpdate instance = new BatchUpdate();
+        BatchUpdateTask instance = getBatchUpdateTask();
         instance.setDoBatchUpdate(expected);
         boolean results = instance.isDoBatchUpdate();
         assertEquals(results, expected);
     }
 
     /**
-     * Test of update method, of class BatchUpdate.
+     * Test of update method, of class BatchUpdateTask.
      */
     @Test
     public void testUpdate() throws Exception {
-        BatchUpdate instance = new BatchUpdate();
+        BatchUpdateTask instance = getBatchUpdateTask();
 
         //do some setup
         instance.setDoBatchUpdate(true);

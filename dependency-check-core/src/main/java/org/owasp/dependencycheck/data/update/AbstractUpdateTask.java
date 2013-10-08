@@ -21,7 +21,6 @@ package org.owasp.dependencycheck.data.update;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import org.owasp.dependencycheck.data.CachedWebDataSource;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -47,25 +46,64 @@ import org.xml.sax.SAXException;
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public abstract class AbstractUpdate {
+public abstract class AbstractUpdateTask implements UpdateTask {
 
+    /**
+     * Initializes the AbstractUpdateTask.
+     *
+     * @param properties information about the data store
+     * @throws MalformedURLException thrown if the configuration contains a
+     * malformed url
+     * @throws DownloadFailedException thrown if the timestamp on a file cannot
+     * be checked
+     * @throws UpdateException thrown if the update fails
+     */
+    public AbstractUpdateTask(DataStoreMetaInfo properties) throws MalformedURLException, DownloadFailedException, UpdateException {
+        this.properties = properties;
+        this.updateable = updatesNeeded();
+    }
+    /**
+     * A collection of updateable NVD CVE items.
+     */
     private Updateable updateable;
     /**
      * Utility to read and write meta-data about the data.
      */
-    protected DataStoreMetaInfo properties = null;
+    private DataStoreMetaInfo properties = null;
+
+    /**
+     * Returns the data store properties.
+     *
+     * @return the data store properties
+     */
+    protected DataStoreMetaInfo getProperties() {
+        return properties;
+    }
     /**
      * Reference to the Cve Database.
      */
-    protected CveDB cveDB = null;
+    private CveDB cveDB = null;
+
+    /**
+     * Returns the CveDB.
+     *
+     * @return the CveDB
+     */
+    protected CveDB getCveDB() {
+        return cveDB;
+    }
     /**
      * Reference to the Cpe Index.
      */
-    protected CpeIndexWriter cpeIndex = null;
+    private CpeIndexWriter cpeIndex = null;
 
-    public AbstractUpdate() throws MalformedURLException, DownloadFailedException, UpdateException {
-        this.properties = new DataStoreMetaInfo();
-        this.updateable = updatesNeeded();
+    /**
+     * Returns the CpeIndex.
+     *
+     * @return the CpeIndex
+     */
+    protected CpeIndexWriter getCpeIndex() {
+        return cpeIndex;
     }
 
     /**
@@ -82,7 +120,7 @@ public abstract class AbstractUpdate {
      *
      * @return an Updateable object containing the NVD CVE entries
      */
-    public Updateable getUpdateable() {
+    protected Updateable getUpdateable() {
         return updateable;
     }
 
@@ -113,7 +151,7 @@ public abstract class AbstractUpdate {
     private boolean deleteAndRecreate = false;
 
     /**
-     * Get the value of deleteAndRecreate
+     * Get the value of deleteAndRecreate.
      *
      * @return the value of deleteAndRecreate
      */
@@ -122,11 +160,11 @@ public abstract class AbstractUpdate {
     }
 
     /**
-     * Set the value of deleteAndRecreate
+     * Set the value of deleteAndRecreate.
      *
      * @param deleteAndRecreate new value of deleteAndRecreate
      */
-    public void setDeleteAndRecreate(boolean deleteAndRecreate) {
+    protected void setDeleteAndRecreate(boolean deleteAndRecreate) {
         this.deleteAndRecreate = deleteAndRecreate;
     }
 
@@ -158,14 +196,14 @@ public abstract class AbstractUpdate {
             try {
                 cveDB.close();
             } catch (Exception ignore) {
-                Logger.getLogger(AbstractUpdate.class.getName()).log(Level.FINEST, "Error closing the cveDB", ignore);
+                Logger.getLogger(AbstractUpdateTask.class.getName()).log(Level.FINEST, "Error closing the cveDB", ignore);
             }
         }
         if (cpeIndex != null) {
             try {
                 cpeIndex.close();
             } catch (Exception ignore) {
-                Logger.getLogger(AbstractUpdate.class.getName()).log(Level.FINEST, "Error closing the cpeIndex", ignore);
+                Logger.getLogger(AbstractUpdateTask.class.getName()).log(Level.FINEST, "Error closing the cpeIndex", ignore);
             }
         }
     }
@@ -184,19 +222,19 @@ public abstract class AbstractUpdate {
             cpeIndex.open();
         } catch (IOException ex) {
             closeDataStores();
-            Logger.getLogger(AbstractUpdate.class.getName()).log(Level.FINE, "IO Error opening databases", ex);
+            Logger.getLogger(AbstractUpdateTask.class.getName()).log(Level.FINE, "IO Error opening databases", ex);
             throw new UpdateException("Error updating the CPE/CVE data, please see the log file for more details.");
         } catch (SQLException ex) {
             closeDataStores();
-            Logger.getLogger(AbstractUpdate.class.getName()).log(Level.FINE, "SQL Exception opening databases", ex);
+            Logger.getLogger(AbstractUpdateTask.class.getName()).log(Level.FINE, "SQL Exception opening databases", ex);
             throw new UpdateException("Error updating the CPE/CVE data, please see the log file for more details.");
         } catch (DatabaseException ex) {
             closeDataStores();
-            Logger.getLogger(AbstractUpdate.class.getName()).log(Level.FINE, "Database Exception opening databases", ex);
+            Logger.getLogger(AbstractUpdateTask.class.getName()).log(Level.FINE, "Database Exception opening databases", ex);
             throw new UpdateException("Error updating the CPE/CVE data, please see the log file for more details.");
         } catch (ClassNotFoundException ex) {
             closeDataStores();
-            Logger.getLogger(AbstractUpdate.class.getName()).log(Level.FINE, "Class not found exception opening databases", ex);
+            Logger.getLogger(AbstractUpdateTask.class.getName()).log(Level.FINE, "Class not found exception opening databases", ex);
             throw new UpdateException("Error updating the CPE/CVE data, please see the log file for more details.");
         }
     }

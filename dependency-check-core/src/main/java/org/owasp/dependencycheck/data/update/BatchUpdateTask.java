@@ -43,10 +43,20 @@ import static org.owasp.dependencycheck.data.update.DataStoreMetaInfo.MODIFIED;
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class BatchUpdate extends AbstractUpdate {
+public class BatchUpdateTask extends AbstractUpdateTask {
 
-    public BatchUpdate() throws MalformedURLException, DownloadFailedException, UpdateException {
-        super();
+    /**
+     * Constructs a new BatchUpdateTask.
+     *
+     * @param properties information about the data store
+     * @throws MalformedURLException thrown if a configured URL is malformed
+     * @throws DownloadFailedException thrown if a timestamp cannot be checked
+     * on a configured URL
+     * @throws UpdateException thrown if there is an exception generating the
+     * update task
+     */
+    public BatchUpdateTask(DataStoreMetaInfo properties) throws MalformedURLException, DownloadFailedException, UpdateException {
+        super(properties);
     }
     /**
      * A flag indicating whether or not the batch update should be performed.
@@ -80,7 +90,7 @@ public class BatchUpdate extends AbstractUpdate {
      */
     @Override
     public void update() throws UpdateException {
-        if (properties.isBatchUpdateMode() && doBatchUpdate) {
+        if (getProperties().isBatchUpdateMode() && doBatchUpdate) {
             final String batchSrc = Settings.getString(Settings.KEYS.BATCH_UPDATE_URL);
             File tmp = null;
             try {
@@ -134,17 +144,17 @@ public class BatchUpdate extends AbstractUpdate {
             updates = retrieveCurrentTimestampsFromWeb();
         } catch (InvalidDataException ex) {
             final String msg = "Unable to retrieve valid timestamp from nvd cve downloads page";
-            Logger.getLogger(BatchUpdate.class.getName()).log(Level.FINE, msg, ex);
+            Logger.getLogger(BatchUpdateTask.class.getName()).log(Level.FINE, msg, ex);
             throw new DownloadFailedException(msg, ex);
         } catch (InvalidSettingException ex) {
-            Logger.getLogger(BatchUpdate.class.getName()).log(Level.FINE, "Invalid setting found when retrieving timestamps", ex);
+            Logger.getLogger(BatchUpdateTask.class.getName()).log(Level.FINE, "Invalid setting found when retrieving timestamps", ex);
             throw new DownloadFailedException("Invalid settings", ex);
         }
 
         if (updates == null) {
             throw new DownloadFailedException("Unable to retrieve the timestamps of the currently published NVD CVE data");
         }
-
+        final DataStoreMetaInfo properties = getProperties();
         if (!properties.isEmpty()) {
             try {
                 boolean deleteAndRecreate = false;
@@ -178,8 +188,8 @@ public class BatchUpdate extends AbstractUpdate {
                         deleteExistingData();
                     } catch (IOException ex) {
                         final String msg = "Unable to delete existing data";
-                        Logger.getLogger(BatchUpdate.class.getName()).log(Level.WARNING, msg);
-                        Logger.getLogger(BatchUpdate.class.getName()).log(Level.FINE, null, ex);
+                        Logger.getLogger(BatchUpdateTask.class.getName()).log(Level.WARNING, msg);
+                        Logger.getLogger(BatchUpdateTask.class.getName()).log(Level.FINE, null, ex);
                     }
                     return updates;
                 }
@@ -214,7 +224,7 @@ public class BatchUpdate extends AbstractUpdate {
                         } catch (NumberFormatException ex) {
                             final String msg = String.format("Error parsing '%s' '%s' from nvdcve.lastupdated",
                                     DataStoreMetaInfo.LAST_UPDATED_BASE, String.valueOf(i));
-                            Logger.getLogger(BatchUpdate.class.getName()).log(Level.FINE, msg, ex);
+                            Logger.getLogger(BatchUpdateTask.class.getName()).log(Level.FINE, msg, ex);
                         }
                         if (currentTimestamp == cve.getTimestamp()) {
                             cve.setNeedsUpdate(false); //they default to true.
@@ -223,8 +233,8 @@ public class BatchUpdate extends AbstractUpdate {
                 }
             } catch (NumberFormatException ex) {
                 final String msg = "An invalid schema version or timestamp exists in the data.properties file.";
-                Logger.getLogger(BatchUpdate.class.getName()).log(Level.WARNING, msg);
-                Logger.getLogger(BatchUpdate.class.getName()).log(Level.FINE, null, ex);
+                Logger.getLogger(BatchUpdateTask.class.getName()).log(Level.WARNING, msg);
+                Logger.getLogger(BatchUpdateTask.class.getName()).log(Level.FINE, null, ex);
                 setDoBatchUpdate(properties.isBatchUpdateMode());
             }
         }
@@ -245,11 +255,11 @@ public class BatchUpdate extends AbstractUpdate {
      */
     private Updateable retrieveCurrentTimestampsFromWeb()
             throws MalformedURLException, DownloadFailedException, InvalidDataException, InvalidSettingException {
-        Updateable updates = new Updateable();
+        final Updateable updates = new Updateable();
         updates.add(BATCH, Settings.getString(Settings.KEYS.BATCH_UPDATE_URL),
                 null, false);
 
-        String url = Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL, "");
+        final String url = Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL, "");
         if (!url.isEmpty()) {
             final NvdCveInfo item = new NvdCveInfo();
             updates.add(MODIFIED, url,
