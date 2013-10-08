@@ -14,35 +14,38 @@
  * You should have received a copy of the GNU General Public License along with
  * dependency-check-core. If not, see http://www.gnu.org/licenses/.
  *
- * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.update;
 
-import org.owasp.dependencycheck.data.update.DatabaseUpdater;
 import java.io.File;
+import java.net.MalformedURLException;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.*;
+import org.owasp.dependencycheck.data.UpdateException;
+import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class DatabaseUpdater_1_Test {
+public class BatchUpdateTest {
 
-    public DatabaseUpdater_1_Test() {
+    public BatchUpdateTest() {
     }
 
     @BeforeClass
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
     }
 
     @AfterClass
-    public static void tearDownClass() throws Exception {
+    public static void tearDownClass() {
     }
     private String old12;
     private String old20;
@@ -84,14 +87,29 @@ public class DatabaseUpdater_1_Test {
     }
 
     /**
-     * Test of update method (when in batch mode), of class DatabaseUpdater.
-     *
-     * @throws Exception
+     * Test of setDoBatchUpdate method, of class BatchUpdate.
      */
     @Test
-    public void testBatchUpdate() throws Exception {
-        DatabaseUpdater instance = new DatabaseUpdater();
+    public void testSetDoBatchUpdate() throws DownloadFailedException, MalformedURLException, UpdateException {
+        boolean expected = false;
+        BatchUpdate instance = new BatchUpdate();
+        instance.setDoBatchUpdate(expected);
+        boolean results = instance.isDoBatchUpdate();
+        assertEquals(results, expected);
+    }
+
+    /**
+     * Test of update method, of class BatchUpdate.
+     */
+    @Test
+    public void testUpdate() throws Exception {
+        BatchUpdate instance = new BatchUpdate();
+
+        //do some setup
+        instance.setDoBatchUpdate(true);
         instance.deleteExistingData();
-        instance.update();
+
+        instance.update(); //no exceptions it worked?
+        //todo add some actual asserts to check things.
     }
 }
