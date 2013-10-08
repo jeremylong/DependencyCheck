@@ -155,6 +155,8 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         final String nextVersion = nextCpe.getVersion();
                         if (currentVersion == null && nextVersion == null) {
                             //how did we get here?
+                            Logger.getLogger(FalsePositiveAnalyzer.class
+                                    .getName()).log(Level.FINE, "currentVersion and nextVersion are both null?");
                         } else if (currentVersion == null && nextVersion != null) {
                             dependency.getIdentifiers().remove(currentId);
                         } else if (nextVersion == null && currentVersion != null) {
