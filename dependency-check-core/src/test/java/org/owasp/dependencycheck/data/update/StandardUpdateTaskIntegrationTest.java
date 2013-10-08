@@ -18,20 +18,23 @@
  */
 package org.owasp.dependencycheck.data.update;
 
+import java.net.MalformedURLException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.owasp.dependencycheck.data.UpdateException;
+import org.owasp.dependencycheck.utils.DownloadFailedException;
 
 /**
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class StandardUpdateIntegrationTest {
+public class StandardUpdateTaskIntegrationTest {
 
-    public StandardUpdateIntegrationTest() {
+    public StandardUpdateTaskIntegrationTest() {
     }
 
     @BeforeClass
@@ -50,22 +53,28 @@ public class StandardUpdateIntegrationTest {
     public void tearDown() {
     }
 
+    public StandardUpdateTask getStandardUpdateTask() throws MalformedURLException, DownloadFailedException, UpdateException {
+        DataStoreMetaInfo props = new DataStoreMetaInfo();
+        StandardUpdateTask instance = new StandardUpdateTask(props);
+        return instance;
+    }
+
     /**
-     * Test of update method, of class StandardUpdate.
+     * Test of update method, of class StandardUpdateTask.
      */
     @Test
     public void testUpdate() throws Exception {
-        StandardUpdate instance = new StandardUpdate();
+        StandardUpdateTask instance = getStandardUpdateTask();
         instance.update();
         //TODO make this an actual test
     }
 
     /**
-     * Test of updatesNeeded method, of class StandardUpdate.
+     * Test of updatesNeeded method, of class StandardUpdateTask.
      */
     @Test
     public void testUpdatesNeeded() throws Exception {
-        StandardUpdate instance = new StandardUpdate();
+        StandardUpdateTask instance = getStandardUpdateTask();
         Updateable result = instance.updatesNeeded();
         assertNotNull(result);
     }

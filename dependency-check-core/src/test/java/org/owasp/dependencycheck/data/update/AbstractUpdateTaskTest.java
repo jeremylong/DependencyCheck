@@ -38,9 +38,9 @@ import org.owasp.dependencycheck.utils.DownloadFailedException;
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class AbstractUpdateTest {
+public class AbstractUpdateTaskTest {
 
-    public AbstractUpdateTest() {
+    public AbstractUpdateTaskTest() {
     }
 
     @BeforeClass
@@ -59,25 +59,31 @@ public class AbstractUpdateTest {
     public void tearDown() {
     }
 
+    public AbstractUpdateTask getAbstractUpdateImpl() throws Exception {
+        DataStoreMetaInfo props = new DataStoreMetaInfo();
+        AbstractUpdateTask instance = new AbstractUpdateImpl(props);
+        return instance;
+    }
+
     /**
-     * Test of setDeleteAndRecreate method, of class AbstractUpdate.
+     * Test of setDeleteAndRecreate method, of class AbstractUpdateTask.
      */
     @Test
     public void testSetDeleteAndRecreate() throws Exception {
         boolean deleteAndRecreate = false;
         boolean expResult = false;
-        AbstractUpdate instance = new AbstractUpdateImpl();
+        AbstractUpdateTask instance = getAbstractUpdateImpl();
         instance.setDeleteAndRecreate(deleteAndRecreate);
         boolean result = instance.shouldDeleteAndRecreate();
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of deleteExistingData method, of class AbstractUpdate.
+     * Test of deleteExistingData method, of class AbstractUpdateTask.
      */
     @Test
     public void testDeleteExistingData() throws Exception {
-        AbstractUpdate instance = new AbstractUpdateImpl();
+        AbstractUpdateTask instance = getAbstractUpdateImpl();
         Exception result = null;
         try {
             instance.deleteExistingData();
@@ -88,17 +94,17 @@ public class AbstractUpdateTest {
     }
 
     /**
-     * Test of openDataStores method, of class AbstractUpdate.
+     * Test of openDataStores method, of class AbstractUpdateTask.
      */
     @Test
     public void testOpenDataStores() throws Exception {
-        AbstractUpdate instance = new AbstractUpdateImpl();
+        AbstractUpdateTask instance = getAbstractUpdateImpl();
         instance.openDataStores();
         instance.closeDataStores();
     }
 
     /**
-     * Test of withinRange method, of class AbstractUpdate.
+     * Test of withinRange method, of class AbstractUpdateTask.
      */
     @Test
     public void testWithinRange() throws Exception {
@@ -107,7 +113,7 @@ public class AbstractUpdateTest {
         long current = c.getTimeInMillis();
         long lastRun = c.getTimeInMillis() - (3 * (1000 * 60 * 60 * 24));
         int range = 7; // 7 days
-        AbstractUpdate instance = new AbstractUpdateImpl();
+        AbstractUpdateTask instance = getAbstractUpdateImpl();
         boolean expResult = true;
         boolean result = instance.withinRange(lastRun, current, range);
         assertEquals(expResult, result);
@@ -118,10 +124,10 @@ public class AbstractUpdateTest {
         assertEquals(expResult, result);
     }
 
-    public class AbstractUpdateImpl extends AbstractUpdate {
+    public class AbstractUpdateImpl extends AbstractUpdateTask {
 
-        public AbstractUpdateImpl() throws Exception {
-            super();
+        public AbstractUpdateImpl(DataStoreMetaInfo props) throws Exception {
+            super(props);
         }
 
         public Updateable updatesNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {

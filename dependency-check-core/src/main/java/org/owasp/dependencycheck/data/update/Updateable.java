@@ -1,6 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of dependency-check-core.
+ *
+ * Dependency-check-core is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Dependency-check-core is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ *
+ * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.update;
 
@@ -24,7 +38,7 @@ public class Updateable implements java.lang.Iterable<NvdCveInfo>, Iterator<NvdC
     /**
      * A collection of sources of data.
      */
-    Map<String, NvdCveInfo> collection = new TreeMap<String, NvdCveInfo>();
+    private Map<String, NvdCveInfo> collection = new TreeMap<String, NvdCveInfo>();
 
     /**
      * Gets whether or not an update is needed.
@@ -66,7 +80,7 @@ public class Updateable implements java.lang.Iterable<NvdCveInfo>, Iterator<NvdC
      * @throws DownloadFailedException thrown if the download fails.
      */
     public void add(String id, String url, String oldUrl, boolean needsUpdate) throws MalformedURLException, DownloadFailedException {
-        NvdCveInfo item = new NvdCveInfo();
+        final NvdCveInfo item = new NvdCveInfo();
         item.setNeedsUpdate(needsUpdate); //the others default to true, to make life easier later this should default to false.
         item.setId(id);
         item.setUrl(url);
@@ -94,7 +108,7 @@ public class Updateable implements java.lang.Iterable<NvdCveInfo>, Iterator<NvdC
     /**
      * An internal iterator used to implement iterable.
      */
-    Iterator<Entry<String, NvdCveInfo>> iterableContent = null;
+    private Iterator<Entry<String, NvdCveInfo>> iterableContent = null;
 
     /**
      * <p>Returns an iterator for the NvdCveInfo contained.</p>
