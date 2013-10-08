@@ -109,7 +109,6 @@ public class DependencyVersionTest {
      */
     @Test
     public void testHashCode() {
-        System.out.println("hashCode");
         DependencyVersion instance = new DependencyVersion("3.2.1");
         int expResult = 80756;
         int result = instance.hashCode();
