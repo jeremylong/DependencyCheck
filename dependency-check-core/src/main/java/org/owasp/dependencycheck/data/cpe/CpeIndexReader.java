@@ -38,7 +38,6 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.Version;
 import org.owasp.dependencycheck.data.lucene.FieldAnalyzer;
 import org.owasp.dependencycheck.data.lucene.SearchFieldAnalyzer;
-import org.owasp.dependencycheck.data.update.BatchUpdate;
 
 /**
  *
@@ -125,12 +124,14 @@ public class CpeIndexReader extends BaseIndex {
         }
         if (queryParser == null) {
             if (isOpen()) {
-                final String msg = String.format("QueryParser is null for query: '%s'. Attempting to reopen index.", searchString);
+                final String msg = String.format("QueryParser is null for query: '%s'. Attempting to reopen index.",
+                        searchString);
                 Logger.getLogger(CpeIndexReader.class.getName()).log(Level.WARNING, msg);
                 close();
                 open();
             } else {
-                final String msg = String.format("QueryParser is null, but data source is open, for query: '%s'. Attempting to reopen index.", searchString);
+                final String msg = String.format("QueryParser is null, but data source is open, for query: '%s'. Attempting to reopen index.",
+                        searchString);
                 Logger.getLogger(CpeIndexReader.class.getName()).log(Level.WARNING, msg);
                 close();
                 open();
