@@ -55,17 +55,14 @@ public class StandardUpdate extends AbstractUpdate {
      * <p>Downloads the latest NVD CVE XML file from the web and imports it into
      * the current CVE Database.</p>
      *
-     * @param updatesNeeded a collection of NvdCveInfo containing information
-     * about needed updates.
      * @throws UpdateException is thrown if there is an error updating the
      * database
      */
     @Override
     public void update() throws UpdateException {
         try {
-            properties = new DataStoreMetaInfo();
             int maxUpdates = 0;
-            for (NvdCveInfo cve : updatesNeeded) {
+            for (NvdCveInfo cve : getUpdateable()) {
                 if (cve.getNeedsUpdate()) {
                     maxUpdates += 1;
                 }
@@ -79,7 +76,7 @@ public class StandardUpdate extends AbstractUpdate {
             }
 
             int count = 0;
-            for (NvdCveInfo cve : updatesNeeded) {
+            for (NvdCveInfo cve : getUpdateable()) {
                 if (cve.getNeedsUpdate()) {
                     count += 1;
                     Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO,
@@ -148,7 +145,7 @@ public class StandardUpdate extends AbstractUpdate {
                 }
             }
             if (maxUpdates >= 1) { //ensure the modified file date gets written
-                properties.save(updatesNeeded.get(MODIFIED));
+                properties.save(getUpdateable().get(MODIFIED));
                 cveDB.cleanupDatabase();
             }
         } catch (MalformedURLException ex) {
@@ -275,18 +272,16 @@ public class StandardUpdate extends AbstractUpdate {
                 Settings.getString(Settings.KEYS.CVE_MODIFIED_12_URL),
                 false);
 
-        //only add these urls if we are not in batch mode
-        if (!properties.isBatchUpdateMode()) {
-            final int start = Settings.getInt(Settings.KEYS.CVE_START_YEAR);
-            final int end = Calendar.getInstance().get(Calendar.YEAR);
-            final String baseUrl20 = Settings.getString(Settings.KEYS.CVE_SCHEMA_2_0);
-            final String baseUrl12 = Settings.getString(Settings.KEYS.CVE_SCHEMA_1_2);
-            for (int i = start; i <= end; i++) {
-                updates.add(Integer.toString(i), String.format(baseUrl20, i),
-                        String.format(baseUrl12, i),
-                        true);
-            }
+        final int start = Settings.getInt(Settings.KEYS.CVE_START_YEAR);
+        final int end = Calendar.getInstance().get(Calendar.YEAR);
+        final String baseUrl20 = Settings.getString(Settings.KEYS.CVE_SCHEMA_2_0);
+        final String baseUrl12 = Settings.getString(Settings.KEYS.CVE_SCHEMA_1_2);
+        for (int i = start; i <= end; i++) {
+            updates.add(Integer.toString(i), String.format(baseUrl20, i),
+                    String.format(baseUrl12, i),
+                    true);
         }
+
         return updates;
     }
 }

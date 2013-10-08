@@ -149,4 +149,9 @@ public class Updateable implements java.lang.Iterable<NvdCveInfo>, Iterator<NvdC
     NvdCveInfo get(String key) {
         return collection.get(key);
     }
+
+    @Override
+    public String toString() {
+        return "Updateable{" + "size=" + collection.size() + '}';
+    }
 }

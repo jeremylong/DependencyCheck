@@ -29,9 +29,9 @@ import static org.junit.Assert.*;
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class DatabaseUpdaterIntegrationTest {
+public class StandardUpdateIntegrationTest {
 
-    public DatabaseUpdaterIntegrationTest() {
+    public StandardUpdateIntegrationTest() {
     }
 
     @BeforeClass
@@ -51,11 +51,22 @@ public class DatabaseUpdaterIntegrationTest {
     }
 
     /**
-     * Test of update method, of class DatabaseUpdater.
+     * Test of update method, of class StandardUpdate.
      */
     @Test
     public void testUpdate() throws Exception {
-        DatabaseUpdater instance = new DatabaseUpdater();
+        StandardUpdate instance = new StandardUpdate();
         instance.update();
+        //TODO make this an actual test
+    }
+
+    /**
+     * Test of updatesNeeded method, of class StandardUpdate.
+     */
+    @Test
+    public void testUpdatesNeeded() throws Exception {
+        StandardUpdate instance = new StandardUpdate();
+        Updateable result = instance.updatesNeeded();
+        assertNotNull(result);
     }
 }

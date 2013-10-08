@@ -78,6 +78,15 @@ public abstract class AbstractUpdate {
     }
 
     /**
+     * Gets the updateable NVD CVE Entries.
+     *
+     * @return an Updateable object containing the NVD CVE entries
+     */
+    public Updateable getUpdateable() {
+        return updateable;
+    }
+
+    /**
      * Determines if the index needs to be updated.
      *
      * @return a collection of updateable resources.
@@ -102,7 +111,6 @@ public abstract class AbstractUpdate {
      * deleted.
      */
     private boolean deleteAndRecreate = false;
-    protected Updateable updatesNeeded = null;
 
     /**
      * Get the value of deleteAndRecreate
