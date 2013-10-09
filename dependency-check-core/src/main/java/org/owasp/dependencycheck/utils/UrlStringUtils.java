@@ -70,7 +70,8 @@ public final class UrlStringUtils {
      * A listing of domain parts that shold not be used as evidence. Yes, this
      * is an incomplete list.
      */
-    private static final HashSet<String> IGNORE_LIST = new HashSet<String>(Arrays.asList("www", "com", "org", "gov", "info", "name", "net", "pro", "tel", "mobi", "xxx"));
+    private static final HashSet<String> IGNORE_LIST = new HashSet<String>(
+            Arrays.asList("www", "com", "org", "gov", "info", "name", "net", "pro", "tel", "mobi", "xxx"));
 
     /**
      * <p>Takes a URL, in String format, and adds the important parts of the URL

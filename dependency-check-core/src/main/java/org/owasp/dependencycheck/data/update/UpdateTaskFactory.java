@@ -28,7 +28,7 @@ import org.owasp.dependencycheck.utils.DownloadFailedException;
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class UpdateTaskFactory {
+public final class UpdateTaskFactory {
 
     /**
      * private constructor for a utility class.

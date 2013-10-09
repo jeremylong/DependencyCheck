@@ -41,6 +41,16 @@ public class Updateable implements java.lang.Iterable<NvdCveInfo>, Iterator<NvdC
     private Map<String, NvdCveInfo> collection = new TreeMap<String, NvdCveInfo>();
 
     /**
+     * Returns the collection of NvdCveInfo objects. This method is mainly used
+     * for testing.
+     *
+     * @return the collection of NvdCveInfo objects
+     */
+    protected Map<String, NvdCveInfo> getCollection() {
+        return collection;
+    }
+
+    /**
      * Gets whether or not an update is needed.
      *
      * @return true or false depending on whether an update is needed
