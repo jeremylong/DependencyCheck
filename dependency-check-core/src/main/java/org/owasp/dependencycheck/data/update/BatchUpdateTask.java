@@ -261,7 +261,6 @@ public class BatchUpdateTask extends AbstractUpdateTask {
 
         final String url = Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL, "");
         if (!url.isEmpty()) {
-            final NvdCveInfo item = new NvdCveInfo();
             updates.add(MODIFIED, url,
                     Settings.getString(Settings.KEYS.CVE_MODIFIED_12_URL),
                     false);

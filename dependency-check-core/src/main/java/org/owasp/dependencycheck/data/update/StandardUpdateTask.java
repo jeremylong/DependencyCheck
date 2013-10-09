@@ -221,8 +221,6 @@ public class StandardUpdateTask extends AbstractUpdateTask {
                 final long lastUpdated = Long.parseLong(properties.getProperty(DataStoreMetaInfo.LAST_UPDATED, "0"));
                 final Date now = new Date();
                 final int days = Settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS, 7);
-                final int start = Settings.getInt(Settings.KEYS.CVE_START_YEAR, 2002);
-                final int end = Calendar.getInstance().get(Calendar.YEAR);
                 if (lastUpdated == updates.getTimeStamp(MODIFIED)) {
                     updates.clear(); //we don't need to update anything.
                 } else if (withinRange(lastUpdated, now.getTime(), days)) {
