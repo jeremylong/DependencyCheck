@@ -130,9 +130,9 @@ public class UpdateableTest {
         String url = "file:///" + f.getCanonicalPath();
         Updateable instance = new Updateable();
         instance.add(id, url, url, false);
-        assertFalse(instance.collection.isEmpty());
+        assertFalse(instance.getCollection().isEmpty());
         instance.clear();
-        assertTrue(instance.collection.isEmpty());
+        assertTrue(instance.getCollection().isEmpty());
     }
 
     /**
@@ -155,6 +155,6 @@ public class UpdateableTest {
             itemsProcessed += 1;
         }
         assertEquals(3, itemsProcessed);
-        assertEquals(2, instance.collection.size());
+        assertEquals(2, instance.getCollection().size());
     }
 }

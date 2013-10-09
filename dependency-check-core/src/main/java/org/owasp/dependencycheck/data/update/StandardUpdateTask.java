@@ -276,7 +276,7 @@ public class StandardUpdateTask extends AbstractUpdateTask {
     private Updateable retrieveCurrentTimestampsFromWeb()
             throws MalformedURLException, DownloadFailedException, InvalidDataException, InvalidSettingException {
 
-        Updateable updates = new Updateable();
+        final Updateable updates = new Updateable();
         updates.add(MODIFIED, Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL),
                 Settings.getString(Settings.KEYS.CVE_MODIFIED_12_URL),
                 false);
