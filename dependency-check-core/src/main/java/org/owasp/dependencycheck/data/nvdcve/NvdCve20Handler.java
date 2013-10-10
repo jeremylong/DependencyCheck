@@ -241,9 +241,7 @@ public class NvdCve20Handler extends DefaultHandler {
     }
 
     /**
-     * Saves a vulnerability to the CVE Database. This is a callback method
-     * called by the Sax Parser Handler
-     * {@link org.owasp.dependencycheck.data.nvdcve.xml.NvdCve20Handler}.
+     * Saves a vulnerability to the CVE Database.
      *
      * @param vuln the vulnerability to store in the database
      * @throws DatabaseException thrown if there is an error writing to the
@@ -251,7 +249,7 @@ public class NvdCve20Handler extends DefaultHandler {
      * @throws CorruptIndexException is thrown if the CPE Index is corrupt
      * @throws IOException thrown if there is an IOException with the CPE Index
      */
-    public void saveEntry(Vulnerability vuln) throws DatabaseException, CorruptIndexException, IOException {
+    private void saveEntry(Vulnerability vuln) throws DatabaseException, CorruptIndexException, IOException {
         if (cveDB == null) {
             return;
         }
