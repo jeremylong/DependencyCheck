@@ -279,6 +279,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         || i.getValue().startsWith("cpe:/a:file:file")
                         || i.getValue().startsWith("cpe:/a:mozilla:mozilla")
                         || i.getValue().startsWith("cpe:/a:cvs:cvs")
+                        || i.getValue().startsWith("cpe:/a:ftp:ftp")
                         || i.getValue().startsWith("cpe:/a:ssh:ssh"))
                         && dependency.getFileName().toLowerCase().endsWith(".jar")) {
                     itr.remove();
