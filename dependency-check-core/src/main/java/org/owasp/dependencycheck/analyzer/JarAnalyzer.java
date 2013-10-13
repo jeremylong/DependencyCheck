@@ -515,7 +515,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             if (ratio > 0.5) {
                 //TODO remove weighting
                 vendor.addWeighting(entry.getKey());
-                if (addPackagesAsEvidence) {
+                if (addPackagesAsEvidence && entry.getKey().length() > 1) {
                     vendor.addEvidence("jar", "package", entry.getKey(), Evidence.Confidence.LOW);
                 }
             }
@@ -524,7 +524,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             final float ratio = entry.getValue() / (float) classCount;
             if (ratio > 0.5) {
                 product.addWeighting(entry.getKey());
-                if (addPackagesAsEvidence) {
+                if (addPackagesAsEvidence && entry.getKey().length() > 1) {
                     product.addEvidence("jar", "package", entry.getKey(), Evidence.Confidence.LOW);
                 }
             }
