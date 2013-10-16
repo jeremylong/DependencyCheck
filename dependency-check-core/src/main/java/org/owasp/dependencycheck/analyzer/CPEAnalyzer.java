@@ -444,6 +444,9 @@ public class CPEAnalyzer implements Analyzer {
         //</editor-fold>
 
         //TODO - likely need to change the split... not sure if this will work for CPE with special chars
+        if (text == null) {
+            return false;
+        }
         final String[] words = text.split("[\\s_-]");
         final List<String> list = new ArrayList<String>();
         String tempWord = null;
