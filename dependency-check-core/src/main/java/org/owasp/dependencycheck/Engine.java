@@ -282,6 +282,8 @@ public class Engine {
             final List<Analyzer> analyzerList = analyzers.get(phase);
             for (Analyzer a : analyzerList) {
                 try {
+                    final String msg = String.format("Initializing %s", a.getName());
+                    Logger.getLogger(Engine.class.getName()).log(Level.FINE, msg);
                     a.initialize();
                 } catch (Exception ex) {
                     final String msg = String.format("\"Exception occurred initializing \"%s\".\"", a.getName());
@@ -305,9 +307,13 @@ public class Engine {
                  * analyzers may modify it. This prevents ConcurrentModificationExceptions.
                  * This is okay for adds/deletes because it happens per analyzer.
                  */
+                final String msg = String.format("Begin Analyzer '%s'", a.getName());
+                Logger.getLogger(Engine.class.getName()).log(Level.FINE, msg);
                 final Set<Dependency> dependencySet = new HashSet<Dependency>();
                 dependencySet.addAll(dependencies);
                 for (Dependency d : dependencySet) {
+                    final String msgFile = String.format("Begin Analysis of '%s'", d.getActualFilePath());
+                    Logger.getLogger(Engine.class.getName()).log(Level.FINE, msgFile);
                     if (a.supportsExtension(d.getFileExtension())) {
                         try {
                             a.analyze(d, this);
@@ -323,6 +329,8 @@ public class Engine {
         for (AnalysisPhase phase : AnalysisPhase.values()) {
             final List<Analyzer> analyzerList = analyzers.get(phase);
             for (Analyzer a : analyzerList) {
+                final String msg = String.format("Closing Analyzer '%s'", a.getName());
+                Logger.getLogger(Engine.class.getName()).log(Level.FINE, msg);
                 try {
                     a.close();
                 } catch (Exception ex) {
