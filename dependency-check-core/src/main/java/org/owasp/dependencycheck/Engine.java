@@ -286,9 +286,9 @@ public class Engine {
                     Logger.getLogger(Engine.class.getName()).log(Level.FINE, msg);
                     a.initialize();
                 } catch (Exception ex) {
-                    final String msg = String.format("\"Exception occurred initializing \"%s\".\"", a.getName());
+                    final String msg = String.format("Exception occurred initializing %s.", a.getName());
                     Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, msg);
-                    Logger.getLogger(Engine.class.getName()).log(Level.INFO, msg, ex);
+                    Logger.getLogger(Engine.class.getName()).log(Level.INFO, null, ex);
                     try {
                         a.close();
                     } catch (Exception ex1) {
