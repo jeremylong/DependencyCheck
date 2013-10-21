@@ -207,6 +207,23 @@ public final class Settings {
      * @throws IOException is thrown when there is an exception loading/merging
      * the properties
      */
+    public static void mergeProperties(File filePath) throws FileNotFoundException, IOException {
+        final FileInputStream fis = new FileInputStream(filePath);
+        mergeProperties(fis);
+    }
+
+    /**
+     * Merges a new properties file into the current properties. This method
+     * allows for the loading of a user provided properties file.<br/><br/>
+     * Note: even if using this method - system properties will be loaded before
+     * properties loaded from files.
+     *
+     * @param filePath the path to the properties file to merge.
+     * @throws FileNotFoundException is thrown when the filePath points to a
+     * non-existent file
+     * @throws IOException is thrown when there is an exception loading/merging
+     * the properties
+     */
     public static void mergeProperties(String filePath) throws FileNotFoundException, IOException {
         final FileInputStream fis = new FileInputStream(filePath);
         mergeProperties(fis);
