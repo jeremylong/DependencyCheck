@@ -195,6 +195,10 @@ public final class CliParser {
                 .withDescription("The output format to write to (XML, HTML, VULN, ALL). The default is HTML.")
                 .create(ArgumentName.OUTPUT_FORMAT_SHORT);
 
+        final Option verboseLog = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.VERBOSE_LOG)
+                .withDescription("The file path to write verbose logging information.")
+                .create(ArgumentName.VERBOSE_LOG_SHORT);
+
         final OptionGroup og = new OptionGroup();
         og.addOption(path);
 
@@ -208,6 +212,7 @@ public final class CliParser {
         opts.addOption(noUpdate);
         opts.addOption(props);
         opts.addOption(data);
+        opts.addOption(verboseLog);
         opts.addOption(proxyPort);
         opts.addOption(proxyUrl);
         opts.addOption(connectionTimeout);
@@ -332,6 +337,28 @@ public final class CliParser {
      */
     public String getDataDirectory() {
         return line.getOptionValue(ArgumentName.DATA_DIRECTORY);
+    }
+
+    /**
+     * Returns the properties file specified on the command line.
+     *
+     * @return the properties file specified on the command line
+     */
+    public File getPropertiesFile() {
+        final String path = line.getOptionValue(ArgumentName.PROP);
+        if (path != null) {
+            return new File(path);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the path to the verbose log file.
+     *
+     * @return the path to the verbose log file
+     */
+    public String getVerboseLog() {
+        return line.getOptionValue(ArgumentName.VERBOSE_LOG);
     }
 
     /**
@@ -469,5 +496,14 @@ public final class CliParser {
          * directory.
          */
         public static final String DATA_DIRECTORY_SHORT = "d";
+        /**
+         * The CLI argument name for setting the location of the data directory.
+         */
+        public static final String VERBOSE_LOG = "log";
+        /**
+         * The short CLI argument name for setting the location of the data
+         * directory.
+         */
+        public static final String VERBOSE_LOG_SHORT = "l";
     }
 }
