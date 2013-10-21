@@ -34,7 +34,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import java.util.Set;
-import java.util.logging.LogManager;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -54,6 +53,7 @@ import org.owasp.dependencycheck.dependency.Reference;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
+import org.owasp.dependencycheck.utils.LogUtils;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -90,6 +90,11 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      */
     @Parameter(property = "report-name", defaultValue = "dependency-check-report")
     private String reportName;
+    /**
+     * The path to the verbose log
+     */
+    @Parameter(property = "logfile", defaultValue = "")
+    private String logFile;
     /**
      * The name of the report to be displayed in the Maven Generated Reports
      * page
@@ -164,43 +169,15 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
 
     // </editor-fold>
     /**
-     * Configures the logger for use by the application.
-     */
-    private static void prepareLogger() {
-        InputStream in = null;
-        try {
-            in = DependencyCheckMojo.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
-            LogManager.getLogManager().reset();
-            LogManager.getLogManager().readConfiguration(in);
-            //TODO add code to disable fine grained log file.
-//            Logger logger = LogManager.getLogManager().getLogger("");
-//            for (Handler h : logger.getHandlers()) {
-//                if (h.getFormatter(). h.toString());
-//            }
-        } catch (IOException ex) {
-            System.err.println(ex.toString());
-            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SecurityException ex) {
-            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (Exception ex) {
-                    //noinspection UnusedAssignment
-                    in = null;
-                }
-            }
-        }
-    }
-
-    /**
      * Executes the Dependency-Check on the dependent libraries.
      *
      * @return the Engine used to scan the dependencies.
      */
     private Engine executeDependencyCheck() {
-        prepareLogger();
+
+        final InputStream in = DependencyCheckMojo.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
+        LogUtils.prepareLogger(in, logFile);
+
         populateSettings();
         final Engine engine = new Engine();
         final Set<Artifact> artifacts = project.getArtifacts();
