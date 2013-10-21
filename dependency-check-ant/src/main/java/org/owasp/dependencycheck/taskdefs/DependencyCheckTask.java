@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -38,6 +37,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.reporting.ReportGenerator.Format;
+import org.owasp.dependencycheck.utils.LogUtils;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -345,41 +345,33 @@ public class DependencyCheckTask extends Task {
     public void setConnectionTimeout(String connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
+    /**
+     * The file path used for verbose logging.
+     */
+    private String logFile = null;
 
     /**
-     * Configures the logger for use by the application.
+     * Get the value of logFile.
+     *
+     * @return the value of logFile
      */
-    private static void prepareLogger() {
-        InputStream in = null;
-        try {
-            in = DependencyCheckTask.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
-            LogManager.getLogManager().reset();
-            LogManager.getLogManager().readConfiguration(in);
-            //TODO add code to disable fine grained log file.
-//            Logger logger = LogManager.getLogManager().getLogger("");
-//            for (Handler h : logger.getHandlers()) {
-//                if (h.getFormatter(). h.toString());
-//            }
-        } catch (IOException ex) {
-            System.err.println(ex.toString());
-            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SecurityException ex) {
-            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (Exception ex) {
-                    //noinspection UnusedAssignment
-                    in = null;
-                }
-            }
-        }
+    public String getLogFile() {
+        return logFile;
+    }
+
+    /**
+     * Set the value of logFile.
+     *
+     * @param logFile new value of logFile
+     */
+    public void setLogFile(String logFile) {
+        this.logFile = logFile;
     }
 
     @Override
     public void execute() throws BuildException {
-        prepareLogger();
+        final InputStream in = DependencyCheckTask.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
+        LogUtils.prepareLogger(in, logFile);
 
         dealWithReferences();
         validateConfiguration();
@@ -512,6 +504,7 @@ public class DependencyCheckTask extends Task {
          *
          * @return the list of values for the report format
          */
+        @Override
         public String[] getValues() {
             int i = 0;
             final Format[] formats = Format.values();
