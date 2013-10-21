@@ -24,12 +24,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import org.apache.commons.cli.ParseException;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.cli.CliParser;
+import org.owasp.dependencycheck.utils.LogUtils;
 import org.owasp.dependencycheck.utils.Settings;
 
 /*
@@ -67,33 +67,8 @@ public class App {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        prepareLogger();
         final App app = new App();
         app.run(args);
-    }
-
-    /**
-     * Configures the logger for use by the application.
-     */
-    private static void prepareLogger() {
-        InputStream in = null;
-        try {
-            in = App.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
-            LogManager.getLogManager().reset();
-            LogManager.getLogManager().readConfiguration(in);
-        } catch (IOException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.FINE, "IO Error preparing the logger", ex);
-        } catch (SecurityException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.FINE, "Error preparing the logger", ex);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (Exception ex) {
-                    Logger.getLogger(App.class.getName()).log(Level.FINEST, "Error closing resource stream", ex);
-                }
-            }
-        }
     }
 
     /**
@@ -116,10 +91,14 @@ public class App {
             return;
         }
 
+        final InputStream in = App.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
+        LogUtils.prepareLogger(in, cli.getVerboseLog());
+
         if (cli.isGetVersion()) {
             cli.printVersionInfo();
         } else if (cli.isRunScan()) {
-            updateSettings(cli.isAutoUpdate(), cli.getConnectionTimeout(), cli.getProxyUrl(), cli.getProxyPort(), cli.getDataDirectory());
+            updateSettings(cli.isAutoUpdate(), cli.getConnectionTimeout(), cli.getProxyUrl(),
+                    cli.getProxyPort(), cli.getDataDirectory(), cli.getPropertiesFile());
             runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles());
         } else {
             cli.printHelp();
@@ -168,8 +147,24 @@ public class App {
      * @param proxyPort the proxy port (null or blank means no port will be
      * used)
      * @param dataDirectory the directory to store/retrieve persistent data from
+     * @param propertiesFile the properties file to utilize
      */
-    private void updateSettings(boolean autoUpdate, String connectionTimeout, String proxyUrl, String proxyPort, String dataDirectory) {
+    private void updateSettings(boolean autoUpdate, String connectionTimeout, String proxyUrl,
+            String proxyPort, String dataDirectory, File propertiesFile) {
+
+        if (propertiesFile != null) {
+            try {
+                Settings.mergeProperties(propertiesFile);
+            } catch (FileNotFoundException ex) {
+                final String msg = String.format("Unable to load properties file '%s'", propertiesFile.getPath());
+                Logger.getLogger(App.class.getName()).log(Level.SEVERE, msg);
+                Logger.getLogger(App.class.getName()).log(Level.FINE, null, ex);
+            } catch (IOException ex) {
+                final String msg = String.format("Unable to find properties file '%s'", propertiesFile.getPath());
+                Logger.getLogger(App.class.getName()).log(Level.SEVERE, msg);
+                Logger.getLogger(App.class.getName()).log(Level.FINE, null, ex);
+            }
+        }
         if (dataDirectory != null) {
             Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
         } else if (System.getProperty("basedir") != null) {
@@ -182,8 +177,6 @@ public class App {
             final File dataDir = new File(base, sub);
             Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());
         }
-
-
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
         if (proxyUrl != null && !proxyUrl.isEmpty()) {
             Settings.setString(Settings.KEYS.PROXY_URL, proxyUrl);
