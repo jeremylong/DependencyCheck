@@ -145,7 +145,10 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
     public void initialize() throws Exception {
         final File baseDir = Settings.getTempDirectory();
         if (!baseDir.exists()) {
-            baseDir.mkdirs();
+            if (!baseDir.mkdirs()) {
+                final String msg = String.format("Unable to make a temporary folder '%s'", baseDir.getPath());
+                throw new AnalysisException(msg);
+            }
         }
         tempFileLocation = File.createTempFile("check", "tmp", baseDir);
         if (!tempFileLocation.delete()) {
