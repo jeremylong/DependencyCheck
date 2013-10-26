@@ -231,6 +231,10 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
     private File getNextTempDirectory() throws AnalysisException {
         dirCount += 1;
         final File directory = new File(tempFileLocation, String.valueOf(dirCount));
+        //getting an exception for some directories not being able to be created; might be because the directory already exists?
+        if (directory.exists()) {
+            return getNextTempDirectory();
+        }
         if (!directory.mkdirs()) {
             throw new AnalysisException("Unable to create temp directory '" + directory.getAbsolutePath() + "'.");
         }
@@ -267,8 +271,10 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
             while ((entry = zis.getNextZipEntry()) != null) {
                 if (entry.isDirectory()) {
                     final File d = new File(extractTo, entry.getName());
-                    if (!d.mkdirs()) {
-                        throw new AnalysisException("Unable to create '" + d.getAbsolutePath() + "'.");
+                    if (!d.exists()) {
+                        if (!d.mkdirs()) {
+                            throw new AnalysisException("Unable to create '" + d.getAbsolutePath() + "'.");
+                        }
                     }
                 } else {
                     final File file = new File(extractTo, entry.getName());
