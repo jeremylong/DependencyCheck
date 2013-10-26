@@ -109,6 +109,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
         removeJreEntries(dependency);
         removeBadMatches(dependency);
+        removeWrongVersionMatches(dependency);
         removeSpuriousCPE(dependency);
         addFalseNegativeCPEs(dependency);
     }
@@ -286,6 +287,40 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                 } else if (i.getValue().startsWith("cpe:/a:apache:maven")
                         && !dependency.getFileName().toLowerCase().matches("maven-core-[\\d\\.]+\\.jar")) {
                     itr.remove();
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes CPE matches for the wrong version of a dependency. Currently,
+     * this only covers Axis 1 & 2.
+     *
+     * @param dependency the dependency to analyze
+     */
+    private void removeWrongVersionMatches(Dependency dependency) {
+        final Set<Identifier> identifiers = dependency.getIdentifiers();
+        final Iterator<Identifier> itr = identifiers.iterator();
+
+        final String fileName = dependency.getFileName();
+        if (fileName != null && fileName.contains("axis2")) {
+            while (itr.hasNext()) {
+                final Identifier i = itr.next();
+                if ("cpe".equals(i.getType())) {
+                    final String cpe = i.getValue();
+                    if (cpe != null && (cpe.startsWith("cpe:/a:apache:axis:") || "cpe:/a:apache:axis".equals(cpe))) {
+                        itr.remove();
+                    }
+                }
+            }
+        } else if (fileName != null && fileName.contains("axis")) {
+            while (itr.hasNext()) {
+                final Identifier i = itr.next();
+                if ("cpe".equals(i.getType())) {
+                    final String cpe = i.getValue();
+                    if (cpe != null && (cpe.startsWith("cpe:/a:apache:axis2:") || "cpe:/a:apache:axis2".equals(cpe))) {
+                        itr.remove();
+                    }
                 }
             }
         }
