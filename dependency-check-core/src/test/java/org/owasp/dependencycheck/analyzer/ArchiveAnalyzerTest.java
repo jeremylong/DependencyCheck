@@ -66,6 +66,9 @@ public class ArchiveAnalyzerTest {
         expResult.add("zip");
         expResult.add("war");
         expResult.add("ear");
+        expResult.add("tar");
+        expResult.add("gz");
+        expResult.add("tgz");
         Set result = instance.getSupportedExtensions();
         assertEquals(expResult, result);
     }
@@ -86,7 +89,7 @@ public class ArchiveAnalyzerTest {
      */
     @Test
     public void testSupportsExtension() {
-        String extension = "tar"; //not supported
+        String extension = "7z"; //not supported
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
         boolean expResult = false;
         boolean result = instance.supportsExtension(extension);
@@ -159,6 +162,81 @@ public class ArchiveAnalyzerTest {
      * Test of analyze method, of class ArchiveAnalyzer.
      */
     @Test
+    public void testAnalyzeTar() throws Exception {
+        ArchiveAnalyzer instance = new ArchiveAnalyzer();
+        try {
+            instance.initialize();
+
+            File file = new File(this.getClass().getClassLoader().getResource("file.tar").getPath());
+            Dependency dependency = new Dependency(file);
+            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            Engine engine = new Engine();
+
+            int initial_size = engine.getDependencies().size();
+            instance.analyze(dependency, engine);
+            int ending_size = engine.getDependencies().size();
+
+            assertTrue(initial_size < ending_size);
+
+        } finally {
+            instance.close();
+        }
+    }
+
+    /**
+     * Test of analyze method, of class ArchiveAnalyzer.
+     */
+    @Test
+    public void testAnalyzeTarGz() throws Exception {
+        ArchiveAnalyzer instance = new ArchiveAnalyzer();
+        try {
+            instance.initialize();
+
+            File file = new File(this.getClass().getClassLoader().getResource("file.tar.gz").getPath());
+            Dependency dependency = new Dependency(file);
+            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            Engine engine = new Engine();
+
+            int initial_size = engine.getDependencies().size();
+            instance.analyze(dependency, engine);
+            int ending_size = engine.getDependencies().size();
+
+            assertTrue(initial_size < ending_size);
+
+        } finally {
+            instance.close();
+        }
+    }
+
+    /**
+     * Test of analyze method, of class ArchiveAnalyzer.
+     */
+    @Test
+    public void testAnalyzeTgz() throws Exception {
+        ArchiveAnalyzer instance = new ArchiveAnalyzer();
+        try {
+            instance.initialize();
+
+            File file = new File(this.getClass().getClassLoader().getResource("file.tgz").getPath());
+            Dependency dependency = new Dependency(file);
+            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            Engine engine = new Engine();
+
+            int initial_size = engine.getDependencies().size();
+            instance.analyze(dependency, engine);
+            int ending_size = engine.getDependencies().size();
+
+            assertTrue(initial_size < ending_size);
+
+        } finally {
+            instance.close();
+        }
+    }
+
+    /**
+     * Test of analyze method, of class ArchiveAnalyzer.
+     */
+    @Test
     public void testAnalyze_badZip() throws Exception {
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
         try {
@@ -168,13 +246,13 @@ public class ArchiveAnalyzerTest {
             Dependency dependency = new Dependency(file);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             Engine engine = new Engine();
-
-            int initial_size = engine.getDependencies().size();
+//            boolean failed = false;
+//            try {
             instance.analyze(dependency, engine);
-            int ending_size = engine.getDependencies().size();
-
-            assertTrue(initial_size == ending_size);
-
+//            } catch (java.lang.UnsupportedClassVersionError ex) {
+//                failed = true;
+//            }
+//            assertTrue(failed);
         } finally {
             instance.close();
         }
