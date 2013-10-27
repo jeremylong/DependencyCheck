@@ -22,7 +22,7 @@ along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
 
     <groupId>org.owasp</groupId>
     <artifactId>dependency-check-parent</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>
