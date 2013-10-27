@@ -23,12 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.SocketAddress;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -187,6 +182,22 @@ public final class Downloader {
             if (proxyUrl != null) {
                 final int proxyPort = Settings.getInt(Settings.KEYS.PROXY_PORT);
                 final SocketAddress addr = new InetSocketAddress(proxyUrl, proxyPort);
+
+                final String username = Settings.getString(Settings.KEYS.PROXY_USERNAME);
+                final String password = Settings.getString(Settings.KEYS.PROXY_PASSWORD);
+                if (username != null && password != null) {
+                    final Authenticator auth = new Authenticator() {
+                        @Override
+                        public PasswordAuthentication getPasswordAuthentication() {
+                            if (getRequestorType().equals(RequestorType.PROXY)) {
+                                return new PasswordAuthentication(username, password.toCharArray());
+                            }
+                            return super.getPasswordAuthentication();
+                        }
+                    };
+                    Authenticator.setDefault(auth);
+                }
+
                 proxy = new Proxy(Proxy.Type.HTTP, addr);
                 conn = (HttpURLConnection) url.openConnection(proxy);
             } else {
