@@ -175,6 +175,14 @@ public final class CliParser {
                 .withDescription("The proxy port to use when downloading resources.")
                 .create(ArgumentName.PROXY_PORT_SHORT);
 
+        final Option proxyUsername = OptionBuilder.withArgName("user").hasArg().withLongOpt(ArgumentName.PROXY_USERNAME)
+                .withDescription("The proxy username to use when downloading resources.")
+                .create(ArgumentName.PROXY_USERNAME_SHORT);
+
+        final Option proxyPassword = OptionBuilder.withArgName("pass").hasArg().withLongOpt(ArgumentName.PROXY_PASSWORD)
+                .withDescription("The proxy password to use when downloading resources.")
+                .create(ArgumentName.PROXY_PASSWORD_SHORT);
+
         final Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.SCAN)
                 .withDescription("The path to scan - this option can be specified multiple times.")
                 .create(ArgumentName.SCAN_SHORT);
@@ -215,6 +223,8 @@ public final class CliParser {
         opts.addOption(verboseLog);
         opts.addOption(proxyPort);
         opts.addOption(proxyUrl);
+        opts.addOption(proxyUsername);
+        opts.addOption(proxyPassword);
         opts.addOption(connectionTimeout);
 
         return opts;
@@ -328,6 +338,24 @@ public final class CliParser {
      */
     public String getProxyPort() {
         return line.getOptionValue(ArgumentName.PROXY_PORT);
+    }
+
+    /**
+     * Returns the proxy username.
+     *
+     * @return the proxy username
+     */
+    public String getProxyUsername() {
+        return line.getOptionValue(ArgumentName.PROXY_USERNAME);
+    }
+
+    /**
+     * Returns the proxy password.
+     *
+     * @return the proxy password
+     */
+    public String getProxyPassword() {
+        return line.getOptionValue(ArgumentName.PROXY_PASSWORD);
     }
 
     /**
@@ -470,11 +498,27 @@ public final class CliParser {
          */
         public static final String PROXY_URL = "proxyurl";
         /**
-         * The short CLI argument name indicating the proxy url.
+         * The short CLI argument name indicating the proxy username.
+         */
+        public static final String PROXY_USERNAME_SHORT = "pu";
+        /**
+         * The CLI argument name indicating the proxy username.
+         */
+        public static final String PROXY_USERNAME = "proxyuser";
+        /**
+         * The short CLI argument name indicating the proxy password.
+         */
+        public static final String PROXY_PASSWORD_SHORT = "pp";
+        /**
+         * The CLI argument name indicating the proxy password.
+         */
+        public static final String PROXY_PASSWORD = "proxypass";
+        /**
+         * The short CLI argument name indicating the connection timeout.
          */
         public static final String CONNECTION_TIMEOUT_SHORT = "c";
         /**
-         * The CLI argument name indicating the proxy url.
+         * The CLI argument name indicating the connection timeout.
          */
         public static final String CONNECTION_TIMEOUT = "connectiontimeout";
         /**
