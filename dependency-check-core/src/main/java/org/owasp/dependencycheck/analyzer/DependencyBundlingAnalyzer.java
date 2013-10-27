@@ -23,12 +23,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
+import org.owasp.dependencycheck.utils.LogUtils;
 
 /**
  * <p>This analyzer ensures dependencies that should be grouped together, to
@@ -144,16 +147,14 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                                 }
                                 dependenciesToRemove.add(nextDependency);
                             } else {
-                                if (isCore(nextDependency, dependency)) {
-                                    nextDependency.addRelatedDependency(dependency);
-                                    //move any "related dependencies" to the new "parent" dependency
-                                    final Iterator<Dependency> i = dependency.getRelatedDependencies().iterator();
-                                    while (i.hasNext()) {
-                                        nextDependency.addRelatedDependency(i.next());
-                                        i.remove();
-                                    }
-                                    dependenciesToRemove.add(dependency);
+                                nextDependency.addRelatedDependency(dependency);
+                                //move any "related dependencies" to the new "parent" dependency
+                                final Iterator<Dependency> i = dependency.getRelatedDependencies().iterator();
+                                while (i.hasNext()) {
+                                    nextDependency.addRelatedDependency(i.next());
+                                    i.remove();
                                 }
+                                dependenciesToRemove.add(dependency);
                             }
                         }
                     }
@@ -260,8 +261,13 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                 || dependency2 == null || dependency2.getIdentifiers() == null) {
             return false;
         }
-        return dependency1.getIdentifiers().size() > 0
+        final boolean matches = dependency1.getIdentifiers().size() > 0
                 && dependency2.getIdentifiers().equals(dependency1.getIdentifiers());
+        if (LogUtils.isVerboseLoggingEnabled()) {
+            final String msg = String.format("IdentifiersMatch=%s (%s, %s)", matches, dependency1.getFileName(), dependency2.getFileName());
+            Logger.getLogger(DependencyBundlingAnalyzer.class.getName()).log(Level.FINE, "currentVersion and nextVersion are both null?");
+        }
+        return matches;
     }
 
     /**
@@ -299,10 +305,6 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      * This is likely a very broken attempt at determining if the 'left'
      * dependency is the 'core' library in comparison to the 'right' library.
      *
-     * TODO - consider splitting on /\._-\s/ and checking if all of one side is
-     * fully contained in the other With the exception of the word "core". This
-     * might work even on groups when we don't have a CVE.
-     *
      * @param left the dependency to test
      * @param right the dependency to test against
      * @return a boolean indicating whether or not the left dependency should be
@@ -311,18 +313,31 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     private boolean isCore(Dependency left, Dependency right) {
         final String leftName = left.getFileName().toLowerCase();
         final String rightName = right.getFileName().toLowerCase();
-
+        final boolean returnVal;
         if (rightName.contains("core") && !leftName.contains("core")) {
-            return false;
+            returnVal = false;
         } else if (!rightName.contains("core") && leftName.contains("core")) {
-            return true;
+            returnVal = true;
         } else {
-            //TODO should we be splitting the name on [-_(.\d)+] and seeing if the
-            //  parts are contained in the other side?
+            /*
+             * considered splitting the names up and comparing the components,
+             * but decided that the file name length should be sufficient as the
+             * "core" component, if this follows a normal namming protocol should
+             * be shorter:
+             * axis2-saaj-1.4.1.jar
+             * axis2-1.4.1.jar       <-----
+             * axis2-kernal-1.4.1.jar
+             */
             if (leftName.length() > rightName.length()) {
-                return false;
+                returnVal = false;
+            } else {
+                returnVal = true;
             }
-            return true;
         }
+        if (LogUtils.isVerboseLoggingEnabled()) {
+            final String msg = String.format("IsCore=%s (%s, %s)", returnVal, left.getFileName(), right.getFileName());
+            Logger.getLogger(DependencyBundlingAnalyzer.class.getName()).log(Level.FINE, "currentVersion and nextVersion are both null?");
+        }
+        return returnVal;
     }
 }

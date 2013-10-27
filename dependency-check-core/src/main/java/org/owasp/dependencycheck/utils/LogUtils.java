@@ -50,6 +50,7 @@ public final class LogUtils {
             LogManager.getLogManager().reset();
             LogManager.getLogManager().readConfiguration(in);
             if (verboseLogFile != null && !verboseLogFile.isEmpty()) {
+                verboseLoggingEnabled = true;
                 final Logger logger = Logger.getLogger("");
                 final FileHandler handler = new FileHandler(verboseLogFile, true);
                 handler.setFormatter(new SimpleFormatter());
@@ -71,5 +72,18 @@ public final class LogUtils {
                 }
             }
         }
+    }
+    /**
+     * Whether or not verbose logging is enabled.
+     */
+    private static boolean verboseLoggingEnabled = false;
+
+    /**
+     * Get the value of verboseLoggingEnabled.
+     *
+     * @return the value of verboseLoggingEnabled
+     */
+    public static boolean isVerboseLoggingEnabled() {
+        return verboseLoggingEnabled;
     }
 }
