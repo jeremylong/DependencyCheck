@@ -193,12 +193,14 @@ public class ArchiveAnalyzerTest {
             instance.initialize();
 
             File file = new File(this.getClass().getClassLoader().getResource("file.tar.gz").getPath());
-            Dependency dependency = new Dependency(file);
+            //Dependency dependency = new Dependency(file);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             Engine engine = new Engine();
 
             int initial_size = engine.getDependencies().size();
-            instance.analyze(dependency, engine);
+            //instance.analyze(dependency, engine);
+            engine.scan(file);
+            engine.analyzeDependencies();
             int ending_size = engine.getDependencies().size();
 
             assertTrue(initial_size < ending_size);
@@ -218,12 +220,12 @@ public class ArchiveAnalyzerTest {
             instance.initialize();
 
             File file = new File(this.getClass().getClassLoader().getResource("file.tgz").getPath());
-            Dependency dependency = new Dependency(file);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             Engine engine = new Engine();
 
             int initial_size = engine.getDependencies().size();
-            instance.analyze(dependency, engine);
+            engine.scan(file);
+            engine.analyzeDependencies();
             int ending_size = engine.getDependencies().size();
 
             assertTrue(initial_size < ending_size);
@@ -246,6 +248,7 @@ public class ArchiveAnalyzerTest {
             Dependency dependency = new Dependency(file);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             Engine engine = new Engine();
+            int initial_size = engine.getDependencies().size();
 //            boolean failed = false;
 //            try {
             instance.analyze(dependency, engine);
@@ -253,6 +256,8 @@ public class ArchiveAnalyzerTest {
 //                failed = true;
 //            }
 //            assertTrue(failed);
+            int ending_size = engine.getDependencies().size();
+            assertEquals(initial_size, ending_size);
         } finally {
             instance.close();
         }

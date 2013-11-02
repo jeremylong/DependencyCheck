@@ -32,29 +32,21 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-//import java.util.zip.ZipEntry;
-//import java.util.zip.ZipException;
-//import java.util.zip.ZipInputStream;
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import org.h2.store.fs.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * <p>An analyzer that works on archive files:
- * <ul>
- * <li><b>ZIP</b> - if it is determined to be a JAR, WAR or EAR a copy is made
- * and the copy is given the correct extension so that it will be correctly
- * analyzed.</li>
- * <li><b>WAR</b> - the WAR contents are extracted and added as dependencies to
- * the scan. The displayed path is relative to the WAR.</li>
- * <li><b>EAR</b> - the WAR contents are extracted and added as dependencies to
- * the scan. Any WAR files are also processed so that the contained JAR files
- * are added to the list of dependencies. The displayed path is relative to the
- * EAR.</li>
- * </ul></p>
+ * <p>An analyzer that extracts files from archives and ensures any supported
+ * files contained within the archive are added to the dependency list.</p>
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
@@ -94,7 +86,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
     /**
      * The set of file extensions supported by this analyzer.
      */
-    private static final Set<String> EXTENSIONS = newHashSet("zip", "ear", "war");
+    private static final Set<String> EXTENSIONS = newHashSet("zip", "ear", "war", "tar", "gz", "tgz");
 
     /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
@@ -152,10 +144,12 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
         }
         tempFileLocation = File.createTempFile("check", "tmp", baseDir);
         if (!tempFileLocation.delete()) {
-            throw new AnalysisException("Unable to delete temporary file '" + tempFileLocation.getAbsolutePath() + "'.");
+            final String msg = String.format("Unable to delete temporary file '%s'.", tempFileLocation.getAbsolutePath());
+            throw new AnalysisException(msg);
         }
         if (!tempFileLocation.mkdirs()) {
-            throw new AnalysisException("Unable to create directory '" + tempFileLocation.getAbsolutePath() + "'.");
+            final String msg = String.format("Unable to create directory '%s'.", tempFileLocation.getAbsolutePath());
+            throw new AnalysisException(msg);
         }
     }
 
@@ -236,7 +230,8 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
             return getNextTempDirectory();
         }
         if (!directory.mkdirs()) {
-            throw new AnalysisException("Unable to create temp directory '" + directory.getAbsolutePath() + "'.");
+            final String msg = String.format("Unable to create temp directory '%s'.", directory.getAbsolutePath());
+            throw new AnalysisException(msg);
         }
         return directory;
     }
@@ -245,39 +240,66 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
      * Extracts the contents of an archive into the specified directory.
      *
      * @param archive an archive file such as a WAR or EAR
-     * @param extractTo a directory to extract the contents to
+     * @param destination a directory to extract the contents to
      * @param engine the scanning engine
      * @throws AnalysisException thrown if the archive is not found
      */
-    private void extractFiles(File archive, File extractTo, Engine engine) throws AnalysisException {
-        if (archive == null || extractTo == null) {
+    private void extractFiles(File archive, File destination, Engine engine) throws AnalysisException {
+        if (archive == null || destination == null) {
             return;
         }
 
         FileInputStream fis = null;
-        //ZipInputStream zis = null;
-        ZipArchiveInputStream zis = null;
-
         try {
             fis = new FileInputStream(archive);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.INFO, null, ex);
             throw new AnalysisException("Archive file was not found.", ex);
         }
-        zis = new ZipArchiveInputStream(new BufferedInputStream(fis));
-        ZipArchiveEntry entry;
-
+        final String archiveExt = org.owasp.dependencycheck.utils.FileUtils.getFileExtension(archive.getName()).toLowerCase();
         try {
-            while ((entry = zis.getNextZipEntry()) != null) {
+            if ("zip".equals(archiveExt) || "war".equals(archiveExt) || "ear".equals(archiveExt)) {
+                extractArchive(new ZipArchiveInputStream(new BufferedInputStream(fis)), destination, engine);
+            } else if ("tar".equals(archiveExt)) {
+                extractArchive(new TarArchiveInputStream(new BufferedInputStream(fis)), destination, engine);
+            } else if ("gz".equals(archiveExt) || "tgz".equals(archiveExt)) {
+                final String uncompressedName = GzipUtils.getUncompressedFilename(archive.getName());
+                final String uncompressedExt = org.owasp.dependencycheck.utils.FileUtils.getFileExtension(uncompressedName).toLowerCase();
+                if (engine.supportsExtension(uncompressedExt)) {
+                    decompressFile(new GzipCompressorInputStream(new BufferedInputStream(fis)), new File(destination, uncompressedName));
+                }
+            }
+        } catch (ArchiveExtractionException ex) {
+            final String msg = String.format("Exception extracting archive '%s'.", archive.getName());
+            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.WARNING, msg);
+            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, null, ex);
+        } catch (IOException ex) {
+            final String msg = String.format("Exception reading archive '%s'.", archive.getName());
+            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.WARNING, msg);
+            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, null, ex);
+        } finally {
+            try {
+                fis.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+            }
+        }
+    }
+
+    private void extractArchive(ArchiveInputStream input, File destination, Engine engine) throws ArchiveExtractionException {
+        ArchiveEntry entry;
+        try {
+            while ((entry = input.getNextEntry()) != null) {
                 if (entry.isDirectory()) {
-                    final File d = new File(extractTo, entry.getName());
+                    final File d = new File(destination, entry.getName());
                     if (!d.exists()) {
                         if (!d.mkdirs()) {
-                            throw new AnalysisException("Unable to create '" + d.getAbsolutePath() + "'.");
+                            final String msg = String.format("Unable to create '%s'.", d.getAbsolutePath());
+                            throw new AnalysisException(msg);
                         }
                     }
                 } else {
-                    final File file = new File(extractTo, entry.getName());
+                    final File file = new File(destination, entry.getName());
                     final String ext = org.owasp.dependencycheck.utils.FileUtils.getFileExtension(file.getName());
                     if (engine.supportsExtension(ext)) {
                         BufferedOutputStream bos = null;
@@ -287,22 +309,27 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
                             bos = new BufferedOutputStream(fos, BUFFER_SIZE);
                             int count;
                             final byte data[] = new byte[BUFFER_SIZE];
-                            while ((count = zis.read(data, 0, BUFFER_SIZE)) != -1) {
+                            while ((count = input.read(data, 0, BUFFER_SIZE)) != -1) {
                                 bos.write(data, 0, count);
                             }
                             bos.flush();
                         } catch (FileNotFoundException ex) {
-                            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, null, ex);
-                            throw new AnalysisException("Unable to find file '" + file.getName() + "'.", ex);
+                            Logger.getLogger(ArchiveAnalyzer.class
+                                    .getName()).log(Level.FINE, null, ex);
+                            final String msg = String.format("Unable to find file '%s'.", file.getName());
+                            throw new AnalysisException(msg, ex);
                         } catch (IOException ex) {
-                            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, null, ex);
-                            throw new AnalysisException("IO Exception while parsing file '" + file.getName() + "'.", ex);
+                            Logger.getLogger(ArchiveAnalyzer.class
+                                    .getName()).log(Level.FINE, null, ex);
+                            final String msg = String.format("IO Exception while parsing file '%s'.", file.getName());
+                            throw new AnalysisException(msg, ex);
                         } finally {
                             if (bos != null) {
                                 try {
                                     bos.close();
                                 } catch (IOException ex) {
-                                    Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+                                    Logger.getLogger(ArchiveAnalyzer.class
+                                            .getName()).log(Level.FINEST, null, ex);
                                 }
                             }
                         }
@@ -310,20 +337,42 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
                 }
             }
         } catch (IOException ex) {
-            final String msg = String.format("Exception reading archive '%s'.", archive.getName());
-            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.WARNING, msg);
-            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, null, ex);
-            throw new AnalysisException(msg, ex);
+            throw new ArchiveExtractionException(ex);
         } catch (Throwable ex) {
-            final String msg = String.format("Exception reading archive '%s'.", archive.getName());
-            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.WARNING, msg);
-            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.WARNING, null, ex);
-            throw new AnalysisException(msg, ex);
+            throw new ArchiveExtractionException(ex);
         } finally {
-            try {
-                zis.close();
-            } catch (IOException ex) {
-                Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+                }
+            }
+        }
+    }
+
+    private void decompressFile(CompressorInputStream inputStream, File outputFile) throws ArchiveExtractionException {
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(outputFile);
+            final byte[] buffer = new byte[BUFFER_SIZE];
+            int n = 0;
+            while (-1 != (n = inputStream.read(buffer))) {
+                out.write(buffer, 0, n);
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, null, ex);
+            throw new ArchiveExtractionException(ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, null, ex);
+            throw new ArchiveExtractionException(ex);
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+                }
             }
         }
     }
