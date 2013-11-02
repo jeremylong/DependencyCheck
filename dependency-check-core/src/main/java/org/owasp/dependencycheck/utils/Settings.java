@@ -126,6 +126,14 @@ public final class Settings {
          */
         public static final String PROXY_PORT = "proxy.port";
         /**
+         * The properties key for the proxy username.
+         */
+        public static final String PROXY_USERNAME = "proxy.username";
+        /**
+         * The properties key for the proxy password.
+         */
+        public static final String PROXY_PASSWORD = "proxy.password";
+        /**
          * The properties key for the connection timeout.
          */
         public static final String CONNECTION_TIMEOUT = "connection.timeout";

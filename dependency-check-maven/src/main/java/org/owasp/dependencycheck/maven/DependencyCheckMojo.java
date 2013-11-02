@@ -161,6 +161,18 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @Parameter(property = "proxyPort", defaultValue = "", required = false)
     private String proxyPort = null;
     /**
+     * The Proxy username.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "proxyUsername", defaultValue = "", required = false)
+    private String proxyUsername = null;
+    /**
+     * The Proxy password.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "proxyPassword", defaultValue = "", required = false)
+    private String proxyPassword = null;
+    /**
      * The Connection Timeout.
      */
     @SuppressWarnings("CanBeFinal")
@@ -624,6 +636,12 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         }
         if (proxyPort != null && !proxyPort.isEmpty()) {
             Settings.setString(Settings.KEYS.PROXY_PORT, proxyPort);
+        }
+        if (proxyUsername != null && !proxyUsername.isEmpty()) {
+            Settings.setString(Settings.KEYS.PROXY_USERNAME, proxyUsername);
+        }
+        if (proxyPassword != null && !proxyPassword.isEmpty()) {
+            Settings.setString(Settings.KEYS.PROXY_PASSWORD, proxyPassword);
         }
         if (connectionTimeout != null && !connectionTimeout.isEmpty()) {
             Settings.setString(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
