@@ -323,6 +323,53 @@ public class DependencyCheckTask extends Task {
     public void setProxyPort(String proxyPort) {
         this.proxyPort = proxyPort;
     }
+
+    /**
+     * The Proxy username.
+     */
+    private String proxyUsername;
+
+    /**
+     * Get the value of proxyUsername.
+     *
+     * @return the value of proxyUsername
+     */
+    public String getProxyUsername() {
+        return proxyUsername;
+    }
+
+    /**
+     * Set the value of proxyUsername.
+     *
+     * @param proxyUsername new value of proxyUsername
+     */
+    public void setProxyUsername(String proxyUsername) {
+        this.proxyUsername = proxyUsername;
+    }
+
+    /**
+     * The Proxy password.
+     */
+    private String proxyPassword;
+
+    /**
+     * Get the value of proxyPassword.
+     *
+     * @return the value of proxyPassword
+     */
+    public String getProxyPassword() {
+        return proxyPassword;
+    }
+
+    /**
+     * Set the value of proxyPassword.
+     *
+     * @param proxyPassword new value of proxyPassword
+     */
+    public void setProxyPassword(String proxyPassword) {
+        this.proxyPassword = proxyPassword;
+    }
+
     /**
      * The Connection Timeout.
      */
@@ -458,6 +505,12 @@ public class DependencyCheckTask extends Task {
         }
         if (proxyPort != null && !proxyPort.isEmpty()) {
             Settings.setString(Settings.KEYS.PROXY_PORT, proxyPort);
+        }
+        if (proxyUsername != null && !proxyUsername.isEmpty()) {
+            Settings.setString(Settings.KEYS.PROXY_USERNAME, proxyUsername);
+        }
+        if (proxyPassword != null && !proxyPassword.isEmpty()) {
+            Settings.setString(Settings.KEYS.PROXY_PASSWORD, proxyPassword);
         }
         if (connectionTimeout != null && !connectionTimeout.isEmpty()) {
             Settings.setString(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);

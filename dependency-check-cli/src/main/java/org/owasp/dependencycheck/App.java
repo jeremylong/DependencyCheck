@@ -98,7 +98,8 @@ public class App {
             cli.printVersionInfo();
         } else if (cli.isRunScan()) {
             updateSettings(cli.isAutoUpdate(), cli.getConnectionTimeout(), cli.getProxyUrl(),
-                    cli.getProxyPort(), cli.getDataDirectory(), cli.getPropertiesFile());
+                    cli.getProxyPort(), cli.getProxyUsername(), cli.getProxyPassword(),
+                    cli.getDataDirectory(), cli.getPropertiesFile());
             runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles());
         } else {
             cli.printHelp();
@@ -149,8 +150,8 @@ public class App {
      * @param dataDirectory the directory to store/retrieve persistent data from
      * @param propertiesFile the properties file to utilize
      */
-    private void updateSettings(boolean autoUpdate, String connectionTimeout, String proxyUrl,
-            String proxyPort, String dataDirectory, File propertiesFile) {
+    private void updateSettings(boolean autoUpdate, String connectionTimeout, String proxyUrl, String proxyPort,
+                                String proxyUser, String proxyPass, String dataDirectory, File propertiesFile) {
 
         if (propertiesFile != null) {
             try {
@@ -183,6 +184,12 @@ public class App {
         }
         if (proxyPort != null && !proxyPort.isEmpty()) {
             Settings.setString(Settings.KEYS.PROXY_PORT, proxyPort);
+        }
+        if (proxyUser != null && !proxyUser.isEmpty()) {
+            Settings.setString(Settings.KEYS.PROXY_USERNAME, proxyUser);
+        }
+        if (proxyPass != null && !proxyPass.isEmpty()) {
+            Settings.setString(Settings.KEYS.PROXY_PASSWORD, proxyPass);
         }
         if (connectionTimeout != null && !connectionTimeout.isEmpty()) {
             Settings.setString(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
