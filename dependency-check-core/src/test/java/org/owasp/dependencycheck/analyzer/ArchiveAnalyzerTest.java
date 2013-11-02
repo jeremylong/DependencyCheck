@@ -28,6 +28,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.data.cpe.BaseIndexTestCase;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -35,7 +36,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class ArchiveAnalyzerTest {
+public class ArchiveAnalyzerTest extends BaseIndexTestCase {
 
     public ArchiveAnalyzerTest() {
     }
@@ -49,11 +50,13 @@ public class ArchiveAnalyzerTest {
     }
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
+        super.setUp();
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
