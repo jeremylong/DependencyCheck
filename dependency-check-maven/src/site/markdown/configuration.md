@@ -11,3 +11,5 @@ format              | The report format to be generated (HTML, XML, VULN, ALL). 
 connectionTimeout   | The Connection Timeout.            |
 proxyUrl            | The Proxy URL.                     |
 proxyPort           | The Proxy Port.                    |
+proxyUsername       | Defines the proxy user name.       |
+proxyPassword       | Defines the proxy password.        |

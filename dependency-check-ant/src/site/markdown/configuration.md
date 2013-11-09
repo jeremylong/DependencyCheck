@@ -30,6 +30,8 @@ AutoUpdate            | If set to false the NVD CVE data is not automatically up
 DataDirectory         | The directory where dependency-check will store data used for analysis. Defaults to a folder called, called 'dependency-check-data', that is in the same directory as the dependency-check-ant jar file was installed in. *It is not recommended to change this.* | Optional
 ProxyUrl              | Defines the proxy used to connect to the Internet. | Optional
 ProxyPort             | Defines the port for the proxy. | Optional
+ProxyUsername         | Defines the proxy user name. | Optional
+ProxyPassword         | Defines the proxy password. | Optional
 ConnectionTimeout     | The connection timeout used when downloading data files from the Internet. | Optional
 
 
