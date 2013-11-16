@@ -20,6 +20,7 @@ package org.owasp.dependencycheck;
 
 import java.util.EnumMap;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,9 +32,12 @@ import org.owasp.dependencycheck.analyzer.AnalysisException;
 import org.owasp.dependencycheck.analyzer.AnalysisPhase;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.AnalyzerService;
+import org.owasp.dependencycheck.analyzer.CPEAnalyzer;
 import org.owasp.dependencycheck.data.CachedWebDataSource;
+import org.owasp.dependencycheck.data.NoDataException;
 import org.owasp.dependencycheck.data.UpdateException;
 import org.owasp.dependencycheck.data.UpdateService;
+import org.owasp.dependencycheck.data.cpe.CpeIndexReader;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
@@ -277,6 +281,17 @@ public class Engine {
      * Runs the analyzers against all of the dependencies.
      */
     public void analyzeDependencies() {
+
+        //need to ensure that data exists
+        try {
+            ensureDataExists();
+        } catch (NoDataException ex) {
+            String msg = String.format("\n\n%s\n\nUnable to continue dependency-check analysis.", ex.getMessage());
+            Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, msg);
+            Logger.getLogger(Engine.class.getName()).log(Level.FINE, null, ex);
+            return;
+        }
+
         //phase one initialize
         for (AnalysisPhase phase : AnalysisPhase.values()) {
             final List<Analyzer> analyzerList = analyzers.get(phase);
@@ -395,5 +410,38 @@ public class Engine {
             }
         }
         return false;
+    }
+
+    /**
+     * Checks the CPE Index to ensure documents exists. If none exist a
+     * NoDataException is thrown.
+     *
+     * @throws NoDataException thrown if no data exists in the CPE Index
+     */
+    private void ensureDataExists() throws NoDataException {
+        CpeIndexReader cpe = null;
+        boolean noDataExists = false;
+        try {
+            cpe = new CpeIndexReader();
+            cpe.open();
+            if (cpe.numDocs() <= 0) {
+                noDataExists = true;
+            }
+        } catch (IOException ex) {
+            noDataExists = true;
+        } catch (NullPointerException ex) {
+            noDataExists = true;
+        } finally {
+            if (cpe != null) {
+                cpe.close();
+            }
+        }
+        if (noDataExists) {
+            throw new NoDataException("No data exists in the data store. Please check that you are able to connect "
+                    + "to the Internet and re-run dependency-check. If the problem persists determine whether you need "
+                    + "to set a proxy url and port.\\n\\nIf you are unable to solve this problem please contact the mailing "
+                    + "list for help: dependency-check@googlegroups.com");
+
+        }
     }
 }
