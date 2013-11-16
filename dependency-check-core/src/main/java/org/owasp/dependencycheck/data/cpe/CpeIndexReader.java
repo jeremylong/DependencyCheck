@@ -194,4 +194,16 @@ public class CpeIndexReader extends BaseIndex {
             vendorSearchFieldAnalyzer.clear();
         }
     }
+
+    /**
+     * Returns the number of CPE entries stored in the index.
+     *
+     * @return the number of CPE entries stored in the index
+     */
+    public int numDocs() {
+        if (indexReader == null) {
+            return -1;
+        }
+        return indexReader.numDocs();
+    }
 }
