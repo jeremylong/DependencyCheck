@@ -265,7 +265,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                 && dependency2.getIdentifiers().equals(dependency1.getIdentifiers());
         if (LogUtils.isVerboseLoggingEnabled()) {
             final String msg = String.format("IdentifiersMatch=%s (%s, %s)", matches, dependency1.getFileName(), dependency2.getFileName());
-            Logger.getLogger(DependencyBundlingAnalyzer.class.getName()).log(Level.FINE, "currentVersion and nextVersion are both null?");
+            Logger.getLogger(DependencyBundlingAnalyzer.class.getName()).log(Level.FINE, msg);
         }
         return matches;
     }
@@ -336,7 +336,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
         }
         if (LogUtils.isVerboseLoggingEnabled()) {
             final String msg = String.format("IsCore=%s (%s, %s)", returnVal, left.getFileName(), right.getFileName());
-            Logger.getLogger(DependencyBundlingAnalyzer.class.getName()).log(Level.FINE, "currentVersion and nextVersion are both null?");
+            Logger.getLogger(DependencyBundlingAnalyzer.class.getName()).log(Level.FINE, msg);
         }
         return returnVal;
     }
