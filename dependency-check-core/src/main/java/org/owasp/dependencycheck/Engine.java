@@ -281,12 +281,11 @@ public class Engine {
      * Runs the analyzers against all of the dependencies.
      */
     public void analyzeDependencies() {
-
         //need to ensure that data exists
         try {
             ensureDataExists();
         } catch (NoDataException ex) {
-            String msg = String.format("\n\n%s\n\nUnable to continue dependency-check analysis.", ex.getMessage());
+            String msg = String.format("%n%n%s%n%nUnable to continue dependency-check analysis.", ex.getMessage());
             Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, msg);
             Logger.getLogger(Engine.class.getName()).log(Level.FINE, null, ex);
             return;
