@@ -32,7 +32,6 @@ import org.owasp.dependencycheck.analyzer.AnalysisException;
 import org.owasp.dependencycheck.analyzer.AnalysisPhase;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.AnalyzerService;
-import org.owasp.dependencycheck.analyzer.CPEAnalyzer;
 import org.owasp.dependencycheck.data.CachedWebDataSource;
 import org.owasp.dependencycheck.data.NoDataException;
 import org.owasp.dependencycheck.data.UpdateException;
@@ -285,7 +284,7 @@ public class Engine {
         try {
             ensureDataExists();
         } catch (NoDataException ex) {
-            String msg = String.format("%n%n%s%n%nUnable to continue dependency-check analysis.", ex.getMessage());
+            final String msg = String.format("%n%n%s%n%nUnable to continue dependency-check analysis.", ex.getMessage());
             Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, msg);
             Logger.getLogger(Engine.class.getName()).log(Level.FINE, null, ex);
             return;
