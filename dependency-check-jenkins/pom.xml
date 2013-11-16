@@ -6,13 +6,13 @@
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>1.0.5-SNAPSHOT</version>
+        <version>1.0.5</version>
     </parent>
 
     <groupId>org.owasp</groupId>
     <artifactId>dependency-check-jenkins</artifactId>
     <name>Dependency-Check Jenkins Plugin</name>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
     <inceptionYear>2012</inceptionYear>
     <organization>
         <name>OWASP</name>
