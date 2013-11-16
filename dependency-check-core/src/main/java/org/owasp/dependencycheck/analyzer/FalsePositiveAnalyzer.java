@@ -130,6 +130,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      *
      * @param dependency the dependency being analyzed
      */
+    @SuppressWarnings("null")
     private void removeSpuriousCPE(Dependency dependency) {
         final List<Identifier> ids = new ArrayList<Identifier>();
         ids.addAll(dependency.getIdentifiers());
