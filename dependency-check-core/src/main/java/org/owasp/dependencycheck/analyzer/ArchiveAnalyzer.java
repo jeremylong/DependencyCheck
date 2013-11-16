@@ -286,6 +286,15 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
         }
     }
 
+    /**
+     * Extracts files from an archive.
+     *
+     * @param input the archive to extract files from
+     * @param destination the location to write the files too
+     * @param engine the dependency-check engine
+     * @throws ArchiveExtractionException thrown if there is an exception
+     * extracting files from the archive
+     */
     private void extractArchive(ArchiveInputStream input, File destination, Engine engine) throws ArchiveExtractionException {
         ArchiveEntry entry;
         try {
@@ -351,6 +360,14 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
         }
     }
 
+    /**
+     * Decompresses a file.
+     *
+     * @param inputStream the compressed file
+     * @param outputFile the location to write the decompressed file
+     * @throws ArchiveExtractionException thrown if there is an exception
+     * decompressing the file
+     */
     private void decompressFile(CompressorInputStream inputStream, File outputFile) throws ArchiveExtractionException {
         FileOutputStream out = null;
         try {
