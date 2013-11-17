@@ -41,8 +41,10 @@ import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.dependency.Evidence.Confidence;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.data.cpe.CpeIndexReader;
+import org.owasp.dependencycheck.data.cpe.CpeMemoryIndex;
 import org.owasp.dependencycheck.data.cpe.Fields;
 import org.owasp.dependencycheck.data.cpe.IndexEntry;
+import org.owasp.dependencycheck.data.cpe.IndexException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Identifier;
@@ -83,9 +85,9 @@ public class CPEAnalyzer implements Analyzer {
      */
     static final int STRING_BUILDER_BUFFER = 20;
     /**
-     * The CPE Index Reader.
+     * The CPE in memory index.
      */
-    private CpeIndexReader cpe;
+    private CpeMemoryIndex cpe;
     /**
      * The CVE Database.
      */
@@ -100,8 +102,6 @@ public class CPEAnalyzer implements Analyzer {
      * usually occurs when the database is in use by another process.
      */
     public void open() throws IOException, DatabaseException {
-        cpe = new CpeIndexReader();
-        cpe.open();
         cve = new CveDB();
         try {
             cve.open();
@@ -112,10 +112,17 @@ public class CPEAnalyzer implements Analyzer {
             Logger.getLogger(CPEAnalyzer.class.getName()).log(Level.FINE, null, ex);
             throw new DatabaseException("Unable to open the cve db", ex);
         }
+        cpe = CpeMemoryIndex.getInstance();
+        try {
+            cpe.open(cve);
+        } catch (IndexException ex) {
+            Logger.getLogger(CPEAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DatabaseException(ex);
+        }
     }
 
     /**
-     * Closes the data source.
+     * Closes the data sources.
      */
     @Override
     public void close() {
@@ -124,28 +131,6 @@ public class CPEAnalyzer implements Analyzer {
         }
         if (cve != null) {
             cve.close();
-        }
-    }
-
-    /**
-     * Returns the status of the data source - is the index open.
-     *
-     * @return true or false.
-     */
-    public boolean isOpen() {
-        return (cpe != null) && cpe.isOpen();
-    }
-
-    /**
-     * Ensures that the Lucene index is closed.
-     *
-     * @throws Throwable when a throwable is thrown.
-     */
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        if (isOpen()) {
-            close();
         }
     }
 
