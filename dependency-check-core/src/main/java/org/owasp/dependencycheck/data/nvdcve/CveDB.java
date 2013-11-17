@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.owasp.dependencycheck.data.cpe.IndexEntry;
 import org.owasp.dependencycheck.data.cwe.CweDB;
 import org.owasp.dependencycheck.dependency.Reference;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -128,6 +129,10 @@ public class CveDB {
      * SQL Statement to select references by CVEID.
      */
     public static final String SELECT_REFERENCE = "SELECT source, name, url FROM reference WHERE cveid = ?";
+    /**
+     * SQL Statement to select vendor and product for lucene index.
+     */
+    public static final String SELECT_VENDOR_PRODUCT_LIST = "SELECT DISTINCT vendor, product FROM cpeEntry";
     /**
      * SQL Statement to select software by CVEID.
      */
@@ -245,6 +250,33 @@ public class CveDB {
             closeStatement(ps);
         }
         return cpe;
+    }
+
+    /**
+     * Returns the entire list of vendor/product combinations.
+     *
+     * @return the entire list of vendor/product combinations.
+     */
+    public Set<IndexEntry> getVendorProductList() {
+        final Set<IndexEntry> set = new HashSet<IndexEntry>();
+        ResultSet rs = null;
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(SELECT_VENDOR_PRODUCT_LIST);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                final IndexEntry entry = new IndexEntry();
+                entry.setVendor(rs.getString(1));
+                entry.setProduct(rs.getString(2));
+                set.add(entry);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResultSet(rs);
+            closeStatement(ps);
+        }
+        return set;
     }
 
     /**
