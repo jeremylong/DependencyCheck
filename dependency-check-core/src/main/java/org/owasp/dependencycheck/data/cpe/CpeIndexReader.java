@@ -37,6 +37,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.Version;
 import org.owasp.dependencycheck.data.lucene.FieldAnalyzer;
+import org.owasp.dependencycheck.data.lucene.LuceneUtils;
 import org.owasp.dependencycheck.data.lucene.SearchFieldAnalyzer;
 
 /**
@@ -77,12 +78,11 @@ public class CpeIndexReader extends BaseIndex {
      */
     @Override
     public void open() throws IOException {
-        //TODO add spinlock (shared)
         super.open();
         indexReader = DirectoryReader.open(getDirectory());
         indexSearcher = new IndexSearcher(indexReader);
         searchingAnalyzer = createSearchingAnalyzer();
-        queryParser = new QueryParser(Version.LUCENE_43, Fields.DOCUMENT_KEY, searchingAnalyzer);
+        queryParser = new QueryParser(LuceneUtils.CURRENT_VERSION, Fields.DOCUMENT_KEY, searchingAnalyzer);
     }
 
     /**
@@ -175,12 +175,12 @@ public class CpeIndexReader extends BaseIndex {
     private Analyzer createSearchingAnalyzer() {
         final Map fieldAnalyzers = new HashMap();
         fieldAnalyzers.put(Fields.DOCUMENT_KEY, new KeywordAnalyzer());
-        productSearchFieldAnalyzer = new SearchFieldAnalyzer(Version.LUCENE_43);
-        vendorSearchFieldAnalyzer = new SearchFieldAnalyzer(Version.LUCENE_43);
+        productSearchFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
+        vendorSearchFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
         fieldAnalyzers.put(Fields.PRODUCT, productSearchFieldAnalyzer);
         fieldAnalyzers.put(Fields.VENDOR, vendorSearchFieldAnalyzer);
 
-        return new PerFieldAnalyzerWrapper(new FieldAnalyzer(Version.LUCENE_43), fieldAnalyzers);
+        return new PerFieldAnalyzerWrapper(new FieldAnalyzer(LuceneUtils.CURRENT_VERSION), fieldAnalyzers);
     }
 
     /**
