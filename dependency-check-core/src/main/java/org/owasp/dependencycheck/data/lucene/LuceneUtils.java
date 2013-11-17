@@ -18,6 +18,8 @@
  */
 package org.owasp.dependencycheck.data.lucene;
 
+import org.apache.lucene.util.Version;
+
 /**
  * <p>Lucene utils is a set of utilize written to make constructing Lucene
  * queries simpler.</p>
@@ -25,6 +27,12 @@ package org.owasp.dependencycheck.data.lucene;
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public final class LuceneUtils {
+
+    /**
+     * The current version of Lucene being used. Declaring this one place so an
+     * upgrade doesn't require hunting through the code base.
+     */
+    public final static Version CURRENT_VERSION = Version.LUCENE_45;
 
     /**
      * Private constructor as this is a utility class.
