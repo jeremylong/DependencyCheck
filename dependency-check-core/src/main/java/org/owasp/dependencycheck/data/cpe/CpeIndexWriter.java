@@ -36,6 +36,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.util.Version;
 import org.owasp.dependencycheck.data.lucene.FieldAnalyzer;
+import org.owasp.dependencycheck.data.lucene.LuceneUtils;
 
 /**
  *
@@ -62,7 +63,7 @@ public class CpeIndexWriter extends BaseIndex {
         //TODO add spinlock
         super.open();
         indexingAnalyzer = createIndexingAnalyzer();
-        final IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_43, indexingAnalyzer);
+        final IndexWriterConfig conf = new IndexWriterConfig(LuceneUtils.CURRENT_VERSION, indexingAnalyzer);
         indexWriter = new IndexWriter(getDirectory(), conf);
     }
 
@@ -124,7 +125,7 @@ public class CpeIndexWriter extends BaseIndex {
     private Analyzer createIndexingAnalyzer() {
         final Map fieldAnalyzers = new HashMap();
         fieldAnalyzers.put(Fields.DOCUMENT_KEY, new KeywordAnalyzer());
-        return new PerFieldAnalyzerWrapper(new FieldAnalyzer(Version.LUCENE_43), fieldAnalyzers);
+        return new PerFieldAnalyzerWrapper(new FieldAnalyzer(LuceneUtils.CURRENT_VERSION), fieldAnalyzers);
     }
 
     /**
