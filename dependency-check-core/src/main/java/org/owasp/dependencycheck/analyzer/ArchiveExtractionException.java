@@ -19,7 +19,7 @@
 package org.owasp.dependencycheck.analyzer;
 
 /**
- * An exception thrown when the analysis of a dependency fails.
+ * An exception thrown when files in an archive cannot be extracted.
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
@@ -31,14 +31,14 @@ public class ArchiveExtractionException extends Exception {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Creates a new AnalysisException.
+     * Creates a new ArchiveExtractionException.
      */
     public ArchiveExtractionException() {
         super();
     }
 
     /**
-     * Creates a new AnalysisException.
+     * Creates a new ArchiveExtractionException.
      *
      * @param msg a message for the exception.
      */
@@ -47,7 +47,7 @@ public class ArchiveExtractionException extends Exception {
     }
 
     /**
-     * Creates a new AnalysisException.
+     * Creates a new ArchiveExtractionException.
      *
      * @param ex the cause of the failure.
      */
@@ -56,7 +56,7 @@ public class ArchiveExtractionException extends Exception {
     }
 
     /**
-     * Creates a new DownloadFailedException.
+     * Creates a new ArchiveExtractionException.
      *
      * @param msg a message for the exception.
      * @param ex the cause of the failure.
