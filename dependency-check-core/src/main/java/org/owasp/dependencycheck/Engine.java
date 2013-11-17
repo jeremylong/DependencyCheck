@@ -21,6 +21,7 @@ package org.owasp.dependencycheck;
 import java.util.EnumMap;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -36,7 +37,10 @@ import org.owasp.dependencycheck.data.CachedWebDataSource;
 import org.owasp.dependencycheck.data.NoDataException;
 import org.owasp.dependencycheck.data.UpdateException;
 import org.owasp.dependencycheck.data.UpdateService;
-import org.owasp.dependencycheck.data.cpe.CpeIndexReader;
+import org.owasp.dependencycheck.data.cpe.CpeMemoryIndex;
+import org.owasp.dependencycheck.data.cpe.IndexException;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
@@ -417,29 +421,28 @@ public class Engine {
      * @throws NoDataException thrown if no data exists in the CPE Index
      */
     private void ensureDataExists() throws NoDataException {
-        CpeIndexReader cpe = null;
-        boolean noDataExists = false;
-        try {
-            cpe = new CpeIndexReader();
-            cpe.open();
-            if (cpe.numDocs() <= 0) {
-                noDataExists = true;
-            }
-        } catch (IOException ex) {
-            noDataExists = true;
-        } catch (NullPointerException ex) {
-            noDataExists = true;
-        } finally {
-            if (cpe != null) {
-                cpe.close();
-            }
-        }
-        if (noDataExists) {
-            throw new NoDataException("No data exists in the data store. Please check that you are able to connect "
-                    + "to the Internet and re-run dependency-check. If the problem persists determine whether you need "
-                    + "to set a proxy url and port.\\n\\nIf you are unable to solve this problem please contact the mailing "
-                    + "list for help: dependency-check@googlegroups.com");
+        CpeMemoryIndex cpe = CpeMemoryIndex.getInstance();
+        CveDB cve = new CveDB();
 
+        try {
+            cve.open();
+            cpe.open(cve);
+        } catch (IndexException ex) {
+            throw new NoDataException(ex);
+        } catch (IOException ex) {
+            throw new NoDataException(ex);
+        } catch (SQLException ex) {
+            throw new NoDataException(ex);
+        } catch (DatabaseException ex) {
+            throw new NoDataException(ex);
+        } catch (ClassNotFoundException ex) {
+            throw new NoDataException(ex);
+        } finally {
+            cve.close();
+        }
+        if (cpe.numDocs() <= 0) {
+            cpe.close();
+            throw new NoDataException();
         }
     }
 }
