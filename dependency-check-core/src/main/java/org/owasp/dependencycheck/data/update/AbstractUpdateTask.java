@@ -30,7 +30,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.owasp.dependencycheck.data.UpdateException;
-import org.owasp.dependencycheck.data.cpe.CpeIndexWriter;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
@@ -91,19 +90,6 @@ public abstract class AbstractUpdateTask implements UpdateTask {
      */
     protected CveDB getCveDB() {
         return cveDB;
-    }
-    /**
-     * Reference to the Cpe Index.
-     */
-    private CpeIndexWriter cpeIndex = null;
-
-    /**
-     * Returns the CpeIndex.
-     *
-     * @return the CpeIndex
-     */
-    protected CpeIndexWriter getCpeIndex() {
-        return cpeIndex;
     }
 
     /**
@@ -199,13 +185,6 @@ public abstract class AbstractUpdateTask implements UpdateTask {
                 Logger.getLogger(AbstractUpdateTask.class.getName()).log(Level.FINEST, "Error closing the cveDB", ignore);
             }
         }
-        if (cpeIndex != null) {
-            try {
-                cpeIndex.close();
-            } catch (Exception ignore) {
-                Logger.getLogger(AbstractUpdateTask.class.getName()).log(Level.FINEST, "Error closing the cpeIndex", ignore);
-            }
-        }
     }
 
     /**
@@ -218,8 +197,6 @@ public abstract class AbstractUpdateTask implements UpdateTask {
         try {
             cveDB = new CveDB();
             cveDB.open();
-            cpeIndex = new CpeIndexWriter();
-            cpeIndex.open();
         } catch (IOException ex) {
             closeDataStores();
             Logger.getLogger(AbstractUpdateTask.class.getName()).log(Level.FINE, "IO Error opening databases", ex);
@@ -269,8 +246,8 @@ public abstract class AbstractUpdateTask implements UpdateTask {
      * @throws ClassNotFoundException thrown if the h2 database driver cannot be
      * loaded
      */
-    protected void importXML(File file, File oldVersion)
-            throws ParserConfigurationException, SAXException, IOException, SQLException, DatabaseException, ClassNotFoundException {
+    protected void importXML(File file, File oldVersion) throws ParserConfigurationException,
+            SAXException, IOException, SQLException, DatabaseException, ClassNotFoundException {
 
         final SAXParserFactory factory = SAXParserFactory.newInstance();
         final SAXParser saxParser = factory.newSAXParser();
@@ -282,7 +259,6 @@ public abstract class AbstractUpdateTask implements UpdateTask {
         final NvdCve20Handler cve20Handler = new NvdCve20Handler();
         cve20Handler.setCveDB(cveDB);
         cve20Handler.setPrevVersionVulnMap(prevVersionVulnMap);
-        cve20Handler.setCpeIndex(cpeIndex);
         saxParser.parse(file, cve20Handler);
     }
 }
