@@ -410,17 +410,17 @@ along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
-            <version>4.3.1</version>
+            <version>4.5.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-analyzers-common</artifactId>
-            <version>4.3.1</version>
+            <version>4.5.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-queryparser</artifactId>
-            <version>4.3.1</version>
+            <version>4.5.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.velocity</groupId>
