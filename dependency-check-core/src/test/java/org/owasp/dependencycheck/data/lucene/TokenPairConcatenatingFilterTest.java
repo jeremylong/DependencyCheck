@@ -53,7 +53,7 @@ public class TokenPairConcatenatingFilterTest extends BaseTokenStreamTestCase {
      * test some examples
      */
     public void testExamples() throws IOException {
-        Tokenizer wsTokenizer = new WhitespaceTokenizer(Version.LUCENE_43, new StringReader("one two three"));
+        Tokenizer wsTokenizer = new WhitespaceTokenizer(LuceneUtils.CURRENT_VERSION, new StringReader("one two three"));
         TokenStream filter = new TokenPairConcatenatingFilter(wsTokenizer);
         assertTokenStreamContents(filter,
                 new String[]{"one", "onetwo", "two", "twothree", "three"});
@@ -65,7 +65,7 @@ public class TokenPairConcatenatingFilterTest extends BaseTokenStreamTestCase {
     @Test
     public void testClear() throws IOException {
 
-        TokenStream ts = new WhitespaceTokenizer(Version.LUCENE_43, new StringReader("one two three"));
+        TokenStream ts = new WhitespaceTokenizer(LuceneUtils.CURRENT_VERSION, new StringReader("one two three"));
         TokenPairConcatenatingFilter filter = new TokenPairConcatenatingFilter(ts);
         assertTokenStreamContents(filter, new String[]{"one", "onetwo", "two", "twothree", "three"});
 
