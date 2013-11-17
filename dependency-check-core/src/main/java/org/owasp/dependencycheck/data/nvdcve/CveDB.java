@@ -59,7 +59,7 @@ public class CveDB {
     /**
      * The version of the current DB Schema.
      */
-    public static final String DB_SCHEMA_VERSION = "2.6";
+    public static final String DB_SCHEMA_VERSION = "2.7";
     /**
      * Database connection
      */
@@ -132,7 +132,7 @@ public class CveDB {
     /**
      * SQL Statement to select vendor and product for lucene index.
      */
-    public static final String SELECT_VENDOR_PRODUCT_LIST = "SELECT DISTINCT vendor, product FROM cpeEntry";
+    public static final String SELECT_VENDOR_PRODUCT_LIST = "SELECT vendor, product FROM cpeEntry GROUP BY vendor, product";
     /**
      * SQL Statement to select software by CVEID.
      */
@@ -257,26 +257,16 @@ public class CveDB {
      *
      * @return the entire list of vendor/product combinations.
      */
-    public Set<IndexEntry> getVendorProductList() {
+    public ResultSet getVendorProductList() {
         final Set<IndexEntry> set = new HashSet<IndexEntry>();
         ResultSet rs = null;
-        PreparedStatement ps = null;
         try {
-            ps = conn.prepareStatement(SELECT_VENDOR_PRODUCT_LIST);
+            PreparedStatement ps = conn.prepareStatement(SELECT_VENDOR_PRODUCT_LIST);
             rs = ps.executeQuery();
-            while (rs.next()) {
-                final IndexEntry entry = new IndexEntry();
-                entry.setVendor(rs.getString(1));
-                entry.setProduct(rs.getString(2));
-                set.add(entry);
-            }
         } catch (SQLException ex) {
             Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            closeResultSet(rs);
-            closeStatement(ps);
         }
-        return set;
+        return rs;
     }
 
     /**
@@ -634,7 +624,7 @@ public class CveDB {
      *
      * @param rs a ResultSet to close
      */
-    private void closeResultSet(ResultSet rs) {
+    public void closeResultSet(ResultSet rs) {
         if (rs != null) {
             try {
                 rs.close();
