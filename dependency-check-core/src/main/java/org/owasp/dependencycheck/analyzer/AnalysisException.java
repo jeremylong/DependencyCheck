@@ -56,7 +56,7 @@ public class AnalysisException extends Exception {
     }
 
     /**
-     * Creates a new DownloadFailedException.
+     * Creates a new AnalysisException.
      *
      * @param msg a message for the exception.
      * @param ex the cause of the failure.
