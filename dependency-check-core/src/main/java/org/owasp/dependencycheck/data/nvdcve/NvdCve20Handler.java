@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.lucene.index.CorruptIndexException;
-import org.owasp.dependencycheck.data.cpe.CpeIndexWriter;
 import org.owasp.dependencycheck.dependency.Reference;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
@@ -260,25 +259,7 @@ public class NvdCve20Handler extends DefaultHandler {
                 vuln.updateVulnerableSoftware(vs);
             }
         }
-        for (VulnerableSoftware vs : vuln.getVulnerableSoftware()) {
-            if (cpeIndex != null) {
-                cpeIndex.saveEntry(vs);
-            }
-        }
         cveDB.updateVulnerability(vuln);
-    }
-    /**
-     * the cpe index.
-     */
-    private CpeIndexWriter cpeIndex;
-
-    /**
-     * Sets the cpe index writer.
-     *
-     * @param index the CPE Lucene Index
-     */
-    public void setCpeIndex(CpeIndexWriter index) {
-        cpeIndex = index;
     }
 
     // <editor-fold defaultstate="collapsed" desc="The Element Class that maintains state information about the current node">

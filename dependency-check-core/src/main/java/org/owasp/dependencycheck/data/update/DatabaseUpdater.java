@@ -24,9 +24,6 @@ import org.owasp.dependencycheck.data.CachedWebDataSource;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.owasp.dependencycheck.concurrency.DirectoryLockException;
-import org.owasp.dependencycheck.concurrency.DirectorySpinLock;
-import org.owasp.dependencycheck.concurrency.InvalidDirectoryException;
 import org.owasp.dependencycheck.data.UpdateException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.FileUtils;
@@ -48,24 +45,9 @@ public class DatabaseUpdater implements CachedWebDataSource {
      */
     @Override
     public void update() throws UpdateException {
-        final File dataDir = Settings.getFile(Settings.KEYS.DATA_DIRECTORY);
-        DirectorySpinLock lock = null;
         try {
-            lock = new DirectorySpinLock(dataDir);
-        } catch (InvalidDirectoryException ex) {
-            throw new UpdateException("Unable to obtain lock on the data directory", ex);
-        } catch (DirectoryLockException ex) {
-            throw new UpdateException("Unable to obtain exclusive lock on the data directory", ex);
-        }
-
-        try {
-            lock.obtainSharedLock();
             final UpdateTask task = UpdateTaskFactory.getUpdateTask();
-
-
             if (task.isUpdateNeeded()) {
-                lock.release();
-                lock.obtainExclusiveLock();
                 if (task.shouldDeleteAndRecreate()) {
                     try {
                         deleteExistingData();
@@ -76,10 +58,6 @@ public class DatabaseUpdater implements CachedWebDataSource {
                 }
                 task.update();
             }
-        } catch (DirectoryLockException ex) {
-            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.WARNING,
-                    "Unable to obtain lock on data directory, unable to update the data to use the most current data.");
-            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINE, null, ex);
         } catch (MalformedURLException ex) {
             Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.WARNING,
                     "NVD CVE properties files contain an invalid URL, unable to update the data to use the most current data.");
@@ -88,10 +66,6 @@ public class DatabaseUpdater implements CachedWebDataSource {
             Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.WARNING,
                     "Unable to download the NVD CVE data, unable to update the data to use the most current data.");
             Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINE, null, ex);
-        } finally {
-            if (lock != null) {
-                lock.release();
-            }
         }
     }
 

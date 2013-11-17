@@ -110,7 +110,6 @@ public class StandardUpdateTask extends AbstractUpdateTask {
                         importXML(outputPath, outputPath12);
 
                         getCveDB().commit();
-                        getCpeIndex().commit();
                         getProperties().save(cve);
 
                         Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
