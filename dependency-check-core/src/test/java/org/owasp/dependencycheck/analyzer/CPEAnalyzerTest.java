@@ -102,21 +102,6 @@ public class CPEAnalyzerTest extends BaseIndexTestCase {
     }
 
     /**
-     * Test of open method, of class CPEAnalyzer.
-     *
-     * @throws Exception is thrown when an exception occurs
-     */
-    @Test
-    public void testOpen() throws Exception {
-        CPEAnalyzer instance = new CPEAnalyzer();
-        Assert.assertFalse(instance.isOpen());
-        instance.open();
-        Assert.assertTrue(instance.isOpen());
-        instance.close();
-        Assert.assertFalse(instance.isOpen());
-    }
-
-    /**
      * Test of determineCPE method, of class CPEAnalyzer.
      *
      * @throws Exception is thrown when an exception occurs
