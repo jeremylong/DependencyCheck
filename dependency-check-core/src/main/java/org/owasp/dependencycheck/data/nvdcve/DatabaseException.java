@@ -42,10 +42,19 @@ public class DatabaseException extends Exception {
     /**
      * Creates an DatabaseException.
      *
+     * @param ex the cause of the exception
+     */
+    public DatabaseException(Throwable ex) {
+        super(ex);
+    }
+
+    /**
+     * Creates an DatabaseException.
+     *
      * @param msg the exception message
      * @param ex the cause of the exception
      */
-    public DatabaseException(String msg, Exception ex) {
+    public DatabaseException(String msg, Throwable ex) {
         super(msg, ex);
     }
 }
