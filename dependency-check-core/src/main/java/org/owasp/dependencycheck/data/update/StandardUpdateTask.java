@@ -29,6 +29,14 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.owasp.dependencycheck.data.UpdateException;
@@ -70,12 +78,15 @@ public class StandardUpdateTask extends AbstractUpdateTask {
      */
     @Override
     public void update() throws UpdateException {
+        int maxUpdates = 0;
         try {
-            int maxUpdates = 0;
             for (NvdCveInfo cve : getUpdateable()) {
                 if (cve.getNeedsUpdate()) {
                     maxUpdates += 1;
                 }
+            }
+            if (maxUpdates <= 0) {
+                return;
             }
             if (maxUpdates > 3) {
                 Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
@@ -85,35 +96,34 @@ public class StandardUpdateTask extends AbstractUpdateTask {
                 openDataStores();
             }
 
-            int count = 0;
+            int numThreads = (3 > maxUpdates) ? 3 : maxUpdates;
+            final ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
+            Set<Future<CallableDownloadTask>> futures = new HashSet<Future<CallableDownloadTask>>(maxUpdates);
+
             for (NvdCveInfo cve : getUpdateable()) {
                 if (cve.getNeedsUpdate()) {
-                    count += 1;
-                    Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
-                            "Updating NVD CVE ({0} of {1})", new Object[]{count, maxUpdates});
-                    URL url = new URL(cve.getUrl());
-                    File outputPath = null;
-                    File outputPath12 = null;
+                    final File file_1;
+                    final File file_2;
                     try {
-                        Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
-                                "Downloading {0}", cve.getUrl());
-                        outputPath = File.createTempFile("cve" + cve.getId() + "_", ".xml");
-                        Downloader.fetchFile(url, outputPath);
+                        file_1 = File.createTempFile("cve" + cve.getId() + "_", ".xml");
+                        file_2 = File.createTempFile("cve_1_2_" + cve.getId() + "_", ".xml");
+                    } catch (IOException ex) {
+                        throw new UpdateException(ex);
+                    }
+                    final CallableDownloadTask call = new CallableDownloadTask(cve, file_1, file_2);
+                    futures.add(executorService.submit(call));
+                }
+            }
 
-                        url = new URL(cve.getOldSchemaVersionUrl());
-                        outputPath12 = File.createTempFile("cve_1_2_" + cve.getId() + "_", ".xml");
-                        Downloader.fetchFile(url, outputPath12);
-
-                        Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
-                                "Processing {0}", cve.getUrl());
-
-                        importXML(outputPath, outputPath12);
-
+            try {
+                for (Future<CallableDownloadTask> future : futures) {
+                    CallableDownloadTask filePair = future.get();
+                    String msg = String.format("Processing Started for NVD CVE - %s", filePair.getNvdCveInfo().getId());
+                    Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO, msg);
+                    try {
+                        importXML(filePair.getFirst(), filePair.getSecond());
                         getCveDB().commit();
-                        getProperties().save(cve);
-
-                        Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
-                                "Completed update {0} of {1}", new Object[]{count, maxUpdates});
+                        getProperties().save(filePair.getNvdCveInfo());
                     } catch (FileNotFoundException ex) {
                         throw new UpdateException(ex);
                     } catch (ParserConfigurationException ex) {
@@ -129,40 +139,132 @@ public class StandardUpdateTask extends AbstractUpdateTask {
                     } catch (ClassNotFoundException ex) {
                         throw new UpdateException(ex);
                     } finally {
-                        boolean deleted = false;
-                        try {
-                            if (outputPath != null && outputPath.exists()) {
-                                deleted = outputPath.delete();
-                            }
-                        } finally {
-                            if (outputPath != null && (outputPath.exists() || !deleted)) {
-                                outputPath.deleteOnExit();
-                            }
-                        }
-                        try {
-                            deleted = false;
-                            if (outputPath12 != null && outputPath12.exists()) {
-                                deleted = outputPath12.delete();
-                            }
-                        } finally {
-                            if (outputPath12 != null && (outputPath12.exists() || !deleted)) {
-                                outputPath12.deleteOnExit();
-                            }
-                        }
+                        filePair.cleanup();
                     }
+                    msg = String.format("Processing Complete for NVD CVE - %s", filePair.getNvdCveInfo().getId());
+                    Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO, msg);
                 }
+            } catch (InterruptedException ex) {
+                executorService.shutdownNow();
+                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "Thread was interupted", ex);
+                throw new UpdateException(ex);
+            } catch (ExecutionException ex) {
+                executorService.shutdownNow();
+                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.SEVERE, null, ex);
+                throw new UpdateException(ex);
+            } finally {
+                //yes, this should likely not be in the finally because of the shutdownNow above.
+                executorService.shutdown();
             }
-            if (maxUpdates >= 1) { //ensure the modified file date gets written
+
+            if (maxUpdates
+                    >= 1) { //ensure the modified file date gets written
                 getProperties().save(getUpdateable().get(MODIFIED));
                 getCveDB().cleanupDatabase();
             }
-        } catch (MalformedURLException ex) {
-            throw new UpdateException(ex);
         } finally {
             closeDataStores();
         }
     }
 
+    //<editor-fold defaultstate="collapsed" desc="OLD version of update() - not multithreaded">
+    /*
+     * TODO - remove this
+     public void update() throws UpdateException {
+     try {
+     int maxUpdates = 0;
+     for (NvdCveInfo cve : getUpdateable()) {
+     if (cve.getNeedsUpdate()) {
+     maxUpdates += 1;
+     }
+     }
+     if (maxUpdates > 3) {
+     Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
+     "NVD CVE requires several updates; this could take a couple of minutes.");
+     }
+     if (maxUpdates > 0) {
+     openDataStores();
+     }
+
+     int count = 0;
+     for (NvdCveInfo cve : getUpdateable()) {
+     if (cve.getNeedsUpdate()) {
+     count += 1;
+     Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
+     "Updating NVD CVE ({0} of {1})", new Object[]{count, maxUpdates});
+     URL url = new URL(cve.getUrl());
+     File outputPath = null;
+     File outputPath12 = null;
+     try {
+     Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
+     "Downloading {0}", cve.getUrl());
+     outputPath = File.createTempFile("cve" + cve.getId() + "_", ".xml");
+     Downloader.fetchFile(url, outputPath);
+
+     url = new URL(cve.getOldSchemaVersionUrl());
+     outputPath12 = File.createTempFile("cve_1_2_" + cve.getId() + "_", ".xml");
+     Downloader.fetchFile(url, outputPath12);
+
+     Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
+     "Processing {0}", cve.getUrl());
+
+     importXML(outputPath, outputPath12);
+
+     getCveDB().commit();
+     getProperties().save(cve);
+
+     Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
+     "Completed update {0} of {1}", new Object[]{count, maxUpdates});
+     } catch (FileNotFoundException ex) {
+     throw new UpdateException(ex);
+     } catch (ParserConfigurationException ex) {
+     throw new UpdateException(ex);
+     } catch (SAXException ex) {
+     throw new UpdateException(ex);
+     } catch (IOException ex) {
+     throw new UpdateException(ex);
+     } catch (SQLException ex) {
+     throw new UpdateException(ex);
+     } catch (DatabaseException ex) {
+     throw new UpdateException(ex);
+     } catch (ClassNotFoundException ex) {
+     throw new UpdateException(ex);
+     } finally {
+     boolean deleted = false;
+     try {
+     if (outputPath != null && outputPath.exists()) {
+     deleted = outputPath.delete();
+     }
+     } finally {
+     if (outputPath != null && (outputPath.exists() || !deleted)) {
+     outputPath.deleteOnExit();
+     }
+     }
+     try {
+     deleted = false;
+     if (outputPath12 != null && outputPath12.exists()) {
+     deleted = outputPath12.delete();
+     }
+     } finally {
+     if (outputPath12 != null && (outputPath12.exists() || !deleted)) {
+     outputPath12.deleteOnExit();
+     }
+     }
+     }
+     }
+     }
+     if (maxUpdates >= 1) { //ensure the modified file date gets written
+     getProperties().save(getUpdateable().get(MODIFIED));
+     getCveDB().cleanupDatabase();
+     }
+     } catch (MalformedURLException ex) {
+     throw new UpdateException(ex);
+     } finally {
+     closeDataStores();
+     }
+     }
+     */
+    //</editor-fold>
     /**
      * Determines if the index needs to be updated. This is done by fetching the
      * NVD CVE meta data and checking the last update date. If the data needs to
@@ -184,11 +286,15 @@ public class StandardUpdateTask extends AbstractUpdateTask {
             updates = retrieveCurrentTimestampsFromWeb();
         } catch (InvalidDataException ex) {
             final String msg = "Unable to retrieve valid timestamp from nvd cve downloads page";
-            Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, msg, ex);
+            Logger
+                    .getLogger(StandardUpdateTask.class
+                    .getName()).log(Level.FINE, msg, ex);
             throw new DownloadFailedException(msg, ex);
         } catch (InvalidSettingException ex) {
-            Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "Invalid setting found when retrieving timestamps", ex);
-            throw new DownloadFailedException("Invalid settings", ex);
+            Logger.getLogger(StandardUpdateTask.class
+                    .getName()).log(Level.FINE, "Invalid setting found when retrieving timestamps", ex);
+            throw new DownloadFailedException(
+                    "Invalid settings", ex);
         }
 
         if (updates == null) {
@@ -241,7 +347,9 @@ public class StandardUpdateTask extends AbstractUpdateTask {
                             } catch (NumberFormatException ex) {
                                 final String msg = String.format("Error parsing '%s' '%s' from nvdcve.lastupdated",
                                         DataStoreMetaInfo.LAST_UPDATED_BASE, entry.getId());
-                                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, msg, ex);
+                                Logger
+                                        .getLogger(StandardUpdateTask.class
+                                        .getName()).log(Level.FINE, msg, ex);
                             }
                             if (currentTimestamp == entry.getTimestamp()) {
                                 entry.setNeedsUpdate(false);
@@ -251,8 +359,11 @@ public class StandardUpdateTask extends AbstractUpdateTask {
                 }
             } catch (NumberFormatException ex) {
                 final String msg = "An invalid schema version or timestamp exists in the data.properties file.";
-                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.WARNING, msg);
-                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, null, ex);
+                Logger
+                        .getLogger(StandardUpdateTask.class
+                        .getName()).log(Level.WARNING, msg);
+                Logger.getLogger(StandardUpdateTask.class
+                        .getName()).log(Level.FINE, null, ex);
             }
         }
         return updates;
