@@ -25,14 +25,11 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,7 +39,6 @@ import java.util.logging.Logger;
 import org.owasp.dependencycheck.data.UpdateException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
-import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
@@ -54,6 +50,11 @@ import static org.owasp.dependencycheck.data.update.DataStoreMetaInfo.MODIFIED;
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class StandardUpdateTask extends AbstractUpdateTask {
+
+    /**
+     * The max thread pool size to use when downloading files.
+     */
+    public static final int MAX_THREAD_POOL_SIZE = Settings.getInt(Settings.KEYS.MAX_DOWNLOAD_THREAD_POOL_SIZE, 3);
 
     /**
      * Constructs a new Standard Update Task.
@@ -96,8 +97,8 @@ public class StandardUpdateTask extends AbstractUpdateTask {
                 openDataStores();
             }
 
-            int numThreads = (3 > maxUpdates) ? 3 : maxUpdates;
-            final ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
+            final int poolSize = (MAX_THREAD_POOL_SIZE > maxUpdates) ? MAX_THREAD_POOL_SIZE : maxUpdates;
+            final ExecutorService executorService = Executors.newFixedThreadPool(poolSize);
             Set<Future<CallableDownloadTask>> futures = new HashSet<Future<CallableDownloadTask>>(maxUpdates);
 
             for (NvdCveInfo cve : getUpdateable()) {
@@ -157,8 +158,7 @@ public class StandardUpdateTask extends AbstractUpdateTask {
                 executorService.shutdown();
             }
 
-            if (maxUpdates
-                    >= 1) { //ensure the modified file date gets written
+            if (maxUpdates >= 1) { //ensure the modified file date gets written
                 getProperties().save(getUpdateable().get(MODIFIED));
                 getCveDB().cleanupDatabase();
             }
