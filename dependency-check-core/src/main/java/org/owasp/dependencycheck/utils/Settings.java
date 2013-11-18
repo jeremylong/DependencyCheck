@@ -141,6 +141,10 @@ public final class Settings {
          * The location of the temporary directory.
          */
         public static final String TEMP_DIRECTORY = "temp.directory";
+        /**
+         * The maximum number of threads to allocate when downloading files.
+         */
+        public static String MAX_DOWNLOAD_THREAD_POOL_SIZE = "max.download.threads";
     }
     /**
      * The properties file location.
