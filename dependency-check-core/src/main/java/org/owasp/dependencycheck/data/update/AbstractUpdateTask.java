@@ -164,10 +164,6 @@ public abstract class AbstractUpdateTask implements UpdateTask {
         if (data.exists()) {
             FileUtils.delete(data);
         }
-        data = Settings.getFile(Settings.KEYS.CPE_DATA_DIRECTORY);
-        if (data.exists()) {
-            FileUtils.delete(data);
-        }
         data = DataStoreMetaInfo.getPropertiesFile();
         if (data.exists()) {
             FileUtils.delete(data);

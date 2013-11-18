@@ -73,11 +73,6 @@ public final class Settings {
          */
         public static final String BATCH_UPDATE_URL = "batch.update.url";
         /**
-         * The properties key for the path where the CPE Lucene Index will be
-         * stored.
-         */
-        public static final String CPE_DATA_DIRECTORY = "data.cpe";
-        /**
          * The properties key for the path where the CVE H2 database will be
          * stored.
          */
