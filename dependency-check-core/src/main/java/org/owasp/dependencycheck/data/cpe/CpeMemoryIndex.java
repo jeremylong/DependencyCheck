@@ -181,7 +181,7 @@ public class CpeMemoryIndex {
             try {
                 indexReader.close();
             } catch (IOException ex) {
-                Logger.getLogger(CpeIndexReader.class.getName()).log(Level.FINEST, null, ex);
+                Logger.getLogger(CpeMemoryIndex.class.getName()).log(Level.FINEST, null, ex);
             }
             indexReader = null;
         }
