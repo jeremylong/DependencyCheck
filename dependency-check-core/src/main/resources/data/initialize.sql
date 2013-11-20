@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS vulnerability;
 DROP TABLE IF EXISTS reference;
 DROP TABLE IF EXISTS cpeEntry;
 DROP TABLE IF EXISTS software;
+DROP TABLE IF EXISTS settings;
 
 CREATE TABLE settings (id varchar(50) PRIMARY KEY, value varchar(200));
 
