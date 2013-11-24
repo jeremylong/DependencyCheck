@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema id="suppressions" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="https://www.owasp.org/index.php/OWASP_Dependency_Check_Suppression">
+    <xs:element name="suppressions">
+        <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="suppress">
+                    <xs:complexType>
+                        <xs:sequence minOccurs="1" maxOccurs="1">
+                            <xs:sequence minOccurs="0" maxOccurs="1">
+                                <xs:element name="notes" type="xs:string"/>
+                            </xs:sequence>
+                            <xs:choice minOccurs="0" maxOccurs="1">
+                                <xs:element name="filePath">
+                                    <xs:complexType>
+                                        <xs:simpleContent>
+                                            <xs:extension base="xs:string">
+                                                <xs:attribute name="regex" use="optional" type="xs:boolean" default="false"/>
+                                            </xs:extension>
+                                        </xs:simpleContent>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:element name="sha1" type="xs:string"/>
+                            </xs:choice>
+                            <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                                <xs:choice>
+                                    <xs:element name="cpe">
+                                        <xs:complexType>
+                                            <xs:simpleContent>
+                                                <xs:extension base="xs:string">
+                                                    <xs:attribute name="regex" use="optional" type="xs:boolean" default="false"/>
+                                                </xs:extension>
+                                            </xs:simpleContent>
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element name="cve" type="xs:string"/>
+                                    <xs:element name="cwe" type="xs:string"/>
+                                    <xs:element name="cvssBelow" type="xs:decimal"/>
+                                </xs:choice>
+                            </xs:sequence>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
