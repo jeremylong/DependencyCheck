@@ -421,8 +421,8 @@ public class Engine {
      * @throws NoDataException thrown if no data exists in the CPE Index
      */
     private void ensureDataExists() throws NoDataException {
-        CpeMemoryIndex cpe = CpeMemoryIndex.getInstance();
-        CveDB cve = new CveDB();
+        final CpeMemoryIndex cpe = CpeMemoryIndex.getInstance();
+        final CveDB cve = new CveDB();
 
         try {
             cve.open();

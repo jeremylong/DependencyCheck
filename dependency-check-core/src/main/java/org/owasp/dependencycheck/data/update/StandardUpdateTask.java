@@ -99,26 +99,26 @@ public class StandardUpdateTask extends AbstractUpdateTask {
 
             final int poolSize = (MAX_THREAD_POOL_SIZE > maxUpdates) ? MAX_THREAD_POOL_SIZE : maxUpdates;
             final ExecutorService executorService = Executors.newFixedThreadPool(poolSize);
-            Set<Future<CallableDownloadTask>> futures = new HashSet<Future<CallableDownloadTask>>(maxUpdates);
+            final Set<Future<CallableDownloadTask>> futures = new HashSet<Future<CallableDownloadTask>>(maxUpdates);
 
             for (NvdCveInfo cve : getUpdateable()) {
                 if (cve.getNeedsUpdate()) {
-                    final File file_1;
-                    final File file_2;
+                    final File file1;
+                    final File file2;
                     try {
-                        file_1 = File.createTempFile("cve" + cve.getId() + "_", ".xml");
-                        file_2 = File.createTempFile("cve_1_2_" + cve.getId() + "_", ".xml");
+                        file1 = File.createTempFile("cve" + cve.getId() + "_", ".xml");
+                        file2 = File.createTempFile("cve_1_2_" + cve.getId() + "_", ".xml");
                     } catch (IOException ex) {
                         throw new UpdateException(ex);
                     }
-                    final CallableDownloadTask call = new CallableDownloadTask(cve, file_1, file_2);
+                    final CallableDownloadTask call = new CallableDownloadTask(cve, file1, file2);
                     futures.add(executorService.submit(call));
                 }
             }
 
             try {
                 for (Future<CallableDownloadTask> future : futures) {
-                    CallableDownloadTask filePair = future.get();
+                    final CallableDownloadTask filePair = future.get();
                     String msg = String.format("Processing Started for NVD CVE - %s", filePair.getNvdCveInfo().getId());
                     Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO, msg);
                     try {

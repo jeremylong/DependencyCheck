@@ -1,6 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of dependency-check-core.
+ *
+ * Dependency-check-core is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Dependency-check-core is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ *
+ * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.cpe;
 
@@ -34,10 +48,12 @@ import org.owasp.dependencycheck.data.lucene.LuceneUtils;
 import org.owasp.dependencycheck.data.lucene.SearchFieldAnalyzer;
 
 /**
+ * An in memory lucene index that contains the vendor/product combinations from
+ * the CPE (application) identifiers within the NVD CVE data.
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class CpeMemoryIndex {
+public final class CpeMemoryIndex {
 
     /**
      * singleton instance.
@@ -94,7 +110,7 @@ public class CpeMemoryIndex {
      * @throws IndexException thrown if there is an error creating the index
      */
     public void open(CveDB cve) throws IndexException {
-        if (!_open) {
+        if (!openState) {
             index = new RAMDirectory();
             buildIndex(cve);
             try {
@@ -105,13 +121,13 @@ public class CpeMemoryIndex {
             indexSearcher = new IndexSearcher(indexReader);
             searchingAnalyzer = createSearchingAnalyzer();
             queryParser = new QueryParser(LuceneUtils.CURRENT_VERSION, Fields.DOCUMENT_KEY, searchingAnalyzer);
-            _open = true;
+            openState = true;
         }
     }
     /**
      * A flag indicating whether or not the index is open.
      */
-    private boolean _open = false;
+    private boolean openState = false;
 
     /**
      * returns whether or not the index is open.
@@ -119,7 +135,7 @@ public class CpeMemoryIndex {
      * @return whether or not the index is open
      */
     public boolean isOpen() {
-        return _open;
+        return openState;
     }
 
     /**
@@ -191,9 +207,15 @@ public class CpeMemoryIndex {
             index.close();
             index = null;
         }
-        _open = false;
+        openState = false;
     }
 
+    /**
+     * Builds the lucene index based off of the data within the CveDB.
+     *
+     * @param cve the data base containing the CPE data
+     * @throws IndexException thrown if there is an issue creating the index
+     */
     private void buildIndex(CveDB cve) throws IndexException {
         Analyzer analyzer = null;
         IndexWriter indexWriter = null;
@@ -201,7 +223,7 @@ public class CpeMemoryIndex {
             analyzer = createIndexingAnalyzer();
             final IndexWriterConfig conf = new IndexWriterConfig(LuceneUtils.CURRENT_VERSION, analyzer);
             indexWriter = new IndexWriter(index, conf);
-            ResultSet rs = cve.getVendorProductList();
+            final ResultSet rs = cve.getVendorProductList();
             if (rs == null) {
                 throw new IndexException("No data exists");
             }
