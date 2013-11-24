@@ -176,7 +176,7 @@ public class CveDB extends BaseDB {
         final Set<IndexEntry> set = new HashSet<IndexEntry>();
         ResultSet rs = null;
         try {
-            PreparedStatement ps = getConnection().prepareStatement(SELECT_VENDOR_PRODUCT_LIST);
+            final PreparedStatement ps = getConnection().prepareStatement(SELECT_VENDOR_PRODUCT_LIST);
             rs = ps.executeQuery();
         } catch (SQLException ex) {
             Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, null, ex);

@@ -1,6 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of dependency-check-core.
+ *
+ * Dependency-check-core is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Dependency-check-core is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ *
+ * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.update;
 
@@ -31,10 +45,13 @@ public class CallableDownloadTask implements Callable<CallableDownloadTask> {
         this.first = first;
         this.second = second;
     }
+    /**
+     * The NVD CVE Meta Data.
+     */
     private NvdCveInfo nvdCveInfo;
 
     /**
-     * Get the value of nvdCveInfo
+     * Get the value of nvdCveInfo.
      *
      * @return the value of nvdCveInfo
      */
@@ -43,7 +60,7 @@ public class CallableDownloadTask implements Callable<CallableDownloadTask> {
     }
 
     /**
-     * Set the value of nvdCveInfo
+     * Set the value of nvdCveInfo.
      *
      * @param nvdCveInfo new value of nvdCveInfo
      */
@@ -95,50 +112,6 @@ public class CallableDownloadTask implements Callable<CallableDownloadTask> {
         this.second = second;
     }
     /**
-     * the first url.
-     */
-    private URL firstUrl;
-
-    /**
-     * Get the value of firstUrl.
-     *
-     * @return the value of firstUrl
-     */
-    public URL getFirstUrl() {
-        return firstUrl;
-    }
-
-    /**
-     * Set the value of firstUrl.
-     *
-     * @param firstUrl new value of firstUrl
-     */
-    public void setFirstUrl(URL firstUrl) {
-        this.firstUrl = firstUrl;
-    }
-    /**
-     * the second url.
-     */
-    private URL secondUrl;
-
-    /**
-     * Get the value of secondURL.
-     *
-     * @return the value of secondURL
-     */
-    public URL getSecondUrl() {
-        return secondUrl;
-    }
-
-    /**
-     * Set the value of secondUrl.
-     *
-     * @param secondURL new value of secondUrl
-     */
-    public void setSecondUrl(URL secondUrl) {
-        this.secondUrl = secondUrl;
-    }
-    /**
      * A placeholder for an exception.
      */
     private Exception exception = null;
@@ -164,12 +137,12 @@ public class CallableDownloadTask implements Callable<CallableDownloadTask> {
     @Override
     public CallableDownloadTask call() throws Exception {
         try {
-            final URL url_1 = new URL(nvdCveInfo.getUrl());
-            final URL url_2 = new URL(nvdCveInfo.getOldSchemaVersionUrl());
+            final URL url1 = new URL(nvdCveInfo.getUrl());
+            final URL url2 = new URL(nvdCveInfo.getOldSchemaVersionUrl());
             String msg = String.format("Download Started for NVD CVE - %s", nvdCveInfo.getId());
             Logger.getLogger(CallableDownloadTask.class.getName()).log(Level.INFO, msg);
-            Downloader.fetchFile(url_1, first);
-            Downloader.fetchFile(url_2, second);
+            Downloader.fetchFile(url1, first);
+            Downloader.fetchFile(url2, second);
             msg = String.format("Download Complete for NVD CVE - %s", nvdCveInfo.getId());
             Logger.getLogger(CallableDownloadTask.class.getName()).log(Level.INFO, msg);
         } catch (DownloadFailedException ex) {

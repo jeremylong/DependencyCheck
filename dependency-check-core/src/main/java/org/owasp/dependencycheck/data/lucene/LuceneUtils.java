@@ -32,7 +32,7 @@ public final class LuceneUtils {
      * The current version of Lucene being used. Declaring this one place so an
      * upgrade doesn't require hunting through the code base.
      */
-    public final static Version CURRENT_VERSION = Version.LUCENE_45;
+    public static final Version CURRENT_VERSION = Version.LUCENE_45;
 
     /**
      * Private constructor as this is a utility class.
