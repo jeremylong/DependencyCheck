@@ -50,11 +50,11 @@ public final class UpdateTaskFactory {
     public static UpdateTask getUpdateTask() throws MalformedURLException, DownloadFailedException, UpdateException {
         final UpdateTask task;
         final DataStoreMetaInfo properties = new DataStoreMetaInfo();
-        if (properties.isBatchUpdateMode()) {
-            task = new BatchUpdateTask(properties);
-        } else {
-            task = new StandardUpdateTask(properties);
-        }
+//        if (properties.isBatchUpdateMode()) {
+//            task = new BatchUpdateTask(properties);
+//        } else {
+        task = new StandardUpdateTask(properties);
+//        }
         return task;
     }
 }
