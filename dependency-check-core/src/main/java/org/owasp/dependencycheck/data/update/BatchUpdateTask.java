@@ -42,7 +42,9 @@ import static org.owasp.dependencycheck.data.update.DataStoreMetaInfo.MODIFIED;
  * Class responsible for updating the CPE and NVDCVE data stores.
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
+ * @deprecated batch update mode will no longer be supported.
  */
+@Deprecated
 public class BatchUpdateTask extends AbstractUpdateTask {
 
     /**
