@@ -140,6 +140,10 @@ public final class Settings {
          * The maximum number of threads to allocate when downloading files.
          */
         public static final String MAX_DOWNLOAD_THREAD_POOL_SIZE = "max.download.threads";
+        /**
+         * The key for a list of suppression files.
+         */
+        public static final String SUPPRESSION_FILE = "suppression.file";
     }
     /**
      * The properties file location.
