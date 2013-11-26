@@ -260,13 +260,29 @@ public final class Settings {
      * argument - this method will return the value from the system properties
      * before the values in the contained configuration file.
      *
-     * This method will also replace a leading "[JAR]\" sequence with the path
-     * to the folder containing the JAR file containing this class.
-     *
      * @param key the key to lookup within the properties file
      * @return the property from the properties file converted to a File object
      */
     public static File getFile(String key) {
+        final String file = getString(key);
+        return new File(file);
+    }
+
+    /**
+     * Returns a value from the properties file as a File object. If the value
+     * was specified as a system property or passed in via the -Dprop=value
+     * argument - this method will return the value from the system properties
+     * before the values in the contained configuration file.
+     *
+     * This method will check the configured base directory and will use this as
+     * the base of the file path. Additionally, if the base directory begins
+     * with a leading "[JAR]\" sequence with the path to the folder containing
+     * the JAR file containing this class.
+     *
+     * @param key the key to lookup within the properties file
+     * @return the property from the properties file converted to a File object
+     */
+    public static File getDataFile(String key) {
         final String file = getString(key);
         final String baseDir = getString(Settings.KEYS.DATA_DIRECTORY);
         if (baseDir != null) {
