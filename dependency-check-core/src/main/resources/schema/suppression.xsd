@@ -15,6 +15,7 @@
                                         <xs:simpleContent>
                                             <xs:extension base="xs:string">
                                                 <xs:attribute name="regex" use="optional" type="xs:boolean" default="false"/>
+                                                <xs:attribute name="caseSensitive" use="optional" type="xs:boolean" default="false"/>
                                             </xs:extension>
                                         </xs:simpleContent>
                                     </xs:complexType>
@@ -28,6 +29,7 @@
                                             <xs:simpleContent>
                                                 <xs:extension base="xs:string">
                                                     <xs:attribute name="regex" use="optional" type="xs:boolean" default="false"/>
+                                                    <xs:attribute name="caseSensitive" use="optional" type="xs:boolean" default="false"/>
                                                 </xs:extension>
                                             </xs:simpleContent>
                                         </xs:complexType>
