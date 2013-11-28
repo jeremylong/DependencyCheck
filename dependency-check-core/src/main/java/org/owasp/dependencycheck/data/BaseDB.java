@@ -178,7 +178,7 @@ public class BaseDB {
      * @throws IOException is thrown if an IOException occurs of course...
      */
     public static File getDataDirectory() throws IOException {
-        final File path = Settings.getFile(Settings.KEYS.CVE_DATA_DIRECTORY);
+        final File path = Settings.getDataFile(Settings.KEYS.CVE_DATA_DIRECTORY);
         if (!path.exists()) {
             if (!path.mkdirs()) {
                 throw new IOException("Unable to create NVD CVE Data directory");
