@@ -160,7 +160,7 @@ public abstract class AbstractUpdateTask implements UpdateTask {
      * @throws IOException thrown if the directory cannot be deleted
      */
     protected void deleteExistingData() throws IOException {
-        File data = Settings.getFile(Settings.KEYS.CVE_DATA_DIRECTORY);
+        File data = Settings.getDataFile(Settings.KEYS.CVE_DATA_DIRECTORY);
         if (data.exists()) {
             FileUtils.delete(data);
         }
