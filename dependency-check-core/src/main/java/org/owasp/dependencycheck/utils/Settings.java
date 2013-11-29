@@ -265,6 +265,9 @@ public final class Settings {
      */
     public static File getFile(String key) {
         final String file = getString(key);
+        if (file == null) {
+            return null;
+        }
         return new File(file);
     }
 
