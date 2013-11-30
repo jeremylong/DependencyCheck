@@ -80,7 +80,7 @@ public class PropertyType {
     /**
      * Indicates case sensitivity.
      */
-    protected boolean caseSensitive = false;
+    private boolean caseSensitive = false;
 
     /**
      * Gets the value of the caseSensitive property.

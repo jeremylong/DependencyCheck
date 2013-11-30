@@ -121,7 +121,7 @@ public class SuppressionRule {
     private List<Float> cvssBelow = new ArrayList<Float>();
 
     /**
-     * Get the value of cvssBelow
+     * Get the value of cvssBelow.
      *
      * @return the value of cvssBelow
      */
@@ -130,7 +130,7 @@ public class SuppressionRule {
     }
 
     /**
-     * Set the value of cvssBelow
+     * Set the value of cvssBelow.
      *
      * @param cvssBelow new value of cvssBelow
      */
@@ -236,6 +236,13 @@ public class SuppressionRule {
         return cve.size() > 0;
     }
 
+    /**
+     * Processes a given dependency to determine if any CPE, CVE, CWE, or CVSS
+     * scores should be suppressed. If any should be, they are removed from the
+     * dependency.
+     *
+     * @param dependency a project dependency to analyze
+     */
     public void process(Dependency dependency) {
         if (filePath != null && !filePath.matches(dependency.getFilePath())) {
             return;
@@ -244,9 +251,9 @@ public class SuppressionRule {
             return;
         }
         if (this.hasCpe()) {
-            Iterator<Identifier> itr = dependency.getIdentifiers().iterator();
+            final Iterator<Identifier> itr = dependency.getIdentifiers().iterator();
             while (itr.hasNext()) {
-                Identifier i = itr.next();
+                final Identifier i = itr.next();
                 for (PropertyType c : this.cpe) {
                     if (cpeMatches(c, i)) {
                         itr.remove();
@@ -256,10 +263,10 @@ public class SuppressionRule {
             }
         }
         if (hasCve() || hasCwe() || hasCvssBelow()) {
-            Iterator<Vulnerability> itr = dependency.getVulnerabilities().iterator();
+            final Iterator<Vulnerability> itr = dependency.getVulnerabilities().iterator();
             boolean remove = false;
             while (!remove && itr.hasNext()) {
-                Vulnerability v = itr.next();
+                final Vulnerability v = itr.next();
                 for (String entry : this.cve) {
                     if (entry.equalsIgnoreCase(v.getName())) {
                         remove = true;
@@ -293,6 +300,14 @@ public class SuppressionRule {
         }
     }
 
+    /**
+     * Identifies if the cpe specified by the cpe suppression rule does not
+     * specify a version.
+     *
+     * @param c a suppression rule identifier
+     * @return true if the property type does not specify a version; otherwise
+     * false
+     */
     boolean cpeHasNoVersion(PropertyType c) {
         if (c.isRegex()) {
             return false;
@@ -303,6 +318,14 @@ public class SuppressionRule {
         return false;
     }
 
+    /**
+     * Counts the number of occurrences of the character found within the
+     * string.
+     *
+     * @param str the string to check
+     * @param c the character to count
+     * @return the number of times the character is found in the string
+     */
     int countCharacter(String str, char c) {
         int count = 0;
         int pos = str.indexOf(c) + 1;
@@ -313,6 +336,14 @@ public class SuppressionRule {
         return count;
     }
 
+    /**
+     * Determines if the cpeEntry specified as a PropertyType matches the given
+     * Identifier.
+     *
+     * @param cpeEntry a suppression rule entry
+     * @param identifier a CPE identifier to check
+     * @return true if the entry matches; otherwise false
+     */
     boolean cpeMatches(PropertyType cpeEntry, Identifier identifier) {
         if (cpeEntry.matches(identifier.getValue())) {
             return true;

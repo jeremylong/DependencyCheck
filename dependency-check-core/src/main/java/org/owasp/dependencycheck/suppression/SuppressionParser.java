@@ -43,17 +43,17 @@ import org.xml.sax.XMLReader;
 public class SuppressionParser {
 
     /**
-     * JAXP Schema Language, source:
+     * JAXP Schema Language. Source:
      * http://docs.oracle.com/javase/tutorial/jaxp/sax/validation.html
      */
     public static final String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
     /**
-     * W3C XML Schema, source:
+     * W3C XML Schema. Source:
      * http://docs.oracle.com/javase/tutorial/jaxp/sax/validation.html
      */
     public static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
     /**
-     * JAXP Schema Source, source:
+     * JAXP Schema Source. Source:
      * http://docs.oracle.com/javase/tutorial/jaxp/sax/validation.html
      */
     public static final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
@@ -68,22 +68,22 @@ public class SuppressionParser {
      */
     public List<SuppressionRule> parseSuppressionRules(File file) throws SuppressionParseException {
         try {
-            File schema = new File(this.getClass().getClassLoader().getResource("schema/suppression.xsd").getPath());
-            SuppressionHandler handler = new SuppressionHandler();
+            final File schema = new File(this.getClass().getClassLoader().getResource("schema/suppression.xsd").getPath());
+            final SuppressionHandler handler = new SuppressionHandler();
 
-            SAXParserFactory factory = SAXParserFactory.newInstance();
+            final SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
             factory.setValidating(true);
-            SAXParser saxParser = factory.newSAXParser();
+            final SAXParser saxParser = factory.newSAXParser();
             saxParser.setProperty(SuppressionParser.JAXP_SCHEMA_LANGUAGE, SuppressionParser.W3C_XML_SCHEMA);
             saxParser.setProperty(SuppressionParser.JAXP_SCHEMA_SOURCE, schema);
-            XMLReader xmlReader = saxParser.getXMLReader();
+            final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setErrorHandler(new SuppressionErrorHandler());
             xmlReader.setContentHandler(handler);
 
-            InputStream inputStream = new FileInputStream(file);
-            Reader reader = new InputStreamReader(inputStream); //, "UTF-8");
-            InputSource in = new InputSource(reader);
+            final InputStream inputStream = new FileInputStream(file);
+            final Reader reader = new InputStreamReader(inputStream); //, "UTF-8");
+            final InputSource in = new InputSource(reader);
             //in.setEncoding("UTF-8");
 
             xmlReader.parse(in);
