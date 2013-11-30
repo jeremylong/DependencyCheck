@@ -178,8 +178,14 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "connectionTimeout", defaultValue = "", required = false)
     private String connectionTimeout = null;
-
+    /**
+     * The Connection Timeout.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "suppressionFile", defaultValue = "", required = false)
+    private String suppressionFile = null;
     // </editor-fold>
+
     /**
      * Executes the Dependency-Check on the dependent libraries.
      *
@@ -645,6 +651,9 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         }
         if (connectionTimeout != null && !connectionTimeout.isEmpty()) {
             Settings.setString(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
+        }
+        if (suppressionFile != null && !suppressionFile.isEmpty()) {
+            Settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
         }
     }
 
