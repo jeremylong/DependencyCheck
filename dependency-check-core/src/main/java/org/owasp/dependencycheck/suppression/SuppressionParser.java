@@ -82,7 +82,7 @@ public class SuppressionParser {
             xmlReader.setContentHandler(handler);
 
             final InputStream inputStream = new FileInputStream(file);
-            final Reader reader = new InputStreamReader(inputStream); //, "UTF-8");
+            final Reader reader = new InputStreamReader(inputStream, "UTF-8");
             final InputSource in = new InputSource(reader);
             //in.setEncoding("UTF-8");
 
