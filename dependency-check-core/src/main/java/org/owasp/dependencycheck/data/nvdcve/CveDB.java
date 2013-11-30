@@ -57,7 +57,7 @@ public class CveDB extends BaseDB {
     /**
      * SQL Statement to delete a vulnerability by CVE.
      */
-    private static final String DELETE_VULNERABILITY = "DELETE FROM vulnerability WHERE cve = ?";
+    private static final String DELETE_VULNERABILITY = "DELETE FROM vulnerability WHERE id = ?";
     /**
      * SQL Statement to cleanup orphan entries. Yes, the db schema could be a
      * little tighter, but what we have works well to keep the data file size
@@ -173,7 +173,6 @@ public class CveDB extends BaseDB {
      * @return the entire list of vendor/product combinations.
      */
     public ResultSet getVendorProductList() {
-        final Set<IndexEntry> set = new HashSet<IndexEntry>();
         ResultSet rs = null;
         try {
             final PreparedStatement ps = getConnection().prepareStatement(SELECT_VENDOR_PRODUCT_LIST);
@@ -313,6 +312,7 @@ public class CveDB extends BaseDB {
      */
     public void updateVulnerability(Vulnerability vuln) throws DatabaseException {
         PreparedStatement selectVulnerabilityId = null;
+        PreparedStatement deleteVulnerability = null;
         PreparedStatement deleteReferences = null;
         PreparedStatement deleteSoftware = null;
         PreparedStatement updateVulnerability = null;
@@ -324,6 +324,7 @@ public class CveDB extends BaseDB {
 
         try {
             selectVulnerabilityId = getConnection().prepareStatement(SELECT_VULNERABILITY_ID);
+            deleteVulnerability = getConnection().prepareStatement(DELETE_VULNERABILITY);
             deleteReferences = getConnection().prepareStatement(DELETE_REFERENCE);
             deleteSoftware = getConnection().prepareStatement(DELETE_SOFTWARE);
             updateVulnerability = getConnection().prepareStatement(UPDATE_VULNERABILITY);
@@ -346,17 +347,22 @@ public class CveDB extends BaseDB {
             closeResultSet(rs);
             rs = null;
             if (vulnerabilityId != 0) {
-                updateVulnerability.setString(1, vuln.getDescription());
-                updateVulnerability.setString(2, vuln.getCwe());
-                updateVulnerability.setFloat(3, vuln.getCvssScore());
-                updateVulnerability.setString(4, vuln.getCvssAccessVector());
-                updateVulnerability.setString(5, vuln.getCvssAccessComplexity());
-                updateVulnerability.setString(6, vuln.getCvssAuthentication());
-                updateVulnerability.setString(7, vuln.getCvssConfidentialityImpact());
-                updateVulnerability.setString(8, vuln.getCvssIntegrityImpact());
-                updateVulnerability.setString(9, vuln.getCvssAvailabilityImpact());
-                updateVulnerability.setInt(10, vulnerabilityId);
-                updateVulnerability.executeUpdate();
+                if (vuln.getDescription().contains("** REJECT **")) {
+                    deleteVulnerability.setInt(1, vulnerabilityId);
+                    deleteVulnerability.executeUpdate();
+                } else {
+                    updateVulnerability.setString(1, vuln.getDescription());
+                    updateVulnerability.setString(2, vuln.getCwe());
+                    updateVulnerability.setFloat(3, vuln.getCvssScore());
+                    updateVulnerability.setString(4, vuln.getCvssAccessVector());
+                    updateVulnerability.setString(5, vuln.getCvssAccessComplexity());
+                    updateVulnerability.setString(6, vuln.getCvssAuthentication());
+                    updateVulnerability.setString(7, vuln.getCvssConfidentialityImpact());
+                    updateVulnerability.setString(8, vuln.getCvssIntegrityImpact());
+                    updateVulnerability.setString(9, vuln.getCvssAvailabilityImpact());
+                    updateVulnerability.setInt(10, vulnerabilityId);
+                    updateVulnerability.executeUpdate();
+                }
             } else {
                 insertVulnerability.setString(1, vuln.getName());
                 insertVulnerability.setString(2, vuln.getDescription());

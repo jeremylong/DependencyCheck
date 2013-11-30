@@ -207,6 +207,9 @@ public class NvdCve20Handler extends DefaultHandler {
             nodeText = null;
         } else if (current.isVulnSummaryNode()) {
             vulnerability.setDescription(nodeText.toString());
+            if (nodeText.indexOf("** REJECT **") >= 0) {
+                hasApplicationCpe = true; //ensure we process this to delete the vuln
+            }
             nodeText = null;
         }
     }
