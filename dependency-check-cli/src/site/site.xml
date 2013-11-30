@@ -27,6 +27,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
         </breadcrumbs>
         <menu name="Getting Started">
             <item name="Installation" href="installation.html"/>
+            <item name="Configuration" href="arguments.html"/>
         </menu>
         <menu ref="Project Documentation" />
         <menu ref="reports" />
