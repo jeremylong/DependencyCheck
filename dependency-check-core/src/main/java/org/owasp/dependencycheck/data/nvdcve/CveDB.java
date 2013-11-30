@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.owasp.dependencycheck.data.BaseDB;
-import org.owasp.dependencycheck.data.cpe.IndexEntry;
 import org.owasp.dependencycheck.data.cwe.CweDB;
 import org.owasp.dependencycheck.dependency.Reference;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -179,7 +178,7 @@ public class CveDB extends BaseDB {
             rs = ps.executeQuery();
         } catch (SQLException ex) {
             Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } // can't close the statement in the PS as the resultset is returned, closing PS would close the resultset
         return rs;
     }
 
@@ -439,6 +438,7 @@ public class CveDB extends BaseDB {
             closeStatement(deleteReferences);
             closeStatement(deleteSoftware);
             closeStatement(updateVulnerability);
+            closeStatement(deleteVulnerability);
             closeStatement(insertVulnerability);
             closeStatement(insertReference);
             closeStatement(selectCpeId);
