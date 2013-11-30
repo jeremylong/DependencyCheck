@@ -323,7 +323,6 @@ public class DependencyCheckTask extends Task {
     public void setProxyPort(String proxyPort) {
         this.proxyPort = proxyPort;
     }
-
     /**
      * The Proxy username.
      */
@@ -346,7 +345,6 @@ public class DependencyCheckTask extends Task {
     public void setProxyUsername(String proxyUsername) {
         this.proxyUsername = proxyUsername;
     }
-
     /**
      * The Proxy password.
      */
@@ -369,7 +367,6 @@ public class DependencyCheckTask extends Task {
     public void setProxyPassword(String proxyPassword) {
         this.proxyPassword = proxyPassword;
     }
-
     /**
      * The Connection Timeout.
      */
@@ -413,6 +410,28 @@ public class DependencyCheckTask extends Task {
      */
     public void setLogFile(String logFile) {
         this.logFile = logFile;
+    }
+    /**
+     * The path to the suppression file.
+     */
+    private String suppressionFile;
+
+    /**
+     * Get the value of suppressionFile.
+     *
+     * @return the value of suppressionFile
+     */
+    public String getSuppressionFile() {
+        return suppressionFile;
+    }
+
+    /**
+     * Set the value of suppressionFile.
+     *
+     * @param suppressionFile new value of suppressionFile
+     */
+    public void setSuppressionFile(String suppressionFile) {
+        this.suppressionFile = suppressionFile;
     }
 
     @Override
@@ -514,6 +533,9 @@ public class DependencyCheckTask extends Task {
         }
         if (connectionTimeout != null && !connectionTimeout.isEmpty()) {
             Settings.setString(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
+        }
+        if (suppressionFile != null && !suppressionFile.isEmpty()) {
+            Settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
         }
     }
 
