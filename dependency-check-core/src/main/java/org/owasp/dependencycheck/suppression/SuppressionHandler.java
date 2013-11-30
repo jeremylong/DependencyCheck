@@ -65,7 +65,7 @@ public class SuppressionHandler extends DefaultHandler {
     private List<SuppressionRule> supressionRules = new ArrayList<SuppressionRule>();
 
     /**
-     * Get the value of supressionRules
+     * Get the value of supressionRules.
      *
      * @return the value of supressionRules
      */
@@ -120,19 +120,19 @@ public class SuppressionHandler extends DefaultHandler {
             supressionRules.add(rule);
             rule = null;
         } else if (FILE_PATH.equals(qName)) {
-            PropertyType pt = processPropertyType();
+            final PropertyType pt = processPropertyType();
             rule.setFilePath(pt);
         } else if (SHA1.equals(qName)) {
             rule.setSha1(currentText.toString());
         } else if (CPE.equals(qName)) {
-            PropertyType pt = processPropertyType();
+            final PropertyType pt = processPropertyType();
             rule.addCpe(pt);
         } else if (CWE.equals(qName)) {
             rule.addCwe(currentText.toString());
         } else if (CVE.equals(qName)) {
             rule.addCve(currentText.toString());
         } else if (CVSS_BELOW.equals(qName)) {
-            float cvss = Float.parseFloat(currentText.toString());
+            final float cvss = Float.parseFloat(currentText.toString());
         }
     }
 
@@ -156,7 +156,7 @@ public class SuppressionHandler extends DefaultHandler {
      * @return a PropertyType object
      */
     private PropertyType processPropertyType() {
-        PropertyType pt = new PropertyType();
+        final PropertyType pt = new PropertyType();
         pt.setValue(currentText.toString());
         if (currentAttributes != null && currentAttributes.getLength() > 0) {
             final String regex = currentAttributes.getValue("regex");
