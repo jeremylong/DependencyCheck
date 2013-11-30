@@ -83,7 +83,7 @@ public class SuppressionHandlerTest {
         xmlReader.setContentHandler(handler);
 
         InputStream inputStream = new FileInputStream(file);
-        Reader reader = new InputStreamReader(inputStream); //, "UTF-8");
+        Reader reader = new InputStreamReader(inputStream, "UTF-8");
         InputSource in = new InputSource(reader);
         //in.setEncoding("UTF-8");
 

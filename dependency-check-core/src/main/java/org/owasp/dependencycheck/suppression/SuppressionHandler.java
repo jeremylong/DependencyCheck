@@ -133,6 +133,7 @@ public class SuppressionHandler extends DefaultHandler {
             rule.addCve(currentText.toString());
         } else if (CVSS_BELOW.equals(qName)) {
             final float cvss = Float.parseFloat(currentText.toString());
+            rule.addCvssBelow(cvss);
         }
     }
 
