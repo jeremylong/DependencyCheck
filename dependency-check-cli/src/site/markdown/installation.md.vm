@@ -14,3 +14,10 @@ To scan a folder on the system you can run:
 
 ### \*nix
     dependency-check.sh --app "My App Name" --scan "/java/application/lib"
+
+To view the command line arguments, see the <a href="arguments.html">arguments page</a>, or you can run:
+### Windows
+    dependency-check.bat --help
+
+### \*nix
+    dependency-check.sh --help
