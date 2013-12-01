@@ -68,7 +68,7 @@ public class SuppressionParser {
      */
     public List<SuppressionRule> parseSuppressionRules(File file) throws SuppressionParseException {
         try {
-            final File schema = new File(this.getClass().getClassLoader().getResource("schema/suppression.xsd").getPath());
+            final InputStream schemaStream = this.getClass().getClassLoader().getResourceAsStream("schema/suppression.xsd");
             final SuppressionHandler handler = new SuppressionHandler();
 
             final SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -76,7 +76,7 @@ public class SuppressionParser {
             factory.setValidating(true);
             final SAXParser saxParser = factory.newSAXParser();
             saxParser.setProperty(SuppressionParser.JAXP_SCHEMA_LANGUAGE, SuppressionParser.W3C_XML_SCHEMA);
-            saxParser.setProperty(SuppressionParser.JAXP_SCHEMA_SOURCE, schema);
+            saxParser.setProperty(SuppressionParser.JAXP_SCHEMA_SOURCE, new InputSource(schemaStream));
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setErrorHandler(new SuppressionErrorHandler());
             xmlReader.setContentHandler(handler);
