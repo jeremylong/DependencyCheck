@@ -264,8 +264,8 @@ public class SuppressionRule {
         }
         if (hasCve() || hasCwe() || hasCvssBelow()) {
             final Iterator<Vulnerability> itr = dependency.getVulnerabilities().iterator();
-            boolean remove = false;
-            while (!remove && itr.hasNext()) {
+            while (itr.hasNext()) {
+                boolean remove = false;
                 final Vulnerability v = itr.next();
                 for (String entry : this.cve) {
                     if (entry.equalsIgnoreCase(v.getName())) {
