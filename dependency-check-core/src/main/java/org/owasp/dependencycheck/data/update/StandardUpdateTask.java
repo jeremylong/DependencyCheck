@@ -36,6 +36,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
@@ -152,9 +153,10 @@ public class StandardUpdateTask {
             final int poolSize = (MAX_THREAD_POOL_SIZE > maxUpdates) ? MAX_THREAD_POOL_SIZE : maxUpdates;
             final ExecutorService executorService = Executors.newFixedThreadPool(poolSize);
             final Set<Future<CallableDownloadTask>> futures = new HashSet<Future<CallableDownloadTask>>(maxUpdates);
-
+            int ctr = 0;
             for (NvdCveInfo cve : updateable) {
                 if (cve.getNeedsUpdate()) {
+                    ctr += 1;
                     final File file1;
                     final File file2;
                     try {
@@ -165,6 +167,20 @@ public class StandardUpdateTask {
                     }
                     final CallableDownloadTask call = new CallableDownloadTask(cve, file1, file2);
                     futures.add(executorService.submit(call));
+                    if (ctr == 3) {
+                        ctr = 0;
+
+                        for (Future<CallableDownloadTask> future : futures) {
+                            while (!future.isDone()) {
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException ex) {
+                                    Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, null, ex);
+                                }
+                            }
+                        }
+
+                    }
                 }
             }
 
