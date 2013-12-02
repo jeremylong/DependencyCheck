@@ -18,7 +18,9 @@
  */
 package org.owasp.dependencycheck.data.update;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Calendar;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -54,9 +56,67 @@ public class StandardUpdateTaskIntegrationTest {
     }
 
     public StandardUpdateTask getStandardUpdateTask() throws MalformedURLException, DownloadFailedException, UpdateException {
-        DataStoreMetaInfo props = new DataStoreMetaInfo();
-        StandardUpdateTask instance = new StandardUpdateTask(props);
+        StandardUpdateTask instance = new StandardUpdateTask();
         return instance;
+    }
+
+    /**
+     * Test of setDeleteAndRecreate method, of class StandardUpdateTask.
+     */
+    @Test
+    public void testSetDeleteAndRecreate() throws Exception {
+        boolean deleteAndRecreate = false;
+        boolean expResult = false;
+        StandardUpdateTask instance = getStandardUpdateTask();
+        instance.setDeleteAndRecreate(deleteAndRecreate);
+        boolean result = instance.shouldDeleteAndRecreate();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of deleteExistingData method, of class StandardUpdateTask.
+     */
+    @Test
+    public void testDeleteExistingData() throws Exception {
+        StandardUpdateTask instance = getStandardUpdateTask();
+        Exception result = null;
+        try {
+            instance.deleteExistingData();
+        } catch (IOException ex) {
+            result = ex;
+        }
+        assertNull(result);
+    }
+
+    /**
+     * Test of openDataStores method, of class StandardUpdateTask.
+     */
+    @Test
+    public void testOpenDataStores() throws Exception {
+        StandardUpdateTask instance = getStandardUpdateTask();
+        instance.openDataStores();
+        instance.closeDataStores();
+    }
+
+    /**
+     * Test of withinRange method, of class StandardUpdateTask.
+     */
+    @Test
+    public void testWithinRange() throws Exception {
+        Calendar c = Calendar.getInstance();
+
+        long current = c.getTimeInMillis();
+        long lastRun = c.getTimeInMillis() - (3 * (1000 * 60 * 60 * 24));
+        int range = 7; // 7 days
+        StandardUpdateTask instance = getStandardUpdateTask();
+        boolean expResult = true;
+        boolean result = instance.withinRange(lastRun, current, range);
+        assertEquals(expResult, result);
+
+        lastRun = c.getTimeInMillis() - (8 * (1000 * 60 * 60 * 24));
+        expResult = false;
+        result = instance.withinRange(lastRun, current, range);
+        assertEquals(expResult, result);
     }
 
     /**

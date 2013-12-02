@@ -29,6 +29,8 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -36,38 +38,89 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import org.owasp.dependencycheck.data.UpdateException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.data.nvdcve.NvdCve12Handler;
+import org.owasp.dependencycheck.data.nvdcve.NvdCve20Handler;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import static org.owasp.dependencycheck.data.update.DataStoreMetaInfo.MODIFIED;
+import org.owasp.dependencycheck.dependency.VulnerableSoftware;
+import org.owasp.dependencycheck.utils.FileUtils;
 
 /**
  * Class responsible for updating the CPE and NVDCVE data stores.
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class StandardUpdateTask extends AbstractUpdateTask {
+public class StandardUpdateTask {
 
     /**
      * The max thread pool size to use when downloading files.
      */
     public static final int MAX_THREAD_POOL_SIZE = Settings.getInt(Settings.KEYS.MAX_DOWNLOAD_THREAD_POOL_SIZE, 3);
+    /**
+     * Information about the timestamps and URLs for data that needs to be
+     * updated.
+     */
+    private DataStoreMetaInfo properties;
+    /**
+     * A collection of updateable NVD CVE items.
+     */
+    private Updateable updateable;
+    /**
+     * A flag indicating whether or not the current data store should be
+     * deleted.
+     */
+    private boolean deleteAndRecreate = false;
+    /**
+     * Reference to the Cve Database.
+     */
+    private CveDB cveDB = null;
+
+    /**
+     * Gets whether or not an update is needed.
+     *
+     * @return true or false depending on whether an update is needed
+     */
+    public boolean isUpdateNeeded() {
+        return updateable.isUpdateNeeded();
+    }
+
+    /**
+     * Set the value of deleteAndRecreate.
+     *
+     * @param deleteAndRecreate new value of deleteAndRecreate
+     */
+    protected void setDeleteAndRecreate(boolean deleteAndRecreate) {
+        this.deleteAndRecreate = deleteAndRecreate;
+    }
+
+    /**
+     * Get the value of deleteAndRecreate.
+     *
+     * @return the value of deleteAndRecreate
+     */
+    public boolean shouldDeleteAndRecreate() {
+        return deleteAndRecreate;
+    }
 
     /**
      * Constructs a new Standard Update Task.
      *
-     * @param properties information about the data store
      * @throws MalformedURLException thrown if a configured URL is malformed
      * @throws DownloadFailedException thrown if a timestamp cannot be checked
      * on a configured URL
      * @throws UpdateException thrown if there is an exception generating the
      * update task
      */
-    public StandardUpdateTask(DataStoreMetaInfo properties) throws MalformedURLException, DownloadFailedException, UpdateException {
-        super(properties);
+    public StandardUpdateTask() throws MalformedURLException, DownloadFailedException, UpdateException {
+        properties = new DataStoreMetaInfo();
+        updateable = updatesNeeded();
     }
 
     /**
@@ -77,11 +130,10 @@ public class StandardUpdateTask extends AbstractUpdateTask {
      * @throws UpdateException is thrown if there is an error updating the
      * database
      */
-    @Override
     public void update() throws UpdateException {
         int maxUpdates = 0;
         try {
-            for (NvdCveInfo cve : getUpdateable()) {
+            for (NvdCveInfo cve : updateable) {
                 if (cve.getNeedsUpdate()) {
                     maxUpdates += 1;
                 }
@@ -101,7 +153,7 @@ public class StandardUpdateTask extends AbstractUpdateTask {
             final ExecutorService executorService = Executors.newFixedThreadPool(poolSize);
             final Set<Future<CallableDownloadTask>> futures = new HashSet<Future<CallableDownloadTask>>(maxUpdates);
 
-            for (NvdCveInfo cve : getUpdateable()) {
+            for (NvdCveInfo cve : updateable) {
                 if (cve.getNeedsUpdate()) {
                     final File file1;
                     final File file2;
@@ -123,8 +175,8 @@ public class StandardUpdateTask extends AbstractUpdateTask {
                     Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO, msg);
                     try {
                         importXML(filePair.getFirst(), filePair.getSecond());
-                        getCveDB().commit();
-                        getProperties().save(filePair.getNvdCveInfo());
+                        cveDB.commit();
+                        properties.save(filePair.getNvdCveInfo());
                     } catch (FileNotFoundException ex) {
                         throw new UpdateException(ex);
                     } catch (ParserConfigurationException ex) {
@@ -159,8 +211,8 @@ public class StandardUpdateTask extends AbstractUpdateTask {
             }
 
             if (maxUpdates >= 1) { //ensure the modified file date gets written
-                getProperties().save(getUpdateable().get(MODIFIED));
-                getCveDB().cleanupDatabase();
+                properties.save(updateable.get(MODIFIED));
+                cveDB.cleanupDatabase();
             }
         } finally {
             closeDataStores();
@@ -279,7 +331,6 @@ public class StandardUpdateTask extends AbstractUpdateTask {
      * @throws UpdateException Is thrown if there is an issue with the last
      * updated properties file
      */
-    @Override
     protected Updateable updatesNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
         Updateable updates = null;
         try {
@@ -300,26 +351,25 @@ public class StandardUpdateTask extends AbstractUpdateTask {
         if (updates == null) {
             throw new DownloadFailedException("Unable to retrieve the timestamps of the currently published NVD CVE data");
         }
-        final DataStoreMetaInfo properties = getProperties();
         if (!properties.isEmpty()) {
             try {
                 float version;
 
                 if (properties.getProperty("version") == null) {
-                    setDeleteAndRecreate(true);
+                    deleteAndRecreate = true;
                 } else {
                     try {
                         version = Float.parseFloat(properties.getProperty("version"));
                         final float currentVersion = Float.parseFloat(CveDB.DB_SCHEMA_VERSION);
                         if (currentVersion > version) {
-                            setDeleteAndRecreate(true);
+                            deleteAndRecreate = true;
                         }
                     } catch (NumberFormatException ex) {
-                        setDeleteAndRecreate(true);
+                        deleteAndRecreate = true;
                     }
                 }
 
-                if (shouldDeleteAndRecreate()) {
+                if (deleteAndRecreate) {
                     return updates;
                 }
 
@@ -400,5 +450,109 @@ public class StandardUpdateTask extends AbstractUpdateTask {
         }
 
         return updates;
+    }
+
+    /**
+     * Deletes the existing data directories.
+     *
+     * @throws IOException thrown if the directory cannot be deleted
+     */
+    protected void deleteExistingData() throws IOException {
+        File data = Settings.getDataFile(Settings.KEYS.CVE_DATA_DIRECTORY);
+        if (data.exists()) {
+            FileUtils.delete(data);
+        }
+        data = DataStoreMetaInfo.getPropertiesFile();
+        if (data.exists()) {
+            FileUtils.delete(data);
+        }
+    }
+
+    /**
+     * Closes the CVE and CPE data stores.
+     */
+    protected void closeDataStores() {
+        if (cveDB != null) {
+            try {
+                cveDB.close();
+            } catch (Exception ignore) {
+                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINEST, "Error closing the cveDB", ignore);
+            }
+        }
+    }
+
+    /**
+     * Opens the CVE and CPE data stores.
+     *
+     * @throws UpdateException thrown if a data store cannot be opened
+     */
+    protected void openDataStores() throws UpdateException {
+        //open the cve and cpe data stores
+        try {
+            cveDB = new CveDB();
+            cveDB.open();
+        } catch (IOException ex) {
+            closeDataStores();
+            Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "IO Error opening databases", ex);
+            throw new UpdateException("Error updating the CPE/CVE data, please see the log file for more details.");
+        } catch (SQLException ex) {
+            closeDataStores();
+            Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "SQL Exception opening databases", ex);
+            throw new UpdateException("Error updating the CPE/CVE data, please see the log file for more details.");
+        } catch (DatabaseException ex) {
+            closeDataStores();
+            Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "Database Exception opening databases", ex);
+            throw new UpdateException("Error updating the CPE/CVE data, please see the log file for more details.");
+        } catch (ClassNotFoundException ex) {
+            closeDataStores();
+            Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "Class not found exception opening databases", ex);
+            throw new UpdateException("Error updating the CPE/CVE data, please see the log file for more details.");
+        }
+    }
+
+    /**
+     * Determines if the epoch date is within the range specified of the
+     * compareTo epoch time. This takes the (compareTo-date)/1000/60/60/24 to
+     * get the number of days. If the calculated days is less then the range the
+     * date is considered valid.
+     *
+     * @param date the date to be checked.
+     * @param compareTo the date to compare to.
+     * @param range the range in days to be considered valid.
+     * @return whether or not the date is within the range.
+     */
+    protected boolean withinRange(long date, long compareTo, int range) {
+        final double differenceInDays = (compareTo - date) / 1000.0 / 60.0 / 60.0 / 24.0;
+        return differenceInDays < range;
+    }
+
+    /**
+     * Imports the NVD CVE XML File into the Lucene Index.
+     *
+     * @param file the file containing the NVD CVE XML
+     * @param oldVersion contains the file containing the NVD CVE XML 1.2
+     * @throws ParserConfigurationException is thrown if there is a parser
+     * configuration exception
+     * @throws SAXException is thrown if there is a SAXException
+     * @throws IOException is thrown if there is a IO Exception
+     * @throws SQLException is thrown if there is a SQL exception
+     * @throws DatabaseException is thrown if there is a database exception
+     * @throws ClassNotFoundException thrown if the h2 database driver cannot be
+     * loaded
+     */
+    protected void importXML(File file, File oldVersion) throws ParserConfigurationException,
+            SAXException, IOException, SQLException, DatabaseException, ClassNotFoundException {
+
+        final SAXParserFactory factory = SAXParserFactory.newInstance();
+        final SAXParser saxParser = factory.newSAXParser();
+
+        final NvdCve12Handler cve12Handler = new NvdCve12Handler();
+        saxParser.parse(oldVersion, cve12Handler);
+        final Map<String, List<VulnerableSoftware>> prevVersionVulnMap = cve12Handler.getVulnerabilities();
+
+        final NvdCve20Handler cve20Handler = new NvdCve20Handler();
+        cve20Handler.setCveDB(cveDB);
+        cve20Handler.setPrevVersionVulnMap(prevVersionVulnMap);
+        saxParser.parse(file, cve20Handler);
     }
 }

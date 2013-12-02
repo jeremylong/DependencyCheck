@@ -46,7 +46,7 @@ public class DatabaseUpdater implements CachedWebDataSource {
     @Override
     public void update() throws UpdateException {
         try {
-            final UpdateTask task = UpdateTaskFactory.getUpdateTask();
+            final StandardUpdateTask task = new StandardUpdateTask();
             if (task.isUpdateNeeded()) {
                 if (task.shouldDeleteAndRecreate()) {
                     try {
