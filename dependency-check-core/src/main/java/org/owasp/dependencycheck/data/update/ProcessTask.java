@@ -120,7 +120,7 @@ public class ProcessTask implements Callable<ProcessTask> {
 
     private void processFiles() throws UpdateException {
         String msg = String.format("Processing Started for NVD CVE - %s", filePair.getNvdCveInfo().getId());
-        Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO, msg);
+        Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO, msg);
         try {
             importXML(filePair.getFirst(), filePair.getSecond());
             cveDB.commit();
@@ -143,6 +143,6 @@ public class ProcessTask implements Callable<ProcessTask> {
             filePair.cleanup();
         }
         msg = String.format("Processing Complete for NVD CVE - %s", filePair.getNvdCveInfo().getId());
-        Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO, msg);
+        Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO, msg);
     }
 }

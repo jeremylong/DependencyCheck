@@ -44,11 +44,11 @@ import static org.owasp.dependencycheck.data.update.DataStoreMetaInfo.MODIFIED;
 import org.owasp.dependencycheck.utils.FileUtils;
 
 /**
- * Class responsible for updating the CPE and NVDCVE data stores.
+ * Class responsible for updating the NVDCVE data store.
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class StandardUpdateTask {
+public class StandardUpdate {
 
     /**
      * The max thread pool size to use when downloading files.
@@ -109,7 +109,7 @@ public class StandardUpdateTask {
      * @throws UpdateException thrown if there is an exception generating the
      * update task
      */
-    public StandardUpdateTask() throws MalformedURLException, DownloadFailedException, UpdateException {
+    public StandardUpdate() throws MalformedURLException, DownloadFailedException, UpdateException {
         properties = new DataStoreMetaInfo();
         updateable = updatesNeeded();
     }
@@ -133,7 +133,7 @@ public class StandardUpdateTask {
                 return;
             }
             if (maxUpdates > 3) {
-                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
+                Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO,
                         "NVD CVE requires several updates; this could take a couple of minutes.");
             }
             if (maxUpdates > 0) {
@@ -159,37 +159,33 @@ public class StandardUpdateTask {
                     }
                     final CallableDownloadTask call = new CallableDownloadTask(cve, file1, file2);
                     downloadFutures.add(downloadExecutor.submit(call));
-                    if (ctr == 3) {
-                        ctr = 0;
 
-                        final Iterator<Future<CallableDownloadTask>> itr = downloadFutures.iterator();
-                        while (itr.hasNext()) {
-                            final Future<CallableDownloadTask> future = itr.next();
-                            while (!future.isDone()) {
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException ex) {
-                                    Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, null, ex);
-                                }
-                            }
+                    boolean waitForFuture = ctr % 2 == 0;
 
-                            final CallableDownloadTask filePair;
+                    final Iterator<Future<CallableDownloadTask>> itr = downloadFutures.iterator();
+                    while (itr.hasNext()) {
+                        final Future<CallableDownloadTask> future = itr.next();
+                        if (waitForFuture) { //only allow two NVD/CVE files to be downloaded at a time
+                            spinWaitForFuture(future);
+                        }
+                        if (future.isDone()) { //if we find something complete, add it to the process queue
                             try {
-                                filePair = future.get();
+                                final CallableDownloadTask filePair = future.get();
+                                itr.remove();
+                                final ProcessTask task = new ProcessTask(cveDB, properties, filePair);
+                                processFutures.add(processExecutor.submit(task));
                             } catch (InterruptedException ex) {
                                 downloadExecutor.shutdownNow();
-                                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "Thread was interupted", ex);
+                                Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interupted", ex);
                                 throw new UpdateException(ex);
                             } catch (ExecutionException ex) {
                                 downloadExecutor.shutdownNow();
-                                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.SEVERE, null, ex);
+                                Logger.getLogger(StandardUpdate.class.getName()).log(Level.SEVERE, null, ex);
                                 throw new UpdateException(ex);
                             }
-                            itr.remove();
-                            final ProcessTask task = new ProcessTask(cveDB, properties, filePair);
-                            processFutures.add(processExecutor.submit(task));
                         }
                     }
+
                 }
             }
 
@@ -203,11 +199,11 @@ public class StandardUpdateTask {
                 }
             } catch (InterruptedException ex) {
                 downloadExecutor.shutdownNow();
-                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "Thread was interupted during download", ex);
+                Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interupted during download", ex);
                 throw new UpdateException(ex);
             } catch (ExecutionException ex) {
                 downloadExecutor.shutdownNow();
-                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "Execution Exception during download", ex);
+                Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Execution Exception during download", ex);
                 throw new UpdateException(ex);
             } finally {
                 downloadExecutor.shutdown();
@@ -221,11 +217,11 @@ public class StandardUpdateTask {
                     }
                 } catch (InterruptedException ex) {
                     processExecutor.shutdownNow();
-                    Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "Thread was interupted during processing", ex);
+                    Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interupted during processing", ex);
                     throw new UpdateException(ex);
                 } catch (ExecutionException ex) {
                     processExecutor.shutdownNow();
-                    Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "Execution Exception during process", ex);
+                    Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Execution Exception during process", ex);
                     throw new UpdateException(ex);
                 } finally {
                     processExecutor.shutdown();
@@ -253,7 +249,7 @@ public class StandardUpdateTask {
      }
      }
      if (maxUpdates > 3) {
-     Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
+     Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO,
      "NVD CVE requires several updates; this could take a couple of minutes.");
      }
      if (maxUpdates > 0) {
@@ -264,13 +260,13 @@ public class StandardUpdateTask {
      for (NvdCveInfo cve : getUpdateable()) {
      if (cve.getNeedsUpdate()) {
      count += 1;
-     Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
+     Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO,
      "Updating NVD CVE ({0} of {1})", new Object[]{count, maxUpdates});
      URL url = new URL(cve.getUrl());
      File outputPath = null;
      File outputPath12 = null;
      try {
-     Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
+     Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO,
      "Downloading {0}", cve.getUrl());
      outputPath = File.createTempFile("cve" + cve.getId() + "_", ".xml");
      Downloader.fetchFile(url, outputPath);
@@ -279,7 +275,7 @@ public class StandardUpdateTask {
      outputPath12 = File.createTempFile("cve_1_2_" + cve.getId() + "_", ".xml");
      Downloader.fetchFile(url, outputPath12);
 
-     Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
+     Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO,
      "Processing {0}", cve.getUrl());
 
      importXML(outputPath, outputPath12);
@@ -287,7 +283,7 @@ public class StandardUpdateTask {
      getCveDB().commit();
      getProperties().save(cve);
 
-     Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO,
+     Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO,
      "Completed update {0} of {1}", new Object[]{count, maxUpdates});
      } catch (FileNotFoundException ex) {
      throw new UpdateException(ex);
@@ -360,11 +356,11 @@ public class StandardUpdateTask {
         } catch (InvalidDataException ex) {
             final String msg = "Unable to retrieve valid timestamp from nvd cve downloads page";
             Logger
-                    .getLogger(StandardUpdateTask.class
+                    .getLogger(StandardUpdate.class
                     .getName()).log(Level.FINE, msg, ex);
             throw new DownloadFailedException(msg, ex);
         } catch (InvalidSettingException ex) {
-            Logger.getLogger(StandardUpdateTask.class
+            Logger.getLogger(StandardUpdate.class
                     .getName()).log(Level.FINE, "Invalid setting found when retrieving timestamps", ex);
             throw new DownloadFailedException(
                     "Invalid settings", ex);
@@ -420,7 +416,7 @@ public class StandardUpdateTask {
                                 final String msg = String.format("Error parsing '%s' '%s' from nvdcve.lastupdated",
                                         DataStoreMetaInfo.LAST_UPDATED_BASE, entry.getId());
                                 Logger
-                                        .getLogger(StandardUpdateTask.class
+                                        .getLogger(StandardUpdate.class
                                         .getName()).log(Level.FINE, msg, ex);
                             }
                             if (currentTimestamp == entry.getTimestamp()) {
@@ -432,9 +428,9 @@ public class StandardUpdateTask {
             } catch (NumberFormatException ex) {
                 final String msg = "An invalid schema version or timestamp exists in the data.properties file.";
                 Logger
-                        .getLogger(StandardUpdateTask.class
+                        .getLogger(StandardUpdate.class
                         .getName()).log(Level.WARNING, msg);
-                Logger.getLogger(StandardUpdateTask.class
+                Logger.getLogger(StandardUpdate.class
                         .getName()).log(Level.FINE, null, ex);
             }
         }
@@ -498,7 +494,7 @@ public class StandardUpdateTask {
             try {
                 cveDB.close();
             } catch (Exception ignore) {
-                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINEST, "Error closing the cveDB", ignore);
+                Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINEST, "Error closing the cveDB", ignore);
             }
         }
     }
@@ -515,19 +511,19 @@ public class StandardUpdateTask {
             cveDB.open();
         } catch (IOException ex) {
             closeDataStores();
-            Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "IO Error opening databases", ex);
+            Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "IO Error opening databases", ex);
             throw new UpdateException("Error updating the CPE/CVE data, please see the log file for more details.");
         } catch (SQLException ex) {
             closeDataStores();
-            Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "SQL Exception opening databases", ex);
+            Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "SQL Exception opening databases", ex);
             throw new UpdateException("Error updating the CPE/CVE data, please see the log file for more details.");
         } catch (DatabaseException ex) {
             closeDataStores();
-            Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "Database Exception opening databases", ex);
+            Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Database Exception opening databases", ex);
             throw new UpdateException("Error updating the CPE/CVE data, please see the log file for more details.");
         } catch (ClassNotFoundException ex) {
             closeDataStores();
-            Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "Class not found exception opening databases", ex);
+            Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Class not found exception opening databases", ex);
             throw new UpdateException("Error updating the CPE/CVE data, please see the log file for more details.");
         }
     }
@@ -546,5 +542,16 @@ public class StandardUpdateTask {
     protected boolean withinRange(long date, long compareTo, int range) {
         final double differenceInDays = (compareTo - date) / 1000.0 / 60.0 / 60.0 / 24.0;
         return differenceInDays < range;
+    }
+
+    private void spinWaitForFuture(final Future<CallableDownloadTask> future) {
+        //then wait for downloads to finish
+        while (!future.isDone()) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, null, ex);
+            }
+        }
     }
 }
