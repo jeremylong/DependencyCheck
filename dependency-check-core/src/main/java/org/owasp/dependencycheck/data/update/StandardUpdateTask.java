@@ -29,6 +29,7 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -151,8 +152,10 @@ public class StandardUpdateTask {
             }
 
             final int poolSize = (MAX_THREAD_POOL_SIZE > maxUpdates) ? MAX_THREAD_POOL_SIZE : maxUpdates;
-            final ExecutorService executorService = Executors.newFixedThreadPool(poolSize);
-            final Set<Future<CallableDownloadTask>> futures = new HashSet<Future<CallableDownloadTask>>(maxUpdates);
+            final ExecutorService downloadExecutor = Executors.newFixedThreadPool(poolSize);
+            final ExecutorService processExecutor = Executors.newSingleThreadExecutor();
+            final Set<Future<CallableDownloadTask>> downloadFutures = new HashSet<Future<CallableDownloadTask>>(maxUpdates);
+            final Set<Future<ProcessTask>> processFutures = new HashSet<Future<ProcessTask>>(maxUpdates);
             int ctr = 0;
             for (NvdCveInfo cve : updateable) {
                 if (cve.getNeedsUpdate()) {
@@ -166,11 +169,13 @@ public class StandardUpdateTask {
                         throw new UpdateException(ex);
                     }
                     final CallableDownloadTask call = new CallableDownloadTask(cve, file1, file2);
-                    futures.add(executorService.submit(call));
+                    downloadFutures.add(downloadExecutor.submit(call));
                     if (ctr == 3) {
                         ctr = 0;
 
-                        for (Future<CallableDownloadTask> future : futures) {
+                        Iterator<Future<CallableDownloadTask>> itr = downloadFutures.iterator();
+                        while (itr.hasNext()) {
+                            final Future<CallableDownloadTask> future = itr.next();
                             while (!future.isDone()) {
                                 try {
                                     Thread.sleep(1000);
@@ -178,52 +183,64 @@ public class StandardUpdateTask {
                                     Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, null, ex);
                                 }
                             }
-                        }
 
+                            final CallableDownloadTask filePair;
+                            try {
+                                filePair = future.get();
+                            } catch (InterruptedException ex) {
+                                downloadExecutor.shutdownNow();
+                                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "Thread was interupted", ex);
+                                throw new UpdateException(ex);
+                            } catch (ExecutionException ex) {
+                                downloadExecutor.shutdownNow();
+                                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.SEVERE, null, ex);
+                                throw new UpdateException(ex);
+                            }
+                            itr.remove();
+                            final ProcessTask task = new ProcessTask(cveDB, properties, filePair);
+                            processFutures.add(processExecutor.submit(task));
+                        }
                     }
                 }
             }
 
             try {
-                for (Future<CallableDownloadTask> future : futures) {
+                Iterator<Future<CallableDownloadTask>> itr = downloadFutures.iterator();
+                while (itr.hasNext()) {
+                    final Future<CallableDownloadTask> future = itr.next();
                     final CallableDownloadTask filePair = future.get();
-                    String msg = String.format("Processing Started for NVD CVE - %s", filePair.getNvdCveInfo().getId());
-                    Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO, msg);
-                    try {
-                        importXML(filePair.getFirst(), filePair.getSecond());
-                        cveDB.commit();
-                        properties.save(filePair.getNvdCveInfo());
-                    } catch (FileNotFoundException ex) {
-                        throw new UpdateException(ex);
-                    } catch (ParserConfigurationException ex) {
-                        throw new UpdateException(ex);
-                    } catch (SAXException ex) {
-                        throw new UpdateException(ex);
-                    } catch (IOException ex) {
-                        throw new UpdateException(ex);
-                    } catch (SQLException ex) {
-                        throw new UpdateException(ex);
-                    } catch (DatabaseException ex) {
-                        throw new UpdateException(ex);
-                    } catch (ClassNotFoundException ex) {
-                        throw new UpdateException(ex);
-                    } finally {
-                        filePair.cleanup();
-                    }
-                    msg = String.format("Processing Complete for NVD CVE - %s", filePair.getNvdCveInfo().getId());
-                    Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.INFO, msg);
+                    final ProcessTask task = new ProcessTask(cveDB, properties, filePair);
+                    processFutures.add(processExecutor.submit(task));
                 }
             } catch (InterruptedException ex) {
-                executorService.shutdownNow();
-                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "Thread was interupted", ex);
+                downloadExecutor.shutdownNow();
+                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "Thread was interupted during download", ex);
                 throw new UpdateException(ex);
             } catch (ExecutionException ex) {
-                executorService.shutdownNow();
-                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.SEVERE, null, ex);
+                downloadExecutor.shutdownNow();
+                Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "Execution Exception during download", ex);
                 throw new UpdateException(ex);
             } finally {
-                //yes, this should likely not be in the finally because of the shutdownNow above.
-                executorService.shutdown();
+                downloadExecutor.shutdown();
+            }
+
+            for (Future<ProcessTask> future : processFutures) {
+                try {
+                    ProcessTask task = future.get();
+                    if (task.getException() != null) {
+                        throw task.getException();
+                    }
+                } catch (InterruptedException ex) {
+                    processExecutor.shutdownNow();
+                    Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "Thread was interupted during processing", ex);
+                    throw new UpdateException(ex);
+                } catch (ExecutionException ex) {
+                    processExecutor.shutdownNow();
+                    Logger.getLogger(StandardUpdateTask.class.getName()).log(Level.FINE, "Execution Exception during process", ex);
+                    throw new UpdateException(ex);
+                } finally {
+                    processExecutor.shutdown();
+                }
             }
 
             if (maxUpdates >= 1) { //ensure the modified file date gets written
@@ -347,7 +364,7 @@ public class StandardUpdateTask {
      * @throws UpdateException Is thrown if there is an issue with the last
      * updated properties file
      */
-    protected Updateable updatesNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
+    final protected Updateable updatesNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
         Updateable updates = null;
         try {
             updates = retrieveCurrentTimestampsFromWeb();
@@ -540,35 +557,5 @@ public class StandardUpdateTask {
     protected boolean withinRange(long date, long compareTo, int range) {
         final double differenceInDays = (compareTo - date) / 1000.0 / 60.0 / 60.0 / 24.0;
         return differenceInDays < range;
-    }
-
-    /**
-     * Imports the NVD CVE XML File into the Lucene Index.
-     *
-     * @param file the file containing the NVD CVE XML
-     * @param oldVersion contains the file containing the NVD CVE XML 1.2
-     * @throws ParserConfigurationException is thrown if there is a parser
-     * configuration exception
-     * @throws SAXException is thrown if there is a SAXException
-     * @throws IOException is thrown if there is a IO Exception
-     * @throws SQLException is thrown if there is a SQL exception
-     * @throws DatabaseException is thrown if there is a database exception
-     * @throws ClassNotFoundException thrown if the h2 database driver cannot be
-     * loaded
-     */
-    protected void importXML(File file, File oldVersion) throws ParserConfigurationException,
-            SAXException, IOException, SQLException, DatabaseException, ClassNotFoundException {
-
-        final SAXParserFactory factory = SAXParserFactory.newInstance();
-        final SAXParser saxParser = factory.newSAXParser();
-
-        final NvdCve12Handler cve12Handler = new NvdCve12Handler();
-        saxParser.parse(oldVersion, cve12Handler);
-        final Map<String, List<VulnerableSoftware>> prevVersionVulnMap = cve12Handler.getVulnerabilities();
-
-        final NvdCve20Handler cve20Handler = new NvdCve20Handler();
-        cve20Handler.setCveDB(cveDB);
-        cve20Handler.setPrevVersionVulnMap(prevVersionVulnMap);
-        saxParser.parse(file, cve20Handler);
     }
 }
