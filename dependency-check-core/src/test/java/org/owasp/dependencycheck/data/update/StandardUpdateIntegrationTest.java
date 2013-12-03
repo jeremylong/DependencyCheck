@@ -34,9 +34,9 @@ import org.owasp.dependencycheck.utils.DownloadFailedException;
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class StandardUpdateTaskIntegrationTest {
+public class StandardUpdateIntegrationTest {
 
-    public StandardUpdateTaskIntegrationTest() {
+    public StandardUpdateIntegrationTest() {
     }
 
     @BeforeClass
@@ -55,30 +55,30 @@ public class StandardUpdateTaskIntegrationTest {
     public void tearDown() {
     }
 
-    public StandardUpdateTask getStandardUpdateTask() throws MalformedURLException, DownloadFailedException, UpdateException {
-        StandardUpdateTask instance = new StandardUpdateTask();
+    public StandardUpdate getStandardUpdateTask() throws MalformedURLException, DownloadFailedException, UpdateException {
+        StandardUpdate instance = new StandardUpdate();
         return instance;
     }
 
     /**
-     * Test of setDeleteAndRecreate method, of class StandardUpdateTask.
+     * Test of setDeleteAndRecreate method, of class StandardUpdate.
      */
     @Test
     public void testSetDeleteAndRecreate() throws Exception {
         boolean deleteAndRecreate = false;
         boolean expResult = false;
-        StandardUpdateTask instance = getStandardUpdateTask();
+        StandardUpdate instance = getStandardUpdateTask();
         instance.setDeleteAndRecreate(deleteAndRecreate);
         boolean result = instance.shouldDeleteAndRecreate();
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of deleteExistingData method, of class StandardUpdateTask.
+     * Test of deleteExistingData method, of class StandardUpdate.
      */
     @Test
     public void testDeleteExistingData() throws Exception {
-        StandardUpdateTask instance = getStandardUpdateTask();
+        StandardUpdate instance = getStandardUpdateTask();
         Exception result = null;
         try {
             instance.deleteExistingData();
@@ -89,17 +89,17 @@ public class StandardUpdateTaskIntegrationTest {
     }
 
     /**
-     * Test of openDataStores method, of class StandardUpdateTask.
+     * Test of openDataStores method, of class StandardUpdate.
      */
     @Test
     public void testOpenDataStores() throws Exception {
-        StandardUpdateTask instance = getStandardUpdateTask();
+        StandardUpdate instance = getStandardUpdateTask();
         instance.openDataStores();
         instance.closeDataStores();
     }
 
     /**
-     * Test of withinRange method, of class StandardUpdateTask.
+     * Test of withinRange method, of class StandardUpdate.
      */
     @Test
     public void testWithinRange() throws Exception {
@@ -108,7 +108,7 @@ public class StandardUpdateTaskIntegrationTest {
         long current = c.getTimeInMillis();
         long lastRun = c.getTimeInMillis() - (3 * (1000 * 60 * 60 * 24));
         int range = 7; // 7 days
-        StandardUpdateTask instance = getStandardUpdateTask();
+        StandardUpdate instance = getStandardUpdateTask();
         boolean expResult = true;
         boolean result = instance.withinRange(lastRun, current, range);
         assertEquals(expResult, result);
@@ -120,21 +120,21 @@ public class StandardUpdateTaskIntegrationTest {
     }
 
     /**
-     * Test of update method, of class StandardUpdateTask.
+     * Test of update method, of class StandardUpdate.
      */
     @Test
     public void testUpdate() throws Exception {
-        StandardUpdateTask instance = getStandardUpdateTask();
+        StandardUpdate instance = getStandardUpdateTask();
         instance.update();
         //TODO make this an actual test
     }
 
     /**
-     * Test of updatesNeeded method, of class StandardUpdateTask.
+     * Test of updatesNeeded method, of class StandardUpdate.
      */
     @Test
     public void testUpdatesNeeded() throws Exception {
-        StandardUpdateTask instance = getStandardUpdateTask();
+        StandardUpdate instance = getStandardUpdateTask();
         Updateable result = instance.updatesNeeded();
         assertNotNull(result);
     }
