@@ -20,38 +20,27 @@ package org.owasp.dependencycheck.data.update;
 
 import org.owasp.dependencycheck.data.nvdcve.InvalidDataException;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.SAXException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import org.owasp.dependencycheck.data.UpdateException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
-import org.owasp.dependencycheck.data.nvdcve.NvdCve12Handler;
-import org.owasp.dependencycheck.data.nvdcve.NvdCve20Handler;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import static org.owasp.dependencycheck.data.update.DataStoreMetaInfo.MODIFIED;
-import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.utils.FileUtils;
 
 /**
@@ -173,7 +162,7 @@ public class StandardUpdateTask {
                     if (ctr == 3) {
                         ctr = 0;
 
-                        Iterator<Future<CallableDownloadTask>> itr = downloadFutures.iterator();
+                        final Iterator<Future<CallableDownloadTask>> itr = downloadFutures.iterator();
                         while (itr.hasNext()) {
                             final Future<CallableDownloadTask> future = itr.next();
                             while (!future.isDone()) {
@@ -205,7 +194,7 @@ public class StandardUpdateTask {
             }
 
             try {
-                Iterator<Future<CallableDownloadTask>> itr = downloadFutures.iterator();
+                final Iterator<Future<CallableDownloadTask>> itr = downloadFutures.iterator();
                 while (itr.hasNext()) {
                     final Future<CallableDownloadTask> future = itr.next();
                     final CallableDownloadTask filePair = future.get();
@@ -226,7 +215,7 @@ public class StandardUpdateTask {
 
             for (Future<ProcessTask> future : processFutures) {
                 try {
-                    ProcessTask task = future.get();
+                    final ProcessTask task = future.get();
                     if (task.getException() != null) {
                         throw task.getException();
                     }
@@ -364,7 +353,7 @@ public class StandardUpdateTask {
      * @throws UpdateException Is thrown if there is an issue with the last
      * updated properties file
      */
-    final protected Updateable updatesNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
+    protected final Updateable updatesNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
         Updateable updates = null;
         try {
             updates = retrieveCurrentTimestampsFromWeb();
