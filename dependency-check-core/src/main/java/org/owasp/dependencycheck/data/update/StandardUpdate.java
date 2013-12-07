@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -140,15 +141,13 @@ public class StandardUpdate {
                 openDataStores();
             }
 
-            final int poolSize = (MAX_THREAD_POOL_SIZE > maxUpdates) ? MAX_THREAD_POOL_SIZE : maxUpdates;
-            final ExecutorService downloadExecutor = Executors.newFixedThreadPool(poolSize);
+            final int poolSize = (MAX_THREAD_POOL_SIZE < maxUpdates) ? MAX_THREAD_POOL_SIZE : maxUpdates;
+
+            final ExecutorService downloadExecutors = Executors.newFixedThreadPool(poolSize);
             final ExecutorService processExecutor = Executors.newSingleThreadExecutor();
-            final Set<Future<CallableDownloadTask>> downloadFutures = new HashSet<Future<CallableDownloadTask>>(maxUpdates);
-            final Set<Future<ProcessTask>> processFutures = new HashSet<Future<ProcessTask>>(maxUpdates);
-            int ctr = 0;
+            final Set<Future<Future<ProcessTask>>> downloadFutures = new HashSet<Future<Future<ProcessTask>>>(maxUpdates);
             for (NvdCveInfo cve : updateable) {
                 if (cve.getNeedsUpdate()) {
-                    ctr += 1;
                     final File file1;
                     final File file2;
                     try {
@@ -157,56 +156,39 @@ public class StandardUpdate {
                     } catch (IOException ex) {
                         throw new UpdateException(ex);
                     }
-                    final CallableDownloadTask call = new CallableDownloadTask(cve, file1, file2);
-                    downloadFutures.add(downloadExecutor.submit(call));
-
-                    boolean waitForFuture = ctr % 2 == 0;
-
-                    final Iterator<Future<CallableDownloadTask>> itr = downloadFutures.iterator();
-                    while (itr.hasNext()) {
-                        final Future<CallableDownloadTask> future = itr.next();
-                        if (waitForFuture) { //only allow two NVD/CVE files to be downloaded at a time
-                            spinWaitForFuture(future);
-                        }
-                        if (future.isDone()) { //if we find something complete, add it to the process queue
-                            try {
-                                final CallableDownloadTask filePair = future.get();
-                                itr.remove();
-                                final ProcessTask task = new ProcessTask(cveDB, properties, filePair);
-                                processFutures.add(processExecutor.submit(task));
-                            } catch (InterruptedException ex) {
-                                downloadExecutor.shutdownNow();
-                                Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interupted", ex);
-                                throw new UpdateException(ex);
-                            } catch (ExecutionException ex) {
-                                downloadExecutor.shutdownNow();
-                                Logger.getLogger(StandardUpdate.class.getName()).log(Level.SEVERE, null, ex);
-                                throw new UpdateException(ex);
-                            }
-                        }
-                    }
-
+                    final CallableDownloadTask call = new CallableDownloadTask(cve, file1, file2, processExecutor, cveDB, properties);
+                    downloadFutures.add(downloadExecutors.submit(call));
                 }
             }
+            downloadExecutors.shutdown();
 
-            try {
-                final Iterator<Future<CallableDownloadTask>> itr = downloadFutures.iterator();
-                while (itr.hasNext()) {
-                    final Future<CallableDownloadTask> future = itr.next();
-                    final CallableDownloadTask filePair = future.get();
-                    final ProcessTask task = new ProcessTask(cveDB, properties, filePair);
-                    processFutures.add(processExecutor.submit(task));
+            //next, move the future future processTasks to just future processTasks
+            final Set<Future<ProcessTask>> processFutures = new HashSet<Future<ProcessTask>>(maxUpdates);
+            for (Future<Future<ProcessTask>> future : downloadFutures) {
+                Future<ProcessTask> task = null;
+                try {
+                    task = future.get();
+                } catch (InterruptedException ex) {
+                    downloadExecutors.shutdownNow();
+                    processExecutor.shutdownNow();
+
+                    Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interupted during download", ex);
+                    throw new UpdateException("The download was interupted", ex);
+                } catch (ExecutionException ex) {
+                    downloadExecutors.shutdownNow();
+                    processExecutor.shutdownNow();
+
+                    Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interupted during download execution", ex);
+                    throw new UpdateException("The execution of the download was interupted", ex);
                 }
-            } catch (InterruptedException ex) {
-                downloadExecutor.shutdownNow();
-                Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interupted during download", ex);
-                throw new UpdateException(ex);
-            } catch (ExecutionException ex) {
-                downloadExecutor.shutdownNow();
-                Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Execution Exception during download", ex);
-                throw new UpdateException(ex);
-            } finally {
-                downloadExecutor.shutdown();
+                if (task == null) {
+                    downloadExecutors.shutdownNow();
+                    processExecutor.shutdownNow();
+                    Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interupted during download");
+                    throw new UpdateException("The download was interupted; unable to complete the update");
+                } else {
+                    processFutures.add(task);
+                }
             }
 
             for (Future<ProcessTask> future : processFutures) {
@@ -228,7 +210,7 @@ public class StandardUpdate {
                 }
             }
 
-            if (maxUpdates >= 1) { //ensure the modified file date gets written
+            if (maxUpdates >= 1) { //ensure the modified file date gets written (we may not have actually updated it)
                 properties.save(updateable.get(MODIFIED));
                 cveDB.cleanupDatabase();
             }
@@ -542,16 +524,5 @@ public class StandardUpdate {
     protected boolean withinRange(long date, long compareTo, int range) {
         final double differenceInDays = (compareTo - date) / 1000.0 / 60.0 / 60.0 / 24.0;
         return differenceInDays < range;
-    }
-
-    private void spinWaitForFuture(final Future<CallableDownloadTask> future) {
-        //then wait for downloads to finish
-        while (!future.isDone()) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, null, ex);
-            }
-        }
     }
 }
