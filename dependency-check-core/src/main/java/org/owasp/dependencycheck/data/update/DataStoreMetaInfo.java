@@ -40,10 +40,6 @@ import org.owasp.dependencycheck.utils.Settings;
 public class DataStoreMetaInfo {
 
     /**
-     * Batch key word, used as key to store information about batch mode.
-     */
-    public static final String BATCH = "batch";
-    /**
      * Modified key word, used as a key to store information about the modified
      * file (i.e. the containing the last 8 days of updates)..
      */
