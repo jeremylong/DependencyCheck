@@ -148,15 +148,7 @@ public class StandardUpdate {
             final Set<Future<Future<ProcessTask>>> downloadFutures = new HashSet<Future<Future<ProcessTask>>>(maxUpdates);
             for (NvdCveInfo cve : updateable) {
                 if (cve.getNeedsUpdate()) {
-                    final File file1;
-                    final File file2;
-                    try {
-                        file1 = File.createTempFile("cve" + cve.getId() + "_", ".xml");
-                        file2 = File.createTempFile("cve_1_2_" + cve.getId() + "_", ".xml");
-                    } catch (IOException ex) {
-                        throw new UpdateException(ex);
-                    }
-                    final CallableDownloadTask call = new CallableDownloadTask(cve, file1, file2, processExecutor, cveDB, properties);
+                    final CallableDownloadTask call = new CallableDownloadTask(cve, processExecutor, cveDB, properties);
                     downloadFutures.add(downloadExecutors.submit(call));
                 }
             }
