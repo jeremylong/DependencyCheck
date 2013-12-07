@@ -19,12 +19,14 @@
 package org.owasp.dependencycheck.data.update;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.owasp.dependencycheck.data.UpdateException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
@@ -40,15 +42,22 @@ public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
      * Simple constructor for the callable download task.
      *
      * @param nvdCveInfo the NVD CVE info
-     * @param first the first file
-     * @param second the second file
      * @param processor the processor service to submit the downloaded files to
      * @param cveDB the CVE DB to use to store the vulnerability data
      */
-    public CallableDownloadTask(NvdCveInfo nvdCveInfo, File first, File second, ExecutorService processor, CveDB cveDB, DataStoreMetaInfo properties) {
+    public CallableDownloadTask(NvdCveInfo nvdCveInfo, ExecutorService processor, CveDB cveDB, DataStoreMetaInfo properties) throws UpdateException {
+        final File file1;
+        final File file2;
+        try {
+            file1 = File.createTempFile("cve" + nvdCveInfo.getId() + "_", ".xml");
+            file2 = File.createTempFile("cve_1_2_" + nvdCveInfo.getId() + "_", ".xml");
+        } catch (IOException ex) {
+            throw new UpdateException(ex);
+        }
+
         this.nvdCveInfo = nvdCveInfo;
-        this.first = first;
-        this.second = second;
+        this.first = file1;
+        this.second = file2;
         this.processorService = processor;
         this.cveDB = cveDB;
         this.properties = properties;
