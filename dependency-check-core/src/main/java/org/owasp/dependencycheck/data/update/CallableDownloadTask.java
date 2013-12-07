@@ -21,8 +21,11 @@ package org.owasp.dependencycheck.data.update;
 import java.io.File;
 import java.net.URL;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 
@@ -31,20 +34,37 @@ import org.owasp.dependencycheck.utils.Downloader;
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class CallableDownloadTask implements Callable<CallableDownloadTask> {
+public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
 
     /**
      * Simple constructor for the callable download task.
      *
-     * @param nvdCveInfo the nvd cve info
+     * @param nvdCveInfo the NVD CVE info
      * @param first the first file
      * @param second the second file
+     * @param processor the processor service to submit the downloaded files to
+     * @param cveDB the CVE DB to use to store the vulnerability data
      */
-    public CallableDownloadTask(NvdCveInfo nvdCveInfo, File first, File second) {
+    public CallableDownloadTask(NvdCveInfo nvdCveInfo, File first, File second, ExecutorService processor, CveDB cveDB, DataStoreMetaInfo properties) {
         this.nvdCveInfo = nvdCveInfo;
         this.first = first;
         this.second = second;
+        this.processorService = processor;
+        this.cveDB = cveDB;
+        this.properties = properties;
     }
+    /**
+     * The DataStoreMeta information.
+     */
+    private DataStoreMetaInfo properties;
+    /**
+     * The CVE DB to use when processing the files.
+     */
+    private CveDB cveDB;
+    /**
+     * The processor service to pass the results of the download to.
+     */
+    private ExecutorService processorService;
     /**
      * The NVD CVE Meta Data.
      */
@@ -135,7 +155,7 @@ public class CallableDownloadTask implements Callable<CallableDownloadTask> {
     }
 
     @Override
-    public CallableDownloadTask call() throws Exception {
+    public Future<ProcessTask> call() throws Exception {
         try {
             final URL url1 = new URL(nvdCveInfo.getUrl());
             final URL url2 = new URL(nvdCveInfo.getOldSchemaVersionUrl());
@@ -145,10 +165,14 @@ public class CallableDownloadTask implements Callable<CallableDownloadTask> {
             Downloader.fetchFile(url2, second);
             msg = String.format("Download Complete for NVD CVE - %s", nvdCveInfo.getId());
             Logger.getLogger(CallableDownloadTask.class.getName()).log(Level.INFO, msg);
+
+            final ProcessTask task = new ProcessTask(cveDB, properties, this);
+            return this.processorService.submit(task);
+
         } catch (DownloadFailedException ex) {
-            this.exception = ex;
+            Logger.getLogger(CallableDownloadTask.class.getName()).log(Level.FINE, "Download Task Failed", ex);
         }
-        return this;
+        return null;
     }
 
     /**
