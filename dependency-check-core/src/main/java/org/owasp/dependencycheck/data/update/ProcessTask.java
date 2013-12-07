@@ -68,8 +68,17 @@ public class ProcessTask implements Callable<ProcessTask> {
     public void setException(UpdateException exception) {
         this.exception = exception;
     }
+    /**
+     * A reference to the CveDB.
+     */
     private final CveDB cveDB;
+    /**
+     * A reference to the callable download task.
+     */
     private final CallableDownloadTask filePair;
+    /**
+     * A reference to the properties.
+     */
     private final DataStoreMetaInfo properties;
 
     public ProcessTask(final CveDB cveDB, final DataStoreMetaInfo properties, final CallableDownloadTask filePair) {
