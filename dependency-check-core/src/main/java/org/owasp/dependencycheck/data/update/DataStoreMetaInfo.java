@@ -64,35 +64,11 @@ public class DataStoreMetaInfo {
      * A collection of properties about the data.
      */
     private Properties properties = new Properties();
-    /**
-     * Indicates whether or not the updates are using a batch update mode or
-     * not.
-     */
-    private boolean batchUpdateMode;
-
-    /**
-     * Get the value of batchUpdateMode.
-     *
-     * @return the value of batchUpdateMode
-     */
-    protected boolean isBatchUpdateMode() {
-        return batchUpdateMode;
-    }
-
-    /**
-     * Set the value of batchUpdateMode.
-     *
-     * @param batchUpdateMode new value of batchUpdateMode
-     */
-    protected void setBatchUpdateMode(boolean batchUpdateMode) {
-        this.batchUpdateMode = batchUpdateMode;
-    }
 
     /**
      * Constructs a new data properties object.
      */
     public DataStoreMetaInfo() {
-        batchUpdateMode = !Settings.getString(Settings.KEYS.BATCH_UPDATE_URL, "").isEmpty();
         loadProperties();
     }
 
