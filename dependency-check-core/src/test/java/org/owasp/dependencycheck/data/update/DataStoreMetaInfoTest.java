@@ -52,18 +52,6 @@ public class DataStoreMetaInfoTest {
     }
 
     /**
-     * Test of isBatchUpdateMode method, of class DataStoreMetaInfo.
-     */
-    @Test
-    public void testIsBatchUpdateMode() {
-        DataStoreMetaInfo instance = new DataStoreMetaInfo();
-        boolean expResult = false;
-        instance.setBatchUpdateMode(expResult);
-        boolean result = instance.isBatchUpdateMode();
-        assertEquals(expResult, result);
-    }
-
-    /**
      * Test of isEmpty method, of class DataStoreMetaInfo.
      */
     @Test
