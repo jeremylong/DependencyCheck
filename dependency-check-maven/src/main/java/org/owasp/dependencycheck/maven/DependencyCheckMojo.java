@@ -79,6 +79,10 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * The name of the test scope.
      */
     public static final String TEST_SCOPE = "test";
+    /**
+     * System specific new line character.
+     */
+    private static final String NEW_LINE = System.getProperty("line.separator", "\n").intern();
     // <editor-fold defaultstate="collapsed" desc="Maven bound parameters and components">
     /**
      * The Maven Project Object.
@@ -151,39 +155,45 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     /**
      * The Proxy URL.
      */
-    @SuppressWarnings("CanBeFinal")
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "proxyUrl", defaultValue = "", required = false)
     private String proxyUrl = null;
     /**
      * The Proxy Port.
      */
-    @SuppressWarnings("CanBeFinal")
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "proxyPort", defaultValue = "", required = false)
     private String proxyPort = null;
     /**
      * The Proxy username.
      */
-    @SuppressWarnings("CanBeFinal")
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "proxyUsername", defaultValue = "", required = false)
     private String proxyUsername = null;
     /**
      * The Proxy password.
      */
-    @SuppressWarnings("CanBeFinal")
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "proxyPassword", defaultValue = "", required = false)
     private String proxyPassword = null;
     /**
      * The Connection Timeout.
      */
-    @SuppressWarnings("CanBeFinal")
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "connectionTimeout", defaultValue = "", required = false)
     private String connectionTimeout = null;
     /**
      * The Connection Timeout.
      */
-    @SuppressWarnings("CanBeFinal")
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "suppressionFile", defaultValue = "", required = false)
     private String suppressionFile = null;
+    /**
+     * Flag indicating whether or not to show a summary in the output.
+     */
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @Parameter(property = "showSummary", defaultValue = "true", required = false)
+    private boolean showSummary = true;
     // </editor-fold>
 
     /**
@@ -670,6 +680,9 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         if (this.failBuildOnCVSS <= 10) {
             checkForFailure(engine.getDependencies());
         }
+        if (this.showSummary) {
+            showSummary(engine.getDependencies());
+        }
     }
 
     /**
@@ -800,6 +813,47 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
                     + "One or more dependencies were identified with vulnerabilities that have a CVSS score greater then '%.1f': %s%n"
                     + "See the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
             throw new MojoFailureException(msg);
+        }
+    }
+
+    /**
+     * Generates a warning message listing a summary of dependencies and their
+     * associated CPE and CVE entries.
+     *
+     * @param dependencies a list of dependency objects
+     */
+    private void showSummary(List<Dependency> dependencies) {
+        final StringBuilder summary = new StringBuilder();
+        for (Dependency d : dependencies) {
+            boolean firstEntry = true;
+            final StringBuilder ids = new StringBuilder();
+            for (Vulnerability v : d.getVulnerabilities()) {
+                if (firstEntry) {
+                    firstEntry = false;
+                } else {
+                    ids.append(", ");
+                }
+                ids.append(v.getName());
+            }
+            if (ids.length() > 0) {
+                summary.append(d.getFileName()).append(" (");
+                firstEntry = true;
+                for (Identifier id : d.getIdentifiers()) {
+                    if (firstEntry) {
+                        firstEntry = false;
+                    } else {
+                        summary.append(", ");
+                    }
+                    summary.append(id.getValue());
+                }
+                summary.append(") : ").append(ids).append(NEW_LINE);
+            }
+        }
+        if (summary.length() > 0) {
+            final String msg = String.format("%n%n"
+                    + "One or more dependencies were identified with known vulnerabilities:%n%n%s"
+                    + "%n%nSee the dependency-check report for more details.%n%n", summary.toString());
+            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.WARNING, msg);
         }
     }
 }
