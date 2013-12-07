@@ -34,6 +34,7 @@ import org.apache.tools.ant.types.resources.FileProvider;
 import org.apache.tools.ant.types.resources.Resources;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.reporting.ReportGenerator.Format;
@@ -55,6 +56,10 @@ public class DependencyCheckTask extends Task {
      * Name of the logging properties file.
      */
     private static final String LOG_PROPERTIES_FILE = "log.properties";
+    /**
+     * System specific new line character.
+     */
+    private static final String NEW_LINE = System.getProperty("line.separator", "\n").intern();
 
     /**
      * Construct a new DependencyCheckTask.
@@ -433,6 +438,28 @@ public class DependencyCheckTask extends Task {
     public void setSuppressionFile(String suppressionFile) {
         this.suppressionFile = suppressionFile;
     }
+    /**
+     * flag indicating whether or not to show a summary of findings.
+     */
+    private boolean showSummary = true;
+
+    /**
+     * Get the value of showSummary.
+     *
+     * @return the value of showSummary
+     */
+    public boolean isShowSummary() {
+        return showSummary;
+    }
+
+    /**
+     * Set the value of showSummary.
+     *
+     * @param showSummary new value of showSummary
+     */
+    public void setShowSummary(boolean showSummary) {
+        this.showSummary = showSummary;
+    }
 
     @Override
     public void execute() throws BuildException {
@@ -460,6 +487,9 @@ public class DependencyCheckTask extends Task {
 
             if (this.failBuildOnCVSS <= 10) {
                 checkForFailure(engine.getDependencies());
+            }
+            if (this.showSummary) {
+                showSummary(engine.getDependencies());
             }
         } catch (IOException ex) {
             Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, null, ex);
@@ -565,6 +595,47 @@ public class DependencyCheckTask extends Task {
                     + "One or more dependencies were identified with vulnerabilities that have a CVSS score greater then '%.1f': %s%n"
                     + "See the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
             throw new BuildException(msg);
+        }
+    }
+
+    /**
+     * Generates a warning message listing a summary of dependencies and their
+     * associated CPE and CVE entries.
+     *
+     * @param dependencies a list of dependency objects
+     */
+    private void showSummary(List<Dependency> dependencies) {
+        final StringBuilder summary = new StringBuilder();
+        for (Dependency d : dependencies) {
+            boolean firstEntry = true;
+            final StringBuilder ids = new StringBuilder();
+            for (Vulnerability v : d.getVulnerabilities()) {
+                if (firstEntry) {
+                    firstEntry = false;
+                } else {
+                    ids.append(", ");
+                }
+                ids.append(v.getName());
+            }
+            if (ids.length() > 0) {
+                summary.append(d.getFileName()).append(" (");
+                firstEntry = true;
+                for (Identifier id : d.getIdentifiers()) {
+                    if (firstEntry) {
+                        firstEntry = false;
+                    } else {
+                        summary.append(", ");
+                    }
+                    summary.append(id.getValue());
+                }
+                summary.append(") : ").append(ids).append(NEW_LINE);
+            }
+        }
+        if (summary.length() > 0) {
+            final String msg = String.format("%n%n"
+                    + "One or more dependencies were identified with known vulnerabilities:%n%n%s"
+                    + "%n%nSee the dependency-check report for more details.%n%n", summary.toString());
+            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.WARNING, msg);
         }
     }
 
