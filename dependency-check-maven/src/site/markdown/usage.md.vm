@@ -21,6 +21,33 @@ seven days the update will only take a few seconds.
               <groupId>org.owasp</groupId>
               <artifactId>dependency-check-maven</artifactId>
               <version>${project.version}</version>
+              <executions>
+                  <execution>
+                      <goals>
+                          <goal>check</goal>
+                      </goals>
+                  </execution>
+              </executions>
+            </plugin>
+            ...
+        </plugins>
+        ...
+    </build>
+    ...
+</project>
+```
+
+### Create the DependencyCheck-report.html and fail the build for CVSS greater then 8
+
+```xml
+<project>
+    <build>
+        <plugins>
+            ...
+            <plugin>
+              <groupId>org.owasp</groupId>
+              <artifactId>dependency-check-maven</artifactId>
+              <version>${project.version}</version>
               <configuration>
                   <failBuildOnCVSS>8</failBuildOnCVSS>
               </configuration>
@@ -39,10 +66,6 @@ seven days the update will only take a few seconds.
     ...
 </project>
 ```
-
-Note, the above configuration will fail the build if any dependencies are found
-to have vulnerabilities with a CVSS score greater then 8. If you do not wish to
-fail the build for CVSS scores do not specify the failBuildOnCVSS element.
 
 ### Create the dependency-check report within the site
 
