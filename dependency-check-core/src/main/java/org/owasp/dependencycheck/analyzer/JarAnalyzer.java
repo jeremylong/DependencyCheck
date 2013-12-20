@@ -281,18 +281,10 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             Model pom = null;
             try {
                 pom = retrievePom(path, jar);
-            } catch (JAXBException ex) {
-                final String msg = String.format("Unable to parse POM '%s' in '%s'",
-                        path, dependency.getFilePath());
-                final AnalysisException ax = new AnalysisException(msg, ex);
-                dependency.getAnalysisExceptions().add(ax);
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, msg, ax);
-            } catch (IOException ex) {
-                final String msg = String.format("Unable to retrieve POM '%s' in '%s'",
-                        path, dependency.getFilePath());
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, msg, ex);
+                foundSomething = setPomEvidence(dependency, pom, pomProperties, classes) || foundSomething;
+            } catch (AnalysisException ex) {
+                dependency.addAnalysisException(ex);
             }
-            foundSomething = setPomEvidence(dependency, pom, pomProperties, classes) || foundSomething;
         }
         return foundSomething;
     }
@@ -348,14 +340,14 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * @param path the path to the pom.xml file within the jar file
      * @param jar the jar file to extract the pom from
      * @return returns a
+     * @throws AnalysisException is thrown if there is an exception extracting
+     * or parsing the POM
      * {@link org.owasp.dependencycheck.analyzer.pom.generated.Model} object
-     * @throws JAXBException is thrown if there is an exception parsing the pom
-     * @throws IOException is thrown if there is an exception reading the jar
      */
-    private Model retrievePom(String path, JarFile jar) throws JAXBException, IOException {
+    private Model retrievePom(String path, JarFile jar) throws AnalysisException {
         final ZipEntry entry = jar.getEntry(path);
+        Model model = null;
         if (entry != null) { //should never be null
-            Model m = null;
             try {
                 final XMLFilter filter = new MavenNamespaceFilter();
                 final SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -367,17 +359,40 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 final InputSource xml = new InputSource(reader);
                 final SAXSource source = new SAXSource(filter, xml);
                 final JAXBElement<Model> el = pomUnmarshaller.unmarshal(source, Model.class);
-                m = el.getValue();
+                model = el.getValue();
+            } catch (SecurityException ex) {
+                final String msg = String.format("Unable to parse pom '%s' in jar '%s'; invalid signature", path, jar.getName());
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
+                throw new AnalysisException(ex);
             } catch (ParserConfigurationException ex) {
-                final String msg = String.format("Unable to parse pom '%s' in jar '%s'", path, jar.getName());
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, msg, ex);
+                final String msg = String.format("Unable to parse pom '%s' in jar '%s' (Parser Configuration Error)", path, jar.getName());
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
+                throw new AnalysisException(ex);
             } catch (SAXException ex) {
-                final String msg = String.format("Unable to parse pom '%s' in jar '%s'", path, jar.getName());
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, msg, ex);
+                final String msg = String.format("Unable to parse pom '%s' in jar '%s' (SAX Error)", path, jar.getName());
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
+                throw new AnalysisException(ex);
+            } catch (JAXBException ex) {
+                final String msg = String.format("Unable to parse pom '%s' in jar '%s' (JAXB Exception)", path, jar.getName());
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
+                throw new AnalysisException(ex);
+            } catch (IOException ex) {
+                final String msg = String.format("Unable to parse pom '%s' in jar '%s' (IO Exception)", path, jar.getName());
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
+                throw new AnalysisException(ex);
+            } catch (Throwable ex) {
+                final String msg = String.format("Unexpected error during parsing of the pom '%s' in jar '%s'", path, jar.getName());
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
+                throw new AnalysisException(ex);
             }
-            return m;
         }
-        return null;
+        return model;
     }
 
     /**
