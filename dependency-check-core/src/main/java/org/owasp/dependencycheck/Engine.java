@@ -336,6 +336,12 @@ public class Engine {
                             a.analyze(d, this);
                         } catch (AnalysisException ex) {
                             d.addAnalysisException(ex);
+                        } catch (Throwable ex) {
+                            final String axMsg = String.format("An unexpected error occured during analysis of '%s'", d.getActualFilePath());
+                            AnalysisException ax = new AnalysisException(axMsg, ex);
+                            d.addAnalysisException(ax);
+                            Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, axMsg);
+                            Logger.getLogger(Engine.class.getName()).log(Level.FINE, axMsg, ex);
                         }
                     }
                 }
