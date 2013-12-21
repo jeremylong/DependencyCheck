@@ -8,9 +8,9 @@ DROP TABLE IF EXISTS vulnerability;
 DROP TABLE IF EXISTS reference;
 DROP TABLE IF EXISTS cpeEntry;
 DROP TABLE IF EXISTS software;
-DROP TABLE IF EXISTS settings;
+DROP TABLE IF EXISTS properties;
 
-CREATE TABLE settings (id varchar(50) PRIMARY KEY, value varchar(200));
+CREATE TABLE properties (id varchar(50) PRIMARY KEY, value varchar(500));
 
 CREATE TABLE vulnerability (id int auto_increment PRIMARY KEY, cve VARCHAR(20) UNIQUE,
 	description VARCHAR(8000), cwe VARCHAR(10), cvssScore DECIMAL(3,1), cvssAccessVector VARCHAR(20),
