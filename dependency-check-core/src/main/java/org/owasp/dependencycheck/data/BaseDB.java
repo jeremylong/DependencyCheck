@@ -49,7 +49,7 @@ public class BaseDB {
     /**
      * The version of the current DB Schema.
      */
-    public static final String DB_SCHEMA_VERSION = "2.7";
+    public static final String DB_SCHEMA_VERSION = "2.8";
     /**
      * Database connection
      */
