@@ -18,7 +18,14 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,6 +33,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,6 +45,7 @@ import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * The database holding information about the NVD CVE data.
@@ -44,6 +54,191 @@ import org.owasp.dependencycheck.utils.DependencyVersionUtil;
  */
 public class CveDB extends BaseDB {
 
+    /**
+     * Resource location for SQL file used to create the database schema.
+     */
+    public static final String DB_STRUCTURE_RESOURCE = "data/initialize.sql";
+    /**
+     * The version of the current DB Schema.
+     */
+    public static final String DB_SCHEMA_VERSION = "2.8";
+    /**
+     * Database connection
+     */
+    private Connection conn;
+
+    /**
+     * Creates a new CveDB object and opens the database connection. Note, the
+     * connection must be closed by the caller by calling the close method.
+     *
+     * @throws DatabaseException thrown if there is an exception opening the
+     * database.
+     */
+    public CveDB() throws DatabaseException {
+        super();
+        try {
+            open();
+            databaseProperties = new DatabaseProperties(this);
+        } catch (IOException ex) {
+            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
+            throw new DatabaseException(ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
+            throw new DatabaseException(ex);
+        } catch (DatabaseException ex) {
+            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
+            throw new DatabaseException(ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
+            throw new DatabaseException(ex);
+        }
+    }
+
+    /**
+     * Returns the database connection.
+     *
+     * @return the database connection
+     */
+    protected Connection getConnection() {
+        return conn;
+    }
+
+    /**
+     * Opens the database connection. If the database does not exist, it will
+     * create a new one.
+     *
+     * @throws IOException thrown if there is an IO Exception
+     * @throws SQLException thrown if there is a SQL Exception
+     * @throws DatabaseException thrown if there is an error initializing a new
+     * database
+     * @throws ClassNotFoundException thrown if the h2 database driver cannot be
+     * loaded
+     */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+            value = "DMI_EMPTY_DB_PASSWORD",
+            justification = "Yes, I know... Blank password.")
+    public final void open() throws IOException, SQLException, DatabaseException, ClassNotFoundException {
+        final String fileName = CveDB.getDataDirectory().getCanonicalPath();
+        final File f = new File(fileName, "cve." + DB_SCHEMA_VERSION);
+        final File check = new File(f.getAbsolutePath() + ".h2.db");
+        final boolean createTables = !check.exists();
+        final String connStr = String.format("jdbc:h2:file:%s;AUTO_SERVER=TRUE", f.getAbsolutePath());
+        Class.forName("org.h2.Driver");
+        conn = DriverManager.getConnection(connStr, "sa", "");
+        if (createTables) {
+            createTables();
+        }
+    }
+
+    /**
+     * Closes the DB4O database. Close should be called on this object when it
+     * is done being used.
+     */
+    public void close() {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException ex) {
+                final String msg = "There was an error attempting to close the CveDB, see the log for more details.";
+                Logger.getLogger(BaseDB.class.getName()).log(Level.SEVERE, msg);
+                Logger.getLogger(BaseDB.class.getName()).log(Level.FINE, null, ex);
+            }
+            conn = null;
+        }
+    }
+
+    /**
+     * Commits all completed transactions.
+     *
+     * @throws SQLException thrown if a SQL Exception occurs
+     */
+    public void commit() throws SQLException {
+        if (conn != null) {
+            conn.commit();
+        }
+    }
+
+    /**
+     * Cleans up the object and ensures that "close" has been called.
+     *
+     * @throws Throwable thrown if there is a problem
+     */
+    @Override
+    protected void finalize() throws Throwable {
+        close();
+        super.finalize(); //not necessary if extending Object.
+    }
+
+    /**
+     * Creates the database structure (tables and indexes) to store the CVE data
+     *
+     * @throws SQLException thrown if there is a sql exception
+     * @throws DatabaseException thrown if there is a database exception
+     */
+    public void createTables() throws SQLException, DatabaseException {
+        InputStream is;
+        InputStreamReader reader;
+        BufferedReader in = null;
+        try {
+            is = this.getClass().getClassLoader().getResourceAsStream(DB_STRUCTURE_RESOURCE);
+            reader = new InputStreamReader(is, "UTF-8");
+            in = new BufferedReader(reader);
+            final StringBuilder sb = new StringBuilder(2110);
+            String tmp;
+            while ((tmp = in.readLine()) != null) {
+                sb.append(tmp);
+            }
+            Statement statement = null;
+            try {
+                statement = conn.createStatement();
+                statement.execute(sb.toString());
+            } finally {
+                closeStatement(statement);
+            }
+        } catch (IOException ex) {
+            throw new DatabaseException("Unable to create database schema", ex);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(CveDB.class
+                            .getName()).log(Level.FINEST, null, ex);
+                }
+            }
+        }
+    }
+
+    /**
+     * Retrieves the directory that the JAR file exists in so that we can ensure
+     * we always use a common data directory.
+     *
+     * @return the data directory for this index.
+     * @throws IOException is thrown if an IOException occurs of course...
+     */
+    public static File getDataDirectory() throws IOException {
+        final File path = Settings.getDataFile(Settings.KEYS.DATA_DIRECTORY);
+        if (!path.exists()) {
+            if (!path.mkdirs()) {
+                throw new IOException("Unable to create NVD CVE Data directory");
+            }
+        }
+        return path;
+    }
+    /**
+     * Database properties object containing the 'properties' from the database
+     * table.
+     */
+    private DatabaseProperties databaseProperties;
+
+    /**
+     * Get the value of databaseProperties
+     *
+     * @return the value of databaseProperties
+     */
+    public DatabaseProperties getDatabaseProperties() {
+        return databaseProperties;
+    }
     //<editor-fold defaultstate="collapsed" desc="Constants to create, maintain, and retrieve data from the CVE Database">
     /**
      * SQL Statement to delete references by vulnerability ID.
@@ -130,8 +325,28 @@ public class CveDB extends BaseDB {
      * SQL Statement to select a vulnerability's primary key.
      */
     private static final String SELECT_VULNERABILITY_ID = "SELECT id FROM vulnerability WHERE cve = ?";
-    //</editor-fold>
+    /**
+     * SQL Statement to retrieve the properties from the database.
+     */
+    private static final String SELECT_PROPERTIES = "SELECT id, value FROM properties";
+    /**
+     * SQL Statement to retrieve a property from the database.
+     */
+    private static final String SELECT_PROPERTY = "SELECT id, value FROM properties WHERE id = ?";
+    /**
+     * SQL Statement to insert a new property.
+     */
+    private static final String INSERT_PROPERTY = "INSERT INTO properties (id, value) VALUES (?, ?)";
+    /**
+     * SQL Statement to update a property.
+     */
+    private static final String UPDATE_PROPERTY = "UPDATE properties SET value = ? WHERE id = ?";
+    /**
+     * SQL Statement to delete a property.
+     */
+    private static final String DELETE_PROPERTY = "DELETE FROM properties WHERE id = ?";
 
+    //</editor-fold>
     /**
      * Searches the CPE entries in the database and retrieves all entries for a
      * given vendor and product combination. The returned list will include all
@@ -158,7 +373,8 @@ public class CveDB extends BaseDB {
                 cpe.add(vs);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, "unexpected SQL Exception occured; please see the verbose log for more details.");
+            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
         } finally {
             closeResultSet(rs);
             closeStatement(ps);
@@ -177,9 +393,115 @@ public class CveDB extends BaseDB {
             final PreparedStatement ps = getConnection().prepareStatement(SELECT_VENDOR_PRODUCT_LIST);
             rs = ps.executeQuery();
         } catch (SQLException ex) {
-            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, "unexpected SQL Exception occured; please see the verbose log for more details.");
+            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
         } // can't close the statement in the PS as the resultset is returned, closing PS would close the resultset
         return rs;
+    }
+
+    /**
+     * Returns a set of properties.
+     *
+     * @return the properties from the database
+     */
+    Properties getProperties() {
+        Properties prop = new Properties();
+        ResultSet rs = null;
+        try {
+            final PreparedStatement ps = getConnection().prepareStatement(SELECT_PROPERTIES);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                prop.setProperty(rs.getString(1), rs.getString(2));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, "unexpected SQL Exception occured; please see the verbose log for more details.");
+            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
+        } finally {
+            closeResultSet(rs);
+        }
+        return prop;
+    }
+
+    /**
+     * Saves a set of properties to the database.
+     *
+     * @param props a collection of properties
+     */
+    void saveProperties(Properties props) {
+        PreparedStatement updateProperty = null;
+        PreparedStatement insertProperty = null;
+        try {
+            try {
+                updateProperty = getConnection().prepareStatement(UPDATE_PROPERTY);
+                insertProperty = getConnection().prepareStatement(INSERT_PROPERTY);
+            } catch (SQLException ex) {
+                Logger.getLogger(CveDB.class.getName()).log(Level.WARNING, "Unable to save properties to the database");
+                Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Unable to save properties to the database", ex);
+                return;
+            }
+            for (Entry<Object, Object> entry : props.entrySet()) {
+                final String key = entry.getKey().toString();
+                final String value = entry.getValue().toString();
+                try {
+                    updateProperty.setString(1, value);
+                    updateProperty.setString(2, key);
+                    if (updateProperty.executeUpdate() == 0) {
+                        insertProperty.setString(1, key);
+                        insertProperty.setString(2, value);
+                    }
+                } catch (SQLException ex) {
+                    final String msg = String.format("Unable to save property '%s' with a value of '%s' to the database", key, value);
+                    Logger.getLogger(CveDB.class.getName()).log(Level.WARNING, msg);
+                    Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
+                }
+            }
+        } finally {
+            closeStatement(updateProperty);
+            closeStatement(insertProperty);
+        }
+    }
+
+    /**
+     * Saves a property to the database.
+     *
+     * @param key the property key
+     * @param value the property value
+     */
+    void saveProperty(String key, String value) {
+        PreparedStatement updateProperty = null;
+        PreparedStatement insertProperty = null;
+        try {
+            try {
+                updateProperty = getConnection().prepareStatement(UPDATE_PROPERTY);
+            } catch (SQLException ex) {
+                Logger.getLogger(CveDB.class.getName()).log(Level.WARNING, "Unable to save properties to the database");
+                Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Unable to save properties to the database", ex);
+                return;
+            }
+            try {
+                updateProperty.setString(1, value);
+                updateProperty.setString(2, key);
+                if (updateProperty.executeUpdate() == 0) {
+                    try {
+                        insertProperty = getConnection().prepareStatement(INSERT_PROPERTY);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(CveDB.class.getName()).log(Level.WARNING, "Unable to save properties to the database");
+                        Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Unable to save properties to the database", ex);
+                        return;
+                    }
+                    insertProperty.setString(1, key);
+                    insertProperty.setString(2, value);
+                    insertProperty.execute();
+                }
+            } catch (SQLException ex) {
+                final String msg = String.format("Unable to save property '%s' with a value of '%s' to the database", key, value);
+                Logger.getLogger(CveDB.class.getName()).log(Level.WARNING, msg);
+                Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
+            }
+        } finally {
+            closeStatement(updateProperty);
+            closeStatement(insertProperty);
+        }
     }
 
     /**
@@ -460,7 +782,8 @@ public class CveDB extends BaseDB {
                 ps.executeUpdate();
             }
         } catch (SQLException ex) {
-            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, "unexpected SQL Exception occured; please see the verbose log for more details.");
+            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
         } finally {
             closeStatement(ps);
         }
