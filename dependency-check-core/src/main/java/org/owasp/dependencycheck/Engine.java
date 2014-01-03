@@ -288,10 +288,16 @@ public class Engine {
         try {
             ensureDataExists();
         } catch (NoDataException ex) {
-            final String msg = String.format("%n%n%s%n%nUnable to continue dependency-check analysis.", ex.getMessage());
+            final String msg = String.format("%s%n%nUnable to continue dependency-check analysis.", ex.getMessage());
             Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, msg);
             Logger.getLogger(Engine.class.getName()).log(Level.FINE, null, ex);
             return;
+        } catch (DatabaseException ex) {
+            final String msg = String.format("%s%n%nUnable to continue dependency-check analysis.", ex.getMessage());
+            Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, msg);
+            Logger.getLogger(Engine.class.getName()).log(Level.FINE, null, ex);
+            return;
+
         }
 
         //phase one initialize
@@ -425,8 +431,10 @@ public class Engine {
      * NoDataException is thrown.
      *
      * @throws NoDataException thrown if no data exists in the CPE Index
+     * @throws DatabaseException thrown if there is an exception opening the
+     * database
      */
-    private void ensureDataExists() throws NoDataException {
+    private void ensureDataExists() throws NoDataException, DatabaseException {
         final CpeMemoryIndex cpe = CpeMemoryIndex.getInstance();
         final CveDB cve = new CveDB();
 
@@ -434,21 +442,21 @@ public class Engine {
             cve.open();
             cpe.open(cve);
         } catch (IndexException ex) {
-            throw new NoDataException(ex);
+            throw new NoDataException(ex.getMessage(), ex);
         } catch (IOException ex) {
-            throw new NoDataException(ex);
+            throw new NoDataException(ex.getMessage(), ex);
         } catch (SQLException ex) {
-            throw new NoDataException(ex);
+            throw new NoDataException(ex.getMessage(), ex);
         } catch (DatabaseException ex) {
-            throw new NoDataException(ex);
+            throw new NoDataException(ex.getMessage(), ex);
         } catch (ClassNotFoundException ex) {
-            throw new NoDataException(ex);
+            throw new NoDataException(ex.getMessage(), ex);
         } finally {
             cve.close();
         }
         if (cpe.numDocs() <= 0) {
             cpe.close();
-            throw new NoDataException();
+            throw new NoDataException("No documents exist");
         }
     }
 }
