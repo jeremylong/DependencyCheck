@@ -170,10 +170,11 @@ public class CveDB {
     }
 
     /**
-     * Creates the database structure (tables and indexes) to store the CVE data
+     * Creates the database structure (tables and indexes) to store the CVE
+     * data.
      *
-     * @throws SQLException thrown if there is a sql exception
-     * @throws DatabaseException thrown if there is a database exception
+     * @throws SQLException thrown if there is a SQL Exception
+     * @throws DatabaseException thrown if there is a Database Exception
      */
     public void createTables() throws SQLException, DatabaseException {
         InputStream is;
@@ -232,7 +233,7 @@ public class CveDB {
     private DatabaseProperties databaseProperties;
 
     /**
-     * Get the value of databaseProperties
+     * Get the value of databaseProperties.
      *
      * @return the value of databaseProperties
      */
@@ -373,7 +374,8 @@ public class CveDB {
                 cpe.add(vs);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, "unexpected SQL Exception occured; please see the verbose log for more details.");
+            final String msg = "An unexpected SQL Exception occured; please see the verbose log for more details.";
+            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, msg);
             Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
         } finally {
             DBUtils.closeResultSet(rs);
@@ -393,7 +395,8 @@ public class CveDB {
             final PreparedStatement ps = getConnection().prepareStatement(SELECT_VENDOR_PRODUCT_LIST);
             rs = ps.executeQuery();
         } catch (SQLException ex) {
-            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, "unexpected SQL Exception occured; please see the verbose log for more details.");
+            final String msg = "An unexpected SQL Exception occured; please see the verbose log for more details.";
+            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, msg);
             Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
         } // can't close the statement in the PS as the resultset is returned, closing PS would close the resultset
         return rs;
@@ -405,7 +408,7 @@ public class CveDB {
      * @return the properties from the database
      */
     Properties getProperties() {
-        Properties prop = new Properties();
+        final Properties prop = new Properties();
         ResultSet rs = null;
         try {
             final PreparedStatement ps = getConnection().prepareStatement(SELECT_PROPERTIES);
@@ -414,7 +417,8 @@ public class CveDB {
                 prop.setProperty(rs.getString(1), rs.getString(2));
             }
         } catch (SQLException ex) {
-            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, "unexpected SQL Exception occured; please see the verbose log for more details.");
+            final String msg = "An unexpected SQL Exception occured; please see the verbose log for more details.";
+            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, msg);
             Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
         } finally {
             DBUtils.closeResultSet(rs);
@@ -782,7 +786,8 @@ public class CveDB {
                 ps.executeUpdate();
             }
         } catch (SQLException ex) {
-            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, "unexpected SQL Exception occured; please see the verbose log for more details.");
+            final String msg = "An unexpected SQL Exception occured; please see the verbose log for more details.";
+            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, msg);
             Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
         } finally {
             DBUtils.closeStatement(ps);

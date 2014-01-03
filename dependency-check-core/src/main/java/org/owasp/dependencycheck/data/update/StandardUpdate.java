@@ -19,7 +19,6 @@
 package org.owasp.dependencycheck.data.update;
 
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
@@ -40,7 +39,6 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import static org.owasp.dependencycheck.data.nvdcve.DatabaseProperties.MODIFIED;
-import org.owasp.dependencycheck.utils.FileUtils;
 
 /**
  * Class responsible for updating the NVDCVE data store.
@@ -360,7 +358,7 @@ public class StandardUpdate {
      *
      * @throws UpdateException thrown if a data store cannot be opened
      */
-    final protected void openDataStores() throws UpdateException {
+    protected final void openDataStores() throws UpdateException {
         if (cveDB != null) {
             return;
         }

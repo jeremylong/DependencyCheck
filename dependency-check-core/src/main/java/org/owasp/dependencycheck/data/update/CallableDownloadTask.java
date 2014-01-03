@@ -27,7 +27,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.owasp.dependencycheck.data.UpdateException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
@@ -187,7 +186,7 @@ public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
             msg = String.format("Download Complete for NVD CVE - %s", nvdCveInfo.getId());
             Logger.getLogger(CallableDownloadTask.class.getName()).log(Level.INFO, msg);
 
-            final ProcessTask task = new ProcessTask(cveDB, properties, this);
+            final ProcessTask task = new ProcessTask(cveDB, this);
             return this.processorService.submit(task);
 
         } catch (Throwable ex) {
