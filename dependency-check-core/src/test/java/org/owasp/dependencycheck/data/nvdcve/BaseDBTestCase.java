@@ -30,7 +30,6 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import junit.framework.TestCase;
-import org.owasp.dependencycheck.data.update.DataStoreMetaInfo;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
