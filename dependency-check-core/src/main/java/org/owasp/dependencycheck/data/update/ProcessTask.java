@@ -80,12 +80,26 @@ public class ProcessTask implements Callable<ProcessTask> {
      */
     private final DatabaseProperties properties;
 
-    public ProcessTask(final CveDB cveDB, final DatabaseProperties properties, final CallableDownloadTask filePair) {
+    /**
+     * Constructs a new ProcessTask used to process an NVD CVE update.
+     *
+     * @param cveDB the data store object
+     * @param filePair the download task that contains the URL references to
+     * download
+     */
+    public ProcessTask(final CveDB cveDB, final CallableDownloadTask filePair) {
         this.cveDB = cveDB;
         this.filePair = filePair;
-        this.properties = properties;
+        this.properties = cveDB.getDatabaseProperties();
     }
 
+    /**
+     * Implements the callable interface.
+     *
+     * @return this object
+     * @throws Exception thrown if there is an exception; note that any
+     * UpdateExceptions are simply added to the tasks exception collection
+     */
     @Override
     public ProcessTask call() throws Exception {
         try {
