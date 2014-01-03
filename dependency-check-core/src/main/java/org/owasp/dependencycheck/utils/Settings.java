@@ -68,16 +68,6 @@ public final class Settings {
          */
         public static final String DATA_DIRECTORY = "data.directory";
         /**
-         * The location of the batch update URL. This is a zip file that
-         * contains the contents of the data directory.
-         */
-        public static final String BATCH_UPDATE_URL = "batch.update.url";
-        /**
-         * The properties key for the path where the CVE H2 database will be
-         * stored.
-         */
-        public static final String CVE_DATA_DIRECTORY = "data.cve";
-        /**
          * The properties key for the URL to retrieve the "meta" data from about
          * the CVE entries.
          */
@@ -287,20 +277,13 @@ public final class Settings {
      */
     public static File getDataFile(String key) {
         final String file = getString(key);
-        final String baseDir = getString(Settings.KEYS.DATA_DIRECTORY);
-        if (baseDir != null) {
-            if (baseDir.startsWith("[JAR]/")) {
-                final File jarPath = getJarPath();
-                final File newBase = new File(jarPath, baseDir.substring(6));
-                if (Settings.KEYS.DATA_DIRECTORY.equals(key)) {
-                    return newBase;
-                }
-                return new File(newBase, file);
-            }
-            if (Settings.KEYS.DATA_DIRECTORY.equals(key)) {
-                return new File(baseDir);
-            }
-            return new File(baseDir, file);
+        if (file == null) {
+            return null;
+        }
+        if (file.startsWith("[JAR]/")) {
+            final File jarPath = getJarPath();
+            final File newBase = new File(jarPath, file.substring(6));
+            return new File(newBase, file);
         }
         return new File(file);
     }
