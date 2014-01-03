@@ -344,18 +344,6 @@ public class StandardUpdate {
     }
 
     /**
-     * Deletes the existing data directories.
-     *
-     * @throws IOException thrown if the directory cannot be deleted
-     */
-    protected void deleteExistingData() throws IOException {
-        File data = Settings.getDataFile(Settings.KEYS.CVE_DATA_DIRECTORY);
-        if (data.exists()) {
-            FileUtils.delete(data);
-        }
-    }
-
-    /**
      * Closes the CVE and CPE data stores.
      */
     protected void closeDataStores() {
