@@ -18,6 +18,7 @@
  */
 package org.owasp.dependencycheck.data.update;
 
+import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -45,27 +46,30 @@ public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
      * @param processor the processor service to submit the downloaded files to
      * @param cveDB the CVE DB to use to store the vulnerability data
      */
-    public CallableDownloadTask(NvdCveInfo nvdCveInfo, ExecutorService processor, CveDB cveDB, DataStoreMetaInfo properties) throws UpdateException {
+    public CallableDownloadTask(NvdCveInfo nvdCveInfo, ExecutorService processor, CveDB cveDB) {
+        this.nvdCveInfo = nvdCveInfo;
+        this.processorService = processor;
+        this.cveDB = cveDB;
+        this.properties = cveDB.getDatabaseProperties();
+
         final File file1;
         final File file2;
+
+
         try {
             file1 = File.createTempFile("cve" + nvdCveInfo.getId() + "_", ".xml");
             file2 = File.createTempFile("cve_1_2_" + nvdCveInfo.getId() + "_", ".xml");
         } catch (IOException ex) {
-            throw new UpdateException(ex);
+            return;
         }
-
-        this.nvdCveInfo = nvdCveInfo;
         this.first = file1;
         this.second = file2;
-        this.processorService = processor;
-        this.cveDB = cveDB;
-        this.properties = properties;
+
     }
     /**
      * The DataStoreMeta information.
      */
-    private DataStoreMetaInfo properties;
+    private DatabaseProperties properties;
     /**
      * The CVE DB to use when processing the files.
      */
@@ -170,15 +174,25 @@ public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
             final URL url2 = new URL(nvdCveInfo.getOldSchemaVersionUrl());
             String msg = String.format("Download Started for NVD CVE - %s", nvdCveInfo.getId());
             Logger.getLogger(CallableDownloadTask.class.getName()).log(Level.INFO, msg);
-            Downloader.fetchFile(url1, first);
-            Downloader.fetchFile(url2, second);
+            try {
+                Downloader.fetchFile(url1, first);
+                Downloader.fetchFile(url2, second);
+            } catch (DownloadFailedException ex) {
+                msg = String.format("Download Failed for NVD CVE - %s%nSome CVEs may not be reported.", nvdCveInfo.getId());
+                Logger.getLogger(CallableDownloadTask.class.getName()).log(Level.WARNING, msg);
+                Logger.getLogger(CallableDownloadTask.class.getName()).log(Level.FINE, null, ex);
+                return null;
+            }
+
             msg = String.format("Download Complete for NVD CVE - %s", nvdCveInfo.getId());
             Logger.getLogger(CallableDownloadTask.class.getName()).log(Level.INFO, msg);
 
             final ProcessTask task = new ProcessTask(cveDB, properties, this);
             return this.processorService.submit(task);
 
-        } catch (DownloadFailedException ex) {
+        } catch (Throwable ex) {
+            final String msg = String.format("An exception occured downloading NVD CVE - %s%nSome CVEs may not be reported.", nvdCveInfo.getId());
+            Logger.getLogger(CallableDownloadTask.class.getName()).log(Level.WARNING, msg);
             Logger.getLogger(CallableDownloadTask.class.getName()).log(Level.FINE, "Download Task Failed", ex);
         }
         return null;
