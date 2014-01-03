@@ -140,6 +140,12 @@ public class ProcessTask implements Callable<ProcessTask> {
         saxParser.parse(file, cve20Handler);
     }
 
+    /**
+     * Processes the NVD CVE XML file and imports the data into the DB.
+     *
+     * @throws UpdateException thrown if there is an error loading the data into
+     * the database
+     */
     private void processFiles() throws UpdateException {
         String msg = String.format("Processing Started for NVD CVE - %s", filePair.getNvdCveInfo().getId());
         Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO, msg);

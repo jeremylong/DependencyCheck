@@ -409,9 +409,10 @@ public class CveDB {
      */
     Properties getProperties() {
         final Properties prop = new Properties();
+        PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            final PreparedStatement ps = getConnection().prepareStatement(SELECT_PROPERTIES);
+            ps = getConnection().prepareStatement(SELECT_PROPERTIES);
             rs = ps.executeQuery();
             while (rs.next()) {
                 prop.setProperty(rs.getString(1), rs.getString(2));
@@ -421,6 +422,7 @@ public class CveDB {
             Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, msg);
             Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
         } finally {
+            DBUtils.closeStatement(ps);
             DBUtils.closeResultSet(rs);
         }
         return prop;

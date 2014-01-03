@@ -218,7 +218,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
         final String oneParent = one.getParent();
         final String twoParent = two.getParent();
         if (oneParent != null) {
-            if (twoParent != null && oneParent.equals(twoParent)) {
+            if (oneParent.equals(twoParent)) {
                 fileName1 = one.getName();
                 fileName2 = two.getName();
             } else {
