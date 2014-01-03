@@ -115,7 +115,7 @@ public class CPEAnalyzer implements Analyzer {
         try {
             cpe.open(cve);
         } catch (IndexException ex) {
-            Logger.getLogger(CPEAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CPEAnalyzer.class.getName()).log(Level.FINE, "IndexException", ex);
             throw new DatabaseException(ex);
         }
     }
