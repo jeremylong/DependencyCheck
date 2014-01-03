@@ -38,7 +38,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.owasp.dependencycheck.data.BaseDB;
+import org.owasp.dependencycheck.data.DBUtils;
 import org.owasp.dependencycheck.data.cwe.CweDB;
 import org.owasp.dependencycheck.dependency.Reference;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -52,7 +52,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class CveDB extends BaseDB {
+public class CveDB {
 
     /**
      * Resource location for SQL file used to create the database schema.
@@ -140,8 +140,8 @@ public class CveDB extends BaseDB {
                 conn.close();
             } catch (SQLException ex) {
                 final String msg = "There was an error attempting to close the CveDB, see the log for more details.";
-                Logger.getLogger(BaseDB.class.getName()).log(Level.SEVERE, msg);
-                Logger.getLogger(BaseDB.class.getName()).log(Level.FINE, null, ex);
+                Logger.getLogger(DBUtils.class.getName()).log(Level.SEVERE, msg);
+                Logger.getLogger(DBUtils.class.getName()).log(Level.FINE, null, ex);
             }
             conn = null;
         }
@@ -193,7 +193,7 @@ public class CveDB extends BaseDB {
                 statement = conn.createStatement();
                 statement.execute(sb.toString());
             } finally {
-                closeStatement(statement);
+                DBUtils.closeStatement(statement);
             }
         } catch (IOException ex) {
             throw new DatabaseException("Unable to create database schema", ex);
@@ -376,8 +376,8 @@ public class CveDB extends BaseDB {
             Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, "unexpected SQL Exception occured; please see the verbose log for more details.");
             Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
         } finally {
-            closeResultSet(rs);
-            closeStatement(ps);
+            DBUtils.closeResultSet(rs);
+            DBUtils.closeStatement(ps);
         }
         return cpe;
     }
@@ -417,7 +417,7 @@ public class CveDB extends BaseDB {
             Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, "unexpected SQL Exception occured; please see the verbose log for more details.");
             Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
         } finally {
-            closeResultSet(rs);
+            DBUtils.closeResultSet(rs);
         }
         return prop;
     }
@@ -456,8 +456,8 @@ public class CveDB extends BaseDB {
                 }
             }
         } finally {
-            closeStatement(updateProperty);
-            closeStatement(insertProperty);
+            DBUtils.closeStatement(updateProperty);
+            DBUtils.closeStatement(insertProperty);
         }
     }
 
@@ -499,8 +499,8 @@ public class CveDB extends BaseDB {
                 Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
             }
         } finally {
-            closeStatement(updateProperty);
-            closeStatement(insertProperty);
+            DBUtils.closeStatement(updateProperty);
+            DBUtils.closeStatement(insertProperty);
         }
     }
 
@@ -537,8 +537,8 @@ public class CveDB extends BaseDB {
                     cveEntries.add(cveId);
                 }
             }
-            closeResultSet(rs);
-            closeStatement(ps);
+            DBUtils.closeResultSet(rs);
+            DBUtils.closeStatement(ps);
             for (String cve : cveEntries) {
                 final Vulnerability v = getVulnerability(cve);
                 vulnerabilities.add(v);
@@ -547,7 +547,7 @@ public class CveDB extends BaseDB {
         } catch (SQLException ex) {
             throw new DatabaseException("Exception retrieving vulnerability for " + cpeStr, ex);
         } finally {
-            closeResultSet(rs);
+            DBUtils.closeResultSet(rs);
         }
         return vulnerabilities;
     }
@@ -614,12 +614,12 @@ public class CveDB extends BaseDB {
         } catch (SQLException ex) {
             throw new DatabaseException("Error retrieving " + cve, ex);
         } finally {
-            closeResultSet(rsV);
-            closeResultSet(rsR);
-            closeResultSet(rsS);
-            closeStatement(psV);
-            closeStatement(psR);
-            closeStatement(psS);
+            DBUtils.closeResultSet(rsV);
+            DBUtils.closeResultSet(rsR);
+            DBUtils.closeResultSet(rsS);
+            DBUtils.closeStatement(psV);
+            DBUtils.closeStatement(psR);
+            DBUtils.closeStatement(psS);
         }
         return vuln;
     }
@@ -665,7 +665,7 @@ public class CveDB extends BaseDB {
                 deleteSoftware.setInt(1, vulnerabilityId);
                 deleteSoftware.execute();
             }
-            closeResultSet(rs);
+            DBUtils.closeResultSet(rs);
             rs = null;
             if (vulnerabilityId != 0) {
                 if (vuln.getDescription().contains("** REJECT **")) {
@@ -704,7 +704,7 @@ public class CveDB extends BaseDB {
                     final String msg = String.format("Unable to retrieve id for new vulnerability for '%s'", vuln.getName());
                     throw new DatabaseException(msg, ex);
                 } finally {
-                    closeResultSet(rs);
+                    DBUtils.closeResultSet(rs);
                     rs = null;
                 }
             }
@@ -726,7 +726,7 @@ public class CveDB extends BaseDB {
                 } catch (SQLException ex) {
                     throw new DatabaseException("Unable to get primary key for new cpe: " + s.getName(), ex);
                 } finally {
-                    closeResultSet(rs);
+                    DBUtils.closeResultSet(rs);
                     rs = null;
                 }
 
@@ -735,7 +735,7 @@ public class CveDB extends BaseDB {
                     insertCpe.setString(2, s.getVendor());
                     insertCpe.setString(3, s.getProduct());
                     insertCpe.executeUpdate();
-                    cpeProductId = getGeneratedKey(insertCpe);
+                    cpeProductId = DBUtils.getGeneratedKey(insertCpe);
                 }
                 if (cpeProductId == 0) {
                     throw new DatabaseException("Unable to retrieve cpeProductId - no data returned");
@@ -756,16 +756,16 @@ public class CveDB extends BaseDB {
             Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
             throw new DatabaseException(msg, ex);
         } finally {
-            closeStatement(selectVulnerabilityId);
-            closeStatement(deleteReferences);
-            closeStatement(deleteSoftware);
-            closeStatement(updateVulnerability);
-            closeStatement(deleteVulnerability);
-            closeStatement(insertVulnerability);
-            closeStatement(insertReference);
-            closeStatement(selectCpeId);
-            closeStatement(insertCpe);
-            closeStatement(insertSoftware);
+            DBUtils.closeStatement(selectVulnerabilityId);
+            DBUtils.closeStatement(deleteReferences);
+            DBUtils.closeStatement(deleteSoftware);
+            DBUtils.closeStatement(updateVulnerability);
+            DBUtils.closeStatement(deleteVulnerability);
+            DBUtils.closeStatement(insertVulnerability);
+            DBUtils.closeStatement(insertReference);
+            DBUtils.closeStatement(selectCpeId);
+            DBUtils.closeStatement(insertCpe);
+            DBUtils.closeStatement(insertSoftware);
         }
     }
 
@@ -785,7 +785,7 @@ public class CveDB extends BaseDB {
             Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, "unexpected SQL Exception occured; please see the verbose log for more details.");
             Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
         } finally {
-            closeStatement(ps);
+            DBUtils.closeStatement(ps);
         }
     }
 
