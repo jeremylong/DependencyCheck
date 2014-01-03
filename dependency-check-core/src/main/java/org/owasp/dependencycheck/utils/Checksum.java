@@ -19,7 +19,13 @@ import java.util.logging.Logger;
  * @author Real's How To: http://www.rgagnon.com/javadetails/java-0416.html
  *
  */
-public class Checksum {
+public final class Checksum {
+
+    /**
+     * Private constructor for a utility class.
+     */
+    private Checksum() {
+    }
 
     /**
      * <p>Creates the cryptographic checksum of a given file using the specified
