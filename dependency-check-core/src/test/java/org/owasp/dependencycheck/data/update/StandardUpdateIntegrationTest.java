@@ -74,21 +74,6 @@ public class StandardUpdateIntegrationTest {
     }
 
     /**
-     * Test of deleteExistingData method, of class StandardUpdate.
-     */
-    @Test
-    public void testDeleteExistingData() throws Exception {
-        StandardUpdate instance = getStandardUpdateTask();
-        Exception result = null;
-        try {
-            instance.deleteExistingData();
-        } catch (IOException ex) {
-            result = ex;
-        }
-        assertNull(result);
-    }
-
-    /**
      * Test of openDataStores method, of class StandardUpdate.
      */
     @Test
