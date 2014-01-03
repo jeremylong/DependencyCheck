@@ -18,6 +18,7 @@
  */
 package org.owasp.dependencycheck.data.update;
 
+import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -79,9 +80,9 @@ public class ProcessTask implements Callable<ProcessTask> {
     /**
      * A reference to the properties.
      */
-    private final DataStoreMetaInfo properties;
+    private final DatabaseProperties properties;
 
-    public ProcessTask(final CveDB cveDB, final DataStoreMetaInfo properties, final CallableDownloadTask filePair) {
+    public ProcessTask(final CveDB cveDB, final DatabaseProperties properties, final CallableDownloadTask filePair) {
         this.cveDB = cveDB;
         this.filePair = filePair;
         this.properties = properties;
