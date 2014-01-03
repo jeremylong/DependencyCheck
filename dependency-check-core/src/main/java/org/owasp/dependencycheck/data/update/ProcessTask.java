@@ -34,8 +34,6 @@ import javax.xml.parsers.SAXParserFactory;
 import org.owasp.dependencycheck.data.UpdateException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
-import org.owasp.dependencycheck.data.nvdcve.NvdCve12Handler;
-import org.owasp.dependencycheck.data.nvdcve.NvdCve20Handler;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.xml.sax.SAXException;
 
