@@ -57,8 +57,8 @@ public class SettingsTest {
      */
     @Test
     public void testGetString() {
-        String key = Settings.KEYS.CVE_DATA_DIRECTORY;
-        String expResult = "cve";
+        String key = Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS;
+        String expResult = "7";
         String result = Settings.getString(key);
         Assert.assertTrue(result.endsWith(expResult));
     }
@@ -68,14 +68,10 @@ public class SettingsTest {
      */
     @Test
     public void testGetDataFile() throws IOException {
-        String key = Settings.KEYS.CVE_DATA_DIRECTORY;
-        String expResult = "data" + File.separator + "cve";
+        String key = Settings.KEYS.DATA_DIRECTORY;
+        String expResult = "data";
         File result = Settings.getDataFile(key);
         Assert.assertTrue(result.getAbsolutePath().endsWith(expResult));
-
-        result = Settings.getDataFile(Settings.KEYS.DATA_DIRECTORY);
-        String path = result.getPath();
-        Assert.assertTrue(path.endsWith("data") || path.endsWith("data" + File.separator));
     }
 
     /**
