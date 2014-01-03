@@ -107,13 +107,6 @@ public class NvdCveAnalyzer implements Analyzer {
                     final String value = id.getValue();
                     final List<Vulnerability> vulns = cveDB.getVulnerabilities(value);
                     dependency.getVulnerabilities().addAll(vulns);
-//TODO - remove this comment block after additional testing is completed
-//note - valid match functionality has been moved into the CveDB class.
-////                    for (Vulnerability v : vulns) {
-////                        if (isValidMatch(dependency, v)) {
-////                            dependency.addVulnerability(v);
-////                        }
-////                    }
                 } catch (DatabaseException ex) {
                     throw new AnalysisException(ex);
                 }
@@ -166,57 +159,4 @@ public class NvdCveAnalyzer implements Analyzer {
     public void initialize() throws Exception {
         this.open();
     }
-//TODO - remove this comment block after additional testing is completed
-// The following check has been moved into the CveDB class.
-////    /**
-////     * <p>Determines if this is a valid vulnerability match for the given
-////     * dependency. Specifically, this is concerned with ensuring the version
-////     * numbers are correct.</p>
-////     * <p>Currently, this is focused on the issues with the versions for Struts
-////     * 1 and Struts 2. In the future this will due better matching on more
-////     * version numbers.</p>
-////     *
-////     * @param dependency the dependency
-////     * @param v the vulnerability
-////     * @return returns true if the vulnerability is for the given dependency
-////     */
-////    private boolean isValidMatch(final Dependency dependency, final Vulnerability v) {
-////        //right now I only know of the issue with Struts1/2
-////        // start with fixing this problem.
-////
-////        //TODO extend this solution to do better version matching for the vulnerable software.
-////        boolean struts1 = false;
-////        boolean struts2 = false;
-////        for (Identifier i : dependency.getIdentifiers()) {
-////            if (i.getValue().startsWith("cpe:/a:apache:struts:")) {
-////                final char version = i.getValue().charAt(21);
-////                if (version == '1') {
-////                    struts1 = true;
-////                }
-////                if (version == '2') {
-////                    struts2 = true;
-////                }
-////            }
-////        }
-////        if (!struts1 && !struts2) {
-////            return true; //we are not looking at struts, so return true.
-////        }
-////        if (struts1 && struts2) {
-////            return true; //there is a mismatch here, but we can't solve it here so we return valid.
-////        }
-////        if (struts1) {
-////            boolean hasStruts1Vuln = false;
-////            boolean hasStruts2PreviousVersion = false;
-////            for (VulnerableSoftware vs : v.getVulnerableSoftware()) {
-////                //TODO FIX THIS
-////                //hasStruts2PreviousVersion |= vs.hasPreviousVersion() && vs.getName().charAt(21) == '2';
-////                //hasStruts1Vuln |= vs.getName().charAt(21) == '1';
-////            }
-////            if (!hasStruts1Vuln && hasStruts2PreviousVersion) {
-////                return false;
-////            }
-////        }
-////
-////        return true;
-////    }
 }
