@@ -492,10 +492,10 @@ public class DependencyCheckTask extends Task {
                 showSummary(engine.getDependencies());
             }
         } catch (IOException ex) {
-            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, null, ex);
+            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, "Unable to generate dependency-check report", ex);
             throw new BuildException("Unable to generate dependency-check report", ex);
         } catch (Exception ex) {
-            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, "An exception occured; unable to continue task", ex);
             throw new BuildException("An exception occured; unable to continue task", ex);
         }
     }
