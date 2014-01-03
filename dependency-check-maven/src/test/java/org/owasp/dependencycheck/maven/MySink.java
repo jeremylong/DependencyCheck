@@ -44,7 +44,8 @@ public class MySink implements Sink {
         try {
             out.write(tag);
         } catch (IOException ex) {
-            Logger.getLogger(MySink.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MySink.class.getName()).log(Level.SEVERE, "Error writing a tag; unable to generate the report");
+            Logger.getLogger(MySink.class.getName()).log(Level.FINE, null, ex);
         }
     }
 
@@ -393,7 +394,8 @@ public class MySink implements Sink {
             //TODO add HTML Encoding - or figure out how to get the doxia xhtmlsink to work.
             out.write(text);
         } catch (IOException ex) {
-            Logger.getLogger(MySink.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MySink.class.getName()).log(Level.SEVERE, "Error writing a text; unable to generate the report");
+            Logger.getLogger(MySink.class.getName()).log(Level.FINE, null, ex);
         }
     }
 
@@ -401,7 +403,8 @@ public class MySink implements Sink {
         try {
             out.write(text);
         } catch (IOException ex) {
-            Logger.getLogger(MySink.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MySink.class.getName()).log(Level.SEVERE, "Error writing raw text; unable to generate the report");
+            Logger.getLogger(MySink.class.getName()).log(Level.FINE, null, ex);
         }
     }
 
