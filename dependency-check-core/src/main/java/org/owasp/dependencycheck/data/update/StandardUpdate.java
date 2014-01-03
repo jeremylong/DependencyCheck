@@ -18,6 +18,7 @@
  */
 package org.owasp.dependencycheck.data.update;
 
+import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.data.nvdcve.InvalidDataException;
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +40,7 @@ import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
-import static org.owasp.dependencycheck.data.update.DataStoreMetaInfo.MODIFIED;
+import static org.owasp.dependencycheck.data.nvdcve.DatabaseProperties.MODIFIED;
 import org.owasp.dependencycheck.utils.FileUtils;
 
 /**
@@ -57,14 +58,14 @@ public class StandardUpdate {
      * Information about the timestamps and URLs for data that needs to be
      * updated.
      */
-    private DataStoreMetaInfo properties;
+    private DatabaseProperties properties;
     /**
      * A collection of updateable NVD CVE items.
      */
     private Updateable updateable;
     /**
      * A flag indicating whether or not the current data store should be
-     * deleted.
+     * deleted; this only occurs if the database schema has been updated.
      */
     private boolean deleteAndRecreate = false;
     /**
@@ -91,7 +92,8 @@ public class StandardUpdate {
     }
 
     /**
-     * Get the value of deleteAndRecreate.
+     * Get the value of deleteAndRecreate; this only returns true if the
+     * database schema has changed.
      *
      * @return the value of deleteAndRecreate
      */
@@ -109,7 +111,8 @@ public class StandardUpdate {
      * update task
      */
     public StandardUpdate() throws MalformedURLException, DownloadFailedException, UpdateException {
-        properties = new DataStoreMetaInfo();
+        openDataStores();
+        properties = cveDB.getDatabaseProperties();
         updateable = updatesNeeded();
     }
 
@@ -146,7 +149,7 @@ public class StandardUpdate {
             final Set<Future<Future<ProcessTask>>> downloadFutures = new HashSet<Future<Future<ProcessTask>>>(maxUpdates);
             for (NvdCveInfo cve : updateable) {
                 if (cve.getNeedsUpdate()) {
-                    final CallableDownloadTask call = new CallableDownloadTask(cve, processExecutor, cveDB, properties);
+                    final CallableDownloadTask call = new CallableDownloadTask(cve, processExecutor, cveDB);
                     downloadFutures.add(downloadExecutors.submit(call));
                 }
             }
@@ -209,104 +212,6 @@ public class StandardUpdate {
         }
     }
 
-    //<editor-fold defaultstate="collapsed" desc="OLD version of update() - not multithreaded">
-    /*
-     * TODO - remove this
-     public void update() throws UpdateException {
-     try {
-     int maxUpdates = 0;
-     for (NvdCveInfo cve : getUpdateable()) {
-     if (cve.getNeedsUpdate()) {
-     maxUpdates += 1;
-     }
-     }
-     if (maxUpdates > 3) {
-     Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO,
-     "NVD CVE requires several updates; this could take a couple of minutes.");
-     }
-     if (maxUpdates > 0) {
-     openDataStores();
-     }
-
-     int count = 0;
-     for (NvdCveInfo cve : getUpdateable()) {
-     if (cve.getNeedsUpdate()) {
-     count += 1;
-     Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO,
-     "Updating NVD CVE ({0} of {1})", new Object[]{count, maxUpdates});
-     URL url = new URL(cve.getUrl());
-     File outputPath = null;
-     File outputPath12 = null;
-     try {
-     Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO,
-     "Downloading {0}", cve.getUrl());
-     outputPath = File.createTempFile("cve" + cve.getId() + "_", ".xml");
-     Downloader.fetchFile(url, outputPath);
-
-     url = new URL(cve.getOldSchemaVersionUrl());
-     outputPath12 = File.createTempFile("cve_1_2_" + cve.getId() + "_", ".xml");
-     Downloader.fetchFile(url, outputPath12);
-
-     Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO,
-     "Processing {0}", cve.getUrl());
-
-     importXML(outputPath, outputPath12);
-
-     getCveDB().commit();
-     getProperties().save(cve);
-
-     Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO,
-     "Completed update {0} of {1}", new Object[]{count, maxUpdates});
-     } catch (FileNotFoundException ex) {
-     throw new UpdateException(ex);
-     } catch (ParserConfigurationException ex) {
-     throw new UpdateException(ex);
-     } catch (SAXException ex) {
-     throw new UpdateException(ex);
-     } catch (IOException ex) {
-     throw new UpdateException(ex);
-     } catch (SQLException ex) {
-     throw new UpdateException(ex);
-     } catch (DatabaseException ex) {
-     throw new UpdateException(ex);
-     } catch (ClassNotFoundException ex) {
-     throw new UpdateException(ex);
-     } finally {
-     boolean deleted = false;
-     try {
-     if (outputPath != null && outputPath.exists()) {
-     deleted = outputPath.delete();
-     }
-     } finally {
-     if (outputPath != null && (outputPath.exists() || !deleted)) {
-     outputPath.deleteOnExit();
-     }
-     }
-     try {
-     deleted = false;
-     if (outputPath12 != null && outputPath12.exists()) {
-     deleted = outputPath12.delete();
-     }
-     } finally {
-     if (outputPath12 != null && (outputPath12.exists() || !deleted)) {
-     outputPath12.deleteOnExit();
-     }
-     }
-     }
-     }
-     }
-     if (maxUpdates >= 1) { //ensure the modified file date gets written
-     getProperties().save(getUpdateable().get(MODIFIED));
-     getCveDB().cleanupDatabase();
-     }
-     } catch (MalformedURLException ex) {
-     throw new UpdateException(ex);
-     } finally {
-     closeDataStores();
-     }
-     }
-     */
-    //</editor-fold>
     /**
      * Determines if the index needs to be updated. This is done by fetching the
      * NVD CVE meta data and checking the last update date. If the data needs to
@@ -327,15 +232,11 @@ public class StandardUpdate {
             updates = retrieveCurrentTimestampsFromWeb();
         } catch (InvalidDataException ex) {
             final String msg = "Unable to retrieve valid timestamp from nvd cve downloads page";
-            Logger
-                    .getLogger(StandardUpdate.class
-                    .getName()).log(Level.FINE, msg, ex);
+            Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, msg, ex);
             throw new DownloadFailedException(msg, ex);
         } catch (InvalidSettingException ex) {
-            Logger.getLogger(StandardUpdate.class
-                    .getName()).log(Level.FINE, "Invalid setting found when retrieving timestamps", ex);
-            throw new DownloadFailedException(
-                    "Invalid settings", ex);
+            Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Invalid setting found when retrieving timestamps", ex);
+            throw new DownloadFailedException("Invalid settings", ex);
         }
 
         if (updates == null) {
@@ -363,7 +264,7 @@ public class StandardUpdate {
                     return updates;
                 }
 
-                final long lastUpdated = Long.parseLong(properties.getProperty(DataStoreMetaInfo.LAST_UPDATED, "0"));
+                final long lastUpdated = Long.parseLong(properties.getProperty(DatabaseProperties.LAST_UPDATED, "0"));
                 final Date now = new Date();
                 final int days = Settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS, 7);
                 if (lastUpdated == updates.getTimeStamp(MODIFIED)) {
@@ -383,10 +284,10 @@ public class StandardUpdate {
                         } else {
                             long currentTimestamp = 0;
                             try {
-                                currentTimestamp = Long.parseLong(properties.getProperty(DataStoreMetaInfo.LAST_UPDATED_BASE + entry.getId(), "0"));
+                                currentTimestamp = Long.parseLong(properties.getProperty(DatabaseProperties.LAST_UPDATED_BASE + entry.getId(), "0"));
                             } catch (NumberFormatException ex) {
                                 final String msg = String.format("Error parsing '%s' '%s' from nvdcve.lastupdated",
-                                        DataStoreMetaInfo.LAST_UPDATED_BASE, entry.getId());
+                                        DatabaseProperties.LAST_UPDATED_BASE, entry.getId());
                                 Logger
                                         .getLogger(StandardUpdate.class
                                         .getName()).log(Level.FINE, msg, ex);
@@ -452,10 +353,6 @@ public class StandardUpdate {
         if (data.exists()) {
             FileUtils.delete(data);
         }
-        data = DataStoreMetaInfo.getPropertiesFile();
-        if (data.exists()) {
-            FileUtils.delete(data);
-        }
     }
 
     /**
@@ -476,8 +373,10 @@ public class StandardUpdate {
      *
      * @throws UpdateException thrown if a data store cannot be opened
      */
-    protected void openDataStores() throws UpdateException {
-        //open the cve and cpe data stores
+    final protected void openDataStores() throws UpdateException {
+        if (cveDB != null) {
+            return;
+        }
         try {
             cveDB = new CveDB();
             cveDB.open();
@@ -514,5 +413,19 @@ public class StandardUpdate {
     protected boolean withinRange(long date, long compareTo, int range) {
         final double differenceInDays = (compareTo - date) / 1000.0 / 60.0 / 60.0 / 24.0;
         return differenceInDays < range;
+    }
+
+    /**
+     * Recreates the database tables, ensuring that old data
+     *
+     * @throws DatabaseException thrown if there is an exception creating the DB
+     * tables
+     */
+    void recreateTables() throws DatabaseException {
+        try {
+            cveDB.createTables();
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
     }
 }
