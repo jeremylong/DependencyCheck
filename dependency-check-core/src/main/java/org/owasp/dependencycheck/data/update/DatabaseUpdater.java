@@ -18,16 +18,13 @@
  */
 package org.owasp.dependencycheck.data.update;
 
-import java.io.File;
-import java.io.IOException;
 import org.owasp.dependencycheck.data.CachedWebDataSource;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.owasp.dependencycheck.data.UpdateException;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
-import org.owasp.dependencycheck.utils.FileUtils;
-import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * Class responsible for updating the CPE and NVDCVE data stores.
@@ -50,9 +47,10 @@ public class DatabaseUpdater implements CachedWebDataSource {
             if (task.isUpdateNeeded()) {
                 if (task.shouldDeleteAndRecreate()) {
                     try {
-                        deleteExistingData();
-                    } catch (IOException ex) {
-                        Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.WARNING, "Unable to delete the existing data directory");
+                        task.recreateTables();
+                    } catch (DatabaseException ex) {
+                        final String msg = "Unable to update the database schema";
+                        Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.SEVERE, msg);
                         Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINE, null, ex);
                     }
                 }
@@ -68,20 +66,16 @@ public class DatabaseUpdater implements CachedWebDataSource {
             Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINE, null, ex);
         }
     }
-
-    /**
-     * Deletes the existing data directories.
-     *
-     * @throws IOException thrown if the directory cannot be deleted
-     */
-    protected void deleteExistingData() throws IOException {
-        File data = Settings.getDataFile(Settings.KEYS.CVE_DATA_DIRECTORY);
-        if (data.exists()) {
-            FileUtils.delete(data);
-        }
-        data = DataStoreMetaInfo.getPropertiesFile();
-        if (data.exists()) {
-            FileUtils.delete(data);
-        }
-    }
+//
+//    /**
+//     * Deletes the existing data directories.
+//     *
+//     * @throws IOException thrown if the directory cannot be deleted
+//     */
+//    protected void deleteExistingData() throws IOException {
+//        File data = Settings.getDataFile(Settings.KEYS.CVE_DATA_DIRECTORY);
+//        if (data.exists()) {
+//            FileUtils.delete(data);
+//        }
+//    }
 }
