@@ -21,20 +21,20 @@ package org.owasp.dependencycheck.data;
 import org.owasp.dependencycheck.update.UpdateException;
 
 /**
- * Defines an Index who's data is retrieved from the Internet. This data can be
- * downloaded and the index updated.
+ * Defines a data source who's data is retrieved from the Internet. This data
+ * can be downloaded and the local cache updated.
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public interface CachedWebDataSource {
 
     /**
-     * Determines if an update to the current index is needed, if it is the new
-     * data is downloaded from the Internet and imported into the current Lucene
-     * Index.
+     * Determines if an update to the current data store is needed, if it is the
+     * new data is downloaded from the Internet and imported into the current
+     * cached data store.
      *
-     * @throws UpdateException is thrown if there is an exception updating the
-     * index.
+     * @throws UpdateException is thrown if there is an exception downloading
+     * the data or updating the data store.
      */
     void update() throws UpdateException;
 }
