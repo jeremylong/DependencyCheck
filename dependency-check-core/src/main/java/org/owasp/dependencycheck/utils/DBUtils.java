@@ -16,7 +16,7 @@
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data;
+package org.owasp.dependencycheck.utils;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
