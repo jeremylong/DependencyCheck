@@ -16,8 +16,9 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data;
+package org.owasp.dependencycheck.data.update;
 
+import org.owasp.dependencycheck.data.update.CachedWebDataSource;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
