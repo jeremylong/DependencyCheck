@@ -32,7 +32,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.owasp.dependencycheck.data.UpdateException;
+import org.owasp.dependencycheck.update.UpdateException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Settings;
@@ -59,7 +59,7 @@ public class StandardUpdate {
     /**
      * A collection of updateable NVD CVE items.
      */
-    private Updateable updateable;
+    private UpdateableNvdCve updateable;
     /**
      * A flag indicating whether or not the current data store should be
      * deleted; this only occurs if the database schema has been updated.
@@ -223,8 +223,8 @@ public class StandardUpdate {
      * @throws UpdateException Is thrown if there is an issue with the last
      * updated properties file
      */
-    protected final Updateable updatesNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
-        Updateable updates = null;
+    protected final UpdateableNvdCve updatesNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
+        UpdateableNvdCve updates = null;
         try {
             updates = retrieveCurrentTimestampsFromWeb();
         } catch (InvalidDataException ex) {
@@ -319,10 +319,10 @@ public class StandardUpdate {
      * timestamps
      * @throws InvalidSettingException thrown if the settings are invalid
      */
-    private Updateable retrieveCurrentTimestampsFromWeb()
+    private UpdateableNvdCve retrieveCurrentTimestampsFromWeb()
             throws MalformedURLException, DownloadFailedException, InvalidDataException, InvalidSettingException {
 
-        final Updateable updates = new Updateable();
+        final UpdateableNvdCve updates = new UpdateableNvdCve();
         updates.add(MODIFIED, Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL),
                 Settings.getString(Settings.KEYS.CVE_MODIFIED_12_URL),
                 false);

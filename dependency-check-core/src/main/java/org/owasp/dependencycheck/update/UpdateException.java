@@ -14,18 +14,18 @@
  * You should have received a copy of the GNU General Public License along with
  * dependency-check-core. If not, see http://www.gnu.org/licenses/.
  *
- * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data;
+package org.owasp.dependencycheck.update;
 
 import java.io.IOException;
 
 /**
- * An exception used when the data needed does not exist to perform analysis.
+ * An exception used when an error occurs reading a setting.
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class NoDataException extends IOException {
+public class UpdateException extends IOException {
 
     /**
      * The serial version uid.
@@ -33,37 +33,37 @@ public class NoDataException extends IOException {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Creates a new NoDataException.
+     * Creates a new UpdateException.
      */
-    public NoDataException() {
+    public UpdateException() {
         super();
     }
 
     /**
-     * Creates a new NoDataException.
+     * Creates a new UpdateException.
      *
      * @param msg a message for the exception.
      */
-    public NoDataException(String msg) {
+    public UpdateException(String msg) {
         super(msg);
     }
 
     /**
-     * Creates a new NoDataException.
+     * Creates a new UpdateException.
      *
-     * @param ex the cause of the exception.
+     * @param ex the cause of the update exception.
      */
-    public NoDataException(Throwable ex) {
+    public UpdateException(Throwable ex) {
         super(ex);
     }
 
     /**
-     * Creates a new NoDataException.
+     * Creates a new UpdateException.
      *
      * @param msg a message for the exception.
-     * @param ex the cause of the exception.
+     * @param ex the cause of the update exception.
      */
-    public NoDataException(String msg, Throwable ex) {
+    public UpdateException(String msg, Throwable ex) {
         super(msg, ex);
     }
 }

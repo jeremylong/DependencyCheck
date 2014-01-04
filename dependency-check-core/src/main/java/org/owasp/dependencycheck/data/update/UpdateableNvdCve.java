@@ -33,7 +33,7 @@ import org.owasp.dependencycheck.utils.Downloader;
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class Updateable implements java.lang.Iterable<NvdCveInfo>, Iterator<NvdCveInfo> {
+public class UpdateableNvdCve implements java.lang.Iterable<NvdCveInfo>, Iterator<NvdCveInfo> {
 
     /**
      * A collection of sources of data.

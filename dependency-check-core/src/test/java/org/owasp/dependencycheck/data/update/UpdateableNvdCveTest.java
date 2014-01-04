@@ -33,9 +33,9 @@ import org.owasp.dependencycheck.utils.DownloadFailedException;
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class UpdateableTest {
+public class UpdateableNvdCveTest {
 
-    public UpdateableTest() {
+    public UpdateableNvdCveTest() {
     }
 
     @BeforeClass
@@ -55,7 +55,7 @@ public class UpdateableTest {
     }
 
     /**
-     * Test of isUpdateNeeded method, of class Updateable.
+     * Test of isUpdateNeeded method, of class UpdateableNvdCve.
      */
     @Test
     public void testIsUpdateNeeded() throws MalformedURLException, DownloadFailedException, IOException {
@@ -63,7 +63,7 @@ public class UpdateableTest {
         //use a local file as this test will load the result and check the timestamp
         File f = new File("target/test-classes/nvdcve-2.0-2012.xml");
         String url = "file:///" + f.getCanonicalPath();
-        Updateable instance = new Updateable();
+        UpdateableNvdCve instance = new UpdateableNvdCve();
         instance.add(id, url, url, false);
 
         boolean expResult = false;
@@ -78,7 +78,7 @@ public class UpdateableTest {
     }
 
     /**
-     * Test of add method, of class Updateable.
+     * Test of add method, of class UpdateableNvdCve.
      */
     @Test
     public void testAdd_3args() throws Exception {
@@ -86,7 +86,7 @@ public class UpdateableTest {
         File f = new File("target/test-classes/nvdcve-2.0-2012.xml");
         //use a local file as this test will load the result and check the timestamp
         String url = "file:///" + f.getCanonicalPath();
-        Updateable instance = new Updateable();
+        UpdateableNvdCve instance = new UpdateableNvdCve();
         instance.add(id, url, url);
         NvdCveInfo results = instance.get(id);
         assertEquals(id, results.getId());
@@ -95,7 +95,7 @@ public class UpdateableTest {
     }
 
     /**
-     * Test of add method, of class Updateable.
+     * Test of add method, of class UpdateableNvdCve.
      */
     @Test
     public void testAdd_4args() throws Exception {
@@ -103,7 +103,7 @@ public class UpdateableTest {
         //use a local file as this test will load the result and check the timestamp
         File f = new File("target/test-classes/nvdcve-2.0-2012.xml");
         String url = "file:///" + f.getCanonicalPath();
-        Updateable instance = new Updateable();
+        UpdateableNvdCve instance = new UpdateableNvdCve();
         instance.add(id, url, url, false);
 
         boolean expResult = false;
@@ -120,7 +120,7 @@ public class UpdateableTest {
     }
 
     /**
-     * Test of clear method, of class Updateable.
+     * Test of clear method, of class UpdateableNvdCve.
      */
     @Test
     public void testClear() throws MalformedURLException, DownloadFailedException, IOException {
@@ -128,7 +128,7 @@ public class UpdateableTest {
         //use a local file as this test will load the result and check the timestamp
         File f = new File("target/test-classes/nvdcve-2.0-2012.xml");
         String url = "file:///" + f.getCanonicalPath();
-        Updateable instance = new Updateable();
+        UpdateableNvdCve instance = new UpdateableNvdCve();
         instance.add(id, url, url, false);
         assertFalse(instance.getCollection().isEmpty());
         instance.clear();
@@ -136,14 +136,14 @@ public class UpdateableTest {
     }
 
     /**
-     * Test of iterator method, of class Updateable.
+     * Test of iterator method, of class UpdateableNvdCve.
      */
     @Test
     public void testIterator() throws IOException {
         //use a local file as this test will load the result and check the timestamp
         File f = new File("target/test-classes/nvdcve-2.0-2012.xml");
         String url = "file:///" + f.getCanonicalPath();
-        Updateable instance = new Updateable();
+        UpdateableNvdCve instance = new UpdateableNvdCve();
         instance.add("one", url, url, false);
         instance.add("two", url, url, false);
         instance.add("three", url, url, false);
