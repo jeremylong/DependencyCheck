@@ -18,7 +18,6 @@
  */
 package org.owasp.dependencycheck.data.update;
 
-import org.owasp.dependencycheck.data.CachedWebDataSource;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
