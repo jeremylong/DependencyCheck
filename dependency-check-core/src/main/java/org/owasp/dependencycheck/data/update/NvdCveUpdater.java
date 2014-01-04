@@ -21,16 +21,15 @@ package org.owasp.dependencycheck.data.update;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.owasp.dependencycheck.update.UpdateException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 
 /**
- * Class responsible for updating the CPE and NVDCVE data stores.
+ * Class responsible for updating the NVD CVE and CPE data stores.
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class DatabaseUpdater implements CachedWebDataSource {
+public class NvdCveUpdater implements CachedWebDataSource {
 
     /**
      * <p>Downloads the latest NVD CVE XML file from the web and imports it into
@@ -49,20 +48,20 @@ public class DatabaseUpdater implements CachedWebDataSource {
                         task.recreateTables();
                     } catch (DatabaseException ex) {
                         final String msg = "Unable to update the database schema";
-                        Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.SEVERE, msg);
-                        Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINE, null, ex);
+                        Logger.getLogger(NvdCveUpdater.class.getName()).log(Level.SEVERE, msg);
+                        Logger.getLogger(NvdCveUpdater.class.getName()).log(Level.FINE, null, ex);
                     }
                 }
                 task.update();
             }
         } catch (MalformedURLException ex) {
-            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.WARNING,
+            Logger.getLogger(NvdCveUpdater.class.getName()).log(Level.WARNING,
                     "NVD CVE properties files contain an invalid URL, unable to update the data to use the most current data.");
-            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINE, null, ex);
+            Logger.getLogger(NvdCveUpdater.class.getName()).log(Level.FINE, null, ex);
         } catch (DownloadFailedException ex) {
-            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.WARNING,
+            Logger.getLogger(NvdCveUpdater.class.getName()).log(Level.WARNING,
                     "Unable to download the NVD CVE data, unable to update the data to use the most current data.");
-            Logger.getLogger(DatabaseUpdater.class.getName()).log(Level.FINE, null, ex);
+            Logger.getLogger(NvdCveUpdater.class.getName()).log(Level.FINE, null, ex);
         }
     }
 //

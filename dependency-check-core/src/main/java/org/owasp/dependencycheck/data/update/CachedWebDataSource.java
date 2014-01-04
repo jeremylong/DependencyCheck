@@ -18,8 +18,6 @@
  */
 package org.owasp.dependencycheck.data.update;
 
-import org.owasp.dependencycheck.update.UpdateException;
-
 /**
  * Defines a data source who's data is retrieved from the Internet. This data
  * can be downloaded and the local cache updated.

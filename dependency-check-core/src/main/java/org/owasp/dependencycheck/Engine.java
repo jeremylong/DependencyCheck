@@ -35,7 +35,7 @@ import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.AnalyzerService;
 import org.owasp.dependencycheck.data.update.CachedWebDataSource;
 import org.owasp.dependencycheck.exception.NoDataException;
-import org.owasp.dependencycheck.update.UpdateException;
+import org.owasp.dependencycheck.data.update.UpdateException;
 import org.owasp.dependencycheck.data.update.UpdateService;
 import org.owasp.dependencycheck.data.cpe.CpeMemoryIndex;
 import org.owasp.dependencycheck.data.cpe.IndexException;

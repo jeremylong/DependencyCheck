@@ -27,7 +27,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.owasp.dependencycheck.update.UpdateException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 
 /**

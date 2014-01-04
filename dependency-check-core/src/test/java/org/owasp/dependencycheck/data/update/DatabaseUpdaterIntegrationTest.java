@@ -51,11 +51,11 @@ public class DatabaseUpdaterIntegrationTest {
     }
 
     /**
-     * Test of update method, of class DatabaseUpdater.
+     * Test of update method, of class NvdCveUpdater.
      */
     @Test
     public void testUpdate() throws Exception {
-        DatabaseUpdater instance = new DatabaseUpdater();
+        NvdCveUpdater instance = new NvdCveUpdater();
         instance.update();
     }
 }
