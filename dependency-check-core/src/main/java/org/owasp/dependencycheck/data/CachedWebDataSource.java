@@ -18,6 +18,8 @@
  */
 package org.owasp.dependencycheck.data;
 
+import org.owasp.dependencycheck.update.UpdateException;
+
 /**
  * Defines an Index who's data is retrieved from the Internet. This data can be
  * downloaded and the index updated.

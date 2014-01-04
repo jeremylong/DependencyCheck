@@ -22,7 +22,7 @@ import org.owasp.dependencycheck.data.CachedWebDataSource;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.owasp.dependencycheck.data.UpdateException;
+import org.owasp.dependencycheck.update.UpdateException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 
