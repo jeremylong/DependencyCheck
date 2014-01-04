@@ -16,7 +16,7 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.update;
+package org.owasp.dependencycheck.data.update;
 
 import java.io.IOException;
 

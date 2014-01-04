@@ -19,7 +19,7 @@
 package org.owasp.dependencycheck.data.nvdcve;
 
 import java.util.Properties;
-import org.owasp.dependencycheck.update.UpdateException;
+import org.owasp.dependencycheck.data.update.UpdateException;
 import org.owasp.dependencycheck.data.update.NvdCveInfo;
 
 /**
