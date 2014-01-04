@@ -14,17 +14,10 @@
  * You should have received a copy of the GNU General Public License along with
  * dependency-check-core. If not, see http://www.gnu.org/licenses/.
  *
- * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.update;
 
-import org.owasp.dependencycheck.data.update.NvdCve12Handler;
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -36,17 +29,17 @@ import static org.junit.Assert.*;
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class NvdCve_1_2_HandlerTest {
+public class NvdCveUpdaterIntegrationTest {
 
-    public NvdCve_1_2_HandlerTest() {
+    public NvdCveUpdaterIntegrationTest() {
     }
 
     @BeforeClass
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
     }
 
     @AfterClass
-    public static void tearDownClass() throws Exception {
+    public static void tearDownClass() {
     }
 
     @Before
@@ -57,16 +50,12 @@ public class NvdCve_1_2_HandlerTest {
     public void tearDown() {
     }
 
+    /**
+     * Test of update method, of class NvdCveUpdater.
+     */
     @Test
-    public void testParse() throws Exception {
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        SAXParser saxParser = factory.newSAXParser();
-
-        File file = new File(this.getClass().getClassLoader().getResource("nvdcve-2012.xml").getPath());
-
-        NvdCve12Handler instance = new NvdCve12Handler();
-        saxParser.parse(file, instance);
-        Map<String, List<VulnerableSoftware>> results = instance.getVulnerabilities();
-        assertTrue("No vulnerable software identified with a previous version in 2012 CVE 1.2?", !results.isEmpty());
+    public void testUpdate() throws Exception {
+        NvdCveUpdater instance = new NvdCveUpdater();
+        instance.update();
     }
 }

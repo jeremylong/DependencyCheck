@@ -16,9 +16,9 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.update;
+package org.owasp.dependencycheck.data.update.xml;
 
-import org.owasp.dependencycheck.data.update.NvdCve20Handler;
+import org.owasp.dependencycheck.data.update.xml.NvdCve20Handler;
 import java.io.File;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
