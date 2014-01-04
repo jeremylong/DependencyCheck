@@ -18,6 +18,7 @@
  */
 package org.owasp.dependencycheck.data.update;
 
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Calendar;

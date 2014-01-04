@@ -16,8 +16,12 @@
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.update;
+package org.owasp.dependencycheck.data.update.task;
 
+import org.owasp.dependencycheck.data.update.task.CallableDownloadTask;
+import org.owasp.dependencycheck.data.update.xml.NvdCve20Handler;
+import org.owasp.dependencycheck.data.update.xml.NvdCve12Handler;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,6 +37,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.data.update.StandardUpdate;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.xml.sax.SAXException;
 

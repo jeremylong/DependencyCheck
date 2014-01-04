@@ -14,48 +14,39 @@
  * You should have received a copy of the GNU General Public License along with
  * dependency-check-core. If not, see http://www.gnu.org/licenses/.
  *
- * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.update;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+package org.owasp.dependencycheck.data.update.exception;
 
 /**
+ * An InvalidDataDataException is a generic exception used when trying to load
+ * the NVD CVE meta data.
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class DatabaseUpdaterIntegrationTest {
+public class InvalidDataException extends Exception {
 
-    public DatabaseUpdaterIntegrationTest() {
-    }
+    /**
+     * The serial version UID.
+     */
+    private static final long serialVersionUID = 1L;
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
+    /**
+     * Creates an InvalidDataException.
+     *
+     * @param msg the exception message
+     */
+    public InvalidDataException(String msg) {
+        super(msg);
     }
 
     /**
-     * Test of update method, of class NvdCveUpdater.
+     * Creates an InvalidDataException.
+     *
+     * @param msg the exception message
+     * @param ex the cause of the exception
      */
-    @Test
-    public void testUpdate() throws Exception {
-        NvdCveUpdater instance = new NvdCveUpdater();
-        instance.update();
+    public InvalidDataException(String msg, Exception ex) {
+        super(msg, ex);
     }
 }

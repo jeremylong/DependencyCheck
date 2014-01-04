@@ -18,6 +18,10 @@
  */
 package org.owasp.dependencycheck.data.update;
 
+import org.owasp.dependencycheck.data.update.task.ProcessTask;
+import org.owasp.dependencycheck.data.update.task.CallableDownloadTask;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.data.update.exception.InvalidDataException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import java.io.IOException;
 import java.net.MalformedURLException;

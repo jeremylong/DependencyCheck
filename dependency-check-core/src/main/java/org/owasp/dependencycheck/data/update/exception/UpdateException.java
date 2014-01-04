@@ -16,37 +16,54 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.update;
+package org.owasp.dependencycheck.data.update.exception;
+
+import java.io.IOException;
 
 /**
- * An InvalidDataDataException is a generic exception used when trying to load
- * the NVD CVE meta data.
+ * An exception used when an error occurs reading a setting.
  *
  * @author Jeremy Long (jeremy.long@owasp.org)
  */
-public class InvalidDataException extends Exception {
+public class UpdateException extends IOException {
 
     /**
-     * The serial version UID.
+     * The serial version uid.
      */
     private static final long serialVersionUID = 1L;
 
     /**
-     * Creates an InvalidDataException.
-     *
-     * @param msg the exception message
+     * Creates a new UpdateException.
      */
-    public InvalidDataException(String msg) {
+    public UpdateException() {
+        super();
+    }
+
+    /**
+     * Creates a new UpdateException.
+     *
+     * @param msg a message for the exception.
+     */
+    public UpdateException(String msg) {
         super(msg);
     }
 
     /**
-     * Creates an InvalidDataException.
+     * Creates a new UpdateException.
      *
-     * @param msg the exception message
-     * @param ex the cause of the exception
+     * @param ex the cause of the update exception.
      */
-    public InvalidDataException(String msg, Exception ex) {
+    public UpdateException(Throwable ex) {
+        super(ex);
+    }
+
+    /**
+     * Creates a new UpdateException.
+     *
+     * @param msg a message for the exception.
+     * @param ex the cause of the update exception.
+     */
+    public UpdateException(String msg, Throwable ex) {
         super(msg, ex);
     }
 }
