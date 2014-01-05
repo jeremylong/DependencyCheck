@@ -300,6 +300,12 @@ public class Engine {
 
         }
 
+        final String logHeader = String.format("%n"
+                + "----------------------------------------------------%n"
+                + "BEGIN ANALYSIS%n"
+                + "----------------------------------------------------");
+        Logger.getLogger(Engine.class.getName()).log(Level.FINE, logHeader);
+
         //phase one initialize
         for (AnalysisPhase phase : AnalysisPhase.values()) {
             final List<Analyzer> analyzerList = analyzers.get(phase);
@@ -335,9 +341,9 @@ public class Engine {
                 final Set<Dependency> dependencySet = new HashSet<Dependency>();
                 dependencySet.addAll(dependencies);
                 for (Dependency d : dependencySet) {
-                    final String msgFile = String.format("Begin Analysis of '%s'", d.getActualFilePath());
-                    Logger.getLogger(Engine.class.getName()).log(Level.FINE, msgFile);
                     if (a.supportsExtension(d.getFileExtension())) {
+                        final String msgFile = String.format("Begin Analysis of '%s'", d.getActualFilePath());
+                        Logger.getLogger(Engine.class.getName()).log(Level.FINE, msgFile);
                         try {
                             a.analyze(d, this);
                         } catch (AnalysisException ex) {
@@ -367,6 +373,12 @@ public class Engine {
                 }
             }
         }
+
+        final String logFooter = String.format("%n"
+                + "----------------------------------------------------%n"
+                + "END ANALYSIS%n"
+                + "----------------------------------------------------");
+        Logger.getLogger(Engine.class.getName()).log(Level.FINE, logFooter);
     }
 
     /**
