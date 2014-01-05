@@ -74,7 +74,7 @@ public class DirectorySpinLockTest {
             throw task.getException();
         }
         long timeElapsed = end - start;
-        assertTrue("no lock contention occured?", timeElapsed >= 5000);
+        assertTrue("no lock contention occurred?", timeElapsed >= 5000);
         //no exceptions means everything worked.
     }
 
