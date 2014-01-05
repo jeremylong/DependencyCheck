@@ -191,7 +191,7 @@ public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
             return this.processorService.submit(task);
 
         } catch (Throwable ex) {
-            final String msg = String.format("An exception occured downloading NVD CVE - %s%nSome CVEs may not be reported.", nvdCveInfo.getId());
+            final String msg = String.format("An exception occurred downloading NVD CVE - %s%nSome CVEs may not be reported.", nvdCveInfo.getId());
             Logger.getLogger(CallableDownloadTask.class.getName()).log(Level.WARNING, msg);
             Logger.getLogger(CallableDownloadTask.class.getName()).log(Level.FINE, "Download Task Failed", ex);
         }

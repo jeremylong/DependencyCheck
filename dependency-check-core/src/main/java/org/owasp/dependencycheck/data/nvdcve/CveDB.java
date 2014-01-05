@@ -374,7 +374,7 @@ public class CveDB {
                 cpe.add(vs);
             }
         } catch (SQLException ex) {
-            final String msg = "An unexpected SQL Exception occured; please see the verbose log for more details.";
+            final String msg = "An unexpected SQL Exception occurred; please see the verbose log for more details.";
             Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, msg);
             Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
         } finally {
@@ -395,7 +395,7 @@ public class CveDB {
             final PreparedStatement ps = getConnection().prepareStatement(SELECT_VENDOR_PRODUCT_LIST);
             rs = ps.executeQuery();
         } catch (SQLException ex) {
-            final String msg = "An unexpected SQL Exception occured; please see the verbose log for more details.";
+            final String msg = "An unexpected SQL Exception occurred; please see the verbose log for more details.";
             Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, msg);
             Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
         } // can't close the statement in the PS as the resultset is returned, closing PS would close the resultset
@@ -418,7 +418,7 @@ public class CveDB {
                 prop.setProperty(rs.getString(1), rs.getString(2));
             }
         } catch (SQLException ex) {
-            final String msg = "An unexpected SQL Exception occured; please see the verbose log for more details.";
+            final String msg = "An unexpected SQL Exception occurred; please see the verbose log for more details.";
             Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, msg);
             Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
         } finally {
@@ -788,7 +788,7 @@ public class CveDB {
                 ps.executeUpdate();
             }
         } catch (SQLException ex) {
-            final String msg = "An unexpected SQL Exception occured; please see the verbose log for more details.";
+            final String msg = "An unexpected SQL Exception occurred; please see the verbose log for more details.";
             Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, msg);
             Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
         } finally {
