@@ -144,11 +144,13 @@ public class CPEAnalyzer implements Analyzer {
      * @throws ParseException is thrown when the Lucene query cannot be parsed.
      */
     protected void determineCPE(Dependency dependency) throws CorruptIndexException, IOException, ParseException {
-        Confidence vendorConf = Confidence.HIGHEST;
-        Confidence productConf = Confidence.HIGHEST;
+        Confidence confidence = Confidence.HIGHEST;
 
-        String vendors = addEvidenceWithoutDuplicateTerms("", dependency.getVendorEvidence(), vendorConf);
-        String products = addEvidenceWithoutDuplicateTerms("", dependency.getProductEvidence(), productConf);
+        String vendors = addEvidenceWithoutDuplicateTerms("", dependency.getVendorEvidence(), confidence);
+        String products = addEvidenceWithoutDuplicateTerms("", dependency.getProductEvidence(), confidence);
+        /* bug fix for #40 - version evidence is not showing up as "used" in the reports if there is no
+         * CPE identified. As such, we are "using" the evidence and ignoring the results. */
+        addEvidenceWithoutDuplicateTerms("", dependency.getVersionEvidence(), confidence);
 
         int ctr = 0;
         do {
@@ -164,13 +166,17 @@ public class CPEAnalyzer implements Analyzer {
                     }
                 }
             }
-            vendorConf = reduceConfidence(vendorConf);
-            if (dependency.getVendorEvidence().contains(vendorConf)) {
-                vendors = addEvidenceWithoutDuplicateTerms(vendors, dependency.getVendorEvidence(), vendorConf);
+            confidence = reduceConfidence(confidence);
+            if (dependency.getVendorEvidence().contains(confidence)) {
+                vendors = addEvidenceWithoutDuplicateTerms(vendors, dependency.getVendorEvidence(), confidence);
             }
-            productConf = reduceConfidence(productConf);
-            if (dependency.getProductEvidence().contains(productConf)) {
-                products = addEvidenceWithoutDuplicateTerms(products, dependency.getProductEvidence(), productConf);
+            if (dependency.getProductEvidence().contains(confidence)) {
+                products = addEvidenceWithoutDuplicateTerms(products, dependency.getProductEvidence(), confidence);
+            }
+            /* bug fix for #40 - version evidence is not showing up as "used" in the reports if there is no
+             * CPE identified. As such, we are "using" the evidence and ignoring the results. */
+            if (dependency.getVersionEvidence().contains(confidence)) {
+                addEvidenceWithoutDuplicateTerms("", dependency.getVersionEvidence(), confidence);
             }
         } while ((++ctr) < 4);
     }
