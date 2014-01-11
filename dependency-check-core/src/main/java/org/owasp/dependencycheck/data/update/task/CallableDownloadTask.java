@@ -50,7 +50,6 @@ public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
         this.nvdCveInfo = nvdCveInfo;
         this.processorService = processor;
         this.cveDB = cveDB;
-        this.properties = cveDB.getDatabaseProperties();
 
         final File file1;
         final File file2;
@@ -66,10 +65,6 @@ public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
         this.second = file2;
 
     }
-    /**
-     * The DataStoreMeta information.
-     */
-    private DatabaseProperties properties;
     /**
      * The CVE DB to use when processing the files.
      */
