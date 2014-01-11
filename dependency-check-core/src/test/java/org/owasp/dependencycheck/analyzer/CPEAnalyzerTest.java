@@ -18,8 +18,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.owasp.dependencycheck.data.cpe.IndexEntry;
-import org.owasp.dependencycheck.analyzer.CPEAnalyzer;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
