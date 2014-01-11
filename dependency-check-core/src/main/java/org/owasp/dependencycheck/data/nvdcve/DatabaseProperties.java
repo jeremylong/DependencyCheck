@@ -91,9 +91,7 @@ public class DatabaseProperties {
         if (updatedValue == null) {
             return;
         }
-        properties.put("version", CveDB.DB_SCHEMA_VERSION);
         properties.put(LAST_UPDATED_BASE + updatedValue.getId(), String.valueOf(updatedValue.getTimestamp()));
-        cveDB.saveProperty("version", CveDB.DB_SCHEMA_VERSION);
         cveDB.saveProperty(LAST_UPDATED_BASE + updatedValue.getId(), String.valueOf(updatedValue.getTimestamp()));
     }
 
