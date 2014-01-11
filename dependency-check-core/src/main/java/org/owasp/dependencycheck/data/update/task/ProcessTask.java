@@ -18,7 +18,6 @@
  */
 package org.owasp.dependencycheck.data.update.task;
 
-import org.owasp.dependencycheck.data.update.task.CallableDownloadTask;
 import org.owasp.dependencycheck.data.update.xml.NvdCve20Handler;
 import org.owasp.dependencycheck.data.update.xml.NvdCve12Handler;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
