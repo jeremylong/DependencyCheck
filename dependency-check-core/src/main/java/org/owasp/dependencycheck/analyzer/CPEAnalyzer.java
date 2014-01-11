@@ -21,7 +21,6 @@ package org.owasp.dependencycheck.analyzer;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -101,16 +100,10 @@ public class CPEAnalyzer implements Analyzer {
      * usually occurs when the database is in use by another process.
      */
     public void open() throws IOException, DatabaseException {
+        Logger.getLogger(CPEAnalyzer.class.getName()).log(Level.FINE, "Opening the CVE Database");
         cve = new CveDB();
-        try {
-            cve.open();
-        } catch (SQLException ex) {
-            Logger.getLogger(CPEAnalyzer.class.getName()).log(Level.FINE, null, ex);
-            throw new DatabaseException("Unable to open the cve db", ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(CPEAnalyzer.class.getName()).log(Level.FINE, null, ex);
-            throw new DatabaseException("Unable to open the cve db", ex);
-        }
+        cve.open();
+        Logger.getLogger(CPEAnalyzer.class.getName()).log(Level.FINE, "Creating the Lucene CPE Index");
         cpe = CpeMemoryIndex.getInstance();
         try {
             cpe.open(cve);
