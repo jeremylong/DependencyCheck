@@ -18,14 +18,8 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,7 +39,6 @@ import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
-import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * The database holding information about the NVD CVE data.
@@ -54,14 +47,6 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 public class CveDB {
 
-    /**
-     * Resource location for SQL file used to create the database schema.
-     */
-    public static final String DB_STRUCTURE_RESOURCE = "data/initialize.sql";
-    /**
-     * The version of the current DB Schema.
-     */
-    public static final String DB_SCHEMA_VERSION = "2.8";
     /**
      * Database connection
      */
@@ -79,18 +64,8 @@ public class CveDB {
         try {
             open();
             databaseProperties = new DatabaseProperties(this);
-        } catch (IOException ex) {
-            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
-            throw new DatabaseException(ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
-            throw new DatabaseException(ex);
         } catch (DatabaseException ex) {
-            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
-            throw new DatabaseException(ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
-            throw new DatabaseException(ex);
+            throw ex;
         }
     }
 
@@ -107,27 +82,11 @@ public class CveDB {
      * Opens the database connection. If the database does not exist, it will
      * create a new one.
      *
-     * @throws IOException thrown if there is an IO Exception
-     * @throws SQLException thrown if there is a SQL Exception
-     * @throws DatabaseException thrown if there is an error initializing a new
-     * database
-     * @throws ClassNotFoundException thrown if the h2 database driver cannot be
-     * loaded
+     * @throws DatabaseException thrown if there is an error opening the
+     * database connection
      */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings(
-            value = "DMI_EMPTY_DB_PASSWORD",
-            justification = "Yes, I know... Blank password.")
-    public final void open() throws IOException, SQLException, DatabaseException, ClassNotFoundException {
-        final String fileName = CveDB.getDataDirectory().getCanonicalPath();
-        final File f = new File(fileName, "cve." + DB_SCHEMA_VERSION);
-        final File check = new File(f.getAbsolutePath() + ".h2.db");
-        final boolean createTables = !check.exists();
-        final String connStr = String.format("jdbc:h2:file:%s;AUTO_SERVER=TRUE", f.getAbsolutePath());
-        Class.forName("org.h2.Driver");
-        conn = DriverManager.getConnection(connStr, "sa", "");
-        if (createTables) {
-            createTables();
-        }
+    public final void open() throws DatabaseException {
+        conn = ConnectionFactory.getConnection();
     }
 
     /**
@@ -145,6 +104,15 @@ public class CveDB {
             }
             conn = null;
         }
+    }
+
+    /**
+     * Returns whether the database connection is open or closed.
+     *
+     * @return whether the database connection is open or closed
+     */
+    public boolean isOpen() {
+        return conn != null;
     }
 
     /**
@@ -166,65 +134,7 @@ public class CveDB {
     @Override
     protected void finalize() throws Throwable {
         close();
-        super.finalize(); //not necessary if extending Object.
-    }
-
-    /**
-     * Creates the database structure (tables and indexes) to store the CVE
-     * data.
-     *
-     * @throws SQLException thrown if there is a SQL Exception
-     * @throws DatabaseException thrown if there is a Database Exception
-     */
-    public void createTables() throws SQLException, DatabaseException {
-        InputStream is;
-        InputStreamReader reader;
-        BufferedReader in = null;
-        try {
-            is = this.getClass().getClassLoader().getResourceAsStream(DB_STRUCTURE_RESOURCE);
-            reader = new InputStreamReader(is, "UTF-8");
-            in = new BufferedReader(reader);
-            final StringBuilder sb = new StringBuilder(2110);
-            String tmp;
-            while ((tmp = in.readLine()) != null) {
-                sb.append(tmp);
-            }
-            Statement statement = null;
-            try {
-                statement = conn.createStatement();
-                statement.execute(sb.toString());
-            } finally {
-                DBUtils.closeStatement(statement);
-            }
-        } catch (IOException ex) {
-            throw new DatabaseException("Unable to create database schema", ex);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ex) {
-                    Logger.getLogger(CveDB.class
-                            .getName()).log(Level.FINEST, null, ex);
-                }
-            }
-        }
-    }
-
-    /**
-     * Retrieves the directory that the JAR file exists in so that we can ensure
-     * we always use a common data directory.
-     *
-     * @return the data directory for this index.
-     * @throws IOException is thrown if an IOException occurs of course...
-     */
-    public static File getDataDirectory() throws IOException {
-        final File path = Settings.getDataFile(Settings.KEYS.DATA_DIRECTORY);
-        if (!path.exists()) {
-            if (!path.mkdirs()) {
-                throw new IOException("Unable to create NVD CVE Data directory");
-            }
-        }
-        return path;
+        super.finalize();
     }
     /**
      * Database properties object containing the 'properties' from the database
