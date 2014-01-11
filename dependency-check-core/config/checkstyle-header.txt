@@ -14,6 +14,6 @@
 ^ \* You should have received a copy of the GNU General Public License along with\s*$
 ^ \* dependency-check-core\. If not, see http://www.gnu.org/licenses/\.\s*$
 ^ \*\s*$
-^ \* Copyright \(c\) 201[23] (Jeremy Long|Steve Springett)\. All Rights Reserved\.\s*$
+^ \* Copyright \(c\) 201[234] (Jeremy Long|Steve Springett)\. All Rights Reserved\.\s*$
 ^ \*/\s*$
 ^package
