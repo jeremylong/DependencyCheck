@@ -23,9 +23,7 @@ import org.owasp.dependencycheck.data.update.task.CallableDownloadTask;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.data.update.exception.InvalidDataException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -64,11 +62,6 @@ public class StandardUpdate {
      */
     private UpdateableNvdCve updateable;
     /**
-     * A flag indicating whether or not the current data store should be
-     * deleted; this only occurs if the database schema has been updated.
-     */
-    private boolean deleteAndRecreate = false;
-    /**
      * Reference to the Cve Database.
      */
     private CveDB cveDB = null;
@@ -80,25 +73,6 @@ public class StandardUpdate {
      */
     public boolean isUpdateNeeded() {
         return updateable.isUpdateNeeded();
-    }
-
-    /**
-     * Set the value of deleteAndRecreate.
-     *
-     * @param deleteAndRecreate new value of deleteAndRecreate
-     */
-    protected void setDeleteAndRecreate(boolean deleteAndRecreate) {
-        this.deleteAndRecreate = deleteAndRecreate;
-    }
-
-    /**
-     * Get the value of deleteAndRecreate; this only returns true if the
-     * database schema has changed.
-     *
-     * @return the value of deleteAndRecreate
-     */
-    public boolean shouldDeleteAndRecreate() {
-        return deleteAndRecreate;
     }
 
     /**
@@ -244,26 +218,6 @@ public class StandardUpdate {
         }
         if (!properties.isEmpty()) {
             try {
-                float version;
-
-                if (properties.getProperty("version") == null) {
-                    deleteAndRecreate = true;
-                } else {
-                    try {
-                        version = Float.parseFloat(properties.getProperty("version"));
-                        final float currentVersion = Float.parseFloat(CveDB.DB_SCHEMA_VERSION);
-                        if (currentVersion > version) {
-                            deleteAndRecreate = true;
-                        }
-                    } catch (NumberFormatException ex) {
-                        deleteAndRecreate = true;
-                    }
-                }
-
-                if (deleteAndRecreate) {
-                    return updates;
-                }
-
                 final long lastUpdated = Long.parseLong(properties.getProperty(DatabaseProperties.LAST_UPDATED, "0"));
                 final Date now = new Date();
                 final int days = Settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS, 7);
@@ -368,21 +322,9 @@ public class StandardUpdate {
         try {
             cveDB = new CveDB();
             cveDB.open();
-        } catch (IOException ex) {
-            closeDataStores();
-            Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "IO Error opening databases", ex);
-            throw new UpdateException("Error updating the CPE/CVE data, please see the log file for more details.");
-        } catch (SQLException ex) {
-            closeDataStores();
-            Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "SQL Exception opening databases", ex);
-            throw new UpdateException("Error updating the CPE/CVE data, please see the log file for more details.");
         } catch (DatabaseException ex) {
             closeDataStores();
             Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Database Exception opening databases", ex);
-            throw new UpdateException("Error updating the CPE/CVE data, please see the log file for more details.");
-        } catch (ClassNotFoundException ex) {
-            closeDataStores();
-            Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Class not found exception opening databases", ex);
             throw new UpdateException("Error updating the CPE/CVE data, please see the log file for more details.");
         }
     }
@@ -401,19 +343,5 @@ public class StandardUpdate {
     protected boolean withinRange(long date, long compareTo, int range) {
         final double differenceInDays = (compareTo - date) / 1000.0 / 60.0 / 60.0 / 24.0;
         return differenceInDays < range;
-    }
-
-    /**
-     * Recreates the database tables, ensuring that old data
-     *
-     * @throws DatabaseException thrown if there is an exception creating the DB
-     * tables
-     */
-    void recreateTables() throws DatabaseException {
-        try {
-            cveDB.createTables();
-        } catch (SQLException ex) {
-            throw new DatabaseException(ex);
-        }
     }
 }
