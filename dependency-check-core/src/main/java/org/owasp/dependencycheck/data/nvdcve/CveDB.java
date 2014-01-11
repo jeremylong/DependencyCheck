@@ -726,7 +726,7 @@ public class CveDB {
         boolean affected = false;
         final boolean isStruts = "apache".equals(vendor) && "struts".equals(product);
         final DependencyVersion v = parseDependencyVersion(cpeId);
-        final boolean prevAffected = previous == null ? false : !previous.isEmpty();
+        final boolean prevAffected = previous != null && !previous.isEmpty();
         if (identifiedVersion == null || "-".equals(identifiedVersion.toString())) {
             if (v == null || "-".equals(v.toString())) {
                 affected = true;

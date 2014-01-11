@@ -103,7 +103,7 @@ public final class DriverLoader {
         final URLClassLoader loader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
             @Override
             public URLClassLoader run() {
-                return new URLClassLoader(urls.toArray(new URL[0]), parent);
+                return new URLClassLoader(urls.toArray(new URL[urls.size()]), parent);
             }
         });
 
