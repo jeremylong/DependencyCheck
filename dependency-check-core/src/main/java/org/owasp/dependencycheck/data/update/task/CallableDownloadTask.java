@@ -18,7 +18,6 @@
  */
 package org.owasp.dependencycheck.data.update.task;
 
-import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;

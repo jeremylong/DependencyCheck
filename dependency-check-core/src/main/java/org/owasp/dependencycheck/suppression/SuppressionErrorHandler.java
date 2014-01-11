@@ -39,7 +39,7 @@ public class SuppressionErrorHandler implements ErrorHandler {
      */
     private String getPrettyParseExceptionInfo(SAXParseException ex) {
 
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         if (ex.getSystemId() != null) {
             sb.append("systemId=").append(ex.getSystemId()).append(", ");

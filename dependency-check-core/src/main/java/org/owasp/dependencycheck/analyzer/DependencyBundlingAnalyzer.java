@@ -286,10 +286,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
         final File rFile = new File(dependency2.getFilePath());
         String right = rFile.getParent();
         if (left == null) {
-            if (right == null) {
-                return true;
-            }
-            return false;
+            return right == null;
         }
         if (left.equalsIgnoreCase(right)) {
             return true;
@@ -322,17 +319,13 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             /*
              * considered splitting the names up and comparing the components,
              * but decided that the file name length should be sufficient as the
-             * "core" component, if this follows a normal namming protocol should
+             * "core" component, if this follows a normal naming protocol should
              * be shorter:
              * axis2-saaj-1.4.1.jar
              * axis2-1.4.1.jar       <-----
              * axis2-kernal-1.4.1.jar
              */
-            if (leftName.length() > rightName.length()) {
-                returnVal = false;
-            } else {
-                returnVal = true;
-            }
+            returnVal = leftName.length() <= rightName.length();
         }
         if (LogUtils.isVerboseLoggingEnabled()) {
             final String msg = String.format("IsCore=%s (%s, %s)", returnVal, left.getFileName(), right.getFileName());

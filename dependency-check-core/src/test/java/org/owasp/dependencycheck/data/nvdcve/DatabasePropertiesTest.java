@@ -19,7 +19,6 @@
 package org.owasp.dependencycheck.data.nvdcve;
 
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
-import java.io.File;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

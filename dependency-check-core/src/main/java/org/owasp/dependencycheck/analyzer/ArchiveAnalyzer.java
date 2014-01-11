@@ -74,7 +74,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
      * Tracks the current scan/extraction depth for nested archives.
      */
     private int scanDepth = 0;
-    //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
+    //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
      * The name of the analyzer.
      */

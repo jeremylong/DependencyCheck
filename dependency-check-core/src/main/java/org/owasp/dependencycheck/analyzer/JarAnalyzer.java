@@ -342,7 +342,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * @return returns a
      * @throws AnalysisException is thrown if there is an exception extracting
      * or parsing the POM
-     * {@link org.owasp.dependencycheck.analyzer.pom.generated.Model} object
+     * {@link org.owasp.dependencycheck.jaxb.pom.generated.Model} object
      */
     private Model retrievePom(String path, JarFile jar) throws AnalysisException {
         final ZipEntry entry = jar.getEntry(path);

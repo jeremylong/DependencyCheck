@@ -5,24 +5,17 @@
 package org.owasp.dependencycheck.data.lucene;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.io.StringReader;
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.BaseTokenStreamTestCase;
-import static org.apache.lucene.analysis.BaseTokenStreamTestCase.assertAnalyzesTo;
-import static org.apache.lucene.analysis.BaseTokenStreamTestCase.assertTokenStreamContents;
-import static org.apache.lucene.analysis.BaseTokenStreamTestCase.checkOneTerm;
-import org.apache.lucene.analysis.MockTokenizer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
-import org.apache.lucene.analysis.tokenattributes.TypeAttributeImpl;
-import org.apache.lucene.util.Version;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.apache.lucene.analysis.BaseTokenStreamTestCase.assertTokenStreamContents;
 import static org.junit.Assert.*;
 
 /**

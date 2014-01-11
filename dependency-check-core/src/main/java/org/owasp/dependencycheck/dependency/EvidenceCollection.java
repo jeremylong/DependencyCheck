@@ -89,7 +89,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
      *
      * @param confidence the confidence level for the evidence to be iterated
      * over.
-     * @return Iterable<Evidence> an iterable collectoin of evidence
+     * @return Iterable<Evidence> an iterable collection of evidence
      */
     public final Iterable<Evidence> iterator(Evidence.Confidence confidence) {
         if (confidence == Evidence.Confidence.HIGHEST) {
