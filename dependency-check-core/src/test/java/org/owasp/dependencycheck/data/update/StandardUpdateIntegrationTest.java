@@ -61,19 +61,6 @@ public class StandardUpdateIntegrationTest {
     }
 
     /**
-     * Test of setDeleteAndRecreate method, of class StandardUpdate.
-     */
-    @Test
-    public void testSetDeleteAndRecreate() throws Exception {
-        boolean deleteAndRecreate = false;
-        boolean expResult = false;
-        StandardUpdate instance = getStandardUpdateTask();
-        instance.setDeleteAndRecreate(deleteAndRecreate);
-        boolean result = instance.shouldDeleteAndRecreate();
-        assertEquals(expResult, result);
-    }
-
-    /**
      * Test of openDataStores method, of class StandardUpdate.
      */
     @Test
