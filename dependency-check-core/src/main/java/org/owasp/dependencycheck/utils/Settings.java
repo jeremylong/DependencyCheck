@@ -57,14 +57,27 @@ public final class Settings {
          * The database driver class name. If this is not in the properties file
          * the embedded database is used.
          */
-        public static final String DB_DRIVER = "database.drive";
+        public static final String DB_DRIVER_NAME = "data.driver_name";
+        /**
+         * The database driver class name. If this is not in the properties file
+         * the embedded database is used.
+         */
+        public static final String DB_DRIVER_PATH = "data.driver_path";
         /**
          * The database connection string. If this is not in the properties file
          * the embedded database is used.
          */
-        public static final String DB_CONNECTION_STRING = "database.connectionstring";
+        public static final String DB_CONNECTION_STRING = "data.connection_string";
         /**
-         * The base path to use for the data directory.
+         * The username to use when connecting to the database.
+         */
+        public static final String DB_USER = "data.user";
+        /**
+         * The password to authenticate to the database.
+         */
+        public static final String DB_PASSWORD = "data.password";
+        /**
+         * The base path to use for the data directory (for embedded db).
          */
         public static final String DATA_DIRECTORY = "data.directory";
         /**
