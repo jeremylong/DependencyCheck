@@ -77,6 +77,9 @@ along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
             </testResource>
             <testResource>
                 <directory>${basedir}/src/test/resources</directory>
+                <excludes>
+                    <exclude>**/mysql-connector-java-5.1.27-bin.jar</exclude>
+                </excludes>
                 <filtering>false</filtering>
             </testResource>
         </testResources>
