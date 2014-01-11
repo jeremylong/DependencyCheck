@@ -20,8 +20,6 @@ package org.owasp.dependencycheck;
 
 import java.util.EnumMap;
 import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -455,13 +453,7 @@ public class Engine {
             cpe.open(cve);
         } catch (IndexException ex) {
             throw new NoDataException(ex.getMessage(), ex);
-        } catch (IOException ex) {
-            throw new NoDataException(ex.getMessage(), ex);
-        } catch (SQLException ex) {
-            throw new NoDataException(ex.getMessage(), ex);
         } catch (DatabaseException ex) {
-            throw new NoDataException(ex.getMessage(), ex);
-        } catch (ClassNotFoundException ex) {
             throw new NoDataException(ex.getMessage(), ex);
         } finally {
             cve.close();
