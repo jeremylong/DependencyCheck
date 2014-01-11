@@ -25,11 +25,6 @@ along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
     <version>1.0.8-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
     <modules>
         <module>dependency-check-core</module>
         <module>dependency-check-cli</module>
