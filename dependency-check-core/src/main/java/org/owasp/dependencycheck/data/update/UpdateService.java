@@ -18,7 +18,6 @@
  */
 package org.owasp.dependencycheck.data.update;
 
-import org.owasp.dependencycheck.data.update.CachedWebDataSource;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
