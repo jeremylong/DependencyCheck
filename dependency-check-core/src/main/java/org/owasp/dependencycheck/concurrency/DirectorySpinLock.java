@@ -38,7 +38,7 @@ import java.util.logging.Logger;
  * the process will "spin" waiting for an opportunity to obtain the lock
  * requested.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class DirectorySpinLock implements Closeable /*, AutoCloseable*/ {
 

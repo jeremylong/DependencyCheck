@@ -23,7 +23,7 @@ import java.io.IOException;
 /**
  * An exception used when an error occurs reading a setting.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class UpdateException extends IOException {
 

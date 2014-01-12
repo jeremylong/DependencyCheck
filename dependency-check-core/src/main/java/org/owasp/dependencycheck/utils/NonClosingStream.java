@@ -26,7 +26,7 @@ import java.io.InputStream;
  * processes the stream from closing it. This is necessary when dealing with
  * things like JAXB and zipInputStreams.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class NonClosingStream extends FilterInputStream {
 

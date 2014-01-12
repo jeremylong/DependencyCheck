@@ -27,7 +27,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
  * An analyzer will collect information about the dependency in the form of
  * Evidence.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public interface Analyzer {
 

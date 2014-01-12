@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * TODO - figure out how to get the test harness to work. ATM no tests are
  * running.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class DependencyCheckMojoTest extends AbstractMojoTestCase {
 

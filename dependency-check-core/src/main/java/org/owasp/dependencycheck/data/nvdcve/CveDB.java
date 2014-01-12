@@ -43,7 +43,7 @@ import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 /**
  * The database holding information about the NVD CVE data.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class CveDB {
 

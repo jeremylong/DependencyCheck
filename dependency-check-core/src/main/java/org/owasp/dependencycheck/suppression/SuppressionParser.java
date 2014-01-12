@@ -38,7 +38,7 @@ import org.xml.sax.XMLReader;
 /**
  * A simple validating parser for XML Suppression Rules.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class SuppressionParser {
 

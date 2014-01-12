@@ -27,7 +27,7 @@ import org.owasp.dependencycheck.utils.DownloadFailedException;
 /**
  * Class responsible for updating the NVD CVE and CPE data stores.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class NvdCveUpdater implements CachedWebDataSource {
 

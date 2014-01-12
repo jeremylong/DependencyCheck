@@ -23,7 +23,7 @@ import java.io.IOException;
 /**
  * An exception used when a download fails.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class DownloadFailedException extends IOException {
 

@@ -20,7 +20,7 @@ package org.owasp.dependencycheck.dependency;
 
 /**
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class Identifier implements Comparable<Identifier> {
 

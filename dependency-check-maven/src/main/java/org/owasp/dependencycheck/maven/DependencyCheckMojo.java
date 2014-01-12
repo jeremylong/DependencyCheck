@@ -60,7 +60,7 @@ import org.owasp.dependencycheck.utils.Settings;
  * Maven Plugin that checks project dependencies to see if they have any known
  * published vulnerabilities.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 @Mojo(name = "check", defaultPhase = LifecyclePhase.COMPILE, threadSafe = true,
         requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM,

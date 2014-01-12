@@ -30,7 +30,7 @@ import org.apache.lucene.util.Version;
  * SearchVersionAnalyzer is a Lucene Analyzer used to analyze version
  * information.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  * @deprecated version information is no longer stored in lucene
  */
 @Deprecated

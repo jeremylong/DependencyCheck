@@ -21,7 +21,7 @@ package org.owasp.dependencycheck.dependency;
 /**
  * Evidence is a piece of information about a Dependency.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class Evidence implements Comparable<Evidence> {
 

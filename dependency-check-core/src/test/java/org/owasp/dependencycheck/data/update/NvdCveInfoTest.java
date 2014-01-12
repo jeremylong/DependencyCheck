@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
 /**
  * Rigorous test of setters/getters.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class NvdCveInfoTest {
 

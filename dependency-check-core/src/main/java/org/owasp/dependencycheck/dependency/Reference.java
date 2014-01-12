@@ -24,7 +24,7 @@ import java.io.Serializable;
  * An external reference for a vulnerability. This contains a name, URL, and a
  * source.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class Reference implements Serializable, Comparable<Reference> {
 

@@ -44,7 +44,7 @@ import org.owasp.dependencycheck.utils.Settings;
 /**
  * An Ant task definition to execute dependency-check during an Ant build.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class DependencyCheckTask extends Task {
 

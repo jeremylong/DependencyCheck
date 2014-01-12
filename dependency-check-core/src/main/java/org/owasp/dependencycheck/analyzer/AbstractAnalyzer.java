@@ -24,7 +24,7 @@ import java.util.Set;
 
 /**
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public abstract class AbstractAnalyzer implements Analyzer {
 

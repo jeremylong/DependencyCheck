@@ -22,7 +22,7 @@ package org.owasp.dependencycheck.data.nvdcve;
  * An exception used to indicate the db4o database is corrupt. This could be due
  * to invalid data or a complete failure of the db.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 class CorruptDatabaseException extends DatabaseException {
 

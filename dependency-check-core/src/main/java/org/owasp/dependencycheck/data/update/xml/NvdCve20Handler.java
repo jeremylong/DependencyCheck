@@ -37,7 +37,7 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * A SAX Handler that will parse the NVD CVE XML (schema version 2.0).
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class NvdCve20Handler extends DefaultHandler {
 

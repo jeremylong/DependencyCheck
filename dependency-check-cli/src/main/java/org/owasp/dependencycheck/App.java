@@ -52,7 +52,7 @@ import org.owasp.dependencycheck.utils.Settings;
 /**
  * The command line interface for the DependencyCheck application.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class App {
 

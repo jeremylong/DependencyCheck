@@ -35,7 +35,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * schema and is useful to ensure accurate identification (or at least
  * complete).
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class NvdCve12Handler extends DefaultHandler {
 

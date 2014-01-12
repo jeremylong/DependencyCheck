@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  * Used to load a JAR file and collect information that can be used to determine
  * the associated CPE.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class JavaScriptAnalyzer extends AbstractAnalyzer implements Analyzer {
 

@@ -40,7 +40,7 @@ import org.owasp.dependencycheck.utils.Settings;
  * database file exists and that the appropriate table structure has been
  * created.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class ConnectionFactory {
 

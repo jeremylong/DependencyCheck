@@ -29,7 +29,7 @@ import org.apache.maven.doxia.sink.SinkEventAttributes;
 
 /**
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class MySink implements Sink {
 

@@ -29,7 +29,7 @@ import org.junit.Assert;
 
 /**
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class IndexEntryTest extends TestCase {
 

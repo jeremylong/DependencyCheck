@@ -21,7 +21,7 @@ package org.owasp.dependencycheck.concurrency;
 /**
  * If thrown, indicates that there is a problem with a directory.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class InvalidDirectoryException extends Exception {
 

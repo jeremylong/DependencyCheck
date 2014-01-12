@@ -30,7 +30,7 @@ import org.owasp.dependencycheck.data.update.NvdCveInfo;
 
 /**
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class DatabasePropertiesTest {
 

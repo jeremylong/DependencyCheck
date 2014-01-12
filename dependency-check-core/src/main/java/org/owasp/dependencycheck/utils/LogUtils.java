@@ -29,7 +29,7 @@ import java.util.logging.SimpleFormatter;
 /**
  * A utility class to aide in the setup of the logging mechanism.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class LogUtils {
 

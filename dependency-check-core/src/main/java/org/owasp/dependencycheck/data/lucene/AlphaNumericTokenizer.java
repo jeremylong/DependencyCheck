@@ -26,7 +26,7 @@ import org.apache.lucene.util.Version;
  * Tokenizes the input breaking it into tokens when non-alpha/numeric characters
  * are found.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class AlphaNumericTokenizer extends CharTokenizer {
 

@@ -21,7 +21,7 @@ package org.owasp.dependencycheck.data.nvdcve;
 /**
  * An exception thrown the database driver is unable to be loaded.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class DriverLoadException extends Exception {
 

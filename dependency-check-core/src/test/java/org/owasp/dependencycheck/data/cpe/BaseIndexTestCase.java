@@ -27,7 +27,7 @@ import org.owasp.dependencycheck.data.nvdcve.BaseDBTestCase;
 
 /**
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public abstract class BaseIndexTestCase extends TestCase {
 
