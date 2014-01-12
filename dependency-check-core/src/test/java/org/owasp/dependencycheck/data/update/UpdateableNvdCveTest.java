@@ -136,7 +136,7 @@ public class UpdateableNvdCveTest {
     }
 
     /**
-     * Test of iterator method, of class UpdateableNvdCve.
+     * Test of iterator method, of class UpdatableNvdCve.
      */
     @Test
     public void testIterator() throws IOException {

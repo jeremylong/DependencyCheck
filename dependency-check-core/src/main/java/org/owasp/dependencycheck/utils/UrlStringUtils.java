@@ -67,7 +67,7 @@ public final class UrlStringUtils {
         return IS_URL_TEST.matcher(text).matches();
     }
     /**
-     * A listing of domain parts that shold not be used as evidence. Yes, this
+     * A listing of domain parts that should not be used as evidence. Yes, this
      * is an incomplete list.
      */
     private static final HashSet<String> IGNORE_LIST = new HashSet<String>(
