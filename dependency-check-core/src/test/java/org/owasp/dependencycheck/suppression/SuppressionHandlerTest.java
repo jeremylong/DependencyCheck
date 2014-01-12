@@ -28,10 +28,10 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -61,7 +61,7 @@ public class SuppressionHandlerTest {
     }
 
     /**
-     * Test of getSupressionRules method, of class SuppressionHandler.
+     * Test of getSuppressionRules method, of class SuppressionHandler.
      *
      * @throws Exception thrown if there is an exception....
      */
@@ -89,7 +89,7 @@ public class SuppressionHandlerTest {
 
         xmlReader.parse(in);
 
-        List result = handler.getSupressionRules();
+        List result = handler.getSuppressionRules();
         assertTrue(result.size() > 3);
     }
 }

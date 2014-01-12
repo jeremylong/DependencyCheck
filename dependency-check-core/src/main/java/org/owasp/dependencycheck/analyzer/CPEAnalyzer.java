@@ -434,8 +434,10 @@ public class CPEAnalyzer implements Analyzer {
         final List<String> list = new ArrayList<String>();
         String tempWord = null;
         for (String word : words) {
-            //single letter words should be concatonated with the next word.
-            // so { "m", "core", "sample" } -> { "mcore", "sample" }
+            /*
+            single letter words should be concatenated with the next word.
+            so { "m", "core", "sample" } -> { "mcore", "sample" }
+            */
             if (tempWord != null) {
                 list.add(tempWord + word);
                 tempWord = null;
@@ -560,7 +562,7 @@ public class CPEAnalyzer implements Analyzer {
                         dbVer = DependencyVersionUtil.parseVersion(vs.getVersion());
                     }
                     if (dbVer == null //special case, no version specified - everything is vulnerable
-                            || evVer.equals(dbVer)) { //woot exect match
+                            || evVer.equals(dbVer)) { //yeah! exact match
                         final String url = String.format("http://web.nvd.nist.gov/view/vuln/search?cpe=%s", URLEncoder.encode(vs.getName(), "UTF-8"));
                         final IdentifierMatch match = new IdentifierMatch("cpe", vs.getName(), url, IdentifierConfidence.EXACT_MATCH, conf);
                         collected.add(match);
@@ -626,7 +628,7 @@ public class CPEAnalyzer implements Analyzer {
     private static class IdentifierMatch implements Comparable<IdentifierMatch> {
 
         /**
-         * Constructs an IdentiferMatch.
+         * Constructs an IdentifierMatch.
          *
          * @param type the type of identifier (such as CPE)
          * @param value the value of the identifier

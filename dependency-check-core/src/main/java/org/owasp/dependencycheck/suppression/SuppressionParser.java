@@ -43,24 +43,20 @@ import org.xml.sax.XMLReader;
 public class SuppressionParser {
 
     /**
-     * JAXP Schema Language. Source:
-     * http://docs.oracle.com/javase/tutorial/jaxp/sax/validation.html
+     * JAXP Schema Language. Source: http://docs.oracle.com/javase/tutorial/jaxp/sax/validation.html
      */
     public static final String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
     /**
-     * W3C XML Schema. Source:
-     * http://docs.oracle.com/javase/tutorial/jaxp/sax/validation.html
+     * W3C XML Schema. Source: http://docs.oracle.com/javase/tutorial/jaxp/sax/validation.html
      */
     public static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
     /**
-     * JAXP Schema Source. Source:
-     * http://docs.oracle.com/javase/tutorial/jaxp/sax/validation.html
+     * JAXP Schema Source. Source: http://docs.oracle.com/javase/tutorial/jaxp/sax/validation.html
      */
     public static final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
 
     /**
-     * Parses the given xml file and returns a list of the suppression rules
-     * contained.
+     * Parses the given xml file and returns a list of the suppression rules contained.
      *
      * @param file an xml file containing suppression rules
      * @return a list of suppression rules
@@ -88,8 +84,7 @@ public class SuppressionParser {
 
             xmlReader.parse(in);
 
-
-            return handler.getSupressionRules();
+            return handler.getSuppressionRules();
         } catch (ParserConfigurationException ex) {
             Logger.getLogger(SuppressionParser.class.getName()).log(Level.FINE, null, ex);
             throw new SuppressionParseException(ex);

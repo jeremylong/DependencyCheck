@@ -62,15 +62,15 @@ public class SuppressionHandler extends DefaultHandler {
     /**
      * A list of suppression rules.
      */
-    private List<SuppressionRule> supressionRules = new ArrayList<SuppressionRule>();
+    private List<SuppressionRule> suppressionRules = new ArrayList<SuppressionRule>();
 
     /**
-     * Get the value of supressionRules.
+     * Get the value of suppressionRules.
      *
-     * @return the value of supressionRules
+     * @return the value of suppressionRules
      */
-    public List<SuppressionRule> getSupressionRules() {
-        return supressionRules;
+    public List<SuppressionRule> getSuppressionRules() {
+        return suppressionRules;
     }
     /**
      * The current rule being read.
@@ -109,7 +109,7 @@ public class SuppressionHandler extends DefaultHandler {
     /**
      * Handles the end element event.
      *
-     * @param uri the uri of the element
+     * @param uri the URI of the element
      * @param localName the local name of the element
      * @param qName the qName of the element
      * @throws SAXException thrown if there is an exception processing
@@ -117,7 +117,7 @@ public class SuppressionHandler extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (SUPPRESS.equals(qName)) {
-            supressionRules.add(rule);
+            suppressionRules.add(rule);
             rule = null;
         } else if (FILE_PATH.equals(qName)) {
             final PropertyType pt = processPropertyType();
@@ -151,8 +151,8 @@ public class SuppressionHandler extends DefaultHandler {
     }
 
     /**
-     * Processes field members that have been collected during the characters
-     * and startElement method to construct a PropertyType object.
+     * Processes field members that have been collected during the characters and startElement method to construct a
+     * PropertyType object.
      *
      * @return a PropertyType object
      */

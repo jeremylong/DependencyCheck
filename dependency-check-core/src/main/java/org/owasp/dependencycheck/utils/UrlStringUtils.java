@@ -79,7 +79,7 @@ public final class UrlStringUtils {
      * <p>Example, given the following input:</p>
      * <code>"https://www.somedomain.com/path1/path2/file.php?id=439"</code>
      * <p>The function would return:</p>
-     * <code>{"somedomain", "path1", "path2", "file"}</code>
+     * <code>{"some.domain", "path1", "path2", "file"}</code>
      *
      * @param text a URL
      * @return importantParts a list of the important parts of the URL
