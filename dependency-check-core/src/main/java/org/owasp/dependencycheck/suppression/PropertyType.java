@@ -131,7 +131,7 @@ public class PropertyType {
         }
     }
 
-    //<editor-fold defaultstate="collapsed" desc="standard implmentations of hashCode, equals, and toString">
+    //<editor-fold defaultstate="collapsed" desc="standard implementations of hashCode, equals, and toString">
     /**
      * Default implementation of hashCode.
      *

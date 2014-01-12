@@ -36,7 +36,7 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
 
-    //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
+    //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
      *

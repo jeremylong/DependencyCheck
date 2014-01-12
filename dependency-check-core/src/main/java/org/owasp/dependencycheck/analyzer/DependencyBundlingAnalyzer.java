@@ -56,7 +56,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      */
     private boolean analyzed = false;
     //</editor-fold>
-    //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
+    //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
      * The set of file extensions supported by this analyzer.
      */
@@ -196,7 +196,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
 
     /**
      * Returns true if the file names (and version if it exists) of the two
-     * dependencies are sufficiently similiar.
+     * dependencies are sufficiently similar.
      *
      * @param dependency1 a dependency2 to compare
      * @param dependency2 a dependency2 to compare

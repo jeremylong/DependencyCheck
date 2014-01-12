@@ -220,7 +220,7 @@ public final class ConnectionFactory {
      * the database.
      *
      * @param conn the database connection object
-     * @throws DatabaseException thrown if the schema version is not compatable
+     * @throws DatabaseException thrown if the schema version is not compatible
      * with this version of dependency-check
      */
     private static void ensureSchemaVersion(Connection conn) throws DatabaseException {
