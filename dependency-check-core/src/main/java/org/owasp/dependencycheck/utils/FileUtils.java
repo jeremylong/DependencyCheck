@@ -36,7 +36,7 @@ import org.owasp.dependencycheck.Engine;
 /**
  * A collection of utilities for processing information about files.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class FileUtils {
 

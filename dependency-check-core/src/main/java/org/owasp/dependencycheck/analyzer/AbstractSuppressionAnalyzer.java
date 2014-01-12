@@ -32,7 +32,7 @@ import org.owasp.dependencycheck.utils.Settings;
  * Abstract base suppression analyzer that contains methods for parsing the
  * suppression xml file.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
 

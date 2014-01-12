@@ -34,7 +34,7 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
  * attempts to discern if there is an associated CVEs. It uses the the
  * identifiers found by other analyzers to lookup the CVE data.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class NvdCveAnalyzer implements Analyzer {
 

@@ -23,7 +23,7 @@ import java.util.ServiceLoader;
 
 /**
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class AnalyzerService {
 

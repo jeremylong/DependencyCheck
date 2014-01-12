@@ -30,7 +30,7 @@ import org.owasp.dependencycheck.data.nvdcve.BaseDBTestCase;
 
 /**
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class DependencyCheckTaskTest extends BuildFileTest {
 

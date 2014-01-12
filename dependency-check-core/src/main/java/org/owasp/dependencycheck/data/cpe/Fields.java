@@ -22,7 +22,7 @@ package org.owasp.dependencycheck.data.cpe;
  * Fields is a collection of field names used within the Lucene index for CPE
  * entries.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public abstract class Fields {
 

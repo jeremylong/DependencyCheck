@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 /**
  * DriverLoader is a utility class that is used to load database drivers.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class DriverLoader {
 

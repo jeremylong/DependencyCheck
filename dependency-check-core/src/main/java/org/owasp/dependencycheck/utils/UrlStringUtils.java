@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 
 /**
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class UrlStringUtils {
 

@@ -50,7 +50,7 @@ import org.owasp.dependencycheck.utils.Settings;
  * Analyzer is associated with the file type then the file is turned into a
  * dependency.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class Engine {
 

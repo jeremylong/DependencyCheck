@@ -25,7 +25,7 @@ import org.owasp.dependencycheck.data.update.NvdCveInfo;
 /**
  * This is a wrapper around a set of properties that are stored in the database.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class DatabaseProperties {
 

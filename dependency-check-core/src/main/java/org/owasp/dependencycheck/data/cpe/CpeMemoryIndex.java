@@ -51,7 +51,7 @@ import org.owasp.dependencycheck.data.lucene.SearchFieldAnalyzer;
  * An in memory lucene index that contains the vendor/product combinations from
  * the CPE (application) identifiers within the NVD CVE data.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class CpeMemoryIndex {
 

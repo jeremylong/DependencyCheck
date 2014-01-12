@@ -24,7 +24,7 @@ import org.apache.lucene.util.Version;
  * <p>Lucene utils is a set of utilize written to make constructing Lucene
  * queries simpler.</p>
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class LuceneUtils {
 

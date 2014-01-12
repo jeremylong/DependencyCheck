@@ -34,7 +34,7 @@ import org.owasp.dependencycheck.utils.Downloader;
 /**
  * A callable object to download two files.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
 

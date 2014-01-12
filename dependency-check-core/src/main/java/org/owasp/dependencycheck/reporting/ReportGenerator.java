@@ -45,7 +45,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
  * ReportGenerator exposes a list of Dependencies to the template when
  * generating the report.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class ReportGenerator {
 

@@ -1,7 +1,20 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of dependency-check-core.
+ *
+ * Dependency-check-core is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Dependency-check-core is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ *
+ * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
@@ -13,7 +26,7 @@ import org.junit.Test;
 
 /**
  *
- * @author jeremy
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class CveDBMySQLTest {
 

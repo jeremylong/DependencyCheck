@@ -21,7 +21,7 @@ package org.owasp.dependencycheck.concurrency;
 /**
  * If thrown, indicates that a problem occurred when locking a directory.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class DirectoryLockException extends Exception {
 

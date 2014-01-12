@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 /**
  * Test of the suppression parser.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class SuppressionParserTest {
 

@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 /**
  * A simple settings container that wraps the dependencycheck.properties file.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class Settings {
 

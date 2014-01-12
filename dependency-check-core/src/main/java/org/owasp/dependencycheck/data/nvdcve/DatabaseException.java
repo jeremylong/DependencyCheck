@@ -21,7 +21,7 @@ package org.owasp.dependencycheck.data.nvdcve;
 /**
  * An exception thrown if an operation against the database fails.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class DatabaseException extends Exception {
 

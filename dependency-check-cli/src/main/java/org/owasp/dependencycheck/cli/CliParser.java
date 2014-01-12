@@ -35,7 +35,7 @@ import org.owasp.dependencycheck.utils.Settings;
 /**
  * A utility to parse command line arguments for the DependencyCheck.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class CliParser {
 

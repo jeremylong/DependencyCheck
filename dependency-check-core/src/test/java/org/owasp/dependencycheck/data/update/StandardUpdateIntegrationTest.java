@@ -32,7 +32,7 @@ import org.owasp.dependencycheck.utils.DownloadFailedException;
 
 /**
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class StandardUpdateIntegrationTest {
 

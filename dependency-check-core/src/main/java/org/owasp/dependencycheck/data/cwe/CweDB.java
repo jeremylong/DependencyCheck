@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class CweDB {
 

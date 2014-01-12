@@ -67,7 +67,7 @@ import org.xml.sax.XMLReader;
  * Used to load a JAR file and collect information that can be used to determine
  * the associated CPE.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
 

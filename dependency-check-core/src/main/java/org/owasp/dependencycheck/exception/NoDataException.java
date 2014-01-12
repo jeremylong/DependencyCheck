@@ -23,7 +23,7 @@ import java.io.IOException;
 /**
  * An exception used when the data needed does not exist to perform analysis.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class NoDataException extends IOException {
 

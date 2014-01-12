@@ -30,7 +30,7 @@ import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 
 /**
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class CveDBTest extends BaseDBTestCase {
 

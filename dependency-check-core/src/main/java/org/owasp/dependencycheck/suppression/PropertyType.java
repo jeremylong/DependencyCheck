@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
  * a regular expression or could be case insensitive. The equals method has been
  * over-ridden so that the object will correctly compare to strings.
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class PropertyType {
 

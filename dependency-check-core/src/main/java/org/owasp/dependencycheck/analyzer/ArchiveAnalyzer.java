@@ -48,7 +48,7 @@ import org.owasp.dependencycheck.utils.Settings;
  * <p>An analyzer that extracts files from archives and ensures any supported
  * files contained within the archive are added to the dependency list.</p>
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
 

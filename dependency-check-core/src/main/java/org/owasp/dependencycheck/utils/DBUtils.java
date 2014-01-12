@@ -29,7 +29,7 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 
 /**
  *
- * @author Jeremy Long (jeremy.long@owasp.org)
+ * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class DBUtils {
 
