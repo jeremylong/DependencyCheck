@@ -8,3 +8,4 @@ org.owasp.dependencycheck.analyzer.CpeSuppressionAnalyzer
 org.owasp.dependencycheck.analyzer.DependencyBundlingAnalyzer
 org.owasp.dependencycheck.analyzer.NvdCveAnalyzer
 org.owasp.dependencycheck.analyzer.VulnerabilitySuppressionAnalyzer
+org.owasp.dependencycheck.analyzer.NexusAnalyzer
