@@ -45,8 +45,7 @@ public final class DriverLoader {
     }
 
     /**
-     * Loads the specified class using the system class loader and registers the
-     * driver with the driver manager.
+     * Loads the specified class using the system class loader and registers the driver with the driver manager.
      *
      * @param className the fully qualified name of the desired class
      * @throws DriverLoadException thrown if the driver cannot be loaded
@@ -57,17 +56,15 @@ public final class DriverLoader {
     }
 
     /**
-     * Loads the specified class by registering the supplied paths to the class
-     * loader and then registers the driver with the driver manager. The
-     * pathToDriver argument is added to the class loader so that an external
-     * driver can be loaded. Note, the pathTodriver can contain a semi-colon
-     * separated list of paths so any dependencies can be added as needed. If a
-     * path in the pathToDriver argument is a directory all files in the
-     * directory are added to the class path.
+     * Loads the specified class by registering the supplied paths to the class loader and then registers the driver
+     * with the driver manager. The pathToDriver argument is added to the class loader so that an external driver can be
+     * loaded. Note, the pathTodriver can contain a semi-colon separated list of paths so any dependencies can be added
+     * as needed. If a path in the pathToDriver argument is a directory all files in the directory are added to the
+     * class path.
      *
      * @param className the fully qualified name of the desired class
-     * @param pathToDriver the path to the JAR file containing the driver; note,
-     * this can be a semi-colon separated list of paths
+     * @param pathToDriver the path to the JAR file containing the driver; note, this can be a semi-colon separated list
+     * of paths
      * @throws DriverLoadException thrown if the driver cannot be loaded
      */
     public static void load(String className, String pathToDriver) throws DriverLoadException {
@@ -111,8 +108,7 @@ public final class DriverLoader {
     }
 
     /**
-     * Loads the specified class using the supplied class loader and registers
-     * the driver with the driver manager.
+     * Loads the specified class using the supplied class loader and registers the driver with the driver manager.
      *
      * @param className the fully qualified name of the desired class
      * @param loader the class loader to use when loading the driver
@@ -122,7 +118,8 @@ public final class DriverLoader {
         try {
             final Class c = loader.loadClass(className);
             final Driver driver = (Driver) c.newInstance();
-            DriverManager.registerDriver(driver);
+            //using the DriverShim to get around the fact that the DriverManager won't register a driver not in the base class path
+            DriverManager.registerDriver(new DriverShim(driver));
         } catch (ClassNotFoundException ex) {
             final String msg = String.format("Unable to load database driver '%s'", className);
             Logger.getLogger(DriverLoader.class.getName()).log(Level.FINE, msg, ex);
