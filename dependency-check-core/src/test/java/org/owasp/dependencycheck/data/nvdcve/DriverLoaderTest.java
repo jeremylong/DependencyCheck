@@ -19,12 +19,15 @@
 package org.owasp.dependencycheck.data.nvdcve;
 
 import java.io.File;
+import java.sql.Driver;
+import java.sql.DriverManager;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -61,8 +64,7 @@ public class DriverLoaderTest {
     }
 
     /**
-     * Test of load method, of class DriverLoader; expecting an exception due to
-     * a bad driver class name.
+     * Test of load method, of class DriverLoader; expecting an exception due to a bad driver class name.
      */
     @Test(expected = DriverLoadException.class)
     public void testLoad_String_ex() throws Exception {
@@ -82,6 +84,8 @@ public class DriverLoaderTest {
         assertTrue("MySQL Driver JAR file not found in src/test/resources?", driver.isFile());
 
         DriverLoader.load(className, driver.getAbsolutePath());
+        Driver d = DriverManager.getDriver("jdbc:mysql://localhost:3306/dependencycheck");
+        assertNotNull(d);
     }
 
     /**
