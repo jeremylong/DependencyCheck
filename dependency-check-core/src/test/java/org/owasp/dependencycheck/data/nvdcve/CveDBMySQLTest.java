@@ -51,12 +51,20 @@ public class CveDBMySQLTest {
      */
     @Test
     public void testOpen() throws Exception {
-        /*
-         CveDB instance = new CveDB();
-         instance.open();
-         instance.commit();
-         instance.close();
-         */
+//        String con = Settings.getString(Settings.KEYS.DB_CONNECTION_STRING);
+//        String driver = Settings.getString(Settings.KEYS.DB_DRIVER_NAME);
+//        String path = Settings.getString(Settings.KEYS.DB_DRIVER_PATH);
+//
+//        System.out.println("con: " + con);
+//        System.out.println("driver: " + driver);
+//        System.out.println("path: " + path);
+//        Settings.setString(Settings.KEYS.DB_CONNECTION_STRING, "jdbc:mysql://localhost:3306/dependencycheck");
+//        Settings.setString(Settings.KEYS.DB_DRIVER_NAME, "com.mysql.jdbc.Driver");
+//        Settings.setString(Settings.KEYS.DB_DRIVER_PATH, "c:\\Users\\jeremy\\Documents\\NetBeansProjects\\DependencyCheck\\dependency-check-core/src/test/resources/mysql-connector-java-5.1.27-bin.jar");
+
+        CveDB instance = new CveDB();
+        instance.open();
+        instance.close();
     }
 
     /**
