@@ -147,6 +147,14 @@ public final class Settings {
          * The key for a list of suppression files.
          */
         public static final String SUPPRESSION_FILE = "suppression.file";
+        /**
+         * The properties key for whether the Nexus analyzer is enabled.
+         */
+        public static final String ANALYZER_NEXUS_ENABLED = "analyzer.nexus.enabled";
+        /**
+         * The properties key for the Nexus search URL.
+         */
+        public static final String ANALYZER_NEXUS_URL = "analyzer.nexus.url";
     }
     /**
      * The properties file location.
