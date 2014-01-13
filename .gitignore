@@ -12,3 +12,5 @@ nb-configuration.xml
 /target/
 #maven-shade-plugin generated pom
 dependency-reduced-pom.xml
+# vim files
+*.swp
