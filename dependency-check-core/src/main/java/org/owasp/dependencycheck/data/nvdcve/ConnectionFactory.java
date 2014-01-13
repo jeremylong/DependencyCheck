@@ -35,9 +35,8 @@ import org.owasp.dependencycheck.utils.DBUtils;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * Loads the configured database driver and returns the database connection. If
- * the embedded H2 database is used obtaining a connection will ensure the
- * database file exists and that the appropriate table structure has been
+ * Loads the configured database driver and returns the database connection. If the embedded H2 database is used
+ * obtaining a connection will ensure the database file exists and that the appropriate table structure has been
  * created.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
@@ -60,13 +59,11 @@ public final class ConnectionFactory {
     }
 
     /**
-     * Constructs a new database connection object per the database
-     * configuration. This will load the appropriate database driver, via the
-     * DriverManager, if configured.
+     * Constructs a new database connection object per the database configuration. This will load the appropriate
+     * database driver, via the DriverManager, if configured.
      *
      * @return a database connection object
-     * @throws DatabaseException thrown if there is an exception loading the
-     * database connection
+     * @throws DatabaseException thrown if there is an exception loading the database connection
      */
     public static Connection getConnection() throws DatabaseException {
         Connection conn = null;
@@ -121,9 +118,8 @@ public final class ConnectionFactory {
     }
 
     /**
-     * Returns the configured connection string. If using the embedded H2
-     * database this function will also ensure the data directory exists and if
-     * not create it.
+     * Returns the configured connection string. If using the embedded H2 database this function will also ensure the
+     * data directory exists and if not create it.
      *
      * @return the connection string
      * @throws IOException thrown the data directory cannot be created
@@ -139,9 +135,8 @@ public final class ConnectionFactory {
     }
 
     /**
-     * Retrieves the directory that the JAR file exists in so that we can ensure
-     * we always use a common data directory for the embedded H2 database. This
-     * is public solely for some unit tests; otherwise this should be private.
+     * Retrieves the directory that the JAR file exists in so that we can ensure we always use a common data directory
+     * for the embedded H2 database. This is public solely for some unit tests; otherwise this should be private.
      *
      * @return the data directory to store data files
      * @throws IOException is thrown if an IOException occurs of course...
@@ -157,12 +152,10 @@ public final class ConnectionFactory {
     }
 
     /**
-     * Determines if the H2 database file exists. If it does not exist then the
-     * data structure will need to be created.
+     * Determines if the H2 database file exists. If it does not exist then the data structure will need to be created.
      *
      * @return true if the H2 database file does not exist; otherwise false
-     * @throws IOException thrown if the data directory does not exist and
-     * cannot be created
+     * @throws IOException thrown if the data directory does not exist and cannot be created
      */
     private static boolean needToCreateDatabaseStructure() throws IOException {
         final File dir = getDataDirectory();
@@ -172,8 +165,7 @@ public final class ConnectionFactory {
     }
 
     /**
-     * Creates the database structure (tables and indexes) to store the CVE
-     * data.
+     * Creates the database structure (tables and indexes) to store the CVE data.
      *
      * @param conn the database connection
      * @throws DatabaseException thrown if there is a Database Exception
@@ -216,12 +208,10 @@ public final class ConnectionFactory {
     }
 
     /**
-     * Uses the provided connection to check the specified schema version within
-     * the database.
+     * Uses the provided connection to check the specified schema version within the database.
      *
      * @param conn the database connection object
-     * @throws DatabaseException thrown if the schema version is not compatible
-     * with this version of dependency-check
+     * @throws DatabaseException thrown if the schema version is not compatible with this version of dependency-check
      */
     private static void ensureSchemaVersion(Connection conn) throws DatabaseException {
         ResultSet rs = null;
