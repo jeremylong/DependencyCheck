@@ -594,8 +594,16 @@ along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
                         <configuration>
                             <systemProperties>
                                 <property>
-                                    <name>data.directory</name>
-                                    <value>${project.build.directory}/data</value>
+                                    <name>data.driver_path</name>
+                                    <value>${basedir}/${driver_path}</value>
+                                </property>
+                                <property>
+                                    <name>data.driver_name</name>
+                                    <value>${driver_name}</value>
+                                </property>
+                                <property>
+                                    <name>data.connection_string</name>
+                                    <value>${connection_string}</value>
                                 </property>
                             </systemProperties>
                             <includes>
