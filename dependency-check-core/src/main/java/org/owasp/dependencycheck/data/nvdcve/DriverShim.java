@@ -130,7 +130,7 @@ class DriverShim implements Driver {
      * Wraps the call to the underlying driver's getParentLogger method.
      *
      * @return the parent's Logger
-     * @throws SQLException thrown if there is an error accessing the database
+     * @throws SQLFeatureNotSupportedException thrown if the feature is not supported
      * @see java.sql.Driver#getParentLogger()
      */
     @Override
