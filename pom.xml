@@ -115,7 +115,7 @@ along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.4.1</version>
+                <version>2.4.2</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -129,7 +129,7 @@ along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9</version>
+                <version>2.9.1</version>
                 <configuration>
                     <bottom>Copyright© 2012-13 Jeremy Long. All Rights Reserved.</bottom>
                 </configuration>
@@ -147,7 +147,7 @@ along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
                         -->
                         <groupId>org.apache.maven.doxia</groupId>
                         <artifactId>doxia-module-markdown</artifactId>
-                        <version>1.4</version>
+                        <version>1.5</version>
                     </dependency>
                 </dependencies>
                 <configuration>
@@ -156,7 +156,7 @@ along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-project-info-reports-plugin</artifactId>
-                            <version>2.6</version>
+                            <version>2.7</version>
                             <reportSets>
                                 <reportSet>
                                     <reports>
@@ -187,7 +187,7 @@ along with Dependency-Check.  If not, see <http://www.gnu.org/licenses />.
             <plugin>
                 <groupId>com.github.github</groupId>
                 <artifactId>site-maven-plugin</artifactId>
-                <version>0.7</version>
+                <version>0.9</version>
                 <configuration>
                     <message>Creating site for ${project.artifactId}, ${project.version}</message>
                     <!-- this does the trick to place every module in the correct subfolder -->

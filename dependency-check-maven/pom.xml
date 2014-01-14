@@ -118,7 +118,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                     <dependency>
                         <groupId>org.apache.maven.doxia</groupId>
                         <artifactId>doxia-module-markdown</artifactId>
-                        <version>1.4</version>
+                        <version>1.5</version>
                     </dependency>
                 </dependencies>
                 <configuration>
@@ -127,7 +127,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-project-info-reports-plugin</artifactId>
-                            <version>2.6</version>
+                            <version>2.7</version>
                             <reportSets>
                                 <reportSet>
                                     <reports>
@@ -150,7 +150,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-javadoc-plugin</artifactId>
-                            <version>2.9</version>
+                            <version>2.9.1</version>
                             <reportSets>
                                 <reportSet>
                                     <id>default</id>
@@ -163,7 +163,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                         <plugin>
                             <groupId>org.codehaus.mojo</groupId>
                             <artifactId>versions-maven-plugin</artifactId>
-                            <version>2.0</version>
+                            <version>2.1</version>
                             <reportSets>
                                 <reportSet>
                                     <reports>
@@ -176,7 +176,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-jxr-plugin</artifactId>
-                            <version>2.3</version>
+                            <version>2.4</version>
                         </plugin>
                         <plugin>
                             <groupId>org.codehaus.mojo</groupId>
@@ -222,7 +222,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-checkstyle-plugin</artifactId>
-                            <version>2.10</version>
+                            <version>2.11</version>
                             <configuration>
                                 <enableRulesSummary>false</enableRulesSummary>
                                 <configLocation>${basedir}/config/checkstyle-checks.xml</configLocation>
@@ -247,7 +247,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                         <plugin>
                             <groupId>org.codehaus.mojo</groupId>
                             <artifactId>findbugs-maven-plugin</artifactId>
-                            <version>2.5.2</version>
+                            <version>2.5.3</version>
                         </plugin>
                     </reportPlugins>
                 </configuration>
@@ -255,9 +255,11 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.1</version>
                 <configuration>
                     <showDeprecation>false</showDeprecation>
+                    <source>1.6</source>
+                    <target>1.6</target>
                 </configuration>
             </plugin>
         </plugins>
