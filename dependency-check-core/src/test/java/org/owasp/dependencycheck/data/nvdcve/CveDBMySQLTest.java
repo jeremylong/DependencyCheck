@@ -18,11 +18,15 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import java.util.List;
+import java.util.Set;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 
 /**
  *
@@ -50,21 +54,15 @@ public class CveDBMySQLTest {
      * Pretty useless tests of open, commit, and close methods, of class CveDB.
      */
     @Test
-    public void testOpen() throws Exception {
-//        String con = Settings.getString(Settings.KEYS.DB_CONNECTION_STRING);
-//        String driver = Settings.getString(Settings.KEYS.DB_DRIVER_NAME);
-//        String path = Settings.getString(Settings.KEYS.DB_DRIVER_PATH);
-//
-//        System.out.println("con: " + con);
-//        System.out.println("driver: " + driver);
-//        System.out.println("path: " + path);
-//        Settings.setString(Settings.KEYS.DB_CONNECTION_STRING, "jdbc:mysql://localhost:3306/dependencycheck");
-//        Settings.setString(Settings.KEYS.DB_DRIVER_NAME, "com.mysql.jdbc.Driver");
-//        Settings.setString(Settings.KEYS.DB_DRIVER_PATH, "c:\\Users\\jeremy\\Documents\\NetBeansProjects\\DependencyCheck\\dependency-check-core/src/test/resources/mysql-connector-java-5.1.27-bin.jar");
-
-        CveDB instance = new CveDB();
-        instance.open();
-        instance.close();
+    public void testOpen() throws DatabaseException {
+        try {
+            CveDB instance = new CveDB();
+            instance.open();
+            instance.close();
+        } catch (DatabaseException ex) {
+            System.out.println("Unable to connect to the My SQL database; verify that the db server is running and that the schema has been generated");
+            throw ex;
+        }
     }
 
     /**
@@ -72,18 +70,19 @@ public class CveDBMySQLTest {
      */
     @Test
     public void testGetCPEs() throws Exception {
-        /*
-         CveDB instance = new CveDB();
-         try {
-         String vendor = "apache";
-         String product = "struts";
-         instance.open();
-         Set<VulnerableSoftware> result = instance.getCPEs(vendor, product);
-         assertTrue(result.size() > 5);
-         } finally {
-         instance.close();
-         }
-         */
+        CveDB instance = new CveDB();
+        try {
+            String vendor = "apache";
+            String product = "struts";
+            instance.open();
+            Set<VulnerableSoftware> result = instance.getCPEs(vendor, product);
+            assertTrue("Has data been loaded into the MySQL DB? if not consider using the CLI to populate it", result.size() > 5);
+        } catch (Exception ex) {
+            System.out.println("Unable to access the My SQL database; verify that the db server is running and that the schema has been generated");
+            throw ex;
+        } finally {
+            instance.close();
+        }
     }
 
     /**
@@ -91,16 +90,17 @@ public class CveDBMySQLTest {
      */
     @Test
     public void testGetVulnerabilities() throws Exception {
-        /*
-         String cpeStr = "cpe:/a:apache:struts:2.1.2";
-         CveDB instance = new CveDB();
-         try {
-         instance.open();
-         List result = instance.getVulnerabilities(cpeStr);
-         assertTrue(result.size() > 5);
-         } finally {
-         instance.close();
-         }
-         */
+        String cpeStr = "cpe:/a:apache:struts:2.1.2";
+        CveDB instance = new CveDB();
+        try {
+            instance.open();
+            List result = instance.getVulnerabilities(cpeStr);
+            assertTrue(result.size() > 5);
+        } catch (Exception ex) {
+            System.out.println("Unable to access the My SQL database; verify that the db server is running and that the schema has been generated");
+            throw ex;
+        } finally {
+            instance.close();
+        }
     }
 }
