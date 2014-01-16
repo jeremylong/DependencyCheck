@@ -18,9 +18,9 @@
  */
 package org.owasp.dependencycheck;
 
-import java.util.EnumMap;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -31,23 +31,22 @@ import org.owasp.dependencycheck.analyzer.AnalysisException;
 import org.owasp.dependencycheck.analyzer.AnalysisPhase;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.AnalyzerService;
-import org.owasp.dependencycheck.data.update.CachedWebDataSource;
-import org.owasp.dependencycheck.exception.NoDataException;
-import org.owasp.dependencycheck.data.update.exception.UpdateException;
-import org.owasp.dependencycheck.data.update.UpdateService;
 import org.owasp.dependencycheck.data.cpe.CpeMemoryIndex;
 import org.owasp.dependencycheck.data.cpe.IndexException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.data.update.CachedWebDataSource;
+import org.owasp.dependencycheck.data.update.UpdateService;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.exception.NoDataException;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * Scans files, directories, etc. for Dependencies. Analyzers are loaded and
- * used to process the files found by the scan, if a file is encountered and an
- * Analyzer is associated with the file type then the file is turned into a
+ * Scans files, directories, etc. for Dependencies. Analyzers are loaded and used to process the files found by the
+ * scan, if a file is encountered and an Analyzer is associated with the file type then the file is turned into a
  * dependency.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
@@ -61,8 +60,8 @@ public class Engine {
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-    private final EnumMap<AnalysisPhase, List<Analyzer>> analyzers =
-            new EnumMap<AnalysisPhase, List<Analyzer>>(AnalysisPhase.class);
+    private final EnumMap<AnalysisPhase, List<Analyzer>> analyzers
+            = new EnumMap<AnalysisPhase, List<Analyzer>>(AnalysisPhase.class);
     /**
      * A set of extensions supported by the analyzers.
      */
@@ -87,10 +86,8 @@ public class Engine {
     /**
      * Creates a new Engine.
      *
-     * @param autoUpdate indicates whether or not data should be updated from
-     * the Internet
-     * @deprecated This function should no longer be used; the autoupdate flag
-     * should be set using:
+     * @param autoUpdate indicates whether or not data should be updated from the Internet
+     * @deprecated This function should no longer be used; the autoupdate flag should be set using:
      * <code>Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, value);</code>
      */
     @Deprecated
@@ -102,8 +99,7 @@ public class Engine {
     }
 
     /**
-     * Loads the analyzers specified in the configuration file (or system
-     * properties).
+     * Loads the analyzers specified in the configuration file (or system properties).
      */
     private void loadAnalyzers() {
 
@@ -142,9 +138,8 @@ public class Engine {
     }
 
     /**
-     * Scans an array of files or directories. If a directory is specified, it
-     * will be scanned recursively. Any dependencies identified are added to the
-     * dependency collection.
+     * Scans an array of files or directories. If a directory is specified, it will be scanned recursively. Any
+     * dependencies identified are added to the dependency collection.
      *
      * @since v0.3.2.5
      *
@@ -158,9 +153,8 @@ public class Engine {
     }
 
     /**
-     * Scans a given file or directory. If a directory is specified, it will be
-     * scanned recursively. Any dependencies identified are added to the
-     * dependency collection.
+     * Scans a given file or directory. If a directory is specified, it will be scanned recursively. Any dependencies
+     * identified are added to the dependency collection.
      *
      * @param path the path to a file or directory to be analyzed.
      */
@@ -170,9 +164,8 @@ public class Engine {
     }
 
     /**
-     * Scans an array of files or directories. If a directory is specified, it
-     * will be scanned recursively. Any dependencies identified are added to the
-     * dependency collection.
+     * Scans an array of files or directories. If a directory is specified, it will be scanned recursively. Any
+     * dependencies identified are added to the dependency collection.
      *
      * @since v0.3.2.5
      *
@@ -185,9 +178,8 @@ public class Engine {
     }
 
     /**
-     * Scans a list of files or directories. If a directory is specified, it
-     * will be scanned recursively. Any dependencies identified are added to the
-     * dependency collection.
+     * Scans a list of files or directories. If a directory is specified, it will be scanned recursively. Any
+     * dependencies identified are added to the dependency collection.
      *
      * @since v0.3.2.5
      *
@@ -200,9 +192,8 @@ public class Engine {
     }
 
     /**
-     * Scans a list of files or directories. If a directory is specified, it
-     * will be scanned recursively. Any dependencies identified are added to the
-     * dependency collection.
+     * Scans a list of files or directories. If a directory is specified, it will be scanned recursively. Any
+     * dependencies identified are added to the dependency collection.
      *
      * @since v0.3.2.5
      *
@@ -215,9 +206,8 @@ public class Engine {
     }
 
     /**
-     * Scans a given file or directory. If a directory is specified, it will be
-     * scanned recursively. Any dependencies identified are added to the
-     * dependency collection.
+     * Scans a given file or directory. If a directory is specified, it will be scanned recursively. Any dependencies
+     * identified are added to the dependency collection.
      *
      * @since v0.3.2.4
      *
@@ -234,8 +224,7 @@ public class Engine {
     }
 
     /**
-     * Recursively scans files and directories. Any dependencies identified are
-     * added to the dependency collection.
+     * Recursively scans files and directories. Any dependencies identified are added to the dependency collection.
      *
      * @param dir the directory to scan.
      */
@@ -253,8 +242,7 @@ public class Engine {
     }
 
     /**
-     * Scans a specified file. If a dependency is identified it is added to the
-     * dependency collection.
+     * Scans a specified file. If a dependency is identified it is added to the dependency collection.
      *
      * @param file The file to scan.
      */
@@ -303,6 +291,7 @@ public class Engine {
                 + "BEGIN ANALYSIS%n"
                 + "----------------------------------------------------");
         Logger.getLogger(Engine.class.getName()).log(Level.FINE, logHeader);
+        Logger.getLogger(Engine.class.getName()).log(Level.INFO, "Analysis Starting");
 
         //phase one initialize
         for (AnalysisPhase phase : AnalysisPhase.values()) {
@@ -380,8 +369,7 @@ public class Engine {
     }
 
     /**
-     * Cycles through the cached web data sources and calls update on all of
-     * them.
+     * Cycles through the cached web data sources and calls update on all of them.
      */
     private void doUpdates() {
         final UpdateService service = UpdateService.getInstance();
@@ -400,8 +388,7 @@ public class Engine {
     }
 
     /**
-     * Returns a full list of all of the analyzers. This is useful for reporting
-     * which analyzers where used.
+     * Returns a full list of all of the analyzers. This is useful for reporting which analyzers where used.
      *
      * @return a list of Analyzers
      */
@@ -418,8 +405,7 @@ public class Engine {
      * Checks all analyzers to see if an extension is supported.
      *
      * @param ext a file extension
-     * @return true or false depending on whether or not the file extension is
-     * supported
+     * @return true or false depending on whether or not the file extension is supported
      */
     public boolean supportsExtension(String ext) {
         if (ext == null) {
@@ -437,12 +423,10 @@ public class Engine {
     }
 
     /**
-     * Checks the CPE Index to ensure documents exists. If none exist a
-     * NoDataException is thrown.
+     * Checks the CPE Index to ensure documents exists. If none exist a NoDataException is thrown.
      *
      * @throws NoDataException thrown if no data exists in the CPE Index
-     * @throws DatabaseException thrown if there is an exception opening the
-     * database
+     * @throws DatabaseException thrown if there is an exception opening the database
      */
     private void ensureDataExists() throws NoDataException, DatabaseException {
         final CpeMemoryIndex cpe = CpeMemoryIndex.getInstance();
