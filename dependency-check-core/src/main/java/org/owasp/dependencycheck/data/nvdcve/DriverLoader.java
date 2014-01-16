@@ -115,7 +115,8 @@ public final class DriverLoader {
      */
     private static void load(String className, ClassLoader loader) throws DriverLoadException {
         try {
-            final Class c = loader.loadClass(className);
+            final Class c = Class.forName(className, true, loader);
+            //final Class c = loader.loadClass(className);
             final Driver driver = (Driver) c.newInstance();
             //using the DriverShim to get around the fact that the DriverManager won't register a driver not in the base class path
             DriverManager.registerDriver(new DriverShim(driver));
