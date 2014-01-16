@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-ant.
  *
- * Dependency-check-ant is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-ant is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-ant. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
@@ -92,8 +91,8 @@ public class DependencyCheckTask extends Task {
     }
 
     /**
-     * Returns the path. If the path has not been initialized yet, this class is
-     * synchronized, and will instantiate the path object.
+     * Returns the path. If the path has not been initialized yet, this class is synchronized, and will instantiate the
+     * path object.
      *
      * @return the path
      */
@@ -115,8 +114,7 @@ public class DependencyCheckTask extends Task {
     }
 
     /**
-     * Add a reference to a Path, FileSet, DirSet, or FileList defined
-     * elsewhere.
+     * Add a reference to a Path, FileSet, DirSet, or FileList defined elsewhere.
      *
      * @param r the reference to a path, fileset, dirset or filelist.
      */
@@ -128,8 +126,7 @@ public class DependencyCheckTask extends Task {
     }
 
     /**
-     * If this is a reference, this method will add the referenced resource
-     * collection to the collection of paths.
+     * If this is a reference, this method will add the referenced resource collection to the collection of paths.
      *
      * @throws BuildException if the reference is not to a resource collection
      */
@@ -189,8 +186,7 @@ public class DependencyCheckTask extends Task {
         this.dataDirectory = dataDirectory;
     }
     /**
-     * Specifies the destination directory for the generated Dependency-Check
-     * report.
+     * Specifies the destination directory for the generated Dependency-Check report.
      */
     private String reportOutputDirectory = ".";
 
@@ -212,11 +208,9 @@ public class DependencyCheckTask extends Task {
         this.reportOutputDirectory = reportOutputDirectory;
     }
     /**
-     * Specifies if the build should be failed if a CVSS score above a specified
-     * level is identified. The default is 11 which means since the CVSS scores
-     * are 0-10, by default the build will never fail and the CVSS score is set
-     * to 11. The valid range for the fail build on CVSS is 0 to 11, where
-     * anything above 10 will not cause the build to fail.
+     * Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11
+     * which means since the CVSS scores are 0-10, by default the build will never fail and the CVSS score is set to 11.
+     * The valid range for the fail build on CVSS is 0 to 11, where anything above 10 will not cause the build to fail.
      */
     private float failBuildOnCVSS = 11;
 
@@ -238,8 +232,8 @@ public class DependencyCheckTask extends Task {
         this.failBuildOnCVSS = failBuildOnCVSS;
     }
     /**
-     * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not
-     * recommended that this be turned to false. Default is true.
+     * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to
+     * false. Default is true.
      */
     private boolean autoUpdate = true;
 
@@ -261,9 +255,8 @@ public class DependencyCheckTask extends Task {
         this.autoUpdate = autoUpdate;
     }
     /**
-     * The report format to be generated (HTML, XML, VULN, ALL). This
-     * configuration option has no affect if using this within the Site plugin
-     * unless the externalReport is set to true. Default is HTML.
+     * The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this
+     * within the Site plugin unless the externalReport is set to true. Default is HTML.
      */
     private String reportFormat = "HTML";
 
@@ -501,8 +494,7 @@ public class DependencyCheckTask extends Task {
     }
 
     /**
-     * Validate the configuration to ensure the parameters have been properly
-     * configured/initialized.
+     * Validate the configuration to ensure the parameters have been properly configured/initialized.
      *
      * @throws BuildException if the task was not configured correctly.
      */
@@ -516,9 +508,8 @@ public class DependencyCheckTask extends Task {
     }
 
     /**
-     * Takes the properties supplied and updates the dependency-check settings.
-     * Additionally, this sets the system properties required to change the
-     * proxy url, port, and connection timeout.
+     * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system
+     * properties required to change the proxy url, port, and connection timeout.
      */
     private void populateSettings() {
         InputStream taskProperties = null;
@@ -570,12 +561,11 @@ public class DependencyCheckTask extends Task {
     }
 
     /**
-     * Checks to see if a vulnerability has been identified with a CVSS score
-     * that is above the threshold set in the configuration.
+     * Checks to see if a vulnerability has been identified with a CVSS score that is above the threshold set in the
+     * configuration.
      *
      * @param dependencies the list of dependency objects
-     * @throws BuildException thrown if a CVSS score is found that is higher
-     * then the threshold set
+     * @throws BuildException thrown if a CVSS score is found that is higher then the threshold set
      */
     private void checkForFailure(List<Dependency> dependencies) throws BuildException {
         final StringBuilder ids = new StringBuilder();
@@ -599,8 +589,7 @@ public class DependencyCheckTask extends Task {
     }
 
     /**
-     * Generates a warning message listing a summary of dependencies and their
-     * associated CPE and CVE entries.
+     * Generates a warning message listing a summary of dependencies and their associated CPE and CVE entries.
      *
      * @param dependencies a list of dependency objects
      */
@@ -640,8 +629,7 @@ public class DependencyCheckTask extends Task {
     }
 
     /**
-     * An enumeration of supported report formats: "ALL", "HTML", "XML", "VULN",
-     * etc..
+     * An enumeration of supported report formats: "ALL", "HTML", "XML", "VULN", etc..
      */
     public static class ReportFormats extends EnumeratedAttribute {
 

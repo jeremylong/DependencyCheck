@@ -1,19 +1,18 @@
 ^/\*\s*$
-^ \* This file is part of dependency-check-ant\.\s*$
+^ \* This file is part of dependency-check-core\.\s*$
 ^ \*\s*$
-^ \* Dependency-check-ant is free software\: you can redistribute it and/or modify it\s*$
-^ \* under the terms of the GNU General Public License as published by the Free\s*$
-^ \* Software Foundation, either version 3 of the License, or \(at your option\) any\s*$
-^ \* later version\.
+^ \* Licensed under the Apache License, Version 2\.0 \(the "License"\);\s*$
+^ \* you may not use this file except in compliance with the License.\s*$
+^ \* You may obtain a copy of the License at\s*$
 ^ \*\s*$
-^ \* Dependency-check-ant is distributed in the hope that it will be useful, but\s*$
-^ \* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or\s*$
-^ \* FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more\s*$
-^ \* details\.\s*$
+^ \*\s*http://www.apache.org/licenses/LICENSE-2\.0\s*$
 ^ \*\s*$
-^ \* You should have received a copy of the GNU General Public License along with\s*$
-^ \* dependency-check-ant\. If not, see http://www.gnu.org/licenses/\.\s*$
+^ \* Unless required by applicable law or agreed to in writing, software\s*$
+^ \* distributed under the License is distributed on an "AS IS" BASIS,\s*$
+^ \* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied\.\s*$
+^ \* See the License for the specific language governing permissions and\s*$
+^ \* limitations under the License\.\s*$
 ^ \*\s*$
-^ \* Copyright \(c\) 2013 (Jeremy Long|Steve Springett)\. All Rights Reserved\.\s*$
+^ \* Copyright \(c\) 201[234] (Jeremy Long|Steve Springett)\. All Rights Reserved\.\s*$
 ^ \*/\s*$
 ^package
