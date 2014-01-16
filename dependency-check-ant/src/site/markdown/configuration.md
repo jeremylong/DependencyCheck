@@ -29,7 +29,7 @@ FailBuildOn           | If set and a CVE is found that is greater then the speci
 AutoUpdate            | If set to false the NVD CVE data is not automatically updated. Setting this to false could result in false negatives. However, this may be required in some environments. The default value is true. | Optional
 DataDirectory         | The directory where dependency-check will store data used for analysis. Defaults to a folder called, called 'dependency-check-data', that is in the same directory as the dependency-check-ant jar file was installed in. *It is not recommended to change this.* | Optional
 LogFile               | The file path to write verbose logging information. | Optional
-SuppressionFile       | An XML file conforming to the suppression schema that suppresses findings; this is used to hide false positives. | Optional
+SuppressionFile       | An XML file conforming to the suppression schema that suppresses findings; this is used to hide [false positives](../suppression.html). | Optional
 ProxyUrl              | Defines the proxy used to connect to the Internet. | Optional
 ProxyPort             | Defines the port for the proxy. | Optional
 ProxyUsername         | Defines the proxy user name. | Optional

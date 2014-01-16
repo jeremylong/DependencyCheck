@@ -17,6 +17,6 @@ Short  | Argument Name         | Parameter   | Description | Requirement
  \-pp  | \-\-proxypass         | \<pass\>    | The proxy password to use when downloading resources. | Optional
  \-pu  | \-\-proxyuser         | \<user\>    | The proxy username to use when downloading resources. | Optional
  \-s   | \-\-scan              | \<path\>    | The path to scan \- this option can be specified multiple times. |
- \-sf  | \-\-suppression       | \<file\>    | The file path to the suppression XML file. | Optional
+ \-sf  | \-\-suppression       | \<file\>    | The file path to the suppression XML file; used to suppress [false positives](../suppression.html). | Optional
  \-u   | \-\-proxyurl          | \<url\>     | The proxy url to use when downloading resources. | Optional
  \-v   | \-\-version           |             | Print the version information. | Optional

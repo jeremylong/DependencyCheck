@@ -57,6 +57,11 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
         </breadcrumbs>
 
         <menu ref="reports" />
+		<menu name="General">
+            <item name="False Positives" href="./suppression.html">
+                <description>Suppressing False Positives</description>
+            </item>
+		</menu>
         <menu name="Modules">
             <item name="dependency-check-core" href="./dependency-check-core/index.html">
                 <description>The core dependency-check library</description>
