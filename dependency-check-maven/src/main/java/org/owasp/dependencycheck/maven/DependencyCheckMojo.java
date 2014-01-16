@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-maven.
  *
- * Dependency-check-maven is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-maven is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-maven. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
@@ -27,24 +26,24 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkFactory;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
-import java.util.Set;
-import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.plugin.MojoFailureException;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
@@ -57,8 +56,7 @@ import org.owasp.dependencycheck.utils.LogUtils;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * Maven Plugin that checks project dependencies to see if they have any known
- * published vulnerabilities.
+ * Maven Plugin that checks project dependencies to see if they have any known published vulnerabilities.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -100,29 +98,25 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @Parameter(property = "logfile", defaultValue = "")
     private String logFile;
     /**
-     * The name of the report to be displayed in the Maven Generated Reports
-     * page
+     * The name of the report to be displayed in the Maven Generated Reports page
      */
     @Parameter(property = "name", defaultValue = "Dependency-Check")
     private String name;
     /**
-     * The description of the Dependency-Check report to be displayed in the
-     * Maven Generated Reports page
+     * The description of the Dependency-Check report to be displayed in the Maven Generated Reports page
      */
     @Parameter(property = "description", defaultValue = "A report providing details on any published "
             + "vulnerabilities within project dependencies. This report is a best effort but may contain "
             + "false positives and false negatives.")
     private String description;
     /**
-     * Specifies the destination directory for the generated Dependency-Check
-     * report.
+     * Specifies the destination directory for the generated Dependency-Check report.
      */
     @Parameter(property = "reportOutputDirectory", defaultValue = "${project.reporting.outputDirectory}", required = true)
     private File reportOutputDirectory;
     /**
-     * Specifies if the build should be failed if a CVSS score above a specified
-     * level is identified. The default is 11 which means since the CVSS scores
-     * are 0-10, by default the build will never fail.
+     * Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11
+     * which means since the CVSS scores are 0-10, by default the build will never fail.
      */
     @Parameter(property = "failBuildOnCVSS", defaultValue = "11", required = true)
     private float failBuildOnCVSS = 11;
@@ -132,16 +126,15 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @Parameter(defaultValue = "${project.build.directory}", required = true)
     private File outputDirectory;
     /**
-     * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not
-     * recommended that this be turned to false. Default is true.
+     * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to
+     * false. Default is true.
      */
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "autoupdate", defaultValue = "true", required = true)
     private boolean autoUpdate = true;
     /**
-     * The report format to be generated (HTML, XML, VULN, ALL). This
-     * configuration option has no affect if using this within the Site plugin
-     * unless the externalReport is set to true. Default is HTML.
+     * The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this
+     * within the Site plugin unless the externalReport is set to true. Default is HTML.
      */
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "format", defaultValue = "HTML", required = true)
@@ -458,8 +451,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     }
 
     /**
-     * Writes the analysis exceptions generated during analysis to the site
-     * report.
+     * Writes the analysis exceptions generated during analysis to the site report.
      *
      * @param d the dependency
      * @param sink the sink to write the data to
@@ -625,9 +617,8 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     // </editor-fold>
 
     /**
-     * Takes the properties supplied and updates the dependency-check settings.
-     * Additionally, this sets the system properties required to change the
-     * proxy url, port, and connection timeout.
+     * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system
+     * properties required to change the proxy url, port, and connection timeout.
      */
     private void populateSettings() {
         InputStream mojoProperties = null;
@@ -673,8 +664,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * Executes the dependency-check and generates the report.
      *
      * @throws MojoExecutionException if a maven exception occurs
-     * @throws MojoFailureException thrown if a CVSS score is found that is
-     * higher then the configured level
+     * @throws MojoFailureException thrown if a CVSS score is found that is higher then the configured level
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
         final Engine engine = executeDependencyCheck();
@@ -760,8 +750,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     }
 
     /**
-     * Gets the description of the Dependency-Check report to be displayed in
-     * the Maven Generated Reports page.
+     * Gets the description of the Dependency-Check report to be displayed in the Maven Generated Reports page.
      *
      * @param locale The Locale to get the description for
      * @return the description
@@ -790,12 +779,11 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     // </editor-fold>
 
     /**
-     * Checks to see if a vulnerability has been identified with a CVSS score
-     * that is above the threshold set in the configuration.
+     * Checks to see if a vulnerability has been identified with a CVSS score that is above the threshold set in the
+     * configuration.
      *
      * @param dependencies the list of dependency objects
-     * @throws MojoFailureException thrown if a CVSS score is found that is
-     * higher then the threshold set
+     * @throws MojoFailureException thrown if a CVSS score is found that is higher then the threshold set
      */
     private void checkForFailure(List<Dependency> dependencies) throws MojoFailureException {
         final StringBuilder ids = new StringBuilder();
@@ -819,8 +807,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     }
 
     /**
-     * Generates a warning message listing a summary of dependencies and their
-     * associated CPE and CVE entries.
+     * Generates a warning message listing a summary of dependencies and their associated CPE and CVE entries.
      *
      * @param dependencies a list of dependency objects
      */

@@ -20,14 +20,11 @@ Subscribe: [dependency-check+subscribe@googlegroups.com](mailto:dependency-check
 
 Post: [dependency-check@googlegroups.com](mailto:dependency-check@googlegroups.com)
 
-Copyright & License
+Copyright
 -------------------
 
-Dependency-Check Jenkins Plugin is Copyright (c) 2013 Steve Springett. All Rights Reserved.
-
-Permission to modify and redistribute is granted under the terms of the GPLv3 license. See the [LICENSE.txt] [GPLv3] file for the full license.
+Dependency-Check Jenkins Plugin is Copyright (c) 2013-2014 Steve Springett. All Rights Reserved.
 
   [wiki]: https://github.com/jenkinsci/dependency-check-jenkins/wiki
   [analysis-core]: http://wiki.jenkins-ci.org/x/CwDgAQ
-  [GPLv3]: https://github.com/jenkinsci/dependency-check-jenkins/blob/master/LICENSE.txt
   [notices]: https://github.com/jenkinsci/dependency-check-jenkins/blob/master/NOTICES.txt

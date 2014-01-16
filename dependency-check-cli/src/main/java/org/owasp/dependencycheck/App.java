@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-cli.
  *
- * Dependency-check-cli is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-cli is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-cli. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -26,29 +25,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.cli.ParseException;
-import org.owasp.dependencycheck.reporting.ReportGenerator;
-import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.cli.CliParser;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.LogUtils;
 import org.owasp.dependencycheck.utils.Settings;
 
-/*
- * This file is part of App.
- *
- * App is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * App is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * App. If not, see http://www.gnu.org/licenses/.
- *
- * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
- */
 /**
  * The command line interface for the DependencyCheck application.
  *
@@ -107,11 +89,9 @@ public class App {
     }
 
     /**
-     * Scans the specified directories and writes the dependency reports to the
-     * reportDirectory.
+     * Scans the specified directories and writes the dependency reports to the reportDirectory.
      *
-     * @param reportDirectory the path to the directory where the reports will
-     * be written
+     * @param reportDirectory the path to the directory where the reports will be written
      * @param outputFormat the output format of the report
      * @param applicationName the application name for the report
      * @param files the files/directories to scan
@@ -142,11 +122,9 @@ public class App {
      * Updates the global Settings.
      *
      * @param autoUpdate whether or not to update cached web data sources
-     * @param connectionTimeout the timeout to use when downloading resources
-     * (null or blank will use default)
+     * @param connectionTimeout the timeout to use when downloading resources (null or blank will use default)
      * @param proxyUrl the proxy url (null or blank means no proxy will be used)
-     * @param proxyPort the proxy port (null or blank means no port will be
-     * used)
+     * @param proxyPort the proxy port (null or blank means no port will be used)
      * @param proxyUser the proxy user name
      * @param proxyPass the password for the proxy
      * @param dataDirectory the directory to store/retrieve persistent data from

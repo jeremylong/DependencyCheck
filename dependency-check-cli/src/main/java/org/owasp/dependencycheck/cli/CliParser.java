@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-cli.
  *
- * Dependency-check-cli is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-cli is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-cli. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -56,8 +55,7 @@ public final class CliParser {
      * Parses the arguments passed in and captures the results for later use.
      *
      * @param args the command line arguments
-     * @throws FileNotFoundException is thrown when a 'file' argument does not
-     * point to a file that exists.
+     * @throws FileNotFoundException is thrown when a 'file' argument does not point to a file that exists.
      * @throws ParseException is thrown when a Parse Exception occurs.
      */
     public void parse(String[] args) throws FileNotFoundException, ParseException {
@@ -83,10 +81,9 @@ public final class CliParser {
     /**
      * Validates that the command line arguments are valid.
      *
-     * @throws FileNotFoundException if there is a file specified by either the
-     * SCAN or CPE command line arguments that does not exist.
-     * @throws ParseException is thrown if there is an exception parsing the
-     * command line.
+     * @throws FileNotFoundException if there is a file specified by either the SCAN or CPE command line arguments that
+     * does not exist.
+     * @throws ParseException is thrown if there is an exception parsing the command line.
      */
     private void validateArgs() throws FileNotFoundException, ParseException {
         if (isRunScan()) {
@@ -108,14 +105,12 @@ public final class CliParser {
     }
 
     /**
-     * Validates whether or not the path(s) points at a file that exists; if the
-     * path(s) does not point to an existing file a FileNotFoundException is
-     * thrown.
+     * Validates whether or not the path(s) points at a file that exists; if the path(s) does not point to an existing
+     * file a FileNotFoundException is thrown.
      *
      * @param paths the paths to validate if they exists
      * @param optType the option being validated (e.g. scan, out, etc.)
-     * @throws FileNotFoundException is thrown if one of the paths being
-     * validated does not exist.
+     * @throws FileNotFoundException is thrown if one of the paths being validated does not exist.
      */
     private void validatePathExists(String[] paths, String optType) throws FileNotFoundException {
         for (String path : paths) {
@@ -124,14 +119,12 @@ public final class CliParser {
     }
 
     /**
-     * Validates whether or not the path points at a file that exists; if the
-     * path does not point to an existing file a FileNotFoundException is
-     * thrown.
+     * Validates whether or not the path points at a file that exists; if the path does not point to an existing file a
+     * FileNotFoundException is thrown.
      *
      * @param path the paths to validate if they exists
      * @param optType the option being validated (e.g. scan, out, etc.)
-     * @throws FileNotFoundException is thrown if the path being validated does
-     * not exist.
+     * @throws FileNotFoundException is thrown if the path being validated does not exist.
      */
     private void validatePathExists(String path, String optType) throws FileNotFoundException {
         final File f = new File(path);
@@ -143,8 +136,7 @@ public final class CliParser {
     }
 
     /**
-     * Generates an Options collection that is used to parse the command line
-     * and to display the help message.
+     * Generates an Options collection that is used to parse the command line and to display the help message.
      *
      * @return the command line options used for parsing the command line
      */
@@ -210,7 +202,6 @@ public final class CliParser {
         final Option suppressionFile = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.SUPPRESION_FILE)
                 .withDescription("The file path to the suppression XML file.")
                 .create(ArgumentName.SUPPRESION_FILE_SHORT);
-
 
         final OptionGroup og = new OptionGroup();
         og.addOption(path);
@@ -281,8 +272,7 @@ public final class CliParser {
     }
 
     /**
-     * Retrieves the file command line parameter(s) specified for the 'scan'
-     * argument.
+     * Retrieves the file command line parameter(s) specified for the 'scan' argument.
      *
      * @return the file paths specified on the command line for scan
      */
@@ -291,8 +281,7 @@ public final class CliParser {
     }
 
     /**
-     * Returns the directory to write the reports to specified on the command
-     * line.
+     * Returns the directory to write the reports to specified on the command line.
      *
      * @return the path to the reports directory.
      */
@@ -301,8 +290,7 @@ public final class CliParser {
     }
 
     /**
-     * Returns the output format specified on the command line. Defaults to HTML
-     * if no format was specified.
+     * Returns the output format specified on the command line. Defaults to HTML if no format was specified.
      *
      * @return the output format name.
      */
@@ -405,7 +393,8 @@ public final class CliParser {
     }
 
     /**
-     * <p>Prints the manifest information to standard output.</p>
+     * <p>
+     * Prints the manifest information to standard output.</p>
      * <ul><li>Implementation-Title: ${pom.name}</li>
      * <li>Implementation-Version: ${pom.version}</li></ul>
      */
@@ -417,8 +406,8 @@ public final class CliParser {
     }
 
     /**
-     * Checks if the auto update feature has been disabled. If it has been
-     * disabled via the command line this will return false.
+     * Checks if the auto update feature has been disabled. If it has been disabled via the command line this will
+     * return false.
      *
      * @return if auto-update is allowed.
      */
@@ -427,8 +416,7 @@ public final class CliParser {
     }
 
     /**
-     * A collection of static final strings that represent the possible command
-     * line arguments.
+     * A collection of static final strings that represent the possible command line arguments.
      */
     public static class ArgumentName {
 
@@ -441,43 +429,35 @@ public final class CliParser {
          */
         public static final String SCAN_SHORT = "s";
         /**
-         * The long CLI argument name specifying that the CPE/CVE/etc. data
-         * should not be automatically updated.
+         * The long CLI argument name specifying that the CPE/CVE/etc. data should not be automatically updated.
          */
         public static final String DISABLE_AUTO_UPDATE = "noupdate";
         /**
-         * The short CLI argument name specifying that the CPE/CVE/etc. data
-         * should not be automatically updated.
+         * The short CLI argument name specifying that the CPE/CVE/etc. data should not be automatically updated.
          */
         public static final String DISABLE_AUTO_UPDATE_SHORT = "n";
         /**
-         * The long CLI argument name specifying the directory to write the
-         * reports to.
+         * The long CLI argument name specifying the directory to write the reports to.
          */
         public static final String OUT = "out";
         /**
-         * The short CLI argument name specifying the directory to write the
-         * reports to.
+         * The short CLI argument name specifying the directory to write the reports to.
          */
         public static final String OUT_SHORT = "o";
         /**
-         * The long CLI argument name specifying the output format to write the
-         * reports to.
+         * The long CLI argument name specifying the output format to write the reports to.
          */
         public static final String OUTPUT_FORMAT = "format";
         /**
-         * The short CLI argument name specifying the output format to write the
-         * reports to.
+         * The short CLI argument name specifying the output format to write the reports to.
          */
         public static final String OUTPUT_FORMAT_SHORT = "f";
         /**
-         * The long CLI argument name specifying the name of the application to
-         * be scanned.
+         * The long CLI argument name specifying the name of the application to be scanned.
          */
         public static final String APP_NAME = "app";
         /**
-         * The short CLI argument name specifying the name of the application to
-         * be scanned.
+         * The short CLI argument name specifying the name of the application to be scanned.
          */
         public static final String APP_NAME_SHORT = "a";
         /**
@@ -537,13 +517,11 @@ public final class CliParser {
          */
         public static final String CONNECTION_TIMEOUT = "connectiontimeout";
         /**
-         * The short CLI argument name for setting the location of an additional
-         * properties file.
+         * The short CLI argument name for setting the location of an additional properties file.
          */
         public static final String PROP_SHORT = "p";
         /**
-         * The CLI argument name for setting the location of an additional
-         * properties file.
+         * The CLI argument name for setting the location of an additional properties file.
          */
         public static final String PROP = "propertyfile";
         /**
@@ -551,8 +529,7 @@ public final class CliParser {
          */
         public static final String DATA_DIRECTORY = "data";
         /**
-         * The short CLI argument name for setting the location of the data
-         * directory.
+         * The short CLI argument name for setting the location of the data directory.
          */
         public static final String DATA_DIRECTORY_SHORT = "d";
         /**
@@ -560,18 +537,15 @@ public final class CliParser {
          */
         public static final String VERBOSE_LOG = "log";
         /**
-         * The short CLI argument name for setting the location of the data
-         * directory.
+         * The short CLI argument name for setting the location of the data directory.
          */
         public static final String VERBOSE_LOG_SHORT = "l";
         /**
-         * The CLI argument name for setting the location of the suppression
-         * file.
+         * The CLI argument name for setting the location of the suppression file.
          */
         public static final String SUPPRESION_FILE = "suppression";
         /**
-         * The short CLI argument name for setting the location of the
-         * suppression file.
+         * The short CLI argument name for setting the location of the suppression file.
          */
         public static final String SUPPRESION_FILE_SHORT = "sf";
     }

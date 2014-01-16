@@ -14,7 +14,7 @@ For instructions on the use of the Jenkins plugin please see the [Jenkins depend
 ### Command Line
 
 More detailed instructions can be found on the [dependency-check github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-cli/installation.html).
-The latest CLI can be downloaded from bintray's [dependency-check page](https://bintray.com/jeremy-long/owasp/dependency-check). 
+The latest CLI can be downloaded from bintray's [dependency-check page](https://bintray.com/jeremy-long/owasp/dependency-check).
 
 On *nix
 ```
@@ -82,7 +82,7 @@ On Windows
 > dependency-check-cli/target/release/bin/dependency-check.bat --app Testing --out . --scan ./src/test/resources
 ```
 
-Then load the resulting 'DependencyCheck-Report.html' into your favourite browser.
+Then load the resulting 'DependencyCheck-Report.html' into your favorite browser.
 
 Mailing List
 ------------
@@ -96,9 +96,9 @@ Archive: [google group](https://groups.google.com/forum/#!forum/dependency-check
 Copyright & License
 -
 
-Dependency-Check is Copyright (c) 2012-2013 Jeremy Long. All Rights Reserved.
+Dependency-Check is Copyright (c) 2012-2014 Jeremy Long. All Rights Reserved.
 
-Permission to modify and redistribute is granted under the terms of the GPLv3 license. See the [LICENSE.txt] [GPLv3] file for the full license.
+Permission to modify and redistribute is granted under the terms of the Apache 2.0 license. See the [LICENSE.txt](https://github.com/jeremylong/DependencyCheck/dependency-check-cli/blob/master/LICENSE.txt) file for the full license.
 
 Dependency-Check makes use of several other open source libraries. Please see the [NOTICE.txt] [notices] file for more information.
 
@@ -106,5 +106,4 @@ Dependency-Check makes use of several other open source libraries. Please see th
   [wiki]: https://github.com/jeremylong/DependencyCheck/wiki
   [subscribe]: mailto:dependency-check+subscribe@googlegroups.com
   [post]: mailto:dependency-check@googlegroups.com
-  [GPLv3]: https://github.com/jeremylong/DependencyCheck/blob/master/LICENSE.txt
   [notices]: https://github.com/jeremylong/DependencyCheck/blob/master/NOTICES.txt
