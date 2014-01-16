@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
@@ -45,8 +44,9 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * <p>An analyzer that extracts files from archives and ensures any supported
- * files contained within the archive are added to the dependency list.</p>
+ * <p>
+ * An analyzer that extracts files from archives and ensures any supported files contained within the archive are added
+ * to the dependency list.</p>
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -57,8 +57,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
      */
     private static final int BUFFER_SIZE = 4096;
     /**
-     * The count of directories created during analysis. This is used for
-     * creating temporary directories.
+     * The count of directories created during analysis. This is used for creating temporary directories.
      */
     private static int dirCount = 0;
     /**
@@ -66,8 +65,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
      */
     private File tempFileLocation = null;
     /**
-     * The max scan depth that the analyzer will recursively extract nested
-     * archives.
+     * The max scan depth that the analyzer will recursively extract nested archives.
      */
     private static final int MAX_SCAN_DEPTH = Settings.getInt("archive.scan.depth", 3);
     /**
@@ -110,8 +108,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
      * Returns whether or not this analyzer can process the given extension.
      *
      * @param extension the file extension to test for support.
-     * @return whether or not the specified file extension is supported by this
-     * analyzer.
+     * @return whether or not the specified file extension is supported by this analyzer.
      */
     public boolean supportsExtension(String extension) {
         return EXTENSIONS.contains(extension);
@@ -130,8 +127,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
     /**
      * The initialize method does nothing for this Analyzer.
      *
-     * @throws Exception is thrown if there is an exception deleting or creating
-     * temporary files
+     * @throws Exception is thrown if there is an exception deleting or creating temporary files
      */
     @Override
     public void initialize() throws Exception {
@@ -156,8 +152,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
     /**
      * The close method does nothing for this Analyzer.
      *
-     * @throws Exception thrown if there is an exception deleting temporary
-     * files
+     * @throws Exception thrown if there is an exception deleting temporary files
      */
     @Override
     public void close() throws Exception {
@@ -167,9 +162,8 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * Analyzes a given dependency. If the dependency is an archive, such as a
-     * WAR or EAR, the contents are extracted, scanned, and added to the list of
-     * dependencies within the engine.
+     * Analyzes a given dependency. If the dependency is an archive, such as a WAR or EAR, the contents are extracted,
+     * scanned, and added to the list of dependencies within the engine.
      *
      * @param dependency the dependency to analyze
      * @param engine the engine scanning
@@ -204,7 +198,6 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
                 d.setFileName(displayName);
 
                 //TODO - can we get more evidence from the parent? EAR contains module name, etc.
-
                 //analyze the dependency (i.e. extract files) if it is a supported type.
                 if (this.supportsExtension(d.getFileExtension()) && scanDepth < MAX_SCAN_DEPTH) {
                     scanDepth += 1;
@@ -292,8 +285,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
      * @param input the archive to extract files from
      * @param destination the location to write the files too
      * @param engine the dependency-check engine
-     * @throws ArchiveExtractionException thrown if there is an exception
-     * extracting files from the archive
+     * @throws ArchiveExtractionException thrown if there is an exception extracting files from the archive
      */
     private void extractArchive(ArchiveInputStream input, File destination, Engine engine) throws ArchiveExtractionException {
         ArchiveEntry entry;
@@ -365,8 +357,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
      *
      * @param inputStream the compressed file
      * @param outputFile the location to write the decompressed file
-     * @throws ArchiveExtractionException thrown if there is an exception
-     * decompressing the file
+     * @throws ArchiveExtractionException thrown if there is an exception decompressing the file
      */
     private void decompressFile(CompressorInputStream inputStream, File outputFile) throws ArchiveExtractionException {
         FileOutputStream out = null;

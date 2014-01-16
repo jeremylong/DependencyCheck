@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
@@ -22,10 +21,12 @@ import java.io.File;
 import java.net.URL;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -53,11 +54,9 @@ public class DirectorySpinLockTest {
     }
 
     /**
-     * Test of obtainSharedLock method, of class DirectorySpinLock.
-     * Specifically, this test uses the SpinLockTask to obtain an exclusive lock
-     * that is held for 5 seconds. We then try to obtain a shared lock while
-     * that task is running. It should take longer then 5 seconds to obtain the
-     * shared lock.
+     * Test of obtainSharedLock method, of class DirectorySpinLock. Specifically, this test uses the SpinLockTask to
+     * obtain an exclusive lock that is held for 5 seconds. We then try to obtain a shared lock while that task is
+     * running. It should take longer then 5 seconds to obtain the shared lock.
      */
     @Test
     public void testObtainSharedLock_withContention() throws Exception {
@@ -79,9 +78,8 @@ public class DirectorySpinLockTest {
     }
 
     /**
-     * Test of obtainSharedLock method, of class DirectorySpinLock. This method
-     * obtains two shared locks by using the SpinLockTask to obtain a lock in
-     * another thread.
+     * Test of obtainSharedLock method, of class DirectorySpinLock. This method obtains two shared locks by using the
+     * SpinLockTask to obtain a lock in another thread.
      */
     @Test
     public void testObtainSharedLock() throws Exception {

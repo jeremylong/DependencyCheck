@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
@@ -237,9 +236,8 @@ public class SuppressionRule {
     }
 
     /**
-     * Processes a given dependency to determine if any CPE, CVE, CWE, or CVSS
-     * scores should be suppressed. If any should be, they are removed from the
-     * dependency.
+     * Processes a given dependency to determine if any CPE, CVE, CWE, or CVSS scores should be suppressed. If any
+     * should be, they are removed from the dependency.
      *
      * @param dependency a project dependency to analyze
      */
@@ -301,12 +299,10 @@ public class SuppressionRule {
     }
 
     /**
-     * Identifies if the cpe specified by the cpe suppression rule does not
-     * specify a version.
+     * Identifies if the cpe specified by the cpe suppression rule does not specify a version.
      *
      * @param c a suppression rule identifier
-     * @return true if the property type does not specify a version; otherwise
-     * false
+     * @return true if the property type does not specify a version; otherwise false
      */
     boolean cpeHasNoVersion(PropertyType c) {
         if (c.isRegex()) {
@@ -319,8 +315,7 @@ public class SuppressionRule {
     }
 
     /**
-     * Counts the number of occurrences of the character found within the
-     * string.
+     * Counts the number of occurrences of the character found within the string.
      *
      * @param str the string to check
      * @param c the character to count
@@ -337,8 +332,7 @@ public class SuppressionRule {
     }
 
     /**
-     * Determines if the cpeEntry specified as a PropertyType matches the given
-     * Identifier.
+     * Determines if the cpeEntry specified as a PropertyType matches the given Identifier.
      *
      * @param cpeEntry a suppression rule entry
      * @param identifier a CPE identifier to check

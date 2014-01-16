@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -36,8 +35,7 @@ import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 
 /**
- * This analyzer attempts to remove some well known false positives -
- * specifically regarding the java runtime.
+ * This analyzer attempts to remove some well known false positives - specifically regarding the java runtime.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -79,8 +77,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      * Returns whether or not this analyzer can process the given extension.
      *
      * @param extension the file extension to test for support
-     * @return whether or not the specified file extension is supported by this
-     * analyzer.
+     * @return whether or not the specified file extension is supported by this analyzer.
      */
     public boolean supportsExtension(String extension) {
         return true;
@@ -97,13 +94,11 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     //</editor-fold>
 
     /**
-     * Analyzes the dependencies and removes bad/incorrect CPE associations
-     * based on various heuristics.
+     * Analyzes the dependencies and removes bad/incorrect CPE associations based on various heuristics.
      *
      * @param dependency the dependency to analyze.
      * @param engine the engine that is scanning the dependencies
-     * @throws AnalysisException is thrown if there is an error reading the JAR
-     * file.
+     * @throws AnalysisException is thrown if there is an error reading the JAR file.
      */
     @Override
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
@@ -115,15 +110,17 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * <p>Intended to remove spurious CPE entries. By spurious we mean
-     * duplicate, less specific CPE entries.</p>
-     * <p>Example:</p>
+     * <p>
+     * Intended to remove spurious CPE entries. By spurious we mean duplicate, less specific CPE entries.</p>
+     * <p>
+     * Example:</p>
      * <code>
      * cpe:/a:some-vendor:some-product
      * cpe:/a:some-vendor:some-product:1.5
      * cpe:/a:some-vendor:some-product:1.5.2
      * </code>
-     * <p>Should be trimmed to:</p>
+     * <p>
+     * Should be trimmed to:</p>
      * <code>
      * cpe:/a:some-vendor:some-product:1.5.2
      * </code>
@@ -178,8 +175,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         }
     }
     /**
-     * Regex to identify core java libraries and a few other commonly
-     * misidentified ones.
+     * Regex to identify core java libraries and a few other commonly misidentified ones.
      */
     public static final Pattern CORE_JAVA = Pattern.compile("^cpe:/a:(sun|oracle|ibm):(j2[ems]e|"
             + "java(_platfrom_micro_edition|_runtime_environment|_se|virtual_machine|se_development_kit|fx)?|"
@@ -190,8 +186,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     public static final Pattern CORE_FILES = Pattern.compile("^((alt[-])?rt|jsf[-].*|jsse|jfxrt|jfr|jce|javaws|deploy|charsets)\\.jar$");
 
     /**
-     * Removes any CPE entries for the JDK/JRE unless the filename ends with
-     * rt.jar
+     * Removes any CPE entries for the JDK/JRE unless the filename ends with rt.jar
      *
      * @param dependency the dependency to remove JRE CPEs from
      */
@@ -251,9 +246,8 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Removes bad CPE matches for a dependency. Unfortunately, right now these
-     * are hard-coded patches for specific problems identified when testing this
-     * on a LARGE volume of jar files.
+     * Removes bad CPE matches for a dependency. Unfortunately, right now these are hard-coded patches for specific
+     * problems identified when testing this on a LARGE volume of jar files.
      *
      * @param dependency the dependency to analyze
      */
@@ -266,10 +260,8 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
          * found based on LOW confidence evidence should have a different CPE type? (this
          * might be a better solution then just removing the URL for "best-guess" matches).
          */
-
         //Set<Evidence> groupId = dependency.getVendorEvidence().getEvidence("pom", "groupid");
         //Set<Evidence> artifactId = dependency.getVendorEvidence().getEvidence("pom", "artifactid");
-
         while (itr.hasNext()) {
             final Identifier i = itr.next();
             //TODO move this startswith expression to a configuration file?
@@ -294,8 +286,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Removes CPE matches for the wrong version of a dependency. Currently,
-     * this only covers Axis 1 & 2.
+     * Removes CPE matches for the wrong version of a dependency. Currently, this only covers Axis 1 & 2.
      *
      * @param dependency the dependency to analyze
      */
@@ -328,9 +319,8 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * There are some known CPE entries, specifically regarding sun and oracle
-     * products due to the acquisition and changes in product names, that based
-     * on given evidence we can add the related CPE entries to ensure a complete
+     * There are some known CPE entries, specifically regarding sun and oracle products due to the acquisition and
+     * changes in product names, that based on given evidence we can add the related CPE entries to ensure a complete
      * list of CVE entries.
      *
      * @param dependency the dependency being analyzed

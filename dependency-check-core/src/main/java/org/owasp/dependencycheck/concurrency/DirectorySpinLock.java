@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
@@ -34,9 +33,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Implements a spin lock on a given directory. If the lock cannot be obtained,
- * the process will "spin" waiting for an opportunity to obtain the lock
- * requested.
+ * Implements a spin lock on a given directory. If the lock cannot be obtained, the process will "spin" waiting for an
+ * opportunity to obtain the lock requested.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -63,14 +61,12 @@ public class DirectorySpinLock implements Closeable /*, AutoCloseable*/ {
      */
     private FileLock lock = null;
     /**
-     * The maximum number of seconds that the spin lock will wait while trying
-     * to obtain a lock.
+     * The maximum number of seconds that the spin lock will wait while trying to obtain a lock.
      */
     private long maxWait = MAX_SPIN;
 
     /**
-     * Get the maximum wait time, in seconds, that the spin lock will wait while
-     * trying to obtain a lock.
+     * Get the maximum wait time, in seconds, that the spin lock will wait while trying to obtain a lock.
      *
      * @return the number of seconds the spin lock will wait
      */
@@ -79,8 +75,7 @@ public class DirectorySpinLock implements Closeable /*, AutoCloseable*/ {
     }
 
     /**
-     * Set the maximum wait time, in seconds, that the spin lock will wait while
-     * trying to obtain a lock.
+     * Set the maximum wait time, in seconds, that the spin lock will wait while trying to obtain a lock.
      *
      * @param maxWait the number of seconds the spin lock will wait
      */
@@ -92,10 +87,8 @@ public class DirectorySpinLock implements Closeable /*, AutoCloseable*/ {
      * Constructs a new spin lock on the given directory.
      *
      * @param directory the directory to monitor/lock
-     * @throws InvalidDirectoryException thrown if there is an issue with the
-     * directory provided
-     * @throws DirectoryLockException thrown there is an issue obtaining a
-     * handle to the lock file
+     * @throws InvalidDirectoryException thrown if there is an issue with the directory provided
+     * @throws DirectoryLockException thrown there is an issue obtaining a handle to the lock file
      */
     public DirectorySpinLock(File directory) throws InvalidDirectoryException, DirectoryLockException {
         checkDirectory(directory);
@@ -110,39 +103,32 @@ public class DirectorySpinLock implements Closeable /*, AutoCloseable*/ {
     }
 
     /**
-     * Attempts to obtain an exclusive lock; an exception is thrown if the lock
-     * could not be obtained. This method may block for a few seconds if a lock
-     * cannot be obtained.
+     * Attempts to obtain an exclusive lock; an exception is thrown if the lock could not be obtained. This method may
+     * block for a few seconds if a lock cannot be obtained.
      *
-     * @throws DirectoryLockException thrown if there is an exception obtaining
-     * the lock
+     * @throws DirectoryLockException thrown if there is an exception obtaining the lock
      */
     public void obtainSharedLock() throws DirectoryLockException {
         obtainLock(true);
     }
 
     /**
-     * Attempts to obtain an exclusive lock; an exception is thrown if the lock
-     * could not be obtained. This method may block for a few seconds if a lock
-     * cannot be obtained.
+     * Attempts to obtain an exclusive lock; an exception is thrown if the lock could not be obtained. This method may
+     * block for a few seconds if a lock cannot be obtained.
      *
-     * @throws DirectoryLockException thrown if there is an exception obtaining
-     * the lock
+     * @throws DirectoryLockException thrown if there is an exception obtaining the lock
      */
     public void obtainExclusiveLock() throws DirectoryLockException {
         obtainLock(false);
     }
 
     /**
-     * Attempts to obtain a lock; an exception is thrown if the lock could not
-     * be obtained. This method may block for a few seconds if a lock cannot be
-     * obtained.
+     * Attempts to obtain a lock; an exception is thrown if the lock could not be obtained. This method may block for a
+     * few seconds if a lock cannot be obtained.
      *
      * @param shared true if the lock is shared, otherwise false
-     * @param maxWait the maximum time to wait, in seconds, while trying to
-     * obtain the lock
-     * @throws DirectoryLockException thrown if there is an exception obtaining
-     * the lock
+     * @param maxWait the maximum time to wait, in seconds, while trying to obtain the lock
+     * @throws DirectoryLockException thrown if there is an exception obtaining the lock
      */
     protected void obtainLock(boolean shared, long maxWait) throws DirectoryLockException {
         setMaxWait(maxWait);
@@ -150,13 +136,11 @@ public class DirectorySpinLock implements Closeable /*, AutoCloseable*/ {
     }
 
     /**
-     * Attempts to obtain a lock; an exception is thrown if the lock could not
-     * be obtained. This method may block for a few seconds if a lock cannot be
-     * obtained.
+     * Attempts to obtain a lock; an exception is thrown if the lock could not be obtained. This method may block for a
+     * few seconds if a lock cannot be obtained.
      *
      * @param shared true if the lock is shared, otherwise false
-     * @throws DirectoryLockException thrown if there is an exception obtaining
-     * the lock
+     * @throws DirectoryLockException thrown if there is an exception obtaining the lock
      */
     protected void obtainLock(boolean shared) throws DirectoryLockException {
         if (lock != null) {
@@ -199,12 +183,11 @@ public class DirectorySpinLock implements Closeable /*, AutoCloseable*/ {
     }
 
     /**
-     * Performs a few simple rudimentary checks on the specified directory.
-     * Specifically, does the file exist and is it a directory.
+     * Performs a few simple rudimentary checks on the specified directory. Specifically, does the file exist and is it
+     * a directory.
      *
      * @param directory the File object to inspect
-     * @throws InvalidDirectoryException thrown if the directory is null or is
-     * not a directory
+     * @throws InvalidDirectoryException thrown if the directory is null or is not a directory
      */
     private void checkDirectory(File directory) throws InvalidDirectoryException {
         if (directory == null) {
@@ -250,8 +233,7 @@ public class DirectorySpinLock implements Closeable /*, AutoCloseable*/ {
     }
 
     /**
-     * Releases the lock. Any exceptions that are thrown by the underlying lock
-     * during the release are ignored.
+     * Releases the lock. Any exceptions that are thrown by the underlying lock during the release are ignored.
      */
     public void release() {
         if (lock != null) {

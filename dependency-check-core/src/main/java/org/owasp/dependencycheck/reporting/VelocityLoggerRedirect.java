@@ -1,41 +1,37 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2013 Steve Springett. All Rights Reserved.
  */
 package org.owasp.dependencycheck.reporting;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.log.LogChute;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
- * <p>DependencyCheck uses {@link java.util.logging.Logger} as a logging
- * framework, and Apache Velocity uses a custom logging implementation that
- * outputs to a file named velocity.log by default. This class is an
- * implementation of a custom Velocity logger that redirects all velocity
- * logging to the Java Logger class.
+ * <p>
+ * DependencyCheck uses {@link java.util.logging.Logger} as a logging framework, and Apache Velocity uses a custom
+ * logging implementation that outputs to a file named velocity.log by default. This class is an implementation of a
+ * custom Velocity logger that redirects all velocity logging to the Java Logger class.
  * </p><p>
- * This class was written to address permission issues when using
- * Dependency-Check in a server environment (such as the Jenkins plugin). In
- * some circumstances, Velocity would attempt to create velocity.log in an
- * un-writable directory.</p>
+ * This class was written to address permission issues when using Dependency-Check in a server environment (such as the
+ * Jenkins plugin). In some circumstances, Velocity would attempt to create velocity.log in an un-writable
+ * directory.</p>
  *
  * @author Steve Springett (steve.springett@owasp.org)
  */
@@ -51,8 +47,8 @@ public class VelocityLoggerRedirect implements LogChute {
     }
 
     /**
-     * Given a Velocity log level and message, this method will call the
-     * appropriate Logger level and log the specified values.
+     * Given a Velocity log level and message, this method will call the appropriate Logger level and log the specified
+     * values.
      *
      * @param level the logging level
      * @param message the message to be logged
@@ -62,8 +58,8 @@ public class VelocityLoggerRedirect implements LogChute {
     }
 
     /**
-     * Given a Velocity log level, message and Throwable, this method will call
-     * the appropriate Logger level and log the specified values.
+     * Given a Velocity log level, message and Throwable, this method will call the appropriate Logger level and log the
+     * specified values.
      *
      * @param level the logging level
      * @param message the message to be logged

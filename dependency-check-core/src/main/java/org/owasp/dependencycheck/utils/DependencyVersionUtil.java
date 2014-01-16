@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
@@ -23,8 +22,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * <p>A utility class to extract version numbers from file names (or other
- * strings containing version numbers.</p>
+ * <p>
+ * A utility class to extract version numbers from file names (or other strings containing version numbers.</p>
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -35,9 +34,8 @@ public final class DependencyVersionUtil {
      */
     private static final Pattern RX_VERSION = Pattern.compile("\\d+(\\.\\d{1,6})+(\\.?([_-](release|beta|alpha)|[a-zA-Z_-]{1,3}\\d{1,8}))?");
     /**
-     * Regular expression to extract a single version number without periods.
-     * This is a last ditch effort just to check in case we are missing a
-     * version number using the previous regex.
+     * Regular expression to extract a single version number without periods. This is a last ditch effort just to check
+     * in case we are missing a version number using the previous regex.
      */
     private static final Pattern RX_SINGLE_VERSION = Pattern.compile("\\d+(\\.?([_-](release|beta|alpha)|[a-zA-Z_-]{1,3}\\d{1,8}))?");
 
@@ -48,8 +46,8 @@ public final class DependencyVersionUtil {
     }
 
     /**
-     * <p>A utility class to extract version numbers from file names (or other
-     * strings containing version numbers.<br/>
+     * <p>
+     * A utility class to extract version numbers from file names (or other strings containing version numbers.<br/>
      * Example:<br/>
      * Give the file name: library-name-1.4.1r2-release.jar<br/>
      * This function would return: 1.4.1.r2</p>

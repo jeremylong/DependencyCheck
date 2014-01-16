@@ -1,28 +1,27 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
-import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Evidence;
 import java.util.Set;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 
@@ -70,8 +69,7 @@ public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
      * Returns whether or not this analyzer can process the given extension.
      *
      * @param extension the file extension to test for support.
-     * @return whether or not the specified file extension is supported by this
-     * analyzer.
+     * @return whether or not the specified file extension is supported by this analyzer.
      */
     public boolean supportsExtension(String extension) {
         return true;
@@ -92,8 +90,7 @@ public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
      *
      * @param dependency the dependency to analyze.
      * @param engine the engine that is scanning the dependencies
-     * @throws AnalysisException is thrown if there is an error reading the JAR
-     * file.
+     * @throws AnalysisException is thrown if there is an error reading the JAR file.
      */
     @Override
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {

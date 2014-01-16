@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -34,26 +33,25 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.data.lucene.LuceneUtils;
-import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Evidence;
-import org.owasp.dependencycheck.dependency.Evidence.Confidence;
-import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.data.cpe.CpeMemoryIndex;
 import org.owasp.dependencycheck.data.cpe.Fields;
 import org.owasp.dependencycheck.data.cpe.IndexEntry;
 import org.owasp.dependencycheck.data.cpe.IndexException;
+import org.owasp.dependencycheck.data.lucene.LuceneUtils;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.dependency.Evidence.Confidence;
+import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 
 /**
- * CPEAnalyzer is a utility class that takes a project dependency and attempts
- * to discern if there is an associated CPE. It uses the evidence contained
- * within the dependency to search the Lucene index.
+ * CPEAnalyzer is a utility class that takes a project dependency and attempts to discern if there is an associated CPE.
+ * It uses the evidence contained within the dependency to search the Lucene index.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -68,18 +66,15 @@ public class CPEAnalyzer implements Analyzer {
      */
     static final String WEIGHTING_BOOST = "^5";
     /**
-     * A string representation of a regular expression defining characters
-     * utilized within the CPE Names.
+     * A string representation of a regular expression defining characters utilized within the CPE Names.
      */
     static final String CLEANSE_CHARACTER_RX = "[^A-Za-z0-9 ._-]";
     /**
-     * A string representation of a regular expression used to remove all but
-     * alpha characters.
+     * A string representation of a regular expression used to remove all but alpha characters.
      */
     static final String CLEANSE_NONALPHA_RX = "[^A-Za-z]*";
     /**
-     * The additional size to add to a new StringBuilder to account for extra
-     * data that will be written into the string.
+     * The additional size to add to a new StringBuilder to account for extra data that will be written into the string.
      */
     static final int STRING_BUILDER_BUFFER = 20;
     /**
@@ -94,10 +89,9 @@ public class CPEAnalyzer implements Analyzer {
     /**
      * Opens the data source.
      *
-     * @throws IOException when the Lucene directory to be queried does not
-     * exist or is corrupt.
-     * @throws DatabaseException when the database throws an exception. This
-     * usually occurs when the database is in use by another process.
+     * @throws IOException when the Lucene directory to be queried does not exist or is corrupt.
+     * @throws DatabaseException when the database throws an exception. This usually occurs when the database is in use
+     * by another process.
      */
     public void open() throws IOException, DatabaseException {
         Logger.getLogger(CPEAnalyzer.class.getName()).log(Level.FINE, "Opening the CVE Database");
@@ -127,9 +121,8 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * Searches the data store of CPE entries, trying to identify the CPE for
-     * the given dependency based on the evidence contained within. The
-     * dependency passed in is updated with any identified CPE values.
+     * Searches the data store of CPE entries, trying to identify the CPE for the given dependency based on the evidence
+     * contained within. The dependency passed in is updated with any identified CPE values.
      *
      * @param dependency the dependency to search for CPE entries on.
      * @throws CorruptIndexException is thrown when the Lucene index is corrupt.
@@ -175,10 +168,9 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * Returns the text created by concatenating the text and the values from
-     * the EvidenceCollection (filtered for a specific confidence). This
-     * attempts to prevent duplicate terms from being added.<br/<br/> Note, if
-     * the evidence is longer then 200 characters it will be truncated.
+     * Returns the text created by concatenating the text and the values from the EvidenceCollection (filtered for a
+     * specific confidence). This attempts to prevent duplicate terms from being added.<br/<br/> Note, if the evidence
+     * is longer then 200 characters it will be truncated.
      *
      * @param text the base text.
      * @param ec an EvidenceCollection
@@ -208,8 +200,7 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * Reduces the given confidence by one level. This returns LOW if the
-     * confidence passed in is not HIGH.
+     * Reduces the given confidence by one level. This returns LOW if the confidence passed in is not HIGH.
      *
      * @param c the confidence to reduce.
      * @return One less then the confidence passed in.
@@ -225,18 +216,18 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * <p>Searches the Lucene CPE index to identify possible CPE entries
-     * associated with the supplied vendor, product, and version.</p>
+     * <p>
+     * Searches the Lucene CPE index to identify possible CPE entries associated with the supplied vendor, product, and
+     * version.</p>
      *
-     * <p>If either the vendorWeightings or productWeightings lists have been
-     * populated this data is used to add weighting factors to the search.</p>
+     * <p>
+     * If either the vendorWeightings or productWeightings lists have been populated this data is used to add weighting
+     * factors to the search.</p>
      *
      * @param vendor the text used to search the vendor field
      * @param product the text used to search the product field
-     * @param vendorWeightings a list of strings to use to add weighting factors
-     * to the vendor field
-     * @param productWeightings Adds a list of strings that will be used to add
-     * weighting factors to the product search
+     * @param vendorWeightings a list of strings to use to add weighting factors to the vendor field
+     * @param productWeightings Adds a list of strings that will be used to add weighting factors to the product search
      * @return a list of possible CPE values
      * @throws CorruptIndexException when the Lucene index is corrupt
      * @throws IOException when the Lucene index is not found
@@ -276,19 +267,17 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * <p>Builds a Lucene search string by properly escaping data and
-     * constructing a valid search query.</p>
+     * <p>
+     * Builds a Lucene search string by properly escaping data and constructing a valid search query.</p>
      *
-     * <p>If either the possibleVendor or possibleProducts lists have been
-     * populated this data is used to add weighting factors to the search string
-     * generated.</p>
+     * <p>
+     * If either the possibleVendor or possibleProducts lists have been populated this data is used to add weighting
+     * factors to the search string generated.</p>
      *
      * @param vendor text to search the vendor field
      * @param product text to search the product field
-     * @param vendorWeighting a list of strings to apply to the vendor to boost
-     * the terms weight
-     * @param productWeightings a list of strings to apply to the product to
-     * boost the terms weight
+     * @param vendorWeighting a list of strings to apply to the vendor to boost the terms weight
+     * @param productWeightings a list of strings to apply to the product to boost the terms weight
      * @return the Lucene query
      */
     protected String buildSearch(String vendor, String product,
@@ -309,17 +298,14 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * This method constructs a Lucene query for a given field. The searchText
-     * is split into separate words and if the word is within the list of
-     * weighted words then an additional weighting is applied to the term as it
-     * is appended into the query.
+     * This method constructs a Lucene query for a given field. The searchText is split into separate words and if the
+     * word is within the list of weighted words then an additional weighting is applied to the term as it is appended
+     * into the query.
      *
      * @param sb a StringBuilder that the query text will be appended to.
-     * @param field the field within the Lucene index that the query is
-     * searching.
+     * @param field the field within the Lucene index that the query is searching.
      * @param searchText text used to construct the query.
-     * @param weightedText a list of terms that will be considered higher
-     * importance when searching.
+     * @param weightedText a list of terms that will be considered higher importance when searching.
      * @return if the append was successful.
      */
     private boolean appendWeightedSearch(StringBuilder sb, String field, String searchText, Set<String> weightedText) {
@@ -358,8 +344,7 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * Removes characters from the input text that are not used within the CPE
-     * index.
+     * Removes characters from the input text that are not used within the CPE index.
      *
      * @param text is the text to remove the characters from.
      * @return the text having removed some characters.
@@ -369,8 +354,7 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * Compares two strings after lower casing them and removing the non-alpha
-     * characters.
+     * Compares two strings after lower casing them and removing the non-alpha characters.
      *
      * @param l string one to compare.
      * @param r string two to compare.
@@ -387,9 +371,8 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * Ensures that the CPE Identified matches the dependency. This validates
-     * that the product, vendor, and version information for the CPE are
-     * contained within the dependencies evidence.
+     * Ensures that the CPE Identified matches the dependency. This validates that the product, vendor, and version
+     * information for the CPE are contained within the dependencies evidence.
      *
      * @param entry a CPE entry.
      * @param dependency the dependency that the CPE entries could be for.
@@ -425,7 +408,6 @@ public class CPEAnalyzer implements Analyzer {
         //            }
         //        }
         //</editor-fold>
-
         //TODO - likely need to change the split... not sure if this will work for CPE with special chars
         if (text == null) {
             return false;
@@ -435,9 +417,9 @@ public class CPEAnalyzer implements Analyzer {
         String tempWord = null;
         for (String word : words) {
             /*
-            single letter words should be concatenated with the next word.
-            so { "m", "core", "sample" } -> { "mcore", "sample" }
-            */
+             single letter words should be concatenated with the next word.
+             so { "m", "core", "sample" } -> { "mcore", "sample" }
+             */
             if (tempWord != null) {
                 list.add(tempWord + word);
                 tempWord = null;
@@ -459,13 +441,11 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * Analyzes a dependency and attempts to determine if there are any CPE
-     * identifiers for this dependency.
+     * Analyzes a dependency and attempts to determine if there are any CPE identifiers for this dependency.
      *
      * @param dependency The Dependency to analyze.
      * @param engine The analysis engine
-     * @throws AnalysisException is thrown if there is an issue analyzing the
-     * dependency.
+     * @throws AnalysisException is thrown if there is an issue analyzing the dependency.
      */
     @Override
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
@@ -532,11 +512,9 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * Retrieves a list of CPE values from the CveDB based on the vendor and
-     * product passed in. The list is then validated to find only CPEs that are
-     * valid for the given dependency. It is possible that the CPE identified is
-     * a best effort "guess" based on the vendor, product, and version
-     * information.
+     * Retrieves a list of CPE values from the CveDB based on the vendor and product passed in. The list is then
+     * validated to find only CPEs that are valid for the given dependency. It is possible that the CPE identified is a
+     * best effort "guess" based on the vendor, product, and version information.
      *
      * @param dependency the Dependency being analyzed
      * @param vendor the vendor for the CPE being analyzed
@@ -622,8 +600,7 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * A simple object to hold an identifier and carry information about the
-     * confidence in the identifier.
+     * A simple object to hold an identifier and carry information about the confidence in the identifier.
      */
     private static class IdentifierMatch implements Comparable<IdentifierMatch> {
 
@@ -633,10 +610,8 @@ public class CPEAnalyzer implements Analyzer {
          * @param type the type of identifier (such as CPE)
          * @param value the value of the identifier
          * @param url the URL of the identifier
-         * @param identifierConfidence the confidence in the identifier: best
-         * guess or exact match
-         * @param evidenceConfidence the confidence of the evidence used to find
-         * the identifier
+         * @param identifierConfidence the confidence in the identifier: best guess or exact match
+         * @param evidenceConfidence the confidence of the evidence used to find the identifier
          */
         IdentifierMatch(String type, String value, String url, IdentifierConfidence identifierConfidence, Confidence evidenceConfidence) {
             this.identifier = new Identifier(type, value, url);
@@ -767,8 +742,8 @@ public class CPEAnalyzer implements Analyzer {
         //</editor-fold>
 
         /**
-         * Standard implementation of compareTo that compares identifier
-         * confidence, evidence confidence, and then the identifier.
+         * Standard implementation of compareTo that compares identifier confidence, evidence confidence, and then the
+         * identifier.
          *
          * @param o the IdentifierMatch to compare to
          * @return the natural ordering of IdentifierMatch

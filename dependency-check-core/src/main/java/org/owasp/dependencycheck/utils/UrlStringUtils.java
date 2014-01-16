@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
@@ -47,8 +46,8 @@ public final class UrlStringUtils {
     private static final Pattern IS_URL_TEST = Pattern.compile("^(ht|f)tps?://.*", Pattern.CASE_INSENSITIVE);
 
     /**
-     * Tests if the text provided contains a URL. This is somewhat limited
-     * search in that it only looks for (ftp|http|https)://
+     * Tests if the text provided contains a URL. This is somewhat limited search in that it only looks for
+     * (ftp|http|https)://
      *
      * @param text the text to search
      * @return true if the text contains a url, otherwise false
@@ -67,18 +66,19 @@ public final class UrlStringUtils {
         return IS_URL_TEST.matcher(text).matches();
     }
     /**
-     * A listing of domain parts that should not be used as evidence. Yes, this
-     * is an incomplete list.
+     * A listing of domain parts that should not be used as evidence. Yes, this is an incomplete list.
      */
     private static final HashSet<String> IGNORE_LIST = new HashSet<String>(
             Arrays.asList("www", "com", "org", "gov", "info", "name", "net", "pro", "tel", "mobi", "xxx"));
 
     /**
-     * <p>Takes a URL, in String format, and adds the important parts of the URL
-     * to a list of strings.</p>
-     * <p>Example, given the following input:</p>
+     * <p>
+     * Takes a URL, in String format, and adds the important parts of the URL to a list of strings.</p>
+     * <p>
+     * Example, given the following input:</p>
      * <code>"https://www.somedomain.com/path1/path2/file.php?id=439"</code>
-     * <p>The function would return:</p>
+     * <p>
+     * The function would return:</p>
      * <code>{"some.domain", "path1", "path2", "file"}</code>
      *
      * @param text a URL

@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -28,8 +27,8 @@ import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 
 /**
- * Contains a collection of updateable NvdCveInfo objects. This is used to
- * determine which files need to be downloaded and processed.
+ * Contains a collection of updateable NvdCveInfo objects. This is used to determine which files need to be downloaded
+ * and processed.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -41,8 +40,7 @@ public class UpdateableNvdCve implements java.lang.Iterable<NvdCveInfo>, Iterato
     private Map<String, NvdCveInfo> collection = new TreeMap<String, NvdCveInfo>();
 
     /**
-     * Returns the collection of NvdCveInfo objects. This method is mainly used
-     * for testing.
+     * Returns the collection of NvdCveInfo objects. This method is mainly used for testing.
      *
      * @return the collection of NvdCveInfo objects
      */
@@ -69,8 +67,8 @@ public class UpdateableNvdCve implements java.lang.Iterable<NvdCveInfo>, Iterato
      *
      * @param id the key for the item to be added
      * @param url the URL to download the item
-     * @param oldUrl the URL for the old version of the item (the NVD CVE old
-     * schema still contains useful data we need).
+     * @param oldUrl the URL for the old version of the item (the NVD CVE old schema still contains useful data we
+     * need).
      * @throws MalformedURLException thrown if the URL provided is invalid
      * @throws DownloadFailedException thrown if the download fails.
      */
@@ -83,8 +81,8 @@ public class UpdateableNvdCve implements java.lang.Iterable<NvdCveInfo>, Iterato
      *
      * @param id the key for the item to be added
      * @param url the URL to download the item
-     * @param oldUrl the URL for the old version of the item (the NVD CVE old
-     * schema still contains useful data we need).
+     * @param oldUrl the URL for the old version of the item (the NVD CVE old schema still contains useful data we
+     * need).
      * @param needsUpdate whether or not the data needs to be updated
      * @throws MalformedURLException thrown if the URL provided is invalid
      * @throws DownloadFailedException thrown if the download fails.
@@ -121,8 +119,10 @@ public class UpdateableNvdCve implements java.lang.Iterable<NvdCveInfo>, Iterato
     private Iterator<Entry<String, NvdCveInfo>> iterableContent = null;
 
     /**
-     * <p>Returns an iterator for the NvdCveInfo contained.</p>
-     * <p><b>This method is not thread safe.</b></p>
+     * <p>
+     * Returns an iterator for the NvdCveInfo contained.</p>
+     * <p>
+     * <b>This method is not thread safe.</b></p>
      *
      * @return an NvdCveInfo Iterator
      */
@@ -133,11 +133,12 @@ public class UpdateableNvdCve implements java.lang.Iterable<NvdCveInfo>, Iterato
     }
 
     /**
-     * <p>Returns whether or not there is another item in the collection.</p>
-     * <p><b>This method is not thread safe.</b></p>
+     * <p>
+     * Returns whether or not there is another item in the collection.</p>
+     * <p>
+     * <b>This method is not thread safe.</b></p>
      *
-     * @return true or false depending on whether or not another item exists in
-     * the collection
+     * @return true or false depending on whether or not another item exists in the collection
      */
     @Override
     public boolean hasNext() {
@@ -145,8 +146,10 @@ public class UpdateableNvdCve implements java.lang.Iterable<NvdCveInfo>, Iterato
     }
 
     /**
-     * <p>Returns the next item in the collection.</p>
-     * <p><b>This method is not thread safe.</b></p>
+     * <p>
+     * Returns the next item in the collection.</p>
+     * <p>
+     * <b>This method is not thread safe.</b></p>
      *
      * @return the next NvdCveInfo item in the collection
      */
@@ -156,8 +159,10 @@ public class UpdateableNvdCve implements java.lang.Iterable<NvdCveInfo>, Iterato
     }
 
     /**
-     * <p>Removes the current NvdCveInfo object from the collection.</p>
-     * <p><b>This method is not thread safe.</b></p>
+     * <p>
+     * Removes the current NvdCveInfo object from the collection.</p>
+     * <p>
+     * <b>This method is not thread safe.</b></p>
      */
     @Override
     public void remove() {

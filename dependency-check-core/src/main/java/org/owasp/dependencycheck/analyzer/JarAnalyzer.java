@@ -1,37 +1,28 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
-import java.util.Enumeration;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
-import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Evidence;
-import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,15 +34,23 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 import org.jsoup.Jsoup;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.jaxb.pom.MavenNamespaceFilter;
 import org.owasp.dependencycheck.jaxb.pom.generated.License;
 import org.owasp.dependencycheck.jaxb.pom.generated.Model;
@@ -64,8 +63,7 @@ import org.xml.sax.XMLReader;
 
 /**
  *
- * Used to load a JAR file and collect information that can be used to determine
- * the associated CPE.
+ * Used to load a JAR file and collect information that can be used to determine the associated CPE.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -77,8 +75,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      */
     private static final String NEWLINE = System.getProperty("line.separator");
     /**
-     * A list of values in the manifest to ignore as they only result in false
-     * positives.
+     * A list of values in the manifest to ignore as they only result in false positives.
      */
     private static final Set<String> IGNORE_VALUES = newHashSet(
             "Sun Java System Application Server");
@@ -183,8 +180,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * Returns whether or not this analyzer can process the given extension.
      *
      * @param extension the file extension to test for support.
-     * @return whether or not the specified file extension is supported by this
-     * analyzer.
+     * @return whether or not the specified file extension is supported by this analyzer.
      */
     public boolean supportsExtension(String extension) {
         return EXTENSIONS.contains(extension);
@@ -201,13 +197,12 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     //</editor-fold>
 
     /**
-     * Loads a specified JAR file and collects information from the manifest and
-     * checksums to identify the correct CPE information.
+     * Loads a specified JAR file and collects information from the manifest and checksums to identify the correct CPE
+     * information.
      *
      * @param dependency the dependency to analyze.
      * @param engine the engine that is scanning the dependencies
-     * @throws AnalysisException is thrown if there is an error reading the JAR
-     * file.
+     * @throws AnalysisException is thrown if there is an error reading the JAR file.
      */
     @Override
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
@@ -231,14 +226,12 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * Attempts to find a pom.xml within the JAR file. If found it extracts
-     * information and adds it to the evidence. This will attempt to interpolate
-     * the strings contained within the pom.properties if one exists.
+     * Attempts to find a pom.xml within the JAR file. If found it extracts information and adds it to the evidence.
+     * This will attempt to interpolate the strings contained within the pom.properties if one exists.
      *
      * @param dependency the dependency being analyzed
      * @param classes a collection of class name information
-     * @throws AnalysisException is thrown if there is an exception parsing the
-     * pom
+     * @throws AnalysisException is thrown if there is an exception parsing the pom
      * @return whether or not evidence was added to the dependency
      */
     protected boolean analyzePOM(Dependency dependency, ArrayList<ClassNameInformation> classes) throws AnalysisException {
@@ -290,14 +283,12 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * Given a path to a pom.xml within a JarFile, this method attempts to load
-     * a sibling pom.properties if one exists.
+     * Given a path to a pom.xml within a JarFile, this method attempts to load a sibling pom.properties if one exists.
      *
      * @param path the path to the pom.xml within the JarFile
      * @param jar the JarFile to load the pom.properties from
      * @return a Properties object or null if no pom.properties was found
-     * @throws IOException thrown if there is an exception reading the
-     * pom.properties
+     * @throws IOException thrown if there is an exception reading the pom.properties
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "OS_OPEN_STREAM",
             justification = "The reader is closed by closing the zipEntry")
@@ -314,8 +305,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * Searches a JarFile for pom.xml entries and returns a listing of these
-     * entries.
+     * Searches a JarFile for pom.xml entries and returns a listing of these entries.
      *
      * @param jar the JarFile to search
      * @return a list of pom.xml entries
@@ -340,8 +330,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * @param path the path to the pom.xml file within the jar file
      * @param jar the jar file to extract the pom from
      * @return returns a
-     * @throws AnalysisException is thrown if there is an exception extracting
-     * or parsing the POM
+     * @throws AnalysisException is thrown if there is an exception extracting or parsing the POM
      * {@link org.owasp.dependencycheck.jaxb.pom.generated.Model} object
      */
     private Model retrievePom(String path, JarFile jar) throws AnalysisException {
@@ -401,10 +390,9 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * @param dependency the dependency to set data on
      * @param pom the information from the pom
      * @param pomProperties the pom properties file (null if none exists)
-     * @param classes a collection of ClassNameInformation - containing data
-     * about the fully qualified class names within the JAR file being analyzed
-     * @return true if there was evidence within the pom that we could use;
-     * otherwise false
+     * @param classes a collection of ClassNameInformation - containing data about the fully qualified class names
+     * within the JAR file being analyzed
+     * @return true if there was evidence within the pom that we could use; otherwise false
      */
     private boolean setPomEvidence(Dependency dependency, Model pom, Properties pomProperties, ArrayList<ClassNameInformation> classes) {
         boolean foundSomething = false;
@@ -505,15 +493,12 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * Analyzes the path information of the classes contained within the
-     * JarAnalyzer to try and determine possible vendor or product names. If any
-     * are found they are stored in the packageVendor and packageProduct
-     * hashSets.
+     * Analyzes the path information of the classes contained within the JarAnalyzer to try and determine possible
+     * vendor or product names. If any are found they are stored in the packageVendor and packageProduct hashSets.
      *
      * @param classNames a list of class names
      * @param dependency a dependency to analyze
-     * @param addPackagesAsEvidence a flag indicating whether or not package
-     * names should be added as evidence.
+     * @param addPackagesAsEvidence a flag indicating whether or not package names should be added as evidence.
      */
     protected void analyzePackageNames(ArrayList<ClassNameInformation> classNames,
             Dependency dependency, boolean addPackagesAsEvidence) {
@@ -547,12 +532,12 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * <p>Reads the manifest from the JAR file and collects the entries. Some
-     * vendorKey entries are:</p> <ul><li>Implementation Title</li>
+     * <p>
+     * Reads the manifest from the JAR file and collects the entries. Some vendorKey entries are:</p>
+     * <ul><li>Implementation Title</li>
      * <li>Implementation Version</li> <li>Implementation Vendor</li>
-     * <li>Implementation VendorId</li> <li>Bundle Name</li> <li>Bundle
-     * Version</li> <li>Bundle Vendor</li> <li>Bundle Description</li> <li>Main
-     * Class</li> </ul>
+     * <li>Implementation VendorId</li> <li>Bundle Name</li> <li>Bundle Version</li> <li>Bundle Vendor</li> <li>Bundle
+     * Description</li> <li>Main Class</li> </ul>
      * However, all but a handful of specific entries are read in.
      *
      * @param dependency A reference to the dependency
@@ -575,7 +560,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                         && !dependency.getFileName().toLowerCase().endsWith("-doc.jar")) {
                     Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO,
                             String.format("Jar file '%s' does not contain a manifest.",
-                            dependency.getFileName()));
+                                    dependency.getFileName()));
                 }
                 return false;
             }
@@ -779,29 +764,30 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * <p>A utility function that will interpolate strings based on values given
-     * in the properties file. It will also interpolate the strings contained
-     * within the properties file so that properties can reference other
+     * <p>
+     * A utility function that will interpolate strings based on values given in the properties file. It will also
+     * interpolate the strings contained within the properties file so that properties can reference other
      * properties.</p>
-     * <p><b>Note:</b> if there is no property found the reference will be
-     * removed. In other words, if the interpolated string will be replaced with
-     * an empty string.
+     * <p>
+     * <b>Note:</b> if there is no property found the reference will be removed. In other words, if the interpolated
+     * string will be replaced with an empty string.
      * </p>
-     * <p>Example:</p>
+     * <p>
+     * Example:</p>
      * <code>
      * Properties p = new Properties();
      * p.setProperty("key", "value");
      * String s = interpolateString("'${key}' and '${nothing}'", p);
      * System.out.println(s);
      * </code>
-     * <p>Will result in:</p>
+     * <p>
+     * Will result in:</p>
      * <code>
      * 'value' and ''
      * </code>
      *
      * @param text the string that contains references to properties.
-     * @param properties a collection of properties that may be referenced
-     * within the text.
+     * @param properties a collection of properties that may be referenced within the text.
      * @return the interpolated text.
      */
     protected String interpolateString(String text, Properties properties) {
@@ -835,13 +821,11 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * Determines if the key value pair from the manifest is for an "import"
-     * type entry for package names.
+     * Determines if the key value pair from the manifest is for an "import" type entry for package names.
      *
      * @param key the key from the manifest
      * @param value the value from the manifest
-     * @return true or false depending on if it is believed the entry is an
-     * "import" entry
+     * @return true or false depending on if it is believed the entry is an "import" entry
      */
     private boolean isImportPackage(String key, String value) {
         final Pattern packageRx = Pattern.compile("^((([a-zA-Z_#\\$0-9]\\.)+)\\s*\\;\\s*)+$");
@@ -852,9 +836,8 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * Cycles through an enumeration of JarEntries, contained within the
-     * dependency, and returns a list of the class names. This does not include
-     * core Java package names (i.e. java.* or javax.*).
+     * Cycles through an enumeration of JarEntries, contained within the dependency, and returns a list of the class
+     * names. This does not include core Java package names (i.e. java.* or javax.*).
      *
      * @param dependency the dependency being analyzed
      * @return an list of fully qualified class names
@@ -891,16 +874,12 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * Cycles through the list of class names and places the package levels 0-3
-     * into the provided maps for vendor and product. This is helpful when
-     * analyzing vendor/product as many times this is included in the package
-     * name.
+     * Cycles through the list of class names and places the package levels 0-3 into the provided maps for vendor and
+     * product. This is helpful when analyzing vendor/product as many times this is included in the package name.
      *
      * @param classNames a list of class names
-     * @param vendor HashMap of possible vendor names from package names (e.g.
-     * owasp)
-     * @param product HashMap of possible product names from package names (e.g.
-     * dependencycheck)
+     * @param vendor HashMap of possible vendor names from package names (e.g. owasp)
+     * @param product HashMap of possible product names from package names (e.g. dependencycheck)
      */
     private void analyzeFullyQualifiedClassNames(ArrayList<ClassNameInformation> classNames,
             HashMap<String, Integer> vendor, HashMap<String, Integer> product) {
@@ -927,9 +906,8 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * Adds an entry to the specified collection and sets the Integer (e.g. the
-     * count) to 1. If the entry already exists in the collection then the
-     * Integer is incremented by 1.
+     * Adds an entry to the specified collection and sets the Integer (e.g. the count) to 1. If the entry already exists
+     * in the collection then the Integer is incremented by 1.
      *
      * @param collection a collection of strings and their occurrence count
      * @param key the key to add to the collection
@@ -943,10 +921,9 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * Cycles through the collection of class name information to see if parts
-     * of the package names are contained in the provided value. If found, it
-     * will be added as the HIGHEST confidence evidence because we have more
-     * then one source corroborating the value.
+     * Cycles through the collection of class name information to see if parts of the package names are contained in the
+     * provided value. If found, it will be added as the HIGHEST confidence evidence because we have more then one
+     * source corroborating the value.
      *
      * @param classes a collection of class name information
      * @param value the value to check to see if it contains a package name
@@ -967,22 +944,20 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * <p><b>This is currently a failed implementation.</b> Part of the issue is
-     * I was trying to solve the wrong problem. Instead of multiple POMs being
-     * in the JAR to just add information about dependencies - I didn't realize
-     * until later that I was looking at an uber-jar (aka fat-jar) that included
-     * all of its dependencies.</p>
-     * <p>I'm leaving this method in the source tree, entirely commented out
-     * until a solution https://github.com/jeremylong/DependencyCheck/issues/11
-     * has been implemented.</p>
-     * <p>Takes a list of pom entries from a JAR file and attempts to filter it
-     * down to the pom related to the jar (rather then the pom entry for a
-     * dependency).</p>
+     * <p>
+     * <b>This is currently a failed implementation.</b> Part of the issue is I was trying to solve the wrong problem.
+     * Instead of multiple POMs being in the JAR to just add information about dependencies - I didn't realize until
+     * later that I was looking at an uber-jar (aka fat-jar) that included all of its dependencies.</p>
+     * <p>
+     * I'm leaving this method in the source tree, entirely commented out until a solution
+     * https://github.com/jeremylong/DependencyCheck/issues/11 has been implemented.</p>
+     * <p>
+     * Takes a list of pom entries from a JAR file and attempts to filter it down to the pom related to the jar (rather
+     * then the pom entry for a dependency).</p>
      *
      * @param pomEntries a list of pom entries
      * @param classes a list of fully qualified classes from the JAR file
-     * @return the list of pom entries that are associated with the jar being
-     * analyzed rather then the dependent poms
+     * @return the list of pom entries that are associated with the jar being analyzed rather then the dependent poms
      */
     private List<String> filterPomEntries(List<String> pomEntries, ArrayList<ClassNameInformation> classes) {
         return pomEntries;
@@ -1040,8 +1015,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * Simple check to see if the attribute from a manifest is just a package
-     * name.
+     * Simple check to see if the attribute from a manifest is just a package name.
      *
      * @param key the key of the value to check
      * @param value the value to check
@@ -1059,16 +1033,13 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     protected static class ClassNameInformation {
 
         /**
-         * Stores information about a given class name. This class will keep the
-         * fully qualified class name and a list of the important parts of the
-         * package structure. Up to the first four levels of the package
-         * structure are stored, excluding a leading "org" or "com". Example:
-         * <code>ClassNameInformation obj = new ClassNameInformation("org.owasp.dependencycheck.analyzer.JarAnalyzer");
+         * Stores information about a given class name. This class will keep the fully qualified class name and a list
+         * of the important parts of the package structure. Up to the first four levels of the package structure are
+         * stored, excluding a leading "org" or "com". Example:          <code>ClassNameInformation obj = new ClassNameInformation("org.owasp.dependencycheck.analyzer.JarAnalyzer");
          * System.out.println(obj.getName());
          * for (String p : obj.getPackageStructure())
          *     System.out.println(p);
-         * </code> Would result in:
-         * <code>org.owasp.dependencycheck.analyzer.JarAnalyzer
+         * </code> Would result in:          <code>org.owasp.dependencycheck.analyzer.JarAnalyzer
          * owasp
          * dependencycheck
          * analyzer
@@ -1119,8 +1090,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             this.name = name;
         }
         /**
-         * Up to the first four levels of the package structure, excluding a
-         * leading "org" or "com".
+         * Up to the first four levels of the package structure, excluding a leading "org" or "com".
          */
         private ArrayList<String> packageStructure = new ArrayList<String>();
 

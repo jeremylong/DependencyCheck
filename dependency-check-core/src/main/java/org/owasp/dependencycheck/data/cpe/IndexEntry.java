@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -126,16 +125,18 @@ public class IndexEntry implements Serializable {
     }
 
     /**
-     * <p>Parses a name attribute value, from the cpe.xml, into its
-     * corresponding parts: vendor, product.</p>
-     * <p>Example:</p>
+     * <p>
+     * Parses a name attribute value, from the cpe.xml, into its corresponding parts: vendor, product.</p>
+     * <p>
+     * Example:</p>
      * <code>nbsp;nbsp;nbsp;cpe:/a:apache:struts:1.1:rc2</code>
      *
-     * <p>Results in:</p> <ul> <li>Vendor: apache</li> <li>Product: struts</li>
+     * <p>
+     * Results in:</p> <ul> <li>Vendor: apache</li> <li>Product: struts</li>
      * </ul>
-     * <p>If it is necessary to parse the CPE into more parts (i.e. to include
-     * version and revision) then you should use the
-     * {@link org.owasp.dependencycheck.dependency.VulnerableSoftware#parseName VulnerableSoftware.parseName()}.
+     * <p>
+     * If it is necessary to parse the CPE into more parts (i.e. to include version and revision) then you should use
+     * the {@link org.owasp.dependencycheck.dependency.VulnerableSoftware#parseName VulnerableSoftware.parseName()}.
      *
      * @param cpeName the cpe name
      * @throws UnsupportedEncodingException should never be thrown...

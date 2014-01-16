@@ -1,20 +1,19 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
- * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.nexus;
 
@@ -35,6 +34,7 @@ import org.w3c.dom.Document;
  * @author colezlaw
  */
 public class NexusSearch {
+
     /**
      * The root URL for the Nexus repository service
      */
@@ -48,22 +48,21 @@ public class NexusSearch {
     /**
      * Creates a NexusSearch for the given repository URL.
      *
-     * @param rootURL the root URL of the repository on which searches should execute.
-     *        full URL's are calculated relative to this URL, so it should end with a /
+     * @param rootURL the root URL of the repository on which searches should execute. full URL's are calculated
+     * relative to this URL, so it should end with a /
      */
     public NexusSearch(URL rootURL) {
         this.rootURL = rootURL;
     }
 
     /**
-     * Searches the configured Nexus repository for the given sha1
-     * hash. If the artifact is found, a <code>MavenArtifact</code> is populated
-     * with the coordinate information.
+     * Searches the configured Nexus repository for the given sha1 hash. If the artifact is found, a
+     * <code>MavenArtifact</code> is populated with the coordinate information.
      *
      * @param sha1 The SHA-1 hash string for which to search
      * @return the populated Maven coordinates
-     * @throws IOException if it's unable to connect to the specified repositor or
-     *         if the specified artifact is not found.
+     * @throws IOException if it's unable to connect to the specified repositor or if the specified artifact is not
+     * found.
      */
     public MavenArtifact searchSha1(String sha1) throws IOException {
         if (null == sha1 || !sha1.matches("^[0-9A-Fa-f]{40}$")) {
