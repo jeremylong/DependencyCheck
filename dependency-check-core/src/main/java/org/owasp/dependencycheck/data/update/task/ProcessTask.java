@@ -1,27 +1,22 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.update.task;
 
-import org.owasp.dependencycheck.data.update.xml.NvdCve20Handler;
-import org.owasp.dependencycheck.data.update.xml.NvdCve12Handler;
-import org.owasp.dependencycheck.data.update.exception.UpdateException;
-import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -36,13 +31,16 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.data.update.StandardUpdate;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.data.update.xml.NvdCve12Handler;
+import org.owasp.dependencycheck.data.update.xml.NvdCve20Handler;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.xml.sax.SAXException;
 
 /**
- * A callable task that will process a given set of NVD CVE xml files and update
- * the Cve Database accordingly.
+ * A callable task that will process a given set of NVD CVE xml files and update the Cve Database accordingly.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -87,8 +85,7 @@ public class ProcessTask implements Callable<ProcessTask> {
      * Constructs a new ProcessTask used to process an NVD CVE update.
      *
      * @param cveDB the data store object
-     * @param filePair the download task that contains the URL references to
-     * download
+     * @param filePair the download task that contains the URL references to download
      */
     public ProcessTask(final CveDB cveDB, final CallableDownloadTask filePair) {
         this.cveDB = cveDB;
@@ -100,8 +97,8 @@ public class ProcessTask implements Callable<ProcessTask> {
      * Implements the callable interface.
      *
      * @return this object
-     * @throws Exception thrown if there is an exception; note that any
-     * UpdateExceptions are simply added to the tasks exception collection
+     * @throws Exception thrown if there is an exception; note that any UpdateExceptions are simply added to the tasks
+     * exception collection
      */
     @Override
     public ProcessTask call() throws Exception {
@@ -118,14 +115,12 @@ public class ProcessTask implements Callable<ProcessTask> {
      *
      * @param file the file containing the NVD CVE XML
      * @param oldVersion contains the file containing the NVD CVE XML 1.2
-     * @throws ParserConfigurationException is thrown if there is a parser
-     * configuration exception
+     * @throws ParserConfigurationException is thrown if there is a parser configuration exception
      * @throws SAXException is thrown if there is a SAXException
      * @throws IOException is thrown if there is a IO Exception
      * @throws SQLException is thrown if there is a SQL exception
      * @throws DatabaseException is thrown if there is a database exception
-     * @throws ClassNotFoundException thrown if the h2 database driver cannot be
-     * loaded
+     * @throws ClassNotFoundException thrown if the h2 database driver cannot be loaded
      */
     protected void importXML(File file, File oldVersion) throws ParserConfigurationException,
             SAXException, IOException, SQLException, DatabaseException, ClassNotFoundException {
@@ -146,8 +141,7 @@ public class ProcessTask implements Callable<ProcessTask> {
     /**
      * Processes the NVD CVE XML file and imports the data into the DB.
      *
-     * @throws UpdateException thrown if there is an error loading the data into
-     * the database
+     * @throws UpdateException thrown if there is an error loading the data into the database
      */
     private void processFiles() throws UpdateException {
         String msg = String.format("Processing Started for NVD CVE - %s", filePair.getNvdCveInfo().getId());

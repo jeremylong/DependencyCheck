@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -21,16 +20,16 @@ package org.owasp.dependencycheck.data.lucene;
 import org.apache.lucene.util.Version;
 
 /**
- * <p>Lucene utils is a set of utilize written to make constructing Lucene
- * queries simpler.</p>
+ * <p>
+ * Lucene utils is a set of utilize written to make constructing Lucene queries simpler.</p>
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class LuceneUtils {
 
     /**
-     * The current version of Lucene being used. Declaring this one place so an
-     * upgrade doesn't require hunting through the code base.
+     * The current version of Lucene being used. Declaring this one place so an upgrade doesn't require hunting through
+     * the code base.
      */
     public static final Version CURRENT_VERSION = Version.LUCENE_45;
 
@@ -41,8 +40,7 @@ public final class LuceneUtils {
     }
 
     /**
-     * Appends the text to the supplied StringBuilder escaping Lucene control
-     * characters in the process.
+     * Appends the text to the supplied StringBuilder escaping Lucene control characters in the process.
      *
      * @param buf a StringBuilder to append the escaped text to
      * @param text the data to be escaped
@@ -88,8 +86,7 @@ public final class LuceneUtils {
     }
 
     /**
-     * Escapes the text passed in so that it is treated as data instead of
-     * control characters.
+     * Escapes the text passed in so that it is treated as data instead of control characters.
      *
      * @param text data to be escaped
      * @return the escaped text.

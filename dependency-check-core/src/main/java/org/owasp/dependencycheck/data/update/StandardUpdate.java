@@ -1,28 +1,22 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.update;
 
-import org.owasp.dependencycheck.data.update.task.ProcessTask;
-import org.owasp.dependencycheck.data.update.task.CallableDownloadTask;
-import org.owasp.dependencycheck.data.update.exception.UpdateException;
-import org.owasp.dependencycheck.data.update.exception.InvalidDataException;
-import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import java.net.MalformedURLException;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,11 +29,16 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
-import org.owasp.dependencycheck.utils.DownloadFailedException;
-import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
-import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import static org.owasp.dependencycheck.data.nvdcve.DatabaseProperties.MODIFIED;
+import org.owasp.dependencycheck.data.update.exception.InvalidDataException;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.data.update.task.CallableDownloadTask;
+import org.owasp.dependencycheck.data.update.task.ProcessTask;
+import org.owasp.dependencycheck.utils.DownloadFailedException;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * Class responsible for updating the NVDCVE data store.
@@ -53,8 +52,7 @@ public class StandardUpdate {
      */
     public static final int MAX_THREAD_POOL_SIZE = Settings.getInt(Settings.KEYS.MAX_DOWNLOAD_THREAD_POOL_SIZE, 3);
     /**
-     * Information about the timestamps and URLs for data that needs to be
-     * updated.
+     * Information about the timestamps and URLs for data that needs to be updated.
      */
     private DatabaseProperties properties;
     /**
@@ -79,10 +77,8 @@ public class StandardUpdate {
      * Constructs a new Standard Update Task.
      *
      * @throws MalformedURLException thrown if a configured URL is malformed
-     * @throws DownloadFailedException thrown if a timestamp cannot be checked
-     * on a configured URL
-     * @throws UpdateException thrown if there is an exception generating the
-     * update task
+     * @throws DownloadFailedException thrown if a timestamp cannot be checked on a configured URL
+     * @throws UpdateException thrown if there is an exception generating the update task
      */
     public StandardUpdate() throws MalformedURLException, DownloadFailedException, UpdateException {
         openDataStores();
@@ -91,11 +87,10 @@ public class StandardUpdate {
     }
 
     /**
-     * <p>Downloads the latest NVD CVE XML file from the web and imports it into
-     * the current CVE Database.</p>
+     * <p>
+     * Downloads the latest NVD CVE XML file from the web and imports it into the current CVE Database.</p>
      *
-     * @throws UpdateException is thrown if there is an error updating the
-     * database
+     * @throws UpdateException is thrown if there is an error updating the database
      */
     public void update() throws UpdateException {
         int maxUpdates = 0;
@@ -187,18 +182,14 @@ public class StandardUpdate {
     }
 
     /**
-     * Determines if the index needs to be updated. This is done by fetching the
-     * NVD CVE meta data and checking the last update date. If the data needs to
-     * be refreshed this method will return the NvdCveUrl for the files that
-     * need to be updated.
+     * Determines if the index needs to be updated. This is done by fetching the NVD CVE meta data and checking the last
+     * update date. If the data needs to be refreshed this method will return the NvdCveUrl for the files that need to
+     * be updated.
      *
      * @return the collection of files that need to be updated
-     * @throws MalformedURLException is thrown if the URL for the NVD CVE Meta
-     * data is incorrect
-     * @throws DownloadFailedException is thrown if there is an error.
-     * downloading the NVD CVE download data file
-     * @throws UpdateException Is thrown if there is an issue with the last
-     * updated properties file
+     * @throws MalformedURLException is thrown if the URL for the NVD CVE Meta data is incorrect
+     * @throws DownloadFailedException is thrown if there is an error. downloading the NVD CVE download data file
+     * @throws UpdateException Is thrown if there is an issue with the last updated properties file
      */
     protected final UpdateableNvdCve updatesNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
         UpdateableNvdCve updates = null;
@@ -244,7 +235,7 @@ public class StandardUpdate {
                                         DatabaseProperties.LAST_UPDATED_BASE, entry.getId());
                                 Logger
                                         .getLogger(StandardUpdate.class
-                                        .getName()).log(Level.FINE, msg, ex);
+                                                .getName()).log(Level.FINE, msg, ex);
                             }
                             if (currentTimestamp == entry.getTimestamp()) {
                                 entry.setNeedsUpdate(false);
@@ -256,7 +247,7 @@ public class StandardUpdate {
                 final String msg = "An invalid schema version or timestamp exists in the data.properties file.";
                 Logger
                         .getLogger(StandardUpdate.class
-                        .getName()).log(Level.WARNING, msg);
+                                .getName()).log(Level.WARNING, msg);
                 Logger.getLogger(StandardUpdate.class
                         .getName()).log(Level.FINE, null, ex);
             }
@@ -268,12 +259,9 @@ public class StandardUpdate {
      * Retrieves the timestamps from the NVD CVE meta data file.
      *
      * @return the timestamp from the currently published nvdcve downloads page
-     * @throws MalformedURLException thrown if the URL for the NVD CCE Meta data
-     * is incorrect.
-     * @throws DownloadFailedException thrown if there is an error downloading
-     * the nvd cve meta data file
-     * @throws InvalidDataException thrown if there is an exception parsing the
-     * timestamps
+     * @throws MalformedURLException thrown if the URL for the NVD CCE Meta data is incorrect.
+     * @throws DownloadFailedException thrown if there is an error downloading the nvd cve meta data file
+     * @throws InvalidDataException thrown if there is an exception parsing the timestamps
      * @throws InvalidSettingException thrown if the settings are invalid
      */
     private UpdateableNvdCve retrieveCurrentTimestampsFromWeb()
@@ -330,10 +318,9 @@ public class StandardUpdate {
     }
 
     /**
-     * Determines if the epoch date is within the range specified of the
-     * compareTo epoch time. This takes the (compareTo-date)/1000/60/60/24 to
-     * get the number of days. If the calculated days is less then the range the
-     * date is considered valid.
+     * Determines if the epoch date is within the range specified of the compareTo epoch time. This takes the
+     * (compareTo-date)/1000/60/60/24 to get the number of days. If the calculated days is less then the range the date
+     * is considered valid.
      *
      * @param date the date to be checked.
      * @param compareTo the date to compare to.

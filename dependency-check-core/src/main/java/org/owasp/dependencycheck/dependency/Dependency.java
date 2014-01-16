@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -32,9 +31,8 @@ import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.FileUtils;
 
 /**
- * A program dependency. This object is one of the core components within
- * DependencyCheck. It is used to collect information about the dependency in
- * the form of evidence. The Evidence is then used to determine if there are any
+ * A program dependency. This object is one of the core components within DependencyCheck. It is used to collect
+ * information about the dependency in the form of evidence. The Evidence is then used to determine if there are any
  * known, published, vulnerabilities associated with the program dependency.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
@@ -153,9 +151,11 @@ public class Dependency implements Comparable<Dependency> {
     }
 
     /**
-     * <p>Gets the file path of the dependency.</p> <p><b>NOTE:</b> This may not
-     * be the actual path of the file on disk. The actual path of the file on
-     * disk can be obtained via the getActualFilePath().</p>
+     * <p>
+     * Gets the file path of the dependency.</p>
+     * <p>
+     * <b>NOTE:</b> This may not be the actual path of the file on disk. The actual path of the file on disk can be
+     * obtained via the getActualFilePath().</p>
      *
      * @return the file path of the dependency.
      */
@@ -236,8 +236,7 @@ public class Dependency implements Comparable<Dependency> {
     }
 
     /**
-     * Adds an entry to the list of detected Identifiers for the dependency
-     * file.
+     * Adds an entry to the list of detected Identifiers for the dependency file.
      *
      * @param type the type of identifier (such as CPE)
      * @param value the value of the identifier
@@ -249,8 +248,7 @@ public class Dependency implements Comparable<Dependency> {
     }
 
     /**
-     * Adds an entry to the list of detected Identifiers for the dependency
-     * file.
+     * Adds an entry to the list of detected Identifiers for the dependency file.
      *
      * @param identifier the identifier to add
      */
@@ -465,8 +463,7 @@ public class Dependency implements Comparable<Dependency> {
     }
 
     /**
-     * Implementation of the Comparable<Dependency> interface. The comparison is
-     * solely based on the file name.
+     * Implementation of the Comparable<Dependency> interface. The comparison is solely based on the file name.
      *
      * @param o a dependency to compare
      * @return an integer representing the natural ordering
@@ -567,8 +564,7 @@ public class Dependency implements Comparable<Dependency> {
     }
 
     /**
-     * Standard toString() implementation showing the filename, actualFilePath,
-     * and filePath.
+     * Standard toString() implementation showing the filename, actualFilePath, and filePath.
      *
      * @return the string representation of the file
      */

@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -67,8 +66,7 @@ public final class FileUtils {
     }
 
     /**
-     * Deletes a file. If the File is a directory it will recursively delete the
-     * contents.
+     * Deletes a file. If the File is a directory it will recursively delete the contents.
      *
      * @param file the File to delete
      * @throws IOException is thrown if the file could not be deleted
@@ -91,19 +89,16 @@ public final class FileUtils {
     }
 
     /**
-     * Returns the data directory. If a path was specified in
-     * dependencycheck.properties or was specified using the Settings object,
-     * and the path exists, that path will be returned as a File object. If it
-     * does not exist, then a File object will be created based on the file
-     * location of the JAR containing the specified class.
+     * Returns the data directory. If a path was specified in dependencycheck.properties or was specified using the
+     * Settings object, and the path exists, that path will be returned as a File object. If it does not exist, then a
+     * File object will be created based on the file location of the JAR containing the specified class.
      *
      * @param configuredFilePath the configured relative or absolute path
      * @param clazz the class to resolve the path
      * @return a File object
      * @throws IOException is thrown if the path could not be decoded
-     * @deprecated This method should no longer be used. See the implementation
-     * in dependency-check-cli/App.java to see how the data directory should be
-     * set.
+     * @deprecated This method should no longer be used. See the implementation in dependency-check-cli/App.java to see
+     * how the data directory should be set.
      */
     @java.lang.Deprecated
     public static File getDataDirectory(String configuredFilePath, Class clazz) throws IOException {
@@ -117,10 +112,8 @@ public final class FileUtils {
     }
 
     /**
-     * Retrieves the physical path to the parent directory containing the
-     * provided class. For example, if a JAR file contained a class
-     * org.something.clazz this method would return the parent directory of the
-     * JAR file.
+     * Retrieves the physical path to the parent directory containing the provided class. For example, if a JAR file
+     * contained a class org.something.clazz this method would return the parent directory of the JAR file.
      *
      * @param clazz the class to determine the parent directory of
      * @return the parent directory of the file containing the specified class.
@@ -140,24 +133,21 @@ public final class FileUtils {
      *
      * @param archive an archive file such as a WAR or EAR
      * @param extractTo a directory to extract the contents to
-     * @throws ExtractionException thrown if an exception occurs while
-     * extracting the files
+     * @throws ExtractionException thrown if an exception occurs while extracting the files
      */
     public static void extractFiles(File archive, File extractTo) throws ExtractionException {
         extractFiles(archive, extractTo, null);
     }
 
     /**
-     * Extracts the contents of an archive into the specified directory. The
-     * files are only extracted if they are supported by the analyzers loaded
-     * into the specified engine. If the engine is specified as null then all
-     * files are extracted.
+     * Extracts the contents of an archive into the specified directory. The files are only extracted if they are
+     * supported by the analyzers loaded into the specified engine. If the engine is specified as null then all files
+     * are extracted.
      *
      * @param archive an archive file such as a WAR or EAR
      * @param extractTo a directory to extract the contents to
      * @param engine the scanning engine
-     * @throws ExtractionException thrown if there is an error extracting the
-     * files
+     * @throws ExtractionException thrown if there is an error extracting the files
      */
     public static void extractFiles(File archive, File extractTo, Engine engine) throws ExtractionException {
         if (archive == null || extractTo == null) {

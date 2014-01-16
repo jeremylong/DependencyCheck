@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -23,16 +22,15 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Vulnerability;
-import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Identifier;
+import org.owasp.dependencycheck.dependency.Vulnerability;
 
 /**
- * NvdCveAnalyzer is a utility class that takes a project dependency and
- * attempts to discern if there is an associated CVEs. It uses the the
- * identifiers found by other analyzers to lookup the CVE data.
+ * NvdCveAnalyzer is a utility class that takes a project dependency and attempts to discern if there is an associated
+ * CVEs. It uses the the identifiers found by other analyzers to lookup the CVE data.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -53,8 +51,7 @@ public class NvdCveAnalyzer implements Analyzer {
      * @throws SQLException thrown when there is a SQL Exception
      * @throws IOException thrown when there is an IO Exception
      * @throws DatabaseException thrown when there is a database exceptions
-     * @throws ClassNotFoundException thrown if the h2 database driver cannot be
-     * loaded
+     * @throws ClassNotFoundException thrown if the h2 database driver cannot be loaded
      */
     public void open() throws SQLException, IOException, DatabaseException, ClassNotFoundException {
         cveDB = new CveDB();
@@ -92,13 +89,11 @@ public class NvdCveAnalyzer implements Analyzer {
     }
 
     /**
-     * Analyzes a dependency and attempts to determine if there are any CPE
-     * identifiers for this dependency.
+     * Analyzes a dependency and attempts to determine if there are any CPE identifiers for this dependency.
      *
      * @param dependency The Dependency to analyze
      * @param engine The analysis engine
-     * @throws AnalysisException is thrown if there is an issue analyzing the
-     * dependency
+     * @throws AnalysisException is thrown if there is an issue analyzing the dependency
      */
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
         for (Identifier id : dependency.getIdentifiers()) {

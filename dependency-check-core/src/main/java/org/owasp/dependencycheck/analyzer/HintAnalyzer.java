@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -67,8 +66,7 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
      * Returns whether or not this analyzer can process the given extension.
      *
      * @param extension the file extension to test for support.
-     * @return whether or not the specified file extension is supported by this
-     * analyzer.
+     * @return whether or not the specified file extension is supported by this analyzer.
      */
     public boolean supportsExtension(String extension) {
         return true;
@@ -85,13 +83,12 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
     //</editor-fold>
 
     /**
-     * The HintAnalyzer uses knowledge about a dependency to add additional
-     * information to help in identification of identifiers or vulnerabilities.
+     * The HintAnalyzer uses knowledge about a dependency to add additional information to help in identification of
+     * identifiers or vulnerabilities.
      *
      * @param dependency The dependency being analyzed
      * @param engine The scanning engine
-     * @throws AnalysisException is thrown if there is an exception analyzing
-     * the dependency.
+     * @throws AnalysisException is thrown if there is an exception analyzing the dependency.
      */
     @Override
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
@@ -109,7 +106,6 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
                 "Bundle-Vendor",
                 "SpringSource",
                 Evidence.Confidence.HIGH);
-
 
         Set<Evidence> evidence = dependency.getProductEvidence().getEvidence();
         if (evidence.contains(springTest1) || evidence.contains(springTest2)) {
@@ -138,7 +134,6 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
         for (Evidence e : newEntries) {
             dependency.getVendorEvidence().addEvidence(e);
         }
-
 
     }
 }

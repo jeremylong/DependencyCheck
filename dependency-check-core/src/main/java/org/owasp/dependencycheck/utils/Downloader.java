@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -54,8 +53,7 @@ public final class Downloader {
      *
      * @param url the URL of the file to download.
      * @param outputPath the path to the save the file to.
-     * @throws DownloadFailedException is thrown if there is an error
-     * downloading the file.
+     * @throws DownloadFailedException is thrown if there is an error downloading the file.
      */
     public static void fetchFile(URL url, File outputPath) throws DownloadFailedException {
         HttpURLConnection conn = null;
@@ -120,14 +118,12 @@ public final class Downloader {
     }
 
     /**
-     * Makes an HTTP Head request to retrieve the last modified date of the
-     * given URL. If the file:// protocol is specified, then the lastTimestamp
-     * of the file is returned.
+     * Makes an HTTP Head request to retrieve the last modified date of the given URL. If the file:// protocol is
+     * specified, then the lastTimestamp of the file is returned.
      *
      * @param url the URL to retrieve the timestamp from
      * @return an epoch timestamp
-     * @throws DownloadFailedException is thrown if an exception occurs making
-     * the HTTP request
+     * @throws DownloadFailedException is thrown if an exception occurs making the HTTP request
      */
     public static long getLastModified(URL url) throws DownloadFailedException {
         long timestamp = 0;
@@ -173,9 +169,8 @@ public final class Downloader {
     }
 
     /**
-     * Utility method to get an HttpURLConnection. If the app is configured to
-     * use a proxy this method will retrieve the proxy settings and use them
-     * when setting up the connection.
+     * Utility method to get an HttpURLConnection. If the app is configured to use a proxy this method will retrieve the
+     * proxy settings and use them when setting up the connection.
      *
      * @param url the url to connect to
      * @return an HttpURLConnection

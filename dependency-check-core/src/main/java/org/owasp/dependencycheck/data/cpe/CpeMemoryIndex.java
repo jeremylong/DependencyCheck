@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
@@ -41,15 +40,15 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
-import org.owasp.dependencycheck.data.lucene.FieldAnalyzer;
-import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.apache.lucene.store.RAMDirectory;
+import org.owasp.dependencycheck.data.lucene.FieldAnalyzer;
 import org.owasp.dependencycheck.data.lucene.LuceneUtils;
 import org.owasp.dependencycheck.data.lucene.SearchFieldAnalyzer;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
 
 /**
- * An in memory lucene index that contains the vendor/product combinations from
- * the CPE (application) identifiers within the NVD CVE data.
+ * An in memory lucene index that contains the vendor/product combinations from the CPE (application) identifiers within
+ * the NVD CVE data.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -278,8 +277,7 @@ public final class CpeMemoryIndex {
      * @param maxQueryResults the maximum number of documents to return
      * @return the TopDocs found by the search
      * @throws ParseException thrown when the searchString is invalid
-     * @throws IOException is thrown if there is an issue with the underlying
-     * Index
+     * @throws IOException is thrown if there is an issue with the underlying Index
      */
     public TopDocs search(String searchString, int maxQueryResults) throws ParseException, IOException {
         if (searchString == null || searchString.trim().isEmpty()) {

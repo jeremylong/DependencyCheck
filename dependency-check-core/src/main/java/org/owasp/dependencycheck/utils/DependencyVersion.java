@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
@@ -26,15 +25,15 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * <p>Simple object to track the parts of a version number. The parts are
- * contained in a List such that version 1.2.3 will be stored as:
- * <code>versionParts[0] = 1;
+ * <p>
+ * Simple object to track the parts of a version number. The parts are contained in a List such that version 1.2.3 will
+ * be stored as:  <code>versionParts[0] = 1;
  * versionParts[1] = 2;
  * versionParts[2] = 3;
  * </code></p>
- * <p>Note, the parser contained in this class expects the version numbers to be
- * separated by periods. If a different separator is used the parser will likely
- * fail.</p>
+ * <p>
+ * Note, the parser contained in this class expects the version numbers to be separated by periods. If a different
+ * separator is used the parser will likely fail.</p>
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -48,9 +47,8 @@ public class DependencyVersion implements Iterable, Comparable<DependencyVersion
 
     /**
      * Constructor for a DependencyVersion that will parse a version string.
-     * <b>Note</b>, this should only be used when the version passed in is
-     * already known to be a well formated version number. Otherwise,
-     * DependencyVersionUtil.parseVersion() should be used instead.
+     * <b>Note</b>, this should only be used when the version passed in is already known to be a well formated version
+     * number. Otherwise, DependencyVersionUtil.parseVersion() should be used instead.
      *
      * @param version the well formated version number to parse
      */
@@ -59,9 +57,8 @@ public class DependencyVersion implements Iterable, Comparable<DependencyVersion
     }
 
     /**
-     * Parses a version string into its sub parts: major, minor, revision,
-     * build, etc. <b>Note</b>, this should only be used to parse something that
-     * is already known to be a version number.
+     * Parses a version string into its sub parts: major, minor, revision, build, etc. <b>Note</b>, this should only be
+     * used to parse something that is already known to be a version number.
      *
      * @param version the version string to parse
      */
@@ -182,9 +179,8 @@ public class DependencyVersion implements Iterable, Comparable<DependencyVersion
     }
 
     /**
-     * Determines if the three most major major version parts are identical. For
-     * instances, if version 1.2.3.4 was compared to 1.2.3 this function would
-     * return true.
+     * Determines if the three most major major version parts are identical. For instances, if version 1.2.3.4 was
+     * compared to 1.2.3 this function would return true.
      *
      * @param version the version number to compare
      * @return true if the first three major parts of the version are identical

@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -34,13 +33,12 @@ import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 import org.owasp.dependencycheck.utils.LogUtils;
 
 /**
- * <p>This analyzer ensures dependencies that should be grouped together, to
- * remove excess noise from the report, are grouped. An example would be Spring,
- * Spring Beans, Spring MVC, etc. If they are all for the same version and have
- * the same relative path then these should be grouped into a single dependency
- * under the core/main library.</p>
- * <p>Note, this grouping only works on dependencies with identified CVE
- * entries</p>
+ * <p>
+ * This analyzer ensures dependencies that should be grouped together, to remove excess noise from the report, are
+ * grouped. An example would be Spring, Spring Beans, Spring MVC, etc. If they are all for the same version and have the
+ * same relative path then these should be grouped into a single dependency under the core/main library.</p>
+ * <p>
+ * Note, this grouping only works on dependencies with identified CVE entries</p>
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -92,8 +90,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      * Returns whether or not this analyzer can process the given extension.
      *
      * @param extension the file extension to test for support
-     * @return whether or not the specified file extension is supported by this
-     * analyzer.
+     * @return whether or not the specified file extension is supported by this analyzer.
      */
     public boolean supportsExtension(String extension) {
         return true;
@@ -110,14 +107,12 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     //</editor-fold>
 
     /**
-     * Analyzes a set of dependencies. If they have been found to have the same
-     * base path and the same set of identifiers they are likely related. The
-     * related dependencies are bundled into a single reportable item.
+     * Analyzes a set of dependencies. If they have been found to have the same base path and the same set of
+     * identifiers they are likely related. The related dependencies are bundled into a single reportable item.
      *
      * @param ignore this analyzer ignores the dependency being analyzed
      * @param engine the engine that is scanning the dependencies
-     * @throws AnalysisException is thrown if there is an error reading the JAR
-     * file.
+     * @throws AnalysisException is thrown if there is an error reading the JAR file.
      */
     @Override
     public void analyze(Dependency ignore, Engine engine) throws AnalysisException {
@@ -195,13 +190,11 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     }
 
     /**
-     * Returns true if the file names (and version if it exists) of the two
-     * dependencies are sufficiently similar.
+     * Returns true if the file names (and version if it exists) of the two dependencies are sufficiently similar.
      *
      * @param dependency1 a dependency2 to compare
      * @param dependency2 a dependency2 to compare
-     * @return true if the identifiers in the two supplied dependencies are
-     * equal
+     * @return true if the identifiers in the two supplied dependencies are equal
      */
     private boolean fileNameMatch(Dependency dependency1, Dependency dependency2) {
         if (dependency1 == null || dependency1.getFileName() == null
@@ -248,13 +241,11 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     }
 
     /**
-     * Returns true if the identifiers in the two supplied dependencies are
-     * equal.
+     * Returns true if the identifiers in the two supplied dependencies are equal.
      *
      * @param dependency1 a dependency2 to compare
      * @param dependency2 a dependency2 to compare
-     * @return true if the identifiers in the two supplied dependencies are
-     * equal
+     * @return true if the identifiers in the two supplied dependencies are equal
      */
     private boolean identifiersMatch(Dependency dependency1, Dependency dependency2) {
         if (dependency1 == null || dependency1.getIdentifiers() == null
@@ -299,13 +290,12 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     }
 
     /**
-     * This is likely a very broken attempt at determining if the 'left'
-     * dependency is the 'core' library in comparison to the 'right' library.
+     * This is likely a very broken attempt at determining if the 'left' dependency is the 'core' library in comparison
+     * to the 'right' library.
      *
      * @param left the dependency to test
      * @param right the dependency to test against
-     * @return a boolean indicating whether or not the left dependency should be
-     * considered the "core" version.
+     * @return a boolean indicating whether or not the left dependency should be considered the "core" version.
      */
     private boolean isCore(Dependency left, Dependency right) {
         final String leftName = left.getFileName().toLowerCase();

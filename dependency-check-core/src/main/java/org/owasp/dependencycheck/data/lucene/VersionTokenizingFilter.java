@@ -1,18 +1,17 @@
 /*
  * This file is part of dependency-check-core.
  *
- * Dependency-check-core is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Dependency-check-core is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License along with
- * dependency-check-core. If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
@@ -24,10 +23,10 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
 /**
- * <p>Takes a TokenStream and splits or adds tokens to correctly index version
- * numbers.</p>
- * <p><b>Example:</b> "3.0.0.RELEASE" -> "3 3.0 3.0.0 RELEASE
- * 3.0.0.RELEASE".</p>
+ * <p>
+ * Takes a TokenStream and splits or adds tokens to correctly index version numbers.</p>
+ * <p>
+ * <b>Example:</b> "3.0.0.RELEASE" -> "3 3.0 3.0.0 RELEASE 3.0.0.RELEASE".</p>
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  * @deprecated version information is no longer stored in lucene
@@ -45,9 +44,8 @@ public final class VersionTokenizingFilter extends AbstractTokenizingFilter {
     }
 
     /**
-     * Increments the underlying TokenStream and sets CharTermAttributes to
-     * construct an expanded set of tokens by concatenating tokens with the
-     * previous token.
+     * Increments the underlying TokenStream and sets CharTermAttributes to construct an expanded set of tokens by
+     * concatenating tokens with the previous token.
      *
      * @return whether or not we have hit the end of the TokenStream
      * @throws IOException is thrown when an IOException occurs
@@ -69,13 +67,13 @@ public final class VersionTokenizingFilter extends AbstractTokenizingFilter {
     }
 
     /**
-     * <p>Analyzes the version and adds several copies of the version as
-     * different tokens. For example, the version 1.2.7 would create the tokens
-     * 1 1.2 1.2.7. This is useful in discovering the correct version -
-     * sometimes a maintenance or build number will throw off the version
-     * identification.</p>
+     * <p>
+     * Analyzes the version and adds several copies of the version as different tokens. For example, the version 1.2.7
+     * would create the tokens 1 1.2 1.2.7. This is useful in discovering the correct version - sometimes a maintenance
+     * or build number will throw off the version identification.</p>
      *
-     * <p>expected&nbsp;format:&nbps;major.minor[.maintenance[.build]]</p>
+     * <p>
+     * expected&nbsp;format:&nbps;major.minor[.maintenance[.build]]</p>
      *
      * @param version the version to analyze
      */
