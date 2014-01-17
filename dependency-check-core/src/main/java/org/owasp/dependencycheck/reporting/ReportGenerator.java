@@ -36,6 +36,7 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.velocity.tools.ToolManager;
 import org.apache.velocity.tools.config.EasyFactoryConfiguration;
 import org.owasp.dependencycheck.analyzer.Analyzer;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
 
 /**
@@ -82,9 +83,10 @@ public class ReportGenerator {
      *
      * @param applicationName the application name being analyzed
      * @param dependencies the list of dependencies
-     * @param analyzers the list of analyzers used.
+     * @param analyzers the list of analyzers used
+     * @param properties the database properties (containing timestamps of the NVD CVE data)
      */
-    public ReportGenerator(String applicationName, List<Dependency> dependencies, List<Analyzer> analyzers) {
+    public ReportGenerator(String applicationName, List<Dependency> dependencies, List<Analyzer> analyzers, DatabaseProperties properties) {
         engine = createVelocityEngine();
         context = createContext();
 
@@ -93,6 +95,21 @@ public class ReportGenerator {
         context.put("applicationName", applicationName);
         context.put("dependencies", dependencies);
         context.put("analyzers", analyzers);
+        context.put("properties", properties);
+    }
+
+    /**
+     * Constructs a new ReportGenerator. This implementation has been left in so tat backward compatability is not
+     * broken. However, this constructor should no longer be used.
+     *
+     * @param applicationName the application name being analyzed
+     * @param dependencies the list of dependencies
+     * @param analyzers the list of analyzers used
+     * @deprecated
+     */
+    @Deprecated
+    public ReportGenerator(String applicationName, List<Dependency> dependencies, List<Analyzer> analyzers) {
+        this(applicationName, dependencies, analyzers, null);
     }
 
     /**
@@ -226,20 +243,20 @@ public class ReportGenerator {
             if (writer != null) {
                 try {
                     writer.close();
-                } catch (Exception ex) {
+                } catch (IOException ex) {
                     Logger.getLogger(ReportGenerator.class.getName()).log(Level.FINEST, null, ex);
                 }
             }
             if (outputStream != null) {
                 try {
                     outputStream.close();
-                } catch (Exception ex) {
+                } catch (IOException ex) {
                     Logger.getLogger(ReportGenerator.class.getName()).log(Level.FINEST, null, ex);
                 }
             }
             try {
                 reader.close();
-            } catch (Exception ex) {
+            } catch (IOException ex) {
                 Logger.getLogger(ReportGenerator.class.getName()).log(Level.FINEST, null, ex);
             }
         }
