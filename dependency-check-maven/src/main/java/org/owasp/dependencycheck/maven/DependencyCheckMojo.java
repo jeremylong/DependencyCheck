@@ -45,6 +45,9 @@ import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.dependency.Identifier;
@@ -217,7 +220,20 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * @param engine a dependency-check engine
      */
     private void generateExternalReports(Engine engine) {
-        final ReportGenerator r = new ReportGenerator(project.getName(), engine.getDependencies(), engine.getAnalyzers());
+        DatabaseProperties prop = null;
+        CveDB cve = null;
+        try {
+            cve = new CveDB();
+            cve.open();
+            prop = cve.getDatabaseProperties();
+        } catch (DatabaseException ex) {
+            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINE, "Unable to retrieve DB Properties", ex);
+        } finally {
+            if (cve != null) {
+                cve.close();
+            }
+        }
+        final ReportGenerator r = new ReportGenerator(project.getName(), engine.getDependencies(), engine.getAnalyzers(), prop);
         try {
             r.generateReports(outputDirectory.getCanonicalPath(), format);
         } catch (IOException ex) {
