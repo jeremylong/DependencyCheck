@@ -45,7 +45,7 @@ public final class ConnectionFactory {
     /**
      * The version of the current DB Schema.
      */
-    public static final String DB_SCHEMA_VERSION = "2.8";
+    public static final String DB_SCHEMA_VERSION = "2.9";
     /**
      * Resource location for SQL file used to create the database schema.
      */
