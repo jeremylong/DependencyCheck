@@ -16,9 +16,18 @@ limitations under the License.
 Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 
 @author Jeremy Long <jeremy.long@owasp.org>
-@version 1
+@version 1.1
 *#<?xml version="1.0"?>
-<analysis xmlns="https://www.owasp.org/index.php/OWASP_Dependency_Check">
+<analysis xmlns="https://www.owasp.org/index.php/OWASP_Dependency_Check#1.1">
+    <scanInfo>
+        <engineVersion>$version</engineVersion>
+#foreach($prop in $properties.getMetaData().entrySet())
+        <dataSource>
+            <name>$esc.xml($prop.key)</name>
+            <timestamp>$esc.xml($prop.value)</timestamp>
+        </dataSource>
+#end
+    </scanInfo>
     <projectInfo>
         <name>$esc.xml($applicationName)</name>
         <reportDate>$date</reportDate>
