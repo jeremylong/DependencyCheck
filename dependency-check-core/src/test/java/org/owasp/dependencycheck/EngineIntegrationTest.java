@@ -23,6 +23,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 
 /**
@@ -60,8 +62,12 @@ public class EngineIntegrationTest {
         instance.scan(testClasses);
         assertTrue(instance.getDependencies().size() > 0);
         instance.analyzeDependencies();
+        CveDB cveDB = new CveDB();
+        cveDB.open();
+        DatabaseProperties dbProp = cveDB.getDatabaseProperties();
+        cveDB.close();
         ReportGenerator rg = new ReportGenerator("DependencyCheck",
-                instance.getDependencies(), instance.getAnalyzers());
+                instance.getDependencies(), instance.getAnalyzers(), dbProp);
         rg.generateReports("./target/", "ALL");
     }
 }
