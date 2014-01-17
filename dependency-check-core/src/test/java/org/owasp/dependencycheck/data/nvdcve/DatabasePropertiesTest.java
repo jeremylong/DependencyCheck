@@ -17,9 +17,9 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import java.util.Properties;
 import org.junit.After;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,10 +29,7 @@ import org.owasp.dependencycheck.data.update.NvdCveInfo;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class DatabasePropertiesTest {
-
-    public DatabasePropertiesTest() {
-    }
+public class DatabasePropertiesTest extends BaseDBTestCase {
 
     @BeforeClass
     public static void setUpClass() {
@@ -43,11 +40,15 @@ public class DatabasePropertiesTest {
     }
 
     @Before
-    public void setUp() {
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
     }
 
     @After
-    public void tearDown() {
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
@@ -85,7 +86,7 @@ public class DatabasePropertiesTest {
         cveDB.open();
         instance = cveDB.getDatabaseProperties();
         cveDB.close();
-        long results = Long.parseLong(instance.getProperty("lastupdated." + key));
+        long results = Long.parseLong(instance.getProperty("NVD CVE " + key));
         assertEquals(expected, results);
     }
 
@@ -103,5 +104,34 @@ public class DatabasePropertiesTest {
         String expResult = "default";
         String result = instance.getProperty(key, defaultValue);
         assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of getProperty method, of class DatabaseProperties.
+     */
+    @Test
+    public void testGetProperty_String() throws DatabaseException {
+        String key = "version";
+        CveDB cveDB = new CveDB();
+        cveDB.open();
+        DatabaseProperties instance = cveDB.getDatabaseProperties();
+        cveDB.close();
+        String result = instance.getProperty(key);
+        double version = Double.parseDouble(result);
+        assertTrue(version >= 2.8);
+        assertTrue(version <= 10);
+    }
+
+    /**
+     * Test of getProperties method, of class DatabaseProperties.
+     */
+    @Test
+    public void testGetProperties() throws DatabaseException {
+        CveDB cveDB = new CveDB();
+        cveDB.open();
+        DatabaseProperties instance = cveDB.getDatabaseProperties();
+        cveDB.close();
+        Properties result = instance.getProperties();
+        assertTrue(result.size() > 0);
     }
 }
