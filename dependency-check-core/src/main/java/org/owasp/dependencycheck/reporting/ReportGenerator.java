@@ -38,6 +38,7 @@ import org.apache.velocity.tools.config.EasyFactoryConfiguration;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * The ReportGenerator is used to, as the name implies, generate reports. Internally the generator uses the Velocity
@@ -96,6 +97,7 @@ public class ReportGenerator {
         context.put("dependencies", dependencies);
         context.put("analyzers", analyzers);
         context.put("properties", properties);
+        context.put("version", Settings.getString("application.version", "Unknown"));
     }
 
     /**
