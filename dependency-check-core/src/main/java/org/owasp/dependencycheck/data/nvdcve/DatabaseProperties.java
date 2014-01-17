@@ -17,7 +17,15 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import com.hazelcast.logging.Logger;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.TreeMap;
+import java.util.logging.Level;
 import org.owasp.dependencycheck.data.update.NvdCveInfo;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 
@@ -32,17 +40,17 @@ public class DatabaseProperties {
      * Modified key word, used as a key to store information about the modified file (i.e. the containing the last 8
      * days of updates)..
      */
-    public static final String MODIFIED = "modified";
+    public static final String MODIFIED = "Modified";
     /**
      * The properties file key for the last updated field - used to store the last updated time of the Modified NVD CVE
      * xml file.
      */
-    public static final String LAST_UPDATED = "lastupdated.modified";
+    public static final String LAST_UPDATED = "NVD CVE Modified";
     /**
      * Stores the last updated time for each of the NVD CVE files. These timestamps should be updated if we process the
      * modified file within 7 days of the last update.
      */
-    public static final String LAST_UPDATED_BASE = "lastupdated.";
+    public static final String LAST_UPDATED_BASE = "NVD CVE ";
     /**
      * A collection of properties about the data.
      */
@@ -113,5 +121,38 @@ public class DatabaseProperties {
      */
     public String getProperty(String key, String defaultValue) {
         return properties.getProperty(key, defaultValue);
+    }
+
+    /**
+     * Returns the collection of Database Properties as a properties collection.
+     *
+     * @return the collection of Database Properties
+     */
+    public Properties getProperties() {
+        return properties;
+    }
+
+    public Map getMetaData() {
+        TreeMap map = new TreeMap();
+        for (Entry<Object, Object> entry : properties.entrySet()) {
+            final String key = (String) entry.getKey();
+            if (!"version".equals(key)) {
+                if (key.startsWith("NVD CVE ")) {
+                    try {
+                        long epoch = Long.parseLong((String) entry.getValue());
+                        Date date = new Date(epoch);
+                        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                        String formatted = format.format(date);
+                        map.put(key, formatted);
+                    } catch (Throwable ex) { //deliberatly being broad in this catch clause
+                        Logger.getLogger(DatabaseProperties.class.getName()).log(Level.FINE, "Unable to parse timestamp from DB", ex);
+                        map.put(key, entry.getValue());
+                    }
+                } else {
+                    map.put(key, entry.getValue());
+                }
+            }
+        }
+        return map;
     }
 }
