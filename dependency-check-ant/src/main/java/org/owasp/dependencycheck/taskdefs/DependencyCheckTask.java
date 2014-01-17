@@ -32,6 +32,9 @@ import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.FileProvider;
 import org.apache.tools.ant.types.resources.Resources;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -475,7 +478,20 @@ public class DependencyCheckTask extends Task {
         }
         try {
             engine.analyzeDependencies();
-            final ReportGenerator reporter = new ReportGenerator(applicationName, engine.getDependencies(), engine.getAnalyzers());
+            DatabaseProperties prop = null;
+            CveDB cve = null;
+            try {
+                cve = new CveDB();
+                cve.open();
+                prop = cve.getDatabaseProperties();
+            } catch (DatabaseException ex) {
+                Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, "Unable to retrieve DB Properties", ex);
+            } finally {
+                if (cve != null) {
+                    cve.close();
+                }
+            }
+            final ReportGenerator reporter = new ReportGenerator(applicationName, engine.getDependencies(), engine.getAnalyzers(), prop);
             reporter.generateReports(reportOutputDirectory, reportFormat);
 
             if (this.failBuildOnCVSS <= 10) {
