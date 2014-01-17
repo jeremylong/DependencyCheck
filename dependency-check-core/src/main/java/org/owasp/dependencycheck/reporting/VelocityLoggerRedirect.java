@@ -33,7 +33,7 @@ import org.apache.velocity.runtime.log.LogChute;
  * Jenkins plugin). In some circumstances, Velocity would attempt to create velocity.log in an un-writable
  * directory.</p>
  *
- * @author Steve Springett (steve.springett@owasp.org)
+ * @author Steve Springett <steve.springett@owasp.org>
  */
 public class VelocityLoggerRedirect implements LogChute {
 
