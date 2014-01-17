@@ -16,7 +16,7 @@ limitations under the License.
 Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 
 @author Jeremy Long <jeremy.long@owasp.org>
-@version 1
+@version 1.1
 *#
 
 
@@ -52,17 +52,17 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             });
 
             $(function(){
-                $("#modal-background, #modal-close").click(function () {
-                    $("#modal-content,#modal-background").toggleClass("active");
+                $('#modal-background, #modal-close').click(function () {
+                    $('#modal-content,#modal-background').toggleClass('active');
                 });
-                $("#modal-text").bind('copy cut', function() {
+                $('#modal-text').bind('copy cut', function() {
                     setTimeout('$("#modal-content,#modal-background").toggleClass("active");',100);
                 });
-                $("#modal-add-header").click(function () {
+                $('#modal-add-header').click(function () {
                     xml = '<?xml version="1.0" encoding="UTF-8"?>\n<suppressions xmlns="https://www.owasp.org/index.php/OWASP_Dependency_Check_Suppression">\n   ';
                     xml += $("#modal-text").text().replace(/\n/g,'\n   ');
                     xml += '\n</suppressions>';
-                    $("#modal-text").text(xml).focus().select();
+                    $('#modal-text').text(xml).focus().select();
                 });
             });
 
@@ -72,14 +72,28 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 xml += '   <sha1>' + sha1 + '</sha1>\n';
                 xml += '   <'+type+'>' + val + '</'+type+'>\n';
                 xml += '</suppress>';
-                $("#modal-text").text(xml);
-                $("#modal-content,#modal-background").toggleClass("active");
-                $("#modal-text").focus();
-                $("#modal-text").select();
+                $('#modal-text').text(xml);
+                $('#modal-content,#modal-background').toggleClass('active');
+                $('#modal-text').focus();
+                $('#modal-text').select();
             }
 
-            function toggleVuln() {
-                $(".notvulnerable").toggle();
+            function toggleVuln(el) {
+                $('.notvulnerable').toggle();
+                if (el.innerHTML == 'show all') {
+                    el.innerHTML = 'hide';
+                } else {
+                    el.innerHTML = 'show all';
+                }
+            }
+            function toggleMore(el) {
+                $('.hiddenInfo').toggle();
+                $('.nothidden').toggle();
+                if (el.innerHTML == 'more') {
+                    el.innerHTML = 'less';
+                } else {
+                    el.innerHTML = 'more';
+                }
             }
         </script>
         <style type="text/css">
@@ -406,6 +420,15 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             .notvulnerable {
                 display:none;
             }
+            .hiddenInfo {
+                display:none;
+            }
+            .hiddennow {
+                display:none;
+            }
+            .nothidden {
+                display:block;
+            }
         </style>
     </head>
     <body>
@@ -420,6 +443,14 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 ]]#
             <h2 class="sectionheader white">Project:&nbsp;$esc.html($applicationName)</h2>
             <div class="sectioncontent">Report Generated On: $date<br/><br/>
+                Scan Information (<a href="#" onclick="toggleMore(this);">more</a>):<br/>
+                    <ul class="indent">
+                        <li><i>dependency-check version</i>: $version</li>
+                        <li class="hiddennow nothidden">...</li>
+                        #foreach($prop in $properties.getMetaData().entrySet())
+                        <li class="hiddenInfo"><i>$esc.html($prop.key)</i>: $esc.html($prop.value)</li>
+                        #end
+                    </ul><br/>
                 #set($depCount=$dependencies.size())
                 #set($vulnCount=0)
 
@@ -429,7 +460,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         #set($vulnCount=$vulnCount+1)
                     #end
                 #end
-                Dependencies Scanned:&nbsp;$depCount&nbsp;(<a href="#" onclick="toggleVuln()">show all</a>)<br/>
+                Dependencies Scanned:&nbsp;$depCount&nbsp;(<a href="#" onclick="toggleVuln(this)">show all</a>)<br/>
                 Vulnerable Dependencies:&nbsp;$vulnCount<br/><br/>
                 <ul class="indent">
                 #set($lnkcnt=0)
