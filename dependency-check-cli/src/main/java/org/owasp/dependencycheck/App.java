@@ -26,6 +26,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.cli.ParseException;
 import org.owasp.dependencycheck.cli.CliParser;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.LogUtils;
@@ -105,8 +108,20 @@ public class App {
 
         scanner.analyzeDependencies();
         final List<Dependency> dependencies = scanner.getDependencies();
-
-        final ReportGenerator report = new ReportGenerator(applicationName, dependencies, scanner.getAnalyzers());
+        DatabaseProperties prop = null;
+        CveDB cve = null;
+        try {
+            cve = new CveDB();
+            cve.open();
+            prop = cve.getDatabaseProperties();
+        } catch (DatabaseException ex) {
+            Logger.getLogger(App.class.getName()).log(Level.FINE, "Unable to retrieve DB Properties", ex);
+        } finally {
+            if (cve != null) {
+                cve.close();
+            }
+        }
+        final ReportGenerator report = new ReportGenerator(applicationName, dependencies, scanner.getAnalyzers(), prop);
         try {
             report.generateReports(reportDirectory, outputFormat);
         } catch (IOException ex) {
