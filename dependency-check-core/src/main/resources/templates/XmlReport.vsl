@@ -97,7 +97,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 #if($dependency.getIdentifiers().size()>0)
             <identifiers>
 #foreach($id in $dependency.getIdentifiers())
-                <identifier type="$esc.xml($id.type)">
+                <identifier type="$esc.xml($id.type)" #if($id.confidence)confidence="$id.confidence"#end>
                     <name>($id.value)</name>
 #if( $id.url )
                     <url>$esc.xml($id.url)</url>

@@ -578,11 +578,14 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                                 #else
                                     <li><b>$esc.html($id.type):</b>&nbsp;$esc.html($id.value)
                                 #end
+                                #if ($id.confidence)
+                                    &nbsp;&nbsp;<i>Confidence</i>:$id.confidence
+                                #end
                                 #if ($id.type=="cpe")
                                     ##yes, we are HTML Encoding into JavaScript... the escape utils don't have a JS Encode and I haven't written one yet
                                     &nbsp;&nbsp;<button class="copybutton" onclick="copyText('$esc.html($dependency.FileName)', '$esc.html($dependency.Sha1sum)', 'cpe', '$esc.html($id.value)')">suppress</button>
                                 #end
-                                #if( $id.description )
+                                #if ($id.description)
                                     <br/>$esc.html($id.description)
                                 #end
                                 </li>
