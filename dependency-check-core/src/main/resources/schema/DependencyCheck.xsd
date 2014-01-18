@@ -115,8 +115,8 @@
                                                                 <xs:element name="url" type="xs:string" minOccurs="0" maxOccurs="1" />
                                                                 <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1" />
                                                             </xs:sequence>
-                                                            <xs:attribute name="type" type="xs:string" />
-                                                            <xs:attribute name="confidence" type="xs:string" />
+                                                            <xs:attribute name="type" type="xs:string" use="required" />
+                                                            <xs:attribute name="confidence" type="xs:string" use="optional" />
                                                         </xs:complexType>
                                                     </xs:element>
                                                 </xs:sequence>
