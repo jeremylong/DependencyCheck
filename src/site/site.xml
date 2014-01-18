@@ -24,7 +24,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
     </skin>
     <custom>
         <fluidoSkin>
-            <!--<googleSearch/>-->
+            <!--googleSearch/-->
             <sourceLineNumbersEnabled>true</sourceLineNumbersEnabled>
             <sideBarEnabled>true</sideBarEnabled>
             <gitHub>
@@ -37,7 +37,6 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 <showUser>true</showUser>
                 <showFollowers>true</showFollowers>
             </twitter>
-
         </fluidoSkin>
     </custom>
     <bannerLeft>
@@ -59,6 +58,15 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
         <menu name="General">
             <item name="False Positives" href="./suppression.html">
                 <description>Suppressing False Positives</description>
+            </item>
+			<item name="Project Presentation (pptx)" href="./dependency-check.pptx">
+                <description>PowerPoint Deck</description>
+            </item>
+			<item name="Project Presentation (pdf)" href="./dependency-check.pdf">
+                <description>PowerPoint Deck</description>
+            </item>
+			<item name="Sample Report" href="./SampleReport.html">
+                <description>Sample Report</description>
             </item>
         </menu>
         <menu name="Modules">
