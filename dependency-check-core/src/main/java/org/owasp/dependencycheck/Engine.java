@@ -365,6 +365,7 @@ public class Engine {
                 + "END ANALYSIS%n"
                 + "----------------------------------------------------");
         Logger.getLogger(Engine.class.getName()).log(Level.FINE, logFooter);
+        Logger.getLogger(Engine.class.getName()).log(Level.INFO, "Analysis Complete");
     }
 
     /**
