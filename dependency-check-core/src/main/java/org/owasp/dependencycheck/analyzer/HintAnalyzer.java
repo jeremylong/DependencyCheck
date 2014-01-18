@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 
@@ -95,29 +96,29 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
         final Evidence springTest1 = new Evidence("Manifest",
                 "Implementation-Title",
                 "Spring Framework",
-                Evidence.Confidence.HIGH);
+                Confidence.HIGH);
 
         final Evidence springTest2 = new Evidence("Manifest",
                 "Implementation-Title",
                 "org.springframework.core",
-                Evidence.Confidence.HIGH);
+                Confidence.HIGH);
 
         final Evidence springTest3 = new Evidence("Manifest",
                 "Bundle-Vendor",
                 "SpringSource",
-                Evidence.Confidence.HIGH);
+                Confidence.HIGH);
 
         Set<Evidence> evidence = dependency.getProductEvidence().getEvidence();
         if (evidence.contains(springTest1) || evidence.contains(springTest2)) {
-            dependency.getProductEvidence().addEvidence("hint analyzer", "product", "springsource_spring_framework", Evidence.Confidence.HIGH);
-            dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "SpringSource", Evidence.Confidence.HIGH);
-            dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "vmware", Evidence.Confidence.HIGH);
+            dependency.getProductEvidence().addEvidence("hint analyzer", "product", "springsource_spring_framework", Confidence.HIGH);
+            dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "SpringSource", Confidence.HIGH);
+            dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
         }
 
         evidence = dependency.getVendorEvidence().getEvidence();
         if (evidence.contains(springTest3)) {
-            dependency.getProductEvidence().addEvidence("hint analyzer", "product", "springsource_spring_framework", Evidence.Confidence.HIGH);
-            dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "vmware", Evidence.Confidence.HIGH);
+            dependency.getProductEvidence().addEvidence("hint analyzer", "product", "springsource_spring_framework", Confidence.HIGH);
+            dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
         }
         final Iterator<Evidence> itr = dependency.getVendorEvidence().iterator();
         final ArrayList<Evidence> newEntries = new ArrayList<Evidence>();

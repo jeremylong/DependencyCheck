@@ -25,29 +25,6 @@ package org.owasp.dependencycheck.dependency;
 public class Evidence implements Comparable<Evidence> {
 
     /**
-     * The confidence that the evidence is "high" quality.
-     */
-    public enum Confidence {
-
-        /**
-         * High confidence evidence.
-         */
-        HIGHEST,
-        /**
-         * High confidence evidence.
-         */
-        HIGH,
-        /**
-         * Medium confidence evidence.
-         */
-        MEDIUM,
-        /**
-         * Low confidence evidence.
-         */
-        LOW
-    }
-
-    /**
      * Creates a new Evidence object.
      */
     public Evidence() {
