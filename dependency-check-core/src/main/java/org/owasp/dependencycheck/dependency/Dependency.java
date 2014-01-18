@@ -250,6 +250,20 @@ public class Dependency implements Comparable<Dependency> {
     /**
      * Adds an entry to the list of detected Identifiers for the dependency file.
      *
+     * @param type the type of identifier (such as CPE)
+     * @param value the value of the identifier
+     * @param url the URL of the identifier
+     * @param confidence the confidence in the Identifier being accurate
+     */
+    public void addIdentifier(String type, String value, String url, Confidence confidence) {
+        final Identifier i = new Identifier(type, value, url);
+        i.setConfidence(confidence);
+        this.identifiers.add(i);
+    }
+
+    /**
+     * Adds an entry to the list of detected Identifiers for the dependency file.
+     *
      * @param identifier the identifier to add
      */
     public void addIdentifier(Identifier identifier) {
