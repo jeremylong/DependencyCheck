@@ -166,7 +166,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             }
             .modal-button {
                 padding:1px;
-                float:right;
+                float:left;
                 background-color: #eeeeee;
                 border: 1px solid #555555;
                 color:#555555;
@@ -178,6 +178,32 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 border-radius: 3px;
             }
             .modal-button:hover {
+                padding:1px;
+                float:left;
+                background-color: #dddddd;
+                border: 1px solid #333333;
+                color:#333333;
+                text-decoration:none;
+                -moz-border-radius: 3px;
+                -webkit-border-radius: 3px;
+                -khtml-border-radius: 3px;
+                -o-border-radius: 3px;
+                border-radius: 3px;
+            }
+            .modal-button-right {
+                padding:1px;
+                float:right;
+                background-color: #eeeeee;
+                border: 1px solid #555555;
+                color:#555555;
+                text-decoration:none;
+                -moz-border-radius: 3px;
+                -webkit-border-radius: 3px;
+                -khtml-border-radius: 3px;
+                -o-border-radius: 3px;
+                border-radius: 3px;
+            }
+            .modal-button-right:hover {
                 padding:1px;
                 float:right;
                 background-color: #dddddd;
@@ -429,28 +455,30 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             .nothidden {
                 display:block;
             }
+            .infolink {
+                text-decoration:none;
+                color: blue;
+                float:right;
+            }
+            .infolink:hover {
+                text-decoration:none;
+                color: blue;
+                float:right;
+            }
         </style>
     </head>
     <body>
         <div id="modal-background"></div>
         <div id="modal-content">
-            <div>Press CTR-C to copy XML<button id="modal-add-header" class="modal-button">Complete XML Doc</button></div>
+            <div>Press CTR-C to copy XML&nbsp;<a href="http://jeremylong.github.io/DependencyCheck/suppression.html" class="infolink" target="_blank" title="Help with suppressing false positives">[help]</a></div>
                 <textarea id="modal-text" cols="50" rows="10"></textarea><br/>
-                <button id="modal-close" class="modal-button">Close</button>
+                <button id="modal-add-header" class="modal-button">Complete XML Doc</button><button id="modal-close" class="modal-button-right">Close</button>
         </div>
         <div class="wrapper">
             <h1>Dependency Report</h1>
 ]]#
             <h2 class="sectionheader white">Project:&nbsp;$esc.html($applicationName)</h2>
-            <div class="sectioncontent">Report Generated On: $date<br/><br/>
-                Scan Information (<a href="#" onclick="toggleMore(this);">more</a>):<br/>
-                    <ul class="indent">
-                        <li><i>dependency-check version</i>: $version</li>
-                        <li class="hiddennow nothidden">...</li>
-                        #foreach($prop in $properties.getMetaData().entrySet())
-                        <li class="hiddenInfo"><i>$esc.html($prop.key)</i>: $esc.html($prop.value)</li>
-                        #end
-                    </ul><br/>
+            <div class="sectioncontent">
                 #set($depCount=$dependencies.size())
                 #set($vulnCount=0)
 
@@ -460,8 +488,18 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         #set($vulnCount=$vulnCount+1)
                     #end
                 #end
-                Dependencies Scanned:&nbsp;$depCount&nbsp;(<a href="#" onclick="toggleVuln(this)">show all</a>)<br/>
-                Vulnerable Dependencies:&nbsp;$vulnCount<br/><br/>
+                Scan Information (<a href="#" onclick="toggleMore(this);  return false;">more</a>):<br/>
+                    <ul class="indent">
+                        <li><i>dependency-check version</i>: $version</li>
+                        <li><i>Report Generated On</i>: $date</li>
+                        <li><i>Dependencies Scanned</i>:&nbsp;$depCount</li>
+                        <li><i>Vulnerable Dependencies</i>:&nbsp;$vulnCount</li>
+                        <li class="hiddennow nothidden">...</li>
+                        #foreach($prop in $properties.getMetaData().entrySet())
+                        <li class="hiddenInfo"><i>$esc.html($prop.key)</i>: $esc.html($prop.value)</li>
+                        #end
+                    </ul><br/>
+                Dependency Display:&nbsp;<a href="#" onclick="toggleVuln(this); return false;">show all</a><br/><br/>
                 <ul class="indent">
                 #set($lnkcnt=0)
                 #foreach($dependency in $dependencies)
