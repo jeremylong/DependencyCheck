@@ -84,15 +84,17 @@ public class NexusAnalyzer extends AbstractAnalyzer {
     @Override
     public void initialize() throws Exception {
         enabled = Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED);
-
+        LOGGER.fine("Initializing Nexus Analyzer");
+        LOGGER.fine(String.format("Nexus Analyzer enabled: %s", enabled));
         if (enabled) {
             final String searchUrl = Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL);
+            LOGGER.fine(String.format("Nexus Analyzer URL: %s", searchUrl));
             try {
                 searcher = new NexusSearch(new URL(searchUrl));
             } catch (MalformedURLException mue) {
                 // I know that initialize can throw an exception, but we'll
                 // just disable the analyzer if the URL isn't valid
-                LOGGER.warning(String.format("Property %s not a valid URL. Nexus searching disabled", searchUrl));
+                LOGGER.warning(String.format("Property %s not a valid URL. Nexus Analyzer disabled", searchUrl));
                 enabled = false;
             }
         }
