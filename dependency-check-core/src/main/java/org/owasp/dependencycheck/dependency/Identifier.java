@@ -48,6 +48,27 @@ public class Identifier implements Comparable<Identifier> {
         this(type, value, url);
         this.description = description;
     }
+
+    private Confidence confidence;
+
+    /**
+     * Get the value of confidence
+     *
+     * @return the value of confidence
+     */
+    public Confidence getConfidence() {
+        return confidence;
+    }
+
+    /**
+     * Set the value of confidence
+     *
+     * @param confidence new value of confidence
+     */
+    public void setConfidence(Confidence confidence) {
+        this.confidence = confidence;
+    }
+
     /**
      * The value of the identifier
      */
