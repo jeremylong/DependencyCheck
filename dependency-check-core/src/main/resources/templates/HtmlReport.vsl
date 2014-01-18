@@ -125,7 +125,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 left: 50%;
                 margin: -120px 0 0 -160px;
                 padding: 10px;
-                position: absolute;
+                position: fixed;
                 top: 50%;
                 z-index: 1000;
             }
