@@ -20,8 +20,8 @@ package org.owasp.dependencycheck.analyzer;
 import java.io.File;
 import java.util.Set;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 
@@ -109,22 +109,22 @@ public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
         final DependencyVersion version = DependencyVersionUtil.parseVersion(fileName);
         if (version != null) {
             dependency.getVersionEvidence().addEvidence("file", "name",
-                    version.toString(), Evidence.Confidence.HIGHEST);
+                    version.toString(), Confidence.HIGHEST);
             dependency.getVersionEvidence().addEvidence("file", "name",
-                    fileName, Evidence.Confidence.MEDIUM);
+                    fileName, Confidence.MEDIUM);
         }
 
         //add as vendor and product evidence
         if (fileName.contains("-")) {
             dependency.getProductEvidence().addEvidence("file", "name",
-                    fileName, Evidence.Confidence.HIGHEST);
+                    fileName, Confidence.HIGHEST);
             dependency.getVendorEvidence().addEvidence("file", "name",
-                    fileName, Evidence.Confidence.HIGHEST);
+                    fileName, Confidence.HIGHEST);
         } else {
             dependency.getProductEvidence().addEvidence("file", "name",
-                    fileName, Evidence.Confidence.HIGH);
+                    fileName, Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("file", "name",
-                    fileName, Evidence.Confidence.HIGH);
+                    fileName, Confidence.HIGH);
         }
     }
 }

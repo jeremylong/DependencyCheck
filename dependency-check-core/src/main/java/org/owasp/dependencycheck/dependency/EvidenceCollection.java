@@ -43,7 +43,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
      */
     private static final Filter<Evidence> HIGHEST_CONFIDENCE = new Filter<Evidence>() {
         public boolean passes(Evidence evidence) {
-            return evidence.getConfidence() == Evidence.Confidence.HIGHEST;
+            return evidence.getConfidence() == Confidence.HIGHEST;
         }
     };
     /**
@@ -51,7 +51,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
      */
     private static final Filter<Evidence> HIGH_CONFIDENCE = new Filter<Evidence>() {
         public boolean passes(Evidence evidence) {
-            return evidence.getConfidence() == Evidence.Confidence.HIGH;
+            return evidence.getConfidence() == Confidence.HIGH;
         }
     };
     /**
@@ -59,7 +59,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
      */
     private static final Filter<Evidence> MEDIUM_CONFIDENCE = new Filter<Evidence>() {
         public boolean passes(Evidence evidence) {
-            return evidence.getConfidence() == Evidence.Confidence.MEDIUM;
+            return evidence.getConfidence() == Confidence.MEDIUM;
         }
     };
     /**
@@ -67,7 +67,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
      */
     private static final Filter<Evidence> LOW_CONFIDENCE = new Filter<Evidence>() {
         public boolean passes(Evidence evidence) {
-            return evidence.getConfidence() == Evidence.Confidence.LOW;
+            return evidence.getConfidence() == Confidence.LOW;
         }
     };
     /**
@@ -85,12 +85,12 @@ public class EvidenceCollection implements Iterable<Evidence> {
      * @param confidence the confidence level for the evidence to be iterated over.
      * @return Iterable<Evidence> an iterable collection of evidence
      */
-    public final Iterable<Evidence> iterator(Evidence.Confidence confidence) {
-        if (confidence == Evidence.Confidence.HIGHEST) {
+    public final Iterable<Evidence> iterator(Confidence confidence) {
+        if (confidence == Confidence.HIGHEST) {
             return EvidenceCollection.HIGHEST_CONFIDENCE.filter(this.list);
-        } else if (confidence == Evidence.Confidence.HIGH) {
+        } else if (confidence == Confidence.HIGH) {
             return EvidenceCollection.HIGH_CONFIDENCE.filter(this.list);
-        } else if (confidence == Evidence.Confidence.MEDIUM) {
+        } else if (confidence == Confidence.MEDIUM) {
             return EvidenceCollection.MEDIUM_CONFIDENCE.filter(this.list);
         } else {
             return EvidenceCollection.LOW_CONFIDENCE.filter(this.list);
@@ -130,7 +130,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
      * @param value the value of the Evidence.
      * @param confidence the confidence of the Evidence.
      */
-    public void addEvidence(String source, String name, String value, Evidence.Confidence confidence) {
+    public void addEvidence(String source, String name, String value, Confidence confidence) {
         final Evidence e = new Evidence(source, name, value, confidence);
         addEvidence(e);
     }
@@ -265,7 +265,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
      * @param confidence A Confidence value.
      * @return boolean.
      */
-    public boolean contains(Evidence.Confidence confidence) {
+    public boolean contains(Confidence confidence) {
         for (Evidence e : list) {
             if (e.getConfidence().equals(confidence)) {
                 return true;

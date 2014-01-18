@@ -250,9 +250,9 @@ public class DependencyTest {
         Dependency instance = new Dependency();
         String expResult = "used";
 
-        instance.getProductEvidence().addEvidence("used", "used", "used", Evidence.Confidence.HIGH);
-        instance.getProductEvidence().addEvidence("not", "not", "not", Evidence.Confidence.MEDIUM);
-        for (Evidence e : instance.getProductEvidence().iterator(Evidence.Confidence.HIGH)) {
+        instance.getProductEvidence().addEvidence("used", "used", "used", Confidence.HIGH);
+        instance.getProductEvidence().addEvidence("not", "not", "not", Confidence.MEDIUM);
+        for (Evidence e : instance.getProductEvidence().iterator(Confidence.HIGH)) {
             String use = e.getValue();
         }
 

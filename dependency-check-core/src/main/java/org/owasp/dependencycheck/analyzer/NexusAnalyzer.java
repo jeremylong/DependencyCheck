@@ -26,8 +26,8 @@ import java.util.logging.Logger;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nexus.NexusSearch;
+import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -151,16 +151,13 @@ public class NexusAnalyzer extends AbstractAnalyzer {
         try {
             final MavenArtifact ma = searcher.searchSha1(dependency.getSha1sum());
             if (ma.getGroupId() != null && !"".equals(ma.getGroupId())) {
-                dependency.getVendorEvidence().addEvidence("nexus", "groupid", ma.getGroupId(),
-                        Evidence.Confidence.HIGH);
+                dependency.getVendorEvidence().addEvidence("nexus", "groupid", ma.getGroupId(), Confidence.HIGH);
             }
             if (ma.getArtifactId() != null && !"".equals(ma.getArtifactId())) {
-                dependency.getProductEvidence().addEvidence("nexus", "artifactid", ma.getArtifactId(),
-                        Evidence.Confidence.HIGH);
+                dependency.getProductEvidence().addEvidence("nexus", "artifactid", ma.getArtifactId(), Confidence.HIGH);
             }
             if (ma.getVersion() != null && !"".equals(ma.getVersion())) {
-                dependency.getVersionEvidence().addEvidence("nexus", "version", ma.getVersion(),
-                        Evidence.Confidence.HIGH);
+                dependency.getVersionEvidence().addEvidence("nexus", "version", ma.getVersion(), Confidence.HIGH);
             }
             if (ma.getArtifactUrl() != null && !"".equals(ma.getArtifactUrl())) {
                 dependency.addIdentifier("maven", ma.toString(), ma.getArtifactUrl());
