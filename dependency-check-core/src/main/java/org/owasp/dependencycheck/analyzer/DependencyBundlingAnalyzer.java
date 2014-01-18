@@ -127,29 +127,20 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                     final ListIterator<Dependency> subIterator = engine.getDependencies().listIterator(mainIterator.nextIndex());
                     while (subIterator.hasNext()) {
                         final Dependency nextDependency = subIterator.next();
-
-                        if (identifiersMatch(dependency, nextDependency)
+                        if (hashesMatch(dependency, nextDependency)) {
+                            if (isCore(dependency, nextDependency)) {
+                                mergeDependencies(dependency, nextDependency, dependenciesToRemove);
+                            } else {
+                                mergeDependencies(nextDependency, dependency, dependenciesToRemove);
+                            }
+                        } else if (identifiersMatch(dependency, nextDependency)
                                 && hasSameBasePath(dependency, nextDependency)
                                 && fileNameMatch(dependency, nextDependency)) {
 
                             if (isCore(dependency, nextDependency)) {
-                                dependency.addRelatedDependency(nextDependency);
-                                //move any "related dependencies" to the new "parent" dependency
-                                final Iterator<Dependency> i = nextDependency.getRelatedDependencies().iterator();
-                                while (i.hasNext()) {
-                                    dependency.addRelatedDependency(i.next());
-                                    i.remove();
-                                }
-                                dependenciesToRemove.add(nextDependency);
+                                mergeDependencies(dependency, nextDependency, dependenciesToRemove);
                             } else {
-                                nextDependency.addRelatedDependency(dependency);
-                                //move any "related dependencies" to the new "parent" dependency
-                                final Iterator<Dependency> i = dependency.getRelatedDependencies().iterator();
-                                while (i.hasNext()) {
-                                    nextDependency.addRelatedDependency(i.next());
-                                    i.remove();
-                                }
-                                dependenciesToRemove.add(dependency);
+                                mergeDependencies(nextDependency, dependency, dependenciesToRemove);
                             }
                         }
                     }
@@ -161,6 +152,23 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                 engine.getDependencies().remove(d);
             }
         }
+    }
+
+    /**
+     * Adds the relatedDependency to the dependency's related dependencies.
+     *
+     * @param dependency the main dependency
+     * @param nextDependency the related dependency
+     * @param relatedDependency a collection of dependencies to be removed from the main analysis loop
+     */
+    private void mergeDependencies(final Dependency dependency, final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove) {
+        dependency.addRelatedDependency(relatedDependency);
+        final Iterator<Dependency> i = relatedDependency.getRelatedDependencies().iterator();
+        while (i.hasNext()) {
+            dependency.addRelatedDependency(i.next());
+            i.remove();
+        }
+        dependenciesToRemove.add(relatedDependency);
     }
 
     /**
@@ -286,7 +294,16 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             left = getBaseRepoPath(left);
             right = getBaseRepoPath(right);
         }
-        return left.equalsIgnoreCase(right);
+        if (left.equalsIgnoreCase(right)) {
+            return true;
+        }
+        //new code
+        for (Dependency child : dependency2.getRelatedDependencies()) {
+            if (hasSameBasePath(dependency1, child)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -297,13 +314,22 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      * @param right the dependency to test against
      * @return a boolean indicating whether or not the left dependency should be considered the "core" version.
      */
-    private boolean isCore(Dependency left, Dependency right) {
+    boolean isCore(Dependency left, Dependency right) {
         final String leftName = left.getFileName().toLowerCase();
         final String rightName = right.getFileName().toLowerCase();
+
+        if (leftName.equals("struts-1.2.7.jar") || rightName.equals("struts-1.2.7.jar")) {
+            String pause = "pause";
+        }
+
         final boolean returnVal;
-        if (rightName.contains("core") && !leftName.contains("core")) {
+        if (!rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+") && leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+")
+                || rightName.contains("core") && !leftName.contains("core")
+                || rightName.contains("kernel") && !leftName.contains("kernel")) {
             returnVal = false;
-        } else if (!rightName.contains("core") && leftName.contains("core")) {
+        } else if (rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+") && !leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+")
+                || !rightName.contains("core") && leftName.contains("core")
+                || !rightName.contains("kernel") && leftName.contains("kernel")) {
             returnVal = true;
         } else {
             /*
@@ -322,5 +348,19 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             Logger.getLogger(DependencyBundlingAnalyzer.class.getName()).log(Level.FINE, msg);
         }
         return returnVal;
+    }
+
+    /**
+     * Compares the SHA1 hashes of two dependencies to determine if they are equal.
+     *
+     * @param dependency1 a dependency object to compare
+     * @param dependency2 a dependency object to compare
+     * @return true if the sha1 hashes of the two dependencies match; otherwise false
+     */
+    private boolean hashesMatch(Dependency dependency1, Dependency dependency2) {
+        if (dependency1 == null || dependency2 == null || dependency1.getSha1sum() == null || dependency2.getSha1sum() == null) {
+            return false;
+        }
+        return dependency1.getSha1sum().equals(dependency2.getSha1sum());
     }
 }
