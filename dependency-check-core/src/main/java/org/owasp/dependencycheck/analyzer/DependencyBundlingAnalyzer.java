@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 import org.owasp.dependencycheck.utils.LogUtils;
@@ -133,7 +134,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                             } else {
                                 mergeDependencies(nextDependency, dependency, dependenciesToRemove);
                             }
-                        } else if (identifiersMatch(dependency, nextDependency)
+                        } else if (cpeIdentifiersMatch(dependency, nextDependency)
                                 && hasSameBasePath(dependency, nextDependency)
                                 && fileNameMatch(dependency, nextDependency)) {
 
@@ -249,19 +250,38 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     }
 
     /**
-     * Returns true if the identifiers in the two supplied dependencies are equal.
+     * Returns true if the CPE identifiers in the two supplied dependencies are equal.
      *
      * @param dependency1 a dependency2 to compare
      * @param dependency2 a dependency2 to compare
      * @return true if the identifiers in the two supplied dependencies are equal
      */
-    private boolean identifiersMatch(Dependency dependency1, Dependency dependency2) {
+    private boolean cpeIdentifiersMatch(Dependency dependency1, Dependency dependency2) {
         if (dependency1 == null || dependency1.getIdentifiers() == null
                 || dependency2 == null || dependency2.getIdentifiers() == null) {
             return false;
         }
-        final boolean matches = dependency1.getIdentifiers().size() > 0
-                && dependency2.getIdentifiers().equals(dependency1.getIdentifiers());
+        boolean matches = false;
+        int cpeCount1 = 0;
+        int cpeCount2 = 0;
+        for (Identifier i : dependency1.getIdentifiers()) {
+            if ("cpe".equals(i.getType())) {
+                cpeCount1 += 1;
+            }
+        }
+        for (Identifier i : dependency2.getIdentifiers()) {
+            if ("cpe".equals(i.getType())) {
+                cpeCount2 += 1;
+            }
+        }
+        if (cpeCount1 > 0 && cpeCount1 == cpeCount2) {
+            for (Identifier i : dependency1.getIdentifiers()) {
+                matches |= dependency2.getIdentifiers().contains(i);
+                if (!matches) {
+                    break;
+                }
+            }
+        }
         if (LogUtils.isVerboseLoggingEnabled()) {
             final String msg = String.format("IdentifiersMatch=%s (%s, %s)", matches, dependency1.getFileName(), dependency2.getFileName());
             Logger.getLogger(DependencyBundlingAnalyzer.class.getName()).log(Level.FINE, msg);
