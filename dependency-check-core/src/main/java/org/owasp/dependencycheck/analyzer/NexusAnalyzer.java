@@ -67,7 +67,7 @@ public class NexusAnalyzer extends AbstractAnalyzer {
     private static final Set<String> SUPPORTED_EXTENSIONS = newHashSet("jar");
 
     /**
-     * Whether this is actually enabled. Will get set during initialization
+     * Whether this is actually enabled. Will get set during initialization.
      */
     private boolean enabled = false;
 
@@ -79,21 +79,21 @@ public class NexusAnalyzer extends AbstractAnalyzer {
     /**
      * Initializes the analyzer once before any analysis is performed.
      *
-     * @throws Exception if there's an error during initialization.
+     * @throws Exception if there's an error during initialization
      */
+    @Override
     public void initialize() throws Exception {
         enabled = Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED);
 
-        final String searchUrl = Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL);
-
         if (enabled) {
+            final String searchUrl = Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL);
             try {
                 searcher = new NexusSearch(new URL(searchUrl));
             } catch (MalformedURLException mue) {
                 // I know that initialize can throw an exception, but we'll
                 // just disable the analyzer if the URL isn't valid
-                LOGGER.warning(String.format("Property %s not a valid URL. Nexus searching disabled",
-                        searchUrl));
+                LOGGER.warning(String.format("Property %s not a valid URL. Nexus searching disabled", searchUrl));
+                enabled = false;
             }
         }
     }
@@ -103,6 +103,7 @@ public class NexusAnalyzer extends AbstractAnalyzer {
      *
      * @return the name of the analyzer
      */
+    @Override
     public String getName() {
         return ANALYZER_NAME;
     }
@@ -112,6 +113,7 @@ public class NexusAnalyzer extends AbstractAnalyzer {
      *
      * @return the phase under which this analyzer runs
      */
+    @Override
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
@@ -121,6 +123,7 @@ public class NexusAnalyzer extends AbstractAnalyzer {
      *
      * @return the extensions for which this Analyzer runs
      */
+    @Override
     public Set<String> getSupportedExtensions() {
         return SUPPORTED_EXTENSIONS;
     }
@@ -131,6 +134,7 @@ public class NexusAnalyzer extends AbstractAnalyzer {
      * @param extension the extension to check for support
      * @return whether the extension is supported
      */
+    @Override
     public boolean supportsExtension(String extension) {
         return SUPPORTED_EXTENSIONS.contains(extension);
     }
@@ -142,6 +146,7 @@ public class NexusAnalyzer extends AbstractAnalyzer {
      * @param engine the engine
      * @throws AnalysisException when there's an exception during analysis
      */
+    @Override
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
         // Make a quick exit if this analyzer is disabled
         if (!enabled) {
@@ -160,7 +165,7 @@ public class NexusAnalyzer extends AbstractAnalyzer {
                 dependency.getVersionEvidence().addEvidence("nexus", "version", ma.getVersion(), Confidence.HIGH);
             }
             if (ma.getArtifactUrl() != null && !"".equals(ma.getArtifactUrl())) {
-                dependency.addIdentifier("maven", ma.toString(), ma.getArtifactUrl());
+                dependency.addIdentifier("maven", ma.toString(), ma.getArtifactUrl(), Confidence.HIGHEST);
             }
         } catch (IllegalArgumentException iae) {
             dependency.addAnalysisException(new AnalysisException("Invalid SHA-1"));
