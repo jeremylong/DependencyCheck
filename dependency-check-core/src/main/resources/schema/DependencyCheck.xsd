@@ -50,6 +50,17 @@
                                                                 <xs:element name="filePath" type="xs:string" minOccurs="1" maxOccurs="1" />
                                                                 <xs:element name="sha1" type="xs:string" minOccurs="1" maxOccurs="1" />
                                                                 <xs:element name="md5" type="xs:string" minOccurs="1" maxOccurs="1" />
+                                                                <xs:sequence>
+                                                                    <xs:element name="identifier" minOccurs="0" maxOccurs="unbounded">
+                                                                        <xs:complexType>
+                                                                            <xs:sequence>
+                                                                                <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+                                                                                <xs:element name="url" type="xs:string" minOccurs="0" maxOccurs="1" />
+                                                                            </xs:sequence>
+                                                                            <xs:attribute name="type" type="xs:string" use="required" />
+                                                                        </xs:complexType>
+                                                                    </xs:element>
+                                                                </xs:sequence>
                                                             </xs:sequence>
                                                         </xs:complexType>
                                                     </xs:element>
