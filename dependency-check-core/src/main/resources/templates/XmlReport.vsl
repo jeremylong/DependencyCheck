@@ -53,6 +53,16 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <filePath>$esc.xml($related.FilePath)</filePath>
                     <sha1>$esc.xml($related.Sha1sum)</sha1>
                     <md5>$esc.xml($related.Md5sum)</md5>
+#foreach($id in $related.getIdentifiers())
+#if ($id.type=="maven")
+                    <identifier type="$esc.xml($id.type)">
+                        <name>($id.value)</name>
+#if( $id.url )
+                        <url>$esc.xml($id.url)</url>
+#end
+                    </identifier>
+#end
+#end
                 </relatedDependency>
 #end
             </relatedDependencies>
