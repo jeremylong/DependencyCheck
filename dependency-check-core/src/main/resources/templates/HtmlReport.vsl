@@ -589,6 +589,17 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                                         <li>File Path:&nbsp;$esc.html($related.FilePath)</li>
                                         <li>SHA1:&nbsp;$esc.html($related.Sha1sum)</li>
                                         <li>MD5:&nbsp;$esc.html($related.Md5sum)</li>
+                                        #foreach($id in $related.getIdentifiers())
+                                            #if ($id.type=="maven")
+                                                #if( $id.url )
+                                                    ##yes, we are HTML Encoding the href. this is okay. We can't URL encode as we have to trust the analyzer here...
+                                                    <li>$esc.html($id.type):&nbsp;<a href="$esc.html($id.url)" target="_blank">$esc.html($id.value)</a>
+                                                #else
+                                                    <li>$esc.html($id.type):&nbsp;$esc.html($id.value)
+                                                #end
+                                                </li>
+                                            #end
+                                        #end
                                      </ul>
                                 </li>
                             #end
