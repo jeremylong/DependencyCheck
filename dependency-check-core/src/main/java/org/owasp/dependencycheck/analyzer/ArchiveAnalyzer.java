@@ -295,7 +295,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
                     final File d = new File(destination, entry.getName());
                     if (!d.exists()) {
                         if (!d.mkdirs()) {
-                            final String msg = String.format("Unable to create '%s'.", d.getAbsolutePath());
+                            final String msg = String.format("Unable to create directory '%s'.", d.getAbsolutePath());
                             throw new AnalysisException(msg);
                         }
                     }
@@ -306,6 +306,13 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
                         BufferedOutputStream bos = null;
                         FileOutputStream fos;
                         try {
+                            File parent = file.getParentFile();
+                            if (!parent.isDirectory()) {
+                                if (!parent.mkdirs()) {
+                                    final String msg = String.format("Unable to build directory '%s'.", parent.getAbsolutePath());
+                                    throw new AnalysisException(msg);
+                                }
+                            }
                             fos = new FileOutputStream(file);
                             bos = new BufferedOutputStream(fos, BUFFER_SIZE);
                             int count;
