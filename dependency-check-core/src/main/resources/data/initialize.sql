@@ -26,4 +26,4 @@ CREATE INDEX idxSoftwareCve ON software(cveid);
 CREATE INDEX idxSoftwareCpe ON software(cpeEntryId);
 
 CREATE TABLE properties (id varchar(50) PRIMARY KEY, value varchar(500));
-INSERT INTO properties(id, value) VALUES ('version', '2.8');
+INSERT INTO properties(id, value) VALUES ('version', '2.9');
