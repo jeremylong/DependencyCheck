@@ -34,7 +34,7 @@ CREATE INDEX idxCpeEntry ON cpeEntry(vendor, product);
 CREATE INDEX idxSoftwareCve ON software(cveid);
 CREATE INDEX idxSoftwareCpe ON software(cpeEntryId);
 
-INSERT INTO properties(id,value) VALUES ('version','2.8');
+INSERT INTO properties(id,value) VALUES ('version','2.9');
 
 CREATE USER 'dcuser' IDENTIFIED BY 'DC-Pass1337!';
 GRANT SELECT, INSERT, DELETE, UPDATE ON dependencycheck.* TO 'dcuser';
