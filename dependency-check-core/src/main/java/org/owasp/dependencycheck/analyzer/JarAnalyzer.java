@@ -17,11 +17,18 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +53,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
+import org.h2.store.fs.FileUtils;
 import org.jsoup.Jsoup;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Confidence;
@@ -55,7 +63,9 @@ import org.owasp.dependencycheck.jaxb.pom.MavenNamespaceFilter;
 import org.owasp.dependencycheck.jaxb.pom.generated.License;
 import org.owasp.dependencycheck.jaxb.pom.generated.Model;
 import org.owasp.dependencycheck.jaxb.pom.generated.Organization;
+import org.owasp.dependencycheck.jaxb.pom.generated.Parent;
 import org.owasp.dependencycheck.utils.NonClosingStream;
+import org.owasp.dependencycheck.utils.Settings;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLFilter;
@@ -70,6 +80,14 @@ import org.xml.sax.XMLReader;
 public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
 
     //<editor-fold defaultstate="collapsed" desc="Constants and Member Variables">
+    /**
+     * The buffer size to use when extracting files from the archive.
+     */
+    private static final int BUFFER_SIZE = 4096;
+    /**
+     * The count of directories created during analysis. This is used for creating temporary directories.
+     */
+    private static int dirCount = 0;
     /**
      * The system independent newline character.
      */
@@ -217,7 +235,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 engine.getDependencies().remove(dependency);
             }
             final boolean hasManifest = parseManifest(dependency, classNames);
-            final boolean hasPOM = analyzePOM(dependency, classNames);
+            final boolean hasPOM = analyzePOM(dependency, classNames, engine);
             final boolean addPackagesAsEvidence = !(hasManifest && hasPOM);
             analyzePackageNames(classNames, dependency, addPackagesAsEvidence);
         } catch (IOException ex) {
@@ -231,10 +249,11 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      *
      * @param dependency the dependency being analyzed
      * @param classes a collection of class name information
+     * @param engine the analysis engine, used to add additional dependencies
      * @throws AnalysisException is thrown if there is an exception parsing the pom
      * @return whether or not evidence was added to the dependency
      */
-    protected boolean analyzePOM(Dependency dependency, ArrayList<ClassNameInformation> classes) throws AnalysisException {
+    protected boolean analyzePOM(Dependency dependency, ArrayList<ClassNameInformation> classes, Engine engine) throws AnalysisException {
         boolean foundSomething = false;
         final JarFile jar;
         try {
@@ -261,9 +280,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         if (pomEntries.isEmpty()) {
             return false;
         }
-        if (pomEntries.size() > 1) { //need to sort out which pom we will use
-            pomEntries = filterPomEntries(pomEntries, classes);
-        }
         for (String path : pomEntries) {
             Properties pomProperties = null;
             try {
@@ -273,8 +289,29 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             }
             Model pom = null;
             try {
-                pom = retrievePom(path, jar);
-                foundSomething = setPomEvidence(dependency, pom, pomProperties, classes) || foundSomething;
+                if (pomEntries.size() > 1) {
+                    //extract POM to its own directory and add it as its own dependency
+                    Dependency newDependency = new Dependency();
+                    pom = extractPom(path, jar, newDependency);
+
+                    final String displayPath = String.format("%s%s%s",
+                            dependency.getFilePath(),
+                            File.separator,
+                            path);//.replaceAll("[\\/]", File.separator));
+                    final String displayName = String.format("%s%s%s",
+                            dependency.getFileName(),
+                            File.separator,
+                            path);//.replaceAll("[\\/]", File.separator));
+
+                    newDependency.setFileName(displayName);
+                    newDependency.setFilePath(displayPath);
+                    addPomEvidence(newDependency, pom, pomProperties);
+                    engine.getDependencies().add(newDependency);
+                    Collections.sort(engine.getDependencies());
+                } else {
+                    pom = retrievePom(path, jar);
+                    foundSomething |= setPomEvidence(dependency, pom, pomProperties, classes);
+                }
             } catch (AnalysisException ex) {
                 dependency.addAnalysisException(ex);
             }
@@ -333,41 +370,94 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * @throws AnalysisException is thrown if there is an exception extracting or parsing the POM
      * {@link org.owasp.dependencycheck.jaxb.pom.generated.Model} object
      */
+    private Model extractPom(String path, JarFile jar, Dependency dependency) throws AnalysisException {
+        InputStream input = null;
+        FileOutputStream fos = null;
+        BufferedOutputStream bos = null;
+        File tmpDir = getNextTempDirectory();
+        File file = new File(tmpDir, "pom.xml");
+        try {
+            final ZipEntry entry = jar.getEntry(path);
+            input = jar.getInputStream(entry);
+            fos = new FileOutputStream(file);
+            bos = new BufferedOutputStream(fos, BUFFER_SIZE);
+            int count;
+            final byte data[] = new byte[BUFFER_SIZE];
+            while ((count = input.read(data, 0, BUFFER_SIZE)) != -1) {
+                bos.write(data, 0, count);
+            }
+            bos.flush();
+            dependency.setActualFilePath(file.getAbsolutePath());
+        } catch (IOException ex) {
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                input.close();
+            } catch (IOException ex) {
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        Model model = null;
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(file);
+            final InputStreamReader reader = new InputStreamReader(fis, "UTF-8");
+            final InputSource xml = new InputSource(reader);
+            final SAXSource source = new SAXSource(xml);
+            model = readPom(source);
+        } catch (FileNotFoundException ex) {
+            final String msg = String.format("Unable to parse pom '%s' in jar '%s' (File Not Found)", path, jar.getName());
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
+            throw new AnalysisException(ex);
+        } catch (UnsupportedEncodingException ex) {
+            final String msg = String.format("Unable to parse pom '%s' in jar '%s' (IO Exception)", path, jar.getName());
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
+            throw new AnalysisException(ex);
+        } catch (AnalysisException ex) {
+            final String msg = String.format("Unable to parse pom '%s' in jar '%s'", path, jar.getName());
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
+            throw ex;
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+                }
+            }
+        }
+        return model;
+    }
+
+    /**
+     * Retrieves the specified POM from a jar file and converts it to a Model.
+     *
+     * @param path the path to the pom.xml file within the jar file
+     * @param jar the jar file to extract the pom from
+     * @return returns a
+     * @throws AnalysisException is thrown if there is an exception extracting or parsing the POM
+     * {@link org.owasp.dependencycheck.jaxb.pom.generated.Model} object
+     */
     private Model retrievePom(String path, JarFile jar) throws AnalysisException {
         final ZipEntry entry = jar.getEntry(path);
         Model model = null;
         if (entry != null) { //should never be null
             try {
-                final XMLFilter filter = new MavenNamespaceFilter();
-                final SAXParserFactory spf = SAXParserFactory.newInstance();
-                final SAXParser sp = spf.newSAXParser();
-                final XMLReader xr = sp.getXMLReader();
-                filter.setParent(xr);
                 final NonClosingStream stream = new NonClosingStream(jar.getInputStream(entry));
                 final InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
                 final InputSource xml = new InputSource(reader);
-                final SAXSource source = new SAXSource(filter, xml);
-                final JAXBElement<Model> el = pomUnmarshaller.unmarshal(source, Model.class);
-                model = el.getValue();
+                final SAXSource source = new SAXSource(xml);
+                model = readPom(source);
             } catch (SecurityException ex) {
                 final String msg = String.format("Unable to parse pom '%s' in jar '%s'; invalid signature", path, jar.getName());
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
-                throw new AnalysisException(ex);
-            } catch (ParserConfigurationException ex) {
-                final String msg = String.format("Unable to parse pom '%s' in jar '%s' (Parser Configuration Error)", path, jar.getName());
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
-                throw new AnalysisException(ex);
-            } catch (SAXException ex) {
-                final String msg = String.format("Unable to parse pom '%s' in jar '%s' (SAX Error)", path, jar.getName());
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
-                throw new AnalysisException(ex);
-            } catch (JAXBException ex) {
-                final String msg = String.format("Unable to parse pom '%s' in jar '%s' (JAXB Exception)", path, jar.getName());
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
+                Logger
+                        .getLogger(JarAnalyzer.class
+                                .getName()).log(Level.WARNING, msg);
+                Logger.getLogger(JarAnalyzer.class
+                        .getName()).log(Level.FINE, null, ex);
                 throw new AnalysisException(ex);
             } catch (IOException ex) {
                 final String msg = String.format("Unable to parse pom '%s' in jar '%s' (IO Exception)", path, jar.getName());
@@ -380,6 +470,39 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
                 throw new AnalysisException(ex);
             }
+        }
+        return model;
+    }
+
+    /**
+     * Retrieves the specified POM from a jar file and converts it to a Model.
+     *
+     * @param path the path to the pom.xml file within the jar file
+     * @param jar the jar file to extract the pom from
+     * @return returns a
+     * @throws AnalysisException is thrown if there is an exception extracting or parsing the POM
+     * {@link org.owasp.dependencycheck.jaxb.pom.generated.Model} object
+     */
+    private Model readPom(SAXSource source) throws AnalysisException {
+        Model model = null;
+        try {
+            final XMLFilter filter = new MavenNamespaceFilter();
+            final SAXParserFactory spf = SAXParserFactory.newInstance();
+            final SAXParser sp = spf.newSAXParser();
+            final XMLReader xr = sp.getXMLReader();
+            filter.setParent(xr);
+            final JAXBElement<Model> el = pomUnmarshaller.unmarshal(source, Model.class);
+            model = el.getValue();
+        } catch (SecurityException ex) {
+            throw new AnalysisException(ex);
+        } catch (ParserConfigurationException ex) {
+            throw new AnalysisException(ex);
+        } catch (SAXException ex) {
+            throw new AnalysisException(ex);
+        } catch (JAXBException ex) {
+            throw new AnalysisException(ex);
+        } catch (Throwable ex) {
+            throw new AnalysisException(ex);
         }
         return model;
     }
@@ -552,15 +675,17 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             jar = new JarFile(dependency.getActualFilePath());
 
             final Manifest manifest = jar.getManifest();
+
             if (manifest == null) {
                 //don't log this for javadoc or sources jar files
                 if (!dependency.getFileName().toLowerCase().endsWith("-sources.jar")
                         && !dependency.getFileName().toLowerCase().endsWith("-javadoc.jar")
                         && !dependency.getFileName().toLowerCase().endsWith("-src.jar")
                         && !dependency.getFileName().toLowerCase().endsWith("-doc.jar")) {
-                    Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO,
-                            String.format("Jar file '%s' does not contain a manifest.",
-                                    dependency.getFileName()));
+                    Logger.getLogger(JarAnalyzer.class
+                            .getName()).log(Level.INFO,
+                                    String.format("Jar file '%s' does not contain a manifest.",
+                                            dependency.getFileName()));
                 }
                 return false;
             }
@@ -750,17 +875,43 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * The initialize method does nothing for this Analyzer.
+     * The parent directory for the individual directories per archive.
      */
-    public void initialize() {
-        //do nothing
+    private File tempFileLocation = null;
+
+    /**
+     * The initialize method does nothing for this Analyzer.
+     *
+     * @throws Exception is thrown if there is an exception creating a temporary directory
+     */
+    @Override
+    public void initialize() throws Exception {
+        final File baseDir = Settings.getTempDirectory();
+        if (!baseDir.exists()) {
+            if (!baseDir.mkdirs()) {
+                final String msg = String.format("Unable to make a temporary folder '%s'", baseDir.getPath());
+                throw new AnalysisException(msg);
+            }
+        }
+        tempFileLocation = File.createTempFile("check", "tmp", baseDir);
+        if (!tempFileLocation.delete()) {
+            final String msg = String.format("Unable to delete temporary file '%s'.", tempFileLocation.getAbsolutePath());
+            throw new AnalysisException(msg);
+        }
+        if (!tempFileLocation.mkdirs()) {
+            final String msg = String.format("Unable to create directory '%s'.", tempFileLocation.getAbsolutePath());
+            throw new AnalysisException(msg);
+        }
     }
 
     /**
-     * The close method does nothing for this Analyzer.
+     * Deletes any files extracted from the JAR during analysis.
      */
+    @Override
     public void close() {
-        //do nothing
+        if (tempFileLocation != null && tempFileLocation.exists()) {
+            FileUtils.deleteRecursive(tempFileLocation.getAbsolutePath(), true);
+        }
     }
 
     /**
@@ -859,8 +1010,11 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             }
         } catch (IOException ex) {
             final String msg = String.format("Unable to open jar file '%s'.", dependency.getFileName());
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
+            Logger
+                    .getLogger(JarAnalyzer.class
+                            .getName()).log(Level.WARNING, msg);
+            Logger.getLogger(JarAnalyzer.class
+                    .getName()).log(Level.FINE, null, ex);
         } finally {
             if (jar != null) {
                 try {
@@ -944,77 +1098,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * <p>
-     * <b>This is currently a failed implementation.</b> Part of the issue is I was trying to solve the wrong problem.
-     * Instead of multiple POMs being in the JAR to just add information about dependencies - I didn't realize until
-     * later that I was looking at an uber-jar (aka fat-jar) that included all of its dependencies.</p>
-     * <p>
-     * I'm leaving this method in the source tree, entirely commented out until a solution
-     * https://github.com/jeremylong/DependencyCheck/issues/11 has been implemented.</p>
-     * <p>
-     * Takes a list of pom entries from a JAR file and attempts to filter it down to the pom related to the jar (rather
-     * then the pom entry for a dependency).</p>
-     *
-     * @param pomEntries a list of pom entries
-     * @param classes a list of fully qualified classes from the JAR file
-     * @return the list of pom entries that are associated with the jar being analyzed rather then the dependent poms
-     */
-    private List<String> filterPomEntries(List<String> pomEntries, ArrayList<ClassNameInformation> classes) {
-        return pomEntries;
-//        final HashMap<String, Integer> usePoms = new HashMap<String, Integer>();
-//        final ArrayList<String> possiblePoms = new ArrayList<String>();
-//        for (String entry : pomEntries) {
-//            //todo validate that the starts with is correct... or does it start with a ./ or /?
-//            // is it different on different platforms?
-//            if (entry.startsWith("META-INF/maven/")) {
-//                //trim the meta-inf/maven and pom.xml...
-//                final String pomPath = entry.substring(15, entry.length() - 8).toLowerCase();
-//                final String[] parts = pomPath.split("/");
-//                if (parts == null || parts.length != 2) { //misplaced pom?
-//                    //TODO add logging to FINE
-//                    possiblePoms.add(entry);
-//                }
-//                parts[0] = parts[0].replace('.', '/');
-//                parts[1] = parts[1].replace('.', '/');
-//                for (ClassNameInformation cni : classes) {
-//                    final String name = cni.getName();
-//                    if (StringUtils.containsIgnoreCase(name, parts[0])) {
-//                        addEntry(usePoms, entry);
-//                    }
-//                    if (StringUtils.containsIgnoreCase(name, parts[1])) {
-//                        addEntry(usePoms, entry);
-//                    }
-//                }
-//            } else { // we have a JAR file with an incorrect POM layout...
-//                //TODO add logging to FINE
-//                possiblePoms.add(entry);
-//            }
-//        }
-//        List<String> retValue;
-//        if (usePoms.isEmpty()) {
-//            if (possiblePoms.isEmpty()) {
-//                retValue = pomEntries;
-//            } else {
-//                retValue = possiblePoms;
-//            }
-//        } else {
-//            retValue = new ArrayList<String>();
-//            int maxCount = 0;
-//            for (Map.Entry<String, Integer> entry : usePoms.entrySet()) {
-//                final int current = entry.getValue().intValue();
-//                if (current > maxCount) {
-//                    maxCount = current;
-//                    retValue.clear();
-//                    retValue.add(entry.getKey());
-//                } else if (current == maxCount) {
-//                    retValue.add(entry.getKey());
-//                }
-//            }
-//        }
-//        return retValue;
-    }
-
-    /**
      * Simple check to see if the attribute from a manifest is just a package name.
      *
      * @param key the key of the value to check
@@ -1025,6 +1108,117 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
 
         return !key.matches(".*(version|title|vendor|name|license|description).*")
                 && value.matches("^([a-zA-Z_][a-zA-Z0-9_\\$]*(\\.[a-zA-Z_][a-zA-Z0-9_\\$]*)*)?$");
+
+    }
+
+    private void addPomEvidence(Dependency dependency, Model pom, Properties pomProperties) {
+        if (pom == null) {
+            return;
+        }
+        String groupid = interpolateString(pom.getGroupId(), pomProperties);
+        if (groupid != null && !groupid.isEmpty()) {
+            if (groupid.startsWith("org.") || groupid.startsWith("com.")) {
+                groupid = groupid.substring(4);
+            }
+            dependency.getVendorEvidence().addEvidence("pom", "groupid", groupid, Confidence.HIGH);
+            dependency.getProductEvidence().addEvidence("pom", "groupid", groupid, Confidence.LOW);
+        }
+        String artifactid = interpolateString(pom.getArtifactId(), pomProperties);
+        if (artifactid != null && !artifactid.isEmpty()) {
+            if (artifactid.startsWith("org.") || artifactid.startsWith("com.")) {
+                artifactid = artifactid.substring(4);
+            }
+            dependency.getProductEvidence().addEvidence("pom", "artifactid", artifactid, Confidence.HIGH);
+            dependency.getVendorEvidence().addEvidence("pom", "artifactid", artifactid, Confidence.LOW);
+        }
+        final String version = interpolateString(pom.getVersion(), pomProperties);
+        if (version != null && !version.isEmpty()) {
+            dependency.getVersionEvidence().addEvidence("pom", "version", version, Confidence.HIGHEST);
+        }
+
+        Parent parent = pom.getParent(); //grab parent GAV
+        if (parent != null) {
+            String parentGroupId = interpolateString(parent.getGroupId(), pomProperties);
+            if (parentGroupId != null && !parentGroupId.isEmpty()) {
+                if (groupid == null || groupid.isEmpty()) {
+                    dependency.getVendorEvidence().addEvidence("pom", "parent.groupid", parentGroupId, Confidence.HIGH);
+                } else {
+                    dependency.getVendorEvidence().addEvidence("pom", "parent.groupid", parentGroupId, Confidence.MEDIUM);
+                }
+                dependency.getProductEvidence().addEvidence("pom", "parent.groupid", parentGroupId, Confidence.LOW);
+            }
+            String parentArtifactId = interpolateString(parent.getArtifactId(), pomProperties);
+            if (parentArtifactId != null && !parentArtifactId.isEmpty()) {
+                if (artifactid == null || artifactid.isEmpty()) {
+                    dependency.getProductEvidence().addEvidence("pom", "parent.artifactid", parentArtifactId, Confidence.HIGH);
+                } else {
+                    dependency.getProductEvidence().addEvidence("pom", "parent.artifactid", parentArtifactId, Confidence.MEDIUM);
+                }
+                dependency.getVendorEvidence().addEvidence("pom", "parent.artifactid", parentArtifactId, Confidence.LOW);
+            }
+            String parentVersion = interpolateString(parent.getVersion(), pomProperties);
+            if (parentVersion != null && !parentVersion.isEmpty()) {
+                if (version == null || version.isEmpty()) {
+                    dependency.getVersionEvidence().addEvidence("pom", "parent.version", parentVersion, Confidence.HIGH);
+                } else {
+                    dependency.getVersionEvidence().addEvidence("pom", "parent.version", parentVersion, Confidence.LOW);
+                }
+            }
+        }
+        // org name
+        final Organization org = pom.getOrganization();
+        if (org != null && org.getName() != null) {
+            final String orgName = interpolateString(org.getName(), pomProperties);
+            if (orgName != null && !orgName.isEmpty()) {
+                dependency.getVendorEvidence().addEvidence("pom", "organization name", orgName, Confidence.HIGH);
+            }
+        }
+        //pom name
+        final String pomName = interpolateString(pom.getName(), pomProperties);
+        if (pomName != null && !pomName.isEmpty()) {
+            dependency.getProductEvidence().addEvidence("pom", "name", pomName, Confidence.HIGH);
+            dependency.getVendorEvidence().addEvidence("pom", "name", pomName, Confidence.HIGH);
+        }
+
+        //Description
+        if (pom.getDescription() != null) {
+            final String description = interpolateString(pom.getDescription(), pomProperties);
+            if (description != null && !description.isEmpty()) {
+                addDescription(dependency, description, "pom", "description");
+            }
+        }
+
+        //license
+        if (pom.getLicenses() != null) {
+            String license = null;
+            for (License lic : pom.getLicenses().getLicense()) {
+                String tmp = null;
+                if (lic.getName() != null) {
+                    tmp = interpolateString(lic.getName(), pomProperties);
+                }
+                if (lic.getUrl() != null) {
+                    if (tmp == null) {
+                        tmp = interpolateString(lic.getUrl(), pomProperties);
+                    } else {
+                        tmp += ": " + interpolateString(lic.getUrl(), pomProperties);
+                    }
+                }
+                if (tmp == null) {
+                    continue;
+                }
+                if (HTML_DETECTION_PATTERN.matcher(tmp).find()) {
+                    tmp = Jsoup.parse(tmp).text();
+                }
+                if (license == null) {
+                    license = tmp;
+                } else {
+                    license += "\n" + tmp;
+                }
+            }
+            if (license != null) {
+                dependency.setLicense(license);
+            }
+        }
     }
 
     /**
@@ -1092,7 +1286,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         /**
          * Up to the first four levels of the package structure, excluding a leading "org" or "com".
          */
-        private ArrayList<String> packageStructure = new ArrayList<String>();
+        private final ArrayList<String> packageStructure = new ArrayList<String>();
 
         /**
          * Get the value of packageStructure
@@ -1102,5 +1296,25 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         public ArrayList<String> getPackageStructure() {
             return packageStructure;
         }
+    }
+
+    /**
+     * Retrieves the next temporary directory to extract an archive too.
+     *
+     * @return a directory
+     * @throws AnalysisException thrown if unable to create temporary directory
+     */
+    private File getNextTempDirectory() throws AnalysisException {
+        dirCount += 1;
+        final File directory = new File(tempFileLocation, String.valueOf(dirCount));
+        //getting an exception for some directories not being able to be created; might be because the directory already exists?
+        if (directory.exists()) {
+            return getNextTempDirectory();
+        }
+        if (!directory.mkdirs()) {
+            final String msg = String.format("Unable to create temp directory '%s'.", directory.getAbsolutePath());
+            throw new AnalysisException(msg);
+        }
+        return directory;
     }
 }
