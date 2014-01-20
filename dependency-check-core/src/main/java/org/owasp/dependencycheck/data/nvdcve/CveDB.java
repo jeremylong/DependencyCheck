@@ -443,14 +443,17 @@ public class CveDB {
                 final String previous = rs.getString(3);
                 if (!cveEntries.contains(cveId) && isAffected(cpe.getVendor(), cpe.getProduct(), detectedVersion, cpeId, previous)) {
                     cveEntries.add(cveId);
+                    final Vulnerability v = getVulnerability(cveId);
+                    v.setMatchedCPE(cpeId, previous);
+                    vulnerabilities.add(v);
                 }
             }
             DBUtils.closeResultSet(rs);
             DBUtils.closeStatement(ps);
-            for (String cve : cveEntries) {
-                final Vulnerability v = getVulnerability(cve);
-                vulnerabilities.add(v);
-            }
+//            for (String cve : cveEntries) {
+//                final Vulnerability v = getVulnerability(cve);
+//                vulnerabilities.add(v);
+//            }
 
         } catch (SQLException ex) {
             throw new DatabaseException("Exception retrieving vulnerability for " + cpeStr, ex);
