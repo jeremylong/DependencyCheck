@@ -65,7 +65,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     $('#modal-text').text(xml).focus().select();
                 });
             });
-
             function copyText(name, sha1, type, val) {
                 xml =  '<suppress>\n';
                 xml += '   <notes><!'+'[CDATA[\n   file name: ' + name + '\n   ]]'+'></notes>\n';
@@ -77,22 +76,12 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 $('#modal-text').focus();
                 $('#modal-text').select();
             }
-
-            function toggleVuln(el) {
-                $('.notvulnerable').toggle();
+            function toggleDisplay(el, clzName) {
+                $(clzName).toggle();
                 if (el.innerHTML == 'show all') {
-                    el.innerHTML = 'hide';
-                } else {
-                    el.innerHTML = 'show all';
-                }
-            }
-            function toggleMore(el) {
-                $('.hiddenInfo').toggle();
-                $('.nothidden').toggle();
-                if (el.innerHTML == 'more') {
                     el.innerHTML = 'less';
                 } else {
-                    el.innerHTML = 'more';
+                    el.innerHTML = 'show all';
                 }
             }
         </script>
@@ -446,14 +435,8 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             .notvulnerable {
                 display:none;
             }
-            .hiddenInfo {
+            .hidden {
                 display:none;
-            }
-            .hiddennow {
-                display:none;
-            }
-            .nothidden {
-                display:block;
             }
             .infolink {
                 text-decoration:none;
@@ -475,10 +458,10 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 <button id="modal-add-header" class="modal-button">Complete XML Doc</button><button id="modal-close" class="modal-button-right">Close</button>
         </div>
         <div class="wrapper">
-            <h1>Dependency Report</h1>
+            <h1>Dependency-Check Report</h1>
 ]]#
-            <h2 class="sectionheader white">Project:&nbsp;$esc.html($applicationName)</h2>
-            <div class="sectioncontent">
+            <h2 class="">Project:&nbsp;$esc.html($applicationName)</h2>
+            <div class="">
                 #set($depCount=$dependencies.size())
                 #set($vulnCount=0)
 
@@ -488,18 +471,18 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         #set($vulnCount=$vulnCount+1)
                     #end
                 #end
-                Scan Information (<a href="#" onclick="toggleMore(this);  return false;">more</a>):<br/>
+                Scan Information (<a href="#" onclick="toggleDisplay(this, '.scaninfo');  return false;">show all</a>):<br/>
                     <ul class="indent">
                         <li><i>dependency-check version</i>: $version</li>
                         <li><i>Report Generated On</i>: $date</li>
                         <li><i>Dependencies Scanned</i>:&nbsp;$depCount</li>
                         <li><i>Vulnerable Dependencies</i>:&nbsp;$vulnCount</li>
-                        <li class="hiddennow nothidden">...</li>
+                        <li class="scaninfo">...</li>
                         #foreach($prop in $properties.getMetaData().entrySet())
-                        <li class="hiddenInfo"><i>$esc.html($prop.key)</i>: $esc.html($prop.value)</li>
+                        <li class="scaninfo hidden"><i>$esc.html($prop.key)</i>: $esc.html($prop.value)</li>
                         #end
                     </ul><br/>
-                Dependency Display:&nbsp;<a href="#" onclick="toggleVuln(this); return false;">show all</a><br/><br/>
+                Dependency Display:&nbsp;<a href="#" onclick="toggleDisplay(this,'.notvulnerable'); return false;">show all</a><br/><br/>
                 <ul class="indent">
                 #set($lnkcnt=0)
                 #foreach($dependency in $dependencies)
@@ -519,6 +502,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 <h2>Dependencies</h2>
                 #set($lnkcnt=0)
                 #set($cnt=0)
+                #set($vsctr=0) ##counter to create unique groups for vulnerable software
                 #foreach($dependency in $dependencies)
                     #set($lnkcnt=$lnkcnt+1)
                     <h3 class="subsectionheader standardsubsection#if($dependency.getVulnerabilities().size()==0) notvulnerable#end"><a name="l${lnkcnt}_$esc.html($dependency.Sha1sum)"></a>$esc.html($dependency.FileName)</h3>
@@ -647,6 +631,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <h4 id="header$cnt" class="subsectionheader expandable collaspablesubsection white">Published Vulnerabilities</h4>
                     <div id="content$cnt" class="subsectioncontent standardsubsection">
                         #foreach($vuln in $dependency.getVulnerabilities())
+                            #set($vsctr=$vsctr+1)
                             <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$esc.url($vuln.name)">$esc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" onclick="copyText('$esc.html($dependency.FileName)', '$esc.html($dependency.Sha1sum)', 'cve', '$esc.html($vuln.name)')">suppress</button></p>
                             <p>Severity:
                             #if ($vuln.cvssScore<4.0)
@@ -669,9 +654,11 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                                     </ul>
                                 #end
                             </p>
-                            <p>Vulnerable Software &amp; Versions:<ul>
+                            <p>Vulnerable Software &amp; Versions:&nbsp;(<a href="#" onclick="toggleDisplay(this,'.vs$vsctr'); return false;">show all</a>)<ul>
+                                <li class="vs$vsctr"><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/search-results?cpe=$esc.url($vuln.matchedCPE)">$esc.html($vuln.matchedCPE)</a> #if($vuln.hasMatchedAllPreviousCPE()) and all previous versions#end</li>
+                                <li class="vs$vsctr">...</li>
                             #foreach($vs in $vuln.getVulnerableSoftware())
-                                <li><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/search-results?cpe=$esc.url($vs.name)">$esc.html($vs.name)</a> #if($vs.hasPreviousVersion()) and all previous versions.#end</li>
+                                <li class="vs$vsctr hidden"><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/search-results?cpe=$esc.url($vs.name)">$esc.html($vs.name)</a> #if($vs.hasPreviousVersion()) and all previous versions#end</li>
                             #end
                             </ul></p>
                         #end
