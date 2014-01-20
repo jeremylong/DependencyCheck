@@ -48,11 +48,13 @@ public class ArchiveAnalyzerTest extends BaseIndexTestCase {
     }
 
     @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
     }
 
     @After
+    @Override
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -168,7 +170,8 @@ public class ArchiveAnalyzerTest extends BaseIndexTestCase {
         try {
             instance.initialize();
 
-            File file = new File(this.getClass().getClassLoader().getResource("file.tar").getPath());
+            //File file = new File(this.getClass().getClassLoader().getResource("file.tar").getPath());
+            File file = new File(this.getClass().getClassLoader().getResource("stagedhttp-modified.tar").getPath());
             Dependency dependency = new Dependency(file);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             Engine engine = new Engine();
