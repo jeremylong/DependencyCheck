@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
@@ -170,11 +171,15 @@ public class NexusAnalyzer extends AbstractAnalyzer {
                 dependency.addIdentifier("maven", ma.toString(), ma.getArtifactUrl(), Confidence.HIGHEST);
             }
         } catch (IllegalArgumentException iae) {
-            dependency.addAnalysisException(new AnalysisException("Invalid SHA-1"));
+            //dependency.addAnalysisException(new AnalysisException("Invalid SHA-1"));
+            LOGGER.info(String.format("invalid sha-1 hash on %s", dependency.getFileName()));
         } catch (FileNotFoundException fnfe) {
-            dependency.addAnalysisException(new AnalysisException("Artifact not found on repository"));
+            //dependency.addAnalysisException(new AnalysisException("Artifact not found on repository"));
+            LOGGER.fine(String.format("Artificat not found in repository '%s'", dependency.getFileName()));
+            LOGGER.log(Level.FINE, fnfe.getMessage(), fnfe);
         } catch (IOException ioe) {
-            dependency.addAnalysisException(new AnalysisException("Could not connect to repository", ioe));
+            //dependency.addAnalysisException(new AnalysisException("Could not connect to repository", ioe));
+            LOGGER.log(Level.FINE, "Could not connect to nexus repository", ioe);
         }
     }
 }
