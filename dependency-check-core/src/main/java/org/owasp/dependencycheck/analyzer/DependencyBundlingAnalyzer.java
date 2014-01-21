@@ -128,7 +128,13 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                     final ListIterator<Dependency> subIterator = engine.getDependencies().listIterator(mainIterator.nextIndex());
                     while (subIterator.hasNext()) {
                         final Dependency nextDependency = subIterator.next();
-                        if (hashesMatch(dependency, nextDependency)) {
+                        if (isShadedJar(dependency, nextDependency)) {
+                            if (dependency.getFileName().toLowerCase().endsWith("pom.xml")) {
+                                dependenciesToRemove.add(dependency);
+                            } else {
+                                dependenciesToRemove.add(nextDependency);
+                            }
+                        } else if (hashesMatch(dependency, nextDependency)) {
                             if (isCore(dependency, nextDependency)) {
                                 mergeDependencies(dependency, nextDependency, dependenciesToRemove);
                             } else {
@@ -382,5 +388,16 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             return false;
         }
         return dependency1.getSha1sum().equals(dependency2.getSha1sum());
+    }
+
+    private boolean isShadedJar(Dependency dependency, Dependency nextDependency) {
+        final String mainName = dependency.getFileName().toLowerCase();
+        final String nextName = nextDependency.getFileName().toLowerCase();
+        if (mainName.endsWith(".jar") && nextName.endsWith("pomx.xml")) {
+            return dependency.getIdentifiers().containsAll(nextDependency.getIdentifiers());
+        } else if (nextName.endsWith(".jar") && mainName.endsWith("pomx.xml")) {
+            return nextDependency.getIdentifiers().containsAll(dependency.getIdentifiers());
+        }
+        return false;
     }
 }
