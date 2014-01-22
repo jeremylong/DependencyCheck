@@ -108,8 +108,16 @@ public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
         //add version evidence
         final DependencyVersion version = DependencyVersionUtil.parseVersion(fileName);
         if (version != null) {
-            dependency.getVersionEvidence().addEvidence("file", "name",
-                    version.toString(), Confidence.HIGHEST);
+            // If the version number is just a number like 2 or 23, reduce the confidence
+            // a shade. This should hopefully correct for cases like log4j.jar or
+            // struts2-core.jar
+            if (version.getVersionParts() == null || version.getVersionParts().size() < 2) {
+                dependency.getVersionEvidence().addEvidence("file", "name",
+                        version.toString(), Confidence.MEDIUM);
+            } else {
+                dependency.getVersionEvidence().addEvidence("file", "name",
+                        version.toString(), Confidence.HIGHEST);
+            }
             dependency.getVersionEvidence().addEvidence("file", "name",
                     fileName, Confidence.MEDIUM);
         }
