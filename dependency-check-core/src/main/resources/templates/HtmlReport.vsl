@@ -522,36 +522,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                             <b>MD5:</b>&nbsp;$esc.html($dependency.Md5sum)<br/>
                             <b>SHA1:</b>&nbsp;$esc.html($dependency.Sha1sum)
                         </p>
-
-                        #if ( $dependency.analysisExceptions.size() != 0 )
-                            #set($cnt=$cnt+1)
-                            <h4 id="header$cnt" class="subsectionheader expandable expandablesubsection red">Exceptions Occured During Analysis</h4>
-                            <div id="content$cnt" class="subsectioncontent standardsubsection hidden">
-                                <ul>
-                                #foreach($ex in $dependency.analysisExceptions)
-                                    <li>$esc.html($ex.message)
-                                    #if ( $ex.stackTrace )
-                                        <div class="indent">
-                                            #foreach ($st in $ex.stackTrace)
-                                                $esc.html($st)<br/>
-                                            #end
-                                        </div>
-                                    #end
-                                    #if ( $ex.cause )
-                                        <br/><b>Caused by:</b> $esc.html($ex.cause.message)
-                                        #if ( $ex.cause.stackTrace )
-                                            <div class="indent">
-                                                #foreach ($st in $ex.cause.stackTrace)
-                                                    $esc.html($st)<br/>
-                                                #end
-                                            </div>
-                                        #end
-                                    #end
-                                    </li>
-                                #end
-                                </ul>
-                            </div>
-                        #end
                         #set($cnt=$cnt+1)
                         <h4 id="header$cnt" class="subsectionheader expandable expandablesubsection white">Evidence</h4>
                         <div id="content$cnt" class="subsectioncontent standardsubsection hidden">

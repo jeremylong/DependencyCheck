@@ -67,34 +67,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 #end
             </relatedDependencies>
 #end
-#if ( $dependency.analysisExceptions.size() != 0 )
-            <analysisExceptions>
-#foreach($ex in $dependency.analysisExceptions)
-                <exception>
-                    <message>$esc.xml($ex.message)</message>
-#if ( $ex.stackTrace )
-                    <stackTrace>
-#foreach ($st in $ex.stackTrace)
-                        <trace>$esc.xml($st)</trace>
-#end
-                    </stackTrace>
-#end
-#if ( $ex.cause )
-                    <innerException>
-                        <message>$esc.xml($ex.cause.message)</message>
-#if ( $ex.cause.stackTrace )
-                        <stackTrace>
-#foreach ($st in $ex.cause.stackTrace)
-                            <trace>$esc.xml($st)</trace>
-#end
-                        </stackTrace>
-#end
-                    </innerException>
-#end
-                </exception>
-#end
-            </analysisExceptions>
-#end
             <evidenceCollected>
 #foreach($evidence in $dependency.getEvidenceUsed())
                 <evidence>
