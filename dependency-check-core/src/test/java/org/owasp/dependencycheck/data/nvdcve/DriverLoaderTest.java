@@ -97,7 +97,7 @@ public class DriverLoaderTest {
         final File testClassPath = (new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath())).getParentFile();
         final File dir1 = new File(testClassPath, "../../src/test/");
         final File dir2 = new File(testClassPath, "../../src/test/resources/");
-        final String paths = String.format("%s;%s", dir1.getAbsolutePath(), dir2.getAbsolutePath());
+        final String paths = String.format("%s" + File.pathSeparator + "%s", dir1.getAbsolutePath(), dir2.getAbsolutePath());
 
         DriverLoader.load(className, paths);
     }
