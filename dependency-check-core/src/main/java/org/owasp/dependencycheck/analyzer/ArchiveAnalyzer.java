@@ -82,9 +82,16 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INITIAL;
     /**
+     * The set of things we can handle with Zip methods
+     */
+    private static final Set<String> ZIPPABLES = newHashSet("zip", "ear", "war", "nupkg");
+    /**
      * The set of file extensions supported by this analyzer.
      */
-    private static final Set<String> EXTENSIONS = newHashSet("zip", "ear", "war", "tar", "gz", "tgz");
+    private static final Set<String> EXTENSIONS = newHashSet("tar", "gz", "tgz");
+    static {
+      EXTENSIONS.addAll(ZIPPABLES);
+    }
 
     /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
@@ -251,7 +258,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
         }
         final String archiveExt = org.owasp.dependencycheck.utils.FileUtils.getFileExtension(archive.getName()).toLowerCase();
         try {
-            if ("zip".equals(archiveExt) || "war".equals(archiveExt) || "ear".equals(archiveExt)) {
+            if (ZIPPABLES.contains(archiveExt)) {
                 extractArchive(new ZipArchiveInputStream(new BufferedInputStream(fis)), destination, engine);
             } else if ("tar".equals(archiveExt)) {
                 extractArchive(new TarArchiveInputStream(new BufferedInputStream(fis)), destination, engine);
