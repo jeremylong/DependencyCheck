@@ -203,6 +203,14 @@ public final class CliParser {
                 .withDescription("The file path to the suppression XML file.")
                 .create(ArgumentName.SUPPRESION_FILE_SHORT);
 
+        final Option disableNexusAnalyzer = OptionBuilder.withLongOpt(ArgumentName.DISABLE_NEXUS)
+                .withDescription("Disable the Nexus Analyzer.")
+                .create();
+
+        final Option nexusUrl = OptionBuilder.withArgName("url").hasArg().withLongOpt(ArgumentName.NEXUS_URL)
+                .withDescription("The url to the Nexus Server.")
+                .create();
+
         final OptionGroup og = new OptionGroup();
         og.addOption(path);
 
@@ -223,6 +231,8 @@ public final class CliParser {
         opts.addOption(proxyUsername);
         opts.addOption(proxyPassword);
         opts.addOption(connectionTimeout);
+        opts.addOption(disableNexusAnalyzer);
+        opts.addOption(nexusUrl);
 
         return opts;
     }
@@ -252,6 +262,28 @@ public final class CliParser {
      */
     public boolean isRunScan() {
         return (line != null) && isValid && line.hasOption(ArgumentName.SCAN);
+    }
+
+    /**
+     * Returns true if the disableNexus command line argument was specified.
+     *
+     * @return true if the disableNexus command line argument was specified; otherwise false
+     */
+    public boolean isNexusDisabled() {
+        return (line != null) && line.hasOption(ArgumentName.DISABLE_NEXUS);
+    }
+
+    /**
+     * Returns the url to the nexus server if one was specified.
+     *
+     * @return the url to the nexus server; if none was specified this will return null;
+     */
+    public String getNexusUrl() {
+        if (line == null || !line.hasOption(ArgumentName.NEXUS_URL)) {
+            return null;
+        } else {
+            return line.getOptionValue(ArgumentName.NEXUS_URL);
+        }
     }
 
     /**
@@ -544,6 +576,15 @@ public final class CliParser {
          * The CLI argument name for setting the location of the suppression file.
          */
         public static final String SUPPRESION_FILE = "suppression";
+        /**
+         * Disables the Nexus Analyzer.
+         */
+        public static final String DISABLE_NEXUS = "disableNexus";
+        /**
+         * The URL of the nexus server.
+         */
+        public static final String NEXUS_URL = "nexus";
+
         /**
          * The short CLI argument name for setting the location of the suppression file.
          */
