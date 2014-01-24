@@ -276,13 +276,18 @@ public final class Settings {
      */
     public static File getDataFile(String key) {
         final String file = getString(key);
+        Logger.getLogger(Settings.class.getName()).log(Level.FINE, String.format("Settings.getDataFile() - file: '%s'", file));
         if (file == null) {
             return null;
         }
-        if (file.startsWith("[JAR]/")) {
+        if (file.startsWith("[JAR]")) {
+            Logger.getLogger(Settings.class.getName()).log(Level.FINE, "Settings.getDataFile() - transforming filename");
             final File jarPath = getJarPath();
+            Logger.getLogger(Settings.class.getName()).log(Level.FINE, String.format("Settings.getDataFile() - jar file: '%s'", jarPath.toString()));
             final File newBase = new File(jarPath, file.substring(6));
-            return new File(newBase, file);
+            File retVal = new File(newBase, file);
+            Logger.getLogger(Settings.class.getName()).log(Level.FINE, String.format("Settings.getDataFile() - returning: '%s'", retVal.toString()));
+            return retVal;
         }
         return new File(file);
     }
