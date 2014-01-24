@@ -284,8 +284,7 @@ public final class Settings {
             Logger.getLogger(Settings.class.getName()).log(Level.FINE, "Settings.getDataFile() - transforming filename");
             final File jarPath = getJarPath();
             Logger.getLogger(Settings.class.getName()).log(Level.FINE, String.format("Settings.getDataFile() - jar file: '%s'", jarPath.toString()));
-            final File newBase = new File(jarPath, file.substring(6));
-            File retVal = new File(newBase, file);
+            final File retVal = new File(jarPath, file.substring(6));
             Logger.getLogger(Settings.class.getName()).log(Level.FINE, String.format("Settings.getDataFile() - returning: '%s'", retVal.toString()));
             return retVal;
         }

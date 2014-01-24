@@ -50,7 +50,7 @@ public final class DriverLoader {
      * @throws DriverLoadException thrown if the driver cannot be loaded
      */
     public static void load(String className) throws DriverLoadException {
-        final ClassLoader loader = ClassLoader.getSystemClassLoader();
+        final ClassLoader loader = DriverLoader.class.getClassLoader(); //ClassLoader.getSystemClassLoader();
         load(className, loader);
     }
 
