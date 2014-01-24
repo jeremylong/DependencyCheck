@@ -126,9 +126,10 @@ public final class ConnectionFactory {
     private static String getConnectionString() throws IOException {
         final String connStr = Settings.getString(Settings.KEYS.DB_CONNECTION_STRING, "jdbc:h2:file:%s;AUTO_SERVER=TRUE");
         if (connStr.contains("%s")) {
-            final String fileName = getDataDirectory().getCanonicalPath();
-            final File file = new File(fileName, "cve." + DB_SCHEMA_VERSION);
-            return String.format(connStr, file.getAbsolutePath());
+            final String directory = getDataDirectory().getCanonicalPath();
+            final File data_file = new File(directory, "cve." + DB_SCHEMA_VERSION);
+            Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, String.format("File path for H2 file: '%s'", data_file.toString()));
+            return String.format(connStr, data_file.getAbsolutePath());
         }
         return connStr;
     }
