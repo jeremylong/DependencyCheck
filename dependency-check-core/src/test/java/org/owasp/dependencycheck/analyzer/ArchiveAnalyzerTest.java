@@ -69,6 +69,7 @@ public class ArchiveAnalyzerTest extends BaseIndexTestCase {
         expResult.add("zip");
         expResult.add("war");
         expResult.add("ear");
+        expResult.add("nupkg");
         expResult.add("tar");
         expResult.add("gz");
         expResult.add("tgz");
@@ -108,6 +109,10 @@ public class ArchiveAnalyzerTest extends BaseIndexTestCase {
         assertEquals(expResult, result);
 
         extension = "zip"; //supported
+        result = instance.supportsExtension(extension);
+        assertEquals(expResult, result);
+
+        extension = "nupkg"; //supported
         result = instance.supportsExtension(extension);
         assertEquals(expResult, result);
     }
