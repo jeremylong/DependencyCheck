@@ -457,6 +457,52 @@ public class DependencyCheckTask extends Task {
         this.showSummary = showSummary;
     }
 
+    /**
+     * Whether or not the nexus analyzer is enabled.
+     */
+    private boolean nexusAnalyzerEnabled = true;
+
+    /**
+     * Get the value of nexusAnalyzerEnabled.
+     *
+     * @return the value of nexusAnalyzerEnabled
+     */
+    public boolean isNexusAnalyzerEnabled() {
+        return nexusAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of nexusAnalyzerEnabled.
+     *
+     * @param nexusAnalyzerEnabled new value of nexusAnalyzerEnabled
+     */
+    public void setNexusAnalyzerEnabled(boolean nexusAnalyzerEnabled) {
+        this.nexusAnalyzerEnabled = nexusAnalyzerEnabled;
+    }
+
+    /**
+     * The URL of the Nexus server.
+     */
+    private String nexusUrl;
+
+    /**
+     * Get the value of nexusUrl.
+     *
+     * @return the value of NexusUrl
+     */
+    public String getNexusUrl() {
+        return nexusUrl;
+    }
+
+    /**
+     * Set the value of nexusUrl.
+     *
+     * @param NexusUrl new value of NexusUrl
+     */
+    public void setNexusUrl(String NexusUrl) {
+        this.nexusUrl = NexusUrl;
+    }
+
     @Override
     public void execute() throws BuildException {
         final InputStream in = DependencyCheckTask.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
@@ -573,6 +619,10 @@ public class DependencyCheckTask extends Task {
         }
         if (suppressionFile != null && !suppressionFile.isEmpty()) {
             Settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
+        }
+        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
+        if (nexusUrl != null && !nexusUrl.isEmpty()) {
+            Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
         }
     }
 
