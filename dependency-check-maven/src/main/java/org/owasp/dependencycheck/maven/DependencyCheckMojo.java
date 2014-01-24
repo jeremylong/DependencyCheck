@@ -190,6 +190,18 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "showSummary", defaultValue = "true", required = false)
     private boolean showSummary = true;
+    /**
+     * Whether or not the Nexus Analyzer is enabled.
+     */
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @Parameter(property = "nexusAnalyzerEnabled", defaultValue = "true", required = false)
+    private boolean nexusAnalyzerEnabled = true;
+    /**
+     * Whether or not the Nexus Analyzer is enabled.
+     */
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @Parameter(property = "nexusUrl", defaultValue = "", required = false)
+    private String nexusUrl;
     // </editor-fold>
 
     /**
@@ -673,6 +685,10 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         }
         if (suppressionFile != null && !suppressionFile.isEmpty()) {
             Settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
+        }
+        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
+        if (nexusUrl != null && !nexusUrl.isEmpty()) {
+            Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
         }
     }
 
