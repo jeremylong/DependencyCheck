@@ -82,9 +82,7 @@ public class App {
         if (cli.isGetVersion()) {
             cli.printVersionInfo();
         } else if (cli.isRunScan()) {
-            updateSettings(cli.isAutoUpdate(), cli.getConnectionTimeout(), cli.getProxyUrl(),
-                    cli.getProxyPort(), cli.getProxyUsername(), cli.getProxyPassword(),
-                    cli.getDataDirectory(), cli.getPropertiesFile(), cli.getSuppressionFile());
+            updateSettings(cli);
             runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles());
         } else {
             cli.printHelp();
@@ -146,9 +144,19 @@ public class App {
      * @param propertiesFile the properties file to utilize
      * @param suppressionFile the path to the suppression file
      */
-    private void updateSettings(boolean autoUpdate, String connectionTimeout, String proxyUrl, String proxyPort,
-            String proxyUser, String proxyPass, String dataDirectory, File propertiesFile,
-            String suppressionFile) {
+    private void updateSettings(CliParser cli) {
+
+        boolean autoUpdate = cli.isAutoUpdate();
+        String connectionTimeout = cli.getConnectionTimeout();
+        String proxyUrl = cli.getProxyUrl();
+        String proxyPort = cli.getProxyPort();
+        String proxyUser = cli.getProxyUsername();
+        String proxyPass = cli.getProxyPassword();
+        String dataDirectory = cli.getDataDirectory();
+        File propertiesFile = cli.getPropertiesFile();
+        String suppressionFile = cli.getSuppressionFile();
+        boolean nexusDisabled = cli.isNexusDisabled();
+        String nexusUrl = cli.getNexusUrl();
 
         if (propertiesFile != null) {
             try {
@@ -193,6 +201,10 @@ public class App {
         }
         if (suppressionFile != null && !suppressionFile.isEmpty()) {
             Settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
+        }
+        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, !nexusDisabled);
+        if (nexusUrl != null && !nexusUrl.isEmpty()) {
+            Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
         }
     }
 }
