@@ -67,7 +67,7 @@ public class NuspecAnalyzer extends AbstractAnalyzer {
      */
     @Override
     public void initialize() throws Exception {
-        SAXParserFactory factory = SAXParserFactory.newInstance();
+        final SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
         parser = factory.newSAXParser();
     }
@@ -124,7 +124,7 @@ public class NuspecAnalyzer extends AbstractAnalyzer {
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
         LOGGER.log(Level.INFO, "Checking Nuspec file {0}", dependency.toString());
         try {
-            NuspecHandler nh = new NuspecHandler();
+            final NuspecHandler nh = new NuspecHandler();
             parser.parse(new File(dependency.getActualFilePath()), nh);
             if (nh.getVersion() != null && !"".equals(nh.getVersion())) {
                 dependency.getVersionEvidence().addEvidence("nuspec", "version", nh.getVersion(),

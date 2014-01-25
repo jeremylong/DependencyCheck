@@ -17,8 +17,8 @@
  */
 package org.owasp.dependencycheck.data.nuget;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -26,34 +26,77 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * A <code>DefaultHandler</code> for parsing a Nuspec
  * file.
+ * @author colezlaw
  */
 public class NuspecHandler extends DefaultHandler {
+    /**
+     * Holds the id
+     */
     private String id;
+    /**
+     * Holds the version
+     */
     private String version;
+    /**
+     * Holds the title
+     */
     private String title;
+    /**
+     * Holds the authors
+     */
     private String authors;
+    /**
+     * Holds the owners
+     */
     private String owners;
+    /**
+     * Holds the licenseUrl
+     */
     private String licenseUrl;
 
+    /**
+     * Indicates whether we're currently processing the id.
+     */
     private boolean inId;
+    /**
+     * Indicates whether we're currently processing the version.
+     */
     private boolean inVersion;
+    /**
+     * Indicates whether we're currently processing the title.
+     */
     private boolean inTitle;
+    /**
+     * Indicates whether we're currently processing the authors.
+     */
     private boolean inAuthors;
+    /**
+     * Indicates whether we're currently processing the owners.
+     */
     private boolean inOwners;
+    /**
+     * Indicates whether we're currently processing the licenseUrl.
+     */
     private boolean inLicenseUrl;
 
+    /**
+     * The Namespace for Nuspec documents.
+     */
     private static final String NS_NUSPEC =
         "http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd";
 
-    private static final Logger LOGGER = Logger.getLogger(NuspecHandler.class.getName());
-
     /**
-     * Creates a NugetHandler
+     * Creates a NugetHandler.
      */
     public NuspecHandler() {
-        inId = inVersion = inTitle = inAuthors = inOwners = inLicenseUrl = false;
+        inId = false;
+        inVersion = false;
+        inTitle = false;
+        inAuthors = false;
+        inOwners = false;
+        inLicenseUrl = false;
     }
-  
+
     /**
      * Gets the id.
      * @return the id
@@ -64,6 +107,7 @@ public class NuspecHandler extends DefaultHandler {
 
     /**
      * Gets the version.
+     * @return the version
      */
     public String getVersion() {
         return version;
@@ -71,6 +115,7 @@ public class NuspecHandler extends DefaultHandler {
 
     /**
      * Gets the title.
+     * @return the title
      */
     public String getTitle() {
         return title;
@@ -78,6 +123,7 @@ public class NuspecHandler extends DefaultHandler {
 
     /**
      * Gets the authors.
+     * @return the authors
      */
     public String getAuthors() {
         return authors;
@@ -85,18 +131,20 @@ public class NuspecHandler extends DefaultHandler {
 
     /**
      * Gets the owners.
+     * @return the owners
      */
     public String getOwners() {
         return owners;
     }
 
     /**
-     * Gets the licenseUrl;
+     * Gets the licenseUrl.
+     * @return the licenseUrl
      */
     public String getLicenseUrl() {
         return licenseUrl;
     }
-    
+
     /**
      * Receive notification of the start of an element.
      * @param uri The Namespace URL, or the empty string if the element has no
@@ -151,7 +199,12 @@ public class NuspecHandler extends DefaultHandler {
      */
     public void endElement(String uri, String localName, String qName)
                            throws SAXException {
-        inId = inVersion = inTitle = inAuthors = inOwners = inLicenseUrl = false;
+        inId = false;
+        inVersion = false;
+        inTitle = false;
+        inAuthors = false;
+        inOwners = false;
+        inLicenseUrl = false;
     }
 
     /**
@@ -167,7 +220,7 @@ public class NuspecHandler extends DefaultHandler {
      */
     public void characters(char[] ch, int start, int length)
                             throws SAXException {
-        String toAppend = new String(ch, start, length);
+        final String toAppend = new String(ch, start, length);
         if (inId) {
             id += toAppend;
         } else if (inVersion) {
