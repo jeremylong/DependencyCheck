@@ -390,12 +390,21 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
         return dependency1.getSha1sum().equals(dependency2.getSha1sum());
     }
 
+    /**
+     * Determines if the jar is shaded and the created pom.xml identified the same CPE as the jar - if so, the pom.xml
+     * dependency should be removed.
+     *
+     * @param dependency a dependency to check
+     * @param nextDependency another dependency to check
+     * @return true if on of the dependencies is a pom.xml and the identifiers between the two collections match;
+     * otherwise false
+     */
     private boolean isShadedJar(Dependency dependency, Dependency nextDependency) {
         final String mainName = dependency.getFileName().toLowerCase();
         final String nextName = nextDependency.getFileName().toLowerCase();
-        if (mainName.endsWith(".jar") && nextName.endsWith("pomx.xml")) {
+        if (mainName.endsWith(".jar") && nextName.endsWith("pom.xml")) {
             return dependency.getIdentifiers().containsAll(nextDependency.getIdentifiers());
-        } else if (nextName.endsWith(".jar") && mainName.endsWith("pomx.xml")) {
+        } else if (nextName.endsWith(".jar") && mainName.endsWith("pom.xml")) {
             return nextDependency.getIdentifiers().containsAll(dependency.getIdentifiers());
         }
         return false;
