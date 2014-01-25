@@ -344,10 +344,6 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
         final String leftName = left.getFileName().toLowerCase();
         final String rightName = right.getFileName().toLowerCase();
 
-        if (leftName.equals("struts-1.2.7.jar") || rightName.equals("struts-1.2.7.jar")) {
-            String pause = "pause";
-        }
-
         final boolean returnVal;
         if (!rightName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+") && leftName.matches(".*\\.(tar|tgz|gz|zip|ear|war).+")
                 || rightName.contains("core") && !leftName.contains("core")
