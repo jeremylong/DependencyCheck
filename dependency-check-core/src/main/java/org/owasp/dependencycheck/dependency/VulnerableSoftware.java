@@ -73,19 +73,19 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
         if (cpeName != null && cpeName.length() > 7) {
             final String[] data = cpeName.substring(7).split(":");
             if (data.length >= 1) {
-                this.setVendor(URLDecoder.decode(data[0].replace("+", "%2B"), "UTF-8")); //.replaceAll("[_-]", " ")
-                if (data.length >= 2) {
-                    this.setProduct(URLDecoder.decode(data[1].replace("+", "%2B"), "UTF-8")); //.replaceAll("[_-]", " ")
-                    if (data.length >= 3) {
-                        version = URLDecoder.decode(data[2].replace("+", "%2B"), "UTF-8");
-                        if (data.length >= 4) {
-                            revision = URLDecoder.decode(data[3].replace("+", "%2B"), "UTF-8");
-                            if (data.length >= 5) {
-                                edition = URLDecoder.decode(data[4].replace("+", "%2B"), "UTF-8");
-                            }
-                        }
-                    }
-                }
+                this.setVendor(URLDecoder.decode(data[0].replace("+", "%2B"), "UTF-8"));
+            }
+            if (data.length >= 2) {
+                this.setProduct(URLDecoder.decode(data[1].replace("+", "%2B"), "UTF-8"));
+            }
+            if (data.length >= 3) {
+                version = URLDecoder.decode(data[2].replace("+", "%2B"), "UTF-8");
+            }
+            if (data.length >= 4) {
+                revision = URLDecoder.decode(data[3].replace("+", "%2B"), "UTF-8");
+            }
+            if (data.length >= 5) {
+                edition = URLDecoder.decode(data[4].replace("+", "%2B"), "UTF-8");
             }
         }
     }
