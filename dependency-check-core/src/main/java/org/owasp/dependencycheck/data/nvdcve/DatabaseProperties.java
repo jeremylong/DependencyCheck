@@ -132,6 +132,12 @@ public class DatabaseProperties {
         return properties;
     }
 
+    /**
+     * Returns a map of the meta data from the database properties. This primarily contains timestamps of when the NVD
+     * CVE information was last updated.
+     *
+     * @return a map of the database meta data
+     */
     public Map getMetaData() {
         TreeMap map = new TreeMap();
         for (Entry<Object, Object> entry : properties.entrySet()) {
@@ -139,10 +145,10 @@ public class DatabaseProperties {
             if (!"version".equals(key)) {
                 if (key.startsWith("NVD CVE ")) {
                     try {
-                        long epoch = Long.parseLong((String) entry.getValue());
-                        Date date = new Date(epoch);
-                        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                        String formatted = format.format(date);
+                        final long epoch = Long.parseLong((String) entry.getValue());
+                        final Date date = new Date(epoch);
+                        final DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                        final String formatted = format.format(date);
                         map.put(key, formatted);
                     } catch (Throwable ex) { //deliberatly being broad in this catch clause
                         Logger.getLogger(DatabaseProperties.class.getName()).log(Level.FINE, "Unable to parse timestamp from DB", ex);
