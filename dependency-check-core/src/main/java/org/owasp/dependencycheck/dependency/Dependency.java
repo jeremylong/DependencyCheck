@@ -131,8 +131,8 @@ public class Dependency implements Comparable<Dependency> {
     public void setActualFilePath(String actualFilePath) {
         this.actualFilePath = actualFilePath;
         if (this.sha1sum == null) {
-            File f = new File(this.actualFilePath);
-            determineHashes(f);
+            final File file = new File(this.actualFilePath);
+            determineHashes(file);
         }
     }
 
