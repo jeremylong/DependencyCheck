@@ -146,17 +146,22 @@ public class App {
      */
     private void updateSettings(CliParser cli) {
 
-        boolean autoUpdate = cli.isAutoUpdate();
-        String connectionTimeout = cli.getConnectionTimeout();
-        String proxyUrl = cli.getProxyUrl();
-        String proxyPort = cli.getProxyPort();
-        String proxyUser = cli.getProxyUsername();
-        String proxyPass = cli.getProxyPassword();
-        String dataDirectory = cli.getDataDirectory();
-        File propertiesFile = cli.getPropertiesFile();
-        String suppressionFile = cli.getSuppressionFile();
-        boolean nexusDisabled = cli.isNexusDisabled();
-        String nexusUrl = cli.getNexusUrl();
+        final boolean autoUpdate = cli.isAutoUpdate();
+        final String connectionTimeout = cli.getConnectionTimeout();
+        final String proxyUrl = cli.getProxyUrl();
+        final String proxyPort = cli.getProxyPort();
+        final String proxyUser = cli.getProxyUsername();
+        final String proxyPass = cli.getProxyPassword();
+        final String dataDirectory = cli.getDataDirectory();
+        final File propertiesFile = cli.getPropertiesFile();
+        final String suppressionFile = cli.getSuppressionFile();
+        final boolean nexusDisabled = cli.isNexusDisabled();
+        final String nexusUrl = cli.getNexusUrl();
+        final String databaseDriverName = cli.getDatabaseDriverName();
+        final String databaseDriverPath = cli.getDatabaseDriverPath();
+        final String connectionString = cli.getConnectionString();
+        final String databaseUser = cli.getDatabaseUser();
+        final String databasePassword = cli.getDatabasePassword();
 
         if (propertiesFile != null) {
             try {
@@ -205,6 +210,22 @@ public class App {
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, !nexusDisabled);
         if (nexusUrl != null && !nexusUrl.isEmpty()) {
             Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
+        }
+
+        if (databaseDriverName != null && !databaseDriverName.isEmpty()) {
+            Settings.setString(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
+        }
+        if (databaseDriverPath != null && !databaseDriverPath.isEmpty()) {
+            Settings.setString(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
+        }
+        if (connectionString != null && !connectionString.isEmpty()) {
+            Settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
+        }
+        if (databaseUser != null && !databaseUser.isEmpty()) {
+            Settings.setString(Settings.KEYS.DB_USER, databaseUser);
+        }
+        if (databasePassword != null && !databasePassword.isEmpty()) {
+            Settings.setString(Settings.KEYS.DB_PASSWORD, databasePassword);
         }
     }
 }
