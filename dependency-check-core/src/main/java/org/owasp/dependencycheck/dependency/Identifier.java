@@ -49,10 +49,13 @@ public class Identifier implements Comparable<Identifier> {
         this.description = description;
     }
 
+    /**
+     * The confidence that this is the correct identifier.
+     */
     private Confidence confidence;
 
     /**
-     * Get the value of confidence
+     * Get the value of confidence.
      *
      * @return the value of confidence
      */
@@ -61,7 +64,7 @@ public class Identifier implements Comparable<Identifier> {
     }
 
     /**
-     * Set the value of confidence
+     * Set the value of confidence.
      *
      * @param confidence new value of confidence
      */
