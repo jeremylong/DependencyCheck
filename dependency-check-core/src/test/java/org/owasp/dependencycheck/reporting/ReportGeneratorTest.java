@@ -30,6 +30,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 
 /**
  *
@@ -140,7 +142,12 @@ public class ReportGeneratorTest {
         engine.scan(jetty);
         engine.analyzeDependencies();
 
-        ReportGenerator generator = new ReportGenerator("Test Report", engine.getDependencies(), engine.getAnalyzers());
+        CveDB cveDB = new CveDB();
+        cveDB.open();
+        DatabaseProperties dbProp = cveDB.getDatabaseProperties();
+        cveDB.close();
+
+        ReportGenerator generator = new ReportGenerator("Test Report", engine.getDependencies(), engine.getAnalyzers(), dbProp);
         generator.generateReport(templateName, writeTo);
 
         InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/DependencyCheck.xsd");
