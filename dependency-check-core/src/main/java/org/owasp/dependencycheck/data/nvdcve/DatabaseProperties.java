@@ -139,7 +139,7 @@ public class DatabaseProperties {
      * @return a map of the database meta data
      */
     public Map getMetaData() {
-        TreeMap map = new TreeMap();
+        final TreeMap map = new TreeMap();
         for (Entry<Object, Object> entry : properties.entrySet()) {
             final String key = (String) entry.getKey();
             if (!"version".equals(key)) {
