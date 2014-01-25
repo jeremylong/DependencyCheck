@@ -202,6 +202,36 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "nexusUrl", defaultValue = "", required = false)
     private String nexusUrl;
+    /**
+     * The database connection string.
+     */
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @Parameter(property = "nexusUrl", defaultValue = "", required = false)
+    private String connectionString;
+    /**
+     * The database driver name. An example would be org.h2.Driver.
+     */
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @Parameter(property = "databaseDriverName", defaultValue = "", required = false)
+    private String databaseDriverName;
+    /**
+     * The path to the database driver if it is not on the class path.
+     */
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @Parameter(property = "databaseDriverPath", defaultValue = "", required = false)
+    private String databaseDriverPath;
+    /**
+     * The database user name.
+     */
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @Parameter(property = "databaseUser", defaultValue = "", required = false)
+    private String databaseUser;
+    /**
+     * The password to use when connecting to the database.
+     */
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @Parameter(property = "databasePassword", defaultValue = "", required = false)
+    private String databasePassword;
     // </editor-fold>
 
     /**
@@ -689,6 +719,21 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
         if (nexusUrl != null && !nexusUrl.isEmpty()) {
             Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
+        }
+        if (databaseDriverName != null && !databaseDriverName.isEmpty()) {
+            Settings.setString(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
+        }
+        if (databaseDriverPath != null && !databaseDriverPath.isEmpty()) {
+            Settings.setString(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
+        }
+        if (connectionString != null && !connectionString.isEmpty()) {
+            Settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
+        }
+        if (databaseUser != null && !databaseUser.isEmpty()) {
+            Settings.setString(Settings.KEYS.DB_USER, databaseUser);
+        }
+        if (databasePassword != null && !databasePassword.isEmpty()) {
+            Settings.setString(Settings.KEYS.DB_PASSWORD, databasePassword);
         }
     }
 
