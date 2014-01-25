@@ -101,20 +101,6 @@ public class ReportGenerator {
     }
 
     /**
-     * Constructs a new ReportGenerator. This implementation has been left in so tat backward compatability is not
-     * broken. However, this constructor should no longer be used.
-     *
-     * @param applicationName the application name being analyzed
-     * @param dependencies the list of dependencies
-     * @param analyzers the list of analyzers used
-     * @deprecated
-     */
-    @Deprecated
-    public ReportGenerator(String applicationName, List<Dependency> dependencies, List<Analyzer> analyzers) {
-        this(applicationName, dependencies, analyzers, null);
-    }
-
-    /**
      * Creates a new Velocity Engine.
      *
      * @return a velocity engine.
