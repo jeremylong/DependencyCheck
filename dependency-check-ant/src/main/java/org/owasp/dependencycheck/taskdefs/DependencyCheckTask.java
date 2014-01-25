@@ -503,6 +503,119 @@ public class DependencyCheckTask extends Task {
         this.nexusUrl = NexusUrl;
     }
 
+    /**
+     * The database driver name; such as org.h2.Driver.
+     */
+    private String databaseDriverName;
+
+    /**
+     * Get the value of databaseDriverName.
+     *
+     * @return the value of databaseDriverName
+     */
+    public String getDatabaseDriverName() {
+        return databaseDriverName;
+    }
+
+    /**
+     * Set the value of databaseDriverName.
+     *
+     * @param databaseDriverName new value of databaseDriverName
+     */
+    public void setDatabaseDriverName(String databaseDriverName) {
+        this.databaseDriverName = databaseDriverName;
+    }
+
+    /**
+     * The path to the database driver JAR file if it is not on the class path.
+     */
+    private String databaseDriverPath;
+
+    /**
+     * Get the value of databaseDriverPath.
+     *
+     * @return the value of databaseDriverPath
+     */
+    public String getDatabaseDriverPath() {
+        return databaseDriverPath;
+    }
+
+    /**
+     * Set the value of databaseDriverPath.
+     *
+     * @param databaseDriverPath new value of databaseDriverPath
+     */
+    public void setDatabaseDriverPath(String databaseDriverPath) {
+        this.databaseDriverPath = databaseDriverPath;
+    }
+    /**
+     * The database connection string.
+     */
+    private String connectionString;
+
+    /**
+     * Get the value of connectionString.
+     *
+     * @return the value of connectionString
+     */
+    public String getConnectionString() {
+        return connectionString;
+    }
+
+    /**
+     * Set the value of connectionString.
+     *
+     * @param connectionString new value of connectionString
+     */
+    public void setConnectionString(String connectionString) {
+        this.connectionString = connectionString;
+    }
+    /**
+     * The user name for connecting to the database.
+     */
+    private String databaseUser;
+
+    /**
+     * Get the value of databaseUser.
+     *
+     * @return the value of databaseUser
+     */
+    public String getDatabaseUser() {
+        return databaseUser;
+    }
+
+    /**
+     * Set the value of databaseUser.
+     *
+     * @param databaseUser new value of databaseUser
+     */
+    public void setDatabaseUser(String databaseUser) {
+        this.databaseUser = databaseUser;
+    }
+
+    /**
+     * The password to use when connecting to the database.
+     */
+    private String databasePassword;
+
+    /**
+     * Get the value of databasePassword.
+     *
+     * @return the value of databasePassword
+     */
+    public String getDatabasePassword() {
+        return databasePassword;
+    }
+
+    /**
+     * Set the value of databasePassword.
+     *
+     * @param databasePassword new value of databasePassword
+     */
+    public void setDatabasePassword(String databasePassword) {
+        this.databasePassword = databasePassword;
+    }
+
     @Override
     public void execute() throws BuildException {
         final InputStream in = DependencyCheckTask.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
@@ -623,6 +736,21 @@ public class DependencyCheckTask extends Task {
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
         if (nexusUrl != null && !nexusUrl.isEmpty()) {
             Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
+        }
+        if (databaseDriverName != null && !databaseDriverName.isEmpty()) {
+            Settings.setString(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
+        }
+        if (databaseDriverPath != null && !databaseDriverPath.isEmpty()) {
+            Settings.setString(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
+        }
+        if (connectionString != null && !connectionString.isEmpty()) {
+            Settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
+        }
+        if (databaseUser != null && !databaseUser.isEmpty()) {
+            Settings.setString(Settings.KEYS.DB_USER, databaseUser);
+        }
+        if (databasePassword != null && !databasePassword.isEmpty()) {
+            Settings.setString(Settings.KEYS.DB_PASSWORD, databasePassword);
         }
     }
 
