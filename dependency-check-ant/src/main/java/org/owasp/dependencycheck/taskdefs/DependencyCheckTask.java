@@ -488,7 +488,7 @@ public class DependencyCheckTask extends Task {
     /**
      * Get the value of nexusUrl.
      *
-     * @return the value of NexusUrl
+     * @return the value of nexusUrl
      */
     public String getNexusUrl() {
         return nexusUrl;
@@ -497,10 +497,10 @@ public class DependencyCheckTask extends Task {
     /**
      * Set the value of nexusUrl.
      *
-     * @param NexusUrl new value of NexusUrl
+     * @param nexusUrl new value of nexusUrl
      */
-    public void setNexusUrl(String NexusUrl) {
-        this.nexusUrl = NexusUrl;
+    public void setNexusUrl(String nexusUrl) {
+        this.nexusUrl = nexusUrl;
     }
 
     /**
