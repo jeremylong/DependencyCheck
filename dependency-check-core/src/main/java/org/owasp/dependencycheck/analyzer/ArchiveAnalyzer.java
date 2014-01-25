@@ -306,7 +306,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
                         BufferedOutputStream bos = null;
                         FileOutputStream fos;
                         try {
-                            File parent = file.getParentFile();
+                            final File parent = file.getParentFile();
                             if (!parent.isDirectory()) {
                                 if (!parent.mkdirs()) {
                                     final String msg = String.format("Unable to build directory '%s'.", parent.getAbsolutePath());
