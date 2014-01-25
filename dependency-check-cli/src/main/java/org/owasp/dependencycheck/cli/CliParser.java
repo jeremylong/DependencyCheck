@@ -340,8 +340,6 @@ public final class CliParser {
      */
     public void printHelp() {
         final HelpFormatter formatter = new HelpFormatter();
-        final String nl = System.getProperty("line.separator");
-
         final Options options = new Options();
         addStandardOptions(options);
         if (line != null && line.hasOption(ArgumentName.ADVANCED_HELP)) {
