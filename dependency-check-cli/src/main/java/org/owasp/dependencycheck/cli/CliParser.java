@@ -43,10 +43,6 @@ public final class CliParser {
      */
     private CommandLine line;
     /**
-     * The options for the command line parser.
-     */
-    private final Options options = createCommandLineOptions();
-    /**
      * Indicates whether the arguments are valid.
      */
     private boolean isValid = true;
@@ -75,6 +71,7 @@ public final class CliParser {
      */
     private CommandLine parseArgs(String[] args) throws ParseException {
         final CommandLineParser parser = new PosixParser();
+        final Options options = createCommandLineOptions();
         return parser.parse(options, args);
     }
 
@@ -142,8 +139,27 @@ public final class CliParser {
      */
     @SuppressWarnings("static-access")
     private Options createCommandLineOptions() {
+
+        final Options options = new Options();
+        addStandardOptions(options);
+        addAdvancedOptions(options);
+
+        return options;
+    }
+
+    /**
+     * Adds the standard command line options to the given options collection.
+     *
+     * @param options a collection of command line arguments
+     * @throws IllegalArgumentException thrown if there is an exception
+     */
+    @SuppressWarnings("static-access")
+    private void addStandardOptions(final Options options) throws IllegalArgumentException {
         final Option help = new Option(ArgumentName.HELP_SHORT, ArgumentName.HELP, false,
                 "Print this message.");
+
+        final Option advancedHelp = OptionBuilder.withLongOpt(ArgumentName.ADVANCED_HELP)
+                .withDescription("Print the advanced help message.").create();
 
         final Option version = new Option(ArgumentName.VERSION_SHORT, ArgumentName.VERSION,
                 false, "Print the version information.");
@@ -154,26 +170,6 @@ public final class CliParser {
         final Option appName = OptionBuilder.withArgName("name").hasArg().withLongOpt(ArgumentName.APP_NAME)
                 .withDescription("The name of the application being scanned. This is a required argument.")
                 .create(ArgumentName.APP_NAME_SHORT);
-
-        final Option connectionTimeout = OptionBuilder.withArgName("timeout").hasArg().withLongOpt(ArgumentName.CONNECTION_TIMEOUT)
-                .withDescription("The connection timeout (in milliseconds) to use when downloading resources.")
-                .create(ArgumentName.CONNECTION_TIMEOUT_SHORT);
-
-        final Option proxyUrl = OptionBuilder.withArgName("url").hasArg().withLongOpt(ArgumentName.PROXY_URL)
-                .withDescription("The proxy url to use when downloading resources.")
-                .create(ArgumentName.PROXY_URL_SHORT);
-
-        final Option proxyPort = OptionBuilder.withArgName("port").hasArg().withLongOpt(ArgumentName.PROXY_PORT)
-                .withDescription("The proxy port to use when downloading resources.")
-                .create(ArgumentName.PROXY_PORT_SHORT);
-
-        final Option proxyUsername = OptionBuilder.withArgName("user").hasArg().withLongOpt(ArgumentName.PROXY_USERNAME)
-                .withDescription("The proxy username to use when downloading resources.")
-                .create(ArgumentName.PROXY_USERNAME_SHORT);
-
-        final Option proxyPassword = OptionBuilder.withArgName("pass").hasArg().withLongOpt(ArgumentName.PROXY_PASSWORD)
-                .withDescription("The proxy password to use when downloading resources.")
-                .create(ArgumentName.PROXY_PASSWORD_SHORT);
 
         final Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.SCAN)
                 .withDescription("The path to scan - this option can be specified multiple times.")
@@ -201,7 +197,7 @@ public final class CliParser {
 
         final Option suppressionFile = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.SUPPRESION_FILE)
                 .withDescription("The file path to the suppression XML file.")
-                .create(ArgumentName.SUPPRESION_FILE_SHORT);
+                .create();
 
         final Option disableNexusAnalyzer = OptionBuilder.withLongOpt(ArgumentName.DISABLE_NEXUS)
                 .withDescription("Disable the Nexus Analyzer.")
@@ -211,30 +207,81 @@ public final class CliParser {
                 .withDescription("The url to the Nexus Server.")
                 .create();
 
+        //This is an option group because it can be specified more then once.
         final OptionGroup og = new OptionGroup();
         og.addOption(path);
 
-        final Options opts = new Options();
-        opts.addOptionGroup(og);
-        opts.addOption(out);
-        opts.addOption(outputFormat);
-        opts.addOption(appName);
-        opts.addOption(version);
-        opts.addOption(help);
-        opts.addOption(noUpdate);
-        opts.addOption(props);
-        opts.addOption(data);
-        opts.addOption(verboseLog);
-        opts.addOption(suppressionFile);
-        opts.addOption(proxyPort);
-        opts.addOption(proxyUrl);
-        opts.addOption(proxyUsername);
-        opts.addOption(proxyPassword);
-        opts.addOption(connectionTimeout);
-        opts.addOption(disableNexusAnalyzer);
-        opts.addOption(nexusUrl);
+        options.addOptionGroup(og)
+                .addOption(out)
+                .addOption(outputFormat)
+                .addOption(appName)
+                .addOption(version)
+                .addOption(help)
+                .addOption(advancedHelp)
+                .addOption(noUpdate)
+                .addOption(props)
+                .addOption(data)
+                .addOption(verboseLog)
+                .addOption(suppressionFile)
+                .addOption(disableNexusAnalyzer)
+                .addOption(nexusUrl);
+    }
 
-        return opts;
+    /**
+     * Adds the advanced command line options to the given options collection. These are split out for purposes of being
+     * able to display two different help messages.
+     *
+     * @param options a collection of command line arguments
+     * @throws IllegalArgumentException thrown if there is an exception
+     */
+    @SuppressWarnings("static-access")
+    private void addAdvancedOptions(final Options options) throws IllegalArgumentException {
+        final Option connectionTimeout = OptionBuilder.withArgName("timeout").hasArg().withLongOpt(ArgumentName.CONNECTION_TIMEOUT)
+                .withDescription("The connection timeout (in milliseconds) to use when downloading resources.")
+                .create(ArgumentName.CONNECTION_TIMEOUT_SHORT);
+
+        final Option proxyUrl = OptionBuilder.withArgName("url").hasArg().withLongOpt(ArgumentName.PROXY_URL)
+                .withDescription("The proxy url to use when downloading resources.")
+                .create(ArgumentName.PROXY_URL_SHORT);
+
+        final Option proxyPort = OptionBuilder.withArgName("port").hasArg().withLongOpt(ArgumentName.PROXY_PORT)
+                .withDescription("The proxy port to use when downloading resources.")
+                .create(ArgumentName.PROXY_PORT_SHORT);
+
+        final Option proxyUsername = OptionBuilder.withArgName("user").hasArg().withLongOpt(ArgumentName.PROXY_USERNAME)
+                .withDescription("The proxy username to use when downloading resources.")
+                .create();
+
+        final Option proxyPassword = OptionBuilder.withArgName("pass").hasArg().withLongOpt(ArgumentName.PROXY_PASSWORD)
+                .withDescription("The proxy password to use when downloading resources.")
+                .create();
+
+        final Option connectionString = OptionBuilder.withArgName("connStr").hasArg().withLongOpt(ArgumentName.CONNECTION_STRING)
+                .withDescription("The connection string to the database.")
+                .create();
+        final Option dbUser = OptionBuilder.withArgName("user").hasArg().withLongOpt(ArgumentName.DB_NAME)
+                .withDescription("The username used to connect to the database.")
+                .create();
+        final Option dbPassword = OptionBuilder.withArgName("password").hasArg().withLongOpt(ArgumentName.DB_PASSWORD)
+                .withDescription("The password for connecting to the database.")
+                .create();
+        final Option dbDriver = OptionBuilder.withArgName("driver").hasArg().withLongOpt(ArgumentName.DB_DRIVER)
+                .withDescription("The database driver name.")
+                .create();
+        final Option dbDriverPath = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.DB_DRIVER_PATH)
+                .withDescription("The path to the database driver; note, this does not need to be set unless the JAR is outside of the classpath.")
+                .create();
+
+        options.addOption(proxyPort)
+                .addOption(proxyUrl)
+                .addOption(proxyUsername)
+                .addOption(proxyPassword)
+                .addOption(connectionTimeout)
+                .addOption(connectionString)
+                .addOption(dbUser)
+                .addOption(dbPassword)
+                .addOption(dbDriver)
+                .addOption(dbDriverPath);
     }
 
     /**
@@ -293,14 +340,23 @@ public final class CliParser {
         final HelpFormatter formatter = new HelpFormatter();
         final String nl = System.getProperty("line.separator");
 
-        formatter.printHelp(Settings.getString("application.name", "DependencyCheck"),
-                nl + Settings.getString("application.name", "DependencyCheck")
+        final Options options = new Options();
+        addStandardOptions(options);
+        if (line != null && line.hasOption(ArgumentName.ADVANCED_HELP)) {
+            addAdvancedOptions(options);
+        }
+        final String helpMsg = String.format("%n%s"
                 + " can be used to identify if there are any known CVE vulnerabilities in libraries utilized by an application. "
-                + Settings.getString("application.name", "DependencyCheck")
-                + " will automatically update required data from the Internet, such as the CVE and CPE data files from nvd.nist.gov." + nl + nl,
+                + "%s will automatically update required data from the Internet, such as the CVE and CPE data files from nvd.nist.gov.%n%n",
+                Settings.getString("application.name", "DependencyCheck"),
+                Settings.getString("application.name", "DependencyCheck"));
+
+        formatter.printHelp(Settings.getString("application.name", "DependencyCheck"),
+                helpMsg,
                 options,
                 "",
                 true);
+
     }
 
     /**
@@ -448,6 +504,51 @@ public final class CliParser {
     }
 
     /**
+     * Returns the database driver name if specified; otherwise null is returned.
+     *
+     * @return the database driver name if specified; otherwise null is returned
+     */
+    public String getDatabaseDriverName() {
+        return line.getOptionValue(ArgumentName.DB_DRIVER);
+    }
+
+    /**
+     * Returns the database driver path if specified; otherwise null is returned.
+     *
+     * @return the database driver name if specified; otherwise null is returned
+     */
+    public String getDatabaseDriverPath() {
+        return line.getOptionValue(ArgumentName.DB_DRIVER_PATH);
+    }
+
+    /**
+     * Returns the database connection string if specified; otherwise null is returned.
+     *
+     * @return the database connection string if specified; otherwise null is returned
+     */
+    public String getConnectionString() {
+        return line.getOptionValue(ArgumentName.CONNECTION_STRING);
+    }
+
+    /**
+     * Returns the database database user name if specified; otherwise null is returned.
+     *
+     * @return the database database user name if specified; otherwise null is returned
+     */
+    public String getDatabaseUser() {
+        return line.getOptionValue(ArgumentName.DB_NAME);
+    }
+
+    /**
+     * Returns the database database password if specified; otherwise null is returned.
+     *
+     * @return the database database password if specified; otherwise null is returned
+     */
+    public String getDatabasePassword() {
+        return line.getOptionValue(ArgumentName.DB_PASSWORD);
+    }
+
+    /**
      * A collection of static final strings that represent the possible command line arguments.
      */
     public static class ArgumentName {
@@ -497,6 +598,10 @@ public final class CliParser {
          */
         public static final String HELP = "help";
         /**
+         * The long CLI argument name asking for advanced help.
+         */
+        public static final String ADVANCED_HELP = "advancedHelp";
+        /**
          * The short CLI argument name asking for help.
          */
         public static final String HELP_SHORT = "h";
@@ -525,17 +630,9 @@ public final class CliParser {
          */
         public static final String PROXY_URL = "proxyurl";
         /**
-         * The short CLI argument name indicating the proxy username.
-         */
-        public static final String PROXY_USERNAME_SHORT = "pu";
-        /**
          * The CLI argument name indicating the proxy username.
          */
         public static final String PROXY_USERNAME = "proxyuser";
-        /**
-         * The short CLI argument name indicating the proxy password.
-         */
-        public static final String PROXY_PASSWORD_SHORT = "pp";
         /**
          * The CLI argument name indicating the proxy password.
          */
@@ -584,10 +681,25 @@ public final class CliParser {
          * The URL of the nexus server.
          */
         public static final String NEXUS_URL = "nexus";
-
         /**
-         * The short CLI argument name for setting the location of the suppression file.
+         * The CLI argument name for setting the connection string.
          */
-        public static final String SUPPRESION_FILE_SHORT = "sf";
+        public static final String CONNECTION_STRING = "connectionString";
+        /**
+         * The CLI argument name for setting the database user name.
+         */
+        public static final String DB_NAME = "dbUser";
+        /**
+         * The CLI argument name for setting the database password.
+         */
+        public static final String DB_PASSWORD = "dbPassword";
+        /**
+         * The CLI argument name for setting the database driver name.
+         */
+        public static final String DB_DRIVER = "dbDriverName";
+        /**
+         * The CLI argument name for setting the path to the database driver; in case it is not on the class path.
+         */
+        public static final String DB_DRIVER_PATH = "dbDriverPath";
     }
 }
