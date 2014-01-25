@@ -116,10 +116,10 @@ public class CveDB {
      * @throws SQLException thrown if a SQL Exception occurs
      */
     public void commit() throws SQLException {
-        if (conn != null) {
-            //temporary remove this as autocommit is on.
-            //conn.commit();
-        }
+        //temporary remove this as autocommit is on.
+        //if (conn != null) {
+        //    conn.commit();
+        //}
     }
 
     /**
