@@ -291,17 +291,17 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             try {
                 if (pomEntries.size() > 1) {
                     //extract POM to its own directory and add it as its own dependency
-                    Dependency newDependency = new Dependency();
+                    final Dependency newDependency = new Dependency();
                     pom = extractPom(path, jar, newDependency);
 
                     final String displayPath = String.format("%s%s%s",
                             dependency.getFilePath(),
                             File.separator,
-                            path);//.replaceAll("[\\/]", File.separator));
+                            path); //.replaceAll("[\\/]", File.separator));
                     final String displayName = String.format("%s%s%s",
                             dependency.getFileName(),
                             File.separator,
-                            path);//.replaceAll("[\\/]", File.separator));
+                            path); //.replaceAll("[\\/]", File.separator));
 
                     newDependency.setFileName(displayName);
                     newDependency.setFilePath(displayPath);
@@ -366,7 +366,8 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      *
      * @param path the path to the pom.xml file within the jar file
      * @param jar the jar file to extract the pom from
-     * @return returns a
+     * @param dependency the dependency being analyzed
+     * @return returns the POM object
      * @throws AnalysisException is thrown if there is an exception extracting or parsing the POM
      * {@link org.owasp.dependencycheck.jaxb.pom.generated.Model} object
      */
@@ -374,8 +375,8 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         InputStream input = null;
         FileOutputStream fos = null;
         BufferedOutputStream bos = null;
-        File tmpDir = getNextTempDirectory();
-        File file = new File(tmpDir, "pom.xml");
+        final File tmpDir = getNextTempDirectory();
+        final File file = new File(tmpDir, "pom.xml");
         try {
             final ZipEntry entry = jar.getEntry(path);
             input = jar.getInputStream(entry);
@@ -477,9 +478,8 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     /**
      * Retrieves the specified POM from a jar file and converts it to a Model.
      *
-     * @param path the path to the pom.xml file within the jar file
-     * @param jar the jar file to extract the pom from
-     * @return returns a
+     * @param source the SAXSource input stream to read the POM from
+     * @return returns the POM object
      * @throws AnalysisException is thrown if there is an exception extracting or parsing the POM
      * {@link org.owasp.dependencycheck.jaxb.pom.generated.Model} object
      */
@@ -1111,6 +1111,14 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
 
     }
 
+    /**
+     * Adds evidence from the POM to the dependency. This includes the GAV and in some situations the parent GAV if
+     * specified.
+     *
+     * @param dependency the dependency being analyzed
+     * @param pom the POM data
+     * @param pomProperties the properties file associated with the pom
+     */
     private void addPomEvidence(Dependency dependency, Model pom, Properties pomProperties) {
         if (pom == null) {
             return;
@@ -1136,9 +1144,9 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             dependency.getVersionEvidence().addEvidence("pom", "version", version, Confidence.HIGHEST);
         }
 
-        Parent parent = pom.getParent(); //grab parent GAV
+        final Parent parent = pom.getParent(); //grab parent GAV
         if (parent != null) {
-            String parentGroupId = interpolateString(parent.getGroupId(), pomProperties);
+            final String parentGroupId = interpolateString(parent.getGroupId(), pomProperties);
             if (parentGroupId != null && !parentGroupId.isEmpty()) {
                 if (groupid == null || groupid.isEmpty()) {
                     dependency.getVendorEvidence().addEvidence("pom", "parent.groupid", parentGroupId, Confidence.HIGH);
@@ -1147,7 +1155,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 }
                 dependency.getProductEvidence().addEvidence("pom", "parent.groupid", parentGroupId, Confidence.LOW);
             }
-            String parentArtifactId = interpolateString(parent.getArtifactId(), pomProperties);
+            final String parentArtifactId = interpolateString(parent.getArtifactId(), pomProperties);
             if (parentArtifactId != null && !parentArtifactId.isEmpty()) {
                 if (artifactid == null || artifactid.isEmpty()) {
                     dependency.getProductEvidence().addEvidence("pom", "parent.artifactid", parentArtifactId, Confidence.HIGH);
@@ -1156,7 +1164,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 }
                 dependency.getVendorEvidence().addEvidence("pom", "parent.artifactid", parentArtifactId, Confidence.LOW);
             }
-            String parentVersion = interpolateString(parent.getVersion(), pomProperties);
+            final String parentVersion = interpolateString(parent.getVersion(), pomProperties);
             if (parentVersion != null && !parentVersion.isEmpty()) {
                 if (version == null || version.isEmpty()) {
                     dependency.getVersionEvidence().addEvidence("pom", "parent.version", parentVersion, Confidence.HIGH);
@@ -1227,13 +1235,18 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     protected static class ClassNameInformation {
 
         /**
+         * <p>
          * Stores information about a given class name. This class will keep the fully qualified class name and a list
          * of the important parts of the package structure. Up to the first four levels of the package structure are
-         * stored, excluding a leading "org" or "com". Example:          <code>ClassNameInformation obj = new ClassNameInformation("org.owasp.dependencycheck.analyzer.JarAnalyzer");
+         * stored, excluding a leading "org" or "com". Example:</p>
+         * <code>ClassNameInformation obj = new ClassNameInformation("org.owasp.dependencycheck.analyzer.JarAnalyzer");
          * System.out.println(obj.getName());
          * for (String p : obj.getPackageStructure())
          *     System.out.println(p);
-         * </code> Would result in:          <code>org.owasp.dependencycheck.analyzer.JarAnalyzer
+         * </code>
+         * <p>
+         * Would result in:</p>
+         * <code>org.owasp.dependencycheck.analyzer.JarAnalyzer
          * owasp
          * dependencycheck
          * analyzer
