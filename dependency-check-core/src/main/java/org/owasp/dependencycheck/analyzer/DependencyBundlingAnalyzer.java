@@ -165,8 +165,10 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      * Adds the relatedDependency to the dependency's related dependencies.
      *
      * @param dependency the main dependency
-     * @param nextDependency the related dependency
-     * @param relatedDependency a collection of dependencies to be removed from the main analysis loop
+     * @param relatedDependency a collection of dependencies to be removed from the main analysis loop, this is the
+     * source of dependencies to remove
+     * @param dependenciesToRemove a collection of dependencies that will be removed from the main analysis loop, this
+     * function adds to this collection
      */
     private void mergeDependencies(final Dependency dependency, final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove) {
         dependency.addRelatedDependency(relatedDependency);
