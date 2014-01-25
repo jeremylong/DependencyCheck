@@ -55,42 +55,30 @@ public class Engine {
     /**
      * The list of dependencies.
      */
-    private final List<Dependency> dependencies = new ArrayList<Dependency>();
+    private final List<Dependency> dependencies;
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-    private final EnumMap<AnalysisPhase, List<Analyzer>> analyzers
-            = new EnumMap<AnalysisPhase, List<Analyzer>>(AnalysisPhase.class);
+    private final EnumMap<AnalysisPhase, List<Analyzer>> analyzers;
     /**
      * A set of extensions supported by the analyzers.
      */
-    private final Set<String> extensions = new HashSet<String>();
+    private final Set<String> extensions;
 
     /**
      * Creates a new Engine.
      */
     public Engine() {
+        this.extensions = new HashSet<String>();
+        this.dependencies = new ArrayList<Dependency>();
+        this.analyzers = new EnumMap<AnalysisPhase, List<Analyzer>>(AnalysisPhase.class);
+
         boolean autoUpdate = true;
         try {
             autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
         } catch (InvalidSettingException ex) {
             Logger.getLogger(Engine.class.getName()).log(Level.FINE, "Invalid setting for auto-update; using true.");
         }
-        if (autoUpdate) {
-            doUpdates();
-        }
-        loadAnalyzers();
-    }
-
-    /**
-     * Creates a new Engine.
-     *
-     * @param autoUpdate indicates whether or not data should be updated from the Internet
-     * @deprecated This function should no longer be used; the autoupdate flag should be set using:
-     * <code>Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, value);</code>
-     */
-    @Deprecated
-    public Engine(boolean autoUpdate) {
         if (autoUpdate) {
             doUpdates();
         }
