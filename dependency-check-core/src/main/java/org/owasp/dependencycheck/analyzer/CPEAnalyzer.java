@@ -579,7 +579,7 @@ public class CPEAnalyzer implements Analyzer {
         for (IdentifierMatch m : collected) {
             if (bestIdentifierQuality.equals(m.getConfidence())
                     && bestEvidenceQuality.equals(m.getEvidenceConfidence())) {
-                Identifier i = m.getIdentifier();
+                final Identifier i = m.getIdentifier();
                 if (bestIdentifierQuality == IdentifierConfidence.BEST_GUESS) {
                     i.setConfidence(Confidence.LOW);
                 } else {
