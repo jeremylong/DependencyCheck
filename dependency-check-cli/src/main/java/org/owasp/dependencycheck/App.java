@@ -134,15 +134,8 @@ public class App {
     /**
      * Updates the global Settings.
      *
-     * @param autoUpdate whether or not to update cached web data sources
-     * @param connectionTimeout the timeout to use when downloading resources (null or blank will use default)
-     * @param proxyUrl the proxy url (null or blank means no proxy will be used)
-     * @param proxyPort the proxy port (null or blank means no port will be used)
-     * @param proxyUser the proxy user name
-     * @param proxyPass the password for the proxy
-     * @param dataDirectory the directory to store/retrieve persistent data from
-     * @param propertiesFile the properties file to utilize
-     * @param suppressionFile the path to the suppression file
+     * @param cli a reference to the CLI Parser that contains the command line arguments used to set the corresponding
+     * settings in the core engine.
      */
     private void updateSettings(CliParser cli) {
 
