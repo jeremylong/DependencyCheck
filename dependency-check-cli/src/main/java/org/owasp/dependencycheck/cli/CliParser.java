@@ -179,10 +179,6 @@ public final class CliParser {
                 .withDescription("A property file to load.")
                 .create(ArgumentName.PROP_SHORT);
 
-        final Option data = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.DATA_DIRECTORY)
-                .withDescription("The location of the data directory used to store persistent data. This option should generally not be set.")
-                .create(ArgumentName.DATA_DIRECTORY_SHORT);
-
         final Option out = OptionBuilder.withArgName("folder").hasArg().withLongOpt(ArgumentName.OUT)
                 .withDescription("The folder to write reports to. This defaults to the current directory.")
                 .create(ArgumentName.OUT_SHORT);
@@ -220,7 +216,6 @@ public final class CliParser {
                 .addOption(advancedHelp)
                 .addOption(noUpdate)
                 .addOption(props)
-                .addOption(data)
                 .addOption(verboseLog)
                 .addOption(suppressionFile)
                 .addOption(disableNexusAnalyzer)
@@ -236,6 +231,11 @@ public final class CliParser {
      */
     @SuppressWarnings("static-access")
     private void addAdvancedOptions(final Options options) throws IllegalArgumentException {
+
+        final Option data = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.DATA_DIRECTORY)
+                .withDescription("The location of the H2 Database file. This option should generally not be set.")
+                .create(ArgumentName.DATA_DIRECTORY_SHORT);
+
         final Option connectionTimeout = OptionBuilder.withArgName("timeout").hasArg().withLongOpt(ArgumentName.CONNECTION_TIMEOUT)
                 .withDescription("The connection timeout (in milliseconds) to use when downloading resources.")
                 .create(ArgumentName.CONNECTION_TIMEOUT_SHORT);
@@ -279,6 +279,7 @@ public final class CliParser {
                 .addOption(connectionTimeout)
                 .addOption(connectionString)
                 .addOption(dbUser)
+                .addOption(data)
                 .addOption(dbPassword)
                 .addOption(dbDriver)
                 .addOption(dbDriverPath);
