@@ -51,8 +51,8 @@
     </issueManagement>
     <licenses>
         <license>
-            <name>GNU General Public License version 3</name>
-            <url>http://www.gnu.org/licenses/</url>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
     <build>
