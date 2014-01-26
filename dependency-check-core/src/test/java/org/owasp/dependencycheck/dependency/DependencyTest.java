@@ -70,7 +70,7 @@ public class DependencyTest {
      */
     @Test
     public void testSetFileName() {
-        String fileName = "test.file";
+        String fileName = "file.tar";
         Dependency instance = new Dependency();
         instance.setFileName(fileName);
         assertEquals(fileName, instance.getFileName());
@@ -81,7 +81,7 @@ public class DependencyTest {
      */
     @Test
     public void testSetActualFilePath() {
-        String actualFilePath = "test.file";
+        String actualFilePath = "file.tar";
         Dependency instance = new Dependency();
         instance.setActualFilePath(actualFilePath);
         assertEquals(actualFilePath, instance.getActualFilePath());
@@ -93,7 +93,7 @@ public class DependencyTest {
     @Test
     public void testGetActualFilePath() {
         Dependency instance = new Dependency();
-        String expResult = "test.file";
+        String expResult = "file.tar";
         instance.setActualFilePath(expResult);
         String result = instance.getActualFilePath();
         assertEquals(expResult, result);
@@ -104,7 +104,7 @@ public class DependencyTest {
      */
     @Test
     public void testSetFilePath() {
-        String filePath = "test.file";
+        String filePath = "file.tar";
         Dependency instance = new Dependency();
         instance.setFilePath(filePath);
         assertEquals(filePath, instance.getFilePath());
@@ -116,7 +116,7 @@ public class DependencyTest {
     @Test
     public void testGetFilePath() {
         Dependency instance = new Dependency();
-        String expResult = "path/test.file";
+        String expResult = "file.tar";
         instance.setFilePath(expResult);
         String result = instance.getFilePath();
         assertEquals(expResult, result);
