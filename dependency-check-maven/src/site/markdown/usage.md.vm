@@ -10,7 +10,7 @@ Vulnerability Database (NVD) hosted by NIST: https://nvd.nist.gov
 After the first batch download, as long as the plugin is executed at least once every
 seven days the update will only take a few seconds.
 
-### Create the DependencyCheck-report.html in the target directory
+<h3>Create the DependencyCheck-report.html in the target directory</h3>
 
 ```xml
 <project>
@@ -37,7 +37,7 @@ seven days the update will only take a few seconds.
 </project>
 ```
 
-### Create the DependencyCheck-report.html and fail the build for CVSS greater then 8
+<h3>Create the DependencyCheck-report.html and fail the build for CVSS greater then 8</h3>
 
 ```xml
 <project>
@@ -67,7 +67,7 @@ seven days the update will only take a few seconds.
 </project>
 ```
 
-### Create the dependency-check report within the site
+<h3>Create the dependency-check report within the site</h3>
 
 ```xml
 <project>
