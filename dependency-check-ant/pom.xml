@@ -21,7 +21,7 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>1.1.0-SNAPSHOT</version>
+        <version>1.1.0</version>
     </parent>
 
     <artifactId>dependency-check-ant</artifactId>
@@ -442,12 +442,12 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
-            <version>1.9.1</version>
+            <version>1.9.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant-testutil</artifactId>
-            <version>1.9.1</version>
+            <version>1.9.3</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
