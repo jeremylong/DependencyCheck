@@ -96,9 +96,19 @@ public final class ConnectionFactory {
             //Class.forName("org.h2.Driver");
             conn = DriverManager.getConnection(connStr, user, pass);
             if (createTables) {
-                createTables(conn);
+                try {
+                    createTables(conn);
+                } catch (DatabaseException ex) {
+                    Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, null, ex);
+                    throw new DatabaseException("Unable to create the database structure");
+                }
             } else {
-                ensureSchemaVersion(conn);
+                try {
+                    ensureSchemaVersion(conn);
+                } catch (DatabaseException ex) {
+                    Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, null, ex);
+                    throw new DatabaseException("Database schema does not match this version of dependency-check");
+                }
             }
         } catch (IOException ex) {
             Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, null, ex);
@@ -109,9 +119,6 @@ public final class ConnectionFactory {
         } catch (SQLException ex) {
             Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, null, ex);
             throw new DatabaseException("Unable to connect to the database");
-        } catch (DatabaseException ex) {
-            Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, null, ex);
-            throw new DatabaseException("Unable to create the database structure");
         }
         return conn;
     }
