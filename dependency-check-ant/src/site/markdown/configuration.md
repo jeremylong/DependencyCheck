@@ -35,5 +35,12 @@ ProxyPort             | Defines the port for the proxy. | Optional
 ProxyUsername         | Defines the proxy user name. | Optional
 ProxyPassword         | Defines the proxy password. | Optional
 ConnectionTimeout     | The connection timeout used when downloading data files from the Internet. | Optional
+nexusAnalyzerEnabled  | The connection timeout used when downloading data files from the Internet. | Optional
+nexusUrl              | The connection timeout used when downloading data files from the Internet. | Optional
+databaseDriverName    | The name of the database driver. Example: org.h2.Driver. | Optional
+databaseDriverPath    | The path to the database driver JAR file; only used if the driver is not in the class path. | Optional
+connectionString      | The connection string used to connect to the database. | Optional
+databaseUser          | The username used when connecting to the database. | Optional
+databasePassword      | The password used when connecting to the database. | Optional
 
 
