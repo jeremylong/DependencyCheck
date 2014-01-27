@@ -17,14 +17,15 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.File;
+import java.io.FileInputStream;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+
 import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.data.nuget.NuspecHandler;
+import org.owasp.dependencycheck.data.nuget.NugetPackage;
+import org.owasp.dependencycheck.data.nuget.NuspecParser;
+import org.owasp.dependencycheck.data.nuget.XPathNuspecParser;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 
@@ -56,20 +57,12 @@ public class NuspecAnalyzer extends AbstractAnalyzer {
     private static final Set<String> SUPPORTED_EXTENSIONS = newHashSet("nuspec");
 
     /**
-     * The SAXParser we'll use to parse nuspec files.
-     */
-    private SAXParser parser;
-
-    /**
      * Initializes the analyzer once before any analysis is performed.
      *
      * @throws Exception if there's an error during initialization
      */
     @Override
     public void initialize() throws Exception {
-        final SAXParserFactory factory = SAXParserFactory.newInstance();
-        factory.setNamespaceAware(true);
-        parser = factory.newSAXParser();
     }
 
     /**
@@ -124,30 +117,26 @@ public class NuspecAnalyzer extends AbstractAnalyzer {
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
         LOGGER.log(Level.INFO, "Checking Nuspec file {0}", dependency.toString());
         try {
-            final NuspecHandler nh = new NuspecHandler();
-            parser.parse(new File(dependency.getActualFilePath()), nh);
-            if (nh.getVersion() != null && !"".equals(nh.getVersion())) {
-                dependency.getVersionEvidence().addEvidence("nuspec", "version", nh.getVersion(),
-                                                            Confidence.HIGHEST);
+            final NuspecParser parser = new XPathNuspecParser();
+            NugetPackage np = null;
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(dependency.getActualFilePath());
+                np = parser.parse(fis);
+            } finally {
+                if (fis != null) {
+                    try { fis.close(); } catch (Exception e) { }
+                }
             }
-            if (nh.getId() != null && !"".equals(nh.getId())) {
-                dependency.getProductEvidence().addEvidence("nuspec", "id", nh.getId(),
-                                                            Confidence.HIGHEST);
+
+            if (np.getOwners() != null) {
+                dependency.getVendorEvidence().addEvidence("nuspec", "owners", np.getOwners(), Confidence.HIGHEST);
             }
-            if (nh.getOwners() != null && !"".equals(nh.getOwners())) {
-                dependency.getVendorEvidence().addEvidence("nuspec", "owners", nh.getOwners(),
-                                                           Confidence.HIGHEST);
-            }
-            if (nh.getAuthors() != null && !"".equals(nh.getAuthors())) {
-                dependency.getVendorEvidence().addEvidence("nuspec", "authors", nh.getAuthors(),
-                                                           Confidence.MEDIUM);
-            }
-            if (nh.getTitle() != null && !"".equals(nh.getTitle())) {
-                dependency.getProductEvidence().addEvidence("nuspec", "title", nh.getTitle(),
-                                                            Confidence.MEDIUM);
-            }
-            if (nh.getLicenseUrl() != null && !"".equals(nh.getLicenseUrl())) {
-                dependency.setLicense(nh.getLicenseUrl());
+            dependency.getVendorEvidence().addEvidence("nuspec", "authors", np.getAuthors(), Confidence.HIGH);
+            dependency.getVersionEvidence().addEvidence("nuspec", "version", np.getVersion(), Confidence.HIGHEST);
+            dependency.getProductEvidence().addEvidence("nuspec", "id", np.getId(), Confidence.HIGHEST);
+            if (np.getTitle() != null) {
+                dependency.getProductEvidence().addEvidence("nuspec", "title", np.getTitle(), Confidence.MEDIUM);
             }
         } catch (Exception e) {
             throw new AnalysisException(e);
