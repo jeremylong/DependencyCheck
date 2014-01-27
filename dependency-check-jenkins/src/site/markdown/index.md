@@ -1,30 +1,34 @@
 Dependency-Check Jenkins Plugin
 ==============================
 
-The Dependency-Check Jenkins Plugin features the ability to perform a dependency
-analysis build and later view results post build. The plugin is built using [analysis-core]
-and features many of the same features that Jenkins static analysis plugins offer,
-including thresholds, charts and the ability to view vulnerability information should
-a dependency have one identified.
+Dependency-Check is a utility that identifies project dependencies and checks if there are any known, publicly disclosed, vulnerabilities. This tool can be part of the solution to the OWASP Top 10 2013: A9 - Using Components with Known Vulnerabilities. This plug-in can independently execute a Dependency-Check analysis and visualize results.
 
-The main repository is located at [jenkins-cli/dependency-check-jenkins](https://github.com/jenkinsci/dependency-check-jenkins).
-
-The main site for documentation is located at [OWASP Dependency-Check-Jenkins](https://wiki.jenkins-ci.org/display/JENKINS/OWASP+Dependency-Check+Plugin).
+The Dependency-Check Jenkins Plugin features the ability to perform a dependency analysis build and later view results post build. The plugin is built using [analysis-core] and features many of the same features that Jenkins static analysis plugins offer, including thresholds, charts and the ability to view vulnerability information should a dependency have one identified.
 
 More information can be found on the [wiki].
 
 Mailing List
 ------------
 
-Subscribe: [dependency-check+subscribe@googlegroups.com](mailto:dependency-check+subscribe@googlegroups.com)
+Subscribe: [dependency-check+subscribe@googlegroups.com] [subscribe]
 
-Post: [dependency-check@googlegroups.com](mailto:dependency-check@googlegroups.com)
+Post: [dependency-check@googlegroups.com] [post]
 
-Copyright
+Copyright & License
 -------------------
+
+Dependency-Check is Copyright (c) 2012-2014 Jeremy Long. All Rights Reserved.
 
 Dependency-Check Jenkins Plugin is Copyright (c) 2013-2014 Steve Springett. All Rights Reserved.
 
-  [wiki]: https://github.com/jenkinsci/dependency-check-jenkins/wiki
+Permission to modify and redistribute is granted under the terms of the Apache 2.0 license. See the [LICENSE.txt] [license] file for the full license.
+
+Dependency-Check makes use of several other open source libraries. Please see the [NOTICE.txt] [notices] file for more information.
+
+
+  [wiki]: https://wiki.jenkins-ci.org/display/JENKINS/OWASP+Dependency-Check+Plugin
   [analysis-core]: http://wiki.jenkins-ci.org/x/CwDgAQ
-  [notices]: https://github.com/jenkinsci/dependency-check-jenkins/blob/master/NOTICES.txt
+  [subscribe]: mailto:dependency-check+subscribe@googlegroups.com
+  [post]: mailto:dependency-check@googlegroups.com
+  [license]: https://github.com/jenkinsci/dependency-check-plugin/blob/master/LICENSE.txt
+  [notices]: https://github.com/jenkinsci/dependency-check-plugin/blob/master/NOTICES.txt
