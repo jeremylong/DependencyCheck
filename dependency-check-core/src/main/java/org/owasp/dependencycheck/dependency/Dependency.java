@@ -146,6 +146,15 @@ public class Dependency implements Comparable<Dependency> {
     }
 
     /**
+     * Gets a reference to the File object.
+     *
+     * @return the File object.
+     */
+    public File getActualFile() {
+        return new File(this.actualFilePath);
+    }
+
+    /**
      * Sets the file path of the dependency.
      *
      * @param filePath the file path of the dependency.
