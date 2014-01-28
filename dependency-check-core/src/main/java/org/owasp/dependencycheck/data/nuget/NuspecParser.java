@@ -22,7 +22,7 @@ import java.io.InputStream;
 /**
  * Interface defining methods for parsing a Nuspec file.
  *
- * @author willstranathan
+ * @author colezlaw
  *
  */
 public interface NuspecParser {

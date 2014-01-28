@@ -125,7 +125,11 @@ public class NuspecAnalyzer extends AbstractAnalyzer {
                 np = parser.parse(fis);
             } finally {
                 if (fis != null) {
-                    try { fis.close(); } catch (Exception e) { }
+                    try {
+                        fis.close();
+                    } catch (Exception e) {
+                        LOGGER.fine("Error closing input stream");
+                    }
                 }
             }
 
