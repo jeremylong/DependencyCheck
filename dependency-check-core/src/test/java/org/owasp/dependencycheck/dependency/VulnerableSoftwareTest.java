@@ -89,9 +89,9 @@ public class VulnerableSoftwareTest {
         assertEquals(expResult, result);
 
         vs = new VulnerableSoftware();
-        vs.setCpe("cpe:/a:some:dep:9.2.0.0-20090116170000");
+        vs.setCpe("cpe:/a:yahoo:toolbar:3.1.0.20130813024103");
         instance = new VulnerableSoftware();
-        instance.setCpe("cpe:/a:some:dep:9.2.0.0-20090116170001");
+        instance.setCpe("cpe:/a:yahoo:toolbar:3.1.0.20130813024104");
         expResult = 1;
         result = instance.compareTo(vs);
         assertEquals(expResult, result);
