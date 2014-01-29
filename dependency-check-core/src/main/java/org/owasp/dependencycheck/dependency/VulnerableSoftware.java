@@ -184,13 +184,21 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
                 if (subMax > 0) {
                     for (int x = 0; result == 0 && x < subMax; x++) {
                         if (isPositiveInteger(subLeft[x]) && isPositiveInteger(subRight[x])) {
-                            final int iLeft = Integer.parseInt(subLeft[x]);
-                            final int iRight = Integer.parseInt(subRight[x]);
-                            if (iLeft != iRight) {
-                                if (iLeft > iRight) {
-                                    result = 2;
-                                } else {
-                                    result = -2;
+                            try {
+                                result = Long.valueOf(subLeft[x]).compareTo(Long.valueOf(subRight[x]));
+//                                final long iLeft = Long.parseLong(subLeft[x]);
+//                                final long iRight = Long.parseLong(subRight[x]);
+//                                if (iLeft != iRight) {
+//                                    if (iLeft > iRight) {
+//                                        result = 2;
+//                                    } else {
+//                                        result = -2;
+//                                    }
+//                                }
+                            } catch (NumberFormatException ex) {
+                                //ignore the exception - they obviously aren't numbers
+                                if (!subLeft[x].equalsIgnoreCase(subRight[x])) {
+                                    result = subLeft[x].compareToIgnoreCase(subRight[x]);
                                 }
                             }
                         } else {
