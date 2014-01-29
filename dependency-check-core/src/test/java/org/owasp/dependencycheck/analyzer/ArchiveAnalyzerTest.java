@@ -222,28 +222,27 @@ public class ArchiveAnalyzerTest extends BaseIndexTestCase {
         }
     }
 
-    /**
-     * Test of analyze method, of class ArchiveAnalyzer.
-     */
-    @Test
-    public void testNestedZipFolder() throws Exception {
-        ArchiveAnalyzer instance = new ArchiveAnalyzer();
-        try {
-            instance.initialize();
-
-            File file = new File(this.getClass().getClassLoader().getResource("nested.zip").getPath());
-            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
-            Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
-            Engine engine = new Engine();
-
-            engine.scan(file);
-            engine.analyzeDependencies();
-
-        } finally {
-            instance.close();
-        }
-    }
-
+//    /**
+//     * Test of analyze method, of class ArchiveAnalyzer.
+//     */
+//    @Test
+//    public void testNestedZipFolder() throws Exception {
+//        ArchiveAnalyzer instance = new ArchiveAnalyzer();
+//        try {
+//            instance.initialize();
+//
+//            File file = new File(this.getClass().getClassLoader().getResource("nested.zip").getPath());
+//            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+//            Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
+//            Engine engine = new Engine();
+//
+//            engine.scan(file);
+//            engine.analyzeDependencies();
+//
+//        } finally {
+//            instance.close();
+//        }
+//    }
     /**
      * Test of analyze method, of class ArchiveAnalyzer.
      */
