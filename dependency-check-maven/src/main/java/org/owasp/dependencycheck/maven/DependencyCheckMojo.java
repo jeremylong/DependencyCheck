@@ -206,7 +206,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * The database connection string.
      */
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
-    @Parameter(property = "nexusUrl", defaultValue = "", required = false)
+    @Parameter(property = "connectionString", defaultValue = "", required = false)
     private String connectionString;
     /**
      * The database driver name. An example would be org.h2.Driver.
