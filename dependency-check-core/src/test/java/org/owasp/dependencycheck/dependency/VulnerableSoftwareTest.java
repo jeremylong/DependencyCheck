@@ -87,5 +87,13 @@ public class VulnerableSoftwareTest {
         int expResult = -2;
         int result = instance.compareTo(vs);
         assertEquals(expResult, result);
+
+        vs = new VulnerableSoftware();
+        vs.setCpe("cpe:/a:some:dep:9.2.0.0-20090116170000");
+        instance = new VulnerableSoftware();
+        instance.setCpe("cpe:/a:some:dep:9.2.0.0-20090116170001");
+        expResult = 1;
+        result = instance.compareTo(vs);
+        assertEquals(expResult, result);
     }
 }
