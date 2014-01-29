@@ -153,6 +153,7 @@ public class ArchiveAnalyzerTest extends BaseIndexTestCase {
             File file = new File(this.getClass().getClassLoader().getResource("daytrader-ear-2.1.7.ear").getPath());
             Dependency dependency = new Dependency(file);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
             Engine engine = new Engine();
 
             int initial_size = engine.getDependencies().size();
@@ -179,6 +180,7 @@ public class ArchiveAnalyzerTest extends BaseIndexTestCase {
             File file = new File(this.getClass().getClassLoader().getResource("stagedhttp-modified.tar").getPath());
             Dependency dependency = new Dependency(file);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
             Engine engine = new Engine();
 
             int initial_size = engine.getDependencies().size();
@@ -204,6 +206,7 @@ public class ArchiveAnalyzerTest extends BaseIndexTestCase {
             File file = new File(this.getClass().getClassLoader().getResource("file.tar.gz").getPath());
             //Dependency dependency = new Dependency(file);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
             Engine engine = new Engine();
 
             int initial_size = engine.getDependencies().size();
@@ -223,6 +226,28 @@ public class ArchiveAnalyzerTest extends BaseIndexTestCase {
      * Test of analyze method, of class ArchiveAnalyzer.
      */
     @Test
+    public void testNestedZipFolder() throws Exception {
+        ArchiveAnalyzer instance = new ArchiveAnalyzer();
+        try {
+            instance.initialize();
+
+            File file = new File(this.getClass().getClassLoader().getResource("nested.zip").getPath());
+            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
+            Engine engine = new Engine();
+
+            engine.scan(file);
+            engine.analyzeDependencies();
+
+        } finally {
+            instance.close();
+        }
+    }
+
+    /**
+     * Test of analyze method, of class ArchiveAnalyzer.
+     */
+    @Test
     public void testAnalyzeTgz() throws Exception {
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
         try {
@@ -230,6 +255,7 @@ public class ArchiveAnalyzerTest extends BaseIndexTestCase {
 
             File file = new File(this.getClass().getClassLoader().getResource("file.tgz").getPath());
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
             Engine engine = new Engine();
 
             int initial_size = engine.getDependencies().size();
@@ -256,6 +282,7 @@ public class ArchiveAnalyzerTest extends BaseIndexTestCase {
             File file = new File(this.getClass().getClassLoader().getResource("test.zip").getPath());
             Dependency dependency = new Dependency(file);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
             Engine engine = new Engine();
             int initial_size = engine.getDependencies().size();
 //            boolean failed = false;
