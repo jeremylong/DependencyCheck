@@ -13,20 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
 
 /**
  *
- * Used to load a JAR file and collect information that can be used to determine the associated CPE.
+ * Used to analyze a JavaScript file to gather information to aid in identification of a CPE identifier.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long (jeremy.long@owasp.org)
  */
 public class JavaScriptAnalyzer extends AbstractAnalyzer implements Analyzer {
 
@@ -49,6 +56,7 @@ public class JavaScriptAnalyzer extends AbstractAnalyzer implements Analyzer {
      *
      * @return a list of file EXTENSIONS supported by this analyzer.
      */
+    @Override
     public Set<String> getSupportedExtensions() {
         return EXTENSIONS;
     }
@@ -58,6 +66,7 @@ public class JavaScriptAnalyzer extends AbstractAnalyzer implements Analyzer {
      *
      * @return the name of the analyzer.
      */
+    @Override
     public String getName() {
         return ANALYZER_NAME;
     }
@@ -68,6 +77,7 @@ public class JavaScriptAnalyzer extends AbstractAnalyzer implements Analyzer {
      * @param extension the file extension to test for support.
      * @return whether or not the specified file extension is supported by this analyzer.
      */
+    @Override
     public boolean supportsExtension(String extension) {
         return EXTENSIONS.contains(extension);
     }
@@ -77,42 +87,45 @@ public class JavaScriptAnalyzer extends AbstractAnalyzer implements Analyzer {
      *
      * @return the phase that the analyzer is intended to run in.
      */
+    @Override
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
     //</editor-fold>
 
     /**
-     * Loads a specified JAR file and collects information from the manifest and checksums to identify the correct CPE
-     * information.
+     * Loads a specified JavaScript file and collects information from the copyright information contained within.
      *
      * @param dependency the dependency to analyze.
      * @param engine the engine that is scanning the dependencies
-     * @throws AnalysisException is thrown if there is an error reading the JAR file.
+     * @throws AnalysisException is thrown if there is an error reading the JavaScript file.
      */
     @Override
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
-        final Pattern extractComments = Pattern.compile("(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)|(//.*)");
-
-    }
-
-    /**
-     * The initialize method does nothing for this Analyzer.
-     *
-     * @throws Exception thrown if there is an exception
-     */
-    @Override
-    public void initialize() throws Exception {
-        //do nothing
-    }
-
-    /**
-     * The close method does nothing for this Analyzer.
-     *
-     * @throws Exception thrown if there is an exception
-     */
-    @Override
-    public void close() throws Exception {
-        //do nothing
+        BufferedReader fin = null;;
+        try {
+            //  /\*([^\*][^/]|[\r\n\f])+?\*/
+            final Pattern extractComments = Pattern.compile("(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)|(//.*)", Pattern.MULTILINE);
+            File file = dependency.getActualFile();
+            fin = new BufferedReader(new FileReader(file));
+            StringBuilder sb = new StringBuilder(2000);
+            String text;
+            while ((text = fin.readLine()) != null) {
+                sb.append(text);
+            }
+        } catch (FileNotFoundException ex) {
+            final String msg = String.format("Dependency file not found: '%s'", dependency.getActualFilePath());
+            throw new AnalysisException(msg, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(JavaScriptAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (fin != null) {
+                try {
+                    fin.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(JavaScriptAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+                }
+            }
+        }
     }
 }
