@@ -1,5 +1,5 @@
 Installation & Usage
---------------------
+====================
 Download the dependency-check command line tool [here](http://dl.bintray.com/jeremy-long/owasp/dependency-check-${project.version}-release.zip).
 Extract the zip file to a location on your computer and put the 'bin' directory into the
 path environment variable. On \*nix systems you will likely need to make the shell
@@ -9,15 +9,19 @@ script executable:
 
 To scan a folder on the system you can run:
 
-<h3>Windows</h3>
+Windows
+-------
     dependency-check.bat --app "My App Name" --scan "c:\java\application\lib"
 
-<h3>\*nix</h3>
+\*nix
+-------
     dependency-check.sh --app "My App Name" --scan "/java/application/lib"
 
 To view the command line arguments, see the <a href="arguments.html">arguments page</a>, or you can run:
-<h3>Windows</h3>
+Windows
+-------
     dependency-check.bat --help
 
-<h3>\*nix</h3>
+\*nix
+-------
     dependency-check.sh --help
