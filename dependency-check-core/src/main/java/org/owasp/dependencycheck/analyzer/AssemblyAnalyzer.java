@@ -168,32 +168,13 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
             while ((bread = is.read(buff)) >= 0) {
                 fos.write(buff, 0, bread);
             }
-            fos.flush();
-            fos.close();
-            fos = null;
             grokAssemblyExe = tempFile;
             // Set the temp file to get deleted when we're done
             grokAssemblyExe.deleteOnExit();
             LOG.log(Level.INFO, "Extracted GrokAssembly.exe to {0}", grokAssemblyExe.getPath());
-
-            // Now, need to see if GrokAssembly actually runs from this location.
-            final List<String> args = buildArgumentList();
-            try {
-                final Process p = new ProcessBuilder(args).start();
-                final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(p.getInputStream());
-                final XPath xpath = XPathFactory.newInstance().newXPath();
-                final String error = xpath.evaluate("/assembly/error", doc);
-                if (p.exitValue() != 1 || error == null || "".equals(error)) {
-                    LOG.warning("GrokAssembly.exe is not working properly");
-                    grokAssemblyExe = null;
-                    throw new AnalysisException("Could not execute GrokAssembly");
-                }
-            } catch (Exception e) {
-                LOG.warning("Could not execute GrokAssembly " + e.getMessage());
-                throw new AnalysisException("Could not execute GrokAssembly", e);
-            }
-
-            builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        } catch (IOException ioe) {
+            LOG.log(Level.WARNING, "Could not extract GrokAssembly.exe: {0}", ioe.getMessage());
+            throw new AnalysisException("Could not extract GrokAssembly.exe", ioe);
         } finally {
             if (fos != null) {
                 try {
@@ -210,6 +191,25 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
                 }
             }
         }
+
+        // Now, need to see if GrokAssembly actually runs from this location.
+        final List<String> args = buildArgumentList();
+        try {
+            final Process p = new ProcessBuilder(args).start();
+            final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(p.getInputStream());
+            final XPath xpath = XPathFactory.newInstance().newXPath();
+            final String error = xpath.evaluate("/assembly/error", doc);
+            if (p.exitValue() != 1 || error == null || "".equals(error)) {
+                LOG.warning("GrokAssembly.exe is not working properly");
+                grokAssemblyExe = null;
+                throw new AnalysisException("Could not execute GrokAssembly");
+            }
+        } catch (Exception e) {
+            LOG.warning("Could not execute GrokAssembly " + e.getMessage());
+            throw new AnalysisException("Could not execute GrokAssembly", e);
+        }
+
+        builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
     }
 
     @Override
