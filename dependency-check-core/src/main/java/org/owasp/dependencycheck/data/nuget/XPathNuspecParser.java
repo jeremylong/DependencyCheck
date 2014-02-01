@@ -30,7 +30,7 @@ import org.w3c.dom.Node;
 /**
  * Parse a Nuspec file using XPath.
  *
- * @author willstranathan
+ * @author colezlaw
  */
 public class XPathNuspecParser implements NuspecParser {
     /**

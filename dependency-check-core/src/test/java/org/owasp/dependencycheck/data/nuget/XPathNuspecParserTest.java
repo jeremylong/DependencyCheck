@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 
 /**
  * 
- * @author willstranathan
+ * @author colezlaw
  *
  */
 public class XPathNuspecParserTest {

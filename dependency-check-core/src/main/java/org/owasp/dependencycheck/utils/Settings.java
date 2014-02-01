@@ -145,6 +145,10 @@ public final class Settings {
          * The properties key for the Nexus search URL.
          */
         public static final String ANALYZER_NEXUS_URL = "analyzer.nexus.url";
+        /**
+         * The path to mono, if available.
+         */
+        public static final String ANALYZER_ASSEMBLY_MONO_PATH = "analyzer.assembly.mono.path";
     }
     /**
      * The properties file location.
