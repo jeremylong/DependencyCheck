@@ -138,6 +138,7 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
                 dependency.getProductEvidence().addEvidence(new Evidence("grokassembly", "product",
                         product, Confidence.HIGH));
             }
+
         } catch (IOException ioe) {
             throw new AnalysisException(ioe);
         } catch (SAXException saxe) {
