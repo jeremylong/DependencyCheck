@@ -17,16 +17,12 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import com.codeaffine.junit.ignore.ConditionalIgnoreRule;
-import com.codeaffine.junit.ignore.ConditionalIgnoreRule.ConditionalIgnore;
-import com.codeaffine.junit.ignore.NotRunningOnWindows;
 import java.io.File;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -88,12 +84,12 @@ public class AssemblyAnalyzerTest {
         analyzer.analyze(d, null);
     }
 
-    @Rule
-    public ConditionalIgnoreRule rule = new ConditionalIgnoreRule();
-
-    @Test()
-    @ConditionalIgnore(condition = NotRunningOnWindows.class)
+    @Test(expected = AnalysisException.class)
     public void testWithSettingMono() throws Exception {
+
+        //This test doesn't work on Windows.
+        assumeFalse(System.getProperty("os.name").startsWith("Windows"));
+
         String oldValue = Settings.getString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH);
         // if oldValue is null, that means that neither the system property nor the setting has
         // been set. If that's the case, then we have to make it such that when we recover,
@@ -105,14 +101,10 @@ public class AssemblyAnalyzerTest {
             Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, "/yooser/bine/mono");
         }
 
-        //** @Test(expected = AnalysisException) doesn't seem to work with the conditional test **//
-        AnalysisException aex = null;
         try {
             // Have to make a NEW analyzer because during setUp, it would have gotten the correct one
             AssemblyAnalyzer aanalyzer = new AssemblyAnalyzer();
             aanalyzer.initialize();
-        } catch (AnalysisException ex) {
-            aex = ex;
         } finally {
             // Now recover the way we came in. If we had to set a System property, delete it. Otherwise,
             // reset the old value
@@ -122,7 +114,6 @@ public class AssemblyAnalyzerTest {
                 Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, oldValue);
             }
         }
-        assertNull("Excpted exception: org.owasp.dependencycheck.analyzer.AnalysisException", aex);
     }
 
     @After
