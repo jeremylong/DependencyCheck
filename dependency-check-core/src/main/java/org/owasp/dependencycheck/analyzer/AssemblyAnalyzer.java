@@ -26,13 +26,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -42,13 +40,13 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
- * Analyzer for getting company, product, and version information
- * from a .NET assembly.
+ * Analyzer for getting company, product, and version information from a .NET assembly.
  *
  * @author colezlaw
  *
  */
 public class AssemblyAnalyzer extends AbstractAnalyzer {
+
     /**
      * The analyzer name
      */
@@ -76,6 +74,7 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
 
     /**
      * Builds the beginnings of a List for ProcessBuilder
+     *
      * @return the list of arguments to begin populating the ProcessBuilder
      */
     private List<String> buildArgumentList() {
@@ -95,6 +94,7 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
 
     /**
      * Performs the analysis on a single Dependency.
+     *
      * @param dependency the dependency to analyze
      * @param engine the engine to perform the analysis under
      * @throws AnalysisException if anything goes sideways
@@ -150,8 +150,8 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Initialize the analyzer. In this case, extract GrokAssembly.exe
-     * to a temporary location.
+     * Initialize the analyzer. In this case, extract GrokAssembly.exe to a temporary location.
+     *
      * @throws Exception if anything goes wrong
      */
     @Override
@@ -168,6 +168,9 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
             while ((bread = is.read(buff)) >= 0) {
                 fos.write(buff, 0, bread);
             }
+            fos.flush();
+            fos.close();
+            fos = null;
             grokAssemblyExe = tempFile;
             // Set the temp file to get deleted when we're done
             grokAssemblyExe.deleteOnExit();
@@ -221,6 +224,7 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
 
     /**
      * Gets the set of extensions supported by this analyzer.
+     *
      * @return the list of supported extensions
      */
     @Override
@@ -240,6 +244,7 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
 
     /**
      * Gets whether the analyzer supports the provided extension.
+     *
      * @param extension the extension to check
      * @return whether the analyzer supports the extension
      */
