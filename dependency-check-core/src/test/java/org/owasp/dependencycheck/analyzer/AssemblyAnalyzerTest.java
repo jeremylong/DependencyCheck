@@ -17,12 +17,16 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
+import com.codeaffine.junit.ignore.ConditionalIgnoreRule;
+import com.codeaffine.junit.ignore.ConditionalIgnoreRule.ConditionalIgnore;
+import com.codeaffine.junit.ignore.NotRunningOnWindows;
 import java.io.File;
 import org.junit.After;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -31,14 +35,17 @@ import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * Tests for the AssemblyAnalyzer.
+ *
  * @author colezlaw
  *
  */
 public class AssemblyAnalyzerTest {
+
     AssemblyAnalyzer analyzer;
-    
+
     /**
      * Sets up the analyzer.
+     *
      * @throws Exception if anything goes sideways
      */
     @Before
@@ -46,7 +53,7 @@ public class AssemblyAnalyzerTest {
         analyzer = new AssemblyAnalyzer();
         analyzer.initialize();
     }
-    
+
     /**
      * Tests to make sure the name is correct.
      */
@@ -54,7 +61,7 @@ public class AssemblyAnalyzerTest {
     public void testGetName() {
         assertEquals("Assembly Analyzer", analyzer.getName());
     }
-    
+
     @Test
     public void testAnalysis() throws Exception {
         File f = new File(AssemblyAnalyzerTest.class.getClassLoader().getResource("GrokAssembly.exe").getPath());
@@ -62,7 +69,7 @@ public class AssemblyAnalyzerTest {
         analyzer.analyze(d, null);
         assertTrue(d.getVersionEvidence().getEvidence().contains(new Evidence("grokassembly", "version", "1.0.5140.29700", Confidence.HIGHEST)));
     }
-    
+
     @Test
     public void testLog4Net() throws Exception {
         File f = new File(AssemblyAnalyzerTest.class.getClassLoader().getResource("log4net.dll").getPath());
@@ -72,16 +79,20 @@ public class AssemblyAnalyzerTest {
         assertTrue(d.getVendorEvidence().getEvidence().contains(new Evidence("grokassembly", "vendor", "The Apache Software Foundation", Confidence.HIGH)));
         assertTrue(d.getProductEvidence().getEvidence().contains(new Evidence("grokassembly", "product", "log4net", Confidence.HIGH)));
     }
-    
-    @Test(expected=AnalysisException.class)
+
+    @Test(expected = AnalysisException.class)
     public void testNonexistent() throws Exception {
         File f = new File(AssemblyAnalyzerTest.class.getClassLoader().getResource("log4net.dll").getPath());
         File test = new File(f.getParent(), "nonexistent.dll");
         Dependency d = new Dependency(test);
         analyzer.analyze(d, null);
     }
-    
-    @Test(expected=AnalysisException.class)
+
+    @Rule
+    public ConditionalIgnoreRule rule = new ConditionalIgnoreRule();
+
+    @Test()
+    @ConditionalIgnore(condition = NotRunningOnWindows.class)
     public void testWithSettingMono() throws Exception {
         String oldValue = Settings.getString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH);
         // if oldValue is null, that means that neither the system property nor the setting has
@@ -93,11 +104,15 @@ public class AssemblyAnalyzerTest {
         } else {
             Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, "/yooser/bine/mono");
         }
-        
+
+        //** @Test(expected = AnalysisException) doesn't seem to work with the conditional test **//
+        AnalysisException aex = null;
         try {
             // Have to make a NEW analyzer because during setUp, it would have gotten the correct one
             AssemblyAnalyzer aanalyzer = new AssemblyAnalyzer();
             aanalyzer.initialize();
+        } catch (AnalysisException ex) {
+            aex = ex;
         } finally {
             // Now recover the way we came in. If we had to set a System property, delete it. Otherwise,
             // reset the old value
@@ -107,8 +122,9 @@ public class AssemblyAnalyzerTest {
                 Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, oldValue);
             }
         }
+        assertNull("Excpted exception: org.owasp.dependencycheck.analyzer.AnalysisException", aex);
     }
-    
+
     @After
     public void tearDown() throws Exception {
         analyzer.close();
