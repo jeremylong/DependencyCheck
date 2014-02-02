@@ -17,6 +17,8 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;

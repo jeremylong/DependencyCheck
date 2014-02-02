@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import java.io.File;
 import java.util.Set;
 import org.owasp.dependencycheck.Engine;

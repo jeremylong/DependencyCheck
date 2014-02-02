@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import java.io.FileInputStream;
 import java.util.Set;
 import java.util.logging.Level;

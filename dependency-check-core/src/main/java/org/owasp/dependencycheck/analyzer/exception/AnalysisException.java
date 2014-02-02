@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.analyzer;
+package org.owasp.dependencycheck.analyzer.exception;
 
 /**
- * An exception thrown when files in an archive cannot be extracted.
+ * An exception thrown when the analysis of a dependency fails.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class ArchiveExtractionException extends Exception {
+public class AnalysisException extends Exception {
 
     /**
      * The serial version UID for serialization.
@@ -30,37 +30,37 @@ public class ArchiveExtractionException extends Exception {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Creates a new ArchiveExtractionException.
+     * Creates a new AnalysisException.
      */
-    public ArchiveExtractionException() {
+    public AnalysisException() {
         super();
     }
 
     /**
-     * Creates a new ArchiveExtractionException.
+     * Creates a new AnalysisException.
      *
      * @param msg a message for the exception.
      */
-    public ArchiveExtractionException(String msg) {
+    public AnalysisException(String msg) {
         super(msg);
     }
 
     /**
-     * Creates a new ArchiveExtractionException.
+     * Creates a new AnalysisException.
      *
      * @param ex the cause of the failure.
      */
-    public ArchiveExtractionException(Throwable ex) {
+    public AnalysisException(Throwable ex) {
         super(ex);
     }
 
     /**
-     * Creates a new ArchiveExtractionException.
+     * Creates a new AnalysisException.
      *
      * @param msg a message for the exception.
      * @param ex the cause of the failure.
      */
-    public ArchiveExtractionException(String msg, Throwable ex) {
+    public AnalysisException(String msg, Throwable ex) {
         super(msg, ex);
     }
 }
