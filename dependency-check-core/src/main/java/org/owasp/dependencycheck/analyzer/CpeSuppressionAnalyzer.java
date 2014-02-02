@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.suppression.SuppressionRule;

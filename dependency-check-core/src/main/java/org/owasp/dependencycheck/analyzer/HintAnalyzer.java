@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;

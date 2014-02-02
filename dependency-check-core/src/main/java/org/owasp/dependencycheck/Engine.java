@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.owasp.dependencycheck.analyzer.AnalysisException;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.analyzer.AnalysisPhase;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.AnalyzerService;
