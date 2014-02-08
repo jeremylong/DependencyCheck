@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,6 +56,7 @@ import javax.xml.transform.sax.SAXSource;
 import org.h2.store.fs.FileUtils;
 import org.jsoup.Jsoup;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
@@ -262,7 +262,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         } catch (IOException ex) {
             final String msg = String.format("Unable to read JarFile '%s'.", dependency.getActualFilePath());
             final AnalysisException ax = new AnalysisException(msg, ex);
-            dependency.getAnalysisExceptions().add(ax);
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
             return false;
@@ -273,7 +272,6 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         } catch (IOException ex) {
             final String msg = String.format("Unable to read Jar file entries in '%s'.", dependency.getActualFilePath());
             final AnalysisException ax = new AnalysisException(msg, ex);
-            dependency.getAnalysisExceptions().add(ax);
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO, msg, ex);
             return false;
@@ -314,7 +312,9 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                     foundSomething |= setPomEvidence(dependency, pom, pomProperties, classes);
                 }
             } catch (AnalysisException ex) {
-                dependency.addAnalysisException(ex);
+                final String msg = String.format("An error occured while analyzing '%s'.", dependency.getActualFilePath());
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO, "", ex);
             }
         }
         return foundSomething;

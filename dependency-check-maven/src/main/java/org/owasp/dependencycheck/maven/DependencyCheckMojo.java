@@ -304,7 +304,6 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         int cnt = 0;
         for (Dependency d : dependencies) {
             writeSiteReportDependencyHeader(sink, d);
-            cnt = writeSiteReportDependencyAnalysisExceptions(d, cnt, sink);
             cnt = writeSiteReportDependencyEvidenceUsed(d, cnt, sink);
             cnt = writeSiteReportDependencyRelatedDependencies(d, cnt, sink);
             writeSiteReportDependencyIdentifiers(d, sink);
@@ -505,35 +504,6 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
                 sink.tableRow_();
             }
             sink.table_();
-            sink.rawText("</div>");
-        }
-        return cnt;
-    }
-
-    /**
-     * Writes the analysis exceptions generated during analysis to the site report.
-     *
-     * @param d the dependency
-     * @param sink the sink to write the data to
-     * @param collapsibleHeaderCount the collapsible header count
-     * @return the collapsible header count
-     */
-    private int writeSiteReportDependencyAnalysisExceptions(Dependency d, int collapsibleHeaderCount, Sink sink) {
-        int cnt = collapsibleHeaderCount;
-        if (d.getAnalysisExceptions() != null && !d.getAnalysisExceptions().isEmpty()) {
-            cnt += 1;
-            sink.sectionTitle4();
-            sink.rawText("<font style=\"color:red\">Errors occurred during analysis:</font> <a href=\"javascript:toggleElement(this, 'errors"
-                    + cnt + "')\">[+]</a>");
-            sink.sectionTitle4_();
-            sink.rawText("<div id=\"errors" + cnt + "\">");
-            sink.list();
-            for (Exception e : d.getAnalysisExceptions()) {
-                sink.listItem();
-                sink.text(e.getMessage());
-                sink.listItem_();
-            }
-            sink.list_();
             sink.rawText("</div>");
         }
         return cnt;
