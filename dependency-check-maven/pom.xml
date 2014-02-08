@@ -180,7 +180,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                         <plugin>
                             <groupId>org.codehaus.mojo</groupId>
                             <artifactId>cobertura-maven-plugin</artifactId>
-                            <version>2.5.2</version>
+                            <version>2.6</version>
                         </plugin>
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
