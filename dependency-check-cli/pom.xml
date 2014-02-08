@@ -77,8 +77,11 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.5.2</version>
+                <version>2.6</version>
                 <configuration>
+                    <instrumentation>
+                        <ignoreTrivial>true</ignoreTrivial>
+                    </instrumentation>
                     <check>
                         <branchRate>85</branchRate>
                         <lineRate>85</lineRate>
@@ -115,11 +118,6 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
                 <version>2.16</version>
                 <configuration>
                     <systemProperties>
-                        <property>
-                            <name>net.sourceforge.cobertura.datafile</name>
-                            <value>${project.build.directory}/cobertura/cobertura.ser</value>
-                            <workingDirectory>target</workingDirectory>
-                        </property>
                         <property>
                             <name>cpe</name>
                             <value>data/cpe</value>
@@ -206,7 +204,7 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
                         <plugin>
                             <groupId>org.codehaus.mojo</groupId>
                             <artifactId>cobertura-maven-plugin</artifactId>
-                            <version>2.5.2</version>
+                            <version>2.6</version>
                         </plugin>
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
