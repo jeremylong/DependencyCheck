@@ -20,8 +20,6 @@ package org.owasp.dependencycheck.dependency;
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -328,37 +326,6 @@ public class Dependency implements Comparable<Dependency> {
         return this.versionEvidence;
     }
     /**
-     * A list of exceptions that occurred during analysis of this dependency.
-     */
-    private List<Exception> analysisExceptions = new ArrayList<Exception>();
-
-    /**
-     * Get the value of analysisExceptions.
-     *
-     * @return the value of analysisExceptions
-     */
-    public List<Exception> getAnalysisExceptions() {
-        return analysisExceptions;
-    }
-
-    /**
-     * Set the value of analysisExceptions.
-     *
-     * @param analysisExceptions new value of analysisExceptions
-     */
-    public void setAnalysisExceptions(List<Exception> analysisExceptions) {
-        this.analysisExceptions = analysisExceptions;
-    }
-
-    /**
-     * Adds an exception to the analysis exceptions collection.
-     *
-     * @param ex an exception.
-     */
-    public void addAnalysisException(Exception ex) {
-        this.analysisExceptions.add(ex);
-    }
-    /**
      * The description of the JAR file.
      */
     private String description;
@@ -544,10 +511,6 @@ public class Dependency implements Comparable<Dependency> {
         if (this.versionEvidence != other.versionEvidence && (this.versionEvidence == null || !this.versionEvidence.equals(other.versionEvidence))) {
             return false;
         }
-        if (this.analysisExceptions != other.analysisExceptions
-                && (this.analysisExceptions == null || !this.analysisExceptions.equals(other.analysisExceptions))) {
-            return false;
-        }
         if ((this.description == null) ? (other.description != null) : !this.description.equals(other.description)) {
             return false;
         }
@@ -582,7 +545,6 @@ public class Dependency implements Comparable<Dependency> {
         hash = 47 * hash + (this.vendorEvidence != null ? this.vendorEvidence.hashCode() : 0);
         hash = 47 * hash + (this.productEvidence != null ? this.productEvidence.hashCode() : 0);
         hash = 47 * hash + (this.versionEvidence != null ? this.versionEvidence.hashCode() : 0);
-        hash = 47 * hash + (this.analysisExceptions != null ? this.analysisExceptions.hashCode() : 0);
         hash = 47 * hash + (this.description != null ? this.description.hashCode() : 0);
         hash = 47 * hash + (this.license != null ? this.license.hashCode() : 0);
         hash = 47 * hash + (this.vulnerabilities != null ? this.vulnerabilities.hashCode() : 0);
