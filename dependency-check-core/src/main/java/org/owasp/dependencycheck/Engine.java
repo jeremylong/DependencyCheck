@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.analyzer.AnalysisPhase;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.AnalyzerService;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.cpe.CpeMemoryIndex;
 import org.owasp.dependencycheck.data.cpe.IndexException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
@@ -321,13 +321,14 @@ public class Engine {
                         try {
                             a.analyze(d, this);
                         } catch (AnalysisException ex) {
-                            d.addAnalysisException(ex);
+                            final String exMsg = String.format("An error occured while analyzing '%s'.", d.getActualFilePath());
+                            Logger.getLogger(Engine.class.getName()).log(Level.WARNING, exMsg);
+                            Logger.getLogger(Engine.class.getName()).log(Level.FINE, "", ex);
                         } catch (Throwable ex) {
                             final String axMsg = String.format("An unexpected error occurred during analysis of '%s'", d.getActualFilePath());
                             final AnalysisException ax = new AnalysisException(axMsg, ex);
-                            d.addAnalysisException(ax);
-                            Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, axMsg);
-                            Logger.getLogger(Engine.class.getName()).log(Level.FINE, axMsg, ex);
+                            Logger.getLogger(Engine.class.getName()).log(Level.WARNING, axMsg);
+                            Logger.getLogger(Engine.class.getName()).log(Level.FINE, "", ex);
                         }
                     }
                 }
