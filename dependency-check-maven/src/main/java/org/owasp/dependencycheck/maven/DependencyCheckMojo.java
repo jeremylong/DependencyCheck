@@ -748,11 +748,11 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     public void execute() throws MojoExecutionException, MojoFailureException {
         final Engine engine = executeDependencyCheck();
         generateExternalReports(engine);
-        if (this.failBuildOnCVSS <= 10) {
-            checkForFailure(engine.getDependencies());
-        }
         if (this.showSummary) {
             showSummary(engine.getDependencies());
+        }
+        if (this.failBuildOnCVSS <= 10) {
+            checkForFailure(engine.getDependencies());
         }
     }
 
@@ -867,9 +867,12 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     private void checkForFailure(List<Dependency> dependencies) throws MojoFailureException {
         final StringBuilder ids = new StringBuilder();
         for (Dependency d : dependencies) {
+            boolean addName = true;
             for (Vulnerability v : d.getVulnerabilities()) {
                 if (v.getCvssScore() >= failBuildOnCVSS) {
-                    if (ids.length() == 0) {
+                    if (addName) {
+                        addName = false;
+                        ids.append(NEW_LINE).append(d.getFileName()).append(": ");
                         ids.append(v.getName());
                     } else {
                         ids.append(", ").append(v.getName());
