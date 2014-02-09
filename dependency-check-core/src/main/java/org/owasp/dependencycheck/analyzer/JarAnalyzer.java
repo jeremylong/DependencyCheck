@@ -768,7 +768,16 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                             } else {
                                 versionEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
                             }
-
+                        } else if (key.equals("build-id")) {
+                            int pos = value.indexOf('(');
+                            if (pos >= 0) {
+                                value = value.substring(0, pos - 1);
+                            }
+                            pos = value.indexOf('[');
+                            if (pos >= 0) {
+                                value = value.substring(0, pos - 1);
+                            }
+                            versionEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
                         } else if (key.contains("title")) {
                             productEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
                             addMatchingValues(classInformation, value, productEvidence);
