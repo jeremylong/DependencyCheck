@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -34,6 +33,7 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.cpe.CpeMemoryIndex;
 import org.owasp.dependencycheck.data.cpe.Fields;
 import org.owasp.dependencycheck.data.cpe.IndexEntry;
