@@ -576,9 +576,9 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             foundSomething = true;
             final String description = interpolateString(pom.getDescription(), pomProperties);
             if (description != null && !description.isEmpty()) {
-                addDescription(dependency, description, "pom", "description");
-                addMatchingValues(classes, description, dependency.getVendorEvidence());
-                addMatchingValues(classes, description, dependency.getProductEvidence());
+                final String trimmedDescription = addDescription(dependency, description, "pom", "description");
+                addMatchingValues(classes, trimmedDescription, dependency.getVendorEvidence());
+                addMatchingValues(classes, trimmedDescription, dependency.getProductEvidence());
             }
         }
 
@@ -826,14 +826,18 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * Adds a description to the given dependency.
+     * Adds a description to the given dependency. If the description contains one of the following strings beyond 100
+     * characters, then the description used will be trimmed to that position:
+     * <ul><li>"such as"</li><li>"like "</li><li>"will use "</li><li>"* uses "</li></ul>
      *
      * @param dependency a dependency
      * @param description the description
      * @param source the source of the evidence
      * @param key the "name" of the evidence
+     * @return if the description is trimmed, the trimmed version is returned; otherwise the original description is
+     * returned
      */
-    private void addDescription(Dependency dependency, String description, String source, String key) {
+    private String addDescription(Dependency dependency, String description, String source, String key) {
         if (dependency.getDescription() == null) {
             dependency.setDescription(description);
         }
@@ -845,29 +849,42 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         }
         dependency.setDescription(desc);
         if (desc.length() > 100) {
+            desc = desc.replaceAll("\\s\\s+", " ");
             final int posSuchAs = desc.toLowerCase().indexOf("such as ", 100);
             final int posLike = desc.toLowerCase().indexOf("like ", 100);
+            final int posWillUse = desc.toLowerCase().indexOf("will use ", 100);
+            final int posUses = desc.toLowerCase().indexOf(" uses ", 100);
             int pos = -1;
-            if (posLike > 0 && posSuchAs > 0) {
-                pos = posLike > posSuchAs ? posLike : posSuchAs;
-            } else if (posLike > 0) {
-                pos = posLike;
-            } else if (posSuchAs > 0) {
-                pos = posSuchAs;
+            pos = Math.max(pos, posSuchAs);
+            if (pos >= 0 && posLike >= 0) {
+                pos = Math.min(pos, posLike);
+            } else {
+                pos = Math.max(pos, posLike);
             }
-            String descToUse = desc;
+            if (pos >= 0 && posWillUse >= 0) {
+                pos = Math.min(pos, posWillUse);
+            } else {
+                pos = Math.max(pos, posWillUse);
+            }
+            if (pos >= 0 && posUses >= 0) {
+                pos = Math.min(pos, posUses);
+            } else {
+                pos = Math.max(pos, posUses);
+            }
+
             if (pos > 0) {
                 final StringBuilder sb = new StringBuilder(pos + 3);
                 sb.append(desc.substring(0, pos));
                 sb.append("...");
-                descToUse = sb.toString();
+                desc = sb.toString();
             }
-            dependency.getProductEvidence().addEvidence(source, key, descToUse, Confidence.LOW);
-            dependency.getVendorEvidence().addEvidence(source, key, descToUse, Confidence.LOW);
+            dependency.getProductEvidence().addEvidence(source, key, desc, Confidence.LOW);
+            dependency.getVendorEvidence().addEvidence(source, key, desc, Confidence.LOW);
         } else {
             dependency.getProductEvidence().addEvidence(source, key, desc, Confidence.MEDIUM);
             dependency.getVendorEvidence().addEvidence(source, key, desc, Confidence.MEDIUM);
         }
+        return desc;
     }
 
     /**
