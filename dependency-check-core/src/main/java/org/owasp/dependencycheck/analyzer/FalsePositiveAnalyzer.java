@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -31,6 +30,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
@@ -281,6 +281,9 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                     itr.remove();
                 } else if (i.getValue().startsWith("cpe:/a:apache:maven")
                         && !dependency.getFileName().toLowerCase().matches("maven-core-[\\d\\.]+\\.jar")) {
+                    itr.remove();
+                } else if (i.getValue().startsWith("cpe:/a:m-core:m-core")
+                        && !dependency.getEvidenceUsed().containsUsedString("m-core")) {
                     itr.remove();
                 }
             }
