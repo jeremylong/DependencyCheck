@@ -636,5 +636,40 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <!-- The following profile adds additional
+            dependencies that are only used during testing.
+            Additionally, these are only added when using "allTests" to
+            make the build slightly faster in most cases. -->
+            <id>False Positive Tests</id>
+            <!--activation>
+                <property>
+                    <name>allTests</name>
+                </property>
+            </activation-->
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                    <artifactId>batik-util</artifactId>
+                    <version>1.7</version>
+                    <scope>provided</scope>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>com.thoughtworks.xstream</groupId>
+                    <artifactId>xstream</artifactId>
+                    <version>1.4.2</version>
+                    <scope>provided</scope>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.ws.security</groupId>
+                    <artifactId>wss4j</artifactId>
+                    <version>1.5.7</version>
+                    <scope>provided</scope>
+                    <optional>true</optional>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 </project>
