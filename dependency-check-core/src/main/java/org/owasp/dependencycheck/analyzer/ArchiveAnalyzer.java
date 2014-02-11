@@ -96,6 +96,14 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
+     * Add a list of file EXTENSIONS to be supported by this analyzer.
+     *
+     */
+    public void addSupportedExtensions(Set<String> extraExtensions) {
+        EXTENSIONS.addAll(extraExtensions);
+    }
+
+    /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
      *
      * @return a list of file EXTENSIONS supported by this analyzer.

@@ -21,10 +21,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.cli.ParseException;
+import org.owasp.dependencycheck.analyzer.Analyzer;
+import org.owasp.dependencycheck.analyzer.ArchiveAnalyzer;
 import org.owasp.dependencycheck.cli.CliParser;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -83,7 +87,7 @@ public class App {
             cli.printVersionInfo();
         } else if (cli.isRunScan()) {
             updateSettings(cli);
-            runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles());
+            runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles(), cli.getExtraExtensions());
         } else {
             cli.printHelp();
         }
@@ -97,8 +101,13 @@ public class App {
      * @param applicationName the application name for the report
      * @param files the files/directories to scan
      */
-    private void runScan(String reportDirectory, String outputFormat, String applicationName, String[] files) {
+    private void runScan(String reportDirectory, String outputFormat, String applicationName, String[] files, String extraExtensions) {
         final Engine scanner = new Engine();
+
+        if (extraExtensions != null && ! extraExtensions.isEmpty())
+            for (Analyzer analyzer : scanner.getAnalyzers())
+                if (analyzer instanceof ArchiveAnalyzer)
+                    ((ArchiveAnalyzer)analyzer).addSupportedExtensions(new HashSet<String>(Arrays.asList(extraExtensions.split("\\s*,\\s*"))));
 
         for (String file : files) {
             scanner.scan(file);
@@ -155,6 +164,7 @@ public class App {
         final String connectionString = cli.getConnectionString();
         final String databaseUser = cli.getDatabaseUser();
         final String databasePassword = cli.getDatabasePassword();
+        final String extraExtensions = cli.getExtraExtensions();
 
         if (propertiesFile != null) {
             try {
@@ -219,6 +229,9 @@ public class App {
         }
         if (databasePassword != null && !databasePassword.isEmpty()) {
             Settings.setString(Settings.KEYS.DB_PASSWORD, databasePassword);
+        }
+        if (extraExtensions!= null && !extraExtensions.isEmpty()) {
+            Settings.setString(Settings.KEYS.EXTRA_EXTENSIONS, extraExtensions);
         }
     }
 }

@@ -204,6 +204,10 @@ public final class CliParser {
                 .withDescription("The url to the Nexus Server.")
                 .create();
 
+        final Option extraExtensions = OptionBuilder.withArgName("extraExtensions").hasArg().withLongOpt(ArgumentName.EXTRA_EXTENSIONS)
+                .withDescription("List of extra extensions to be scanned")
+                .create();
+
         //This is an option group because it can be specified more then once.
         final OptionGroup og = new OptionGroup();
         og.addOption(path);
@@ -220,7 +224,8 @@ public final class CliParser {
                 .addOption(verboseLog)
                 .addOption(suppressionFile)
                 .addOption(disableNexusAnalyzer)
-                .addOption(nexusUrl);
+                .addOption(nexusUrl)
+                .addOption(extraExtensions);
     }
 
     /**
@@ -549,6 +554,15 @@ public final class CliParser {
     }
 
     /**
+     * Returns the extra Extensions if specified; otherwise null is returned.
+     *
+     * @return the extra Extensions; otherwise null is returned
+     */
+    public String getExtraExtensions() {
+        return line.getOptionValue(ArgumentName.EXTRA_EXTENSIONS);
+    }
+
+    /**
      * A collection of static final strings that represent the possible command line arguments.
      */
     public static class ArgumentName {
@@ -701,5 +715,9 @@ public final class CliParser {
          * The CLI argument name for setting the path to the database driver; in case it is not on the class path.
          */
         public static final String DB_DRIVER_PATH = "dbDriverPath";
+        /**
+         * The CLI argument name for setting extra extensions.
+         */
+        public static final String EXTRA_EXTENSIONS = "extraExtension";
     }
 }
