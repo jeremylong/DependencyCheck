@@ -17,12 +17,15 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -65,6 +68,20 @@ class DriverShim implements Driver {
     }
 
     /**
+     * Wraps the call to the underlying driver's connect method.
+     *
+     * @param url the URL of the database
+     * @param info a collection of string/value pairs
+     * @return a Connection object
+     * @throws SQLException thrown if there is an error connecting to the database
+     * @see java.sql.Driver#connect(java.lang.String, java.util.Properties)
+     */
+    @Override
+    public Connection connect(String url, Properties info) throws SQLException {
+        return this.driver.connect(url, info);
+    }
+
+    /**
      * Returns the wrapped driver's major version number.
      *
      * @return the wrapped driver's major version number
@@ -87,28 +104,33 @@ class DriverShim implements Driver {
     }
 
     /**
-     * Returns whether or not the wrapped driver is jdbcCompliant.
+     * Wraps the call to the underlying driver's getParentLogger method.
      *
-     * @return true if the wrapped driver is JDBC compliant; otherwise false
-     * @see java.sql.Driver#jdbcCompliant()
+     * @return the parent's Logger
+     * @throws SQLFeatureNotSupportedException thrown if the feature is not supported
+     * @see java.sql.Driver#getParentLogger()
      */
-    @Override
-    public boolean jdbcCompliant() {
-        return this.driver.jdbcCompliant();
-    }
-
-    /**
-     * Wraps the call to the underlying driver's connect method.
-     *
-     * @param url the URL of the database
-     * @param info a collection of string/value pairs
-     * @return a Connection object
-     * @throws SQLException thrown if there is an error connecting to the database
-     * @see java.sql.Driver#connect(java.lang.String, java.util.Properties)
-     */
-    @Override
-    public Connection connect(String url, Properties info) throws SQLException {
-        return this.driver.connect(url, info);
+    //@Override
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        //return driver.getParentLogger();
+        Method m = null;
+        try {
+            m = driver.getClass().getMethod("getParentLogger");
+        } catch (Exception e) {
+            throw new SQLFeatureNotSupportedException();
+        }
+        if (m != null) {
+            try {
+                return (Logger) m.invoke(m);
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(DriverShim.class.getName()).log(Level.FINER, null, ex);
+            } catch (IllegalArgumentException ex) {
+                Logger.getLogger(DriverShim.class.getName()).log(Level.FINER, null, ex);
+            } catch (InvocationTargetException ex) {
+                Logger.getLogger(DriverShim.class.getName()).log(Level.FINER, null, ex);
+            }
+        }
+        throw new SQLFeatureNotSupportedException();
     }
 
     /**
@@ -126,15 +148,14 @@ class DriverShim implements Driver {
     }
 
     /**
-     * Wraps the call to the underlying driver's getParentLogger method.
+     * Returns whether or not the wrapped driver is jdbcCompliant.
      *
-     * @return the parent's Logger
-     * @throws SQLFeatureNotSupportedException thrown if the feature is not supported
-     * @see java.sql.Driver#getParentLogger()
+     * @return true if the wrapped driver is JDBC compliant; otherwise false
+     * @see java.sql.Driver#jdbcCompliant()
      */
     @Override
-    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        return this.driver.getParentLogger();
+    public boolean jdbcCompliant() {
+        return this.driver.jdbcCompliant();
     }
 
     /**
