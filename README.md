@@ -29,7 +29,7 @@ On Windows
 
 ### Maven Plugin
 
-More detailed instructions can be found on the [dependency-check-maven github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-maven/installation.html).
+More detailed instructions can be found on the [dependency-check-maven github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-maven/usage.html).
 The plugin can be configured using the following:
 
 ```xml
