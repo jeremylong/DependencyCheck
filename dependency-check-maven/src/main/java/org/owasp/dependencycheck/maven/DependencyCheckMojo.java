@@ -77,10 +77,6 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      */
     private static final String LOG_PROPERTIES_FILE = "log.properties";
     /**
-     * The name of the test scope.
-     */
-    public static final String TEST_SCOPE = "test";
-    /**
      * System specific new line character.
      */
     private static final String NEW_LINE = System.getProperty("line.separator", "\n").intern();
