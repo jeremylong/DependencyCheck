@@ -248,7 +248,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         final Engine engine = new Engine();
         final Set<Artifact> artifacts = project.getArtifacts();
         for (Artifact a : artifacts) {
-            if (!TEST_SCOPE.equals(a.getScope())) {
+            if (!Artifact.SCOPE_TEST.equals(a.getScope()) && !Artifact.SCOPE_PROVIDED.equals(a.getScope()) && !Artifact.SCOPE_RUNTIME.equals(a.getScope())) {
                 engine.scan(a.getFile().getAbsolutePath());
             }
         }
