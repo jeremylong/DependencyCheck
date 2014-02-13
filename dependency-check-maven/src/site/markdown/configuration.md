@@ -22,3 +22,4 @@ databaseDriverPath    | The path to the database driver JAR file; only used if t
 connectionString      | The connection string used to connect to the database. |
 databaseUser          | The username used when connecting to the database. |
 databasePassword      | The password used when connecting to the database. |
+extraExtensions      | List of extra extensions to be scanned. |

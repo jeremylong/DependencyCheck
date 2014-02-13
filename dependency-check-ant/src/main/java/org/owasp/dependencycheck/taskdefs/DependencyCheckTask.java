@@ -20,6 +20,8 @@ package org.owasp.dependencycheck.taskdefs;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +34,8 @@ import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.FileProvider;
 import org.apache.tools.ant.types.resources.Resources;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.Analyzer;
+import org.owasp.dependencycheck.analyzer.ArchiveAnalyzer;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
@@ -616,6 +620,30 @@ public class DependencyCheckTask extends Task {
         this.databasePassword = databasePassword;
     }
 
+    /**
+     * File extensions to add to analysis next to jar, zip, ....
+     */
+    private String extraExtensions;
+
+    /**
+     * Get the value of extraExtensions.
+     *
+     * @return the value of extraExtensions
+     */
+    public String getExtraExtensions() {
+        return extraExtensions;
+    }
+
+    /**
+     * Set the value of extraExtensions.
+     *
+     * @param extraExtensions new value of extraExtensions
+     */
+    public void setExtraExtensions(String extraExtensions) {
+        this.extraExtensions = extraExtensions;
+    }
+
+
     @Override
     public void execute() throws BuildException {
         final InputStream in = DependencyCheckTask.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
@@ -626,6 +654,12 @@ public class DependencyCheckTask extends Task {
         populateSettings();
 
         final Engine engine = new Engine();
+
+        if (extraExtensions != null && ! extraExtensions.isEmpty())
+            for (Analyzer analyzer : engine.getAnalyzers())
+                if (analyzer instanceof ArchiveAnalyzer)
+                    ((ArchiveAnalyzer)analyzer).addSupportedExtensions(new HashSet<String>(Arrays.asList(extraExtensions.split("\\s*,\\s*"))));
+
         for (Resource resource : path) {
             final FileProvider provider = resource.as(FileProvider.class);
             if (provider != null) {

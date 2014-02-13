@@ -149,6 +149,10 @@ public final class Settings {
          * The path to mono, if available.
          */
         public static final String ANALYZER_ASSEMBLY_MONO_PATH = "analyzer.assembly.mono.path";
+        /**
+         * The extra extensions, if available.
+         */
+        public static final String EXTRA_EXTENSIONS = "extra.extensions";
     }
     /**
      * The properties file location.
