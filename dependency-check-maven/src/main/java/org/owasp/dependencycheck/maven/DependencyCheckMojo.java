@@ -23,10 +23,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.DateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.maven.artifact.Artifact;
@@ -45,6 +42,8 @@ import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.Analyzer;
+import org.owasp.dependencycheck.analyzer.ArchiveAnalyzer;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
@@ -76,10 +75,6 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * Name of the logging properties file.
      */
     private static final String LOG_PROPERTIES_FILE = "log.properties";
-    /**
-     * The name of the test scope.
-     */
-    public static final String TEST_SCOPE = "test";
     /**
      * System specific new line character.
      */
@@ -233,7 +228,11 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @Parameter(property = "databasePassword", defaultValue = "", required = false)
     private String databasePassword;
     // </editor-fold>
-
+    /**
+     * File extensions to add to analysis next to jar, zip, ....
+     */
+    @Parameter(property = "extraExtensions", required = false)
+    private String[] extraExtensions;
     /**
      * Executes the Dependency-Check on the dependent libraries.
      *
@@ -246,9 +245,16 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
 
         populateSettings();
         final Engine engine = new Engine();
+
+        if (extraExtensions != null) {
+            for (Analyzer analyzer : engine.getAnalyzers())
+              if (analyzer instanceof ArchiveAnalyzer)
+                  ((ArchiveAnalyzer)analyzer).addSupportedExtensions(new HashSet<String>(Arrays.asList(extraExtensions)));
+        }
+
         final Set<Artifact> artifacts = project.getArtifacts();
         for (Artifact a : artifacts) {
-            if (!TEST_SCOPE.equals(a.getScope())) {
+            if (!Artifact.SCOPE_TEST.equals(a.getScope()) && !Artifact.SCOPE_PROVIDED.equals(a.getScope()) && !Artifact.SCOPE_RUNTIME.equals(a.getScope())) {
                 engine.scan(a.getFile().getAbsolutePath());
             }
         }
