@@ -285,6 +285,9 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                 } else if (i.getValue().startsWith("cpe:/a:m-core:m-core")
                         && !dependency.getEvidenceUsed().containsUsedString("m-core")) {
                     itr.remove();
+                } else if (i.getValue().startsWith("cpe:/a:jboss:jboss")
+                        && !dependency.getFileName().toLowerCase().matches("jboss-[\\d\\.]+(GA)?\\.jar")) {
+                    itr.remove();
                 }
             }
         }
