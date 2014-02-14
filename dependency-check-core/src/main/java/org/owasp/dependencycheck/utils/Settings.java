@@ -164,7 +164,7 @@ public final class Settings {
         /**
          * The properties key for whether Provided Scope dependencies should be skipped.
          */
-        public static final String SKIP_PROVIDED_SCOPE = "skip.provide.scope";
+        public static final String SKIP_PROVIDED_SCOPE = "skip.provided.scope";
     }
     /**
      * The properties file location.
