@@ -204,8 +204,10 @@ public final class CliParser {
                 .withDescription("The url to the Nexus Server.")
                 .create();
 
-        final Option extraExtensions = OptionBuilder.withArgName("extraExtensions").hasArg().withLongOpt(ArgumentName.EXTRA_EXTENSIONS)
-                .withDescription("List of extra extensions to be scanned")
+        final Option additionalZipExtensions = OptionBuilder.withArgName("extensions").hasArg()
+                .withLongOpt(ArgumentName.ADDITIONAL_ZIP_EXTENSIONS)
+                .withDescription("A comma seperated list of additional extensions to be scanned as ZIP files "
+                        + "(ZIP, EAR, WAR are already treated as zip files)")
                 .create();
 
         //This is an option group because it can be specified more then once.
@@ -225,7 +227,7 @@ public final class CliParser {
                 .addOption(suppressionFile)
                 .addOption(disableNexusAnalyzer)
                 .addOption(nexusUrl)
-                .addOption(extraExtensions);
+                .addOption(additionalZipExtensions);
     }
 
     /**
@@ -554,12 +556,12 @@ public final class CliParser {
     }
 
     /**
-     * Returns the extra Extensions if specified; otherwise null is returned.
+     * Returns the additional Extensions if specified; otherwise null is returned.
      *
-     * @return the extra Extensions; otherwise null is returned
+     * @return the additional Extensions; otherwise null is returned
      */
-    public String getExtraExtensions() {
-        return line.getOptionValue(ArgumentName.EXTRA_EXTENSIONS);
+    public String getAdditionalZipExtensions() {
+        return line.getOptionValue(ArgumentName.ADDITIONAL_ZIP_EXTENSIONS);
     }
 
     /**
@@ -718,6 +720,6 @@ public final class CliParser {
         /**
          * The CLI argument name for setting extra extensions.
          */
-        public static final String EXTRA_EXTENSIONS = "extraExtension";
+        public static final String ADDITIONAL_ZIP_EXTENSIONS = "zipExtensions";
     }
 }
