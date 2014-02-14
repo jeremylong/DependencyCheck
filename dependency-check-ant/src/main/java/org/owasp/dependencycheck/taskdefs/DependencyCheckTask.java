@@ -20,8 +20,6 @@ package org.owasp.dependencycheck.taskdefs;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,8 +32,6 @@ import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.FileProvider;
 import org.apache.tools.ant.types.resources.Resources;
 import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.analyzer.Analyzer;
-import org.owasp.dependencycheck.analyzer.ArchiveAnalyzer;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
@@ -621,28 +617,28 @@ public class DependencyCheckTask extends Task {
     }
 
     /**
-     * File extensions to add to analysis next to jar, zip, ....
+     * Additional ZIP File extensions to add analyze. This should be a comma-separated list of file extensions to treat
+     * like ZIP files.
      */
-    private String extraExtensions;
+    private String zipExtensions;
 
     /**
-     * Get the value of extraExtensions.
+     * Get the value of zipExtensions.
      *
-     * @return the value of extraExtensions
+     * @return the value of zipExtensions
      */
-    public String getExtraExtensions() {
-        return extraExtensions;
+    public String getZipExtensions() {
+        return zipExtensions;
     }
 
     /**
-     * Set the value of extraExtensions.
+     * Set the value of zipExtensions.
      *
-     * @param extraExtensions new value of extraExtensions
+     * @param zipExtensions new value of zipExtensions
      */
-    public void setExtraExtensions(String extraExtensions) {
-        this.extraExtensions = extraExtensions;
+    public void setZipExtensions(String zipExtensions) {
+        this.zipExtensions = zipExtensions;
     }
-
 
     @Override
     public void execute() throws BuildException {
@@ -654,11 +650,6 @@ public class DependencyCheckTask extends Task {
         populateSettings();
 
         final Engine engine = new Engine();
-
-        if (extraExtensions != null && ! extraExtensions.isEmpty())
-            for (Analyzer analyzer : engine.getAnalyzers())
-                if (analyzer instanceof ArchiveAnalyzer)
-                    ((ArchiveAnalyzer)analyzer).addSupportedExtensions(new HashSet<String>(Arrays.asList(extraExtensions.split("\\s*,\\s*"))));
 
         for (Resource resource : path) {
             final FileProvider provider = resource.as(FileProvider.class);
@@ -785,6 +776,9 @@ public class DependencyCheckTask extends Task {
         }
         if (databasePassword != null && !databasePassword.isEmpty()) {
             Settings.setString(Settings.KEYS.DB_PASSWORD, databasePassword);
+        }
+        if (zipExtensions != null && !zipExtensions.isEmpty()) {
+            Settings.setString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
         }
     }
 

@@ -42,6 +42,6 @@ databaseDriverPath    | The path to the database driver JAR file; only used if t
 connectionString      | The connection string used to connect to the database. | Optional
 databaseUser          | The username used when connecting to the database. | Optional
 databasePassword      | The password used when connecting to the database. | Optional
-extraExtensions       | List of extra extensions to be scanned, comma separated. | Optional
+zipExtensions         | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | Optional
 
 

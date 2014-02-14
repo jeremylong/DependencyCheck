@@ -150,9 +150,9 @@ public final class Settings {
          */
         public static final String ANALYZER_ASSEMBLY_MONO_PATH = "analyzer.assembly.mono.path";
         /**
-         * The extra extensions, if available.
+         * The additional configured zip file extensions, if available.
          */
-        public static final String EXTRA_EXTENSIONS = "extra.extensions";
+        public static final String ADDITIONAL_ZIP_EXTENSIONS = "extensions.zip";
     }
     /**
      * The properties file location.

@@ -17,8 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -27,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +41,8 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import org.h2.store.fs.FileUtils;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -88,19 +89,18 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
      */
     private static final Set<String> ZIPPABLES = newHashSet("zip", "ear", "war", "nupkg");
     /**
-     * The set of file extensions supported by this analyzer.
+     * The set of file extensions supported by this analyzer. Note for developers, any additions to this list will need
+     * to be explicitly handled in extractFiles().
      */
     private static final Set<String> EXTENSIONS = newHashSet("tar", "gz", "tgz");
-    static {
-      EXTENSIONS.addAll(ZIPPABLES);
-    }
 
-    /**
-     * Add a list of file EXTENSIONS to be supported by this analyzer.
-     *
-     */
-    public void addSupportedExtensions(Set<String> extraExtensions) {
-        EXTENSIONS.addAll(extraExtensions);
+    static {
+        String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
+        if (additionalZipExt != null) {
+            HashSet ext = new HashSet<String>(Arrays.asList(additionalZipExt));
+            ZIPPABLES.addAll(ext);
+        }
+        EXTENSIONS.addAll(ZIPPABLES);
     }
 
     /**
