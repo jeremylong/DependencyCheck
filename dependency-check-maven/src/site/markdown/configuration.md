@@ -15,11 +15,14 @@ proxyUrl             | The Proxy URL.                     |
 proxyPort            | The Proxy Port.                    |
 proxyUsername        | Defines the proxy user name.       |
 proxyPassword        | Defines the proxy password.        |
-nexusAnalyzerEnabled | The connection timeout used when downloading data files from the Internet. |
-nexusUrl             | The connection timeout used when downloading data files from the Internet. |
+nexusAnalyzerEnabled | Sets whether Nexus Analyzer will be used. |
+nexusUrl             | Defines the Nexus URL. |
 databaseDriverName   | The name of the database driver. Example: org.h2.Driver. |
 databaseDriverPath   | The path to the database driver JAR file; only used if the driver is not in the class path. |
 connectionString     | The connection string used to connect to the database. |
 databaseUser         | The username used when connecting to the database. |
 databasePassword     | The password used when connecting to the database. |
 zipExtensions        | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. |
+skipTestScope | Should be skip analysis for artifacts with Test Scope (default: true) |
+skipProvidedScope | Should be skip analysis for artifacts with Provided Scope (default: false) |
+skipRuntimeScope | Should be skip analysis for artifacts with Runtime Scope (default: false) |
