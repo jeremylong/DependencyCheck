@@ -103,3 +103,36 @@ Create the dependency-check report within the site
     ...
 </project>
 ```
+Example 4:
+---------------------
+Create the DependencyCheck-report.html and skip artifacts no bundled in distribution (Provided and Runtime scope)
+
+```xml
+<project>
+    <build>
+        <plugins>
+            ...
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <skipProvidedScope>true</skipProvidedScope>
+                    <skipRuntimeScope>true</skipRuntimeScope>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            ...
+        </plugins>
+        ...
+    </build>
+    ...
+</project>
+```
+

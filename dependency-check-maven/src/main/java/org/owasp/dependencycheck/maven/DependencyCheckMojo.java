@@ -233,6 +233,23 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      */
     @Parameter(property = "zipExtensions", required = false)
     private String zipExtensions;
+    /**
+     * Skip Analisys for Test Scope Dependencies
+     */
+    @Parameter(property = "skipTestScope", defaultValue = "true", required = false)
+    private boolean skipTestScope = true;
+    /**
+     * Skip Analisys for Runtime Scope Dependencies
+     */
+    @Parameter(property = "skipRuntimeScope", defaultValue = "false", required = false)
+    private boolean skipRuntimeScope = false;
+    /**
+     * Skip Analisys for Provided Scope Dependencies
+     */
+    @Parameter(property = "skipProvidedScope", defaultValue = "false", required = false)
+    private boolean skipProvidedScope = false;
+
+
     // </editor-fold>
     /**
      * Executes the Dependency-Check on the dependent libraries.
@@ -248,9 +265,16 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         final Engine engine = new Engine();
         final Set<Artifact> artifacts = project.getArtifacts();
         for (Artifact a : artifacts) {
-            if (!Artifact.SCOPE_TEST.equals(a.getScope()) && !Artifact.SCOPE_PROVIDED.equals(a.getScope()) && !Artifact.SCOPE_RUNTIME.equals(a.getScope())) {
+            if (skipTestScope && Artifact.SCOPE_TEST.equals(a.getScope()))
+                    continue;
+
+            if (skipProvidedScope && Artifact.SCOPE_PROVIDED.equals(a.getScope()))
+                continue;
+
+            if (skipRuntimeScope && !Artifact.SCOPE_RUNTIME.equals(a.getScope()))
+                continue;
+
                 engine.scan(a.getFile().getAbsolutePath());
-            }
         }
         engine.analyzeDependencies();
         return engine;
@@ -710,6 +734,9 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         if (zipExtensions != null && !zipExtensions.isEmpty()) {
             Settings.setString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
         }
+        Settings.setBoolean(Settings.KEYS.SKIP_TEST_SCOPE, skipTestScope);
+        Settings.setBoolean(Settings.KEYS.SKIP_RUNTIME_SCOPE, skipRuntimeScope);
+        Settings.setBoolean(Settings.KEYS.SKIP_PROVIDED_SCOPE, skipProvidedScope);
     }
 
     /**
