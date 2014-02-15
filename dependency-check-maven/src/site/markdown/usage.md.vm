@@ -135,4 +135,38 @@ Create the DependencyCheck-report.html and skip artifacts no bundled in distribu
     ...
 </project>
 ```
+Example 5:
+---------------------
+Create the DependencyCheck-report.html and use internal mirroring of CVE contents
+
+```xml
+<project>
+    <build>
+        <plugins>
+            ...
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <cveUrl12Modified>http://internal-mirror.mycorp.com/downloads/nist/nvdcve-modified.xml</cveUrl12Modified>
+                    <cveUrl20Modified>http://internal-mirror.mycorp.com/downloads/nist/nvdcve-2.0-modified.xml</cveUrl20Modified>
+                    <cveUrl12Base>http://internal-mirror.mycorp.com/downloads/nist/nvdcve-%d.xml</cveUrl12Base>
+                    <cveUrl20Base>http://internal-mirror.mycorp.com/downloads/nist/nvdcve-2.0-%d.xml</cveUrl20Base>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            ...
+        </plugins>
+        ...
+    </build>
+    ...
+</project>
+```
 

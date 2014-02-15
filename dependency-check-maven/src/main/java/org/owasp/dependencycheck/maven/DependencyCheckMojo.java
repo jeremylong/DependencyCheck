@@ -248,7 +248,31 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      */
     @Parameter(property = "skipProvidedScope", defaultValue = "false", required = false)
     private boolean skipProvidedScope = false;
-
+    /**
+     * The data directory, hold DC SQL DB.
+     */
+    @Parameter(property = "dataDirectory", defaultValue = "", required = false)
+    private String dataDirectory;
+    /**
+     * Data Mirror URL for CVE 1.2
+     */
+    @Parameter(property = "cveUrl12Modified", defaultValue = "", required = false)
+    private String cveUrl12Modified;
+    /**
+     * Data Mirror URL for CVE 2.0
+     */
+    @Parameter(property = "cveUrl20Modified", defaultValue = "", required = false)
+    private String cveUrl20Modified;
+    /**
+     * Base Data Mirror URL for CVE 1.2
+     */
+    @Parameter(property = "cveUrl12Base", defaultValue = "", required = false)
+    private String cveUrl12Base;
+    /**
+     * Data Mirror URL for CVE 2.0
+     */
+    @Parameter(property = "cveUrl20Base", defaultValue = "", required = false)
+    private String cveUrl20Base;
 
     // </editor-fold>
     /**
@@ -265,16 +289,19 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         final Engine engine = new Engine();
         final Set<Artifact> artifacts = project.getArtifacts();
         for (Artifact a : artifacts) {
-            if (skipTestScope && Artifact.SCOPE_TEST.equals(a.getScope()))
-                    continue;
-
-            if (skipProvidedScope && Artifact.SCOPE_PROVIDED.equals(a.getScope()))
+            if (skipTestScope && Artifact.SCOPE_TEST.equals(a.getScope())) {
                 continue;
+            }
 
-            if (skipRuntimeScope && !Artifact.SCOPE_RUNTIME.equals(a.getScope()))
+            if (skipProvidedScope && Artifact.SCOPE_PROVIDED.equals(a.getScope())) {
                 continue;
+            }
 
-                engine.scan(a.getFile().getAbsolutePath());
+            if (skipRuntimeScope && !Artifact.SCOPE_RUNTIME.equals(a.getScope())) {
+                continue;
+            }
+
+            engine.scan(a.getFile().getAbsolutePath());
         }
         engine.analyzeDependencies();
         return engine;
@@ -734,9 +761,30 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         if (zipExtensions != null && !zipExtensions.isEmpty()) {
             Settings.setString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
         }
+
+        // Scope Exclusion
         Settings.setBoolean(Settings.KEYS.SKIP_TEST_SCOPE, skipTestScope);
         Settings.setBoolean(Settings.KEYS.SKIP_RUNTIME_SCOPE, skipRuntimeScope);
         Settings.setBoolean(Settings.KEYS.SKIP_PROVIDED_SCOPE, skipProvidedScope);
+
+        // Data Directory
+        if (dataDirectory != null && !dataDirectory.isEmpty()) {
+            Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
+        }
+
+        // CVE Data Mirroring
+        if (cveUrl12Modified != null && !cveUrl12Modified.isEmpty()) {
+            Settings.setString(Settings.KEYS.CVE_MODIFIED_12_URL, cveUrl12Modified);
+        }
+        if (cveUrl20Modified != null && !cveUrl20Modified.isEmpty()) {
+            Settings.setString(Settings.KEYS.CVE_MODIFIED_20_URL, cveUrl20Modified);
+        }
+        if (cveUrl12Base != null && !cveUrl12Base.isEmpty()) {
+            Settings.setString(Settings.KEYS.CVE_SCHEMA_1_2, cveUrl12Base);
+        }
+        if (cveUrl20Base != null && !cveUrl20Base.isEmpty()) {
+            Settings.setString(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
+        }
     }
 
     /**

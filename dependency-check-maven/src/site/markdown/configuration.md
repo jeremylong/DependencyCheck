@@ -23,6 +23,11 @@ connectionString     | The connection string used to connect to the database. |
 databaseUser         | The username used when connecting to the database. |
 databasePassword     | The password used when connecting to the database. |
 zipExtensions        | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. |
-skipTestScope | Should be skip analysis for artifacts with Test Scope (default: true) |
-skipProvidedScope | Should be skip analysis for artifacts with Provided Scope (default: false) |
-skipRuntimeScope | Should be skip analysis for artifacts with Runtime Scope (default: false) |
+skipTestScope | Should be skip analysis for artifacts with Test Scope | true
+skipProvidedScope | Should be skip analysis for artifacts with Provided Scope | false
+skipRuntimeScope | Should be skip analysis for artifacts with Runtime Scope | false
+dataDirectory | Data directory to hold SQL CVEs contents. This should generally not be changed. |
+cveUrl12Modified | URL for the modified CVE 1.2 | http://nvd.nist.gov/download/nvdcve-modified.xml
+cveUrl20Modified | URL for the modified CVE 2.0 | http://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-modified.xml
+cveUrl12Base | Base URL for each year's CVE 1.2, the %d will be replaced with the year | http://nvd.nist.gov/download/nvdcve-%d.xml
+cveUrl20Base | Base URL for each year's CVE 2.0, the %d will be replaced with the year | http://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-%d.xml
