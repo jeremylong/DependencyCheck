@@ -640,6 +640,98 @@ public class DependencyCheckTask extends Task {
         this.zipExtensions = zipExtensions;
     }
 
+    /**
+     * The url for the modified NVD CVE (1.2 schema).
+     */
+    private String cveUrl12Modified;
+
+    /**
+     * Get the value of cveUrl12Modified.
+     *
+     * @return the value of cveUrl12Modified
+     */
+    public String getCveUrl12Modified() {
+        return cveUrl12Modified;
+    }
+
+    /**
+     * Set the value of cveUrl12Modified.
+     *
+     * @param cveUrl12Modified new value of cveUrl12Modified
+     */
+    public void setCveUrl12Modified(String cveUrl12Modified) {
+        this.cveUrl12Modified = cveUrl12Modified;
+    }
+
+    /**
+     * The url for the modified NVD CVE (2.0 schema).
+     */
+    private String cveUrl20Modified;
+
+    /**
+     * Get the value of cveUrl20Modified.
+     *
+     * @return the value of cveUrl20Modified
+     */
+    public String getCveUrl20Modified() {
+        return cveUrl20Modified;
+    }
+
+    /**
+     * Set the value of cveUrl20Modified.
+     *
+     * @param cveUrl20Modified new value of cveUrl20Modified
+     */
+    public void setCveUrl20Modified(String cveUrl20Modified) {
+        this.cveUrl20Modified = cveUrl20Modified;
+    }
+
+    /**
+     * Base Data Mirror URL for CVE 1.2.
+     */
+    private String cveUrl12Base;
+
+    /**
+     * Get the value of cveUrl12Base.
+     *
+     * @return the value of cveUrl12Base
+     */
+    public String getCveUrl12Base() {
+        return cveUrl12Base;
+    }
+
+    /**
+     * Set the value of cveUrl12Base.
+     *
+     * @param cveUrl12Base new value of cveUrl12Base
+     */
+    public void setCveUrl12Base(String cveUrl12Base) {
+        this.cveUrl12Base = cveUrl12Base;
+    }
+
+    /**
+     * Data Mirror URL for CVE 2.0.
+     */
+    private String cveUrl20Base;
+
+    /**
+     * Get the value of cveUrl20Base.
+     *
+     * @return the value of cveUrl20Base
+     */
+    public String getCveUrl20Base() {
+        return cveUrl20Base;
+    }
+
+    /**
+     * Set the value of cveUrl20Base.
+     *
+     * @param cveUrl20Base new value of cveUrl20Base
+     */
+    public void setCveUrl20Base(String cveUrl20Base) {
+        this.cveUrl20Base = cveUrl20Base;
+    }
+
     @Override
     public void execute() throws BuildException {
         final InputStream in = DependencyCheckTask.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
@@ -779,6 +871,18 @@ public class DependencyCheckTask extends Task {
         }
         if (zipExtensions != null && !zipExtensions.isEmpty()) {
             Settings.setString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
+        }
+        if (cveUrl12Modified != null && !cveUrl12Modified.isEmpty()) {
+            Settings.setString(Settings.KEYS.CVE_MODIFIED_12_URL, cveUrl12Modified);
+        }
+        if (cveUrl20Modified != null && !cveUrl20Modified.isEmpty()) {
+            Settings.setString(Settings.KEYS.CVE_MODIFIED_20_URL, cveUrl20Modified);
+        }
+        if (cveUrl12Base != null && !cveUrl12Base.isEmpty()) {
+            Settings.setString(Settings.KEYS.CVE_SCHEMA_1_2, cveUrl12Base);
+        }
+        if (cveUrl20Base != null && !cveUrl20Base.isEmpty()) {
+            Settings.setString(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
         }
     }
 
