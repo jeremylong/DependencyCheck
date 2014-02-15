@@ -17,12 +17,18 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import org.mortbay.log.Log;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+
 import java.io.File;
+
 import org.junit.After;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
+
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.dependency.Confidence;
@@ -46,9 +52,14 @@ public class AssemblyAnalyzerTest {
      * @throws Exception if anything goes sideways
      */
     @Before
-    public void setUp() throws Exception {
-        analyzer = new AssemblyAnalyzer();
-        analyzer.initialize();
+    public void setUp()  {
+        try {
+            analyzer = new AssemblyAnalyzer();
+            analyzer.initialize();
+        } catch (Exception e) {
+            Log.warn("Exception setting up AssemblyAnalyzer. Tests will be incomplete");
+            Assume.assumeNoException("Is mono installed? TESTS WILL BE INCOMPLETE", e);
+        }
     }
 
     /**
