@@ -66,13 +66,14 @@ public final class ConnectionFactory {
      */
     public static Connection getConnection() throws DatabaseException {
         Connection conn = null;
+        String connStr = null;
+        final String user = Settings.getString(Settings.KEYS.DB_USER, "dcuser");
+        //yes, yes - hard-coded password - only if there isn't one in the properties file.
+        final String pass = Settings.getString(Settings.KEYS.DB_PASSWORD, "DC-Pass1337!");
         try {
-            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Loading database connection");
+            connStr = getConnectionString();
 
-            final String connStr = getConnectionString();
-            final String user = Settings.getString(Settings.KEYS.DB_USER, "dcuser");
-            //yes, yes - hard-coded password - only if there isn't one in the properties file.
-            final String pass = Settings.getString(Settings.KEYS.DB_PASSWORD, "DC-Pass1337!");
+            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Loading database connection");
             Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Connection String: {0}", connStr);
             Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Database User: {0}", user);
             boolean createTables = false;
@@ -92,8 +93,6 @@ public final class ConnectionFactory {
                 }
             }
 
-            //JDBC4 drivers don't need this call.
-            //Class.forName("org.h2.Driver");
             conn = DriverManager.getConnection(connStr, user, pass);
             if (createTables) {
                 try {
@@ -117,8 +116,20 @@ public final class ConnectionFactory {
             Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, null, ex);
             throw new DatabaseException("Unable to load database driver");
         } catch (SQLException ex) {
-            Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, null, ex);
-            throw new DatabaseException("Unable to connect to the database");
+            if (ex.getMessage().contains("java.net.UnknownHostException") && connStr.contains("AUTO_SERVER=TRUE;")) {
+                final String newConnStr = connStr.replace("AUTO_SERVER=TRUE;", "");
+                try {
+                    conn = DriverManager.getConnection(newConnStr, user, pass);
+                    Settings.setString(Settings.KEYS.DB_CONNECTION_STRING, newConnStr);
+                    Logger.getLogger(ConnectionFactory.class.getName()).log(Level.WARNING, "Unable to start the database in server mode; reverting to single user mode");
+                } catch (SQLException sqlex) {
+                    Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, null, ex);
+                    throw new DatabaseException("Unable to connect to the database");
+                }
+            } else {
+                Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, null, ex);
+                throw new DatabaseException("Unable to connect to the database");
+            }
         }
         return conn;
     }
