@@ -291,7 +291,7 @@ public class Engine {
                 } catch (Exception ex) {
                     final String msg = String.format("Exception occurred initializing %s.", a.getName());
                     Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, msg);
-                    Logger.getLogger(Engine.class.getName()).log(Level.INFO, null, ex);
+                    Logger.getLogger(Engine.class.getName()).log(Level.FINE, null, ex);
                     try {
                         a.close();
                     } catch (Exception ex1) {

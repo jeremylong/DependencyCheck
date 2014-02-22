@@ -273,7 +273,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             final String msg = String.format("Unable to read Jar file entries in '%s'.", dependency.getActualFilePath());
             final AnalysisException ax = new AnalysisException(msg, ex);
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO, msg, ex);
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, msg, ex);
             return false;
         }
         if (pomEntries.isEmpty()) {
@@ -314,7 +314,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             } catch (AnalysisException ex) {
                 final String msg = String.format("An error occured while analyzing '%s'.", dependency.getActualFilePath());
                 Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO, "", ex);
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, "", ex);
             }
         }
         return foundSomething;

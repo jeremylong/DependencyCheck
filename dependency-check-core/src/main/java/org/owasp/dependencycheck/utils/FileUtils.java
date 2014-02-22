@@ -160,7 +160,7 @@ public final class FileUtils {
         try {
             fis = new FileInputStream(archive);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(FileUtils.class.getName()).log(Level.INFO, null, ex);
+            Logger.getLogger(FileUtils.class.getName()).log(Level.FINE, null, ex);
             throw new ExtractionException("Archive file was not found.", ex);
         }
         zis = new ZipInputStream(new BufferedInputStream(fis));
