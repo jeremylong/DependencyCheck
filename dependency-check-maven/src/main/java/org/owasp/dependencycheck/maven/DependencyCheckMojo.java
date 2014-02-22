@@ -280,30 +280,37 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      *
      * @return the Engine used to scan the dependencies.
      */
-    private Engine executeDependencyCheck() {
+    private Engine executeDependencyCheck() throws DatabaseException {
 
         final InputStream in = DependencyCheckMojo.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
         LogUtils.prepareLogger(in, logFile);
 
         populateSettings();
-        final Engine engine = new Engine();
-        final Set<Artifact> artifacts = project.getArtifacts();
-        for (Artifact a : artifacts) {
-            if (skipTestScope && Artifact.SCOPE_TEST.equals(a.getScope())) {
-                continue;
-            }
+        Engine engine = null;
+        try {
+            engine = new Engine();
+            final Set<Artifact> artifacts = project.getArtifacts();
+            for (Artifact a : artifacts) {
+                if (skipTestScope && Artifact.SCOPE_TEST.equals(a.getScope())) {
+                    continue;
+                }
 
-            if (skipProvidedScope && Artifact.SCOPE_PROVIDED.equals(a.getScope())) {
-                continue;
-            }
+                if (skipProvidedScope && Artifact.SCOPE_PROVIDED.equals(a.getScope())) {
+                    continue;
+                }
 
-            if (skipRuntimeScope && !Artifact.SCOPE_RUNTIME.equals(a.getScope())) {
-                continue;
-            }
+                if (skipRuntimeScope && !Artifact.SCOPE_RUNTIME.equals(a.getScope())) {
+                    continue;
+                }
 
-            engine.scan(a.getFile().getAbsolutePath());
+                engine.scan(a.getFile().getAbsolutePath());
+            }
+            engine.analyzeDependencies();
+        } finally {
+            if (engine != null) {
+                engine.cleanup();
+            }
         }
-        engine.analyzeDependencies();
         return engine;
     }
 
@@ -794,13 +801,23 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * @throws MojoFailureException thrown if a CVSS score is found that is higher then the configured level
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
-        final Engine engine = executeDependencyCheck();
-        generateExternalReports(engine);
-        if (this.showSummary) {
-            showSummary(engine.getDependencies());
-        }
-        if (this.failBuildOnCVSS <= 10) {
-            checkForFailure(engine.getDependencies());
+        Engine engine = null;
+        try {
+            engine = executeDependencyCheck();
+            generateExternalReports(engine);
+            if (this.showSummary) {
+                showSummary(engine.getDependencies());
+            }
+            if (this.failBuildOnCVSS <= 10) {
+                checkForFailure(engine.getDependencies());
+            }
+        } catch (DatabaseException ex) {
+            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
+            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINE, "", ex);
+        } finally {
+            if (engine != null) {
+                engine.cleanup();
+            }
         }
     }
 
@@ -825,8 +842,18 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * @throws MavenReportException if a maven report exception occurs
      */
     public void generate(Sink sink, SinkFactory sinkFactory, Locale locale) throws MavenReportException {
-        final Engine engine = executeDependencyCheck();
-        generateMavenSiteReport(engine, sink);
+        Engine engine = null;
+        try {
+            engine = executeDependencyCheck();
+            generateMavenSiteReport(engine, sink);
+        } catch (DatabaseException ex) {
+            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
+            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINE, "", ex);
+        } finally {
+            if (engine != null) {
+                engine.cleanup();
+            }
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="required setter/getter methods">
