@@ -103,6 +103,9 @@ public final class ConnectionFactory {
                 throw new DatabaseException("Unable to load database driver");
             }
         }
+        userName = Settings.getString(Settings.KEYS.DB_USER, "dcuser");
+        //yes, yes - hard-coded password - only if there isn't one in the properties file.
+        password = Settings.getString(Settings.KEYS.DB_PASSWORD, "DC-Pass1337!");
         try {
             connectionString = getConnectionString();
         } catch (IOException ex) {
@@ -110,10 +113,16 @@ public final class ConnectionFactory {
                     "Unable to retrieve the database connection string", ex);
             throw new DatabaseException("Unable to retrieve the database connection string");
         }
-        userName = Settings.getString(Settings.KEYS.DB_USER, "dcuser");
-        //yes, yes - hard-coded password - only if there isn't one in the properties file.
-        password = Settings.getString(Settings.KEYS.DB_PASSWORD, "DC-Pass1337!");
-
+        boolean shouldCreateSchema = false;
+        try {
+            if (connectionString.startsWith("jdbc:h2:file:")) { //H2
+                shouldCreateSchema = !dbSchemaExists();
+                Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Need to create DB Structure: {0}", shouldCreateSchema);
+            }
+        } catch (IOException ioex) {
+            Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, "Unable to verify database exists", ioex);
+            throw new DatabaseException("Unable to verify database exists");
+        }
         Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Loading database connection");
         Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Connection String: {0}", connectionString);
         Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Database User: {0}", userName);
@@ -135,17 +144,6 @@ public final class ConnectionFactory {
             } else {
                 Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, "Unable to connect to the database", ex);
                 throw new DatabaseException("Unable to connect to the database");
-            }
-
-            boolean shouldCreateSchema = false;
-            try {
-                if (connectionString.startsWith("jdbc:h2:file:")) { //H2
-                    shouldCreateSchema = !dbSchemaExists();
-                    Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Need to create DB Structure: {0}", shouldCreateSchema);
-                }
-            } catch (IOException ioex) {
-                Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, "Unable to verify database exists", ioex);
-                throw new DatabaseException("Unable to verify database exists");
             }
 
             if (shouldCreateSchema) {
@@ -172,7 +170,6 @@ public final class ConnectionFactory {
                 }
             }
         }
-
     }
 
     /**

@@ -360,7 +360,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
                     final List<String> data = UrlStringUtils.extractImportantUrlData(part);
                     sb.append(' ').append(StringUtils.join(data, ' '));
                 } catch (MalformedURLException ex) {
-                    Logger.getLogger(EvidenceCollection.class.getName()).log(Level.INFO, "error parsing " + part, ex);
+                    Logger.getLogger(EvidenceCollection.class.getName()).log(Level.FINE, "error parsing " + part, ex);
                     sb.append(' ').append(part);
                 }
             } else {

@@ -263,7 +263,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
         try {
             fis = new FileInputStream(archive);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.INFO, null, ex);
+            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, null, ex);
             throw new AnalysisException("Archive file was not found.", ex);
         }
         final String archiveExt = org.owasp.dependencycheck.utils.FileUtils.getFileExtension(archive.getName()).toLowerCase();
