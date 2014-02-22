@@ -80,7 +80,12 @@ public final class ConnectionFactory {
      *
      * @throws DatabaseException thrown if we are unable to connect to the database
      */
-    public static void initialize() throws DatabaseException {
+    public static synchronized void initialize() throws DatabaseException {
+        //this only needs to be called once.
+        if (connectionString != null) {
+            return;
+        }
+
         //load the driver if necessary
         final String driverName = Settings.getString(Settings.KEYS.DB_DRIVER_NAME, "");
         if (!driverName.isEmpty()) { //likely need to load the correct driver
@@ -173,7 +178,7 @@ public final class ConnectionFactory {
     /**
      * Cleans up resources and unloads any registered database drivers.
      */
-    public static void cleanup() {
+    public static synchronized void cleanup() {
         if (driver != null) {
             try {
                 DriverManager.deregisterDriver(driver);
@@ -182,6 +187,9 @@ public final class ConnectionFactory {
             }
             driver = null;
         }
+        connectionString = null;
+        userName = null;
+        password = null;
     }
 
     /**
