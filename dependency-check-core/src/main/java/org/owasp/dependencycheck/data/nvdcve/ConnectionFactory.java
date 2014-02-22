@@ -173,7 +173,9 @@ public final class ConnectionFactory {
     }
 
     /**
-     * Cleans up resources and unloads any registered database drivers.
+     * Cleans up resources and unloads any registered database drivers. This needs to be called to ensure the driver is
+     * unregistered prior to the finalize method being called as during shutdown the class loader used to load the
+     * driver may be unloaded prior to the driver being de-registered.
      */
     public static synchronized void cleanup() {
         if (driver != null) {

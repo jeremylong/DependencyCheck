@@ -32,6 +32,7 @@ import org.owasp.dependencycheck.analyzer.AnalyzerService;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.cpe.CpeMemoryIndex;
 import org.owasp.dependencycheck.data.cpe.IndexException;
+import org.owasp.dependencycheck.data.nvdcve.ConnectionFactory;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.update.CachedWebDataSource;
@@ -67,11 +68,14 @@ public class Engine {
 
     /**
      * Creates a new Engine.
+     *
+     * @throws DatabaseException thrown if there is an error connecting to the database
      */
-    public Engine() {
+    public Engine() throws DatabaseException {
         this.extensions = new HashSet<String>();
         this.dependencies = new ArrayList<Dependency>();
         this.analyzers = new EnumMap<AnalysisPhase, List<Analyzer>>(AnalysisPhase.class);
+        ConnectionFactory.initialize();
 
         boolean autoUpdate = true;
         try {
@@ -83,6 +87,13 @@ public class Engine {
             doUpdates();
         }
         loadAnalyzers();
+    }
+
+    /**
+     * Properly cleans up resources allocated during analysis.
+     */
+    public void cleanup() {
+        ConnectionFactory.cleanup();
     }
 
     /**
