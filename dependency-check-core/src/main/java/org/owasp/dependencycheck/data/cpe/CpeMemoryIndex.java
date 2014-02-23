@@ -18,10 +18,9 @@
 package org.owasp.dependencycheck.data.cpe;
 
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -45,6 +44,8 @@ import org.owasp.dependencycheck.data.lucene.FieldAnalyzer;
 import org.owasp.dependencycheck.data.lucene.LuceneUtils;
 import org.owasp.dependencycheck.data.lucene.SearchFieldAnalyzer;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.utils.Pair;
 
 /**
  * An in memory lucene index that contains the vendor/product combinations from the CPE (application) identifiers within
@@ -210,7 +211,7 @@ public final class CpeMemoryIndex {
     }
 
     /**
-     * Builds the lucene index based off of the data within the CveDB.
+     * Builds the CPE Lucene Index based off of the data within the CveDB.
      *
      * @param cve the data base containing the CPE data
      * @throws IndexException thrown if there is an issue creating the index
@@ -222,15 +223,12 @@ public final class CpeMemoryIndex {
             analyzer = createIndexingAnalyzer();
             final IndexWriterConfig conf = new IndexWriterConfig(LuceneUtils.CURRENT_VERSION, analyzer);
             indexWriter = new IndexWriter(index, conf);
-            final ResultSet rs = cve.getVendorProductList();
-            if (rs == null) {
-                throw new IndexException("No data exists");
-            }
             try {
-                while (rs.next()) {
-                    saveEntry(rs.getString(1), rs.getString(2), indexWriter);
+                final Set<Pair<String, String>> data = cve.getVendorProductList();
+                for (Pair<String, String> pair : data) {
+                    saveEntry(pair.getLeft(), pair.getRight(), indexWriter);
                 }
-            } catch (SQLException ex) {
+            } catch (DatabaseException ex) {
                 Logger.getLogger(CpeMemoryIndex.class.getName()).log(Level.FINE, null, ex);
                 throw new IndexException("Error reading CPE data", ex);
             }
