@@ -172,7 +172,7 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
             grokAssemblyExe = tempFile;
             // Set the temp file to get deleted when we're done
             grokAssemblyExe.deleteOnExit();
-            LOG.log(Level.INFO, "Extracted GrokAssembly.exe to {0}", grokAssemblyExe.getPath());
+            LOG.log(Level.FINE, "Extracted GrokAssembly.exe to {0}", grokAssemblyExe.getPath());
         } catch (IOException ioe) {
             LOG.log(Level.WARNING, "Could not extract GrokAssembly.exe: {0}", ioe.getMessage());
             throw new AnalysisException("Could not extract GrokAssembly.exe", ioe);
