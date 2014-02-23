@@ -261,7 +261,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             jar = new JarFile(dependency.getActualFilePath());
         } catch (IOException ex) {
             final String msg = String.format("Unable to read JarFile '%s'.", dependency.getActualFilePath());
-            final AnalysisException ax = new AnalysisException(msg, ex);
+            //final AnalysisException ax = new AnalysisException(msg, ex);
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
             return false;
@@ -271,7 +271,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             pomEntries = retrievePomListing(jar);
         } catch (IOException ex) {
             final String msg = String.format("Unable to read Jar file entries in '%s'.", dependency.getActualFilePath());
-            final AnalysisException ax = new AnalysisException(msg, ex);
+            //final AnalysisException ax = new AnalysisException(msg, ex);
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, msg, ex);
             return false;

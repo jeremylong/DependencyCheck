@@ -337,7 +337,7 @@ public class Engine {
                             Logger.getLogger(Engine.class.getName()).log(Level.FINE, "", ex);
                         } catch (Throwable ex) {
                             final String axMsg = String.format("An unexpected error occurred during analysis of '%s'", d.getActualFilePath());
-                            final AnalysisException ax = new AnalysisException(axMsg, ex);
+                            //final AnalysisException ax = new AnalysisException(axMsg, ex);
                             Logger.getLogger(Engine.class.getName()).log(Level.WARNING, axMsg);
                             Logger.getLogger(Engine.class.getName()).log(Level.FINE, "", ex);
                         }
