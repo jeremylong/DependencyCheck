@@ -95,9 +95,9 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
     private static final Set<String> EXTENSIONS = newHashSet("tar", "gz", "tgz");
 
     static {
-        String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
+        final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
         if (additionalZipExt != null) {
-            HashSet ext = new HashSet<String>(Arrays.asList(additionalZipExt));
+            final HashSet ext = new HashSet<String>(Arrays.asList(additionalZipExt));
             ZIPPABLES.addAll(ext);
         }
         EXTENSIONS.addAll(ZIPPABLES);
