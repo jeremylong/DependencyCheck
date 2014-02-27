@@ -67,7 +67,7 @@ public final class UrlTokenizingFilter extends AbstractTokenizingFilter {
                             final List<String> data = UrlStringUtils.extractImportantUrlData(part);
                             tokens.addAll(data);
                         } catch (MalformedURLException ex) {
-                            Logger.getLogger(UrlTokenizingFilter.class.getName()).log(Level.INFO, "error parsing " + part, ex);
+                            Logger.getLogger(UrlTokenizingFilter.class.getName()).log(Level.FINE, "error parsing " + part, ex);
                             tokens.add(part);
                         }
                     } else {

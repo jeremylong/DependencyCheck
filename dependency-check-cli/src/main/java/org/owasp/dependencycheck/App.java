@@ -98,36 +98,46 @@ public class App {
      * @param files the files/directories to scan
      */
     private void runScan(String reportDirectory, String outputFormat, String applicationName, String[] files, String extraExtensions) {
-        final Engine scanner = new Engine();
-
-        for (String file : files) {
-            scanner.scan(file);
-        }
-
-        scanner.analyzeDependencies();
-        final List<Dependency> dependencies = scanner.getDependencies();
-        DatabaseProperties prop = null;
-        CveDB cve = null;
+        Engine scanner = null;
         try {
-            cve = new CveDB();
-            cve.open();
-            prop = cve.getDatabaseProperties();
-        } catch (DatabaseException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.FINE, "Unable to retrieve DB Properties", ex);
-        } finally {
-            if (cve != null) {
-                cve.close();
+            scanner = new Engine();
+
+            for (String file : files) {
+                scanner.scan(file);
             }
-        }
-        final ReportGenerator report = new ReportGenerator(applicationName, dependencies, scanner.getAnalyzers(), prop);
-        try {
-            report.generateReports(reportDirectory, outputFormat);
-        } catch (IOException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, "There was an IO error while attempting to generate the report.");
-            Logger.getLogger(App.class.getName()).log(Level.INFO, null, ex);
-        } catch (Exception ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, "There was an error while attempting to generate the report.");
-            Logger.getLogger(App.class.getName()).log(Level.INFO, null, ex);
+
+            scanner.analyzeDependencies();
+            final List<Dependency> dependencies = scanner.getDependencies();
+            DatabaseProperties prop = null;
+            CveDB cve = null;
+            try {
+                cve = new CveDB();
+                cve.open();
+                prop = cve.getDatabaseProperties();
+            } catch (DatabaseException ex) {
+                Logger.getLogger(App.class.getName()).log(Level.FINE, "Unable to retrieve DB Properties", ex);
+            } finally {
+                if (cve != null) {
+                    cve.close();
+                }
+            }
+            final ReportGenerator report = new ReportGenerator(applicationName, dependencies, scanner.getAnalyzers(), prop);
+            try {
+                report.generateReports(reportDirectory, outputFormat);
+            } catch (IOException ex) {
+                Logger.getLogger(App.class.getName()).log(Level.SEVERE, "There was an IO error while attempting to generate the report.");
+                Logger.getLogger(App.class.getName()).log(Level.FINE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(App.class.getName()).log(Level.SEVERE, "There was an error while attempting to generate the report.");
+                Logger.getLogger(App.class.getName()).log(Level.FINE, null, ex);
+            }
+        } catch (DatabaseException ex) {
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
+            Logger.getLogger(App.class.getName()).log(Level.FINE, "", ex);
+        } finally {
+            if (scanner != null) {
+                scanner.cleanup();
+            }
         }
     }
 

@@ -261,7 +261,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             jar = new JarFile(dependency.getActualFilePath());
         } catch (IOException ex) {
             final String msg = String.format("Unable to read JarFile '%s'.", dependency.getActualFilePath());
-            final AnalysisException ax = new AnalysisException(msg, ex);
+            //final AnalysisException ax = new AnalysisException(msg, ex);
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
             return false;
@@ -271,9 +271,9 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             pomEntries = retrievePomListing(jar);
         } catch (IOException ex) {
             final String msg = String.format("Unable to read Jar file entries in '%s'.", dependency.getActualFilePath());
-            final AnalysisException ax = new AnalysisException(msg, ex);
+            //final AnalysisException ax = new AnalysisException(msg, ex);
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO, msg, ex);
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, msg, ex);
             return false;
         }
         if (pomEntries.isEmpty()) {
@@ -314,7 +314,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             } catch (AnalysisException ex) {
                 final String msg = String.format("An error occured while analyzing '%s'.", dependency.getActualFilePath());
                 Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.INFO, "", ex);
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, "", ex);
             }
         }
         return foundSomething;
@@ -768,7 +768,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                             } else {
                                 versionEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
                             }
-                        } else if (key.equals("build-id")) {
+                        } else if ("build-id".equals(key)) {
                             int pos = value.indexOf('(');
                             if (pos >= 0) {
                                 value = value.substring(0, pos - 1);

@@ -32,6 +32,7 @@ import org.owasp.dependencycheck.analyzer.AnalyzerService;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.cpe.CpeMemoryIndex;
 import org.owasp.dependencycheck.data.cpe.IndexException;
+import org.owasp.dependencycheck.data.nvdcve.ConnectionFactory;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.update.CachedWebDataSource;
@@ -67,11 +68,14 @@ public class Engine {
 
     /**
      * Creates a new Engine.
+     *
+     * @throws DatabaseException thrown if there is an error connecting to the database
      */
-    public Engine() {
+    public Engine() throws DatabaseException {
         this.extensions = new HashSet<String>();
         this.dependencies = new ArrayList<Dependency>();
         this.analyzers = new EnumMap<AnalysisPhase, List<Analyzer>>(AnalysisPhase.class);
+        ConnectionFactory.initialize();
 
         boolean autoUpdate = true;
         try {
@@ -83,6 +87,13 @@ public class Engine {
             doUpdates();
         }
         loadAnalyzers();
+    }
+
+    /**
+     * Properly cleans up resources allocated during analysis.
+     */
+    public void cleanup() {
+        ConnectionFactory.cleanup();
     }
 
     /**
@@ -291,7 +302,7 @@ public class Engine {
                 } catch (Exception ex) {
                     final String msg = String.format("Exception occurred initializing %s.", a.getName());
                     Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, msg);
-                    Logger.getLogger(Engine.class.getName()).log(Level.INFO, null, ex);
+                    Logger.getLogger(Engine.class.getName()).log(Level.FINE, null, ex);
                     try {
                         a.close();
                     } catch (Exception ex1) {
@@ -326,7 +337,7 @@ public class Engine {
                             Logger.getLogger(Engine.class.getName()).log(Level.FINE, "", ex);
                         } catch (Throwable ex) {
                             final String axMsg = String.format("An unexpected error occurred during analysis of '%s'", d.getActualFilePath());
-                            final AnalysisException ax = new AnalysisException(axMsg, ex);
+                            //final AnalysisException ax = new AnalysisException(axMsg, ex);
                             Logger.getLogger(Engine.class.getName()).log(Level.WARNING, axMsg);
                             Logger.getLogger(Engine.class.getName()).log(Level.FINE, "", ex);
                         }

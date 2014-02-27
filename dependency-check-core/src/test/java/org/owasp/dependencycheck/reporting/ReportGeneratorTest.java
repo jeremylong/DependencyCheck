@@ -150,6 +150,8 @@ public class ReportGeneratorTest {
         ReportGenerator generator = new ReportGenerator("Test Report", engine.getDependencies(), engine.getAnalyzers(), dbProp);
         generator.generateReport(templateName, writeTo);
 
+        engine.cleanup();
+
         InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/DependencyCheck.xsd");
         StreamSource xsdSource = new StreamSource(xsdStream);
         StreamSource xmlSource = new StreamSource(new File(writeTo));
