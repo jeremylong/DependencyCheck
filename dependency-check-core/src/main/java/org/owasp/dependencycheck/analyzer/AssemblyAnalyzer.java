@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,6 +32,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
@@ -172,7 +172,7 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
             grokAssemblyExe = tempFile;
             // Set the temp file to get deleted when we're done
             grokAssemblyExe.deleteOnExit();
-            LOG.log(Level.INFO, "Extracted GrokAssembly.exe to {0}", grokAssemblyExe.getPath());
+            LOG.log(Level.FINE, "Extracted GrokAssembly.exe to {0}", grokAssemblyExe.getPath());
         } catch (IOException ioe) {
             LOG.log(Level.WARNING, "Could not extract GrokAssembly.exe: {0}", ioe.getMessage());
             throw new AnalysisException("Could not extract GrokAssembly.exe", ioe);
@@ -201,13 +201,15 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
             final XPath xpath = XPathFactory.newInstance().newXPath();
             final String error = xpath.evaluate("/assembly/error", doc);
             if (p.exitValue() != 1 || error == null || "".equals(error)) {
-                LOG.warning("GrokAssembly.exe is not working properly");
+                LOG.warning("An error occured with the .NET AssemblyAnalyzer, please see the log for more details.");
+                LOG.fine("GrokAssembly.exe is not working properly");
                 grokAssemblyExe = null;
-                throw new AnalysisException("Could not execute GrokAssembly");
+                throw new AnalysisException("Could not execute .NET AssemblyAnalyzer");
             }
         } catch (Exception e) {
-            LOG.warning("Could not execute GrokAssembly " + e.getMessage());
-            throw new AnalysisException("Could not execute GrokAssembly", e);
+            LOG.warning("An error occured with the .NET AssemblyAnalyzer, please see the log for more details.");
+            LOG.fine("Could not execute GrokAssembly " + e.getMessage());
+            throw new AnalysisException("An error occured with the .NET AssemblyAnalyzer", e);
         }
 
         builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();

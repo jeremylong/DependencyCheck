@@ -38,6 +38,7 @@ import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.utils.DBUtils;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
+import org.owasp.dependencycheck.utils.Pair;
 
 /**
  * The database holding information about the NVD CVE data.
@@ -295,19 +296,27 @@ public class CveDB {
     /**
      * Returns the entire list of vendor/product combinations.
      *
-     * @return the entire list of vendor/product combinations.
+     * @return the entire list of vendor/product combinations
+     * @throws DatabaseException thrown when there is an error retrieving the data from the DB
      */
-    public ResultSet getVendorProductList() {
+    public Set<Pair<String, String>> getVendorProductList() throws DatabaseException {
+        HashSet data = new HashSet<Pair<String, String>>();
         ResultSet rs = null;
+        PreparedStatement ps = null;
         try {
-            final PreparedStatement ps = getConnection().prepareStatement(SELECT_VENDOR_PRODUCT_LIST);
+            ps = getConnection().prepareStatement(SELECT_VENDOR_PRODUCT_LIST);
             rs = ps.executeQuery();
+            while (rs.next()) {
+                data.add(new Pair(rs.getString(1), rs.getString(2)));
+            }
         } catch (SQLException ex) {
             final String msg = "An unexpected SQL Exception occurred; please see the verbose log for more details.";
-            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, msg);
-            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, null, ex);
-        } // can't close the statement in the PS as the resultset is returned, closing PS would close the resultset
-        return rs;
+            throw new DatabaseException(msg, ex);
+        } finally {
+            DBUtils.closeResultSet(rs);
+            DBUtils.closeStatement(ps);
+        }
+        return data;
     }
 
     /**

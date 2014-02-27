@@ -160,6 +160,8 @@ public class ArchiveAnalyzerTest extends BaseIndexTestCase {
             instance.analyze(dependency, engine);
             int ending_size = engine.getDependencies().size();
 
+            engine.cleanup();
+
             assertTrue(initial_size < ending_size);
 
         } finally {
@@ -186,6 +188,7 @@ public class ArchiveAnalyzerTest extends BaseIndexTestCase {
             int initial_size = engine.getDependencies().size();
             instance.analyze(dependency, engine);
             int ending_size = engine.getDependencies().size();
+            engine.cleanup();
 
             assertTrue(initial_size < ending_size);
 
@@ -214,7 +217,7 @@ public class ArchiveAnalyzerTest extends BaseIndexTestCase {
             engine.scan(file);
             engine.analyzeDependencies();
             int ending_size = engine.getDependencies().size();
-
+            engine.cleanup();
             assertTrue(initial_size < ending_size);
 
         } finally {
@@ -261,7 +264,7 @@ public class ArchiveAnalyzerTest extends BaseIndexTestCase {
             engine.scan(file);
             engine.analyzeDependencies();
             int ending_size = engine.getDependencies().size();
-
+            engine.cleanup();
             assertTrue(initial_size < ending_size);
 
         } finally {
@@ -292,6 +295,7 @@ public class ArchiveAnalyzerTest extends BaseIndexTestCase {
 //            }
 //            assertTrue(failed);
             int ending_size = engine.getDependencies().size();
+            engine.cleanup();
             assertEquals(initial_size, ending_size);
         } finally {
             instance.close();

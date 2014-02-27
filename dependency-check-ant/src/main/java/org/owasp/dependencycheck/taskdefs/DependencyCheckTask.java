@@ -741,47 +741,57 @@ public class DependencyCheckTask extends Task {
         validateConfiguration();
         populateSettings();
 
-        final Engine engine = new Engine();
-
-        for (Resource resource : path) {
-            final FileProvider provider = resource.as(FileProvider.class);
-            if (provider != null) {
-                final File file = provider.getFile();
-                if (file != null && file.exists()) {
-                    engine.scan(file);
-                }
-            }
-        }
+        Engine engine = null;
         try {
-            engine.analyzeDependencies();
-            DatabaseProperties prop = null;
-            CveDB cve = null;
-            try {
-                cve = new CveDB();
-                cve.open();
-                prop = cve.getDatabaseProperties();
-            } catch (DatabaseException ex) {
-                Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, "Unable to retrieve DB Properties", ex);
-            } finally {
-                if (cve != null) {
-                    cve.close();
+            engine = new Engine();
+
+            for (Resource resource : path) {
+                final FileProvider provider = resource.as(FileProvider.class);
+                if (provider != null) {
+                    final File file = provider.getFile();
+                    if (file != null && file.exists()) {
+                        engine.scan(file);
+                    }
                 }
             }
-            final ReportGenerator reporter = new ReportGenerator(applicationName, engine.getDependencies(), engine.getAnalyzers(), prop);
-            reporter.generateReports(reportOutputDirectory, reportFormat);
+            try {
+                engine.analyzeDependencies();
+                DatabaseProperties prop = null;
+                CveDB cve = null;
+                try {
+                    cve = new CveDB();
+                    cve.open();
+                    prop = cve.getDatabaseProperties();
+                } catch (DatabaseException ex) {
+                    Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, "Unable to retrieve DB Properties", ex);
+                } finally {
+                    if (cve != null) {
+                        cve.close();
+                    }
+                }
+                final ReportGenerator reporter = new ReportGenerator(applicationName, engine.getDependencies(), engine.getAnalyzers(), prop);
+                reporter.generateReports(reportOutputDirectory, reportFormat);
 
-            if (this.failBuildOnCVSS <= 10) {
-                checkForFailure(engine.getDependencies());
+                if (this.failBuildOnCVSS <= 10) {
+                    checkForFailure(engine.getDependencies());
+                }
+                if (this.showSummary) {
+                    showSummary(engine.getDependencies());
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, "Unable to generate dependency-check report", ex);
+                throw new BuildException("Unable to generate dependency-check report", ex);
+            } catch (Exception ex) {
+                Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, "An exception occurred; unable to continue task", ex);
+                throw new BuildException("An exception occurred; unable to continue task", ex);
             }
-            if (this.showSummary) {
-                showSummary(engine.getDependencies());
+        } catch (DatabaseException ex) {
+            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
+            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, "", ex);
+        } finally {
+            if (engine != null) {
+                engine.cleanup();
             }
-        } catch (IOException ex) {
-            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, "Unable to generate dependency-check report", ex);
-            throw new BuildException("Unable to generate dependency-check report", ex);
-        } catch (Exception ex) {
-            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, "An exception occurred; unable to continue task", ex);
-            throw new BuildException("An exception occurred; unable to continue task", ex);
         }
     }
 
