@@ -17,13 +17,15 @@
  */
 package org.owasp.dependencycheck.data.nexus;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.logging.Logger;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+
+import org.junit.Assume;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -37,6 +39,7 @@ public class NexusSearchTest {
         String nexusUrl = Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL);
         LOGGER.fine(nexusUrl);
         searcher = new NexusSearch(new URL(nexusUrl));
+        Assume.assumeTrue(searcher.preflightRequest());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -52,7 +55,6 @@ public class NexusSearchTest {
     // This test does generate network traffic and communicates with a host
     // you may not be able to reach. Remove the @Ignore annotation if you want to
     // test it anyway
-    @Ignore
     @Test
     public void testValidSha1() throws Exception {
         MavenArtifact ma = searcher.searchSha1("9977a8d04e75609cf01badc4eb6a9c7198c4c5ea");
@@ -65,7 +67,6 @@ public class NexusSearchTest {
     // This test does generate network traffic and communicates with a host
     // you may not be able to reach. Remove the @Ignore annotation if you want to
     // test it anyway
-    @Ignore
     @Test(expected = FileNotFoundException.class)
     public void testMissingSha1() throws Exception {
         searcher.searchSha1("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
