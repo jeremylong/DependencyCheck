@@ -93,6 +93,10 @@ public class NexusAnalyzer extends AbstractAnalyzer {
             LOGGER.fine(String.format("Nexus Analyzer URL: %s", searchUrl));
             try {
                 searcher = new NexusSearch(new URL(searchUrl));
+                if (! searcher.preflightRequest()) {
+                    LOGGER.warning("There was an issue getting Nexus status. Disabling analyzer.");
+                    enabled = false;
+                }
             } catch (MalformedURLException mue) {
                 // I know that initialize can throw an exception, but we'll
                 // just disable the analyzer if the URL isn't valid
