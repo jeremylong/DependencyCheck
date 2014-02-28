@@ -39,11 +39,11 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
-import org.h2.store.fs.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -167,14 +167,18 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * The close method does nothing for this Analyzer.
+     * The close method deletes any temporary files and directories created during analysis.
      *
      * @throws Exception thrown if there is an exception deleting temporary files
      */
     @Override
     public void close() throws Exception {
         if (tempFileLocation != null && tempFileLocation.exists()) {
-            FileUtils.deleteRecursive(tempFileLocation.getAbsolutePath(), true);
+            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, "Attempting to delete temporary files");
+            boolean success = FileUtils.delete(tempFileLocation);
+            if (!success) {
+                Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.WARNING, "Failed to delete some temporary files, see the log for more details");
+            }
         }
     }
 
