@@ -64,6 +64,18 @@ Copyright (c) 2012 - Jeremy Long
                 <role>developer</role>
             </roles>
         </developer>
+        <developer>
+            <name>Will Stranathan</name>
+            <email>Will.Stranathan@owasp.org</email>
+            <organization>OWASP</organization>
+            <organizationUrl>https://www.owasp.org/index.php/OWASP_Dependency_Check</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <properties>
+              <twitter>@willathome</twitter>
+            </properties>
+        </developer>
     </developers>
     <contributors>
         <contributor>
