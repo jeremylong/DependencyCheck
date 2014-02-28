@@ -23,12 +23,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Logger;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
-
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
@@ -36,7 +34,7 @@ import org.w3c.dom.Document;
 
 /**
  * Class of methods to search Nexus repositories.
- * 
+ *
  * @author colezlaw
  */
 public class NexusSearch {
@@ -59,17 +57,15 @@ public class NexusSearch {
 
     /**
      * Creates a NexusSearch for the given repository URL.
-     * 
-     * @param rootURL
-     *            the root URL of the repository on which searches should
-     *            execute. full URL's are calculated relative to this URL, so it
-     *            should end with a /
+     *
+     * @param rootURL the root URL of the repository on which searches should execute. full URL's are calculated
+     * relative to this URL, so it should end with a /
      */
     public NexusSearch(URL rootURL) {
         this.rootURL = rootURL;
         try {
             if (null != Settings.getString(Settings.KEYS.PROXY_URL)
-                    && null != Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY)) {
+                    && Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY)) {
                 useProxy = true;
                 LOGGER.fine("Using proxy");
             } else {
@@ -82,16 +78,13 @@ public class NexusSearch {
     }
 
     /**
-     * Searches the configured Nexus repository for the given sha1 hash. If the
-     * artifact is found, a <code>MavenArtifact</code> is populated with the
-     * coordinate information.
-     * 
-     * @param sha1
-     *            The SHA-1 hash string for which to search
+     * Searches the configured Nexus repository for the given sha1 hash. If the artifact is found, a
+     * <code>MavenArtifact</code> is populated with the coordinate information.
+     *
+     * @param sha1 The SHA-1 hash string for which to search
      * @return the populated Maven coordinates
-     * @throws IOException
-     *             if it's unable to connect to the specified repositor or if
-     *             the specified artifact is not found.
+     * @throws IOException if it's unable to connect to the specified repositor or if the specified artifact is not
+     * found.
      */
     public MavenArtifact searchSha1(String sha1) throws IOException {
         if (null == sha1 || !sha1.matches("^[0-9A-Fa-f]{40}$")) {
@@ -142,7 +135,7 @@ public class NexusSearch {
         } catch (FileNotFoundException fnfe) {
             /* This is what we get when the SHA1 they sent doesn't exist in
              * Nexus. This is useful upstream for recovery, so we just re-throw it
-			 */
+             */
             throw fnfe;
         } catch (Exception e) {
             // Anything else is jacked-up XML stuff that we really can't recover
@@ -153,9 +146,8 @@ public class NexusSearch {
 
     /**
      * Do a preflight request to see if the repository is actually working.
-     * 
-     * @return whether the repository is listening and returns the /status URL
-     *         correctly
+     *
+     * @return whether the repository is listening and returns the /status URL correctly
      */
     public boolean preflightRequest() {
         try {
@@ -175,7 +167,7 @@ public class NexusSearch {
         } catch (Exception e) {
             return false;
         }
-        
+
         return true;
     }
 }
