@@ -22,12 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Authenticator;
 import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.PasswordAuthentication;
-import java.net.Proxy;
-import java.net.SocketAddress;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
@@ -58,7 +53,7 @@ public final class Downloader {
     public static void fetchFile(URL url, File outputPath) throws DownloadFailedException {
         HttpURLConnection conn = null;
         try {
-            conn = Downloader.getConnection(url);
+            conn = URLConnectionFactory.createHttpURLConnection(url);
             conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
             conn.connect();
         } catch (IOException ex) {
@@ -149,11 +144,13 @@ public final class Downloader {
         } else {
             HttpURLConnection conn = null;
             try {
-                conn = Downloader.getConnection(url);
+                conn = URLConnectionFactory.createHttpURLConnection(url);
                 conn.setRequestMethod("HEAD");
                 conn.connect();
                 timestamp = conn.getLastModified();
-            } catch (Exception ex) {
+            } catch (URLConnectionFailureException ex) {
+                throw new DownloadFailedException("Error creating URL Connection for HTTP HEAD request.", ex);
+            } catch (IOException ex) {
                 throw new DownloadFailedException("Error making HTTP HEAD request.", ex);
             } finally {
                 if (conn != null) {
@@ -166,81 +163,5 @@ public final class Downloader {
             }
         }
         return timestamp;
-    }
-
-    /**
-     * Utility method to get an HttpURLConnection. If the app is configured to use a proxy this method will retrieve the
-     * proxy settings and use them when setting up the connection.
-     *
-     * @param url the url to connect to
-     * @return an HttpURLConnection
-     * @throws DownloadFailedException thrown if there is an exception
-     */
-    public static HttpURLConnection getConnection(URL url) throws DownloadFailedException {
-        HttpURLConnection conn = null;
-        Proxy proxy = null;
-        final String proxyUrl = Settings.getString(Settings.KEYS.PROXY_URL);
-        try {
-            if (proxyUrl != null) {
-                final int proxyPort = Settings.getInt(Settings.KEYS.PROXY_PORT);
-                final SocketAddress addr = new InetSocketAddress(proxyUrl, proxyPort);
-
-                final String username = Settings.getString(Settings.KEYS.PROXY_USERNAME);
-                final String password = Settings.getString(Settings.KEYS.PROXY_PASSWORD);
-                if (username != null && password != null) {
-                    final Authenticator auth = new Authenticator() {
-                        @Override
-                        public PasswordAuthentication getPasswordAuthentication() {
-                            if (getRequestorType().equals(RequestorType.PROXY)) {
-                                return new PasswordAuthentication(username, password.toCharArray());
-                            }
-                            return super.getPasswordAuthentication();
-                        }
-                    };
-                    Authenticator.setDefault(auth);
-                }
-
-                proxy = new Proxy(Proxy.Type.HTTP, addr);
-                conn = (HttpURLConnection) url.openConnection(proxy);
-            } else {
-                conn = (HttpURLConnection) url.openConnection();
-            }
-            final int timeout = Settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT, 60000);
-            conn.setConnectTimeout(timeout);
-        } catch (IOException ex) {
-            if (conn != null) {
-                try {
-                    conn.disconnect();
-                } finally {
-                    conn = null;
-                }
-            }
-            throw new DownloadFailedException("Error getting connection.", ex);
-        }
-        return conn;
-    }
-    
-    /**
-     * Utility method to get an HttpURLConnection. The use of a proxy here is optional as there
-     * may be cases where a proxy is configured but we don't want to use it (for example, if there's
-     * an internal repository configured)
-     * 
-     * @param url the url to connect to
-     * @parem proxy whether to use the proxy (if configured)
-     * @throws DownloadFailedException thrown if there is an exception
-     */
-    public static HttpURLConnection getConnection(URL url, boolean proxy) throws DownloadFailedException {
-        if (proxy) {
-            return getConnection(url);
-        }
-        HttpURLConnection conn = null;
-        try {
-            conn = (HttpURLConnection)url.openConnection();
-            final int timeout = Settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT, 60000);
-            conn.setConnectTimeout(timeout);
-        } catch (IOException ioe) {
-            throw new DownloadFailedException("Error getting connection.", ioe);
-        }
-        return conn;
     }
 }
