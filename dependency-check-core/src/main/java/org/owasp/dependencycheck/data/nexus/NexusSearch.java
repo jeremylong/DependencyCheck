@@ -69,7 +69,7 @@ public class NexusSearch {
         this.rootURL = rootURL;
         try {
             if (null != Settings.getString(Settings.KEYS.PROXY_URL)
-                    && Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY)) {
+                    && null != Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY)) {
                 useProxy = true;
                 LOGGER.fine("Using proxy");
             } else {
@@ -140,9 +140,9 @@ public class NexusSearch {
                             doc);
             return new MavenArtifact(groupId, artifactId, version, link);
         } catch (FileNotFoundException fnfe) {
-            // This is what we get when the SHA1 they sent doesn't exist in
-            // Nexus. This
-            // is useful upstream for recovery, so we just re-throw it
+            /* This is what we get when the SHA1 they sent doesn't exist in
+             * Nexus. This is useful upstream for recovery, so we just re-throw it
+			 */
             throw fnfe;
         } catch (Exception e) {
             // Anything else is jacked-up XML stuff that we really can't recover
