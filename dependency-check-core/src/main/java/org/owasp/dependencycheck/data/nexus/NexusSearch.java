@@ -27,9 +27,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
-import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.URLConnectionFactory;
 import org.w3c.dom.Document;
 
 /**
@@ -102,7 +102,7 @@ public class NexusSearch {
         // or proxy is specifically
         // set to false
         URLConnection conn = null;
-        conn = Downloader.getConnection(url, useProxy);
+        conn = URLConnectionFactory.createHttpURLConnection(url, useProxy);
 
         conn.setDoOutput(true);
 
@@ -151,7 +151,7 @@ public class NexusSearch {
      */
     public boolean preflightRequest() {
         try {
-            HttpURLConnection conn = Downloader.getConnection(new URL(rootURL, "status"));
+            HttpURLConnection conn = URLConnectionFactory.createHttpURLConnection(new URL(rootURL, "status"));
             conn.addRequestProperty("Accept", "application/xml");
             conn.connect();
             if (conn.getResponseCode() != 200) {
