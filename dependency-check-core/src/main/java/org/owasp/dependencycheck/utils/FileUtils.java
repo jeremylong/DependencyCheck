@@ -69,23 +69,21 @@ public final class FileUtils {
      * Deletes a file. If the File is a directory it will recursively delete the contents.
      *
      * @param file the File to delete
-     * @throws IOException is thrown if the file could not be deleted
+     * @return true if the file was deleted successfully, otherwise false
      */
-    public static void delete(File file) throws IOException {
-        if (file.isDirectory()) {
-            for (File c : file.listFiles()) {
-                delete(c);
+    public static boolean delete(File file) {
+        boolean success = true;
+        if (file.isDirectory()) { //some of this may duplicative of deleteQuietly....
+            for (File f : file.listFiles()) {
+                success &= delete(f);
             }
         }
         if (!org.apache.commons.io.FileUtils.deleteQuietly(file)) {
-            throw new FileNotFoundException("Failed to delete file: " + file);
+            success = false;
+            final String msg = String.format("Failed to delete file: %s", file.getPath());
+            Logger.getLogger(FileUtils.class.getName()).log(Level.FINE, msg);
         }
-        /* else {
-         //delete on exit was a bad idea. if for some reason the file can't be deleted
-         // this will cause a newly constructed file to be deleted and a subsequent run may fail.
-         // still not sure why a file fails to be deleted, but can be overwritten... odd.
-         file.deleteOnExit();
-         }*/
+        return success;
     }
 
     /**

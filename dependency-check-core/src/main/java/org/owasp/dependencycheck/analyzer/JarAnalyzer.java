@@ -53,7 +53,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
-import org.h2.store.fs.FileUtils;
 import org.jsoup.Jsoup;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -65,6 +64,7 @@ import org.owasp.dependencycheck.jaxb.pom.generated.License;
 import org.owasp.dependencycheck.jaxb.pom.generated.Model;
 import org.owasp.dependencycheck.jaxb.pom.generated.Organization;
 import org.owasp.dependencycheck.jaxb.pom.generated.Parent;
+import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.NonClosingStream;
 import org.owasp.dependencycheck.utils.Settings;
 import org.xml.sax.InputSource;
@@ -937,7 +937,11 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     @Override
     public void close() {
         if (tempFileLocation != null && tempFileLocation.exists()) {
-            FileUtils.deleteRecursive(tempFileLocation.getAbsolutePath(), true);
+            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, "Attempting to delete temporary files");
+            boolean success = FileUtils.delete(tempFileLocation);
+            if (!success) {
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, "Failed to delete some temporary files, see the log for more details");
+            }
         }
     }
 
