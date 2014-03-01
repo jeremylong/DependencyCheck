@@ -779,14 +779,17 @@ public class DependencyCheckTask extends Task {
                     showSummary(engine.getDependencies());
                 }
             } catch (IOException ex) {
-                Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, "Unable to generate dependency-check report", ex);
+                Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE,
+                        "Unable to generate dependency-check report", ex);
                 throw new BuildException("Unable to generate dependency-check report", ex);
             } catch (Exception ex) {
-                Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, "An exception occurred; unable to continue task", ex);
+                Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE,
+                        "An exception occurred; unable to continue task", ex);
                 throw new BuildException("An exception occurred; unable to continue task", ex);
             }
         } catch (DatabaseException ex) {
-            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
+            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.SEVERE,
+                    "Unable to connect to the dependency-check database; analysis has stopped");
             Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, "", ex);
         } finally {
             if (engine != null) {
