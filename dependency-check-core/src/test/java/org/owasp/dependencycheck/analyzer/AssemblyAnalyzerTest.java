@@ -17,25 +17,23 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-
-import java.io.File;
-
-import org.junit.After;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 
+import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.utils.Settings;
-
-import com.sun.istack.internal.logging.Logger;
 
 /**
  * Tests for the AssemblyAnalyzer.
@@ -45,7 +43,7 @@ import com.sun.istack.internal.logging.Logger;
  */
 public class AssemblyAnalyzerTest {
     
-    private static final Logger LOGGER = Logger.getLogger(AssemblyAnalyzerTest.class);
+    private static final Logger LOGGER = Logger.getLogger(AssemblyAnalyzerTest.class.getName());
 
     AssemblyAnalyzer analyzer;
 
@@ -60,7 +58,7 @@ public class AssemblyAnalyzerTest {
             analyzer = new AssemblyAnalyzer();
             analyzer.initialize();
         } catch (Exception e) {
-            LOGGER.warning("Exception setting up AssemblyAnalyzer. Tests will be incomplete", e);
+            LOGGER.log(Level.WARNING, "Exception setting up AssemblyAnalyzer. Tests will be incomplete", e);
             Assume.assumeNoException("Is mono installed? TESTS WILL BE INCOMPLETE", e);
         }
     }
