@@ -180,14 +180,14 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
             if (fos != null) {
                 try {
                     fos.close();
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     LOG.fine("Error closing output stream");
                 }
             }
             if (is != null) {
                 try {
                     is.close();
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     LOG.fine("Error closing input stream");
                 }
             }
@@ -201,14 +201,16 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
             final XPath xpath = XPathFactory.newInstance().newXPath();
             final String error = xpath.evaluate("/assembly/error", doc);
             if (p.exitValue() != 1 || error == null || "".equals(error)) {
-                LOG.warning("An error occured with the .NET AssemblyAnalyzer, please see the log for more details.");
+                LOG.warning("An error occured with the .NET AssemblyAnalyzer; "
+                        + "this can be ignored unless you are scanning .NET dlls. Please see the log for more details.");
                 LOG.fine("GrokAssembly.exe is not working properly");
                 grokAssemblyExe = null;
                 throw new AnalysisException("Could not execute .NET AssemblyAnalyzer");
             }
-        } catch (Exception e) {
-            LOG.warning("An error occured with the .NET AssemblyAnalyzer, please see the log for more details.");
-            LOG.fine("Could not execute GrokAssembly " + e.getMessage());
+        } catch (Throwable e) {
+            LOG.warning("An error occured with the .NET AssemblyAnalyzer; "
+                    + "this can be ignored unless you are scanning .NET dlls. Please see the log for more details.");
+            LOG.log(Level.FINE, "Could not execute GrokAssembly {0}", e.getMessage());
             throw new AnalysisException("An error occured with the .NET AssemblyAnalyzer", e);
         }
 
