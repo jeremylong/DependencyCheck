@@ -200,9 +200,8 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
             final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(p.getInputStream());
             final XPath xpath = XPathFactory.newInstance().newXPath();
             final String error = xpath.evaluate("/assembly/error", doc);
-            if (p.exitValue() != 1 || error == null || "".equals(error)) {
-                LOG.warning("An error occured with the .NET AssemblyAnalyzer; "
-                        + "this can be ignored unless you are scanning .NET dlls. Please see the log for more details.");
+            if (p.waitFor() != 1 || error == null || "".equals(error)) {
+                LOG.warning("An error occured with the .NET AssemblyAnalyzer, please see the log for more details.");
                 LOG.fine("GrokAssembly.exe is not working properly");
                 grokAssemblyExe = null;
                 throw new AnalysisException("Could not execute .NET AssemblyAnalyzer");
