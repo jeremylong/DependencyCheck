@@ -340,7 +340,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
             Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE,
                     "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
             Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINE, null, ex);
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE,
                     "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
             Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINE, null, ex);
