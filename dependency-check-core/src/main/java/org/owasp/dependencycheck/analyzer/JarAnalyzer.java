@@ -604,38 +604,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 addMatchingValues(classes, trimmedDescription, dependency.getProductEvidence());
             }
         }
-
-        //license
-        if (pom.getLicenses() != null) {
-            String license = null;
-            for (License lic : pom.getLicenses().getLicense()) {
-                String tmp = null;
-                if (lic.getName() != null) {
-                    tmp = interpolateString(lic.getName(), pomProperties);
-                }
-                if (lic.getUrl() != null) {
-                    if (tmp == null) {
-                        tmp = interpolateString(lic.getUrl(), pomProperties);
-                    } else {
-                        tmp += ": " + interpolateString(lic.getUrl(), pomProperties);
-                    }
-                }
-                if (tmp == null) {
-                    continue;
-                }
-                if (HTML_DETECTION_PATTERN.matcher(tmp).find()) {
-                    tmp = Jsoup.parse(tmp).text();
-                }
-                if (license == null) {
-                    license = tmp;
-                } else {
-                    license += "\n" + tmp;
-                }
-            }
-            if (license != null) {
-                dependency.setLicense(license);
-            }
-        }
+        extractLicense(pom, pomProperties, dependency);
         return foundSomething;
     }
 
@@ -1250,7 +1219,17 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
                 addDescription(dependency, description, "pom", "description");
             }
         }
+        extractLicense(pom, pomProperties, dependency);
+    }
 
+    /**
+     * Extracts the license information from the pom and adds it to the dependency.
+     *
+     * @param pom the pom object
+     * @param pomProperties the properties, used for string interpolation
+     * @param dependency the dependency to add license information too
+     */
+    private void extractLicense(Model pom, Properties pomProperties, Dependency dependency) {
         //license
         if (pom.getLicenses() != null) {
             String license = null;
