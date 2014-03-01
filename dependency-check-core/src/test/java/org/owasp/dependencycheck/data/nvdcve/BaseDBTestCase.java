@@ -73,7 +73,7 @@ public abstract class BaseDBTestCase extends TestCase {
                         while ((count = zin.read(data, 0, BUFFER_SIZE)) != -1) {
                             dest.write(data, 0, count);
                         }
-                    } catch (Exception ex) {
+                    } catch (Throwable ex) {
                         Logger.getLogger(BaseDBTestCase.class.getName()).log(Level.SEVERE, null, ex);
                     } finally {
                         try {

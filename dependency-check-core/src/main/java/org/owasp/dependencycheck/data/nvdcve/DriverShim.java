@@ -116,7 +116,7 @@ class DriverShim implements Driver {
         Method m = null;
         try {
             m = driver.getClass().getMethod("getParentLogger");
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new SQLFeatureNotSupportedException();
         }
         if (m != null) {

@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 
 import org.junit.After;
 import org.junit.Assume;
+import static org.junit.Assume.assumeFalse;
 import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -53,7 +54,7 @@ public class AssemblyAnalyzerTest {
      * @throws Exception if anything goes sideways
      */
     @Before
-    public void setUp()  {
+    public void setUp() {
         try {
             analyzer = new AssemblyAnalyzer();
             analyzer.initialize();

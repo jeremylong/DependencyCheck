@@ -17,13 +17,12 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import java.io.FileInputStream;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nuget.NugetPackage;
 import org.owasp.dependencycheck.data.nuget.NuspecParser;
 import org.owasp.dependencycheck.data.nuget.XPathNuspecParser;
@@ -128,7 +127,7 @@ public class NuspecAnalyzer extends AbstractAnalyzer {
                 if (fis != null) {
                     try {
                         fis.close();
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         LOGGER.fine("Error closing input stream");
                     }
                 }
@@ -143,7 +142,7 @@ public class NuspecAnalyzer extends AbstractAnalyzer {
             if (np.getTitle() != null) {
                 dependency.getProductEvidence().addEvidence("nuspec", "title", np.getTitle(), Confidence.MEDIUM);
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new AnalysisException(e);
         }
     }
