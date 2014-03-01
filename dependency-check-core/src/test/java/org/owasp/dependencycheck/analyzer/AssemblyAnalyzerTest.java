@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.mortbay.log.Log;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 
 import java.io.File;
@@ -36,6 +35,8 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.utils.Settings;
 
+import com.sun.istack.internal.logging.Logger;
+
 /**
  * Tests for the AssemblyAnalyzer.
  *
@@ -43,6 +44,8 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  */
 public class AssemblyAnalyzerTest {
+    
+    private static final Logger LOGGER = Logger.getLogger(AssemblyAnalyzerTest.class);
 
     AssemblyAnalyzer analyzer;
 
@@ -57,7 +60,7 @@ public class AssemblyAnalyzerTest {
             analyzer = new AssemblyAnalyzer();
             analyzer.initialize();
         } catch (Exception e) {
-            Log.warn("Exception setting up AssemblyAnalyzer. Tests will be incomplete");
+            LOGGER.warning("Exception setting up AssemblyAnalyzer. Tests will be incomplete", e);
             Assume.assumeNoException("Is mono installed? TESTS WILL BE INCOMPLETE", e);
         }
     }
