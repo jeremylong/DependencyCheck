@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -26,6 +25,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nexus.NexusSearch;
 import org.owasp.dependencycheck.dependency.Confidence;
@@ -93,7 +93,7 @@ public class NexusAnalyzer extends AbstractAnalyzer {
             LOGGER.fine(String.format("Nexus Analyzer URL: %s", searchUrl));
             try {
                 searcher = new NexusSearch(new URL(searchUrl));
-                if (! searcher.preflightRequest()) {
+                if (!searcher.preflightRequest()) {
                     LOGGER.warning("There was an issue getting Nexus status. Disabling analyzer.");
                     enabled = false;
                 }
