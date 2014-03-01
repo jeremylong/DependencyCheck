@@ -32,7 +32,7 @@ import java.net.URL;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class URLConnectionFactory {
+public final class URLConnectionFactory {
 
     /**
      * Private constructor for this factory.
