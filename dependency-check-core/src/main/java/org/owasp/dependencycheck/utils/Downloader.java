@@ -85,13 +85,13 @@ public final class Downloader {
             while ((bytesRead = reader.read(buffer)) > 0) {
                 writer.write(buffer, 0, bytesRead);
             }
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             throw new DownloadFailedException("Error saving downloaded file.", ex);
         } finally {
             if (writer != null) {
                 try {
                     writer.close();
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
                             "Error closing the writer in Downloader.", ex);
                 }
@@ -99,7 +99,7 @@ public final class Downloader {
             if (reader != null) {
                 try {
                     reader.close();
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
                             "Error closing the reader in Downloader.", ex);
                 }
