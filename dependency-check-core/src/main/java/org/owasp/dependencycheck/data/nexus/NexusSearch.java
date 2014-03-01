@@ -137,7 +137,7 @@ public class NexusSearch {
              * Nexus. This is useful upstream for recovery, so we just re-throw it
              */
             throw fnfe;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             // Anything else is jacked-up XML stuff that we really can't recover
             // from well
             throw new IOException(e.getMessage(), e);
@@ -151,7 +151,7 @@ public class NexusSearch {
      */
     public boolean preflightRequest() {
         try {
-            HttpURLConnection conn = URLConnectionFactory.createHttpURLConnection(new URL(rootURL, "status"));
+            final HttpURLConnection conn = URLConnectionFactory.createHttpURLConnection(new URL(rootURL, "status"));
             conn.addRequestProperty("Accept", "application/xml");
             conn.connect();
             if (conn.getResponseCode() != 200) {
@@ -164,7 +164,7 @@ public class NexusSearch {
                 LOGGER.warning("Expected root node name of status, got " + doc.getDocumentElement().getNodeName());
                 return false;
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return false;
         }
 
