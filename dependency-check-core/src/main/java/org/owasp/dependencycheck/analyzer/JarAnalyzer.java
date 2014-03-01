@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -393,6 +394,8 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         } catch (IOException ex) {
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
+            closeStream(bos);
+            closeStream(fos);
             closeStream(input);
         }
         Model model = null;
@@ -430,6 +433,21 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * @param stream an input stream to close
      */
     private void closeStream(InputStream stream) {
+        if (stream != null) {
+            try {
+                stream.close();
+            } catch (IOException ex) {
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+            }
+        }
+    }
+
+    /**
+     * Silently closes an output stream ignoring errors.
+     *
+     * @param stream an output stream to close
+     */
+    private void closeStream(OutputStream stream) {
         if (stream != null) {
             try {
                 stream.close();
