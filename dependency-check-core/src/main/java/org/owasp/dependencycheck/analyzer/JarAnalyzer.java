@@ -393,11 +393,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
         } catch (IOException ex) {
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                input.close();
-            } catch (IOException ex) {
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            closeStream(input);
         }
         Model model = null;
         FileInputStream fis = null;
@@ -423,15 +419,24 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
             throw ex;
         } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException ex) {
-                    Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINEST, null, ex);
-                }
-            }
+            closeStream(fis);
         }
         return model;
+    }
+
+    /**
+     * Silently closes an input stream ignoring errors.
+     *
+     * @param stream an input stream to close
+     */
+    private void closeStream(InputStream stream) {
+        if (stream != null) {
+            try {
+                stream.close();
+            } catch (IOException ex) {
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+            }
+        }
     }
 
     /**
