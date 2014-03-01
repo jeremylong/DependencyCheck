@@ -146,7 +146,7 @@ public final class Settings {
          */
         public static final String ANALYZER_NEXUS_URL = "analyzer.nexus.url";
         /**
-         * The properties key for using the proxy to reach Nexus
+         * The properties key for using the proxy to reach Nexus.
          */
         public static final String ANALYZER_NEXUS_PROXY = "analyzer.nexus.proxy";
         /**
