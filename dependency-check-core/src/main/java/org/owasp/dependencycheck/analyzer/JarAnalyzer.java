@@ -938,9 +938,10 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
     public void close() {
         if (tempFileLocation != null && tempFileLocation.exists()) {
             Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, "Attempting to delete temporary files");
-            boolean success = FileUtils.delete(tempFileLocation);
+            final boolean success = FileUtils.delete(tempFileLocation);
             if (!success) {
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, "Failed to delete some temporary files, see the log for more details");
+                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING,
+                        "Failed to delete some temporary files, see the log for more details");
             }
         }
     }
