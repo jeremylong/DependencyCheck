@@ -299,13 +299,13 @@ public class Engine {
                     final String msg = String.format("Initializing %s", a.getName());
                     Logger.getLogger(Engine.class.getName()).log(Level.FINE, msg);
                     a.initialize();
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     final String msg = String.format("Exception occurred initializing %s.", a.getName());
                     Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, msg);
                     Logger.getLogger(Engine.class.getName()).log(Level.FINE, null, ex);
                     try {
                         a.close();
-                    } catch (Exception ex1) {
+                    } catch (Throwable ex1) {
                         Logger.getLogger(Engine.class.getName()).log(Level.FINEST, null, ex1);
                     }
                 }
@@ -354,7 +354,7 @@ public class Engine {
                 Logger.getLogger(Engine.class.getName()).log(Level.FINE, msg);
                 try {
                     a.close();
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     Logger.getLogger(Engine.class.getName()).log(Level.FINEST, null, ex);
                 }
             }

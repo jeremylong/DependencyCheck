@@ -127,7 +127,7 @@ public class App {
             } catch (IOException ex) {
                 Logger.getLogger(App.class.getName()).log(Level.SEVERE, "There was an IO error while attempting to generate the report.");
                 Logger.getLogger(App.class.getName()).log(Level.FINE, null, ex);
-            } catch (Exception ex) {
+            } catch (Throwable ex) {
                 Logger.getLogger(App.class.getName()).log(Level.SEVERE, "There was an error while attempting to generate the report.");
                 Logger.getLogger(App.class.getName()).log(Level.FINE, null, ex);
             }
