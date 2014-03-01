@@ -54,7 +54,7 @@ public class NvdCve_2_0_HandlerTest {
 
     @Test
     public void testParse() {
-        Exception results = null;
+        Throwable results = null;
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
@@ -64,7 +64,7 @@ public class NvdCve_2_0_HandlerTest {
             NvdCve20Handler instance = new NvdCve20Handler();
 
             saxParser.parse(file, instance);
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             results = ex;
         }
         assertTrue("Exception thrown during parse of 2012 CVE version 2.0?", results == null);
