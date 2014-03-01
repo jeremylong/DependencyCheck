@@ -292,7 +292,7 @@ public class StandardUpdate {
         if (cveDB != null) {
             try {
                 cveDB.close();
-            } catch (Exception ignore) {
+            } catch (Throwable ignore) {
                 Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINEST, "Error closing the cveDB", ignore);
             }
         }
