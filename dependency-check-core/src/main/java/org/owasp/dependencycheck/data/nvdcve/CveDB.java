@@ -300,7 +300,7 @@ public class CveDB {
      * @throws DatabaseException thrown when there is an error retrieving the data from the DB
      */
     public Set<Pair<String, String>> getVendorProductList() throws DatabaseException {
-        HashSet data = new HashSet<Pair<String, String>>();
+        final HashSet data = new HashSet<Pair<String, String>>();
         ResultSet rs = null;
         PreparedStatement ps = null;
         try {
