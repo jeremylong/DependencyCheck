@@ -20,9 +20,12 @@ package org.owasp.dependencycheck.utils;
 /**
  * A generic pair of elements.
  *
+ * @param <L> the type for the left element in the pair
+ * @param <R> the type for the right element in the pair
+ *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class Pair<K, V> {
+public class Pair<L, R> {
 
     /**
      * Constructs a new empty pair.
@@ -36,52 +39,52 @@ public class Pair<K, V> {
      * @param left the value for the left pair
      * @param right the value for the right pair
      */
-    public Pair(K left, V right) {
+    public Pair(L left, R right) {
         this.left = left;
         this.right = right;
     }
     /**
      * The left element of the pair.
      */
-    private K left = null;
+    private L left = null;
 
     /**
-     * Get the value of left
+     * Get the value of left.
      *
      * @return the value of left
      */
-    public K getLeft() {
+    public L getLeft() {
         return left;
     }
 
     /**
-     * Set the value of left
+     * Set the value of left.
      *
      * @param left new value of left
      */
-    public void setLeft(K left) {
+    public void setLeft(L left) {
         this.left = left;
     }
     /**
      * The right element of the pair.
      */
-    private V right = null;
+    private R right = null;
 
     /**
-     * Get the value of right
+     * Get the value of right.
      *
      * @return the value of right
      */
-    public V getRight() {
+    public R getRight() {
         return right;
     }
 
     /**
-     * Set the value of right
+     * Set the value of right.
      *
      * @param right new value of right
      */
-    public void setRight(V right) {
+    public void setRight(R right) {
         this.right = right;
     }
 
