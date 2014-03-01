@@ -85,66 +85,67 @@ public final class ConnectionFactory {
         if (connectionString != null) {
             return;
         }
-
-        //load the driver if necessary
-        final String driverName = Settings.getString(Settings.KEYS.DB_DRIVER_NAME, "");
-        if (!driverName.isEmpty()) { //likely need to load the correct driver
-            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Loading driver: {0}", driverName);
-            final String driverPath = Settings.getString(Settings.KEYS.DB_DRIVER_PATH, "");
-            try {
-                if (!driverPath.isEmpty()) {
-                    Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Loading driver from: {0}", driverPath);
-                    driver = DriverLoader.load(driverName, driverPath);
-                } else {
-                    driver = DriverLoader.load(driverName);
-                }
-            } catch (DriverLoadException ex) {
-                Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, "Unable to load database driver", ex);
-                throw new DatabaseException("Unable to load database driver");
-            }
-        }
-        userName = Settings.getString(Settings.KEYS.DB_USER, "dcuser");
-        //yes, yes - hard-coded password - only if there isn't one in the properties file.
-        password = Settings.getString(Settings.KEYS.DB_PASSWORD, "DC-Pass1337!");
-        try {
-            connectionString = getConnectionString();
-        } catch (IOException ex) {
-            Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE,
-                    "Unable to retrieve the database connection string", ex);
-            throw new DatabaseException("Unable to retrieve the database connection string");
-        }
-        boolean shouldCreateSchema = false;
-        try {
-            if (connectionString.startsWith("jdbc:h2:file:")) { //H2
-                shouldCreateSchema = !dbSchemaExists();
-                Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Need to create DB Structure: {0}", shouldCreateSchema);
-            }
-        } catch (IOException ioex) {
-            Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, "Unable to verify database exists", ioex);
-            throw new DatabaseException("Unable to verify database exists");
-        }
-        Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Loading database connection");
-        Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Connection String: {0}", connectionString);
-        Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Database User: {0}", userName);
-
         Connection conn = null;
         try {
-            conn = DriverManager.getConnection(connectionString, userName, password);
-        } catch (SQLException ex) {
-            if (ex.getMessage().contains("java.net.UnknownHostException") && connectionString.contains("AUTO_SERVER=TRUE;")) {
-                connectionString = connectionString.replace("AUTO_SERVER=TRUE;", "");
+            //load the driver if necessary
+            final String driverName = Settings.getString(Settings.KEYS.DB_DRIVER_NAME, "");
+            if (!driverName.isEmpty()) { //likely need to load the correct driver
+                Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Loading driver: {0}", driverName);
+                final String driverPath = Settings.getString(Settings.KEYS.DB_DRIVER_PATH, "");
                 try {
-                    conn = DriverManager.getConnection(connectionString, userName, password);
-                    Settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
-                    Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE,
-                            "Unable to start the database in server mode; reverting to single user mode");
-                } catch (SQLException sqlex) {
+                    if (!driverPath.isEmpty()) {
+                        Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Loading driver from: {0}", driverPath);
+                        driver = DriverLoader.load(driverName, driverPath);
+                    } else {
+                        driver = DriverLoader.load(driverName);
+                    }
+                } catch (DriverLoadException ex) {
+                    Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, "Unable to load database driver", ex);
+                    throw new DatabaseException("Unable to load database driver");
+                }
+            }
+            userName = Settings.getString(Settings.KEYS.DB_USER, "dcuser");
+            //yes, yes - hard-coded password - only if there isn't one in the properties file.
+            password = Settings.getString(Settings.KEYS.DB_PASSWORD, "DC-Pass1337!");
+            try {
+                connectionString = getConnectionString();
+            } catch (IOException ex) {
+                Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE,
+                        "Unable to retrieve the database connection string", ex);
+                throw new DatabaseException("Unable to retrieve the database connection string");
+            }
+            boolean shouldCreateSchema = false;
+            try {
+                if (connectionString.startsWith("jdbc:h2:file:")) { //H2
+                    shouldCreateSchema = !dbSchemaExists();
+                    Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Need to create DB Structure: {0}", shouldCreateSchema);
+                }
+            } catch (IOException ioex) {
+                Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, "Unable to verify database exists", ioex);
+                throw new DatabaseException("Unable to verify database exists");
+            }
+            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Loading database connection");
+            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Connection String: {0}", connectionString);
+            Logger.getLogger(CveDB.class.getName()).log(Level.FINE, "Database User: {0}", userName);
+
+            try {
+                conn = DriverManager.getConnection(connectionString, userName, password);
+            } catch (SQLException ex) {
+                if (ex.getMessage().contains("java.net.UnknownHostException") && connectionString.contains("AUTO_SERVER=TRUE;")) {
+                    connectionString = connectionString.replace("AUTO_SERVER=TRUE;", "");
+                    try {
+                        conn = DriverManager.getConnection(connectionString, userName, password);
+                        Settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
+                        Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE,
+                                "Unable to start the database in server mode; reverting to single user mode");
+                    } catch (SQLException sqlex) {
+                        Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, "Unable to connect to the database", ex);
+                        throw new DatabaseException("Unable to connect to the database");
+                    }
+                } else {
                     Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, "Unable to connect to the database", ex);
                     throw new DatabaseException("Unable to connect to the database");
                 }
-            } else {
-                Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, "Unable to connect to the database", ex);
-                throw new DatabaseException("Unable to connect to the database");
             }
 
             if (shouldCreateSchema) {
