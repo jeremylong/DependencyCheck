@@ -18,12 +18,10 @@
 package org.owasp.dependencycheck.data.nuget;
 
 import java.io.InputStream;
-
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -33,6 +31,7 @@ import org.w3c.dom.Node;
  * @author colezlaw
  */
 public class XPathNuspecParser implements NuspecParser {
+
     /**
      * Gets the string value of a node or null if it's not present
      *
@@ -71,11 +70,11 @@ public class XPathNuspecParser implements NuspecParser {
             nuspec.setId(xpath.evaluate("/package/metadata/id", d));
             nuspec.setVersion(xpath.evaluate("/package/metadata/version", d));
             nuspec.setAuthors(xpath.evaluate("/package/metadata/authors", d));
-            nuspec.setOwners(getOrNull((Node) xpath.evaluate("/package/metadata/owners",  d, XPathConstants.NODE)));
-            nuspec.setLicenseUrl(getOrNull((Node) xpath.evaluate("/package/metadata/licenseUrl",  d, XPathConstants.NODE)));
-            nuspec.setTitle(getOrNull((Node) xpath.evaluate("/package/metadata/title",  d, XPathConstants.NODE)));
+            nuspec.setOwners(getOrNull((Node) xpath.evaluate("/package/metadata/owners", d, XPathConstants.NODE)));
+            nuspec.setLicenseUrl(getOrNull((Node) xpath.evaluate("/package/metadata/licenseUrl", d, XPathConstants.NODE)));
+            nuspec.setTitle(getOrNull((Node) xpath.evaluate("/package/metadata/title", d, XPathConstants.NODE)));
             return nuspec;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new NuspecParseException("Unable to parse nuspec", e);
         }
     }
