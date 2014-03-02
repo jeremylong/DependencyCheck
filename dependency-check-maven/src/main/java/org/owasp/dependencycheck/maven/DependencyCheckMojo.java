@@ -199,6 +199,12 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @Parameter(property = "nexusUrl", defaultValue = "", required = false)
     private String nexusUrl;
     /**
+     * Whether or not the configured proxy is used to connect to Nexus.
+     */
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @Parameter(property = "nexusUsesProxy", defaultValue = "true", required = false)
+    private boolean nexusUsesProxy = true;
+    /**
      * The database connection string.
      */
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
@@ -751,6 +757,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         if (nexusUrl != null && !nexusUrl.isEmpty()) {
             Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
         }
+        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY, nexusUsesProxy);
         if (databaseDriverName != null && !databaseDriverName.isEmpty()) {
             Settings.setString(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
         }

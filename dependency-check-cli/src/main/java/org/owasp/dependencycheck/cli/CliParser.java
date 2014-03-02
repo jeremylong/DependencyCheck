@@ -204,6 +204,10 @@ public final class CliParser {
                 .withDescription("The url to the Nexus Server.")
                 .create();
 
+        final Option nexusUsesProxy = OptionBuilder.withArgName("true/false").hasArg().withLongOpt(ArgumentName.NEXUS_URL)
+                .withDescription("Whether or not the configured proxy should be used when connecting to Nexus.")
+                .create();
+
         final Option additionalZipExtensions = OptionBuilder.withArgName("extensions").hasArg()
                 .withLongOpt(ArgumentName.ADDITIONAL_ZIP_EXTENSIONS)
                 .withDescription("A comma seperated list of additional extensions to be scanned as ZIP files "
@@ -227,6 +231,7 @@ public final class CliParser {
                 .addOption(suppressionFile)
                 .addOption(disableNexusAnalyzer)
                 .addOption(nexusUrl)
+                .addOption(nexusUsesProxy)
                 .addOption(additionalZipExtensions);
     }
 
@@ -339,6 +344,20 @@ public final class CliParser {
             return null;
         } else {
             return line.getOptionValue(ArgumentName.NEXUS_URL);
+        }
+    }
+
+    /**
+     * Returns true if the Nexus Analyzer should use the configured proxy to connect to Nexus; otherwise false is
+     * returned.
+     *
+     * @return true if the Nexus Analyzer should use the configured proxy to connect to Nexus; otherwise false
+     */
+    public boolean isNexusUsesProxy() {
+        if (line == null || !line.hasOption(ArgumentName.NEXUS_USES_PROXY)) {
+            return true;
+        } else {
+            return Boolean.parseBoolean(line.getOptionValue(ArgumentName.NEXUS_USES_PROXY));
         }
     }
 
@@ -697,6 +716,10 @@ public final class CliParser {
          * The URL of the nexus server.
          */
         public static final String NEXUS_URL = "nexus";
+        /**
+         * Whether or not the defined proxy should be used when connecting to Nexus.
+         */
+        public static final String NEXUS_USES_PROXY = "nexusUsesProxy";
         /**
          * The CLI argument name for setting the connection string.
          */

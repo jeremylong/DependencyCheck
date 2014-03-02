@@ -28,4 +28,5 @@ Short  | Argument Name         | Parameter   | Description | Requirement
        | \-\-dbUser            | \<user\>    | The username used to connect to the database. | Optional
        | \-\-disableNexus      |             | Disable the Nexus Analyzer. | Optional
        | \-\-nexus             | \<url\>     | The url to the Nexus Server. | Optional
+       | \-\-nexusUsesProxy    | \<true|false\> | Whether or not the defined proxy should be used when connecting to Nexus. | Optional
        | \-\-zipExtensions     | \<strings\> | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | Optional
