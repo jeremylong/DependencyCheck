@@ -279,6 +279,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * Executes the Dependency-Check on the dependent libraries.
      *
      * @return the Engine used to scan the dependencies.
+     * @throws DatabaseException thrown if there is an exception connecting to the database
      */
     private Engine executeDependencyCheck() throws DatabaseException {
 
@@ -812,7 +813,8 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
                 checkForFailure(engine.getDependencies());
             }
         } catch (DatabaseException ex) {
-            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
+            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE,
+                    "Unable to connect to the dependency-check database; analysis has stopped");
             Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINE, "", ex);
         } finally {
             if (engine != null) {
@@ -847,7 +849,8 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
             engine = executeDependencyCheck();
             generateMavenSiteReport(engine, sink);
         } catch (DatabaseException ex) {
-            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
+            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE,
+                    "Unable to connect to the dependency-check database; analysis has stopped");
             Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINE, "", ex);
         } finally {
             if (engine != null) {
