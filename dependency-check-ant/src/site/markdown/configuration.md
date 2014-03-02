@@ -37,6 +37,7 @@ ProxyPassword         | Defines the proxy password. | Optional |
 ConnectionTimeout     | The connection timeout used when downloading data files from the Internet. | Optional |
 nexusAnalyzerEnabled  | The connection timeout used when downloading data files from the Internet. | Optional |
 nexusUrl              | The connection timeout used when downloading data files from the Internet. | Optional |
+nexusUsesProxy        | Whether or not the defined proxy should be used when connecting to Nexus. | Optional | true
 databaseDriverName    | The name of the database driver. Example: org.h2.Driver. | Optional |
 databaseDriverPath    | The path to the database driver JAR file; only used if the driver is not in the class path. | Optional |
 connectionString      | The connection string used to connect to the database. | Optional |
