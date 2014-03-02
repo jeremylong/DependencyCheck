@@ -83,7 +83,7 @@ public class App {
             cli.printVersionInfo();
         } else if (cli.isRunScan()) {
             updateSettings(cli);
-            runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles(), cli.getAdditionalZipExtensions());
+            runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles());
         } else {
             cli.printHelp();
         }
@@ -97,7 +97,7 @@ public class App {
      * @param applicationName the application name for the report
      * @param files the files/directories to scan
      */
-    private void runScan(String reportDirectory, String outputFormat, String applicationName, String[] files, String extraExtensions) {
+    private void runScan(String reportDirectory, String outputFormat, String applicationName, String[] files) {
         Engine scanner = null;
         try {
             scanner = new Engine();
