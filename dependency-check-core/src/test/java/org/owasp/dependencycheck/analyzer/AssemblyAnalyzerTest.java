@@ -17,15 +17,12 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeFalse;
-
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.junit.After;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Assume;
 import static org.junit.Assume.assumeFalse;
 import org.junit.Before;
@@ -43,7 +40,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  */
 public class AssemblyAnalyzerTest {
-    
+
     private static final Logger LOGGER = Logger.getLogger(AssemblyAnalyzerTest.class.getName());
 
     AssemblyAnalyzer analyzer;
