@@ -22,19 +22,19 @@ The following table lists the configurable properties:
 
 Property              | Description | Requirement | Default Value
 ----------------------|-------------|-------------|------------
-ApplicationName       | The name of the application to use in the generated report. | Required | &nbsp;
-ReportFormat          | The format of the report to be generated. Allowed values are: HTML, XML, VULN, or ALL. The default value is HTML.| Optional | HTML
-ReportOutputDirectory | The directory where dependency-check will store data used for analysis. Defaults to the current working directory. | Optional | &nbsp;
-FailBuildOn           | If set and a CVE is found that is greater then the specified value the build will fail. The default value is 11 which means that the build will not fail. Valid values are 0-11. | Optional | 11
-AutoUpdate            | If set to false the NVD CVE data is not automatically updated. Setting this to false could result in false negatives. However, this may be required in some environments. | Optional | true
-DataDirectory         | The directory where dependency-check will store data used for analysis. Defaults to a folder called, called 'dependency-check-data', that is in the same directory as the dependency-check-ant jar file was installed in. *It is not recommended to change this.* | Optional | &nbsp;
-LogFile               | The file path to write verbose logging information. | Optional | &nbsp;
-SuppressionFile       | An XML file conforming to the suppression schema that suppresses findings; this is used to hide [false positives](../suppression.html). | Optional | &nbsp;
-ProxyUrl              | Defines the proxy used to connect to the Internet. | Optional | &nbsp;
-ProxyPort             | Defines the port for the proxy. | Optional | &nbsp;
-ProxyUsername         | Defines the proxy user name. | Optional | &nbsp;
-ProxyPassword         | Defines the proxy password. | Optional | &nbsp;
-ConnectionTimeout     | The connection timeout used when downloading data files from the Internet. | Optional | &nbsp;
+applicationName       | The name of the application to use in the generated report. | Required | &nbsp;
+reportFormat          | The format of the report to be generated. Allowed values are: HTML, XML, VULN, or ALL. The default value is HTML.| Optional | HTML
+reportOutputDirectory | The directory where dependency-check will store data used for analysis. Defaults to the current working directory. | Optional | &nbsp;
+failBuildOn           | If set and a CVE is found that is greater then the specified value the build will fail. The default value is 11 which means that the build will not fail. Valid values are 0-11. | Optional | 11
+autoUpdate            | If set to false the NVD CVE data is not automatically updated. Setting this to false could result in false negatives. However, this may be required in some environments. | Optional | true
+dataDirectory         | The directory where dependency-check will store data used for analysis. Defaults to a folder called, called 'dependency-check-data', that is in the same directory as the dependency-check-ant jar file was installed in. *It is not recommended to change this.* | Optional | &nbsp;
+logFile               | The file path to write verbose logging information. | Optional | &nbsp;
+suppressionFile       | An XML file conforming to the suppression schema that suppresses findings; this is used to hide [false positives](../suppression.html). | Optional | &nbsp;
+proxyUrl              | Defines the proxy used to connect to the Internet. | Optional | &nbsp;
+proxyPort             | Defines the port for the proxy. | Optional | &nbsp;
+proxyUsername         | Defines the proxy user name. | Optional | &nbsp;
+proxyPassword         | Defines the proxy password. | Optional | &nbsp;
+connectionTimeout     | The connection timeout used when downloading data files from the Internet. | Optional | &nbsp;
 nexusAnalyzerEnabled  | The connection timeout used when downloading data files from the Internet. | Optional | &nbsp;
 nexusUrl              | The connection timeout used when downloading data files from the Internet. | Optional | &nbsp;
 nexusUsesProxy        | Whether or not the defined proxy should be used when connecting to Nexus. | Optional | true
