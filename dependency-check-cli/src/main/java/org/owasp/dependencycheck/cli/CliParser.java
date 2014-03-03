@@ -204,7 +204,7 @@ public final class CliParser {
                 .withDescription("The url to the Nexus Server.")
                 .create();
 
-        final Option nexusUsesProxy = OptionBuilder.withArgName("true/false").hasArg().withLongOpt(ArgumentName.NEXUS_URL)
+        final Option nexusUsesProxy = OptionBuilder.withArgName("true/false").hasArg().withLongOpt(ArgumentName.NEXUS_USES_PROXY)
                 .withDescription("Whether or not the configured proxy should be used when connecting to Nexus.")
                 .create();
 
