@@ -38,6 +38,9 @@ import java.util.logging.Logger;
  */
 public final class Settings {
 
+    /**
+     * The logger.
+     */
     private static final Logger LOGGER = Logger.getLogger(Settings.class.getName());
 
     /**
