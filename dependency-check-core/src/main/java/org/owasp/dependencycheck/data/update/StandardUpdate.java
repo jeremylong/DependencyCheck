@@ -134,20 +134,20 @@ public class StandardUpdate {
                     downloadExecutors.shutdownNow();
                     processExecutor.shutdownNow();
 
-                    Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interupted during download", ex);
-                    throw new UpdateException("The download was interupted", ex);
+                    Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interrupted during download", ex);
+                    throw new UpdateException("The download was interrupted", ex);
                 } catch (ExecutionException ex) {
                     downloadExecutors.shutdownNow();
                     processExecutor.shutdownNow();
 
-                    Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interupted during download execution", ex);
-                    throw new UpdateException("The execution of the download was interupted", ex);
+                    Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interrupted during download execution", ex);
+                    throw new UpdateException("The execution of the download was interrupted", ex);
                 }
                 if (task == null) {
                     downloadExecutors.shutdownNow();
                     processExecutor.shutdownNow();
-                    Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interupted during download");
-                    throw new UpdateException("The download was interupted; unable to complete the update");
+                    Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interrupted during download");
+                    throw new UpdateException("The download was interrupted; unable to complete the update");
                 } else {
                     processFutures.add(task);
                 }
@@ -161,7 +161,7 @@ public class StandardUpdate {
                     }
                 } catch (InterruptedException ex) {
                     processExecutor.shutdownNow();
-                    Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interupted during processing", ex);
+                    Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interrupted during processing", ex);
                     throw new UpdateException(ex);
                 } catch (ExecutionException ex) {
                     processExecutor.shutdownNow();
