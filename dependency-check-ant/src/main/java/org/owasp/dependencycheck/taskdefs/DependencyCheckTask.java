@@ -508,7 +508,7 @@ public class DependencyCheckTask extends Task {
     private boolean nexusUsesProxy = true;
 
     /**
-     * Get the value of nexusUsesProxy
+     * Get the value of nexusUsesProxy.
      *
      * @return the value of nexusUsesProxy
      */
@@ -517,7 +517,7 @@ public class DependencyCheckTask extends Task {
     }
 
     /**
-     * Set the value of nexusUsesProxy
+     * Set the value of nexusUsesProxy.
      *
      * @param nexusUsesProxy new value of nexusUsesProxy
      */
