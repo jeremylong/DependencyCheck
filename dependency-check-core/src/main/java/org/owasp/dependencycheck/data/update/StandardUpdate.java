@@ -245,11 +245,8 @@ public class StandardUpdate {
                 }
             } catch (NumberFormatException ex) {
                 final String msg = "An invalid schema version or timestamp exists in the data.properties file.";
-                Logger
-                        .getLogger(StandardUpdate.class
-                                .getName()).log(Level.WARNING, msg);
-                Logger.getLogger(StandardUpdate.class
-                        .getName()).log(Level.FINE, null, ex);
+                Logger.getLogger(StandardUpdate.class.getName()).log(Level.WARNING, msg);
+                Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "", ex);
             }
         }
         return updates;
