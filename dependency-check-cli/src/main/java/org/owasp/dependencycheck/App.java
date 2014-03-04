@@ -83,7 +83,7 @@ public class App {
             cli.printVersionInfo();
         } else if (cli.isRunScan()) {
             updateSettings(cli);
-            runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles(), cli.getAdditionalZipExtensions());
+            runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles());
         } else {
             cli.printHelp();
         }
@@ -97,7 +97,7 @@ public class App {
      * @param applicationName the application name for the report
      * @param files the files/directories to scan
      */
-    private void runScan(String reportDirectory, String outputFormat, String applicationName, String[] files, String extraExtensions) {
+    private void runScan(String reportDirectory, String outputFormat, String applicationName, String[] files) {
         Engine scanner = null;
         try {
             scanner = new Engine();
@@ -160,6 +160,7 @@ public class App {
         final String suppressionFile = cli.getSuppressionFile();
         final boolean nexusDisabled = cli.isNexusDisabled();
         final String nexusUrl = cli.getNexusUrl();
+        final boolean nexusUsesProxy = cli.isNexusUsesProxy();
         final String databaseDriverName = cli.getDatabaseDriverName();
         final String databaseDriverPath = cli.getDatabaseDriverPath();
         final String connectionString = cli.getConnectionString();
@@ -215,7 +216,7 @@ public class App {
         if (nexusUrl != null && !nexusUrl.isEmpty()) {
             Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
         }
-
+        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY, nexusUsesProxy);
         if (databaseDriverName != null && !databaseDriverName.isEmpty()) {
             Settings.setString(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
         }

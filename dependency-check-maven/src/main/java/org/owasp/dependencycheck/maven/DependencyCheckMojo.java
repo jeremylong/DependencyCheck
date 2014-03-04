@@ -199,6 +199,12 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @Parameter(property = "nexusUrl", defaultValue = "", required = false)
     private String nexusUrl;
     /**
+     * Whether or not the configured proxy is used to connect to Nexus.
+     */
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @Parameter(property = "nexusUsesProxy", defaultValue = "true", required = false)
+    private boolean nexusUsesProxy = true;
+    /**
      * The database connection string.
      */
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
@@ -279,6 +285,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * Executes the Dependency-Check on the dependent libraries.
      *
      * @return the Engine used to scan the dependencies.
+     * @throws DatabaseException thrown if there is an exception connecting to the database
      */
     private Engine executeDependencyCheck() throws DatabaseException {
 
@@ -750,6 +757,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         if (nexusUrl != null && !nexusUrl.isEmpty()) {
             Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
         }
+        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY, nexusUsesProxy);
         if (databaseDriverName != null && !databaseDriverName.isEmpty()) {
             Settings.setString(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
         }
@@ -812,7 +820,8 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
                 checkForFailure(engine.getDependencies());
             }
         } catch (DatabaseException ex) {
-            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
+            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE,
+                    "Unable to connect to the dependency-check database; analysis has stopped");
             Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINE, "", ex);
         } finally {
             if (engine != null) {
@@ -847,7 +856,8 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
             engine = executeDependencyCheck();
             generateMavenSiteReport(engine, sink);
         } catch (DatabaseException ex) {
-            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
+            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE,
+                    "Unable to connect to the dependency-check database; analysis has stopped");
             Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINE, "", ex);
         } finally {
             if (engine != null) {

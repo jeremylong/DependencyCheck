@@ -271,7 +271,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
             Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, null, ex);
             throw new AnalysisException("Archive file was not found.", ex);
         }
-        final String archiveExt = org.owasp.dependencycheck.utils.FileUtils.getFileExtension(archive.getName()).toLowerCase();
+        final String archiveExt = FileUtils.getFileExtension(archive.getName()).toLowerCase();
         try {
             if (ZIPPABLES.contains(archiveExt)) {
                 extractArchive(new ZipArchiveInputStream(new BufferedInputStream(fis)), destination, engine);
@@ -279,7 +279,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
                 extractArchive(new TarArchiveInputStream(new BufferedInputStream(fis)), destination, engine);
             } else if ("gz".equals(archiveExt) || "tgz".equals(archiveExt)) {
                 final String uncompressedName = GzipUtils.getUncompressedFilename(archive.getName());
-                final String uncompressedExt = org.owasp.dependencycheck.utils.FileUtils.getFileExtension(uncompressedName).toLowerCase();
+                final String uncompressedExt = FileUtils.getFileExtension(uncompressedName).toLowerCase();
                 if (engine.supportsExtension(uncompressedExt)) {
                     decompressFile(new GzipCompressorInputStream(new BufferedInputStream(fis)), new File(destination, uncompressedName));
                 }
@@ -323,7 +323,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
                     }
                 } else {
                     final File file = new File(destination, entry.getName());
-                    final String ext = org.owasp.dependencycheck.utils.FileUtils.getFileExtension(file.getName());
+                    final String ext = FileUtils.getFileExtension(file.getName());
                     if (engine.supportsExtension(ext)) {
                         BufferedOutputStream bos = null;
                         FileOutputStream fos;
