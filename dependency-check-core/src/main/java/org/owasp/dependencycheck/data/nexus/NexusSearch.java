@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -151,17 +152,17 @@ public class NexusSearch {
      */
     public boolean preflightRequest() {
         try {
-            final HttpURLConnection conn = URLConnectionFactory.createHttpURLConnection(new URL(rootURL, "status"));
+            final HttpURLConnection conn = URLConnectionFactory.createHttpURLConnection(new URL(rootURL, "status"), useProxy);
             conn.addRequestProperty("Accept", "application/xml");
             conn.connect();
             if (conn.getResponseCode() != 200) {
-                LOGGER.warning("Expected 200 result from Nexus, got " + conn.getResponseCode());
+                LOGGER.log(Level.WARNING, "Expected 200 result from Nexus, got {0}", conn.getResponseCode());
                 return false;
             }
             final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             final Document doc = builder.parse(conn.getInputStream());
-            if (doc.getDocumentElement().getNodeName() != "status") {
-                LOGGER.warning("Expected root node name of status, got " + doc.getDocumentElement().getNodeName());
+            if (!"status".equals(doc.getDocumentElement().getNodeName())) {
+                LOGGER.log(Level.WARNING, "Expected root node name of status, got {0}", doc.getDocumentElement().getNodeName());
                 return false;
             }
         } catch (Throwable e) {

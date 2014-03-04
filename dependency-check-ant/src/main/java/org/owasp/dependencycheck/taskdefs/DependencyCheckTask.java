@@ -502,6 +502,28 @@ public class DependencyCheckTask extends Task {
     public void setNexusUrl(String nexusUrl) {
         this.nexusUrl = nexusUrl;
     }
+    /**
+     * Whether or not the defined proxy should be used when connecting to Nexus.
+     */
+    private boolean nexusUsesProxy = true;
+
+    /**
+     * Get the value of nexusUsesProxy.
+     *
+     * @return the value of nexusUsesProxy
+     */
+    public boolean isNexusUsesProxy() {
+        return nexusUsesProxy;
+    }
+
+    /**
+     * Set the value of nexusUsesProxy.
+     *
+     * @param nexusUsesProxy new value of nexusUsesProxy
+     */
+    public void setNexusUsesProxy(boolean nexusUsesProxy) {
+        this.nexusUsesProxy = nexusUsesProxy;
+    }
 
     /**
      * The database driver name; such as org.h2.Driver.
@@ -779,14 +801,17 @@ public class DependencyCheckTask extends Task {
                     showSummary(engine.getDependencies());
                 }
             } catch (IOException ex) {
-                Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, "Unable to generate dependency-check report", ex);
+                Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE,
+                        "Unable to generate dependency-check report", ex);
                 throw new BuildException("Unable to generate dependency-check report", ex);
             } catch (Exception ex) {
-                Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, "An exception occurred; unable to continue task", ex);
+                Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE,
+                        "An exception occurred; unable to continue task", ex);
                 throw new BuildException("An exception occurred; unable to continue task", ex);
             }
         } catch (DatabaseException ex) {
-            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
+            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.SEVERE,
+                    "Unable to connect to the dependency-check database; analysis has stopped");
             Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, "", ex);
         } finally {
             if (engine != null) {
@@ -864,6 +889,7 @@ public class DependencyCheckTask extends Task {
         if (nexusUrl != null && !nexusUrl.isEmpty()) {
             Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
         }
+        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY, nexusUsesProxy);
         if (databaseDriverName != null && !databaseDriverName.isEmpty()) {
             Settings.setString(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
         }

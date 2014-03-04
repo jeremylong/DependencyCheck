@@ -17,6 +17,7 @@ proxyUsername        | Defines the proxy user name.       |
 proxyPassword        | Defines the proxy password.        |
 nexusAnalyzerEnabled | Sets whether Nexus Analyzer will be used. |
 nexusUrl             | Defines the Nexus URL. |
+nexusUsesProxy       | Whether or not the defined proxy should be used when connecting to Nexus. | true
 databaseDriverName   | The name of the database driver. Example: org.h2.Driver. |
 databaseDriverPath   | The path to the database driver JAR file; only used if the driver is not in the class path. |
 connectionString     | The connection string used to connect to the database. |

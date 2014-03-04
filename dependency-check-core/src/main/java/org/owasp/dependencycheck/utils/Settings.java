@@ -22,8 +22,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,6 +37,11 @@ import java.util.logging.Logger;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class Settings {
+
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Settings.class.getName());
 
     /**
      * The collection of keys used within the properties file.
@@ -204,6 +212,43 @@ public final class Settings {
                 }
             }
         }
+        logProperties("Properties loaded", props);
+    }
+
+    /**
+     * Logs the properties. This will not log any properties that contain 'password' in the key.
+     *
+     * @param header the header to print with the log message
+     * @param properties the properties to log
+     */
+    private static void logProperties(String header, Properties properties) {
+        if (LOGGER.isLoggable(Level.FINE)) {
+            final StringWriter sw = new StringWriter();
+            PrintWriter pw = null;
+            try {
+                pw = new PrintWriter(sw);
+                pw.format("%s:%n%n", header);
+                final Enumeration e = properties.propertyNames();
+                while (e.hasMoreElements()) {
+                    final String key = (String) e.nextElement();
+                    if (key.contains("password")) {
+                        pw.format("%s='*****'%n", key);
+                    } else {
+                        final String value = properties.getProperty(key);
+                        if (value != null) {
+                            pw.format("%s='%s'%n", key, value);
+                        }
+                    }
+                }
+                pw.flush();
+                LOGGER.fine(sw.toString());
+            } finally {
+                if (pw != null) {
+                    pw.close();
+                }
+            }
+
+        }
     }
 
     /**
@@ -214,6 +259,9 @@ public final class Settings {
      */
     public static void setString(String key, String value) {
         INSTANCE.props.setProperty(key, value);
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine(String.format("Setting: %s='%s'", key, value));
+        }
     }
 
     /**
@@ -227,6 +275,9 @@ public final class Settings {
             INSTANCE.props.setProperty(key, Boolean.TRUE.toString());
         } else {
             INSTANCE.props.setProperty(key, Boolean.FALSE.toString());
+        }
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine(String.format("Setting: %s='%b'", key, value));
         }
     }
 
@@ -268,6 +319,7 @@ public final class Settings {
      */
     public static void mergeProperties(InputStream stream) throws IOException {
         INSTANCE.props.load(stream);
+        logProperties("Properties updated via merge", INSTANCE.props);
     }
 
     /**
