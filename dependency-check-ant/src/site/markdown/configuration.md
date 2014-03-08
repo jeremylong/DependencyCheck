@@ -48,3 +48,4 @@ cveUrl12Modified      | URL for the modified CVE 1.2 | Optional | http://nvd.nis
 cveUrl20Modified      | URL for the modified CVE 2.0 | Optional | http://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-modified.xml
 cveUrl12Base          | Base URL for each year's CVE 1.2, the %d will be replaced with the year | Optional | http://nvd.nist.gov/download/nvdcve-%d.xml
 cveUrl20Base          | Base URL for each year's CVE 2.0, the %d will be replaced with the year | Optional | http://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-%d.xml
+pathToMono            | The path to Mono for .NET assembly analysis on non-windows systems | Optional | &nbsp;

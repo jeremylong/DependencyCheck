@@ -92,17 +92,17 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @Parameter(property = "report-name", defaultValue = "dependency-check-report")
     private String reportName;
     /**
-     * The path to the verbose log
+     * The path to the verbose log.
      */
     @Parameter(property = "logfile", defaultValue = "")
     private String logFile;
     /**
-     * The name of the report to be displayed in the Maven Generated Reports page
+     * The name of the report to be displayed in the Maven Generated Reports page.
      */
     @Parameter(property = "name", defaultValue = "Dependency-Check")
     private String name;
     /**
-     * The description of the Dependency-Check report to be displayed in the Maven Generated Reports page
+     * The description of the Dependency-Check report to be displayed in the Maven Generated Reports page.
      */
     @Parameter(property = "description", defaultValue = "A report providing details on any published "
             + "vulnerabilities within project dependencies. This report is a best effort but may contain "
@@ -117,6 +117,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11
      * which means since the CVSS scores are 0-10, by default the build will never fail.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "failBuildOnCVSS", defaultValue = "11", required = true)
     private float failBuildOnCVSS = 11;
     /**
@@ -128,7 +129,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to
      * false. Default is true.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "autoupdate", defaultValue = "true", required = true)
     private boolean autoUpdate = true;
     /**
@@ -240,18 +241,21 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @Parameter(property = "zipExtensions", required = false)
     private String zipExtensions;
     /**
-     * Skip Analisys for Test Scope Dependencies
+     * Skip Analisys for Test Scope Dependencies.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "skipTestScope", defaultValue = "true", required = false)
     private boolean skipTestScope = true;
     /**
-     * Skip Analisys for Runtime Scope Dependencies
+     * Skip Analisys for Runtime Scope Dependencies.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "skipRuntimeScope", defaultValue = "false", required = false)
     private boolean skipRuntimeScope = false;
     /**
-     * Skip Analisys for Provided Scope Dependencies
+     * Skip Analisys for Provided Scope Dependencies.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "skipProvidedScope", defaultValue = "false", required = false)
     private boolean skipProvidedScope = false;
     /**
@@ -260,25 +264,31 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @Parameter(property = "dataDirectory", defaultValue = "", required = false)
     private String dataDirectory;
     /**
-     * Data Mirror URL for CVE 1.2
+     * Data Mirror URL for CVE 1.2.
      */
     @Parameter(property = "cveUrl12Modified", defaultValue = "", required = false)
     private String cveUrl12Modified;
     /**
-     * Data Mirror URL for CVE 2.0
+     * Data Mirror URL for CVE 2.0.
      */
     @Parameter(property = "cveUrl20Modified", defaultValue = "", required = false)
     private String cveUrl20Modified;
     /**
-     * Base Data Mirror URL for CVE 1.2
+     * Base Data Mirror URL for CVE 1.2.
      */
     @Parameter(property = "cveUrl12Base", defaultValue = "", required = false)
     private String cveUrl12Base;
     /**
-     * Data Mirror URL for CVE 2.0
+     * Data Mirror URL for CVE 2.0.
      */
     @Parameter(property = "cveUrl20Base", defaultValue = "", required = false)
     private String cveUrl20Base;
+
+    /**
+     * The path to mono for .NET Assembly analysis on non-windows systems.
+     */
+    @Parameter(property = "pathToMono", defaultValue = "", required = false)
+    private String pathToMono;
 
     // </editor-fold>
     /**
@@ -799,6 +809,9 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         }
         if (cveUrl20Base != null && !cveUrl20Base.isEmpty()) {
             Settings.setString(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
+        }
+        if (pathToMono != null && !pathToMono.isEmpty()) {
+            Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
         }
     }
 

@@ -167,6 +167,7 @@ public class App {
         final String databaseUser = cli.getDatabaseUser();
         final String databasePassword = cli.getDatabasePassword();
         final String additionalZipExtensions = cli.getAdditionalZipExtensions();
+        final String pathToMono = cli.getPathToMono();
 
         if (propertiesFile != null) {
             try {
@@ -234,6 +235,9 @@ public class App {
         }
         if (additionalZipExtensions != null && !additionalZipExtensions.isEmpty()) {
             Settings.setString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, additionalZipExtensions);
+        }
+        if (pathToMono != null && !pathToMono.isEmpty()) {
+            Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
         }
     }
 }

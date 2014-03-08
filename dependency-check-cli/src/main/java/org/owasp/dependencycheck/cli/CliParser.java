@@ -196,24 +196,6 @@ public final class CliParser {
                 .withDescription("The file path to the suppression XML file.")
                 .create();
 
-        final Option disableNexusAnalyzer = OptionBuilder.withLongOpt(ArgumentName.DISABLE_NEXUS)
-                .withDescription("Disable the Nexus Analyzer.")
-                .create();
-
-        final Option nexusUrl = OptionBuilder.withArgName("url").hasArg().withLongOpt(ArgumentName.NEXUS_URL)
-                .withDescription("The url to the Nexus Server.")
-                .create();
-
-        final Option nexusUsesProxy = OptionBuilder.withArgName("true/false").hasArg().withLongOpt(ArgumentName.NEXUS_USES_PROXY)
-                .withDescription("Whether or not the configured proxy should be used when connecting to Nexus.")
-                .create();
-
-        final Option additionalZipExtensions = OptionBuilder.withArgName("extensions").hasArg()
-                .withLongOpt(ArgumentName.ADDITIONAL_ZIP_EXTENSIONS)
-                .withDescription("A comma seperated list of additional extensions to be scanned as ZIP files "
-                        + "(ZIP, EAR, WAR are already treated as zip files)")
-                .create();
-
         //This is an option group because it can be specified more then once.
         final OptionGroup og = new OptionGroup();
         og.addOption(path);
@@ -228,11 +210,7 @@ public final class CliParser {
                 .addOption(noUpdate)
                 .addOption(props)
                 .addOption(verboseLog)
-                .addOption(suppressionFile)
-                .addOption(disableNexusAnalyzer)
-                .addOption(nexusUrl)
-                .addOption(nexusUsesProxy)
-                .addOption(additionalZipExtensions);
+                .addOption(suppressionFile);
     }
 
     /**
@@ -272,17 +250,43 @@ public final class CliParser {
         final Option connectionString = OptionBuilder.withArgName("connStr").hasArg().withLongOpt(ArgumentName.CONNECTION_STRING)
                 .withDescription("The connection string to the database.")
                 .create();
+
         final Option dbUser = OptionBuilder.withArgName("user").hasArg().withLongOpt(ArgumentName.DB_NAME)
                 .withDescription("The username used to connect to the database.")
                 .create();
+
         final Option dbPassword = OptionBuilder.withArgName("password").hasArg().withLongOpt(ArgumentName.DB_PASSWORD)
                 .withDescription("The password for connecting to the database.")
                 .create();
+
         final Option dbDriver = OptionBuilder.withArgName("driver").hasArg().withLongOpt(ArgumentName.DB_DRIVER)
                 .withDescription("The database driver name.")
                 .create();
+
         final Option dbDriverPath = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.DB_DRIVER_PATH)
                 .withDescription("The path to the database driver; note, this does not need to be set unless the JAR is outside of the classpath.")
+                .create();
+
+        final Option disableNexusAnalyzer = OptionBuilder.withLongOpt(ArgumentName.DISABLE_NEXUS)
+                .withDescription("Disable the Nexus Analyzer.")
+                .create();
+
+        final Option nexusUrl = OptionBuilder.withArgName("url").hasArg().withLongOpt(ArgumentName.NEXUS_URL)
+                .withDescription("The url to the Nexus Server.")
+                .create();
+
+        final Option nexusUsesProxy = OptionBuilder.withArgName("true/false").hasArg().withLongOpt(ArgumentName.NEXUS_USES_PROXY)
+                .withDescription("Whether or not the configured proxy should be used when connecting to Nexus.")
+                .create();
+
+        final Option additionalZipExtensions = OptionBuilder.withArgName("extensions").hasArg()
+                .withLongOpt(ArgumentName.ADDITIONAL_ZIP_EXTENSIONS)
+                .withDescription("A comma seperated list of additional extensions to be scanned as ZIP files "
+                        + "(ZIP, EAR, WAR are already treated as zip files)")
+                .create();
+
+        final Option pathToMono = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.PATH_TO_MONO)
+                .withDescription("The path to Mono for .NET Assembly analysis on non-windows systems.")
                 .create();
 
         options.addOption(proxyPort)
@@ -295,7 +299,12 @@ public final class CliParser {
                 .addOption(data)
                 .addOption(dbPassword)
                 .addOption(dbDriver)
-                .addOption(dbDriverPath);
+                .addOption(dbDriverPath)
+                .addOption(disableNexusAnalyzer)
+                .addOption(nexusUrl)
+                .addOption(nexusUsesProxy)
+                .addOption(additionalZipExtensions)
+                .addOption(pathToMono);
     }
 
     /**
@@ -401,6 +410,15 @@ public final class CliParser {
      */
     public String getReportDirectory() {
         return line.getOptionValue(ArgumentName.OUT, ".");
+    }
+
+    /**
+     * Returns the path to Mono for .NET Assembly analysis on non-windows systems.
+     *
+     * @return the path to Mono
+     */
+    public String getPathToMono() {
+        return line.getOptionValue(ArgumentName.PATH_TO_MONO);
     }
 
     /**
@@ -740,6 +758,10 @@ public final class CliParser {
          * The CLI argument name for setting the path to the database driver; in case it is not on the class path.
          */
         public static final String DB_DRIVER_PATH = "dbDriverPath";
+        /**
+         * The CLI argument name for setting the path to mono for .NET Assembly analysis on non-windows systems.
+         */
+        public static final String PATH_TO_MONO = "mono";
         /**
          * The CLI argument name for setting extra extensions.
          */
