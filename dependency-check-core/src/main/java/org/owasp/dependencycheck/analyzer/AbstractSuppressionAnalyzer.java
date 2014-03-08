@@ -18,13 +18,20 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import org.owasp.dependencycheck.suppression.SuppressionParseException;
 import org.owasp.dependencycheck.suppression.SuppressionParser;
 import org.owasp.dependencycheck.suppression.SuppressionRule;
+import org.owasp.dependencycheck.utils.DownloadFailedException;
+import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -95,17 +102,54 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      * @throws SuppressionParseException thrown if the XML cannot be parsed.
      */
     private void loadSuppressionData() throws SuppressionParseException {
-        final File file = Settings.getFile(Settings.KEYS.SUPPRESSION_FILE);
-        if (file != null) {
-            final SuppressionParser parser = new SuppressionParser();
-            try {
-                rules = parser.parseSuppressionRules(file);
-            } catch (SuppressionParseException ex) {
-                final String msg = String.format("Unable to parse suppression xml file '%s'", file.getPath());
-                Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.WARNING, msg);
-                Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.WARNING, ex.getMessage());
-                Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.FINE, null, ex);
-                throw ex;
+        String suppressionFilePath = Settings.getString(Settings.KEYS.SUPPRESSION_FILE);
+        if (suppressionFilePath == null) {
+            return;
+        }
+        File file = null;
+        boolean deleteTempFile = false;
+        try {
+            Pattern uriRx = Pattern.compile("^(https?|file)\\:.*", Pattern.CASE_INSENSITIVE);
+            if (uriRx.matcher(suppressionFilePath).matches()) {
+                file = File.createTempFile("suppression", "xml", Settings.getTempDirectory());
+                URL url = new URL(suppressionFilePath);
+                try {
+                    Downloader.fetchFile(url, file, false);
+                } catch (DownloadFailedException ex) {
+                    Downloader.fetchFile(url, file, true);
+                }
+            }
+
+            if (file != null) {
+                final SuppressionParser parser = new SuppressionParser();
+                try {
+                    rules = parser.parseSuppressionRules(file);
+                } catch (SuppressionParseException ex) {
+                    final String msg = String.format("Unable to parse suppression xml file '%s'", file.getPath());
+                    Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.WARNING, msg);
+                    Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.WARNING, ex.getMessage());
+                    Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.FINE, null, ex);
+                    throw ex;
+                }
+            }
+        } catch (DownloadFailedException ex) {
+            Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.WARNING,
+                    "Unable to fetch the configured suppression file");
+            Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.FINE, "", ex);
+            throw new SuppressionParseException("Unable to fetch the configured suppression file", ex);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.WARNING,
+                    "Configured suppression file has an invalid URL");
+            Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.FINE, "", ex);
+            throw new SuppressionParseException("Configured suppression file has an invalid URL", ex);
+        } catch (IOException ex) {
+            Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.WARNING,
+                    "Unable to create temp file for suppressions");
+            Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.FINE, "", ex);
+            throw new SuppressionParseException("Unable to create temp file for suppressions", ex);
+        } finally {
+            if (deleteTempFile && file != null) {
+                FileUtils.delete(file);
             }
         }
     }
