@@ -54,8 +54,8 @@ public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
         final File file2;
 
         try {
-            file1 = File.createTempFile("cve" + nvdCveInfo.getId() + "_", ".xml", Settings.getTempDirectory(););
-            file2 = File.createTempFile("cve_1_2_" + nvdCveInfo.getId() + "_", ".xml", Settings.getTempDirectory(););
+            file1 = File.createTempFile("cve" + nvdCveInfo.getId() + "_", ".xml", Settings.getTempDirectory());
+            file2 = File.createTempFile("cve_1_2_" + nvdCveInfo.getId() + "_", ".xml", Settings.getTempDirectory());
         } catch (IOException ex) {
             return;
         }
