@@ -73,7 +73,7 @@ public class FileUtilsTest {
     @Test
     public void testDelete() throws Exception {
 
-        File file = File.createTempFile("tmp", "deleteme");
+        File file = File.createTempFile("tmp", "deleteme", Settings.getTempDirectory());
         if (!file.exists()) {
             fail("Unable to create a temporary file.");
         }
