@@ -29,6 +29,7 @@ import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.update.NvdCveInfo;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * A callable object to download two files.
@@ -53,8 +54,8 @@ public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
         final File file2;
 
         try {
-            file1 = File.createTempFile("cve" + nvdCveInfo.getId() + "_", ".xml");
-            file2 = File.createTempFile("cve_1_2_" + nvdCveInfo.getId() + "_", ".xml");
+            file1 = File.createTempFile("cve" + nvdCveInfo.getId() + "_", ".xml", Settings.getTempDirectory(););
+            file2 = File.createTempFile("cve_1_2_" + nvdCveInfo.getId() + "_", ".xml", Settings.getTempDirectory(););
         } catch (IOException ex) {
             return;
         }
