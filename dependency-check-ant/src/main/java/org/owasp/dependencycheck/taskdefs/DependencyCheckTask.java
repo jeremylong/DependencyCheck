@@ -753,6 +753,28 @@ public class DependencyCheckTask extends Task {
     public void setCveUrl20Base(String cveUrl20Base) {
         this.cveUrl20Base = cveUrl20Base;
     }
+    /**
+     * The path to Mono for .NET assembly analysis on non-windows systems.
+     */
+    private String pathToMono;
+
+    /**
+     * Get the value of pathToMono.
+     *
+     * @return the value of pathToMono
+     */
+    public String getPathToMono() {
+        return pathToMono;
+    }
+
+    /**
+     * Set the value of pathToMono.
+     *
+     * @param pathToMono new value of pathToMono
+     */
+    public void setPathToMono(String pathToMono) {
+        this.pathToMono = pathToMono;
+    }
 
     @Override
     public void execute() throws BuildException {
@@ -919,6 +941,9 @@ public class DependencyCheckTask extends Task {
         }
         if (cveUrl20Base != null && !cveUrl20Base.isEmpty()) {
             Settings.setString(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
+        }
+        if (pathToMono != null && !pathToMono.isEmpty()) {
+            Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
         }
     }
 
