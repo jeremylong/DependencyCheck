@@ -46,14 +46,26 @@ public final class Downloader {
     /**
      * Retrieves a file from a given URL and saves it to the outputPath.
      *
-     * @param url the URL of the file to download.
-     * @param outputPath the path to the save the file to.
-     * @throws DownloadFailedException is thrown if there is an error downloading the file.
+     * @param url the URL of the file to download
+     * @param outputPath the path to the save the file to
+     * @throws DownloadFailedException is thrown if there is an error downloading the file
      */
     public static void fetchFile(URL url, File outputPath) throws DownloadFailedException {
+        fetchFile(url, outputPath, true);
+    }
+
+    /**
+     * Retrieves a file from a given URL and saves it to the outputPath.
+     *
+     * @param url the URL of the file to download
+     * @param outputPath the path to the save the file to
+     * @param useProxy whether to use the configured proxy when downloading files
+     * @throws DownloadFailedException is thrown if there is an error downloading the file
+     */
+    public static void fetchFile(URL url, File outputPath, boolean useProxy) throws DownloadFailedException {
         HttpURLConnection conn = null;
         try {
-            conn = URLConnectionFactory.createHttpURLConnection(url);
+            conn = URLConnectionFactory.createHttpURLConnection(url, useProxy);
             conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
             conn.connect();
         } catch (IOException ex) {
