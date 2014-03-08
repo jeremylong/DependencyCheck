@@ -74,7 +74,7 @@ public class AssemblyAnalyzerTest {
         File f = new File(AssemblyAnalyzerTest.class.getClassLoader().getResource("GrokAssembly.exe").getPath());
         Dependency d = new Dependency(f);
         analyzer.analyze(d, null);
-        assertTrue(d.getVersionEvidence().getEvidence().contains(new Evidence("grokassembly", "version", "1.0.5140.29700", Confidence.HIGHEST)));
+        assertTrue(d.getVersionEvidence().getEvidence().contains(new Evidence("grokassembly", "version", "1.0.5176.23901", Confidence.HIGHEST)));
     }
 
     @Test
