@@ -158,7 +158,7 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
     @Override
     public void initialize() throws Exception {
         super.initialize();
-        final File tempFile = File.createTempFile("GKA", ".exe");
+        final File tempFile = File.createTempFile("GKA", ".exe", Settings.getTempDirectory());
         FileOutputStream fos = null;
         InputStream is = null;
         try {
