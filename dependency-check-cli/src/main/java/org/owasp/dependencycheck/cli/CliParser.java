@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.cli;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -29,6 +30,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.owasp.dependencycheck.reporting.ReportGenerator.Format;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -366,8 +368,14 @@ public final class CliParser {
      * @return true if the Nexus Analyzer should use the configured proxy to connect to Nexus; otherwise false
      */
     public boolean isNexusUsesProxy() {
+        // If they didn't specify whether Nexus needs to use the proxy, we should
+        // still honor the property if it's set.
         if (line == null || !line.hasOption(ArgumentName.NEXUS_USES_PROXY)) {
-            return true;
+            try {
+                return Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY);
+            } catch (InvalidSettingException ise) {
+                return true;
+            }
         } else {
             return Boolean.parseBoolean(line.getOptionValue(ArgumentName.NEXUS_USES_PROXY));
         }
@@ -704,7 +712,7 @@ public final class CliParser {
         /**
          * The short CLI argument name for setting the location of an additional properties file.
          */
-        public static final String PROP_SHORT = "p";
+        public static final String PROP_SHORT = "P";
         /**
          * The CLI argument name for setting the location of an additional properties file.
          */
