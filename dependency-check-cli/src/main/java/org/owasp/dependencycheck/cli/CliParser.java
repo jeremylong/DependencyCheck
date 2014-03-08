@@ -84,8 +84,11 @@ public final class CliParser {
      */
     private void validateArgs() throws FileNotFoundException, ParseException {
         if (isRunScan()) {
-            validatePathExists(getScanFiles(), "scan");
-            validatePathExists(getReportDirectory(), "out");
+            validatePathExists(getScanFiles(), ArgumentName.SCAN);
+            validatePathExists(getReportDirectory(), ArgumentName.OUT);
+            if (getPathToMono() != null) {
+                validatePathExists(getPathToMono(), ArgumentName.PATH_TO_MONO);
+            }
             if (!line.hasOption(ArgumentName.APP_NAME)) {
                 throw new ParseException("Missing 'app' argument; the scan cannot be run without the an application name.");
             }
@@ -121,14 +124,14 @@ public final class CliParser {
      * FileNotFoundException is thrown.
      *
      * @param path the paths to validate if they exists
-     * @param optType the option being validated (e.g. scan, out, etc.)
+     * @param argumentName the argument being validated (e.g. scan, out, etc.)
      * @throws FileNotFoundException is thrown if the path being validated does not exist.
      */
-    private void validatePathExists(String path, String optType) throws FileNotFoundException {
+    private void validatePathExists(String path, String argumentName) throws FileNotFoundException {
         final File f = new File(path);
         if (!f.exists()) {
             isValid = false;
-            final String msg = String.format("Invalid '%s' argument: '%s'", optType, path);
+            final String msg = String.format("Invalid '%s' argument: '%s'", argumentName, path);
             throw new FileNotFoundException(msg);
         }
     }
