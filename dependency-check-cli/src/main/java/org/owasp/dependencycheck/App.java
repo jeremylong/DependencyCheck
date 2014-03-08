@@ -160,7 +160,6 @@ public class App {
         final String suppressionFile = cli.getSuppressionFile();
         final boolean nexusDisabled = cli.isNexusDisabled();
         final String nexusUrl = cli.getNexusUrl();
-        final boolean nexusUsesProxy = cli.isNexusUsesProxy();
         final String databaseDriverName = cli.getDatabaseDriverName();
         final String databaseDriverPath = cli.getDatabaseDriverPath();
         final String connectionString = cli.getConnectionString();
@@ -182,6 +181,10 @@ public class App {
                 Logger.getLogger(App.class.getName()).log(Level.FINE, null, ex);
             }
         }
+        // We have to wait until we've merged the properties before attempting to set whether we use
+        // the proxy for Nexus since it could be disabled in the properties, but not explicitly stated
+        // on the command line
+        final boolean nexusUsesProxy = cli.isNexusUsesProxy();
         if (dataDirectory != null) {
             Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
         } else if (System.getProperty("basedir") != null) {
