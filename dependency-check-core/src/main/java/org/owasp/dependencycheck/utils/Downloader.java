@@ -63,63 +63,84 @@ public final class Downloader {
      * @throws DownloadFailedException is thrown if there is an error downloading the file
      */
     public static void fetchFile(URL url, File outputPath, boolean useProxy) throws DownloadFailedException {
-        HttpURLConnection conn = null;
-        try {
-            conn = URLConnectionFactory.createHttpURLConnection(url, useProxy);
-            conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
-            conn.connect();
-        } catch (IOException ex) {
+        if ("file".equalsIgnoreCase(url.getProtocol())) {
+            File file;
             try {
-                if (conn != null) {
-                    conn.disconnect();
-                }
-            } finally {
-                conn = null;
+                file = new File(url.toURI());
+            } catch (URISyntaxException ex) {
+                final String msg = String.format("Download failed, unable to locate '%s'", url.toString());
+                throw new DownloadFailedException(msg);
             }
-            throw new DownloadFailedException("Error downloading file.", ex);
-        }
-        final String encoding = conn.getContentEncoding();
-
-        BufferedOutputStream writer = null;
-        InputStream reader = null;
-        try {
-            if (encoding != null && "gzip".equalsIgnoreCase(encoding)) {
-                reader = new GZIPInputStream(conn.getInputStream());
-            } else if (encoding != null && "deflate".equalsIgnoreCase(encoding)) {
-                reader = new InflaterInputStream(conn.getInputStream());
+            if (file.exists()) {
+                try {
+                    org.apache.commons.io.FileUtils.copyFile(file, outputPath);
+                } catch (IOException ex) {
+                    final String msg = String.format("Download failed, unable to copy '%s'", url.toString());
+                    throw new DownloadFailedException(msg);
+                }
             } else {
-                reader = conn.getInputStream();
+                final String msg = String.format("Download failed, file does not exist '%s'", url.toString());
+                throw new DownloadFailedException(msg);
             }
-
-            writer = new BufferedOutputStream(new FileOutputStream(outputPath));
-            final byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = reader.read(buffer)) > 0) {
-                writer.write(buffer, 0, bytesRead);
-            }
-        } catch (Throwable ex) {
-            throw new DownloadFailedException("Error saving downloaded file.", ex);
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (Throwable ex) {
-                    Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
-                            "Error closing the writer in Downloader.", ex);
-                }
-            }
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (Throwable ex) {
-                    Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
-                            "Error closing the reader in Downloader.", ex);
-                }
-            }
+        } else {
+            HttpURLConnection conn = null;
             try {
-                conn.disconnect();
+                conn = URLConnectionFactory.createHttpURLConnection(url, useProxy);
+                conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
+                conn.connect();
+            } catch (IOException ex) {
+                try {
+                    if (conn != null) {
+                        conn.disconnect();
+                    }
+                } finally {
+                    conn = null;
+                }
+                throw new DownloadFailedException("Error downloading file.", ex);
+            }
+            final String encoding = conn.getContentEncoding();
+
+            BufferedOutputStream writer = null;
+            InputStream reader = null;
+            try {
+                if (encoding != null && "gzip".equalsIgnoreCase(encoding)) {
+                    reader = new GZIPInputStream(conn.getInputStream());
+                } else if (encoding != null && "deflate".equalsIgnoreCase(encoding)) {
+                    reader = new InflaterInputStream(conn.getInputStream());
+                } else {
+                    reader = conn.getInputStream();
+                }
+
+                writer = new BufferedOutputStream(new FileOutputStream(outputPath));
+                final byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = reader.read(buffer)) > 0) {
+                    writer.write(buffer, 0, bytesRead);
+                }
+            } catch (Throwable ex) {
+                throw new DownloadFailedException("Error saving downloaded file.", ex);
             } finally {
-                conn = null;
+                if (writer != null) {
+                    try {
+                        writer.close();
+                    } catch (Throwable ex) {
+                        Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
+                                "Error closing the writer in Downloader.", ex);
+                    }
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (Throwable ex) {
+                        Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
+                                "Error closing the reader in Downloader.", ex);
+                    }
+                }
+                try {
+                    conn.disconnect();
+                } finally {
+                    conn = null;
+                }
             }
         }
     }
@@ -134,20 +155,11 @@ public final class Downloader {
      */
     public static long getLastModified(URL url) throws DownloadFailedException {
         long timestamp = 0;
-        //TODO add the FPR protocol?
+        //TODO add the FTP protocol?
         if ("file".equalsIgnoreCase(url.getProtocol())) {
             File lastModifiedFile;
             try {
-//                if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
-//                    String filePath = url.toString();
-//                    if (filePath.matches("file://[a-zA-Z]:.*")) {
-//                        f = new File(filePath.substring(7));
-//                    } else {
-//                        f = new File(url.toURI());
-//                    }
-//                } else {
                 lastModifiedFile = new File(url.toURI());
-//                }
             } catch (URISyntaxException ex) {
                 final String msg = String.format("Unable to locate '%s'; is the cve.url-2.0.modified property set correctly?", url.toString());
                 throw new DownloadFailedException(msg);
