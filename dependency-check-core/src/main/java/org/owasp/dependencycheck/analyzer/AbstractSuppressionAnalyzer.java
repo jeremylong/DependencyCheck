@@ -102,7 +102,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      * @throws SuppressionParseException thrown if the XML cannot be parsed.
      */
     private void loadSuppressionData() throws SuppressionParseException {
-        String suppressionFilePath = Settings.getString(Settings.KEYS.SUPPRESSION_FILE);
+        final String suppressionFilePath = Settings.getString(Settings.KEYS.SUPPRESSION_FILE);
         if (suppressionFilePath == null) {
             return;
         }
