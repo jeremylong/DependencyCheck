@@ -16,3 +16,5 @@ dependency-reduced-pom.xml
 Gemfile
 Gemfile.lock
 _site/**
+#unknown as to why these are showing up... but need to be ignored.
+.LCKpom.xml~
