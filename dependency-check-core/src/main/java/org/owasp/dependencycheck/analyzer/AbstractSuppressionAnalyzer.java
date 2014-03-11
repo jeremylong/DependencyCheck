@@ -112,10 +112,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
             final Pattern uriRx = Pattern.compile("^(https?|file)\\:.*", Pattern.CASE_INSENSITIVE);
             if (uriRx.matcher(suppressionFilePath).matches()) {
                 deleteTempFile = true;
-                file = File.createTempFile("suppression", ".xml", Settings.getTempDirectory());
-                if (file.exists()) {
-                    file.delete();
-                }
+                file = FileUtils.getTempFile("suppression", "xml");
                 final URL url = new URL(suppressionFilePath);
                 try {
                     Downloader.fetchFile(url, file, false);

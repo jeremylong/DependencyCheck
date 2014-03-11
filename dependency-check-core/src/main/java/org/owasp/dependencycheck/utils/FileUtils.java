@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -84,6 +85,26 @@ public final class FileUtils {
             Logger.getLogger(FileUtils.class.getName()).log(Level.FINE, msg);
         }
         return success;
+    }
+
+    /**
+     * Generates a new temporary file name that is guaranteed to be unique.
+     *
+     * @param prefix the prefix for the file name to generate
+     * @param extension the extension of the generated file name
+     * @return a temporary File
+     */
+    public static File getTempFile(String prefix, String extension) {
+        final File dir = Settings.getTempDirectory();
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        final String tempFileName = String.format("%s%s.%s", prefix, UUID.randomUUID().toString(), extension);
+        final File tempFile = new File(dir, tempFileName);
+        if (tempFile.exists()) {
+            return getTempFile(prefix, extension);
+        }
+        return tempFile;
     }
 
     /**
