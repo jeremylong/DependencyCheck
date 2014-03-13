@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkFactory;
@@ -44,6 +45,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.settings.Proxy;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -147,27 +149,45 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     private boolean externalReport = false;
     /**
      * The Proxy URL.
+     * @deprecated Please use mavenSettings instead
      */
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "proxyUrl", defaultValue = "", required = false)
+    @Deprecated
     private String proxyUrl = null;
+    
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @Parameter(property = "mavenSettings", defaultValue = "${settings}", required = false)
+    private org.apache.maven.settings.Settings mavenSettings;
+    
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @Parameter(property = "mavenSettingsProxyId", required = false)
+    private String mavenSettingsProxyId;
+    
+    
     /**
      * The Proxy Port.
+     * @deprecated Please use mavenSettings instead
      */
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "proxyPort", defaultValue = "", required = false)
+    @Deprecated
     private String proxyPort = null;
     /**
      * The Proxy username.
+     * @deprecated Please use mavenSettings instead
      */
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "proxyUsername", defaultValue = "", required = false)
+    @Deprecated
     private String proxyUsername = null;
     /**
      * The Proxy password.
+     * @deprecated Please use mavenSettings instead
      */
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "proxyPassword", defaultValue = "", required = false)
+    @Deprecated
     private String proxyPassword = null;
     /**
      * The Connection Timeout.
@@ -721,6 +741,34 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     }
     // </editor-fold>
 
+    private String getMavenSettingsProxyUrl(Proxy proxy) {
+        return new StringBuilder(proxy.getProtocol()).append( "://" ).append(proxy.getHost()).toString();
+    }
+    
+    private Proxy getMavenProxy(){
+        if (mavenSettings!=null) {
+            List<Proxy> proxies = mavenSettings.getProxies();
+            if ( proxies != null && proxies.size() > 0) {
+                if (mavenSettingsProxyId!=null) {
+                    for ( Proxy proxy : proxies )
+                    {
+                        if ( mavenSettingsProxyId.equalsIgnoreCase( proxy.getId() )) {
+                            return proxy;
+                        }
+                    }
+                }
+                else if (proxies.size() == 1) {
+                    return proxies.get(0);
+                }
+                else {
+                    throw new IllegalStateException( "Ambigous proxy definition" );
+                }
+            }
+        }
+        
+        return null;
+    }
+    
     /**
      * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system
      * properties required to change the proxy url, port, and connection timeout.
@@ -744,6 +792,19 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         }
 
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
+        
+        
+        Proxy proxy = getMavenProxy();
+        if (proxy != null) {
+            Settings.setString(Settings.KEYS.PROXY_URL,getMavenSettingsProxyUrl(proxy));
+            Settings.setString(Settings.KEYS.PROXY_PORT,Integer.toString(proxy.getPort()));
+            String userName = proxy.getUsername();
+            String password = proxy.getPassword();
+            if ( userName != null && password != null){
+                Settings.setString(Settings.KEYS.PROXY_USERNAME, userName);
+                Settings.setString(Settings.KEYS.PROXY_PASSWORD, password);
+            }
+        }
 
         if (proxyUrl != null && !proxyUrl.isEmpty()) {
             Settings.setString(Settings.KEYS.PROXY_URL, proxyUrl);
