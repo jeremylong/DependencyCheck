@@ -64,7 +64,7 @@ public class DependencyCheckTaskTest extends BuildFileTest {
      */
     @Test
     public void testAddFileSet() throws Exception {
-        File report = new File("target/DependencyCheck-Report.html");
+        File report = new File("target/dependency-check-report.html");
         if (report.exists()) {
             if (!report.delete()) {
                 throw new Exception("Unable to delete 'target/DependencyCheck-Report.html' prior to test.");
@@ -83,7 +83,7 @@ public class DependencyCheckTaskTest extends BuildFileTest {
      */
     @Test
     public void testAddFileList() throws Exception {
-        File report = new File("target/DependencyCheck-Report.xml");
+        File report = new File("target/dependency-check-report.xml");
         if (report.exists()) {
             if (!report.delete()) {
                 throw new Exception("Unable to delete 'target/DependencyCheck-Report.xml' prior to test.");
@@ -101,7 +101,7 @@ public class DependencyCheckTaskTest extends BuildFileTest {
      */
     @Test
     public void testAddDirSet() throws Exception {
-        File report = new File("target/DependencyCheck-Vulnerability.html");
+        File report = new File("target/dependency-check-vulnerability.html");
         if (report.exists()) {
             if (!report.delete()) {
                 throw new Exception("Unable to delete 'target/DependencyCheck-Vulnerability.html' prior to test.");
