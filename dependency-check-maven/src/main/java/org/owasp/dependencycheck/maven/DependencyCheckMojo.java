@@ -29,7 +29,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkFactory;
@@ -89,11 +88,6 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @Component
     private MavenProject project;
     /**
-     * The name of the site report destination.
-     */
-    @Parameter(property = "report-name", defaultValue = "dependency-check-report")
-    private String reportName;
-    /**
      * The path to the verbose log.
      */
     @Parameter(property = "logfile", defaultValue = "")
@@ -111,10 +105,16 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
             + "false positives and false negatives.")
     private String description;
     /**
-     * Specifies the destination directory for the generated Dependency-Check report.
+     * Specifies the destination directory for the generated Dependency-Check report. This generally maps to
+     * "target/site".
      */
     @Parameter(property = "reportOutputDirectory", defaultValue = "${project.reporting.outputDirectory}", required = true)
     private File reportOutputDirectory;
+    /**
+     * The output directory. This generally maps to "target".
+     */
+    @Parameter(defaultValue = "${project.build.directory}", required = true)
+    private File outputDirectory;
     /**
      * Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11
      * which means since the CVSS scores are 0-10, by default the build will never fail.
@@ -122,11 +122,6 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "failBuildOnCVSS", defaultValue = "11", required = true)
     private float failBuildOnCVSS = 11;
-    /**
-     * The output directory.
-     */
-    @Parameter(defaultValue = "${project.build.directory}", required = true)
-    private File outputDirectory;
     /**
      * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to
      * false. Default is true.
@@ -149,24 +144,25 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     private boolean externalReport = false;
     /**
      * The Proxy URL.
+     *
      * @deprecated Please use mavenSettings instead
      */
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "proxyUrl", defaultValue = "", required = false)
     @Deprecated
     private String proxyUrl = null;
-    
+
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "mavenSettings", defaultValue = "${settings}", required = false)
     private org.apache.maven.settings.Settings mavenSettings;
-    
+
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "mavenSettingsProxyId", required = false)
     private String mavenSettingsProxyId;
-    
-    
+
     /**
      * The Proxy Port.
+     *
      * @deprecated Please use mavenSettings instead
      */
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
@@ -175,6 +171,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     private String proxyPort = null;
     /**
      * The Proxy username.
+     *
      * @deprecated Please use mavenSettings instead
      */
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
@@ -183,6 +180,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     private String proxyUsername = null;
     /**
      * The Proxy password.
+     *
      * @deprecated Please use mavenSettings instead
      */
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
@@ -355,8 +353,9 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * Generates the reports for a given dependency-check engine.
      *
      * @param engine a dependency-check engine
+     * @param outDirectory the directory to write the reports to
      */
-    private void generateExternalReports(Engine engine) {
+    private void generateExternalReports(Engine engine, File outDirectory) {
         DatabaseProperties prop = null;
         CveDB cve = null;
         try {
@@ -372,7 +371,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         }
         final ReportGenerator r = new ReportGenerator(project.getName(), engine.getDependencies(), engine.getAnalyzers(), prop);
         try {
-            r.generateReports(outputDirectory.getCanonicalPath(), format);
+            r.generateReports(outDirectory.getCanonicalPath(), format);
         } catch (IOException ex) {
             Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE,
                     "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
@@ -742,33 +741,30 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     // </editor-fold>
 
     private String getMavenSettingsProxyUrl(Proxy proxy) {
-        return new StringBuilder(proxy.getProtocol()).append( "://" ).append(proxy.getHost()).toString();
+        return new StringBuilder(proxy.getProtocol()).append("://").append(proxy.getHost()).toString();
     }
-    
-    private Proxy getMavenProxy(){
-        if (mavenSettings!=null) {
+
+    private Proxy getMavenProxy() {
+        if (mavenSettings != null) {
             List<Proxy> proxies = mavenSettings.getProxies();
-            if ( proxies != null && proxies.size() > 0) {
-                if (mavenSettingsProxyId!=null) {
-                    for ( Proxy proxy : proxies )
-                    {
-                        if ( mavenSettingsProxyId.equalsIgnoreCase( proxy.getId() )) {
+            if (proxies != null && proxies.size() > 0) {
+                if (mavenSettingsProxyId != null) {
+                    for (Proxy proxy : proxies) {
+                        if (mavenSettingsProxyId.equalsIgnoreCase(proxy.getId())) {
                             return proxy;
                         }
                     }
-                }
-                else if (proxies.size() == 1) {
+                } else if (proxies.size() == 1) {
                     return proxies.get(0);
-                }
-                else {
-                    throw new IllegalStateException( "Ambigous proxy definition" );
+                } else {
+                    throw new IllegalStateException("Ambigous proxy definition");
                 }
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system
      * properties required to change the proxy url, port, and connection timeout.
@@ -792,15 +788,14 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         }
 
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
-        
-        
+
         Proxy proxy = getMavenProxy();
         if (proxy != null) {
-            Settings.setString(Settings.KEYS.PROXY_URL,getMavenSettingsProxyUrl(proxy));
-            Settings.setString(Settings.KEYS.PROXY_PORT,Integer.toString(proxy.getPort()));
+            Settings.setString(Settings.KEYS.PROXY_URL, getMavenSettingsProxyUrl(proxy));
+            Settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(proxy.getPort()));
             String userName = proxy.getUsername();
             String password = proxy.getPassword();
-            if ( userName != null && password != null){
+            if (userName != null && password != null) {
                 Settings.setString(Settings.KEYS.PROXY_USERNAME, userName);
                 Settings.setString(Settings.KEYS.PROXY_PASSWORD, password);
             }
@@ -886,7 +881,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         Engine engine = null;
         try {
             engine = executeDependencyCheck();
-            generateExternalReports(engine);
+            generateExternalReports(engine, outputDirectory);
             if (this.showSummary) {
                 showSummary(engine.getDependencies());
             }
@@ -928,7 +923,11 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         Engine engine = null;
         try {
             engine = executeDependencyCheck();
-            generateMavenSiteReport(engine, sink);
+            if (this.externalReport) {
+                generateExternalReports(engine, reportOutputDirectory);
+            } else {
+                generateMavenSiteReport(engine, sink);
+            }
         } catch (DatabaseException ex) {
             Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE,
                     "Unable to connect to the dependency-check database; analysis has stopped");
@@ -947,7 +946,18 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * @return the output name
      */
     public String getOutputName() {
-        return reportName;
+        if ("HTML".equalsIgnoreCase(this.format)
+                || "ALL".equalsIgnoreCase(this.format)) {
+            return "dependency-check-report";
+        } else if ("XML".equalsIgnoreCase(this.format)) {
+            return "dependency-check-report.xml#";
+        } else if ("VULN".equalsIgnoreCase(this.format)) {
+            return "dependency-check-vulnerability";
+        } else {
+            Logger.getLogger(DependencyCheckMojo.class
+                    .getName()).log(Level.WARNING, "Unknown report format used during site generatation.");
+            return "dependency-check-report";
+        }
     }
 
     /**
@@ -1083,7 +1093,9 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
             final String msg = String.format("%n%n"
                     + "One or more dependencies were identified with known vulnerabilities:%n%n%s"
                     + "%n%nSee the dependency-check report for more details.%n%n", summary.toString());
-            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.WARNING, msg);
+            Logger
+                    .getLogger(DependencyCheckMojo.class
+                            .getName()).log(Level.WARNING, msg);
         }
     }
 }
