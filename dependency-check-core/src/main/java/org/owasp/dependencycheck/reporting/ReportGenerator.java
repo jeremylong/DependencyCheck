@@ -140,13 +140,13 @@ public class ReportGenerator {
      */
     public void generateReports(String outputDir, Format format) throws IOException, Exception {
         if (format == Format.XML || format == Format.ALL) {
-            generateReport("XmlReport", outputDir + File.separator + "DependencyCheck-Report.xml");
+            generateReport("XmlReport", outputDir + File.separator + "dependency-check-report.xml");
         }
         if (format == Format.HTML || format == Format.ALL) {
-            generateReport("HtmlReport", outputDir + File.separator + "DependencyCheck-Report.html");
+            generateReport("HtmlReport", outputDir + File.separator + "dependency-check-report.html");
         }
         if (format == Format.VULN || format == Format.ALL) {
-            generateReport("VulnerabilityReport", outputDir + File.separator + "DependencyCheck-Vulnerability.html");
+            generateReport("VulnerabilityReport", outputDir + File.separator + "dependency-check-vulnerability.html");
         }
     }
 
