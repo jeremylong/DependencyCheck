@@ -586,7 +586,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                                 #end
                                 #if ($id.type=="cpe")
                                     ##yes, we are HTML Encoding into JavaScript... the escape utils don't have a JS Encode and I haven't written one yet
-                                    &nbsp;&nbsp;<button class="copybutton" onclick="copyText('$esc.html($dependency.FileName)', '$esc.html($dependency.Sha1sum)', 'cpe', '$esc.html($id.value)')">suppress</button>
+                                    &nbsp;&nbsp;<button class="copybutton" onclick="copyText('$esc.html($dependency.FileNameForJavaScript)', '$esc.html($dependency.Sha1sum)', 'cpe', '$esc.html($id.value)')">suppress</button>
                                 #end
                                 #if ($id.description)
                                     <br/>$esc.html($id.description)
@@ -602,7 +602,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <div id="content$cnt" class="subsectioncontent standardsubsection">
                         #foreach($vuln in $dependency.getVulnerabilities())
                             #set($vsctr=$vsctr+1)
-                            <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$esc.url($vuln.name)">$esc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" onclick="copyText('$esc.html($dependency.FileName)', '$esc.html($dependency.Sha1sum)', 'cve', '$esc.html($vuln.name)')">suppress</button></p>
+                            <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$esc.url($vuln.name)">$esc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" onclick="copyText('$esc.html($dependency.FileNameForJavaScript)', '$esc.html($dependency.Sha1sum)', 'cve', '$esc.html($vuln.name)')">suppress</button></p>
                             <p>Severity:
                             #if ($vuln.cvssScore<4.0)
                                 Low

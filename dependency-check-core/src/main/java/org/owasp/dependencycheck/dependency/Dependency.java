@@ -106,16 +106,26 @@ public class Dependency implements Comparable<Dependency> {
     /**
      * Returns the file name of the dependency.
      *
-     * @return the file name of the dependency.
+     * @return the file name of the dependency
      */
     public String getFileName() {
         return this.fileName;
     }
 
     /**
+     * Returns the file name of the dependency with the backslash escaped for use in JavaScript. This is a complete hack
+     * as I could not get the replace to work in the template itself.
+     *
+     * @return the file name of the dependency with the backslash escaped for use in JavaScript
+     */
+    public String getFileNameForJavaScript() {
+        return this.fileName.replace("\\", "\\\\");
+    }
+
+    /**
      * Sets the file name of the dependency.
      *
-     * @param fileName the file name of the dependency.
+     * @param fileName the file name of the dependency
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;
@@ -124,7 +134,7 @@ public class Dependency implements Comparable<Dependency> {
     /**
      * Sets the actual file path of the dependency on disk.
      *
-     * @param actualFilePath the file path of the dependency.
+     * @param actualFilePath the file path of the dependency
      */
     public void setActualFilePath(String actualFilePath) {
         this.actualFilePath = actualFilePath;
@@ -137,7 +147,7 @@ public class Dependency implements Comparable<Dependency> {
     /**
      * Gets the file path of the dependency.
      *
-     * @return the file path of the dependency.
+     * @return the file path of the dependency
      */
     public String getActualFilePath() {
         return this.actualFilePath;
@@ -146,7 +156,7 @@ public class Dependency implements Comparable<Dependency> {
     /**
      * Gets a reference to the File object.
      *
-     * @return the File object.
+     * @return the File object
      */
     public File getActualFile() {
         return new File(this.actualFilePath);
@@ -155,7 +165,7 @@ public class Dependency implements Comparable<Dependency> {
     /**
      * Sets the file path of the dependency.
      *
-     * @param filePath the file path of the dependency.
+     * @param filePath the file path of the dependency
      */
     public void setFilePath(String filePath) {
         this.filePath = filePath;
@@ -168,7 +178,7 @@ public class Dependency implements Comparable<Dependency> {
      * <b>NOTE:</b> This may not be the actual path of the file on disk. The actual path of the file on disk can be
      * obtained via the getActualFilePath().</p>
      *
-     * @return the file path of the dependency.
+     * @return the file path of the dependency
      */
     public String getFilePath() {
         return this.filePath;
@@ -177,7 +187,7 @@ public class Dependency implements Comparable<Dependency> {
     /**
      * Sets the file name of the dependency.
      *
-     * @param fileExtension the file name of the dependency.
+     * @param fileExtension the file name of the dependency
      */
     public void setFileExtension(String fileExtension) {
         this.fileExtension = fileExtension;
@@ -186,7 +196,7 @@ public class Dependency implements Comparable<Dependency> {
     /**
      * Gets the file extension of the dependency.
      *
-     * @return the file extension of the dependency.
+     * @return the file extension of the dependency
      */
     public String getFileExtension() {
         return this.fileExtension;
@@ -231,7 +241,7 @@ public class Dependency implements Comparable<Dependency> {
     /**
      * Returns a List of Identifiers.
      *
-     * @return an ArrayList of Identifiers.
+     * @return an ArrayList of Identifiers
      */
     public Set<Identifier> getIdentifiers() {
         return this.identifiers;
@@ -240,7 +250,7 @@ public class Dependency implements Comparable<Dependency> {
     /**
      * Sets a List of Identifiers.
      *
-     * @param identifiers A list of Identifiers.
+     * @param identifiers A list of Identifiers
      */
     public void setIdentifiers(Set<Identifier> identifiers) {
         this.identifiers = identifiers;
