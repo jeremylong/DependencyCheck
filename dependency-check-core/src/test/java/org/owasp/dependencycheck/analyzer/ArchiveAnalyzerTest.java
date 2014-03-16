@@ -26,7 +26,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.data.cpe.BaseIndexTestCase;
+import org.owasp.dependencycheck.data.cpe.AbstractDatabaseTestCase;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -34,7 +34,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class ArchiveAnalyzerTest extends BaseIndexTestCase {
+public class ArchiveAnalyzerTest extends AbstractDatabaseTestCase {
 
     public ArchiveAnalyzerTest() {
     }
