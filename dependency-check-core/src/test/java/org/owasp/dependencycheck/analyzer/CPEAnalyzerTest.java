@@ -30,7 +30,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.owasp.dependencycheck.data.cpe.BaseIndexTestCase;
+import org.owasp.dependencycheck.data.cpe.AbstractDatabaseTestCase;
 import org.owasp.dependencycheck.data.cpe.IndexEntry;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
@@ -39,7 +39,7 @@ import org.owasp.dependencycheck.dependency.Identifier;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class CPEAnalyzerTest extends BaseIndexTestCase {
+public class CPEAnalyzerTest extends AbstractDatabaseTestCase {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
