@@ -111,9 +111,15 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             "buildjdk",
             "ant-version",
             "antversion",
+            "dynamicimportpackage",
+            "dynamicimport-package",
+            "dynamic-importpackage",
+            "dynamic-import-package",
             "import-package",
+            "ignore-package",
             "export-package",
             "importpackage",
+            "ignorepackage",
             "exportpackage",
             "sealed",
             "manifest-version",
@@ -125,7 +131,10 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
             "tool",
             "bundle-manifestversion",
             "bundlemanifestversion",
-            "include-resource");
+            "include-resource",
+            "embed-dependency",
+            "ipojo-components",
+            "ipojo-extension");
     /**
      * item in some manifest, should be considered medium confidence.
      */
@@ -1003,11 +1012,9 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      * @return true or false depending on if it is believed the entry is an "import" entry
      */
     private boolean isImportPackage(String key, String value) {
-        final Pattern packageRx = Pattern.compile("^((([a-zA-Z_#\\$0-9]\\.)+)\\s*\\;\\s*)+$");
-        if (packageRx.matcher(value).matches()) {
-            return (key.contains("import") || key.contains("include"));
-        }
-        return false;
+        final Pattern packageRx = Pattern.compile("^([a-zA-Z0-9_#\\$\\*\\.]+\\s*[,;]\\s*)+([a-zA-Z0-9_#\\$\\*\\.]+\\s*)?$");
+        boolean matches = packageRx.matcher(value).matches();
+        return matches && (key.contains("import") || key.contains("include") || value.length() > 10);
     }
 
     /**
