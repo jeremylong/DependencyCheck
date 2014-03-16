@@ -291,32 +291,13 @@ public class Engine {
         Logger.getLogger(Engine.class.getName()).log(Level.FINE, logHeader);
         Logger.getLogger(Engine.class.getName()).log(Level.INFO, "Analysis Starting");
 
-        //phase one initialize
-        for (AnalysisPhase phase : AnalysisPhase.values()) {
-            final List<Analyzer> analyzerList = analyzers.get(phase);
-            for (Analyzer a : analyzerList) {
-                try {
-                    final String msg = String.format("Initializing %s", a.getName());
-                    Logger.getLogger(Engine.class.getName()).log(Level.FINE, msg);
-                    a.initialize();
-                } catch (Throwable ex) {
-                    final String msg = String.format("Exception occurred initializing %s.", a.getName());
-                    Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, msg);
-                    Logger.getLogger(Engine.class.getName()).log(Level.FINE, null, ex);
-                    try {
-                        a.close();
-                    } catch (Throwable ex1) {
-                        Logger.getLogger(Engine.class.getName()).log(Level.FINEST, null, ex1);
-                    }
-                }
-            }
-        }
-
         // analysis phases
         for (AnalysisPhase phase : AnalysisPhase.values()) {
             final List<Analyzer> analyzerList = analyzers.get(phase);
 
             for (Analyzer a : analyzerList) {
+                initializeAnalyzer(a);
+
                 /* need to create a copy of the collection because some of the
                  * analyzers may modify it. This prevents ConcurrentModificationExceptions.
                  * This is okay for adds/deletes because it happens per analyzer.
@@ -343,20 +324,7 @@ public class Engine {
                         }
                     }
                 }
-            }
-        }
-
-        //close/cleanup
-        for (AnalysisPhase phase : AnalysisPhase.values()) {
-            final List<Analyzer> analyzerList = analyzers.get(phase);
-            for (Analyzer a : analyzerList) {
-                final String msg = String.format("Closing Analyzer '%s'", a.getName());
-                Logger.getLogger(Engine.class.getName()).log(Level.FINE, msg);
-                try {
-                    a.close();
-                } catch (Throwable ex) {
-                    Logger.getLogger(Engine.class.getName()).log(Level.FINEST, null, ex);
-                }
+                initializeAnalyzer(a);
             }
         }
 
@@ -366,6 +334,43 @@ public class Engine {
                 + "----------------------------------------------------");
         Logger.getLogger(Engine.class.getName()).log(Level.FINE, logFooter);
         Logger.getLogger(Engine.class.getName()).log(Level.INFO, "Analysis Complete");
+    }
+
+    /**
+     * Initializes the given analyzer.
+     *
+     * @param analyzer the analyzer to initialize
+     */
+    private void initializeAnalyzer(Analyzer analyzer) {
+        try {
+            final String msg = String.format("Initializing %s", analyzer.getName());
+            Logger.getLogger(Engine.class.getName()).log(Level.FINE, msg);
+            analyzer.initialize();
+        } catch (Throwable ex) {
+            final String msg = String.format("Exception occurred initializing %s.", analyzer.getName());
+            Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, msg);
+            Logger.getLogger(Engine.class.getName()).log(Level.FINE, null, ex);
+            try {
+                analyzer.close();
+            } catch (Throwable ex1) {
+                Logger.getLogger(Engine.class.getName()).log(Level.FINEST, null, ex1);
+            }
+        }
+    }
+
+    /**
+     * Closes the given analyzer.
+     *
+     * @param analyzer the analyzer to close
+     */
+    private void closeAnalyzer(Analyzer analyzer) {
+        final String msg = String.format("Closing Analyzer '%s'", analyzer.getName());
+        Logger.getLogger(Engine.class.getName()).log(Level.FINE, msg);
+        try {
+            analyzer.close();
+        } catch (Throwable ex) {
+            Logger.getLogger(Engine.class.getName()).log(Level.FINEST, null, ex);
+        }
     }
 
     /**
