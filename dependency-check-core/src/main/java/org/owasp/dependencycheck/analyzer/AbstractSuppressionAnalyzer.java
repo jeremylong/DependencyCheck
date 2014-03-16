@@ -119,17 +119,20 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                 } catch (DownloadFailedException ex) {
                     Downloader.fetchFile(url, file, true);
                 }
+            } else {
+                file = new File(suppressionFilePath);
             }
 
             if (file != null) {
                 final SuppressionParser parser = new SuppressionParser();
                 try {
                     rules = parser.parseSuppressionRules(file);
+                    Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.FINE, rules.size() + " suppression rules were loaded.");
                 } catch (SuppressionParseException ex) {
                     final String msg = String.format("Unable to parse suppression xml file '%s'", file.getPath());
                     Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.WARNING, msg);
                     Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.WARNING, ex.getMessage());
-                    Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.FINE, null, ex);
+                    Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.FINE, "", ex);
                     throw ex;
                 }
             }
