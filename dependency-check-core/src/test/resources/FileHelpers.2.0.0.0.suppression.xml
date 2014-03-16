@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://www.owasp.org/index.php/OWASP_Dependency_Check_Suppression">
+	<suppress>
+	   <notes><![CDATA[
+	   file name: FileHelpers.2.0.0.0.nupkg
+	   ]]></notes>
+	   <sha1>30FB37D6163CF16E3BA740343BECDD14D5457619</sha1>
+	   <cve>CVE-2007-1536</cve>
+	</suppress>
+</suppressions>
