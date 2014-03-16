@@ -115,7 +115,7 @@ public class NuspecAnalyzer extends AbstractAnalyzer {
      */
     @Override
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
-        LOGGER.log(Level.INFO, "Checking Nuspec file {0}", dependency.toString());
+        LOGGER.log(Level.FINE, "Checking Nuspec file {0}", dependency.toString());
         try {
             final NuspecParser parser = new XPathNuspecParser();
             NugetPackage np = null;
