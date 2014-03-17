@@ -46,7 +46,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author colezlaw
  */
-public class NexusAnalyzer extends AbstractFileTypeAnalyzer implements Analyzer, FileTypeAnalyzer {
+public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
      * The logger
@@ -69,11 +69,6 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer implements Analyzer,
     private static final Set<String> SUPPORTED_EXTENSIONS = newHashSet("jar");
 
     /**
-     * Whether this is actually enabled. Will get set during initialization.
-     */
-    private boolean enabled = false;
-
-    /**
      * The Nexus Search to be set up for this analyzer.
      */
     private NexusSearch searcher;
@@ -84,28 +79,24 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer implements Analyzer,
      * @throws Exception if there's an error during initialization
      */
     @Override
-    public void initialize() throws Exception {
-        if (!isFilesMatched()) {
-            enabled = false;
-            return; //no work to do so don't initialize
-        }
-        enabled = Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED);
+    public void initializeFileTypeAnalyzer() throws Exception {
+        setEnabled(Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED));
         LOGGER.fine("Initializing Nexus Analyzer");
-        LOGGER.fine(String.format("Nexus Analyzer enabled: %s", enabled));
-        if (enabled) {
+        LOGGER.fine(String.format("Nexus Analyzer enabled: %s", isEnabled()));
+        if (isEnabled()) {
             final String searchUrl = Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL);
             LOGGER.fine(String.format("Nexus Analyzer URL: %s", searchUrl));
             try {
                 searcher = new NexusSearch(new URL(searchUrl));
                 if (!searcher.preflightRequest()) {
                     LOGGER.warning("There was an issue getting Nexus status. Disabling analyzer.");
-                    enabled = false;
+                    setEnabled(false);
                 }
             } catch (MalformedURLException mue) {
                 // I know that initialize can throw an exception, but we'll
                 // just disable the analyzer if the URL isn't valid
                 LOGGER.warning(String.format("Property %s not a valid URL. Nexus Analyzer disabled", searchUrl));
-                enabled = false;
+                setEnabled(false);
             }
         }
     }
@@ -148,12 +139,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer implements Analyzer,
      * @throws AnalysisException when there's an exception during analysis
      */
     @Override
-    public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
-        // Make a quick exit if this analyzer is disabled
-        if (!enabled) {
-            return;
-        }
-
+    public void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException {
         try {
             final MavenArtifact ma = searcher.searchSha1(dependency.getSha1sum());
             if (ma.getGroupId() != null && !"".equals(ma.getGroupId())) {

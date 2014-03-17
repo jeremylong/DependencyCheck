@@ -101,7 +101,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws AnalysisException if anything goes sideways
      */
     @Override
-    public void analyze(Dependency dependency, Engine engine)
+    public void analyzeFileType(Dependency dependency, Engine engine)
             throws AnalysisException {
         if (grokAssemblyExe == null) {
             LOG.warning("GrokAssembly didn't get deployed");
@@ -156,11 +156,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws Exception if anything goes wrong
      */
     @Override
-    public void initialize() throws Exception {
-        super.initialize();
-        if (!isFilesMatched()) {
-            return; //no work to do, so don't initialize
-        }
+    public void initializeFileTypeAnalyzer() throws Exception {
         final File tempFile = File.createTempFile("GKA", ".exe", Settings.getTempDirectory());
         FileOutputStream fos = null;
         InputStream is = null;
