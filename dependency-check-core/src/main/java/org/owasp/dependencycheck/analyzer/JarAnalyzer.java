@@ -79,7 +79,7 @@ import org.xml.sax.XMLReader;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class JarAnalyzer extends AbstractFileTypeAnalyzer implements Analyzer, FileTypeAnalyzer {
+public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
     //<editor-fold defaultstate="collapsed" desc="Constants and Member Variables">
     /**
@@ -226,7 +226,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer implements Analyzer, F
      * @throws AnalysisException is thrown if there is an error reading the JAR file.
      */
     @Override
-    public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
+    public void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException {
         try {
             final ArrayList<ClassNameInformation> classNames = collectClassNames(dependency);
             final String fileName = dependency.getFileName().toLowerCase();
@@ -900,15 +900,12 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer implements Analyzer, F
     private File tempFileLocation = null;
 
     /**
-     * The initialize method does nothing for this Analyzer.
+     * Initializes the JarAnalyzer.
      *
      * @throws Exception is thrown if there is an exception creating a temporary directory
      */
     @Override
-    public void initialize() throws Exception {
-        if (!this.isFilesMatched()) {
-            return; //no files matched, no need to initialize
-        }
+    public void initializeFileTypeAnalyzer() throws Exception {
         final File baseDir = Settings.getTempDirectory();
         if (!baseDir.exists()) {
             if (!baseDir.mkdirs()) {

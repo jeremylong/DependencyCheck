@@ -22,8 +22,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.dependency.Dependency;
 
 /**
+ * The base FileTypeAnalyzer that all analyzers that have specific file types they analyze should extend.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -46,20 +50,48 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     protected abstract Set<String> getSupportedExtensions();
 
     /**
-     * Utility method to help in the creation of the extensions set. This constructs a new Set that can be used in a
-     * final static declaration.<br/><br/>
+     * Initializes the file type analyzer.
      *
-     * This implementation was copied from
-     * http://stackoverflow.com/questions/2041778/initialize-java-hashset-values-by-construction
-     *
-     * @param strings a list of strings to add to the set.
-     * @return a Set of strings.
+     * @throws Exception thrown if there is an exception during initialization
      */
-    protected static Set<String> newHashSet(String... strings) {
-        final Set<String> set = new HashSet<String>();
+    protected abstract void initializeFileTypeAnalyzer() throws Exception;
 
-        Collections.addAll(set, strings);
-        return set;
+    /**
+     * Initializes the analyzer.
+     *
+     * @throws Exception thrown if there is an exception during initialization
+     */
+    public final void initialize() throws Exception {
+        if (filesMatched) {
+            initializeFileTypeAnalyzer();
+        } else {
+            enabled = false;
+        }
+    }
+
+    /**
+     * Analyzes a given dependency. If the dependency is an archive, such as a WAR or EAR, the contents are extracted,
+     * scanned, and added to the list of dependencies within the engine.
+     *
+     * @param dependency the dependency to analyze
+     * @param engine the engine scanning
+     * @throws AnalysisException thrown if there is an analysis exception
+     */
+    protected abstract void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException;
+
+    /**
+     * Analyzes a given dependency. If the dependency is an archive, such as a WAR or EAR, the contents are extracted,
+     * scanned, and added to the list of dependencies within the engine.
+     *
+     * @param dependency the dependency to analyze
+     * @param engine the engine scanning
+     * @throws AnalysisException thrown if there is an analysis exception
+     */
+    @Override
+    public final void analyze(Dependency dependency, Engine engine) throws AnalysisException {
+        if (enabled) {
+            analyzeFileType(dependency, engine);
+        }
     }
 
     /**
@@ -89,21 +121,59 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     private boolean filesMatched = false;
 
     /**
-     * Get the value of filesMatched
+     * Get the value of filesMatched. A flag indicating whether the scan included any file types this analyzer supports.
      *
      * @return the value of filesMatched
      */
-    public boolean isFilesMatched() {
+    protected boolean isFilesMatched() {
         return filesMatched;
     }
 
     /**
-     * Set the value of filesMatched
+     * Set the value of filesMatched. A flag indicating whether the scan included any file types this analyzer supports.
      *
      * @param filesMatched new value of filesMatched
      */
-    public void setFilesMatched(boolean filesMatched) {
+    protected void setFilesMatched(boolean filesMatched) {
         this.filesMatched = filesMatched;
     }
 
+    private boolean enabled = true;
+
+    /**
+     * Get the value of enabled
+     *
+     * @return the value of enabled
+     */
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * Set the value of enabled
+     *
+     * @param enabled new value of enabled
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    /**
+     * <p>
+     * Utility method to help in the creation of the extensions set. This constructs a new Set that can be used in a
+     * final static declaration.</p>
+     *
+     * <p>
+     * This implementation was copied from
+     * http://stackoverflow.com/questions/2041778/initialize-java-hashset-values-by-construction</p>
+     *
+     * @param strings a list of strings to add to the set.
+     * @return a Set of strings.
+     */
+    protected static Set<String> newHashSet(String... strings) {
+        final Set<String> set = new HashSet<String>();
+
+        Collections.addAll(set, strings);
+        return set;
+    }
 }

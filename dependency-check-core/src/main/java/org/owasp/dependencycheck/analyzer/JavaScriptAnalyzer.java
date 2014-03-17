@@ -36,7 +36,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class JavaScriptAnalyzer extends AbstractFileTypeAnalyzer implements Analyzer, FileTypeAnalyzer {
+public class JavaScriptAnalyzer extends AbstractFileTypeAnalyzer {
 
     //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
     /**
@@ -91,7 +91,7 @@ public class JavaScriptAnalyzer extends AbstractFileTypeAnalyzer implements Anal
      * @throws AnalysisException is thrown if there is an error reading the JavaScript file.
      */
     @Override
-    public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
+    public void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException {
         BufferedReader fin = null;;
         try {
             //  /\*([^\*][^/]|[\r\n\f])+?\*/
@@ -117,5 +117,10 @@ public class JavaScriptAnalyzer extends AbstractFileTypeAnalyzer implements Anal
                 }
             }
         }
+    }
+
+    @Override
+    protected void initializeFileTypeAnalyzer() throws Exception {
+
     }
 }

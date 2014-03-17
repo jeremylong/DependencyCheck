@@ -62,7 +62,7 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws Exception if there's an error during initialization
      */
     @Override
-    public void initialize() throws Exception {
+    public void initializeFileTypeAnalyzer() throws Exception {
     }
 
     /**
@@ -103,7 +103,7 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws AnalysisException when there's an exception during analysis
      */
     @Override
-    public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
+    public void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException {
         LOGGER.log(Level.FINE, "Checking Nuspec file {0}", dependency.toString());
         try {
             final NuspecParser parser = new XPathNuspecParser();

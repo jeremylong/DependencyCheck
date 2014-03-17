@@ -53,7 +53,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer implements Analyzer, FileTypeAnalyzer {
+public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
      * The buffer size to use when extracting files from the archive.
@@ -140,11 +140,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer implements Analyze
      * @throws Exception is thrown if there is an exception deleting or creating temporary files
      */
     @Override
-    public void initialize() throws Exception {
-        super.initialize();
-        if (!isFilesMatched()) {
-            return;
-        }
+    public void initializeFileTypeAnalyzer() throws Exception {
         final File baseDir = Settings.getTempDirectory();
         if (!baseDir.exists()) {
             if (!baseDir.mkdirs()) {
@@ -189,7 +185,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer implements Analyze
      * @throws AnalysisException thrown if there is an analysis exception
      */
     @Override
-    public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
+    public void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException {
         final File f = new File(dependency.getActualFilePath());
         final File tmpDir = getNextTempDirectory();
         extractFiles(f, tmpDir, engine);
