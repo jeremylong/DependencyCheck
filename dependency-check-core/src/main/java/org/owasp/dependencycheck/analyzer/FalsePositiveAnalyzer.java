@@ -44,10 +44,6 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
 
     //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
     /**
-     * The set of file extensions supported by this analyzer.
-     */
-    private static final Set<String> EXTENSIONS = null;
-    /**
      * The name of the analyzer.
      */
     private static final String ANALYZER_NAME = "False Positive Analyzer";
@@ -57,31 +53,12 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.POST_IDENTIFIER_ANALYSIS;
 
     /**
-     * Returns a list of file EXTENSIONS supported by this analyzer.
-     *
-     * @return a list of file EXTENSIONS supported by this analyzer.
-     */
-    public Set<String> getSupportedExtensions() {
-        return EXTENSIONS;
-    }
-
-    /**
      * Returns the name of the analyzer.
      *
      * @return the name of the analyzer.
      */
     public String getName() {
         return ANALYZER_NAME;
-    }
-
-    /**
-     * Returns whether or not this analyzer can process the given extension.
-     *
-     * @param extension the file extension to test for support
-     * @return whether or not the specified file extension is supported by this analyzer.
-     */
-    public boolean supportsExtension(String extension) {
-        return true;
     }
 
     /**

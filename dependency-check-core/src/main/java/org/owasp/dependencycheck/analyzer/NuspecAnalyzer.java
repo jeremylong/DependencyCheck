@@ -34,7 +34,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
  *
  * @author colezlaw
  */
-public class NuspecAnalyzer extends AbstractAnalyzer {
+public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
      * The logger
@@ -93,17 +93,6 @@ public class NuspecAnalyzer extends AbstractAnalyzer {
     @Override
     public Set<String> getSupportedExtensions() {
         return SUPPORTED_EXTENSIONS;
-    }
-
-    /**
-     * Determines whether the incoming extension is supported.
-     *
-     * @param extension the extension to check for support
-     * @return whether the extension is supported
-     */
-    @Override
-    public boolean supportsExtension(String extension) {
-        return SUPPORTED_EXTENSIONS.contains(extension);
     }
 
     /**

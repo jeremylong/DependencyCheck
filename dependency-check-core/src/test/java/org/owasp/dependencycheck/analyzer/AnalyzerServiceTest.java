@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.util.Iterator;
-import java.util.Set;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertTrue;
@@ -62,8 +61,7 @@ public class AnalyzerServiceTest {
         boolean found = false;
         while (result.hasNext()) {
             Analyzer a = result.next();
-            Set<String> e = a.getSupportedExtensions();
-            if (e != null && e.contains("jar")) {
+            if ("Jar Analyzer".equals(a.getName())) {
                 found = true;
             }
         }

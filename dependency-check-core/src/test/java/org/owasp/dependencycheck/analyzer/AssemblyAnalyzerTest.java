@@ -54,6 +54,8 @@ public class AssemblyAnalyzerTest {
     public void setUp() {
         try {
             analyzer = new AssemblyAnalyzer();
+            //trick the analyzer into thinking it is active, otherwise the initialize will do nothing.
+            analyzer.supportsExtension("dll");
             analyzer.initialize();
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Exception setting up AssemblyAnalyzer. Tests will be incomplete", e);

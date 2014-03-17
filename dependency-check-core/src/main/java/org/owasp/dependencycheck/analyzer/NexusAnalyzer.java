@@ -46,7 +46,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author colezlaw
  */
-public class NexusAnalyzer extends AbstractAnalyzer {
+public class NexusAnalyzer extends AbstractFileTypeAnalyzer implements Analyzer, FileTypeAnalyzer {
 
     /**
      * The logger
@@ -85,6 +85,10 @@ public class NexusAnalyzer extends AbstractAnalyzer {
      */
     @Override
     public void initialize() throws Exception {
+        if (!isFilesMatched()) {
+            enabled = false;
+            return; //no work to do so don't initialize
+        }
         enabled = Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED);
         LOGGER.fine("Initializing Nexus Analyzer");
         LOGGER.fine(String.format("Nexus Analyzer enabled: %s", enabled));
@@ -134,17 +138,6 @@ public class NexusAnalyzer extends AbstractAnalyzer {
     @Override
     public Set<String> getSupportedExtensions() {
         return SUPPORTED_EXTENSIONS;
-    }
-
-    /**
-     * Determines whether the incoming extension is supported.
-     *
-     * @param extension the extension to check for support
-     * @return whether the extension is supported
-     */
-    @Override
-    public boolean supportsExtension(String extension) {
-        return SUPPORTED_EXTENSIONS.contains(extension);
     }
 
     /**

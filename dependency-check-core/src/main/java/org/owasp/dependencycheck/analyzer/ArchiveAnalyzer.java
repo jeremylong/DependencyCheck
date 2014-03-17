@@ -53,7 +53,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
+public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer implements Analyzer, FileTypeAnalyzer {
 
     /**
      * The buffer size to use when extracting files from the archive.
@@ -108,6 +108,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
      *
      * @return a list of file EXTENSIONS supported by this analyzer.
      */
+    @Override
     public Set<String> getSupportedExtensions() {
         return EXTENSIONS;
     }
@@ -117,18 +118,9 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
      *
      * @return the name of the analyzer.
      */
+    @Override
     public String getName() {
         return ANALYZER_NAME;
-    }
-
-    /**
-     * Returns whether or not this analyzer can process the given extension.
-     *
-     * @param extension the file extension to test for support.
-     * @return whether or not the specified file extension is supported by this analyzer.
-     */
-    public boolean supportsExtension(String extension) {
-        return EXTENSIONS.contains(extension);
     }
 
     /**
@@ -136,6 +128,7 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
      *
      * @return the phase that the analyzer is intended to run in.
      */
+    @Override
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
@@ -148,6 +141,10 @@ public class ArchiveAnalyzer extends AbstractAnalyzer implements Analyzer {
      */
     @Override
     public void initialize() throws Exception {
+        super.initialize();
+        if (!isFilesMatched()) {
+            return;
+        }
         final File baseDir = Settings.getTempDirectory();
         if (!baseDir.exists()) {
             if (!baseDir.mkdirs()) {

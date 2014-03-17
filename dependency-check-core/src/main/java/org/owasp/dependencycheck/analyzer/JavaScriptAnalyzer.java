@@ -36,7 +36,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class JavaScriptAnalyzer extends AbstractAnalyzer implements Analyzer {
+public class JavaScriptAnalyzer extends AbstractFileTypeAnalyzer implements Analyzer, FileTypeAnalyzer {
 
     //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
     /**
@@ -70,17 +70,6 @@ public class JavaScriptAnalyzer extends AbstractAnalyzer implements Analyzer {
     @Override
     public String getName() {
         return ANALYZER_NAME;
-    }
-
-    /**
-     * Returns whether or not this analyzer can process the given extension.
-     *
-     * @param extension the file extension to test for support.
-     * @return whether or not the specified file extension is supported by this analyzer.
-     */
-    @Override
-    public boolean supportsExtension(String extension) {
-        return EXTENSIONS.contains(extension);
     }
 
     /**

@@ -88,6 +88,36 @@ public class CPEAnalyzer implements Analyzer {
     private CveDB cve;
 
     /**
+     * Returns the name of this analyzer.
+     *
+     * @return the name of this analyzer.
+     */
+    @Override
+    public String getName() {
+        return "CPE Analyzer";
+    }
+
+    /**
+     * Returns the analysis phase that this analyzer should run in.
+     *
+     * @return the analysis phase that this analyzer should run in.
+     */
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+        return AnalysisPhase.IDENTIFIER_ANALYSIS;
+    }
+
+    /**
+     * Creates the CPE Lucene Index.
+     *
+     * @throws Exception is thrown if there is an issue opening the index.
+     */
+    @Override
+    public void initialize() throws Exception {
+        this.open();
+    }
+
+    /**
      * Opens the data source.
      *
      * @throws IOException when the Lucene directory to be queried does not exist or is corrupt.
@@ -459,57 +489,6 @@ public class CPEAnalyzer implements Analyzer {
         } catch (ParseException ex) {
             throw new AnalysisException("Unable to parse the generated Lucene query for this dependency.", ex);
         }
-    }
-
-    /**
-     * Returns true because this analyzer supports all dependency types.
-     *
-     * @return true.
-     */
-    @Override
-    public Set<String> getSupportedExtensions() {
-        return null;
-    }
-
-    /**
-     * Returns the name of this analyzer.
-     *
-     * @return the name of this analyzer.
-     */
-    @Override
-    public String getName() {
-        return "CPE Analyzer";
-    }
-
-    /**
-     * Returns true because this analyzer supports all dependency types.
-     *
-     * @param extension the file extension of the dependency being analyzed.
-     * @return true.
-     */
-    @Override
-    public boolean supportsExtension(String extension) {
-        return true;
-    }
-
-    /**
-     * Returns the analysis phase that this analyzer should run in.
-     *
-     * @return the analysis phase that this analyzer should run in.
-     */
-    @Override
-    public AnalysisPhase getAnalysisPhase() {
-        return AnalysisPhase.IDENTIFIER_ANALYSIS;
-    }
-
-    /**
-     * Opens the CPE Lucene Index.
-     *
-     * @throws Exception is thrown if there is an issue opening the index.
-     */
-    @Override
-    public void initialize() throws Exception {
-        this.open();
     }
 
     /**

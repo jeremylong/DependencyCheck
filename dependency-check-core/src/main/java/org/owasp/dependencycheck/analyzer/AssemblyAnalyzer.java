@@ -46,7 +46,7 @@ import org.xml.sax.SAXException;
  * @author colezlaw
  *
  */
-public class AssemblyAnalyzer extends AbstractAnalyzer {
+public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
      * The analyzer name
@@ -63,7 +63,7 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
     /**
      * The temp value for GrokAssembly.exe
      */
-    private File grokAssemblyExe;
+    private File grokAssemblyExe = null;
     /**
      * The DocumentBuilder for parsing the XML
      */
@@ -158,6 +158,9 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
     @Override
     public void initialize() throws Exception {
         super.initialize();
+        if (!isFilesMatched()) {
+            return; //no work to do, so don't initialize
+        }
         final File tempFile = File.createTempFile("GKA", ".exe", Settings.getTempDirectory());
         FileOutputStream fos = null;
         InputStream is = null;
@@ -220,7 +223,9 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
     public void close() throws Exception {
         super.close();
         try {
-            grokAssemblyExe.delete();
+            if (grokAssemblyExe != null) {
+                grokAssemblyExe.delete();
+            }
         } catch (SecurityException se) {
             LOG.fine("Can't delete temporary GrokAssembly.exe");
         }
@@ -244,17 +249,6 @@ public class AssemblyAnalyzer extends AbstractAnalyzer {
     @Override
     public String getName() {
         return ANALYZER_NAME;
-    }
-
-    /**
-     * Gets whether the analyzer supports the provided extension.
-     *
-     * @param extension the extension to check
-     * @return whether the analyzer supports the extension
-     */
-    @Override
-    public boolean supportsExtension(String extension) {
-        return SUPORTED_EXTENSIONS.contains(extension);
     }
 
     /**

@@ -80,18 +80,6 @@ public class AbstractSuppressionAnalyzerTest {
     }
 
     /**
-     * Test of supportsExtension method, of class AbstractSuppressionAnalyzer.
-     */
-    @Test
-    public void testSupportsExtension() {
-        String extension = "jar";
-        AbstractSuppressionAnalyzer instance = new AbstractSuppressionAnalyzerImpl();
-        boolean expResult = true;
-        boolean result = instance.supportsExtension(extension);
-        assertEquals(expResult, result);
-    }
-
-    /**
      * Test of initialize method, of class AbstractSuppressionAnalyzer.
      */
     @Test

@@ -147,6 +147,8 @@ public class ArchiveAnalyzerTest extends AbstractDatabaseTestCase {
     @Test
     public void testAnalyze() throws Exception {
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
+        //trick the analyzer into thinking it is active.
+        instance.supportsExtension("ear");
         try {
             instance.initialize();
 
@@ -175,6 +177,8 @@ public class ArchiveAnalyzerTest extends AbstractDatabaseTestCase {
     @Test
     public void testAnalyzeTar() throws Exception {
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
+        //trick the analyzer into thinking it is active so that it will initialize
+        instance.supportsExtension("tar");
         try {
             instance.initialize();
 

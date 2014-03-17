@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 import org.owasp.dependencycheck.analyzer.AnalysisPhase;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.AnalyzerService;
+import org.owasp.dependencycheck.analyzer.FileTypeAnalyzer;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.cpe.CpeMemoryIndex;
 import org.owasp.dependencycheck.data.cpe.IndexException;
@@ -62,9 +63,9 @@ public class Engine {
      */
     private final EnumMap<AnalysisPhase, List<Analyzer>> analyzers;
     /**
-     * A set of extensions supported by the analyzers.
+     * A Map of analyzers grouped by Analysis phase.
      */
-    private final Set<String> extensions;
+    private final Set<FileTypeAnalyzer> fileTypeAnalyzers;
 
     /**
      * Creates a new Engine.
@@ -72,9 +73,10 @@ public class Engine {
      * @throws DatabaseException thrown if there is an error connecting to the database
      */
     public Engine() throws DatabaseException {
-        this.extensions = new HashSet<String>();
         this.dependencies = new ArrayList<Dependency>();
         this.analyzers = new EnumMap<AnalysisPhase, List<Analyzer>>(AnalysisPhase.class);
+        this.fileTypeAnalyzers = new HashSet<FileTypeAnalyzer>();
+
         ConnectionFactory.initialize();
 
         boolean autoUpdate = true;
@@ -110,8 +112,8 @@ public class Engine {
         while (iterator.hasNext()) {
             final Analyzer a = iterator.next();
             analyzers.get(a.getAnalysisPhase()).add(a);
-            if (a.getSupportedExtensions() != null) {
-                extensions.addAll(a.getSupportedExtensions());
+            if (a instanceof FileTypeAnalyzer) {
+                this.fileTypeAnalyzers.add((FileTypeAnalyzer) a);
             }
         }
     }
@@ -253,7 +255,7 @@ public class Engine {
         final String fileName = file.getName();
         final String extension = FileUtils.getFileExtension(fileName);
         if (extension != null) {
-            if (extensions.contains(extension)) {
+            if (supportsExtension(extension)) {
                 final Dependency dependency = new Dependency(file);
                 dependencies.add(dependency);
             }
@@ -307,7 +309,12 @@ public class Engine {
                 final Set<Dependency> dependencySet = new HashSet<Dependency>();
                 dependencySet.addAll(dependencies);
                 for (Dependency d : dependencySet) {
-                    if (a.supportsExtension(d.getFileExtension())) {
+                    boolean shouldAnalyze = true;
+                    if (a instanceof FileTypeAnalyzer) {
+                        FileTypeAnalyzer fAnalyzer = (FileTypeAnalyzer) a;
+                        shouldAnalyze = fAnalyzer.supportsExtension(d.getFileExtension());
+                    }
+                    if (shouldAnalyze) {
                         final String msgFile = String.format("Begin Analysis of '%s'", d.getActualFilePath());
                         Logger.getLogger(Engine.class.getName()).log(Level.FINE, msgFile);
                         try {
@@ -416,15 +423,13 @@ public class Engine {
         if (ext == null) {
             return false;
         }
-        for (AnalysisPhase phase : AnalysisPhase.values()) {
-            final List<Analyzer> analyzerList = analyzers.get(phase);
-            for (Analyzer a : analyzerList) {
-                if (a.getSupportedExtensions() != null && a.supportsExtension(ext)) {
-                    return true;
-                }
-            }
+        boolean scan = false;
+        for (FileTypeAnalyzer a : this.fileTypeAnalyzers) {
+            /* note, we can't break early on this loop as the analyzers need to know if
+             they have files to work on prior to initialization */
+            scan |= a.supportsExtension(ext);
         }
-        return false;
+        return scan;
     }
 
     /**
@@ -452,4 +457,5 @@ public class Engine {
             throw new NoDataException("No documents exist");
         }
     }
+
 }

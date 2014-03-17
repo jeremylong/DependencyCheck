@@ -30,9 +30,9 @@ import org.junit.Test;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class AbstractAnalyzerTest {
+public class AbstractFileTypeAnalyzerTest {
 
-    public AbstractAnalyzerTest() {
+    public AbstractFileTypeAnalyzerTest() {
     }
 
     @BeforeClass
@@ -56,7 +56,7 @@ public class AbstractAnalyzerTest {
      */
     @Test
     public void testNewHashSet() {
-        Set result = AbstractAnalyzer.newHashSet("one", "two");
+        Set result = AbstractFileTypeAnalyzer.newHashSet("one", "two");
         assertEquals(2, result.size());
         assertTrue(result.contains("one"));
         assertTrue(result.contains("two"));
