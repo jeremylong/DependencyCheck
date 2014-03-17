@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
-import java.util.Set;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
@@ -54,17 +53,6 @@ public class FileNameAnalyzerTest {
     }
 
     /**
-     * Test of getSupportedExtensions method, of class FileNameAnalyzer.
-     */
-    @Test
-    public void testGetSupportedExtensions() {
-        FileNameAnalyzer instance = new FileNameAnalyzer();
-        Set expResult = null;
-        Set result = instance.getSupportedExtensions();
-        assertEquals(expResult, result);
-    }
-
-    /**
      * Test of getName method, of class FileNameAnalyzer.
      */
     @Test
@@ -72,18 +60,6 @@ public class FileNameAnalyzerTest {
         FileNameAnalyzer instance = new FileNameAnalyzer();
         String expResult = "File Name Analyzer";
         String result = instance.getName();
-        assertEquals(expResult, result);
-    }
-
-    /**
-     * Test of supportsExtension method, of class FileNameAnalyzer.
-     */
-    @Test
-    public void testSupportsExtension() {
-        String extension = "any";
-        FileNameAnalyzer instance = new FileNameAnalyzer();
-        boolean expResult = true;
-        boolean result = instance.supportsExtension(extension);
         assertEquals(expResult, result);
     }
 

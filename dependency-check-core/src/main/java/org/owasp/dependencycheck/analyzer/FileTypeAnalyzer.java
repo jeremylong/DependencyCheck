@@ -13,33 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.analyzer;
 
 /**
+ * An Analyzer that scans specific file types.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public abstract class AbstractAnalyzer implements Analyzer {
+public interface FileTypeAnalyzer extends Analyzer {
 
     /**
-     * The initialize method does nothing for this Analyzer.
+     * Returns whether or not this analyzer can process the given extension.
      *
-     * @throws Exception thrown if there is an exception
+     * @param extension the file extension to test for support.
+     * @return whether or not the specified file extension is supported by this analyzer.
      */
-    @Override
-    public void initialize() throws Exception {
-        //do nothing
-    }
-
-    /**
-     * The close method does nothing for this Analyzer.
-     *
-     * @throws Exception thrown if there is an exception
-     */
-    @Override
-    public void close() throws Exception {
-        //do nothing
-    }
+    boolean supportsExtension(String extension);
 }

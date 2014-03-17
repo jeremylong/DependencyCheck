@@ -17,9 +17,8 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import java.util.Set;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 
 /**
@@ -43,35 +42,11 @@ public interface Analyzer {
     void analyze(Dependency dependency, Engine engine) throws AnalysisException;
 
     /**
-     * <p>
-     * Returns a list of supported file extensions. An example would be an analyzer that inspected java jar files. The
-     * getSupportedExtensions function would return a set with a single element "jar".</p>
-     *
-     * <p>
-     * <b>Note:</b> when implementing this the extensions returned MUST be lowercase.</p>
-     *
-     * @return The file extensions supported by this analyzer.
-     *
-     * <p>
-     * If the analyzer returns null it will not cause additional files to be analyzed but will be executed against every
-     * file loaded</p>
-     */
-    Set<String> getSupportedExtensions();
-
-    /**
      * Returns the name of the analyzer.
      *
      * @return the name of the analyzer.
      */
     String getName();
-
-    /**
-     * Returns whether or not this analyzer can process the given extension.
-     *
-     * @param extension the file extension to test for support.
-     * @return whether or not the specified file extension is supported by this analyzer.
-     */
-    boolean supportsExtension(String extension);
 
     /**
      * Returns the phase that the analyzer is intended to run in.

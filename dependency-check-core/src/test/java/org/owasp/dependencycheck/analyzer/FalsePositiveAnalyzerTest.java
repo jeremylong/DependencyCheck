@@ -15,11 +15,9 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.util.Set;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -53,17 +51,6 @@ public class FalsePositiveAnalyzerTest {
     }
 
     /**
-     * Test of getSupportedExtensions method, of class FalsePositiveAnalyzer.
-     */
-    @Test
-    public void testGetSupportedExtensions() {
-        FalsePositiveAnalyzer instance = new FalsePositiveAnalyzer();
-        Set<String> result = instance.getSupportedExtensions();
-        assertNull(result);
-
-    }
-
-    /**
      * Test of getName method, of class FalsePositiveAnalyzer.
      */
     @Test
@@ -71,18 +58,6 @@ public class FalsePositiveAnalyzerTest {
         FalsePositiveAnalyzer instance = new FalsePositiveAnalyzer();
         String expResult = "False Positive Analyzer";
         String result = instance.getName();
-        assertEquals(expResult, result);
-    }
-
-    /**
-     * Test of supportsExtension method, of class FalsePositiveAnalyzer.
-     */
-    @Test
-    public void testSupportsExtension() {
-        String extension = "any";
-        FalsePositiveAnalyzer instance = new FalsePositiveAnalyzer();
-        boolean expResult = true;
-        boolean result = instance.supportsExtension(extension);
         assertEquals(expResult, result);
     }
 

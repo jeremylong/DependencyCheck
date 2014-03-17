@@ -79,7 +79,7 @@ import org.xml.sax.XMLReader;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
+public class JarAnalyzer extends AbstractFileTypeAnalyzer implements Analyzer, FileTypeAnalyzer {
 
     //<editor-fold defaultstate="collapsed" desc="Constants and Member Variables">
     /**
@@ -192,6 +192,7 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      *
      * @return a list of file EXTENSIONS supported by this analyzer.
      */
+    @Override
     public Set<String> getSupportedExtensions() {
         return EXTENSIONS;
     }
@@ -201,18 +202,9 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      *
      * @return the name of the analyzer.
      */
+    @Override
     public String getName() {
         return ANALYZER_NAME;
-    }
-
-    /**
-     * Returns whether or not this analyzer can process the given extension.
-     *
-     * @param extension the file extension to test for support.
-     * @return whether or not the specified file extension is supported by this analyzer.
-     */
-    public boolean supportsExtension(String extension) {
-        return EXTENSIONS.contains(extension);
     }
 
     /**
@@ -914,6 +906,9 @@ public class JarAnalyzer extends AbstractAnalyzer implements Analyzer {
      */
     @Override
     public void initialize() throws Exception {
+        if (!this.isFilesMatched()) {
+            return; //no files matched, no need to initialize
+        }
         final File baseDir = Settings.getTempDirectory();
         if (!baseDir.exists()) {
             if (!baseDir.mkdirs()) {

@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,6 +27,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.utils.DependencyVersion;
@@ -58,10 +58,6 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
-     * The set of file extensions supported by this analyzer.
-     */
-    private static final Set<String> EXTENSIONS = null;
-    /**
      * The name of the analyzer.
      */
     private static final String ANALYZER_NAME = "Dependency Bundling Analyzer";
@@ -71,31 +67,12 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.PRE_FINDING_ANALYSIS;
 
     /**
-     * Returns a list of file EXTENSIONS supported by this analyzer.
-     *
-     * @return a list of file EXTENSIONS supported by this analyzer.
-     */
-    public Set<String> getSupportedExtensions() {
-        return EXTENSIONS;
-    }
-
-    /**
      * Returns the name of the analyzer.
      *
      * @return the name of the analyzer.
      */
     public String getName() {
         return ANALYZER_NAME;
-    }
-
-    /**
-     * Returns whether or not this analyzer can process the given extension.
-     *
-     * @param extension the file extension to test for support
-     * @return whether or not the specified file extension is supported by this analyzer.
-     */
-    public boolean supportsExtension(String extension) {
-        return true;
     }
 
     /**

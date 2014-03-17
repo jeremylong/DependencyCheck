@@ -17,11 +17,9 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.util.Set;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -53,16 +51,6 @@ public class DependencyBundlingAnalyzerTest {
     }
 
     /**
-     * Test of getSupportedExtensions method, of class DependencyBundlingAnalyzer.
-     */
-    @Test
-    public void testGetSupportedExtensions() {
-        DependencyBundlingAnalyzer instance = new DependencyBundlingAnalyzer();
-        Set<String> result = instance.getSupportedExtensions();
-        assertNull(result);
-    }
-
-    /**
      * Test of getName method, of class DependencyBundlingAnalyzer.
      */
     @Test
@@ -70,18 +58,6 @@ public class DependencyBundlingAnalyzerTest {
         DependencyBundlingAnalyzer instance = new DependencyBundlingAnalyzer();
         String expResult = "Dependency Bundling Analyzer";
         String result = instance.getName();
-        assertEquals(expResult, result);
-    }
-
-    /**
-     * Test of supportsExtension method, of class DependencyBundlingAnalyzer.
-     */
-    @Test
-    public void testSupportsExtension() {
-        String extension = "jar";
-        DependencyBundlingAnalyzer instance = new DependencyBundlingAnalyzer();
-        boolean expResult = true;
-        boolean result = instance.supportsExtension(extension);
         assertEquals(expResult, result);
     }
 

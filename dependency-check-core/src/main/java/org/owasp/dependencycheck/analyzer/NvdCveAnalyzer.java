@@ -17,12 +17,11 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Set;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -62,6 +61,7 @@ public class NvdCveAnalyzer implements Analyzer {
     /**
      * Closes the data source.
      */
+    @Override
     public void close() {
         cveDB.close();
         cveDB = null;
@@ -96,6 +96,7 @@ public class NvdCveAnalyzer implements Analyzer {
      * @param engine The analysis engine
      * @throws AnalysisException is thrown if there is an issue analyzing the dependency
      */
+    @Override
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
         for (Identifier id : dependency.getIdentifiers()) {
             if ("cpe".equals(id.getType())) {
@@ -111,31 +112,13 @@ public class NvdCveAnalyzer implements Analyzer {
     }
 
     /**
-     * Returns true because this analyzer supports all dependency types.
-     *
-     * @return true.
-     */
-    public Set<String> getSupportedExtensions() {
-        return null;
-    }
-
-    /**
      * Returns the name of this analyzer.
      *
      * @return the name of this analyzer.
      */
+    @Override
     public String getName() {
         return "NVD CVE Analyzer";
-    }
-
-    /**
-     * Returns true because this analyzer supports all dependency types.
-     *
-     * @param extension the file extension of the dependency being analyzed.
-     * @return true.
-     */
-    public boolean supportsExtension(String extension) {
-        return true;
     }
 
     /**
@@ -143,15 +126,17 @@ public class NvdCveAnalyzer implements Analyzer {
      *
      * @return the analysis phase that this analyzer should run in.
      */
+    @Override
     public AnalysisPhase getAnalysisPhase() {
         return AnalysisPhase.FINDING_ANALYSIS;
     }
 
     /**
-     * Opens the NVD CVE Lucene Index.
+     * Opens the database used to gather NVD CVE data.
      *
      * @throws Exception is thrown if there is an issue opening the index.
      */
+    @Override
     public void initialize() throws Exception {
         this.open();
     }

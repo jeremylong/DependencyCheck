@@ -17,11 +17,11 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
@@ -41,37 +41,15 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
      * The phase that this analyzer is intended to run in.
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.PRE_IDENTIFIER_ANALYSIS;
-    /**
-     * The set of file extensions supported by this analyzer.
-     */
-    private static final Set<String> EXTENSIONS = null;
-
-    /**
-     * Returns a list of file EXTENSIONS supported by this analyzer.
-     *
-     * @return a list of file EXTENSIONS supported by this analyzer.
-     */
-    public Set<String> getSupportedExtensions() {
-        return EXTENSIONS;
-    }
 
     /**
      * Returns the name of the analyzer.
      *
      * @return the name of the analyzer.
      */
+    @Override
     public String getName() {
         return ANALYZER_NAME;
-    }
-
-    /**
-     * Returns whether or not this analyzer can process the given extension.
-     *
-     * @param extension the file extension to test for support.
-     * @return whether or not the specified file extension is supported by this analyzer.
-     */
-    public boolean supportsExtension(String extension) {
-        return true;
     }
 
     /**
@@ -79,6 +57,7 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
      *
      * @return the phase that the analyzer is intended to run in.
      */
+    @Override
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }

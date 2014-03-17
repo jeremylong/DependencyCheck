@@ -17,10 +17,9 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import java.io.File;
-import java.util.Set;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.DependencyVersion;
@@ -43,19 +42,6 @@ public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
      * The phase that this analyzer is intended to run in.
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
-    /**
-     * The set of file extensions supported by this analyzer.
-     */
-    private static final Set<String> EXTENSIONS = null;
-
-    /**
-     * Returns a list of file EXTENSIONS supported by this analyzer.
-     *
-     * @return a list of file EXTENSIONS supported by this analyzer.
-     */
-    public Set<String> getSupportedExtensions() {
-        return EXTENSIONS;
-    }
 
     /**
      * Returns the name of the analyzer.
@@ -64,16 +50,6 @@ public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
      */
     public String getName() {
         return ANALYZER_NAME;
-    }
-
-    /**
-     * Returns whether or not this analyzer can process the given extension.
-     *
-     * @param extension the file extension to test for support.
-     * @return whether or not the specified file extension is supported by this analyzer.
-     */
-    public boolean supportsExtension(String extension) {
-        return true;
     }
 
     /**
