@@ -117,6 +117,7 @@ public class AssemblyAnalyzerTest {
         try {
             // Have to make a NEW analyzer because during setUp, it would have gotten the correct one
             AssemblyAnalyzer aanalyzer = new AssemblyAnalyzer();
+            aanalyzer.supportsExtension("dll");
             aanalyzer.initialize();
         } finally {
             // Now recover the way we came in. If we had to set a System property, delete it. Otherwise,
