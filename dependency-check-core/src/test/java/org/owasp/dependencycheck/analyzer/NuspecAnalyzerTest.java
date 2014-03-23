@@ -17,39 +17,43 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class NuspecAnalyzerTest {
-  private NuspecAnalyzer instance;
 
-  @Before
-  public void setUp() {
-    instance = new NuspecAnalyzer();
-  }
+    private NuspecAnalyzer instance;
 
-  @Test
-  public void testGetAnalyzerName() {
-    assertEquals("Nuspec Analyzer", instance.getName());
-  }
+    @Before
+    public void setUp() {
+        instance = new NuspecAnalyzer();
+        instance.setEnabled(true);
+    }
 
-  @Test
-  public void testGetSupportedExtensions() {
-    assertTrue(instance.getSupportedExtensions().contains("nuspec"));
-    assertFalse(instance.getSupportedExtensions().contains("nupkg"));
-  }
+    @Test
+    public void testGetAnalyzerName() {
+        assertEquals("Nuspec Analyzer", instance.getName());
+    }
 
-  @Test
-  public void testSupportsExtension() {
-    assertTrue(instance.supportsExtension("nuspec"));
-    assertFalse(instance.supportsExtension("nupkg"));
-  }
+    @Test
+    public void testGetSupportedExtensions() {
+        assertTrue(instance.getSupportedExtensions().contains("nuspec"));
+        assertFalse(instance.getSupportedExtensions().contains("nupkg"));
+    }
 
-  @Test
-  public void testGetAnalysisPhaze() {
-    assertEquals(AnalysisPhase.INFORMATION_COLLECTION, instance.getAnalysisPhase());
-  }
+    @Test
+    public void testSupportsExtension() {
+        assertTrue(instance.supportsExtension("nuspec"));
+        assertFalse(instance.supportsExtension("nupkg"));
+    }
+
+    @Test
+    public void testGetAnalysisPhaze() {
+        assertEquals(AnalysisPhase.INFORMATION_COLLECTION, instance.getAnalysisPhase());
+    }
 }
 
 // vim: cc=120:sw=4:ts=4:sts=4
