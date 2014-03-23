@@ -49,17 +49,17 @@ import org.owasp.dependencycheck.utils.Settings;
 public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
-     * The logger
+     * The logger.
      */
     private static final Logger LOGGER = Logger.getLogger(NexusAnalyzer.class.getName());
 
     /**
-     * The name of the analyzer
+     * The name of the analyzer.
      */
     private static final String ANALYZER_NAME = "Nexus Analyzer";
 
     /**
-     * The phase in which the analyzer runs
+     * The phase in which the analyzer runs.
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
 
@@ -80,7 +80,6 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void initializeFileTypeAnalyzer() throws Exception {
-        setEnabled(Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED));
         LOGGER.fine("Initializing Nexus Analyzer");
         LOGGER.fine(String.format("Nexus Analyzer enabled: %s", isEnabled()));
         if (isEnabled()) {
@@ -109,6 +108,16 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public String getName() {
         return ANALYZER_NAME;
+    }
+
+    /**
+     * Returns the key used in the properties file to reference the analyzer.
+     *
+     * @return a short string used to look up configuration properties
+     */
+    @Override
+    protected String getAnalyzerSettingKey() {
+        return "nexus";
     }
 
     /**
@@ -167,5 +176,3 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 }
-
-// vim: cc=120:sw=4:ts=4:sts=4

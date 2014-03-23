@@ -56,6 +56,10 @@ import org.owasp.dependencycheck.utils.Settings;
 public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(ArchiveAnalyzer.class.getName());
+    /**
      * The buffer size to use when extracting files from the archive.
      */
     private static final int BUFFER_SIZE = 4096;
@@ -75,6 +79,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * Tracks the current scan/extraction depth for nested archives.
      */
     private int scanDepth = 0;
+
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
      * The name of the analyzer.
@@ -135,6 +140,16 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     //</editor-fold>
 
     /**
+     * Returns the key used in the properties file to reference the analyzer.
+     *
+     * @return a short string used to look up configuration properties
+     */
+    @Override
+    protected String getAnalyzerSettingKey() {
+        return "archive";
+    }
+
+    /**
      * The initialize method does nothing for this Analyzer.
      *
      * @throws Exception is thrown if there is an exception deleting or creating temporary files
@@ -167,11 +182,10 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void close() throws Exception {
         if (tempFileLocation != null && tempFileLocation.exists()) {
-            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, "Attempting to delete temporary files");
+            LOGGER.log(Level.FINE, "Attempting to delete temporary files");
             final boolean success = FileUtils.delete(tempFileLocation);
             if (!success) {
-                Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.WARNING,
-                        "Failed to delete some temporary files, see the log for more details");
+                LOGGER.log(Level.WARNING, "Failed to delete some temporary files, see the log for more details");
             }
         }
     }
@@ -261,7 +275,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         try {
             fis = new FileInputStream(archive);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.FINE, null, ex);
             throw new AnalysisException("Archive file was not found.", ex);
         }
         final String archiveExt = FileUtils.getFileExtension(archive.getName()).toLowerCase();
@@ -279,17 +293,17 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             }
         } catch (ArchiveExtractionException ex) {
             final String msg = String.format("Exception extracting archive '%s'.", archive.getName());
-            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.WARNING, msg);
-            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.WARNING, msg);
+            LOGGER.log(Level.FINE, null, ex);
         } catch (IOException ex) {
             final String msg = String.format("Exception reading archive '%s'.", archive.getName());
-            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.WARNING, msg);
-            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.WARNING, msg);
+            LOGGER.log(Level.FINE, null, ex);
         } finally {
             try {
                 fis.close();
             } catch (IOException ex) {
-                Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+                LOGGER.log(Level.FINEST, null, ex);
             }
         }
     }
@@ -368,7 +382,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 try {
                     input.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+                    LOGGER.log(Level.FINEST, null, ex);
                 }
             }
         }
@@ -391,17 +405,17 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 out.write(buffer, 0, n);
             }
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.FINE, null, ex);
             throw new ArchiveExtractionException(ex);
         } catch (IOException ex) {
-            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.FINE, null, ex);
             throw new ArchiveExtractionException(ex);
         } finally {
             if (out != null) {
                 try {
                     out.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+                    LOGGER.log(Level.FINEST, null, ex);
                 }
             }
         }

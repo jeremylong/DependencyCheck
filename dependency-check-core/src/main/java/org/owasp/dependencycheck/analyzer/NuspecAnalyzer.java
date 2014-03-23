@@ -18,12 +18,15 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nuget.NugetPackage;
+import org.owasp.dependencycheck.data.nuget.NuspecParseException;
 import org.owasp.dependencycheck.data.nuget.NuspecParser;
 import org.owasp.dependencycheck.data.nuget.XPathNuspecParser;
 import org.owasp.dependencycheck.dependency.Confidence;
@@ -37,17 +40,17 @@ import org.owasp.dependencycheck.dependency.Dependency;
 public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
-     * The logger
+     * The logger.
      */
     private static final Logger LOGGER = Logger.getLogger(NuspecAnalyzer.class.getName());
 
     /**
-     * The name of the analyzer
+     * The name of the analyzer.
      */
     private static final String ANALYZER_NAME = "Nuspec Analyzer";
 
     /**
-     * The phase in which the analyzer runs
+     * The phase in which the analyzer runs.
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
 
@@ -73,6 +76,16 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public String getName() {
         return ANALYZER_NAME;
+    }
+
+    /**
+     * Returns the key used in the properties file to reference the analyzer.
+     *
+     * @return a short string used to look up configuration properties
+     */
+    @Override
+    protected String getAnalyzerSettingKey() {
+        return "nexus";
     }
 
     /**
@@ -112,11 +125,15 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
             try {
                 fis = new FileInputStream(dependency.getActualFilePath());
                 np = parser.parse(fis);
+            } catch (NuspecParseException ex) {
+                throw new AnalysisException(ex);
+            } catch (FileNotFoundException ex) {
+                throw new AnalysisException(ex);
             } finally {
                 if (fis != null) {
                     try {
                         fis.close();
-                    } catch (Throwable e) {
+                    } catch (IOException e) {
                         LOGGER.fine("Error closing input stream");
                     }
                 }
@@ -136,5 +153,3 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 }
-
-// vim: cc=120:sw=4:ts=4:sts=4

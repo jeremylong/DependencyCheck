@@ -38,6 +38,11 @@ import org.owasp.dependencycheck.dependency.Dependency;
  */
 public class JavaScriptAnalyzer extends AbstractFileTypeAnalyzer {
 
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(JavaScriptAnalyzer.class.getName());
+
     //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
     /**
      * The name of the analyzer.
@@ -82,6 +87,15 @@ public class JavaScriptAnalyzer extends AbstractFileTypeAnalyzer {
         return ANALYSIS_PHASE;
     }
     //</editor-fold>
+    /**
+     * Returns the key used in the properties file to reference the analyzer.
+     *
+     * @return a short string used to look up configuration properties
+     */
+    @Override
+    protected String getAnalyzerSettingKey() {
+        return "javascript";
+    }
 
     /**
      * Loads a specified JavaScript file and collects information from the copyright information contained within.
@@ -107,13 +121,13 @@ public class JavaScriptAnalyzer extends AbstractFileTypeAnalyzer {
             final String msg = String.format("Dependency file not found: '%s'", dependency.getActualFilePath());
             throw new AnalysisException(msg, ex);
         } catch (IOException ex) {
-            Logger.getLogger(JavaScriptAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         } finally {
             if (fin != null) {
                 try {
                     fin.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(JavaScriptAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+                    LOGGER.log(Level.FINEST, null, ex);
                 }
             }
         }
