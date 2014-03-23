@@ -148,7 +148,22 @@ public final class Settings {
         /**
          * The properties key for whether the Nexus analyzer is enabled.
          */
+        @Deprecated
         public static final String ANALYZER_NEXUS_ENABLED = "analyzer.nexus.enabled";
+        /**
+         * The properties key used to determine if a given file type analyzer is enabled;
+         */
+        private static final String FILE_ANALYZER_ENABLED = "analyzer.%s.enabled";
+
+        /**
+         * Returns the properties file key to determine if a given File Type Analyzer is enabled.
+         *
+         * @param key the properties file ID for a given FileTypeAnalyzer (jar, nexus, etc.)
+         * @return the properties file key for enabling/disabling a given File Type Analyzer
+         */
+        public static final String getFileAnalyzerEnabledKey(String key) {
+            return String.format(FILE_ANALYZER_ENABLED, key);
+        }
         /**
          * The properties key for the Nexus search URL.
          */
@@ -506,6 +521,29 @@ public final class Settings {
         boolean value;
         try {
             value = Boolean.parseBoolean(Settings.getString(key));
+        } catch (NumberFormatException ex) {
+            throw new InvalidSettingException("Could not convert property '" + key + "' to an int.", ex);
+        }
+        return value;
+    }
+
+    /**
+     * Returns a boolean value from the properties file. If the value was specified as a system property or passed in
+     * via the <code>-Dprop=value</code> argument this method will return the value from the system properties before
+     * the values in the contained configuration file.
+     *
+     * @param key the key to lookup within the properties file
+     * @return the property from the properties file
+     * @throws InvalidSettingException is thrown if there is an error retrieving the setting
+     */
+    public static boolean getBoolean(String key, boolean defaultValue) throws InvalidSettingException {
+        boolean value;
+        try {
+            final String strValue = Settings.getString(key);
+            if (strValue == null) {
+                return defaultValue;
+            }
+            value = Boolean.parseBoolean(strValue);
         } catch (NumberFormatException ex) {
             throw new InvalidSettingException("Could not convert property '" + key + "' to an int.", ex);
         }
