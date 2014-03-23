@@ -83,6 +83,10 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
     //<editor-fold defaultstate="collapsed" desc="Constants and Member Variables">
     /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(JarAnalyzer.class.getName());
+    /**
      * The buffer size to use when extracting files from the archive.
      */
     private static final int BUFFER_SIZE = 4096;
@@ -169,10 +173,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             final JAXBContext jaxbContext = JAXBContext.newInstance("org.owasp.dependencycheck.jaxb.pom.generated");
             pomUnmarshaller = jaxbContext.createUnmarshaller();
         } catch (JAXBException ex) { //guess we will just have a null pointer exception later...
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, "Unable to load parser. See the log for more details.");
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.SEVERE, "Unable to load parser. See the log for more details.");
+            LOGGER.log(Level.FINE, null, ex);
         }
     }
+
     //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
     /**
      * The name of the analyzer.
@@ -216,6 +221,16 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         return ANALYSIS_PHASE;
     }
     //</editor-fold>
+
+    /**
+     * Returns the key used in the properties file to reference the analyzer.
+     *
+     * @return a short string used to look up configuration properties
+     */
+    @Override
+    protected String getAnalyzerSettingKey() {
+        return "jar";
+    }
 
     /**
      * Loads a specified JAR file and collects information from the manifest and checksums to identify the correct CPE
@@ -264,8 +279,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (IOException ex) {
             final String msg = String.format("Unable to read JarFile '%s'.", dependency.getActualFilePath());
             //final AnalysisException ax = new AnalysisException(msg, ex);
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.WARNING, msg);
+            LOGGER.log(Level.FINE, "", ex);
             return false;
         }
         List<String> pomEntries;
@@ -274,8 +289,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (IOException ex) {
             final String msg = String.format("Unable to read Jar file entries in '%s'.", dependency.getActualFilePath());
             //final AnalysisException ax = new AnalysisException(msg, ex);
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, msg, ex);
+            LOGGER.log(Level.WARNING, msg);
+            LOGGER.log(Level.FINE, msg, ex);
             return false;
         }
         if (pomEntries.isEmpty()) {
@@ -286,7 +301,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             try {
                 pomProperties = retrievePomProperties(path, jar);
             } catch (IOException ex) {
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINEST, "ignore this, failed reading a non-existent pom.properties", ex);
+                LOGGER.log(Level.FINEST, "ignore this, failed reading a non-existent pom.properties", ex);
             }
             Model pom = null;
             try {
@@ -315,8 +330,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             } catch (AnalysisException ex) {
                 final String msg = String.format("An error occured while analyzing '%s'.", dependency.getActualFilePath());
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, "", ex);
+                LOGGER.log(Level.WARNING, msg);
+                LOGGER.log(Level.FINE, "", ex);
             }
         }
         return foundSomething;
@@ -393,7 +408,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             bos.flush();
             dependency.setActualFilePath(file.getAbsolutePath());
         } catch (IOException ex) {
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+            final String msg = String.format("An error occured reading '%s' from '%s'.", path, dependency.getFilePath());
+            LOGGER.warning(msg);
+            LOGGER.log(Level.SEVERE, "", ex);
         } finally {
             closeStream(bos);
             closeStream(fos);
@@ -409,18 +426,18 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             model = readPom(source);
         } catch (FileNotFoundException ex) {
             final String msg = String.format("Unable to parse pom '%s' in jar '%s' (File Not Found)", path, jar.getName());
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.WARNING, msg);
+            LOGGER.log(Level.FINE, "", ex);
             throw new AnalysisException(ex);
         } catch (UnsupportedEncodingException ex) {
             final String msg = String.format("Unable to parse pom '%s' in jar '%s' (IO Exception)", path, jar.getName());
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.WARNING, msg);
+            LOGGER.log(Level.FINE, "", ex);
             throw new AnalysisException(ex);
         } catch (AnalysisException ex) {
             final String msg = String.format("Unable to parse pom '%s' in jar '%s'", path, jar.getName());
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.WARNING, msg);
+            LOGGER.log(Level.FINE, "", ex);
             throw ex;
         } finally {
             closeStream(fis);
@@ -438,7 +455,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             try {
                 stream.close();
             } catch (IOException ex) {
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+                LOGGER.log(Level.FINEST, null, ex);
             }
         }
     }
@@ -453,7 +470,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             try {
                 stream.close();
             } catch (IOException ex) {
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+                LOGGER.log(Level.FINEST, null, ex);
             }
         }
     }
@@ -487,13 +504,13 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 throw new AnalysisException(ex);
             } catch (IOException ex) {
                 final String msg = String.format("Unable to parse pom '%s' in jar '%s' (IO Exception)", path, jar.getName());
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
+                LOGGER.log(Level.WARNING, msg);
+                LOGGER.log(Level.FINE, "", ex);
                 throw new AnalysisException(ex);
             } catch (Throwable ex) {
                 final String msg = String.format("Unexpected error during parsing of the pom '%s' in jar '%s'", path, jar.getName());
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING, msg);
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, null, ex);
+                LOGGER.log(Level.WARNING, msg);
+                LOGGER.log(Level.FINE, "", ex);
                 throw new AnalysisException(ex);
             }
         }
@@ -930,10 +947,10 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void close() {
         if (tempFileLocation != null && tempFileLocation.exists()) {
-            Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINE, "Attempting to delete temporary files");
+            LOGGER.log(Level.FINE, "Attempting to delete temporary files");
             final boolean success = FileUtils.delete(tempFileLocation);
             if (!success) {
-                Logger.getLogger(JarAnalyzer.class.getName()).log(Level.WARNING,
+                LOGGER.log(Level.WARNING,
                         "Failed to delete some temporary files, see the log for more details");
             }
         }
@@ -1043,7 +1060,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 try {
                     jar.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(JarAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+                    LOGGER.log(Level.FINEST, null, ex);
                 }
             }
         }

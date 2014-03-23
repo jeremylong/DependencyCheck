@@ -17,14 +17,16 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import com.hazelcast.logging.Logger;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * The base FileTypeAnalyzer that all analyzers that have specific file types they analyze should extend.
@@ -33,88 +35,30 @@ import org.owasp.dependencycheck.dependency.Dependency;
  */
 public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implements FileTypeAnalyzer {
 
+    //<editor-fold defaultstate="collapsed" desc="Constructor">
     /**
-     * <p>
-     * Returns a list of supported file extensions. An example would be an analyzer that inspected java jar files. The
-     * getSupportedExtensions function would return a set with a single element "jar".</p>
-     *
-     * <p>
-     * <b>Note:</b> when implementing this the extensions returned MUST be lowercase.</p>
-     *
-     * @return The file extensions supported by this analyzer.
-     *
-     * <p>
-     * If the analyzer returns null it will not cause additional files to be analyzed but will be executed against every
-     * file loaded</p>
+     * Base constructor that all children must call. This checks the configuration to determine if the analyzer is
+     * enabled.
      */
-    protected abstract Set<String> getSupportedExtensions();
-
-    /**
-     * Initializes the file type analyzer.
-     *
-     * @throws Exception thrown if there is an exception during initialization
-     */
-    protected abstract void initializeFileTypeAnalyzer() throws Exception;
-
-    /**
-     * Initializes the analyzer.
-     *
-     * @throws Exception thrown if there is an exception during initialization
-     */
-    public final void initialize() throws Exception {
-        if (filesMatched) {
-            initializeFileTypeAnalyzer();
-        } else {
-            enabled = false;
+    public AbstractFileTypeAnalyzer() {
+        String key = Settings.KEYS.getFileAnalyzerEnabledKey(getAnalyzerSettingKey());
+        try {
+            enabled = Settings.getBoolean(key, true);
+        } catch (InvalidSettingException ex) {
+            String msg = String.format("Invalid settting for property '%s'", key);
+            LOGGER.log(Level.WARNING, msg);
+            LOGGER.log(Level.FINE, "", ex);
+            msg = String.format("%s has been disabled", getName());
+            LOGGER.log(Level.WARNING, msg);
         }
     }
+//</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Field defentitions">
     /**
-     * Analyzes a given dependency. If the dependency is an archive, such as a WAR or EAR, the contents are extracted,
-     * scanned, and added to the list of dependencies within the engine.
-     *
-     * @param dependency the dependency to analyze
-     * @param engine the engine scanning
-     * @throws AnalysisException thrown if there is an analysis exception
+     * The logger.
      */
-    protected abstract void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException;
-
-    /**
-     * Analyzes a given dependency. If the dependency is an archive, such as a WAR or EAR, the contents are extracted,
-     * scanned, and added to the list of dependencies within the engine.
-     *
-     * @param dependency the dependency to analyze
-     * @param engine the engine scanning
-     * @throws AnalysisException thrown if there is an analysis exception
-     */
-    @Override
-    public final void analyze(Dependency dependency, Engine engine) throws AnalysisException {
-        if (enabled) {
-            analyzeFileType(dependency, engine);
-        }
-    }
-
-    /**
-     * Returns whether or not this analyzer can process the given extension.
-     *
-     * @param extension the file extension to test for support.
-     * @return whether or not the specified file extension is supported by this analyzer.
-     */
-    @Override
-    public boolean supportsExtension(String extension) {
-        Set<String> ext = getSupportedExtensions();
-        if (ext == null) {
-            String msg = String.format("The '%s%' analyzer is misconfigured and does not have any file extensions; it will be disabled", getName());
-            Logger.getLogger(AbstractFileTypeAnalyzer.class.getName()).log(Level.SEVERE, msg);
-            return false;
-        } else {
-            boolean match = ext.contains(extension);
-            if (match) {
-                filesMatched = match;
-            }
-            return match;
-        }
-    }
+    private static final Logger LOGGER = Logger.getLogger(AbstractFileTypeAnalyzer.class.getName());
     /**
      * Whether the file type analyzer detected any files it needs to analyze.
      */
@@ -157,7 +101,109 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+//</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Abstract methods children must implement">
+    /**
+     * <p>
+     * Returns a list of supported file extensions. An example would be an analyzer that inspected java jar files. The
+     * getSupportedExtensions function would return a set with a single element "jar".</p>
+     *
+     * <p>
+     * <b>Note:</b> when implementing this the extensions returned MUST be lowercase.</p>
+     *
+     * @return The file extensions supported by this analyzer.
+     *
+     * <p>
+     * If the analyzer returns null it will not cause additional files to be analyzed but will be executed against every
+     * file loaded</p>
+     */
+    protected abstract Set<String> getSupportedExtensions();
+
+    /**
+     * Initializes the file type analyzer.
+     *
+     * @throws Exception thrown if there is an exception during initialization
+     */
+    protected abstract void initializeFileTypeAnalyzer() throws Exception;
+
+    /**
+     * Analyzes a given dependency. If the dependency is an archive, such as a WAR or EAR, the contents are extracted,
+     * scanned, and added to the list of dependencies within the engine.
+     *
+     * @param dependency the dependency to analyze
+     * @param engine the engine scanning
+     * @throws AnalysisException thrown if there is an analysis exception
+     */
+    protected abstract void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException;
+
+    /**
+     * <p>
+     * Returns the key used in the properties file to reference the analyzer. An example would be the JarAnalyzer where
+     * the key is "jar". One of the associated properties would be 'analyzer.jar.enabled.
+     *
+     * @return a short string used to look up configuration properties
+     */
+    protected abstract String getAnalyzerSettingKey();
+//</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Final implementations for the Analyzer interface">
+    /**
+     * Initializes the analyzer.
+     *
+     * @throws Exception thrown if there is an exception during initialization
+     */
+    @Override
+    public final void initialize() throws Exception {
+        if (filesMatched) {
+            initializeFileTypeAnalyzer();
+        } else {
+            enabled = false;
+        }
+    }
+
+    /**
+     * Analyzes a given dependency. If the dependency is an archive, such as a WAR or EAR, the contents are extracted,
+     * scanned, and added to the list of dependencies within the engine.
+     *
+     * @param dependency the dependency to analyze
+     * @param engine the engine scanning
+     * @throws AnalysisException thrown if there is an analysis exception
+     */
+    @Override
+    public final void analyze(Dependency dependency, Engine engine) throws AnalysisException {
+        if (enabled) {
+            analyzeFileType(dependency, engine);
+        }
+    }
+
+    /**
+     * Returns whether or not this analyzer can process the given extension.
+     *
+     * @param extension the file extension to test for support.
+     * @return whether or not the specified file extension is supported by this analyzer.
+     */
+    @Override
+    public final boolean supportsExtension(String extension) {
+        if (!enabled) {
+            return false;
+        }
+        Set<String> ext = getSupportedExtensions();
+        if (ext == null) {
+            String msg = String.format("The '%s%' analyzer is misconfigured and does not have any file extensions; it will be disabled", getName());
+            Logger.getLogger(AbstractFileTypeAnalyzer.class.getName()).log(Level.SEVERE, msg);
+            return false;
+        } else {
+            boolean match = ext.contains(extension);
+            if (match) {
+                filesMatched = match;
+            }
+            return match;
+        }
+    }
+//</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Static utility methods">
     /**
      * <p>
      * Utility method to help in the creation of the extensions set. This constructs a new Set that can be used in a
@@ -176,4 +222,5 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
         Collections.addAll(set, strings);
         return set;
     }
+//</editor-fold>
 }
