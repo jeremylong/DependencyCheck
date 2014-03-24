@@ -152,10 +152,16 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @Deprecated
     private String proxyUrl = null;
 
+    /**
+     * The maven settings.
+     */
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "mavenSettings", defaultValue = "${settings}", required = false)
     private org.apache.maven.settings.Settings mavenSettings;
 
+    /**
+     * The maven settings proxy id.
+     */
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "mavenSettingsProxyId", required = false)
     private String mavenSettingsProxyId;
@@ -205,6 +211,35 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "showSummary", defaultValue = "true", required = false)
     private boolean showSummary = true;
+
+    /**
+     * Whether or not the Jar Analyzer is enabled.
+     */
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @Parameter(property = "jarAnalyzerEnabled", defaultValue = "true", required = false)
+    private boolean jarAnalyzerEnabled = true;
+
+    /**
+     * Whether or not the Archive Analyzer is enabled.
+     */
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @Parameter(property = "archiveAnalyzerEnabled", defaultValue = "true", required = false)
+    private boolean archiveAnalyzerEnabled = true;
+
+    /**
+     * Whether or not the .NET Assembly Analyzer is enabled.
+     */
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @Parameter(property = "assemblyAnalyzerEnabled", defaultValue = "true", required = false)
+    private boolean assemblyAnalyzerEnabled = true;
+
+    /**
+     * Whether or not the .NET Nuspec Analyzer is enabled.
+     */
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @Parameter(property = "nuspecAnalyzerEnabled", defaultValue = "true", required = false)
+    private boolean nuspecAnalyzerEnabled = true;
+
     /**
      * Whether or not the Nexus Analyzer is enabled.
      */
@@ -740,13 +775,24 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     }
     // </editor-fold>
 
+    /**
+     * Returns the maven settings proxy url.
+     *
+     * @param proxy the maven proxy
+     * @return the proxy url
+     */
     private String getMavenSettingsProxyUrl(Proxy proxy) {
         return new StringBuilder(proxy.getProtocol()).append("://").append(proxy.getHost()).toString();
     }
 
+    /**
+     * Returns the maven proxy.
+     *
+     * @return the maven proxy
+     */
     private Proxy getMavenProxy() {
         if (mavenSettings != null) {
-            List<Proxy> proxies = mavenSettings.getProxies();
+            final List<Proxy> proxies = mavenSettings.getProxies();
             if (proxies != null && proxies.size() > 0) {
                 if (mavenSettingsProxyId != null) {
                     for (Proxy proxy : proxies) {
@@ -761,7 +807,6 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
                 }
             }
         }
-
         return null;
     }
 
@@ -789,12 +834,12 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
 
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
 
-        Proxy proxy = getMavenProxy();
+        final Proxy proxy = getMavenProxy();
         if (proxy != null) {
             Settings.setString(Settings.KEYS.PROXY_URL, getMavenSettingsProxyUrl(proxy));
             Settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(proxy.getPort()));
-            String userName = proxy.getUsername();
-            String password = proxy.getPassword();
+            final String userName = proxy.getUsername();
+            final String password = proxy.getPassword();
             if (userName != null && password != null) {
                 Settings.setString(Settings.KEYS.PROXY_USERNAME, userName);
                 Settings.setString(Settings.KEYS.PROXY_PASSWORD, password);
@@ -819,11 +864,30 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         if (suppressionFile != null && !suppressionFile.isEmpty()) {
             Settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
         }
+
+        //File Type Analyzer Settings
+        //JAR ANALYZER
+        Settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
+        //NUSPEC ANALYZER
+        Settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
+        //NEXUS ANALYZER
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
         if (nexusUrl != null && !nexusUrl.isEmpty()) {
             Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
         }
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY, nexusUsesProxy);
+        //ARCHIVE ANALYZER
+        Settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
+        if (zipExtensions != null && !zipExtensions.isEmpty()) {
+            Settings.setString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
+        }
+        //ASSEMBLY ANALYZER
+        Settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
+        if (pathToMono != null && !pathToMono.isEmpty()) {
+            Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
+        }
+
+        //Database configuration
         if (databaseDriverName != null && !databaseDriverName.isEmpty()) {
             Settings.setString(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
         }
@@ -839,19 +903,15 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         if (databasePassword != null && !databasePassword.isEmpty()) {
             Settings.setString(Settings.KEYS.DB_PASSWORD, databasePassword);
         }
-        if (zipExtensions != null && !zipExtensions.isEmpty()) {
-            Settings.setString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
+        // Data Directory
+        if (dataDirectory != null && !dataDirectory.isEmpty()) {
+            Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
         }
 
         // Scope Exclusion
         Settings.setBoolean(Settings.KEYS.SKIP_TEST_SCOPE, skipTestScope);
         Settings.setBoolean(Settings.KEYS.SKIP_RUNTIME_SCOPE, skipRuntimeScope);
         Settings.setBoolean(Settings.KEYS.SKIP_PROVIDED_SCOPE, skipProvidedScope);
-
-        // Data Directory
-        if (dataDirectory != null && !dataDirectory.isEmpty()) {
-            Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
-        }
 
         // CVE Data Mirroring
         if (cveUrl12Modified != null && !cveUrl12Modified.isEmpty()) {
@@ -866,9 +926,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         if (cveUrl20Base != null && !cveUrl20Base.isEmpty()) {
             Settings.setString(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
         }
-        if (pathToMono != null && !pathToMono.isEmpty()) {
-            Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
-        }
+
     }
 
     /**

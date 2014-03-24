@@ -158,6 +158,10 @@ public class App {
         final String dataDirectory = cli.getDataDirectory();
         final File propertiesFile = cli.getPropertiesFile();
         final String suppressionFile = cli.getSuppressionFile();
+        final boolean jarDisabled = cli.isJarDisabled();
+        final boolean archiveDisabled = cli.isArchiveDisabled();
+        final boolean assemblyDisabled = cli.isAssemblyDisabled();
+        final boolean nuspecDisabled = cli.isNuspecDisabled();
         final boolean nexusDisabled = cli.isNexusDisabled();
         final String nexusUrl = cli.getNexusUrl();
         final String databaseDriverName = cli.getDatabaseDriverName();
@@ -216,6 +220,13 @@ public class App {
         if (suppressionFile != null && !suppressionFile.isEmpty()) {
             Settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
         }
+
+        //File Type Analyzer Settings
+        Settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, !jarDisabled);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, !archiveDisabled);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, !nuspecDisabled);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, !assemblyDisabled);
+
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, !nexusDisabled);
         if (nexusUrl != null && !nexusUrl.isEmpty()) {
             Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
