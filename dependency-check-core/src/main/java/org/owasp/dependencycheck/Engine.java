@@ -311,7 +311,7 @@ public class Engine {
                 for (Dependency d : dependencySet) {
                     boolean shouldAnalyze = true;
                     if (a instanceof FileTypeAnalyzer) {
-                        FileTypeAnalyzer fAnalyzer = (FileTypeAnalyzer) a;
+                        final FileTypeAnalyzer fAnalyzer = (FileTypeAnalyzer) a;
                         shouldAnalyze = fAnalyzer.supportsExtension(d.getFileExtension());
                     }
                     if (shouldAnalyze) {
@@ -331,7 +331,7 @@ public class Engine {
                         }
                     }
                 }
-                initializeAnalyzer(a);
+                closeAnalyzer(a);
             }
         }
 
