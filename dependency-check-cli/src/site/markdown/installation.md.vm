@@ -8,20 +8,18 @@ script executable:
     $ chmod +777 dependency-check.sh
 
 To scan a folder on the system you can run:
+#set( $H = '#' )
 
-Windows
--------
+$H$H$H Windows
     dependency-check.bat --app "My App Name" --scan "c:\java\application\lib"
 
-\*nix
--------
+$H$H$H *nix
     dependency-check.sh --app "My App Name" --scan "/java/application/lib"
 
 To view the command line arguments, see the <a href="arguments.html">arguments page</a>, or you can run:
-Windows
--------
+
+$H$H$H Windows
     dependency-check.bat --help
 
-\*nix
--------
+$H$H$H *nix
     dependency-check.sh --help

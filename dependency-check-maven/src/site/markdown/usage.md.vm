@@ -10,8 +10,9 @@ Vulnerability Database (NVD) hosted by NIST: https://nvd.nist.gov
 After the first batch download, as long as the plugin is executed at least once every
 seven days the update will only take a few seconds.
 
-Example 1:
----------------------
+#set( $H = '#' )
+
+$H$H$H Example 1:
 Create the DependencyCheck-report.html in the target directory
 
 ```xml
@@ -39,8 +40,7 @@ Create the DependencyCheck-report.html in the target directory
 </project>
 ```
 
-Example 2:
----------------------
+$H$H$H Example 2:
 Create the DependencyCheck-report.html and fail the build for CVSS greater then 8
 
 ```xml
@@ -71,8 +71,7 @@ Create the DependencyCheck-report.html and fail the build for CVSS greater then 
 </project>
 ```
 
-Example 3:
----------------------
+$H$H$H Example 3:
 Create the dependency-check report within the site
 
 ```xml
@@ -103,8 +102,8 @@ Create the dependency-check report within the site
     ...
 </project>
 ```
-Example 4:
----------------------
+
+$H$H$H Example 4:
 Create the DependencyCheck-report.html and skip artifacts no bundled in distribution (Provided and Runtime scope)
 
 ```xml
@@ -135,8 +134,8 @@ Create the DependencyCheck-report.html and skip artifacts no bundled in distribu
     ...
 </project>
 ```
-Example 5:
----------------------
+
+$H$H$H Example 5:
 Create the DependencyCheck-report.html and use internal mirroring of CVE contents
 
 ```xml
@@ -169,4 +168,3 @@ Create the DependencyCheck-report.html and use internal mirroring of CVE content
     ...
 </project>
 ```
-
