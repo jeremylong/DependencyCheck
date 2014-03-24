@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
@@ -88,13 +89,13 @@ public class JavaScriptAnalyzer extends AbstractFileTypeAnalyzer {
     }
     //</editor-fold>
     /**
-     * Returns the key used in the properties file to reference the analyzer.
+     * Returns the key used in the properties file to reference the analyzer's enabled property.
      *
-     * @return a short string used to look up configuration properties
+     * @return the analyzer's enabled property setting key
      */
     @Override
-    protected String getAnalyzerSettingKey() {
-        return "javascript";
+    protected String getAnalyzerEnabledSettingKey() {
+        return Settings.KEYS.ANALYZER_JAVASCRIPT_ENABLED;
     }
 
     /**
