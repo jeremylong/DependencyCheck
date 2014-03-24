@@ -11,28 +11,51 @@ failBuildOnCVSS      | Specifies if the build should be failed if a CVSS score a
 format               | The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | HTML
 logFile              | The file path to write verbose logging information. | &nbsp;
 suppressionFile      | The file path to the XML suppression file \- used to suppress [false positives](../suppression.html) | &nbsp;
-connectionTimeout    | The Connection Timeout.            | &nbsp;
-nexusAnalyzerEnabled | Sets whether Nexus Analyzer will be used. | &nbsp;
-nexusUrl             | Defines the Nexus URL. | &nbsp;
-nexusUsesProxy       | Whether or not the defined proxy should be used when connecting to Nexus. | true
-databaseDriverName   | The name of the database driver. Example: org.h2.Driver. | &nbsp;
-databaseDriverPath   | The path to the database driver JAR file; only used if the driver is not in the class path. | &nbsp;
-connectionString     | The connection string used to connect to the database. | &nbsp;
-databaseUser         | The username used when connecting to the database. | &nbsp;
-databasePassword     | The password used when connecting to the database. | &nbsp;
-zipExtensions        | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
 skipTestScope        | Should be skip analysis for artifacts with Test Scope | true
 skipProvidedScope    | Should be skip analysis for artifacts with Provided Scope | false
 skipRuntimeScope     | Should be skip analysis for artifacts with Runtime Scope | false
-dataDirectory        | Data directory to hold SQL CVEs contents. This should generally not be changed. | &nbsp;
-cveUrl12Modified     | URL for the modified CVE 1.2 | http://nvd.nist.gov/download/nvdcve-modified.xml
-cveUrl20Modified     | URL for the modified CVE 2.0 | http://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-modified.xml
+
+Analyzer Configuration
+====================
+The following properties are used to configure the various file type analyzers.
+These properties can be used to turn off specific analyzers if it is not needed.
+Note, that specific analyzers will automatically disable themselves if no file
+types that they support are detected - so specifically disabling them may not
+be needed.
+
+Property                | Description                        | Default Value
+------------------------|------------------------------------|------------------
+archiveAnalyzerEnabled  | Sets whether the Archive Analyzer will be used.                    | true
+zipExtensions           | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
+jarAnalyzer             | Sets whether Jar Analyzer will be used.                            | true
+nexusAnalyzerEnabled    | Sets whether Nexus Analyzer will be used.                          | true
+nexusUrl                | Defines the Nexus URL. | http://repository.sonatype.org/service/local/
+nexusUsesProxy          | Whether or not the defined proxy should be used when connecting to Nexus. | true
+nuspecAnalyzerEnabled  | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.   | true
+assemblyAnalyzerEnabled | Sets whether or not the .NET Assembly Analyzer should be used.     | true
+pathToMono              | The path to Mono for .NET assembly analysis on non-windows systems | &nbsp;
+
+Advanced Configuration
+====================
+The following properties can be configured in the plugin. However, they are less frequently changed. One exception
+may be the cvedUrl properties, which can be used to host a mirror of the NVD within an enterprise environment.
+
+Property             | Description                                                             | Default Value
+---------------------|-------------------------------------------------------------------------|------------------
+cveUrl12Modified     | URL for the modified CVE 1.2                                            | http://nvd.nist.gov/download/nvdcve-modified.xml
+cveUrl20Modified     | URL for the modified CVE 2.0                                            | http://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-modified.xml
 cveUrl12Base         | Base URL for each year's CVE 1.2, the %d will be replaced with the year | http://nvd.nist.gov/download/nvdcve-%d.xml
 cveUrl20Base         | Base URL for each year's CVE 2.0, the %d will be replaced with the year | http://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-%d.xml
-pathToMono           | The path to Mono for .NET assembly analysis on non-windows systems | &nbsp;
+connectionTimeout    | The URL Connection Timeout.                                                                 | &nbsp;
+dataDirectory        | Data directory to hold SQL CVEs contents. This should generally not be changed.             | &nbsp;
+databaseDriverName   | The name of the database driver. Example: org.h2.Driver.                                    | &nbsp;
+databaseDriverPath   | The path to the database driver JAR file; only used if the driver is not in the class path. | &nbsp;
+connectionString     | The connection string used to connect to the database.                                      | &nbsp;
+databaseUser         | The username used when connecting to the database.                                          | &nbsp;
+databasePassword     | The password used when connecting to the database.                                          | &nbsp;
 
 
-Deprecated Properties
+Deprecated Configuration
 ====================
 The following properties have been deprecated. These can stell be set in
 the dependency-check-maven plugin's configuration. However, future versions
