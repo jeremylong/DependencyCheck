@@ -146,24 +146,29 @@ public final class Settings {
          */
         public static final String SUPPRESSION_FILE = "suppression.file";
         /**
+         * The properties key for whether the Jar Analyzer is enabled.
+         */
+        public static final String ANALYZER_JAR_ENABLED = "analyzer.jar.enabled";
+        /**
+         * The properties key for whether the Archive analyzer is enabled.
+         */
+        public static final String ANALYZER_ARCHIVE_ENABLED = "analyzer.archive.enabled";
+        /**
+         * The properties key for whether the .NET Assembly analyzer is enabled.
+         */
+        public static final String ANALYZER_ASSEMBLY_ENABLED = "analyzer.assembly.enabled";
+        /**
+         * The properties key for whether the .NET Nuspec analyzer is enabled.
+         */
+        public static final String ANALYZER_NUSPEC_ENABLED = "analyzer.nuspec.enabled";
+        /**
+         * The properties key for whether the JavaScript analyzer is enabled.
+         */
+        public static final String ANALYZER_JAVASCRIPT_ENABLED = "analyzer.javascript.enabled";
+        /**
          * The properties key for whether the Nexus analyzer is enabled.
          */
-        @Deprecated
         public static final String ANALYZER_NEXUS_ENABLED = "analyzer.nexus.enabled";
-        /**
-         * The properties key used to determine if a given file type analyzer is enabled;
-         */
-        private static final String FILE_ANALYZER_ENABLED = "analyzer.%s.enabled";
-
-        /**
-         * Returns the properties file key to determine if a given File Type Analyzer is enabled.
-         *
-         * @param key the properties file ID for a given FileTypeAnalyzer (jar, nexus, etc.)
-         * @return the properties file key for enabling/disabling a given File Type Analyzer
-         */
-        public static final String getFileAnalyzerEnabledKey(String key) {
-            return String.format(FILE_ANALYZER_ENABLED, key);
-        }
         /**
          * The properties key for the Nexus search URL.
          */
@@ -533,6 +538,7 @@ public final class Settings {
      * the values in the contained configuration file.
      *
      * @param key the key to lookup within the properties file
+     * @param defaultValue the default value to return if the setting does not exist
      * @return the property from the properties file
      * @throws InvalidSettingException is thrown if there is an error retrieving the setting
      */
