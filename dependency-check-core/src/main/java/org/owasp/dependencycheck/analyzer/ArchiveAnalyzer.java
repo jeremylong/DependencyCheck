@@ -140,13 +140,13 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     //</editor-fold>
 
     /**
-     * Returns the key used in the properties file to reference the analyzer.
+     * Returns the key used in the properties file to reference the analyzer's enabled property.
      *
-     * @return a short string used to look up configuration properties
+     * @return the analyzer's enabled property setting key
      */
     @Override
-    protected String getAnalyzerSettingKey() {
-        return "archive";
+    protected String getAnalyzerEnabledSettingKey() {
+        return Settings.KEYS.ANALYZER_ARCHIVE_ENABLED;
     }
 
     /**

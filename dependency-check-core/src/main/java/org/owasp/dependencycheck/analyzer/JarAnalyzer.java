@@ -223,13 +223,13 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     //</editor-fold>
 
     /**
-     * Returns the key used in the properties file to reference the analyzer.
+     * Returns the key used in the properties file to reference the analyzer's enabled property.
      *
-     * @return a short string used to look up configuration properties
+     * @return the analyzer's enabled property setting key
      */
     @Override
-    protected String getAnalyzerSettingKey() {
-        return "jar";
+    protected String getAnalyzerEnabledSettingKey() {
+        return Settings.KEYS.ANALYZER_JAR_ENABLED;
     }
 
     /**
@@ -1022,7 +1022,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private boolean isImportPackage(String key, String value) {
         final Pattern packageRx = Pattern.compile("^([a-zA-Z0-9_#\\$\\*\\.]+\\s*[,;]\\s*)+([a-zA-Z0-9_#\\$\\*\\.]+\\s*)?$");
-        boolean matches = packageRx.matcher(value).matches();
+        final boolean matches = packageRx.matcher(value).matches();
         return matches && (key.contains("import") || key.contains("include") || value.length() > 10);
     }
 

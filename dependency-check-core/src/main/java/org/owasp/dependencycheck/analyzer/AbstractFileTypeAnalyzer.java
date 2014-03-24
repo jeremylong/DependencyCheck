@@ -41,7 +41,7 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
      * enabled.
      */
     public AbstractFileTypeAnalyzer() {
-        String key = Settings.KEYS.getFileAnalyzerEnabledKey(getAnalyzerSettingKey());
+        final String key = getAnalyzerEnabledSettingKey();
         try {
             enabled = Settings.getBoolean(key, true);
         } catch (InvalidSettingException ex) {
@@ -82,10 +82,13 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
         this.filesMatched = filesMatched;
     }
 
+    /**
+     * A flag indicating whether or not the analyzer is enabled.
+     */
     private boolean enabled = true;
 
     /**
-     * Get the value of enabled
+     * Get the value of enabled.
      *
      * @return the value of enabled
      */
@@ -94,7 +97,7 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     }
 
     /**
-     * Set the value of enabled
+     * Set the value of enabled.
      *
      * @param enabled new value of enabled
      */
@@ -139,14 +142,13 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
 
     /**
      * <p>
-     * Returns the key used in the properties file to reference the analyzer. An example would be the JarAnalyzer where
-     * the key is "jar". One of the associated properties would be 'analyzer.jar.enabled.
+     * Returns the setting key to determine if the analyzer is enabled.</p>
      *
-     * @return a short string used to look up configuration properties
+     * @return the key for the analyzer's enabled property
      */
-    protected abstract String getAnalyzerSettingKey();
-//</editor-fold>
+    protected abstract String getAnalyzerEnabledSettingKey();
 
+//</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Final implementations for the Analyzer interface">
     /**
      * Initializes the analyzer.
@@ -188,13 +190,14 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
         if (!enabled) {
             return false;
         }
-        Set<String> ext = getSupportedExtensions();
+        final Set<String> ext = getSupportedExtensions();
         if (ext == null) {
-            String msg = String.format("The '%s%' analyzer is misconfigured and does not have any file extensions; it will be disabled", getName());
+            final String msg = String.format("The '%s' analyzer is misconfigured and does not have any file extensions;"
+                    + " it will be disabled", getName());
             Logger.getLogger(AbstractFileTypeAnalyzer.class.getName()).log(Level.SEVERE, msg);
             return false;
         } else {
-            boolean match = ext.contains(extension);
+            final boolean match = ext.contains(extension);
             if (match) {
                 filesMatched = match;
             }
