@@ -41,6 +41,16 @@ import org.owasp.dependencycheck.Engine;
 public final class FileUtils {
 
     /**
+     * Bit bucket for non-Windows systems
+     */
+    private static final String BIT_BUCKET_UNIX = "/dev/null";
+
+    /**
+     * Bit bucket for Windows systems (yes, only one 'L')
+     */
+    private static final String BIT_BUCKET_WIN = "NUL";
+
+    /**
      * The buffer size to use when extracting files from the archive.
      */
     private static final int BUFFER_SIZE = 4096;
@@ -237,6 +247,18 @@ public final class FileUtils {
             } catch (IOException ex) {
                 Logger.getLogger(FileUtils.class.getName()).log(Level.FINEST, null, ex);
             }
+        }
+    }
+
+    /**
+     * Return the bit bucket for the OS. '/dev/null' for Unix and 'NUL' for Windows
+     * @return a String containing the bit bucket
+     */
+    public static String getBitBucket() {
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            return BIT_BUCKET_WIN;
+        } else {
+            return BIT_BUCKET_UNIX;
         }
     }
 }
