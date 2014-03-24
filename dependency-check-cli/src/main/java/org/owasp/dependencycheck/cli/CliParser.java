@@ -19,7 +19,6 @@ package org.owasp.dependencycheck.cli;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -272,6 +271,19 @@ public final class CliParser {
                 .withDescription("The path to the database driver; note, this does not need to be set unless the JAR is outside of the classpath.")
                 .create();
 
+        final Option disableJarAnalyzer = OptionBuilder.withLongOpt(ArgumentName.DISABLE_JAR)
+                .withDescription("Disable the Jar Analyzer.")
+                .create();
+        final Option disableArchiveAnalyzer = OptionBuilder.withLongOpt(ArgumentName.DISABLE_ARCHIVE)
+                .withDescription("Disable the Archive Analyzer.")
+                .create();
+        final Option disableNuspecAnalyzer = OptionBuilder.withLongOpt(ArgumentName.DISABLE_NUSPEC)
+                .withDescription("Disable the Nuspec Analyzer.")
+                .create();
+        final Option disableAssemblyAnalyzer = OptionBuilder.withLongOpt(ArgumentName.DISABLE_ASSEMBLY)
+                .withDescription("Disable the .NET Assembly Analyzer.")
+                .create();
+
         final Option disableNexusAnalyzer = OptionBuilder.withLongOpt(ArgumentName.DISABLE_NEXUS)
                 .withDescription("Disable the Nexus Analyzer.")
                 .create();
@@ -305,6 +317,10 @@ public final class CliParser {
                 .addOption(dbPassword)
                 .addOption(dbDriver)
                 .addOption(dbDriverPath)
+                .addOption(disableJarAnalyzer)
+                .addOption(disableArchiveAnalyzer)
+                .addOption(disableAssemblyAnalyzer)
+                .addOption(disableNuspecAnalyzer)
                 .addOption(disableNexusAnalyzer)
                 .addOption(nexusUrl)
                 .addOption(nexusUsesProxy)
@@ -337,6 +353,42 @@ public final class CliParser {
      */
     public boolean isRunScan() {
         return (line != null) && isValid && line.hasOption(ArgumentName.SCAN);
+    }
+
+    /**
+     * Returns true if the disableJar command line argument was specified.
+     *
+     * @return true if the disableJar command line argument was specified; otherwise false
+     */
+    public boolean isJarDisabled() {
+        return (line != null) && line.hasOption(ArgumentName.DISABLE_JAR);
+    }
+
+    /**
+     * Returns true if the disableArchive command line argument was specified.
+     *
+     * @return true if the disableArchive command line argument was specified; otherwise false
+     */
+    public boolean isArchiveDisabled() {
+        return (line != null) && line.hasOption(ArgumentName.DISABLE_ARCHIVE);
+    }
+
+    /**
+     * Returns true if the disableNuspec command line argument was specified.
+     *
+     * @return true if the disableNuspec command line argument was specified; otherwise false
+     */
+    public boolean isNuspecDisabled() {
+        return (line != null) && line.hasOption(ArgumentName.DISABLE_NUSPEC);
+    }
+
+    /**
+     * Returns true if the disableAssembly command line argument was specified.
+     *
+     * @return true if the disableAssembly command line argument was specified; otherwise false
+     */
+    public boolean isAssemblyDisabled() {
+        return (line != null) && line.hasOption(ArgumentName.DISABLE_ASSEMBLY);
     }
 
     /**
@@ -737,6 +789,22 @@ public final class CliParser {
          * The CLI argument name for setting the location of the suppression file.
          */
         public static final String SUPPRESION_FILE = "suppression";
+        /**
+         * Disables the Jar Analyzer.
+         */
+        public static final String DISABLE_JAR = "disableJar";
+        /**
+         * Disables the Archive Analyzer.
+         */
+        public static final String DISABLE_ARCHIVE = "disableArchive";
+        /**
+         * Disables the Assembly Analyzer.
+         */
+        public static final String DISABLE_ASSEMBLY = "disableAssembly";
+        /**
+         * Disables the Nuspec Analyzer.
+         */
+        public static final String DISABLE_NUSPEC = "disableNuspec";
         /**
          * Disables the Nexus Analyzer.
          */

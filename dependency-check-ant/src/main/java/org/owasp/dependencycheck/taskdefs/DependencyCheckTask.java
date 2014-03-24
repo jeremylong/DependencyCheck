@@ -458,6 +458,81 @@ public class DependencyCheckTask extends Task {
     }
 
     /**
+     * Sets whether or not the analyzer is enabled.
+     *
+     * @param jarAnalyzerEnabled the value of the new setting
+     */
+    public void setJarAnalyzerEnabled(boolean jarAnalyzerEnabled) {
+        this.jarAnalyzerEnabled = jarAnalyzerEnabled;
+    }
+    /**
+     * Whether or not the Archive Analyzer is enabled.
+     */
+    private boolean archiveAnalyzerEnabled = true;
+
+    /**
+     * Returns whether or not the analyzer is enabled.
+     *
+     * @return true if the analyzer is enabled
+     */
+    public boolean isArchiveAnalyzerEnabled() {
+        return archiveAnalyzerEnabled;
+    }
+    /**
+     * Whether or not the .NET Assembly Analyzer is enabled.
+     */
+    private boolean assemblyAnalyzerEnabled = true;
+
+    /**
+     * Sets whether or not the analyzer is enabled.
+     *
+     * @param archiveAnalyzerEnabled the value of the new setting
+     */
+    public void setArchiveAnalyzerEnabled(boolean archiveAnalyzerEnabled) {
+        this.archiveAnalyzerEnabled = archiveAnalyzerEnabled;
+    }
+
+    /**
+     * Returns whether or not the analyzer is enabled.
+     *
+     * @return true if the analyzer is enabled
+     */
+    public boolean isAssemblyAnalyzerEnabled() {
+        return assemblyAnalyzerEnabled;
+    }
+
+    /**
+     * Sets whether or not the analyzer is enabled.
+     *
+     * @param assemblyAnalyzerEnabled the value of the new setting
+     */
+    public void setAssemblyAnalyzerEnabled(boolean assemblyAnalyzerEnabled) {
+        this.assemblyAnalyzerEnabled = assemblyAnalyzerEnabled;
+    }
+    /**
+     * Whether or not the .NET Nuspec Analyzer is enabled.
+     */
+    private boolean nuspecAnalyzerEnabled = true;
+
+    /**
+     * Returns whether or not the analyzer is enabled.
+     *
+     * @return true if the analyzer is enabled
+     */
+    public boolean isNuspecAnalyzerEnabled() {
+        return nuspecAnalyzerEnabled;
+    }
+
+    /**
+     * Sets whether or not the analyzer is enabled.
+     *
+     * @param nuspecAnalyzerEnabled the value of the new setting
+     */
+    public void setNuspecAnalyzerEnabled(boolean nuspecAnalyzerEnabled) {
+        this.nuspecAnalyzerEnabled = nuspecAnalyzerEnabled;
+    }
+
+    /**
      * Whether or not the nexus analyzer is enabled.
      */
     private boolean nexusAnalyzerEnabled = true;
@@ -907,11 +982,29 @@ public class DependencyCheckTask extends Task {
         if (suppressionFile != null && !suppressionFile.isEmpty()) {
             Settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
         }
+
+        //File Type Analyzer Settings
+        //JAR ANALYZER
+        Settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
+        //NUSPEC ANALYZER
+        Settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
+        //NEXUS ANALYZER
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
         if (nexusUrl != null && !nexusUrl.isEmpty()) {
             Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
         }
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY, nexusUsesProxy);
+        //ARCHIVE ANALYZER
+        Settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
+        if (zipExtensions != null && !zipExtensions.isEmpty()) {
+            Settings.setString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
+        }
+        //ASSEMBLY ANALYZER
+        Settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
+        if (pathToMono != null && !pathToMono.isEmpty()) {
+            Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
+        }
+
         if (databaseDriverName != null && !databaseDriverName.isEmpty()) {
             Settings.setString(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
         }
@@ -927,9 +1020,6 @@ public class DependencyCheckTask extends Task {
         if (databasePassword != null && !databasePassword.isEmpty()) {
             Settings.setString(Settings.KEYS.DB_PASSWORD, databasePassword);
         }
-        if (zipExtensions != null && !zipExtensions.isEmpty()) {
-            Settings.setString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
-        }
         if (cveUrl12Modified != null && !cveUrl12Modified.isEmpty()) {
             Settings.setString(Settings.KEYS.CVE_MODIFIED_12_URL, cveUrl12Modified);
         }
@@ -941,9 +1031,6 @@ public class DependencyCheckTask extends Task {
         }
         if (cveUrl20Base != null && !cveUrl20Base.isEmpty()) {
             Settings.setString(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
-        }
-        if (pathToMono != null && !pathToMono.isEmpty()) {
-            Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
         }
     }
 
@@ -1035,5 +1122,19 @@ public class DependencyCheckTask extends Task {
             }
             return values;
         }
+    }
+
+    /**
+     * Whether or not the Jar Analyzer is enabled.
+     */
+    private boolean jarAnalyzerEnabled = true;
+
+    /**
+     * Returns whether or not the analyzer is enabled.
+     *
+     * @return true if the analyzer is enabled
+     */
+    public boolean isJarAnalyzerEnabled() {
+        return jarAnalyzerEnabled;
     }
 }
