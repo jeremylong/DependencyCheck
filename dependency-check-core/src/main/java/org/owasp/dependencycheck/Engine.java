@@ -57,7 +57,7 @@ public class Engine {
     /**
      * The list of dependencies.
      */
-    private final List<Dependency> dependencies;
+    private List<Dependency> dependencies;
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
@@ -135,6 +135,13 @@ public class Engine {
      */
     public List<Dependency> getDependencies() {
         return dependencies;
+    }
+
+    public void setDependencies(List<Dependency> dependencies) {
+        this.dependencies = dependencies;
+        //for (Dependency dependency: dependencies) {
+        //    dependencies.add(dependency);
+        //}
     }
 
     /**
