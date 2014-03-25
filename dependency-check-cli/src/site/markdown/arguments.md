@@ -25,7 +25,7 @@ Short  | Argument Name         | Parameter       | Description | Default Value
        | \-\-disableJar        |                 | Sets whether Jar Analyzer will be used.                              | false
        | \-\-disableNexus      |                 | Sets whether Nexus Analyzer will be used.                            | false
        | \-\-disableNexus      |                 | Disable the Nexus Analyzer.                                          | &nbsp;
-       | \-\-nexus             | \<url\>         | The url to the Nexus Server. | http://repository.sonatype.org/service/local/
+       | \-\-nexus             | \<url\>         | The url to the Nexus Server. | https://repository.sonatype.org/service/local/
        | \-\-nexusUsesProxy    | \<true\|false\> | Whether or not the defined proxy should be used when connecting to Nexus. | true
        | \-\-disableNuspec     |                 | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.     | false
        | \-\-disableAssembly   |                 | Sets whether or not the .NET Assembly Analyzer should be used.       | false
