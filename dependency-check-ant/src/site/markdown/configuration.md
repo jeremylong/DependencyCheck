@@ -52,7 +52,7 @@ archiveAnalyzerEnabled  | Sets whether the Archive Analyzer will be used.       
 zipExtensions           | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
 jarAnalyzer             | Sets whether Jar Analyzer will be used.                            | true
 nexusAnalyzerEnabled    | Sets whether Nexus Analyzer will be used.                          | true
-nexusUrl                | Defines the Nexus URL. | http://repository.sonatype.org/service/local/
+nexusUrl                | Defines the Nexus URL. | https://repository.sonatype.org/service/local/
 nexusUsesProxy          | Whether or not the defined proxy should be used when connecting to Nexus. | true
 nuspecAnalyzerEnabled  | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.   | true
 assemblyAnalyzerEnabled | Sets whether or not the .NET Assembly Analyzer should be used.     | true
