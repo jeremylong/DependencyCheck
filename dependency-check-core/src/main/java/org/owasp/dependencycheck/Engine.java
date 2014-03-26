@@ -338,6 +338,12 @@ public class Engine {
                         }
                     }
                 }
+            }
+        }
+        for (AnalysisPhase phase : AnalysisPhase.values()) {
+            final List<Analyzer> analyzerList = analyzers.get(phase);
+
+            for (Analyzer a : analyzerList) {
                 closeAnalyzer(a);
             }
         }
