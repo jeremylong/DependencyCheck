@@ -71,7 +71,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Logger
      */
-    private static final Logger LOG = Logger.getLogger(AbstractAnalyzer.class.getName());
+    private static final Logger LOG = Logger.getLogger(AssemblyAnalyzer.class.getName());
 
     /**
      * Builds the beginnings of a List for ProcessBuilder
@@ -113,6 +113,19 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         final ProcessBuilder pb = new ProcessBuilder(args);
         try {
             final Process proc = pb.start();
+            int rc = 0;
+            try {
+                rc = proc.waitFor();
+            } catch (InterruptedException ie) {
+                return;
+            }
+            if (rc == 3) {
+                LOG.info(dependency.getActualFilePath() + " is not a valid assembly");
+                return;
+            } else if (rc != 0) {
+                LOG.warning("Return code " + rc + " from GrokAssembly");
+            }
+            
             final Document doc = builder.parse(proc.getInputStream());
             final XPath xpath = XPathFactory.newInstance().newXPath();
 
