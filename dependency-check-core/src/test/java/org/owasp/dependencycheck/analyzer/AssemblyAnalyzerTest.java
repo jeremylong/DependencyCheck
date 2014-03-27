@@ -17,14 +17,17 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeFalse;
+
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.junit.After;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.Assume;
-import static org.junit.Assume.assumeFalse;
 import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -75,7 +78,21 @@ public class AssemblyAnalyzerTest {
         File f = new File(AssemblyAnalyzerTest.class.getClassLoader().getResource("GrokAssembly.exe").getPath());
         Dependency d = new Dependency(f);
         analyzer.analyze(d, null);
-        assertTrue(d.getVersionEvidence().getEvidence().contains(new Evidence("grokassembly", "version", "1.0.5176.23901", Confidence.HIGHEST)));
+        boolean foundVendor = false;
+        for (Evidence e : d.getVendorEvidence().getEvidence("grokassembly", "vendor")) {
+            if ("OWASP".equals(e.getValue())) {
+                foundVendor = true;
+            }
+        }
+        assertTrue(foundVendor);
+        
+        boolean foundProduct = false;
+        for (Evidence e : d.getProductEvidence().getEvidence("grokassembly", "product")) {
+            if ("GrokAssembly".equals(e.getValue())) {
+                foundProduct = true;
+            }
+        }
+        assertTrue(foundProduct);
     }
 
     @Test
@@ -88,15 +105,29 @@ public class AssemblyAnalyzerTest {
         assertTrue(d.getProductEvidence().getEvidence().contains(new Evidence("grokassembly", "product", "log4net", Confidence.HIGH)));
     }
 
-    @Test(expected = AnalysisException.class)
-    public void testNonexistent() throws Exception {
+    @Test
+    public void testNonexistent() {
+        Level oldLevel = Logger.getLogger(AssemblyAnalyzer.class.getName()).getLevel();
+        Level oldDependency = Logger.getLogger(Dependency.class.getName()).getLevel();
+        // Tweak the log level so the warning doesn't show in the console
+        Logger.getLogger(AssemblyAnalyzer.class.getName()).setLevel(Level.OFF);
+        Logger.getLogger(Dependency.class.getName()).setLevel(Level.OFF);
         File f = new File(AssemblyAnalyzerTest.class.getClassLoader().getResource("log4net.dll").getPath());
         File test = new File(f.getParent(), "nonexistent.dll");
         Dependency d = new Dependency(test);
-        analyzer.analyze(d, null);
+
+        try {
+            analyzer.analyze(d, null);
+            fail("Expected an AnalysisException");
+        } catch (AnalysisException ae) {
+            assertEquals("File does not exist", ae.getMessage());
+        } finally {
+            Logger.getLogger(AssemblyAnalyzer.class.getName()).setLevel(oldLevel);
+            Logger.getLogger(Dependency.class.getName()).setLevel(oldDependency);
+        }
     }
 
-    @Test(expected = AnalysisException.class)
+    @Test
     public void testWithSettingMono() throws Exception {
 
         //This test doesn't work on Windows.
@@ -113,12 +144,20 @@ public class AssemblyAnalyzerTest {
             Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, "/yooser/bine/mono");
         }
 
+        Level oldLevel = Logger.getLogger(AssemblyAnalyzer.class.getName()).getLevel();
         try {
+            // Tweak the logging to swallow the warning when testing
+            Logger.getLogger(AssemblyAnalyzer.class.getName()).setLevel(Level.OFF);
             // Have to make a NEW analyzer because during setUp, it would have gotten the correct one
             AssemblyAnalyzer aanalyzer = new AssemblyAnalyzer();
             aanalyzer.supportsExtension("dll");
             aanalyzer.initialize();
+            fail("Expected an AnalysisException");
+        } catch (AnalysisException ae) {
+            assertEquals("An error occured with the .NET AssemblyAnalyzer", ae.getMessage());
         } finally {
+            // Recover the logger
+            Logger.getLogger(AssemblyAnalyzer.class.getName()).setLevel(oldLevel);
             // Now recover the way we came in. If we had to set a System property, delete it. Otherwise,
             // reset the old value
             if (oldValue == null) {
