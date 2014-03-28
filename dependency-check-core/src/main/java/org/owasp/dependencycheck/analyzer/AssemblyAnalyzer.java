@@ -17,20 +17,24 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
@@ -71,7 +75,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Logger
      */
-    private static final Logger LOG = Logger.getLogger(AbstractAnalyzer.class.getName());
+    private static final Logger LOG = Logger.getLogger(AssemblyAnalyzer.class.getName());
 
     /**
      * Builds the beginnings of a List for ProcessBuilder
@@ -113,6 +117,13 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         final ProcessBuilder pb = new ProcessBuilder(args);
         try {
             final Process proc = pb.start();
+            // Try evacuating the error stream
+            final BufferedReader rdr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+            String line = null;
+            while ((line = rdr.readLine()) != null) {
+                LOG.warning("Error from GrokAssembly: " + line);
+            }
+            int rc = 0;
             final Document doc = builder.parse(proc.getInputStream());
             final XPath xpath = XPathFactory.newInstance().newXPath();
 
@@ -139,6 +150,19 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 dependency.getProductEvidence().addEvidence(new Evidence("grokassembly", "product",
                         product, Confidence.HIGH));
             }
+
+            try {
+                rc = proc.waitFor();
+            } catch (InterruptedException ie) {
+                return;
+            }
+            if (rc == 3) {
+                LOG.info(dependency.getActualFilePath() + " is not a valid assembly");
+                return;
+            } else if (rc != 0) {
+                LOG.warning("Return code " + rc + " from GrokAssembly");
+            }
+            
 
         } catch (IOException ioe) {
             throw new AnalysisException(ioe);
@@ -195,7 +219,14 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         // Now, need to see if GrokAssembly actually runs from this location.
         final List<String> args = buildArgumentList();
         try {
-            final Process p = new ProcessBuilder(args).start();
+            final ProcessBuilder pb = new ProcessBuilder(args);
+            final Process p = pb.start();
+            // Try evacuating the error stream
+            final BufferedReader rdr = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+            String line = null;
+            while ((line = rdr.readLine()) != null) {
+                // We expect this to complain
+            }
             final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(p.getInputStream());
             final XPath xpath = XPathFactory.newInstance().newXPath();
             final String error = xpath.evaluate("/assembly/error", doc);
