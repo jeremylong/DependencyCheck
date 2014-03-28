@@ -166,38 +166,49 @@ public class Engine {
      * @param path the path to a file or directory to be analyzed.
      */
     public void scan(String path) {
-        final File file = new File(path);
-        scan(file);
-    }
-
-    /**
-     * Scans an array of files or directories. If a directory is specified, it will be scanned recursively. Any
-     * dependencies identified are added to the dependency collection.
-     *
-     * @since v0.3.2.5
-     *
-     * @param files an array of paths to files or directories to be analyzed.
-     */
-    public void scan(File[] files) {
-        for (File file : files) {
+        if (path.matches("^.*[\\/]\\*\\.[^\\/:*|?<>\"]+$")) {
+            String[] parts = path.split("\\*\\.");
+            String[] ext = new String[]{parts[parts.length - 1]};
+            File dir = new File(path.substring(0, path.length() - ext[0].length() - 2));
+            if (dir.isDirectory()) {
+                List<File> files = (List<File>) org.apache.commons.io.FileUtils.listFiles(dir, ext, true);
+                scan(files);
+            } else {
+                final String msg = String.format("Invalid file path provided to scan '%s'", path);
+                Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, msg);
+            }
+        } else {
+            final File file = new File(path);
             scan(file);
         }
     }
 
-    /**
-     * Scans a list of files or directories. If a directory is specified, it will be scanned recursively. Any
-     * dependencies identified are added to the dependency collection.
-     *
-     * @since v0.3.2.5
-     *
-     * @param files a set of paths to files or directories to be analyzed.
-     */
-    public void scan(Set<File> files) {
-        for (File file : files) {
-            scan(file);
-        }
-    }
-
+//    /**
+//     * Scans an array of files or directories. If a directory is specified, it will be scanned recursively. Any
+//     * dependencies identified are added to the dependency collection.
+//     *
+//     * @since v0.3.2.5
+//     *
+//     * @param files an array of paths to files or directories to be analyzed.
+//     */
+//    public void scan(File[] files) {
+//        for (File file : files) {
+//            scan(file);
+//        }
+//    }
+//    /**
+//     * Scans a list of files or directories. If a directory is specified, it will be scanned recursively. Any
+//     * dependencies identified are added to the dependency collection.
+//     *
+//     * @since v0.3.2.5
+//     *
+//     * @param files a set of paths to files or directories to be analyzed.
+//     */
+//    public void scan(Set<File> files) {
+//        for (File file : files) {
+//            scan(file);
+//        }
+//    }
     /**
      * Scans a list of files or directories. If a directory is specified, it will be scanned recursively. Any
      * dependencies identified are added to the dependency collection.
