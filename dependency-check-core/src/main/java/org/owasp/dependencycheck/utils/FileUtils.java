@@ -84,15 +84,11 @@ public final class FileUtils {
      */
     public static boolean delete(File file) {
         boolean success = true;
-        if (file.isDirectory()) { //some of this may duplicative of deleteQuietly....
-            for (File f : file.listFiles()) {
-                success &= delete(f);
-            }
-        }
         if (!org.apache.commons.io.FileUtils.deleteQuietly(file)) {
             success = false;
-            final String msg = String.format("Failed to delete file: %s", file.getPath());
+            final String msg = String.format("Failed to delete file: %s; attempting to delete on exit.", file.getPath());
             Logger.getLogger(FileUtils.class.getName()).log(Level.FINE, msg);
+            file.deleteOnExit();
         }
         return success;
     }
@@ -252,6 +248,7 @@ public final class FileUtils {
 
     /**
      * Return the bit bucket for the OS. '/dev/null' for Unix and 'NUL' for Windows
+     *
      * @return a String containing the bit bucket
      */
     public static String getBitBucket() {
