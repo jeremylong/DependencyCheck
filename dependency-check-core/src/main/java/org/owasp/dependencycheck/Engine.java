@@ -183,32 +183,34 @@ public class Engine {
         }
     }
 
-//    /**
-//     * Scans an array of files or directories. If a directory is specified, it will be scanned recursively. Any
-//     * dependencies identified are added to the dependency collection.
-//     *
-//     * @since v0.3.2.5
-//     *
-//     * @param files an array of paths to files or directories to be analyzed.
-//     */
-//    public void scan(File[] files) {
-//        for (File file : files) {
-//            scan(file);
-//        }
-//    }
-//    /**
-//     * Scans a list of files or directories. If a directory is specified, it will be scanned recursively. Any
-//     * dependencies identified are added to the dependency collection.
-//     *
-//     * @since v0.3.2.5
-//     *
-//     * @param files a set of paths to files or directories to be analyzed.
-//     */
-//    public void scan(Set<File> files) {
-//        for (File file : files) {
-//            scan(file);
-//        }
-//    }
+    /**
+     * Scans an array of files or directories. If a directory is specified, it will be scanned recursively. Any
+     * dependencies identified are added to the dependency collection.
+     *
+     * @since v0.3.2.5
+     *
+     * @param files an array of paths to files or directories to be analyzed.
+     */
+    public void scan(File[] files) {
+        for (File file : files) {
+            scan(file);
+        }
+    }
+
+    /**
+     * Scans a list of files or directories. If a directory is specified, it will be scanned recursively. Any
+     * dependencies identified are added to the dependency collection.
+     *
+     * @since v0.3.2.5
+     *
+     * @param files a set of paths to files or directories to be analyzed.
+     */
+    public void scan(Set<File> files) {
+        for (File file : files) {
+            scan(file);
+        }
+    }
+
     /**
      * Scans a list of files or directories. If a directory is specified, it will be scanned recursively. Any
      * dependencies identified are added to the dependency collection.
