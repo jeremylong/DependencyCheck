@@ -28,13 +28,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
@@ -120,7 +118,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             // Try evacuating the error stream
             final BufferedReader rdr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
             String line = null;
-            while ((line = rdr.readLine()) != null) {
+            while (rdr.ready() && (line = rdr.readLine()) != null) {
                 LOG.warning("Error from GrokAssembly: " + line);
             }
             int rc = 0;
@@ -162,7 +160,6 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             } else if (rc != 0) {
                 LOG.warning("Return code " + rc + " from GrokAssembly");
             }
-            
 
         } catch (IOException ioe) {
             throw new AnalysisException(ioe);
