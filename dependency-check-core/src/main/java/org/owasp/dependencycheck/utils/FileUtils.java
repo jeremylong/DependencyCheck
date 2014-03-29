@@ -99,11 +99,14 @@ public final class FileUtils {
      * @param prefix the prefix for the file name to generate
      * @param extension the extension of the generated file name
      * @return a temporary File
+     * @throws java.io.IOException thrown if the temporary folder could not be created
      */
-    public static File getTempFile(String prefix, String extension) {
+    public static File getTempFile(String prefix, String extension) throws IOException {
         final File dir = Settings.getTempDirectory();
         if (!dir.exists()) {
-            dir.mkdirs();
+            if (!dir.mkdirs()) {
+                throw new IOException("Unable to create temporary folder");
+            }
         }
         final String tempFileName = String.format("%s%s.%s", prefix, UUID.randomUUID().toString(), extension);
         final File tempFile = new File(dir, tempFileName);
