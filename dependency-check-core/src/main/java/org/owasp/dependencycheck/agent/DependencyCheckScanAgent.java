@@ -17,6 +17,11 @@
  */
 package org.owasp.dependencycheck.agent;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -28,18 +33,11 @@ import org.owasp.dependencycheck.exception.ScanAgentException;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.Settings;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
- * This class provides a way to easily conduct a scan solely based on existing evidence metadata
- * rather than collecting evidence from the files themselves. This class is based on the Ant task
- * and Maven plugin with the exception that it takes a list of dependencies that can be
- * programmatically added from data in a spreadsheet, database or some other datasource and conduct
- * a scan based on this pre-defined evidence.
+ * This class provides a way to easily conduct a scan solely based on existing evidence metadata rather than collecting
+ * evidence from the files themselves. This class is based on the Ant task and Maven plugin with the exception that it
+ * takes a list of dependencies that can be programmatically added from data in a spreadsheet, database or some other
+ * datasource and conduct a scan based on this pre-defined evidence.
  *
  * <h2>Example:</h2>
  * <pre>
@@ -61,7 +59,6 @@ import java.util.logging.Logger;
  */
 @SuppressWarnings("unused")
 public class DependencyCheckScanAgent {
-
 
     /**
      * System specific new line character.
@@ -97,14 +94,16 @@ public class DependencyCheckScanAgent {
     private List<Dependency> dependencies;
 
     /**
-     * Returns a list of pre-determined dependencies
+     * Returns a list of pre-determined dependencies.
+     *
+     * @return returns a list of dependencies
      */
     public List<Dependency> getDependencies() {
         return dependencies;
     }
 
     /**
-     * Sets the list of dependencies to scan
+     * Sets the list of dependencies to scan.
      *
      * @param dependencies new value of dependencies
      */
@@ -742,7 +741,8 @@ public class DependencyCheckScanAgent {
      * Executes the Dependency-Check on the dependent libraries.
      *
      * @return the Engine used to scan the dependencies.
-     * @throws org.owasp.dependencycheck.data.nvdcve.DatabaseException thrown if there is an exception connecting to the database
+     * @throws org.owasp.dependencycheck.data.nvdcve.DatabaseException thrown if there is an exception connecting to the
+     * database
      */
     private Engine executeDependencyCheck() throws DatabaseException {
         populateSettings();
@@ -871,6 +871,9 @@ public class DependencyCheckScanAgent {
 
     /**
      * Executes the dependency-check and generates the report.
+     *
+     * @throws org.owasp.dependencycheck.exception.ScanAgentException thrown if there is an exception executing the
+     * scan.
      */
     public void execute() throws ScanAgentException {
         Engine engine = null;
@@ -899,6 +902,8 @@ public class DependencyCheckScanAgent {
      * configuration.
      *
      * @param dependencies the list of dependency objects
+     * @throws org.owasp.dependencycheck.exception.ScanAgentException thrown if there is an exception executing the
+     * scan.
      */
     private void checkForFailure(List<Dependency> dependencies) throws ScanAgentException {
         final StringBuilder ids = new StringBuilder();

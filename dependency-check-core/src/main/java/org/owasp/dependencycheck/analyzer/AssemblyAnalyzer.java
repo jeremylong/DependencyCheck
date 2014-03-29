@@ -220,8 +220,8 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             final Process p = pb.start();
             // Try evacuating the error stream
             final BufferedReader rdr = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-            String line = null;
-            while ((line = rdr.readLine()) != null) {
+            String line;
+            while (rdr.ready() && (line = rdr.readLine()) != null) {
                 // We expect this to complain
             }
             final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(p.getInputStream());
