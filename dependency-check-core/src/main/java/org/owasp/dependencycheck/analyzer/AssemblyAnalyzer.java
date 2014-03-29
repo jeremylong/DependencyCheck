@@ -113,13 +113,14 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         final List<String> args = buildArgumentList();
         args.add(dependency.getActualFilePath());
         final ProcessBuilder pb = new ProcessBuilder(args);
+        BufferedReader rdr = null;
         try {
             final Process proc = pb.start();
             // Try evacuating the error stream
-            final BufferedReader rdr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+            rdr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
             String line = null;
             while (rdr.ready() && (line = rdr.readLine()) != null) {
-                LOG.warning("Error from GrokAssembly: " + line);
+                LOG.log(Level.WARNING, "Error from GrokAssembly: {0}", line);
             }
             int rc = 0;
             final Document doc = builder.parse(proc.getInputStream());
@@ -155,10 +156,10 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 return;
             }
             if (rc == 3) {
-                LOG.info(dependency.getActualFilePath() + " is not a valid assembly");
+                LOG.log(Level.INFO, "{0} is not a valid assembly", dependency.getActualFilePath());
                 return;
             } else if (rc != 0) {
-                LOG.warning("Return code " + rc + " from GrokAssembly");
+                LOG.log(Level.WARNING, "Return code {0} from GrokAssembly", rc);
             }
 
         } catch (IOException ioe) {
@@ -168,6 +169,14 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (XPathExpressionException xpe) {
             // This shouldn't happen
             throw new AnalysisException(xpe);
+        } finally {
+            if (rdr != null) {
+                try {
+                    rdr.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(AssemblyAnalyzer.class.getName()).log(Level.FINEST, "ignore", ex);
+                }
+            }
         }
     }
 
@@ -215,11 +224,12 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
 
         // Now, need to see if GrokAssembly actually runs from this location.
         final List<String> args = buildArgumentList();
+        BufferedReader rdr = null;
         try {
             final ProcessBuilder pb = new ProcessBuilder(args);
             final Process p = pb.start();
             // Try evacuating the error stream
-            final BufferedReader rdr = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+            rdr = new BufferedReader(new InputStreamReader(p.getErrorStream()));
             String line;
             while (rdr.ready() && (line = rdr.readLine()) != null) {
                 // We expect this to complain
@@ -238,6 +248,14 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                     + "this can be ignored unless you are scanning .NET dlls. Please see the log for more details.");
             LOG.log(Level.FINE, "Could not execute GrokAssembly {0}", e.getMessage());
             throw new AnalysisException("An error occured with the .NET AssemblyAnalyzer", e);
+        } finally {
+            if (rdr != null) {
+                try {
+                    rdr.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(AssemblyAnalyzer.class.getName()).log(Level.FINEST, "ignore", ex);
+                }
+            }
         }
 
         builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -247,8 +265,8 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     public void close() throws Exception {
         super.close();
         try {
-            if (grokAssemblyExe != null) {
-                grokAssemblyExe.delete();
+            if (grokAssemblyExe != null && !grokAssemblyExe.delete()) {
+                grokAssemblyExe.deleteOnExit();
             }
         } catch (SecurityException se) {
             LOG.fine("Can't delete temporary GrokAssembly.exe");
