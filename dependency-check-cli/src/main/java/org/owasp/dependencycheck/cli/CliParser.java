@@ -179,7 +179,8 @@ public final class CliParser {
                 .create(ArgumentName.APP_NAME_SHORT);
 
         final Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.SCAN)
-                .withDescription("The path to scan - this option can be specified multiple times.")
+                .withDescription("The path to scan - this option can be specified multiple times. To limit the scan"
+                        + " to specific file types *.[ext] can be added to the end of the path.")
                 .create(ArgumentName.SCAN_SHORT);
 
         final Option props = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.PROP)
