@@ -117,7 +117,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         try {
             final Process proc = pb.start();
             // Try evacuating the error stream
-            rdr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+            rdr = new BufferedReader(new InputStreamReader(proc.getErrorStream(), "UTF-8"));
             String line = null;
             while (rdr.ready() && (line = rdr.readLine()) != null) {
                 LOG.log(Level.WARNING, "Error from GrokAssembly: {0}", line);
@@ -229,7 +229,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             final ProcessBuilder pb = new ProcessBuilder(args);
             final Process p = pb.start();
             // Try evacuating the error stream
-            rdr = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+            rdr = new BufferedReader(new InputStreamReader(p.getErrorStream(), "UTF-8"));
             String line;
             while (rdr.ready() && (line = rdr.readLine()) != null) {
                 // We expect this to complain
