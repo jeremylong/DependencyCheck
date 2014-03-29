@@ -411,6 +411,11 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <version>1.2</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.8</version>
+        </dependency>
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
@@ -494,11 +499,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <artifactId>jsoup</artifactId>
             <version>1.7.2</version>
             <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-            <version>1.5</version>
         </dependency>
         <!-- The following dependencies are only used during testing -->
         <dependency>
