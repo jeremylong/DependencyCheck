@@ -207,6 +207,7 @@ public class ArchiveAnalyzerTest extends AbstractDatabaseTestCase {
     @Test
     public void testAnalyzeTarGz() throws Exception {
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
+        instance.supportsExtension("zip"); //ensure analyzer is "enabled"
         try {
             instance.initialize();
 
@@ -256,6 +257,7 @@ public class ArchiveAnalyzerTest extends AbstractDatabaseTestCase {
     @Test
     public void testAnalyzeTgz() throws Exception {
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
+        instance.supportsExtension("zip"); //ensure analyzer is "enabled"
         try {
             instance.initialize();
 
