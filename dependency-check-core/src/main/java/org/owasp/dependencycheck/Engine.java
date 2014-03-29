@@ -167,11 +167,11 @@ public class Engine {
      */
     public void scan(String path) {
         if (path.matches("^.*[\\/]\\*\\.[^\\/:*|?<>\"]+$")) {
-            String[] parts = path.split("\\*\\.");
-            String[] ext = new String[]{parts[parts.length - 1]};
-            File dir = new File(path.substring(0, path.length() - ext[0].length() - 2));
+            final String[] parts = path.split("\\*\\.");
+            final String[] ext = new String[]{parts[parts.length - 1]};
+            final File dir = new File(path.substring(0, path.length() - ext[0].length() - 2));
             if (dir.isDirectory()) {
-                List<File> files = (List<File>) org.apache.commons.io.FileUtils.listFiles(dir, ext, true);
+                final List<File> files = (List<File>) org.apache.commons.io.FileUtils.listFiles(dir, ext, true);
                 scan(files);
             } else {
                 final String msg = String.format("Invalid file path provided to scan '%s'", path);
