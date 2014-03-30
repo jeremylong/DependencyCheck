@@ -87,6 +87,8 @@ public class Dependency implements Comparable<Dependency> {
         versionEvidence = new EvidenceCollection();
         identifiers = new TreeSet<Identifier>();
         vulnerabilities = new TreeSet<Vulnerability>(new VulnerabilityComparator());
+        suppressedIdentifiers = new TreeSet<Identifier>();
+        suppressedVulnerabilities = new TreeSet<Vulnerability>(new VulnerabilityComparator());
     }
 
     /**
