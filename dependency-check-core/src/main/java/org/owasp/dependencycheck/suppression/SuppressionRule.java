@@ -254,6 +254,7 @@ public class SuppressionRule {
                 final Identifier i = itr.next();
                 for (PropertyType c : this.cpe) {
                     if (cpeMatches(c, i)) {
+                        dependency.addSuppressedIdentifier(i);
                         itr.remove();
                         break;
                     }
@@ -292,6 +293,7 @@ public class SuppressionRule {
                     }
                 }
                 if (remove) {
+                    dependency.addSuppressedVulnerability(v);
                     itr.remove();
                 }
             }
