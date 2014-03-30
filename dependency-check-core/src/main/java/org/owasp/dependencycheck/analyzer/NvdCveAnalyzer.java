@@ -109,6 +109,17 @@ public class NvdCveAnalyzer implements Analyzer {
                 }
             }
         }
+        for (Identifier id : dependency.getSuppressedIdentifiers()) {
+            if ("cpe".equals(id.getType())) {
+                try {
+                    final String value = id.getValue();
+                    final List<Vulnerability> vulns = cveDB.getVulnerabilities(value);
+                    dependency.getSuppressedVulnerabilities().addAll(vulns);
+                } catch (DatabaseException ex) {
+                    throw new AnalysisException(ex);
+                }
+            }
+        }
     }
 
     /**
