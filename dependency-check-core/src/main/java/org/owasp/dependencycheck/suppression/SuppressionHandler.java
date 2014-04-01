@@ -164,7 +164,7 @@ public class SuppressionHandler extends DefaultHandler {
                 pt.setRegex(Boolean.parseBoolean(regex));
             }
             final String caseSensitive = currentAttributes.getValue("caseSensitive");
-            if (regex != null) {
+            if (caseSensitive != null) {
                 pt.setCaseSensitive(Boolean.parseBoolean(caseSensitive));
             }
         }
