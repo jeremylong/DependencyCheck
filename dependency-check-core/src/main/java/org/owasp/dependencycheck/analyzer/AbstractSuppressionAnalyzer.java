@@ -93,6 +93,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     private void loadSuppressionData() throws SuppressionParseException {
         final String suppressionFilePath = Settings.getString(Settings.KEYS.SUPPRESSION_FILE);
         if (suppressionFilePath == null) {
+            rules = null; // Set to null to fix issue with Jenkins plugin configuration changes between builds
             return;
         }
         File file = null;
