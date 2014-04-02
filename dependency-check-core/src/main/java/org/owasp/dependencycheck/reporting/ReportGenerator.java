@@ -26,15 +26,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
-import org.apache.velocity.tools.ToolManager;
-import org.apache.velocity.tools.config.EasyFactoryConfiguration;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -93,10 +95,20 @@ public class ReportGenerator {
 
         engine.init();
 
+        DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy 'at' HH:mm:ss z");
+        DateFormat dateFormatXML = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        Date d = new Date();
+        String scanDate = dateFormat.format(d);
+        String scanDateXML = dateFormatXML.format(d);
+        EscapeTool enc = new EscapeTool();
+
         context.put("applicationName", applicationName);
         context.put("dependencies", dependencies);
         context.put("analyzers", analyzers);
         context.put("properties", properties);
+        context.put("scanDate", scanDate);
+        context.put("scanDateXML", scanDateXML);
+        context.put("enc", enc);
         context.put("version", Settings.getString("application.version", "Unknown"));
     }
 
@@ -118,15 +130,15 @@ public class ReportGenerator {
      *
      * @return a Velocity Context.
      */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "RV_RETURN_VALUE_IGNORED_INFERRED",
-            justification = "No plan to fix this style issue")
     private Context createContext() {
-        final ToolManager manager = new ToolManager();
-        final Context c = manager.createContext();
-        final EasyFactoryConfiguration config = new EasyFactoryConfiguration();
-        config.addDefaultTools();
-        config.toolbox("application").tool("esc", "org.apache.velocity.tools.generic.EscapeTool").tool("org.apache.velocity.tools.generic.DateTool");
-        manager.configure(config);
+        //REMOVED all of the velocity tools to simplify the engine trying to resolve issues running this in Jenkins
+//        final ToolManager manager = new ToolManager();
+//        final Context c = manager.createContext();
+//        final EasyFactoryConfiguration config = new EasyFactoryConfiguration();
+//        config.addDefaultTools();
+//        config.toolbox("application").tool("esc", "org.apache.velocity.tools.generic.EscapeTool").tool("org.apache.velocity.tools.generic.DateTool");
+//        manager.configure(config);
+        VelocityContext c = new VelocityContext();
         return c;
     }
 
