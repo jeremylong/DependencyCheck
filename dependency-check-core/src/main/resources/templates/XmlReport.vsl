@@ -18,7 +18,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 @author Jeremy Long <jeremy.long@owasp.org>
 @version 1.1
 *#<?xml version="1.0"?>
-<analysis xmlns="https://www.owasp.org/index.php/OWASP_Dependency_Check#1.1">
+<analysis xmlns="https://www.owasp.org/index.php/OWASP_Dependency_Check#1.2">
     <scanInfo>
         <engineVersion>$version</engineVersion>
 #foreach($prop in $properties.getMetaData().entrySet())
@@ -89,9 +89,20 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 #end
                 </identifier>
 #end
+#foreach($id in $dependency.getSuppressedIdentifiers())
+                <suppressedIdentifier type="$enc.xml($id.type)" #if($id.confidence)confidence="$id.confidence"#end>
+                    <name>($id.value)</name>
+#if( $id.url )
+                    <url>$enc.xml($id.url)</url>
+#end
+#if( $id.description )
+                    <description>$enc.xml($id.description)</description>
+#end
+                </suppressedIdentifier>
+#end
             </identifiers>
 #end
-#if($dependency.getVulnerabilities().size()>0)
+#if($dependency.getVulnerabilities().size()>0 || $dependency.getSuppressedVulnerabilities().size()>0)
             <vulnerabilities>
 #foreach($vuln in $dependency.getVulnerabilities())
                 <vulnerability>
@@ -123,6 +134,37 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 #end
                     </vulnerableSoftware>
                 </vulnerability>
+#end
+#foreach($vuln in $dependency.getSuppressedVulnerabilities())
+                <suppressedVulnerability>
+                    <name>$enc.xml($vuln.name)</name>
+                    <cvssScore>$vuln.cvssScore</cvssScore>
+#if ($vuln.cvssScore<4.0)
+                    <severity>Low</severity>
+#elseif ($vuln.cvssScore>=7.0)
+                    <severity>High</severity>
+#else
+                    <severity>Medium</severity>
+#end
+#if ($vuln.cwe)
+                    <cwe>$enc.xml($vuln.cwe)</cwe>
+#end
+                    <description>$enc.xml($vuln.description)</description>
+                    <references>
+#foreach($ref in $vuln.getReferences())
+                        <reference>
+                            <source>$enc.xml($ref.source)</source>
+                            <url>$enc.xml($ref.url)</url>
+                            <name>$enc.xml($ref.name)</name>
+                        </reference>
+#end
+                    </references>
+                    <vulnerableSoftware>
+#foreach($vs in $vuln.getVulnerableSoftware())
+                        <software#if($vs.hasPreviousVersion()) allPreviousVersion="true"#end>$enc.xml($vs.name)</software>
+#end
+                    </vulnerableSoftware>
+                </suppressedVulnerability>
 #end
             </vulnerabilities>
 #end
