@@ -39,15 +39,23 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     var content = "#content" + h.id.substr(6);
                     var header = "#" + h.id;
                     $(content).slideToggle("fast");
-                    var exprx = /expandablesubsection/;
+                    var exprx = /expandable\b/;
                     if (exprx.exec($(header).attr("class"))) {
+                        $(header).addClass("collapsed");
+                        $(header).removeClass("expandable");
+                    } else {
+                        $(header).addClass("expandable");
+                        $(header).removeClass("collapsed");
+                    }
+                    var essrx = /expandablesubsection/;
+                    var cssrx = /collaspablesubsection/;
+                    if (essrx.exec($(header).attr("class"))) {
                         $(header).addClass("collaspablesubsection");
                         $(header).removeClass("expandablesubsection");
-                    } else {
+                    } else if (cssrx.exec($(header).attr("class"))) {
                         $(header).addClass("expandablesubsection");
                         $(header).removeClass("collaspablesubsection");
                     }
-
                 });
             });
 
@@ -128,6 +136,19 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             }
             #modal-text:focus {
                 outline: none;
+            }
+            .suppressedLabel {
+                cursor: default;
+                padding:1px;
+                background-color: #eeeeee;
+                border: 1px solid #555555;
+                color:#555555;
+                text-decoration:none;
+                -moz-border-radius: 3px;
+                -webkit-border-radius: 3px;
+                -khtml-border-radius: 3px;
+                -o-border-radius: 3px;
+                border-radius: 3px;
             }
             .copybutton {
                 padding:1px;
@@ -215,24 +236,25 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             .hidden {
                 display: none;
             }
-            .exandable {}
-            .expandablesubsection {
+            .expandable {
                 cursor: pointer;
-                /*background-image: url(img/plus.gif);*/
                 background-image: url(data:image/gif;base64,R0lGODlhDAAMAIABAICAgP///yH5BAEAAAEALAAAAAAMAAwAAAIcjI8Hy22Q1FNwhnpxhW3d2XFWJn2PNiZbyERuAQA7);
                 background-repeat: no-repeat;
                 background-position: 98% 50%;
+            }
+            .collapsed {
+                cursor: pointer;
+                background-image: url(data:image/gif;base64,R0lGODlhDAAMAIABAICAgP///yH5BAEAAAEALAAAAAAMAAwAAAIajI8Hy22Q1IszQHphW3ZuXUUZ1ZXi8zFkUgAAOw==);
+                background-repeat: no-repeat;
+                background-position: 98% 50%;
+            }
+            .expandablesubsection {
                 -moz-border-radius-bottomleft:15px; /* bottom left corner */
                 -webkit-border-bottom-left-radius:15px; /* bottom left corner */
                 border-bottom-left-radius: 15px;
                 border-bottom: 1px solid #cccccc;
             }
             .collaspablesubsection {
-                cursor: pointer;
-                /*background-image: url(img/minus.gif);*/
-                background-image: url(data:image/gif;base64,R0lGODlhDAAMAIABAICAgP///yH5BAEAAAEALAAAAAAMAAwAAAIajI8Hy22Q1IszQHphW3ZuXUUZ1ZXi8zFkUgAAOw==);
-                background-repeat: no-repeat;
-                background-position: 98% 50%;
                 -moz-border-radius-bottomleft:0px; /* bottom left corner */
                 -webkit-border-bottom-left-radius:0px; /* bottom left corner */
                 border-bottom-left-radius: 0px;
@@ -244,7 +266,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 border-bottom-left-radius: 0px;
                 border-bottom: 0px solid #ffffff;
             }
-
             .content {
                 margin-top:0px;
                 margin-left:20px;
@@ -665,8 +686,8 @@ arising out of or in connection with the use of this tool, the analysis performe
 ## BEGIN SUPPRESSED VULNERABILITIES
                 #if ($vulnSuppressedCount>0 || $cpeSuppressedCount>0)
                     #set($cnt=$cnt+1)
-                    <h3 id="header$cnt" class="sectionheader expandable expandablesubsection white">Suppressed Vulnerabilities</h3>
-                    <div id="content$cnt" class="sectioncontent standardsubsection hidden">
+                    <h2 id="header$cnt" class="expandable">Suppressed Vulnerabilities</h3>
+                    <div id="content$cnt" class="hidden">
 
                     #foreach($dependency in $dependencies)
                         #if ($dependency.getSuppressedIdentifiers().size()>0 || $dependency.getSuppressedVulnerabilities().size()>0)
@@ -732,9 +753,9 @@ arising out of or in connection with the use of this tool, the analysis performe
                                     #foreach($id in $dependency.getSuppressedIdentifiers())
                                         #if( $id.url )
                                             ##yes, we are HTML Encoding the href. this is okay. We can't URL encode as we have to trust the analyzer here...
-                                            <li><b>$enc.html($id.type):</b>&nbsp;<a href="$enc.html($id.url)" target="_blank">$enc.html($id.value)</a>
+                                            <li><b>$enc.html($id.type):</b>&nbsp;<a href="$enc.html($id.url)" target="_blank">$enc.html($id.value)</a>&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span>
                                         #else
-                                            <li><b>$enc.html($id.type):</b>&nbsp;$enc.html($id.value)
+                                            <li><b>$enc.html($id.type):</b>&nbsp;$enc.html($id.value)&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span>
                                         #end
                                         #if ($id.confidence)
                                             &nbsp;&nbsp;<i>Confidence</i>:$id.confidence
@@ -753,7 +774,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                             <div id="content$cnt" class="subsectioncontent standardsubsection">
                                 #foreach($vuln in $dependency.getSuppressedVulnerabilities())
                                     #set($vsctr=$vsctr+1)
-                                    <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" onclick="copyText('$enc.html($dependency.FileNameForJavaScript)', '$enc.html($dependency.Sha1sum)', 'cve', '$enc.html($vuln.name)')">suppress</button></p>
+                                    <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span></p>
                                     <p>Severity:
                                     #if ($vuln.cvssScore<4.0)
                                         Low
