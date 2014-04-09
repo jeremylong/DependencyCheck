@@ -17,21 +17,22 @@
  */
 package org.owasp.dependencycheck.data.nuget;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-
+import java.io.PrintStream;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import static org.junit.Assert.*;
-
 
 /**
- * 
+ *
  * @author colezlaw
  *
  */
 public class XPathNuspecParserTest {
+
     /**
      * Test all the valid components.
-     * 
+     *
      * @throws Exception if anything goes sideways.
      */
     @Test
@@ -46,25 +47,30 @@ public class XPathNuspecParserTest {
         assertEquals("Apache Software Foundation", np.getOwners());
         assertEquals("http://logging.apache.org/log4net/license.html", np.getLicenseUrl());
     }
-    
+
     /**
      * Expect a NuspecParseException when what we pass isn't even XML.
-     * 
+     *
      * @throws Exception we expect this.
      */
-    @Test(expected=NuspecParseException.class)
+    @Test(expected = NuspecParseException.class)
     public void testMissingDocument() throws Exception {
         NuspecParser parser = new XPathNuspecParser();
         InputStream is = XPathNuspecParserTest.class.getClassLoader().getResourceAsStream("dependencycheck.properties");
+
+        //hide the fatal message from the core parser
+        final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
+        System.setErr(new PrintStream(myOut));
+
         NugetPackage np = parser.parse(is);
     }
-    
+
     /**
      * Expect a NuspecParseException when it's valid XML, but not a Nuspec.
-     * 
+     *
      * @throws Exception we expect this.
      */
-    @Test(expected=NuspecParseException.class)
+    @Test(expected = NuspecParseException.class)
     public void testNotNuspec() throws Exception {
         NuspecParser parser = new XPathNuspecParser();
         InputStream is = XPathNuspecParserTest.class.getClassLoader().getResourceAsStream("suppressions.xml");
