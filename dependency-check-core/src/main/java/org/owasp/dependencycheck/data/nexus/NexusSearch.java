@@ -21,7 +21,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
@@ -102,8 +101,7 @@ public class NexusSearch {
         // 2) Otherwise, don't use the proxy (either the proxy isn't configured,
         // or proxy is specifically
         // set to false
-        URLConnection conn = null;
-        conn = URLConnectionFactory.createHttpURLConnection(url, useProxy);
+        final HttpURLConnection conn = URLConnectionFactory.createHttpURLConnection(url, useProxy);
 
         conn.setDoOutput(true);
 
@@ -112,36 +110,40 @@ public class NexusSearch {
         conn.addRequestProperty("Accept", "application/xml");
         conn.connect();
 
-        try {
-            final DocumentBuilder builder = DocumentBuilderFactory
-                    .newInstance().newDocumentBuilder();
-            final Document doc = builder.parse(conn.getInputStream());
-            final XPath xpath = XPathFactory.newInstance().newXPath();
-            final String groupId = xpath
-                    .evaluate(
-                            "/org.sonatype.nexus.rest.model.NexusArtifact/groupId",
-                            doc);
-            final String artifactId = xpath.evaluate(
-                    "/org.sonatype.nexus.rest.model.NexusArtifact/artifactId",
-                    doc);
-            final String version = xpath
-                    .evaluate(
-                            "/org.sonatype.nexus.rest.model.NexusArtifact/version",
-                            doc);
-            final String link = xpath
-                    .evaluate(
-                            "/org.sonatype.nexus.rest.model.NexusArtifact/artifactLink",
-                            doc);
-            return new MavenArtifact(groupId, artifactId, version, link);
-        } catch (FileNotFoundException fnfe) {
-            /* This is what we get when the SHA1 they sent doesn't exist in
-             * Nexus. This is useful upstream for recovery, so we just re-throw it
-             */
-            throw fnfe;
-        } catch (Throwable e) {
-            // Anything else is jacked-up XML stuff that we really can't recover
-            // from well
-            throw new IOException(e.getMessage(), e);
+        if (conn.getResponseCode() == 200) {
+            try {
+                final DocumentBuilder builder = DocumentBuilderFactory
+                        .newInstance().newDocumentBuilder();
+                final Document doc = builder.parse(conn.getInputStream());
+                final XPath xpath = XPathFactory.newInstance().newXPath();
+                final String groupId = xpath
+                        .evaluate(
+                                "/org.sonatype.nexus.rest.model.NexusArtifact/groupId",
+                                doc);
+                final String artifactId = xpath.evaluate(
+                        "/org.sonatype.nexus.rest.model.NexusArtifact/artifactId",
+                        doc);
+                final String version = xpath
+                        .evaluate(
+                                "/org.sonatype.nexus.rest.model.NexusArtifact/version",
+                                doc);
+                final String link = xpath
+                        .evaluate(
+                                "/org.sonatype.nexus.rest.model.NexusArtifact/artifactLink",
+                                doc);
+                return new MavenArtifact(groupId, artifactId, version, link);
+            } catch (Throwable e) {
+                // Anything else is jacked-up XML stuff that we really can't recover
+                // from well
+                throw new IOException(e.getMessage(), e);
+            }
+        } else if (conn.getResponseCode() == 404) {
+            throw new FileNotFoundException("Artifact not found in Nexus");
+        } else {
+            final String msg = String.format("Could not connect to Nexus received response code: %d %s",
+                    conn.getResponseCode(), conn.getResponseMessage());
+            LOGGER.fine(msg);
+            throw new IOException(msg);
         }
     }
 
