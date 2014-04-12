@@ -69,6 +69,9 @@ public class ArchiveAnalyzerTest extends AbstractDatabaseTestCase {
         expResult.add("zip");
         expResult.add("war");
         expResult.add("ear");
+        expResult.add("jar");
+        expResult.add("sar");
+        expResult.add("apk");
         expResult.add("nupkg");
         expResult.add("tar");
         expResult.add("gz");
