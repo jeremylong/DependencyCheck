@@ -84,6 +84,9 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             <item name="Sample Report" href="./SampleReport.html">
                 <description>Sample Report</description>
             </item>
+            <item name="Nexus Analyzer" href="./nexus-analyzer.html">
+                <description>Nexus Analyzer</description>
+            </item>
         </menu>
         <menu name="Modules">
             <item name="dependency-check-core" href="./dependency-check-core/index.html">
