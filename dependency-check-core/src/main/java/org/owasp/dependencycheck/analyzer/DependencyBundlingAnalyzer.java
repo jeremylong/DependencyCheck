@@ -106,17 +106,17 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                     final ListIterator<Dependency> subIterator = engine.getDependencies().listIterator(mainIterator.nextIndex());
                     while (subIterator.hasNext()) {
                         final Dependency nextDependency = subIterator.next();
-                        if (isShadedJar(dependency, nextDependency)) {
-                            if (dependency.getFileName().toLowerCase().endsWith("pom.xml")) {
-                                dependenciesToRemove.add(dependency);
-                            } else {
-                                dependenciesToRemove.add(nextDependency);
-                            }
-                        } else if (hashesMatch(dependency, nextDependency)) {
+                        if (hashesMatch(dependency, nextDependency)) {
                             if (isCore(dependency, nextDependency)) {
                                 mergeDependencies(dependency, nextDependency, dependenciesToRemove);
                             } else {
                                 mergeDependencies(nextDependency, dependency, dependenciesToRemove);
+                            }
+                        } else if (isShadedJar(dependency, nextDependency)) {
+                            if (dependency.getFileName().toLowerCase().endsWith("pom.xml")) {
+                                dependenciesToRemove.add(dependency);
+                            } else {
+                                dependenciesToRemove.add(nextDependency);
                             }
                         } else if (cpeIdentifiersMatch(dependency, nextDependency)
                                 && hasSameBasePath(dependency, nextDependency)
