@@ -21,13 +21,10 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 
@@ -35,26 +32,7 @@ import org.owasp.dependencycheck.dependency.Evidence;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class JarAnalyzerTest {
-
-    public JarAnalyzerTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
+public class JarAnalyzerTest extends BaseTest {
 
     /**
      * Test of inspect method, of class JarAnalyzer.
