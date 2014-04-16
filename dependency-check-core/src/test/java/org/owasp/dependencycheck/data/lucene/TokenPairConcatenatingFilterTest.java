@@ -69,6 +69,8 @@ public class TokenPairConcatenatingFilterTest extends BaseTokenStreamTestCase {
 
     /**
      * Test of clear method, of class TokenPairConcatenatingFilter.
+     *
+     * @throws java.io.IOException
      */
     @Test
     public void testClear() throws IOException {
