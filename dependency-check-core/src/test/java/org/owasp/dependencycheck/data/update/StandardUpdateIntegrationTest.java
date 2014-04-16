@@ -19,13 +19,10 @@ package org.owasp.dependencycheck.data.update;
 
 import java.net.MalformedURLException;
 import java.util.Calendar;
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 
@@ -33,26 +30,7 @@ import org.owasp.dependencycheck.utils.DownloadFailedException;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class StandardUpdateIntegrationTest {
-
-    public StandardUpdateIntegrationTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
+public class StandardUpdateIntegrationTest extends BaseTest {
 
     public StandardUpdate getStandardUpdateTask() throws MalformedURLException, DownloadFailedException, UpdateException {
         StandardUpdate instance = new StandardUpdate();
