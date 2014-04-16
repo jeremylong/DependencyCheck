@@ -20,12 +20,9 @@ package org.owasp.dependencycheck.analyzer;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
 
@@ -33,26 +30,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class JavaScriptAnalyzerTest {
-
-    public JavaScriptAnalyzerTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
+public class JavaScriptAnalyzerTest extends BaseTest {
 
     /**
      * Test of getSupportedExtensions method, of class JavaScriptAnalyzer.
