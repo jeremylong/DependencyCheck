@@ -17,38 +17,16 @@
  */
 package org.owasp.dependencycheck.data.update;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 
 /**
  * Rigorous test of setters/getters.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class NvdCveInfoTest {
-
-    public NvdCveInfoTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
+public class NvdCveInfoTest extends BaseTest {
 
     /**
      * Test of setId and getId method, of class NvdCveInfo.
