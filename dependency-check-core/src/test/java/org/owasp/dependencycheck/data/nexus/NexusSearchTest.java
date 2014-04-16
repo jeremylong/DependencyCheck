@@ -17,19 +17,18 @@
  */
 package org.owasp.dependencycheck.data.nexus;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.logging.Logger;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.utils.Settings;
 
-public class NexusSearchTest {
+public class NexusSearchTest extends BaseTest {
 
     private static final Logger LOGGER = Logger.getLogger(NexusSearchTest.class.getName());
     private NexusSearch searcher;
