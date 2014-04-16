@@ -18,12 +18,8 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.owasp.dependencycheck.dependency.Dependency;
 
@@ -32,25 +28,6 @@ import org.owasp.dependencycheck.dependency.Dependency;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class FileNameAnalyzerTest {
-
-    public FileNameAnalyzerTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     /**
      * Test of getName method, of class FileNameAnalyzer.
