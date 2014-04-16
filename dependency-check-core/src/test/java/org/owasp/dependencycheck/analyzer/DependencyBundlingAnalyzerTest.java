@@ -17,38 +17,16 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.dependency.Dependency;
 
 /**
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class DependencyBundlingAnalyzerTest {
-
-    public DependencyBundlingAnalyzerTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
+public class DependencyBundlingAnalyzerTest extends BaseTest {
 
     /**
      * Test of getName method, of class DependencyBundlingAnalyzer.
