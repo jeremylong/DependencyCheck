@@ -23,13 +23,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -40,21 +38,10 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class AbstractSuppressionAnalyzerTest {
-
-    public AbstractSuppressionAnalyzerTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
+public class AbstractSuppressionAnalyzerTest extends BaseTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         try {
             final String uri = this.getClass().getClassLoader().getResource("suppressions.xml").toURI().toURL().toString();
             Settings.setString(Settings.KEYS.SUPPRESSION_FILE, uri);
@@ -63,10 +50,6 @@ public class AbstractSuppressionAnalyzerTest {
         } catch (MalformedURLException ex) {
             Logger.getLogger(AbstractSuppressionAnalyzerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    @After
-    public void tearDown() {
     }
 
     /**
