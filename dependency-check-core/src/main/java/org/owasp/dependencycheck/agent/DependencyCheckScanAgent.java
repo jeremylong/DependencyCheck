@@ -747,16 +747,9 @@ public class DependencyCheckScanAgent {
     private Engine executeDependencyCheck() throws DatabaseException {
         populateSettings();
         Engine engine = null;
-        try {
-            engine = new Engine();
-            engine.setDependencies(this.dependencies);
-            engine.analyzeDependencies();
-
-        } finally {
-            if (engine != null) {
-                engine.cleanup();
-            }
-        }
+        engine = new Engine();
+        engine.setDependencies(this.dependencies);
+        engine.analyzeDependencies();
         return engine;
     }
 
@@ -799,6 +792,7 @@ public class DependencyCheckScanAgent {
      * properties required to change the proxy url, port, and connection timeout.
      */
     private void populateSettings() {
+        Settings.initialize();
         if (dataDirectory != null) {
             Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
         } else {
@@ -891,6 +885,7 @@ public class DependencyCheckScanAgent {
                     "Unable to connect to the dependency-check database; analysis has stopped");
             Logger.getLogger(DependencyCheckScanAgent.class.getName()).log(Level.FINE, "", ex);
         } finally {
+            Settings.cleanup();
             if (engine != null) {
                 engine.cleanup();
             }
