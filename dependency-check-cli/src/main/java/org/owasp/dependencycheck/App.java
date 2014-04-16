@@ -82,7 +82,7 @@ public class App {
         if (cli.isGetVersion()) {
             cli.printVersionInfo();
         } else if (cli.isRunScan()) {
-            updateSettings(cli);
+            populateSettings(cli);
             runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles());
         } else {
             cli.printHelp();
@@ -135,6 +135,7 @@ public class App {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
             Logger.getLogger(App.class.getName()).log(Level.FINE, "", ex);
         } finally {
+            Settings.cleanup();
             if (scanner != null) {
                 scanner.cleanup();
             }
@@ -147,7 +148,9 @@ public class App {
      * @param cli a reference to the CLI Parser that contains the command line arguments used to set the corresponding
      * settings in the core engine.
      */
-    private void updateSettings(CliParser cli) {
+    private void populateSettings(CliParser cli) {
+
+        Settings.initialize();
 
         final boolean autoUpdate = cli.isAutoUpdate();
         final String connectionTimeout = cli.getConnectionTimeout();
