@@ -24,11 +24,7 @@ import java.util.List;
 import java.util.Set;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.owasp.dependencycheck.data.cpe.AbstractDatabaseTestCase;
 import org.owasp.dependencycheck.data.cpe.IndexEntry;
@@ -40,26 +36,6 @@ import org.owasp.dependencycheck.dependency.Identifier;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class CPEAnalyzerTest extends AbstractDatabaseTestCase {
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
 
     /**
      * Tests of buildSearch of class CPEAnalyzer.
