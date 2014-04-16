@@ -69,6 +69,8 @@ import org.owasp.dependencycheck.utils.Settings;
         requiresOnline = true)
 public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageReport {
 
+    private final Logger logger = Logger.getLogger(DependencyCheckMojo.class.getName());
+
     /**
      * The properties file location.
      */
@@ -398,7 +400,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
             cve.open();
             prop = cve.getDatabaseProperties();
         } catch (DatabaseException ex) {
-            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINE, "Unable to retrieve DB Properties", ex);
+            logger.log(Level.FINE, "Unable to retrieve DB Properties", ex);
         } finally {
             if (cve != null) {
                 cve.close();
@@ -408,13 +410,13 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         try {
             r.generateReports(outDirectory.getCanonicalPath(), format);
         } catch (IOException ex) {
-            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE,
+            logger.log(Level.SEVERE,
                     "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
-            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINE, null, ex);
+            logger.log(Level.FINE, null, ex);
         } catch (Throwable ex) {
-            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE,
+            logger.log(Level.SEVERE,
                     "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
-            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINE, null, ex);
+            logger.log(Level.FINE, null, ex);
         }
     }
 
@@ -820,14 +822,14 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
             mojoProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);
             Settings.mergeProperties(mojoProperties);
         } catch (IOException ex) {
-            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.WARNING, "Unable to load the dependency-check ant task.properties file.");
-            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINE, null, ex);
+            logger.log(Level.WARNING, "Unable to load the dependency-check ant task.properties file.");
+            logger.log(Level.FINE, null, ex);
         } finally {
             if (mojoProperties != null) {
                 try {
                     mojoProperties.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINEST, null, ex);
+                    logger.log(Level.FINEST, null, ex);
                 }
             }
         }
@@ -947,9 +949,9 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
                 checkForFailure(engine.getDependencies());
             }
         } catch (DatabaseException ex) {
-            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE,
+            logger.log(Level.SEVERE,
                     "Unable to connect to the dependency-check database; analysis has stopped");
-            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINE, "", ex);
+            logger.log(Level.FINE, "", ex);
         } finally {
             if (engine != null) {
                 engine.cleanup();
@@ -987,9 +989,9 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
                 generateMavenSiteReport(engine, sink);
             }
         } catch (DatabaseException ex) {
-            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.SEVERE,
+            logger.log(Level.SEVERE,
                     "Unable to connect to the dependency-check database; analysis has stopped");
-            Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINE, "", ex);
+            logger.log(Level.FINE, "", ex);
         } finally {
             if (engine != null) {
                 engine.cleanup();
@@ -1012,8 +1014,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         } else if ("VULN".equalsIgnoreCase(this.format)) {
             return "dependency-check-vulnerability";
         } else {
-            Logger.getLogger(DependencyCheckMojo.class
-                    .getName()).log(Level.WARNING, "Unknown report format used during site generatation.");
+            logger.log(Level.WARNING, "Unknown report format used during site generatation.");
             return "dependency-check-report";
         }
     }
@@ -1151,9 +1152,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
             final String msg = String.format("%n%n"
                     + "One or more dependencies were identified with known vulnerabilities:%n%n%s"
                     + "%n%nSee the dependency-check report for more details.%n%n", summary.toString());
-            Logger
-                    .getLogger(DependencyCheckMojo.class
-                            .getName()).log(Level.WARNING, msg);
+            logger.log(Level.WARNING, msg);
         }
     }
 }
