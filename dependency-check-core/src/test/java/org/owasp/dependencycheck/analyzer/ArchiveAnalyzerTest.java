@@ -20,10 +20,8 @@ package org.owasp.dependencycheck.analyzer;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.cpe.AbstractDatabaseTestCase;
@@ -35,29 +33,6 @@ import org.owasp.dependencycheck.utils.Settings;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class ArchiveAnalyzerTest extends AbstractDatabaseTestCase {
-
-    public ArchiveAnalyzerTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
 
     /**
      * Test of getSupportedExtensions method, of class ArchiveAnalyzer.
