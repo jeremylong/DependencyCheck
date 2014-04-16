@@ -17,36 +17,14 @@
  */
 package org.owasp.dependencycheck.data.update;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 
 /**
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class NvdCveUpdaterIntegrationTest {
-
-    public NvdCveUpdaterIntegrationTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
+public class NvdCveUpdaterIntegrationTest extends BaseTest {
 
     /**
      * Test of update method, of class NvdCveUpdater.
