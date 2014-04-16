@@ -22,13 +22,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 
-public class NuspecAnalyzerTest {
+public class NuspecAnalyzerTest extends BaseTest {
 
     private NuspecAnalyzer instance;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         instance = new NuspecAnalyzer();
         instance.setEnabled(true);
     }
