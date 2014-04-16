@@ -17,19 +17,18 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeFalse;
-
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.junit.After;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.Assume;
+import static org.junit.Assume.assumeFalse;
 import org.junit.Before;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -42,7 +41,7 @@ import org.owasp.dependencycheck.utils.Settings;
  * @author colezlaw
  *
  */
-public class AssemblyAnalyzerTest {
+public class AssemblyAnalyzerTest extends BaseTest {
 
     private static final Logger LOGGER = Logger.getLogger(AssemblyAnalyzerTest.class.getName());
 
@@ -54,7 +53,7 @@ public class AssemblyAnalyzerTest {
      * @throws Exception if anything goes sideways
      */
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         try {
             analyzer = new AssemblyAnalyzer();
             analyzer.supportsExtension("dll");
@@ -85,7 +84,7 @@ public class AssemblyAnalyzerTest {
             }
         }
         assertTrue(foundVendor);
-        
+
         boolean foundProduct = false;
         for (Evidence e : d.getProductEvidence().getEvidence("grokassembly", "product")) {
             if ("GrokAssembly".equals(e.getValue())) {
