@@ -911,6 +911,7 @@ public class DependencyCheckTask extends Task {
                     "Unable to connect to the dependency-check database; analysis has stopped");
             Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, "", ex);
         } finally {
+            Settings.cleanup();
             if (engine != null) {
                 engine.cleanup();
             }
@@ -936,6 +937,7 @@ public class DependencyCheckTask extends Task {
      * properties required to change the proxy url, port, and connection timeout.
      */
     private void populateSettings() {
+        Settings.initialize();
         InputStream taskProperties = null;
         try {
             taskProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);
