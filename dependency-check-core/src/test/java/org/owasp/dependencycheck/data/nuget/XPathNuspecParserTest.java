@@ -22,13 +22,14 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 
 /**
  *
  * @author colezlaw
  *
  */
-public class XPathNuspecParserTest {
+public class XPathNuspecParserTest extends BaseTest {
 
     /**
      * Test all the valid components.
