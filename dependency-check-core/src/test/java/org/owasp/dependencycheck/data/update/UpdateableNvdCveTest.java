@@ -20,40 +20,18 @@ package org.owasp.dependencycheck.data.update;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 
 /**
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class UpdateableNvdCveTest {
-
-    public UpdateableNvdCveTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
+public class UpdateableNvdCveTest extends BaseTest {
 
     /**
      * Test of isUpdateNeeded method, of class UpdateableNvdCve.
