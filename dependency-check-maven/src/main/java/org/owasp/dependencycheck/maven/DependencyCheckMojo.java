@@ -356,31 +356,26 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         LogUtils.prepareLogger(in, logFile);
 
         populateSettings();
-        Engine engine = null;
-        try {
-            engine = new Engine();
-            final Set<Artifact> artifacts = project.getArtifacts();
-            for (Artifact a : artifacts) {
-                if (skipTestScope && Artifact.SCOPE_TEST.equals(a.getScope())) {
-                    continue;
-                }
+        Engine engine = new Engine();
 
-                if (skipProvidedScope && Artifact.SCOPE_PROVIDED.equals(a.getScope())) {
-                    continue;
-                }
-
-                if (skipRuntimeScope && !Artifact.SCOPE_RUNTIME.equals(a.getScope())) {
-                    continue;
-                }
-
-                engine.scan(a.getFile().getAbsolutePath());
+        final Set<Artifact> artifacts = project.getArtifacts();
+        for (Artifact a : artifacts) {
+            if (skipTestScope && Artifact.SCOPE_TEST.equals(a.getScope())) {
+                continue;
             }
-            engine.analyzeDependencies();
-        } finally {
-            if (engine != null) {
-                engine.cleanup();
+
+            if (skipProvidedScope && Artifact.SCOPE_PROVIDED.equals(a.getScope())) {
+                continue;
             }
+
+            if (skipRuntimeScope && !Artifact.SCOPE_RUNTIME.equals(a.getScope())) {
+                continue;
+            }
+
+            engine.scan(a.getFile().getAbsolutePath());
         }
+        engine.analyzeDependencies();
+
         return engine;
     }
 
@@ -815,6 +810,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * properties required to change the proxy url, port, and connection timeout.
      */
     private void populateSettings() {
+        Settings.initialize();
         InputStream mojoProperties = null;
         try {
             mojoProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);
@@ -951,6 +947,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
                     "Unable to connect to the dependency-check database; analysis has stopped");
             Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINE, "", ex);
         } finally {
+            Settings.cleanup();
             if (engine != null) {
                 engine.cleanup();
             }
@@ -991,6 +988,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
                     "Unable to connect to the dependency-check database; analysis has stopped");
             Logger.getLogger(DependencyCheckMojo.class.getName()).log(Level.FINE, "", ex);
         } finally {
+            Settings.cleanup();
             if (engine != null) {
                 engine.cleanup();
             }
