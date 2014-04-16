@@ -185,6 +185,9 @@ public final class ConnectionFactory {
                 DriverManager.deregisterDriver(driver);
             } catch (SQLException ex) {
                 Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, "An error occured unloading the databse driver", ex);
+            } catch (Throwable unexpected) {
+                Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE,
+                        "An unexpected throwable occured unloading the databse driver", unexpected);
             }
             driver = null;
         }
