@@ -15,12 +15,8 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -30,25 +26,6 @@ import org.owasp.dependencycheck.dependency.Dependency;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class FalsePositiveAnalyzerTest {
-
-    public FalsePositiveAnalyzerTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     /**
      * Test of getName method, of class FalsePositiveAnalyzer.
