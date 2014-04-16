@@ -42,6 +42,7 @@ public final class Settings {
      * The logger.
      */
     private static final Logger LOGGER = Logger.getLogger(Settings.class.getName());
+    //<editor-fold defaultstate="collapsed" desc="KEYS used to access settings">
 
     /**
      * The collection of keys used within the properties file.
@@ -198,18 +199,21 @@ public final class Settings {
          */
         public static final String SKIP_PROVIDED_SCOPE = "skip.provided.scope";
     }
+    //</editor-fold>
+
     /**
      * The properties file location.
      */
     private static final String PROPERTIES_FILE = "dependencycheck.properties";
-    /**
-     * The singleton instance variable.
-     */
-    private static final Settings INSTANCE = new Settings();
+
     /**
      * The properties.
      */
     private Properties props = null;
+    /**
+     * Thread local settings.
+     */
+    private static ThreadLocal<Settings> THREAD_LOCAL = new ThreadLocal();
 
     /**
      * Private constructor for the Settings class. This class loads the properties files.
@@ -233,6 +237,25 @@ public final class Settings {
             }
         }
         logProperties("Properties loaded", props);
+    }
+
+    /**
+     * Initializes the thread local settings object. Note, to use the settings object you must call this method.
+     * However, you must also call Settings.cleanup() to properly release resources.
+     */
+    public static void initialize() {
+        THREAD_LOCAL.set(new Settings());
+    }
+
+    /**
+     * Cleans up resources to prevent memory leaks.
+     */
+    public static void cleanup() {
+        try {
+            THREAD_LOCAL.remove();
+        } catch (Throwable ex) {
+            LOGGER.log(Level.FINE, "Error cleaning up Settings", ex);
+        }
     }
 
     /**
@@ -278,7 +301,7 @@ public final class Settings {
      * @param value the value for the property
      */
     public static void setString(String key, String value) {
-        INSTANCE.props.setProperty(key, value);
+        THREAD_LOCAL.get().props.setProperty(key, value);
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine(String.format("Setting: %s='%s'", key, value));
         }
@@ -292,9 +315,9 @@ public final class Settings {
      */
     public static void setBoolean(String key, boolean value) {
         if (value) {
-            INSTANCE.props.setProperty(key, Boolean.TRUE.toString());
+            THREAD_LOCAL.get().props.setProperty(key, Boolean.TRUE.toString());
         } else {
-            INSTANCE.props.setProperty(key, Boolean.FALSE.toString());
+            THREAD_LOCAL.get().props.setProperty(key, Boolean.FALSE.toString());
         }
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine(String.format("Setting: %s='%b'", key, value));
@@ -338,8 +361,8 @@ public final class Settings {
      * @throws IOException is thrown when there is an exception loading/merging the properties
      */
     public static void mergeProperties(InputStream stream) throws IOException {
-        INSTANCE.props.load(stream);
-        logProperties("Properties updated via merge", INSTANCE.props);
+        THREAD_LOCAL.get().props.load(stream);
+        logProperties("Properties updated via merge", THREAD_LOCAL.get().props);
     }
 
     /**
@@ -419,7 +442,7 @@ public final class Settings {
      * @return the property from the properties file
      */
     public static String getString(String key, String defaultValue) {
-        final String str = System.getProperty(key, INSTANCE.props.getProperty(key, defaultValue));
+        final String str = System.getProperty(key, THREAD_LOCAL.get().props.getProperty(key, defaultValue));
         return str;
     }
 
@@ -441,7 +464,7 @@ public final class Settings {
      * @return the property from the properties file
      */
     public static String getString(String key) {
-        return System.getProperty(key, INSTANCE.props.getProperty(key));
+        return System.getProperty(key, THREAD_LOCAL.get().props.getProperty(key));
     }
 
     /**
@@ -450,7 +473,7 @@ public final class Settings {
      * @param key the property key to remove
      */
     public static void removeProperty(String key) {
-        INSTANCE.props.remove(key);
+        THREAD_LOCAL.get().props.remove(key);
     }
 
     /**
