@@ -18,10 +18,8 @@
 package org.owasp.dependencycheck.data.nvdcve;
 
 import java.util.Properties;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.data.update.NvdCveInfo;
 
@@ -30,26 +28,6 @@ import org.owasp.dependencycheck.data.update.NvdCveInfo;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class DatabasePropertiesTest extends BaseDBTestCase {
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
 
     /**
      * Test of isEmpty method, of class DatabaseProperties.
