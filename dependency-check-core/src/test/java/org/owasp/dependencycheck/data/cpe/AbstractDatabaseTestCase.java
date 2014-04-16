@@ -17,11 +17,8 @@
  */
 package org.owasp.dependencycheck.data.cpe;
 
-import junit.framework.TestCase;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.data.nvdcve.BaseDBTestCase;
 
 /**
@@ -30,26 +27,11 @@ import org.owasp.dependencycheck.data.nvdcve.BaseDBTestCase;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public abstract class AbstractDatabaseTestCase extends TestCase {
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
+public abstract class AbstractDatabaseTestCase extends BaseTest {
 
     @Before
-    @Override
     public void setUp() throws Exception {
         BaseDBTestCase.ensureDBExists();
-        super.setUp();
     }
 
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
 }
