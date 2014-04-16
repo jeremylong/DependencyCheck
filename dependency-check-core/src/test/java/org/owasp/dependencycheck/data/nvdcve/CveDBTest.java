@@ -19,10 +19,7 @@ package org.owasp.dependencycheck.data.nvdcve;
 
 import java.util.List;
 import java.util.Set;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 
@@ -31,26 +28,6 @@ import org.owasp.dependencycheck.dependency.VulnerableSoftware;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class CveDBTest extends BaseDBTestCase {
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
 
     /**
      * Pretty useless tests of open, commit, and close methods, of class CveDB.
