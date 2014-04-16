@@ -26,20 +26,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public abstract class BaseDBTestCase extends TestCase {
+public abstract class BaseDBTestCase extends BaseTest {
 
     protected final static int BUFFER_SIZE = 2048;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         ensureDBExists();
     }
 
