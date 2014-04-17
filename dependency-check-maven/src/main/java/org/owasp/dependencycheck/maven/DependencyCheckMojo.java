@@ -202,7 +202,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @Parameter(property = "connectionTimeout", defaultValue = "", required = false)
     private String connectionTimeout = null;
     /**
-     * The Connection Timeout.
+     * The path to the suppression file.
      */
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "suppressionFile", defaultValue = "", required = false)
