@@ -27,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.update.NvdCveInfo;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.Settings;
@@ -44,8 +45,11 @@ public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
      * @param nvdCveInfo the NVD CVE info
      * @param processor the processor service to submit the downloaded files to
      * @param cveDB the CVE DB to use to store the vulnerability data
+     * @param settings a reference to the global settings object; this is necessary so that when the thread is started
+     * the dependencies have a correct reference to the global settings.
+     * @throws UpdateException thrown if temporary files could not be created
      */
-    public CallableDownloadTask(NvdCveInfo nvdCveInfo, ExecutorService processor, CveDB cveDB, Settings settings) {
+    public CallableDownloadTask(NvdCveInfo nvdCveInfo, ExecutorService processor, CveDB cveDB, Settings settings) throws UpdateException {
         this.nvdCveInfo = nvdCveInfo;
         this.processorService = processor;
         this.cveDB = cveDB;
@@ -58,7 +62,7 @@ public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
             file1 = File.createTempFile("cve" + nvdCveInfo.getId() + "_", ".xml", Settings.getTempDirectory());
             file2 = File.createTempFile("cve_1_2_" + nvdCveInfo.getId() + "_", ".xml", Settings.getTempDirectory());
         } catch (IOException ex) {
-            return;
+            throw new UpdateException("Unable to create temporary files", ex);
         }
         this.first = file1;
         this.second = file2;
