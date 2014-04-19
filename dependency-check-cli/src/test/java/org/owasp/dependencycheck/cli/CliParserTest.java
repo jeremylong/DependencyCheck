@@ -29,6 +29,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
@@ -38,10 +39,12 @@ public class CliParserTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        Settings.initialize();
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
+        Settings.cleanup();
     }
 
     @Before
