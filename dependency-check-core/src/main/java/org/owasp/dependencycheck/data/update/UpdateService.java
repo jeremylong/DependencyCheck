@@ -21,37 +21,23 @@ import java.util.Iterator;
 import java.util.ServiceLoader;
 
 /**
+ * The CachedWebDataSource Service Loader. This class loads all services that implement
+ * org.owasp.dependencycheck.data.update.CachedWebDataSource.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public final class UpdateService {
+public class UpdateService {
 
-    /**
-     * the singleton reference to the service.
-     */
-    private static UpdateService service;
     /**
      * the service loader for CachedWebDataSource.
      */
     private final ServiceLoader<CachedWebDataSource> loader;
 
     /**
-     * Creates a new instance of UpdateService
+     * Creates a new instance of UpdateService.
      */
-    private UpdateService() {
+    public UpdateService() {
         loader = ServiceLoader.load(CachedWebDataSource.class);
-    }
-
-    /**
-     * Retrieve the singleton instance of UpdateService.
-     *
-     * @return a singleton UpdateService.
-     */
-    public static synchronized UpdateService getInstance() {
-        if (service == null) {
-            service = new UpdateService();
-        }
-        return service;
     }
 
     /**
