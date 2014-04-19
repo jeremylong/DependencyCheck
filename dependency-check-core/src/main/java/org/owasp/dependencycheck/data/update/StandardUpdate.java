@@ -118,7 +118,7 @@ public class StandardUpdate {
             final Set<Future<Future<ProcessTask>>> downloadFutures = new HashSet<Future<Future<ProcessTask>>>(maxUpdates);
             for (NvdCveInfo cve : updateable) {
                 if (cve.getNeedsUpdate()) {
-                    final CallableDownloadTask call = new CallableDownloadTask(cve, processExecutor, cveDB);
+                    final CallableDownloadTask call = new CallableDownloadTask(cve, processExecutor, cveDB, Settings.getInstance());
                     downloadFutures.add(downloadExecutors.submit(call));
                 }
             }
