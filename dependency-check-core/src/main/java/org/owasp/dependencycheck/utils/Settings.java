@@ -259,6 +259,24 @@ public final class Settings {
     }
 
     /**
+     * Gets the underlying instance of the Settings object.
+     *
+     * @return the Settings object
+     */
+    public static Settings getInstance() {
+        return THREAD_LOCAL.get();
+    }
+
+    /**
+     * Sets the instance of the Settings object to use in this thread.
+     *
+     * @param instance the instance of the settings object to use in this thread
+     */
+    public static void setInstance(Settings instance) {
+        THREAD_LOCAL.set(instance);
+    }
+
+    /**
      * Logs the properties. This will not log any properties that contain 'password' in the key.
      *
      * @param header the header to print with the log message

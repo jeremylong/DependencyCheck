@@ -37,6 +37,7 @@ import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.data.update.xml.NvdCve12Handler;
 import org.owasp.dependencycheck.data.update.xml.NvdCve20Handler;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
+import org.owasp.dependencycheck.utils.Settings;
 import org.xml.sax.SAXException;
 
 /**
@@ -80,6 +81,10 @@ public class ProcessTask implements Callable<ProcessTask> {
      * A reference to the properties.
      */
     private final DatabaseProperties properties;
+    /**
+     * A reference to the global settings object.
+     */
+    private Settings settings;
 
     /**
      * Constructs a new ProcessTask used to process an NVD CVE update.
@@ -87,10 +92,11 @@ public class ProcessTask implements Callable<ProcessTask> {
      * @param cveDB the data store object
      * @param filePair the download task that contains the URL references to download
      */
-    public ProcessTask(final CveDB cveDB, final CallableDownloadTask filePair) {
+    public ProcessTask(final CveDB cveDB, final CallableDownloadTask filePair, Settings settings) {
         this.cveDB = cveDB;
         this.filePair = filePair;
         this.properties = cveDB.getDatabaseProperties();
+        this.settings = settings;
     }
 
     /**
@@ -103,9 +109,12 @@ public class ProcessTask implements Callable<ProcessTask> {
     @Override
     public ProcessTask call() throws Exception {
         try {
+            Settings.setInstance(settings);
             processFiles();
         } catch (UpdateException ex) {
             this.exception = ex;
+        } finally {
+            Settings.cleanup();
         }
         return this;
     }

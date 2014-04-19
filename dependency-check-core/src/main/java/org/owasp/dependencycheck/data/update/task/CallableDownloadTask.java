@@ -45,10 +45,11 @@ public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
      * @param processor the processor service to submit the downloaded files to
      * @param cveDB the CVE DB to use to store the vulnerability data
      */
-    public CallableDownloadTask(NvdCveInfo nvdCveInfo, ExecutorService processor, CveDB cveDB) {
+    public CallableDownloadTask(NvdCveInfo nvdCveInfo, ExecutorService processor, CveDB cveDB, Settings settings) {
         this.nvdCveInfo = nvdCveInfo;
         this.processorService = processor;
         this.cveDB = cveDB;
+        this.settings = settings;
 
         final File file1;
         final File file2;
@@ -75,6 +76,10 @@ public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
      * The NVD CVE Meta Data.
      */
     private NvdCveInfo nvdCveInfo;
+    /**
+     * A reference to the global settings object.
+     */
+    private Settings settings;
 
     /**
      * Get the value of nvdCveInfo.
@@ -163,6 +168,7 @@ public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
     @Override
     public Future<ProcessTask> call() throws Exception {
         try {
+            Settings.setInstance(settings);
             final URL url1 = new URL(nvdCveInfo.getUrl());
             final URL url2 = new URL(nvdCveInfo.getOldSchemaVersionUrl());
             String msg = String.format("Download Started for NVD CVE - %s", nvdCveInfo.getId());
@@ -180,13 +186,15 @@ public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
             msg = String.format("Download Complete for NVD CVE - %s", nvdCveInfo.getId());
             Logger.getLogger(CallableDownloadTask.class.getName()).log(Level.INFO, msg);
 
-            final ProcessTask task = new ProcessTask(cveDB, this);
+            final ProcessTask task = new ProcessTask(cveDB, this, settings);
             return this.processorService.submit(task);
 
         } catch (Throwable ex) {
             final String msg = String.format("An exception occurred downloading NVD CVE - %s%nSome CVEs may not be reported.", nvdCveInfo.getId());
             Logger.getLogger(CallableDownloadTask.class.getName()).log(Level.WARNING, msg);
             Logger.getLogger(CallableDownloadTask.class.getName()).log(Level.FINE, "Download Task Failed", ex);
+        } finally {
+            Settings.cleanup();
         }
         return null;
     }
