@@ -24,17 +24,24 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
+import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class ReportGeneratorTest extends BaseTest {
+
+    @Before
+    public void setUp() throws Exception {
+        org.owasp.dependencycheck.data.nvdcve.BaseDBTestCase.ensureDBExists();
+    }
 
     /**
      * Test of generateReport method, of class ReportGenerator.
@@ -117,7 +124,11 @@ public class ReportGeneratorTest extends BaseTest {
         File axis = new File(this.getClass().getClassLoader().getResource("axis2-adb-1.4.1.jar").getPath());
         File jetty = new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath());
 
+        boolean autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
+        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
         Engine engine = new Engine();
+        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
+
         engine.scan(struts);
         engine.scan(axis);
         engine.scan(jetty);
