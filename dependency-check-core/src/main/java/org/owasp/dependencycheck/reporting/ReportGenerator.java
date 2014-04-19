@@ -95,12 +95,12 @@ public class ReportGenerator {
 
         engine.init();
 
-        DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy 'at' HH:mm:ss z");
-        DateFormat dateFormatXML = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-        Date d = new Date();
-        String scanDate = dateFormat.format(d);
-        String scanDateXML = dateFormatXML.format(d);
-        EscapeTool enc = new EscapeTool();
+        final DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy 'at' HH:mm:ss z");
+        final DateFormat dateFormatXML = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        final Date d = new Date();
+        final String scanDate = dateFormat.format(d);
+        final String scanDateXML = dateFormatXML.format(d);
+        final EscapeTool enc = new EscapeTool();
 
         context.put("applicationName", applicationName);
         context.put("dependencies", dependencies);
@@ -136,9 +136,10 @@ public class ReportGenerator {
 //        final Context c = manager.createContext();
 //        final EasyFactoryConfiguration config = new EasyFactoryConfiguration();
 //        config.addDefaultTools();
-//        config.toolbox("application").tool("esc", "org.apache.velocity.tools.generic.EscapeTool").tool("org.apache.velocity.tools.generic.DateTool");
+//        config.toolbox("application").tool("esc", "org.apache.velocity.tools.generic.EscapeTool").
+//        tool("org.apache.velocity.tools.generic.DateTool");
 //        manager.configure(config);
-        VelocityContext c = new VelocityContext();
+        final VelocityContext c = new VelocityContext();
         return c;
     }
 

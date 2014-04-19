@@ -38,12 +38,7 @@ import java.util.logging.Logger;
  */
 public final class Settings {
 
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = Logger.getLogger(Settings.class.getName());
     //<editor-fold defaultstate="collapsed" desc="KEYS used to access settings">
-
     /**
      * The collection of keys used within the properties file.
      */
@@ -202,18 +197,21 @@ public final class Settings {
     //</editor-fold>
 
     /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Settings.class.getName());
+    /**
      * The properties file location.
      */
     private static final String PROPERTIES_FILE = "dependencycheck.properties";
-
+    /**
+     * Thread local settings.
+     */
+    private static ThreadLocal<Settings> localSettings = new ThreadLocal();
     /**
      * The properties.
      */
     private Properties props = null;
-    /**
-     * Thread local settings.
-     */
-    private static ThreadLocal<Settings> THREAD_LOCAL = new ThreadLocal();
 
     /**
      * Private constructor for the Settings class. This class loads the properties files.
@@ -244,7 +242,7 @@ public final class Settings {
      * However, you must also call Settings.cleanup() to properly release resources.
      */
     public static void initialize() {
-        THREAD_LOCAL.set(new Settings());
+        localSettings.set(new Settings());
     }
 
     /**
@@ -252,7 +250,7 @@ public final class Settings {
      */
     public static void cleanup() {
         try {
-            THREAD_LOCAL.remove();
+            localSettings.remove();
         } catch (Throwable ex) {
             LOGGER.log(Level.FINE, "Error cleaning up Settings", ex);
         }
@@ -264,7 +262,7 @@ public final class Settings {
      * @return the Settings object
      */
     public static Settings getInstance() {
-        return THREAD_LOCAL.get();
+        return localSettings.get();
     }
 
     /**
@@ -273,7 +271,7 @@ public final class Settings {
      * @param instance the instance of the settings object to use in this thread
      */
     public static void setInstance(Settings instance) {
-        THREAD_LOCAL.set(instance);
+        localSettings.set(instance);
     }
 
     /**
@@ -319,7 +317,7 @@ public final class Settings {
      * @param value the value for the property
      */
     public static void setString(String key, String value) {
-        THREAD_LOCAL.get().props.setProperty(key, value);
+        localSettings.get().props.setProperty(key, value);
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine(String.format("Setting: %s='%s'", key, value));
         }
@@ -333,9 +331,9 @@ public final class Settings {
      */
     public static void setBoolean(String key, boolean value) {
         if (value) {
-            THREAD_LOCAL.get().props.setProperty(key, Boolean.TRUE.toString());
+            localSettings.get().props.setProperty(key, Boolean.TRUE.toString());
         } else {
-            THREAD_LOCAL.get().props.setProperty(key, Boolean.FALSE.toString());
+            localSettings.get().props.setProperty(key, Boolean.FALSE.toString());
         }
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine(String.format("Setting: %s='%b'", key, value));
@@ -379,8 +377,8 @@ public final class Settings {
      * @throws IOException is thrown when there is an exception loading/merging the properties
      */
     public static void mergeProperties(InputStream stream) throws IOException {
-        THREAD_LOCAL.get().props.load(stream);
-        logProperties("Properties updated via merge", THREAD_LOCAL.get().props);
+        localSettings.get().props.load(stream);
+        logProperties("Properties updated via merge", localSettings.get().props);
     }
 
     /**
@@ -460,7 +458,7 @@ public final class Settings {
      * @return the property from the properties file
      */
     public static String getString(String key, String defaultValue) {
-        final String str = System.getProperty(key, THREAD_LOCAL.get().props.getProperty(key, defaultValue));
+        final String str = System.getProperty(key, localSettings.get().props.getProperty(key, defaultValue));
         return str;
     }
 
@@ -482,7 +480,7 @@ public final class Settings {
      * @return the property from the properties file
      */
     public static String getString(String key) {
-        return System.getProperty(key, THREAD_LOCAL.get().props.getProperty(key));
+        return System.getProperty(key, localSettings.get().props.getProperty(key));
     }
 
     /**
@@ -491,7 +489,7 @@ public final class Settings {
      * @param key the property key to remove
      */
     public static void removeProperty(String key) {
-        THREAD_LOCAL.get().props.remove(key);
+        localSettings.get().props.remove(key);
     }
 
     /**

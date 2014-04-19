@@ -91,6 +91,8 @@ public class ProcessTask implements Callable<ProcessTask> {
      *
      * @param cveDB the data store object
      * @param filePair the download task that contains the URL references to download
+     * @param settings a reference to the global settings object; this is necessary so that when the thread is started
+     * the dependencies have a correct reference to the global settings.
      */
     public ProcessTask(final CveDB cveDB, final CallableDownloadTask filePair, Settings settings) {
         this.cveDB = cveDB;
