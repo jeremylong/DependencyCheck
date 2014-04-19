@@ -21,15 +21,13 @@ import java.util.Iterator;
 import java.util.ServiceLoader;
 
 /**
+ * The Analyzer Service Loader. This class loads all services that implement
+ * org.owasp.dependencycheck.analyzer.Analyzer.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public final class AnalyzerService {
+public class AnalyzerService {
 
-    /**
-     * The analyzer service singleton.
-     */
-    private static AnalyzerService service;
     /**
      * The service loader for analyzers.
      */
@@ -38,20 +36,8 @@ public final class AnalyzerService {
     /**
      * Creates a new instance of AnalyzerService.
      */
-    private AnalyzerService() {
+    public AnalyzerService() {
         loader = ServiceLoader.load(Analyzer.class);
-    }
-
-    /**
-     * Retrieve the singleton instance of AnalyzerService.
-     *
-     * @return a singleton AnalyzerService.
-     */
-    public static synchronized AnalyzerService getInstance() {
-        if (service == null) {
-            service = new AnalyzerService();
-        }
-        return service;
     }
 
     /**

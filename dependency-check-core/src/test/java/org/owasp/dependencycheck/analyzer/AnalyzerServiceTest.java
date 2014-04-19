@@ -33,7 +33,7 @@ public class AnalyzerServiceTest extends BaseTest {
      */
     @Test
     public void testGetAnalyzers() {
-        AnalyzerService instance = AnalyzerService.getInstance();
+        AnalyzerService instance = new AnalyzerService();
         Iterator<Analyzer> result = instance.getAnalyzers();
 
         boolean found = false;

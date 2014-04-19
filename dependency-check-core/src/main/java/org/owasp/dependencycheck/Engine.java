@@ -107,7 +107,7 @@ public class Engine {
             analyzers.put(phase, new ArrayList<Analyzer>());
         }
 
-        final AnalyzerService service = AnalyzerService.getInstance();
+        final AnalyzerService service = new AnalyzerService();
         final Iterator<Analyzer> iterator = service.getAnalyzers();
         while (iterator.hasNext()) {
             final Analyzer a = iterator.next();
@@ -410,7 +410,7 @@ public class Engine {
      * Cycles through the cached web data sources and calls update on all of them.
      */
     private void doUpdates() {
-        final UpdateService service = UpdateService.getInstance();
+        final UpdateService service = new UpdateService();
         final Iterator<CachedWebDataSource> iterator = service.getDataSources();
         while (iterator.hasNext()) {
             final CachedWebDataSource source = iterator.next();
