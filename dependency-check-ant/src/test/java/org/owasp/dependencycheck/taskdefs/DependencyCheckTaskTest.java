@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.owasp.dependencycheck.data.nvdcve.BaseDBTestCase;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
@@ -37,11 +38,13 @@ public class DependencyCheckTaskTest extends BuildFileTest {
     }
 
     @BeforeClass
-    public static void setUpClass() {
+    public static void setUpClass() throws Exception {
+        Settings.initialize();
     }
 
     @AfterClass
-    public static void tearDownClass() {
+    public static void tearDownClass() throws Exception {
+        Settings.cleanup();
     }
 
     @Before
