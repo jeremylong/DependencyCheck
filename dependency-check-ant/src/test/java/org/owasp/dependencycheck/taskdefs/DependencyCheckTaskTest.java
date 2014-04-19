@@ -18,12 +18,9 @@
 package org.owasp.dependencycheck.taskdefs;
 
 import java.io.File;
-import static junit.framework.TestCase.assertTrue;
 import org.apache.tools.ant.BuildFileTest;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.owasp.dependencycheck.data.nvdcve.BaseDBTestCase;
 import org.owasp.dependencycheck.utils.Settings;
@@ -34,22 +31,10 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 public class DependencyCheckTaskTest extends BuildFileTest {
 
-    public DependencyCheckTaskTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        Settings.initialize();
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        Settings.cleanup();
-    }
-
     @Before
     @Override
     public void setUp() throws Exception {
+        Settings.initialize();
         BaseDBTestCase.ensureDBExists();
         final String buildFile = this.getClass().getClassLoader().getResource("build.xml").getPath();
         configureProject(buildFile);
@@ -60,6 +45,7 @@ public class DependencyCheckTaskTest extends BuildFileTest {
     public void tearDown() {
         //no cleanup...
         //executeTarget("cleanup");
+        Settings.cleanup();
     }
 
     /**
