@@ -66,7 +66,10 @@ public class Engine {
      * A Map of analyzers grouped by Analysis phase.
      */
     private final Set<FileTypeAnalyzer> fileTypeAnalyzers;
-
+    /**
+     * The Logger for use throughout the class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Engine.class.getName());
     /**
      * Creates a new Engine.
      *
@@ -83,7 +86,7 @@ public class Engine {
         try {
             autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
         } catch (InvalidSettingException ex) {
-            Logger.getLogger(Engine.class.getName()).log(Level.FINE, "Invalid setting for auto-update; using true.");
+            LOGGER.log(Level.FINE, "Invalid setting for auto-update; using true.");
         }
         if (autoUpdate) {
             doUpdates();
@@ -175,7 +178,7 @@ public class Engine {
                 scan(files);
             } else {
                 final String msg = String.format("Invalid file path provided to scan '%s'", path);
-                Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, msg);
+                LOGGER.log(Level.SEVERE, msg);
             }
         } else {
             final File file = new File(path);
@@ -269,7 +272,7 @@ public class Engine {
     protected void scanFile(File file) {
         if (!file.isFile()) {
             final String msg = String.format("Path passed to scanFile(File) is not a file: %s. Skipping the file.", file.toString());
-            Logger.getLogger(Engine.class.getName()).log(Level.FINE, msg);
+            LOGGER.log(Level.FINE, msg);
             return;
         }
         final String fileName = file.getName();
@@ -282,7 +285,7 @@ public class Engine {
         } else {
             final String msg = String.format("No file extension found on file '%s'. The file was not analyzed.",
                     file.toString());
-            Logger.getLogger(Engine.class.getName()).log(Level.FINEST, msg);
+            LOGGER.log(Level.FINEST, msg);
         }
     }
 
@@ -295,13 +298,13 @@ public class Engine {
             ensureDataExists();
         } catch (NoDataException ex) {
             final String msg = String.format("%s%n%nUnable to continue dependency-check analysis.", ex.getMessage());
-            Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, msg);
-            Logger.getLogger(Engine.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.SEVERE, msg);
+            LOGGER.log(Level.FINE, null, ex);
             return;
         } catch (DatabaseException ex) {
             final String msg = String.format("%s%n%nUnable to continue dependency-check analysis.", ex.getMessage());
-            Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, msg);
-            Logger.getLogger(Engine.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.SEVERE, msg);
+            LOGGER.log(Level.FINE, null, ex);
             return;
 
         }
@@ -310,8 +313,8 @@ public class Engine {
                 + "----------------------------------------------------%n"
                 + "BEGIN ANALYSIS%n"
                 + "----------------------------------------------------");
-        Logger.getLogger(Engine.class.getName()).log(Level.FINE, logHeader);
-        Logger.getLogger(Engine.class.getName()).log(Level.INFO, "Analysis Starting");
+        LOGGER.log(Level.FINE, logHeader);
+        LOGGER.log(Level.INFO, "Analysis Starting");
 
         // analysis phases
         for (AnalysisPhase phase : AnalysisPhase.values()) {
@@ -325,7 +328,7 @@ public class Engine {
                  * This is okay for adds/deletes because it happens per analyzer.
                  */
                 final String msg = String.format("Begin Analyzer '%s'", a.getName());
-                Logger.getLogger(Engine.class.getName()).log(Level.FINE, msg);
+                LOGGER.log(Level.FINE, msg);
                 final Set<Dependency> dependencySet = new HashSet<Dependency>();
                 dependencySet.addAll(dependencies);
                 for (Dependency d : dependencySet) {
@@ -336,18 +339,18 @@ public class Engine {
                     }
                     if (shouldAnalyze) {
                         final String msgFile = String.format("Begin Analysis of '%s'", d.getActualFilePath());
-                        Logger.getLogger(Engine.class.getName()).log(Level.FINE, msgFile);
+                        LOGGER.log(Level.FINE, msgFile);
                         try {
                             a.analyze(d, this);
                         } catch (AnalysisException ex) {
                             final String exMsg = String.format("An error occured while analyzing '%s'.", d.getActualFilePath());
-                            Logger.getLogger(Engine.class.getName()).log(Level.WARNING, exMsg);
-                            Logger.getLogger(Engine.class.getName()).log(Level.FINE, "", ex);
+                            LOGGER.log(Level.WARNING, exMsg);
+                            LOGGER.log(Level.FINE, "", ex);
                         } catch (Throwable ex) {
                             final String axMsg = String.format("An unexpected error occurred during analysis of '%s'", d.getActualFilePath());
                             //final AnalysisException ax = new AnalysisException(axMsg, ex);
-                            Logger.getLogger(Engine.class.getName()).log(Level.WARNING, axMsg);
-                            Logger.getLogger(Engine.class.getName()).log(Level.FINE, "", ex);
+                            LOGGER.log(Level.WARNING, axMsg);
+                            LOGGER.log(Level.FINE, "", ex);
                         }
                     }
                 }
@@ -365,8 +368,8 @@ public class Engine {
                 + "----------------------------------------------------%n"
                 + "END ANALYSIS%n"
                 + "----------------------------------------------------");
-        Logger.getLogger(Engine.class.getName()).log(Level.FINE, logFooter);
-        Logger.getLogger(Engine.class.getName()).log(Level.INFO, "Analysis Complete");
+        LOGGER.log(Level.FINE, logFooter);
+        LOGGER.log(Level.INFO, "Analysis Complete");
     }
 
     /**
@@ -377,16 +380,16 @@ public class Engine {
     private void initializeAnalyzer(Analyzer analyzer) {
         try {
             final String msg = String.format("Initializing %s", analyzer.getName());
-            Logger.getLogger(Engine.class.getName()).log(Level.FINE, msg);
+            LOGGER.log(Level.FINE, msg);
             analyzer.initialize();
         } catch (Throwable ex) {
             final String msg = String.format("Exception occurred initializing %s.", analyzer.getName());
-            Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, msg);
-            Logger.getLogger(Engine.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.SEVERE, msg);
+            LOGGER.log(Level.FINE, null, ex);
             try {
                 analyzer.close();
             } catch (Throwable ex1) {
-                Logger.getLogger(Engine.class.getName()).log(Level.FINEST, null, ex1);
+                LOGGER.log(Level.FINEST, null, ex1);
             }
         }
     }
@@ -398,11 +401,11 @@ public class Engine {
      */
     private void closeAnalyzer(Analyzer analyzer) {
         final String msg = String.format("Closing Analyzer '%s'", analyzer.getName());
-        Logger.getLogger(Engine.class.getName()).log(Level.FINE, msg);
+        LOGGER.log(Level.FINE, msg);
         try {
             analyzer.close();
         } catch (Throwable ex) {
-            Logger.getLogger(Engine.class.getName()).log(Level.FINEST, null, ex);
+            LOGGER.log(Level.FINEST, null, ex);
         }
     }
 
@@ -417,9 +420,9 @@ public class Engine {
             try {
                 source.update();
             } catch (UpdateException ex) {
-                Logger.getLogger(Engine.class.getName()).log(Level.WARNING,
+                LOGGER.log(Level.WARNING,
                         "Unable to update Cached Web DataSource, using local data instead. Results may not include recent vulnerabilities.");
-                Logger.getLogger(Engine.class.getName()).log(Level.FINE,
+                LOGGER.log(Level.FINE,
                         String.format("Unable to update details for %s", source.getClass().getName()), ex);
             }
         }

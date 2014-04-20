@@ -40,7 +40,11 @@ import org.xml.sax.XMLReader;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class SuppressionParser {
-
+    
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(SuppressionParser.class.getName());
     /**
      * JAXP Schema Language. Source: http://docs.oracle.com/javase/tutorial/jaxp/sax/validation.html
      */
@@ -85,16 +89,16 @@ public class SuppressionParser {
 
             return handler.getSuppressionRules();
         } catch (ParserConfigurationException ex) {
-            Logger.getLogger(SuppressionParser.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.FINE, null, ex);
             throw new SuppressionParseException(ex);
         } catch (SAXException ex) {
-            Logger.getLogger(SuppressionParser.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.FINE, null, ex);
             throw new SuppressionParseException(ex);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(SuppressionParser.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.FINE, null, ex);
             throw new SuppressionParseException(ex);
         } catch (IOException ex) {
-            Logger.getLogger(SuppressionParser.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.FINE, null, ex);
             throw new SuppressionParseException(ex);
         }
     }

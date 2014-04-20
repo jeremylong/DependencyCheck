@@ -30,7 +30,11 @@ import org.owasp.dependencycheck.data.cpe.IndexEntry;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class VulnerableSoftware extends IndexEntry implements Serializable, Comparable<VulnerableSoftware> {
-
+    
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(VulnerableSoftware.class.getName());
     /**
      * The serial version UID.
      */
@@ -46,8 +50,8 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
             parseName(cpe);
         } catch (UnsupportedEncodingException ex) {
             final String msg = String.format("Character encoding is unsupported for CPE '%s'.", cpe);
-            Logger.getLogger(VulnerableSoftware.class.getName()).log(Level.WARNING, msg);
-            Logger.getLogger(VulnerableSoftware.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.WARNING, msg);
+            LOGGER.log(Level.FINE, null, ex);
             setName(cpe);
         }
     }

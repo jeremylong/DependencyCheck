@@ -351,13 +351,11 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                             }
                             bos.flush();
                         } catch (FileNotFoundException ex) {
-                            Logger.getLogger(ArchiveAnalyzer.class
-                                    .getName()).log(Level.FINE, null, ex);
+                            LOGGER.log(Level.FINE, null, ex);
                             final String msg = String.format("Unable to find file '%s'.", file.getName());
                             throw new AnalysisException(msg, ex);
                         } catch (IOException ex) {
-                            Logger.getLogger(ArchiveAnalyzer.class
-                                    .getName()).log(Level.FINE, null, ex);
+                            LOGGER.log(Level.FINE, null, ex);
                             final String msg = String.format("IO Exception while parsing file '%s'.", file.getName());
                             throw new AnalysisException(msg, ex);
                         } finally {
@@ -365,8 +363,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                                 try {
                                     bos.close();
                                 } catch (IOException ex) {
-                                    Logger.getLogger(ArchiveAnalyzer.class
-                                            .getName()).log(Level.FINEST, null, ex);
+                                    LOGGER.log(Level.FINEST, null, ex);
                                 }
                             }
                         }

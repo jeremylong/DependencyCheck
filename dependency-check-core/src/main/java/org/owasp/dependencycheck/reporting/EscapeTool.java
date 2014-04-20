@@ -28,7 +28,11 @@ import org.apache.commons.lang.StringEscapeUtils;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class EscapeTool {
-
+    
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(EscapeTool.class.getName());
     /**
      * URL Encodes the provided text.
      *
@@ -39,8 +43,8 @@ public class EscapeTool {
         try {
             return URLEncoder.encode(text, "UTF-8");
         } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(EscapeTool.class.getName()).log(Level.WARNING, "UTF-8 is not supported?");
-            Logger.getLogger(EscapeTool.class.getName()).log(Level.INFO, null, ex);
+            LOGGER.log(Level.WARNING, "UTF-8 is not supported?");
+            LOGGER.log(Level.INFO, null, ex);
         }
         return "";
     }
