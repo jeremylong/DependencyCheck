@@ -36,7 +36,11 @@ import java.util.zip.InflaterInputStream;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class Downloader {
-
+    
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Downloader.class.getName());
     /**
      * Private constructor for utility class.
      */
@@ -124,7 +128,7 @@ public final class Downloader {
                     try {
                         writer.close();
                     } catch (Throwable ex) {
-                        Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
+                        LOGGER.log(Level.FINEST,
                                 "Error closing the writer in Downloader.", ex);
                     }
                 }
@@ -132,7 +136,7 @@ public final class Downloader {
                     try {
                         reader.close();
                     } catch (Throwable ex) {
-                        Logger.getLogger(Downloader.class.getName()).log(Level.FINEST,
+                        LOGGER.log(Level.FINEST,
                                 "Error closing the reader in Downloader.", ex);
                     }
                 }

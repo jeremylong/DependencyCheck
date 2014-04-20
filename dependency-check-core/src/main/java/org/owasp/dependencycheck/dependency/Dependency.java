@@ -36,7 +36,11 @@ import org.owasp.dependencycheck.utils.FileUtils;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class Dependency implements Comparable<Dependency> {
-
+    
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Dependency.class.getName());
     /**
      * The actual file path of the dependency on disk.
      */
@@ -480,12 +484,12 @@ public class Dependency implements Comparable<Dependency> {
             sha1 = Checksum.getSHA1Checksum(file);
         } catch (IOException ex) {
             final String msg = String.format("Unable to read '%s' to determine hashes.", file.getName());
-            Logger.getLogger(Dependency.class.getName()).log(Level.WARNING, msg);
-            Logger.getLogger(Dependency.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.WARNING, msg);
+            LOGGER.log(Level.FINE, null, ex);
         } catch (NoSuchAlgorithmException ex) {
             final String msg = "Unable to use MD5 of SHA1 checksums.";
-            Logger.getLogger(Dependency.class.getName()).log(Level.WARNING, msg);
-            Logger.getLogger(Dependency.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.WARNING, msg);
+            LOGGER.log(Level.FINE, null, ex);
         }
         this.setMd5sum(md5);
         this.setSha1sum(sha1);

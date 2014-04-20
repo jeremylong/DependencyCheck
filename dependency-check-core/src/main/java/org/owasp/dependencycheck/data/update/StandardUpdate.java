@@ -46,7 +46,7 @@ import org.owasp.dependencycheck.utils.Settings;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class StandardUpdate {
-
+    private static final Logger LOGGER = Logger.getLogger(StandardUpdate.class.getName());
     /**
      * The max thread pool size to use when downloading files.
      */
@@ -104,7 +104,7 @@ public class StandardUpdate {
                 return;
             }
             if (maxUpdates > 3) {
-                Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO,
+                LOGGER.log(Level.INFO,
                         "NVD CVE requires several updates; this could take a couple of minutes.");
             }
             if (maxUpdates > 0) {
@@ -134,19 +134,19 @@ public class StandardUpdate {
                     downloadExecutors.shutdownNow();
                     processExecutor.shutdownNow();
 
-                    Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interrupted during download", ex);
+                    LOGGER.log(Level.FINE, "Thread was interrupted during download", ex);
                     throw new UpdateException("The download was interrupted", ex);
                 } catch (ExecutionException ex) {
                     downloadExecutors.shutdownNow();
                     processExecutor.shutdownNow();
 
-                    Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interrupted during download execution", ex);
+                    LOGGER.log(Level.FINE, "Thread was interrupted during download execution", ex);
                     throw new UpdateException("The execution of the download was interrupted", ex);
                 }
                 if (task == null) {
                     downloadExecutors.shutdownNow();
                     processExecutor.shutdownNow();
-                    Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interrupted during download");
+                    LOGGER.log(Level.FINE, "Thread was interrupted during download");
                     throw new UpdateException("The download was interrupted; unable to complete the update");
                 } else {
                     processFutures.add(task);
@@ -161,11 +161,11 @@ public class StandardUpdate {
                     }
                 } catch (InterruptedException ex) {
                     processExecutor.shutdownNow();
-                    Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Thread was interrupted during processing", ex);
+                    LOGGER.log(Level.FINE, "Thread was interrupted during processing", ex);
                     throw new UpdateException(ex);
                 } catch (ExecutionException ex) {
                     processExecutor.shutdownNow();
-                    Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Execution Exception during process", ex);
+                    LOGGER.log(Level.FINE, "Execution Exception during process", ex);
                     throw new UpdateException(ex);
                 } finally {
                     processExecutor.shutdown();
@@ -197,10 +197,10 @@ public class StandardUpdate {
             updates = retrieveCurrentTimestampsFromWeb();
         } catch (InvalidDataException ex) {
             final String msg = "Unable to retrieve valid timestamp from nvd cve downloads page";
-            Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, msg, ex);
+            LOGGER.log(Level.FINE, msg, ex);
             throw new DownloadFailedException(msg, ex);
         } catch (InvalidSettingException ex) {
-            Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Invalid setting found when retrieving timestamps", ex);
+            LOGGER.log(Level.FINE, "Invalid setting found when retrieving timestamps", ex);
             throw new DownloadFailedException("Invalid settings", ex);
         }
 
@@ -233,9 +233,7 @@ public class StandardUpdate {
                             } catch (NumberFormatException ex) {
                                 final String msg = String.format("Error parsing '%s' '%s' from nvdcve.lastupdated",
                                         DatabaseProperties.LAST_UPDATED_BASE, entry.getId());
-                                Logger
-                                        .getLogger(StandardUpdate.class
-                                                .getName()).log(Level.FINE, msg, ex);
+                                LOGGER.log(Level.FINE, msg, ex);
                             }
                             if (currentTimestamp == entry.getTimestamp()) {
                                 entry.setNeedsUpdate(false);
@@ -245,8 +243,8 @@ public class StandardUpdate {
                 }
             } catch (NumberFormatException ex) {
                 final String msg = "An invalid schema version or timestamp exists in the data.properties file.";
-                Logger.getLogger(StandardUpdate.class.getName()).log(Level.WARNING, msg);
-                Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "", ex);
+                LOGGER.log(Level.WARNING, msg);
+                LOGGER.log(Level.FINE, "", ex);
             }
         }
         return updates;
@@ -290,7 +288,7 @@ public class StandardUpdate {
             try {
                 cveDB.close();
             } catch (Throwable ignore) {
-                Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINEST, "Error closing the cveDB", ignore);
+                LOGGER.log(Level.FINEST, "Error closing the cveDB", ignore);
             }
         }
     }
@@ -309,7 +307,7 @@ public class StandardUpdate {
             cveDB.open();
         } catch (DatabaseException ex) {
             closeDataStores();
-            Logger.getLogger(StandardUpdate.class.getName()).log(Level.FINE, "Database Exception opening databases", ex);
+            LOGGER.log(Level.FINE, "Database Exception opening databases", ex);
             throw new UpdateException("Error updating the CPE/CVE data, please see the log file for more details.");
         }
     }

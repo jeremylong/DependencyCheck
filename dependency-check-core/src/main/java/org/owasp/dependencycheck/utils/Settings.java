@@ -225,14 +225,14 @@ public final class Settings {
             in = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);
             props.load(in);
         } catch (IOException ex) {
-            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, "Unable to load default settings.");
-            Logger.getLogger(Settings.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.SEVERE, "Unable to load default settings.");
+            LOGGER.log(Level.FINE, null, ex);
         } finally {
             if (in != null) {
                 try {
                     in.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(Settings.class.getName()).log(Level.FINEST, null, ex);
+                    LOGGER.log(Level.FINEST, null, ex);
                 }
             }
         }
@@ -413,16 +413,16 @@ public final class Settings {
      */
     public static File getDataFile(String key) {
         final String file = getString(key);
-        Logger.getLogger(Settings.class.getName()).log(Level.FINE, String.format("Settings.getDataFile() - file: '%s'", file));
+        LOGGER.log(Level.FINE, String.format("Settings.getDataFile() - file: '%s'", file));
         if (file == null) {
             return null;
         }
         if (file.startsWith("[JAR]")) {
-            Logger.getLogger(Settings.class.getName()).log(Level.FINE, "Settings.getDataFile() - transforming filename");
+            LOGGER.log(Level.FINE, "Settings.getDataFile() - transforming filename");
             final File jarPath = getJarPath();
-            Logger.getLogger(Settings.class.getName()).log(Level.FINE, String.format("Settings.getDataFile() - jar file: '%s'", jarPath.toString()));
+            LOGGER.log(Level.FINE, String.format("Settings.getDataFile() - jar file: '%s'", jarPath.toString()));
             final File retVal = new File(jarPath, file.substring(6));
-            Logger.getLogger(Settings.class.getName()).log(Level.FINE, String.format("Settings.getDataFile() - returning: '%s'", retVal.toString()));
+            LOGGER.log(Level.FINE, String.format("Settings.getDataFile() - returning: '%s'", retVal.toString()));
             return retVal;
         }
         return new File(file);
@@ -439,7 +439,7 @@ public final class Settings {
         try {
             decodedPath = URLDecoder.decode(jarPath, "UTF-8");
         } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(Settings.class.getName()).log(Level.FINEST, null, ex);
+            LOGGER.log(Level.FINEST, null, ex);
         }
 
         final File path = new File(decodedPath);
@@ -529,7 +529,7 @@ public final class Settings {
             value = Integer.parseInt(Settings.getString(key));
         } catch (NumberFormatException ex) {
             final String msg = String.format("Could not convert property '%s' to an int.", key);
-            Logger.getLogger(Settings.class.getName()).log(Level.FINEST, msg, ex);
+            LOGGER.log(Level.FINEST, msg, ex);
             value = defaultValue;
         }
         return value;

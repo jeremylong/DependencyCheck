@@ -39,7 +39,11 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class NvdCve20Handler extends DefaultHandler {
-
+    
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(NvdCve20Handler.class.getName());
     /**
      * the current supported schema version.
      */
@@ -168,8 +172,8 @@ public class NvdCve20Handler extends DefaultHandler {
                 final float score = Float.parseFloat(nodeText.toString());
                 vulnerability.setCvssScore(score);
             } catch (NumberFormatException ex) {
-                Logger.getLogger(NvdCve20Handler.class.getName()).log(Level.SEVERE, "Error parsing CVSS Score.");
-                Logger.getLogger(NvdCve20Handler.class.getName()).log(Level.FINE, null, ex);
+                LOGGER.log(Level.SEVERE, "Error parsing CVSS Score.");
+                LOGGER.log(Level.FINE, null, ex);
             }
             nodeText = null;
         } else if (current.isCVSSAccessVectorNode()) {

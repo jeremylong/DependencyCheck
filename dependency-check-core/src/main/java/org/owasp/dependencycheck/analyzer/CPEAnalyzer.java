@@ -57,7 +57,10 @@ import org.owasp.dependencycheck.utils.DependencyVersionUtil;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class CPEAnalyzer implements Analyzer {
-
+    /**
+     * The Logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(CPEAnalyzer.class.getName());
     /**
      * The maximum number of query results to return.
      */
@@ -125,15 +128,15 @@ public class CPEAnalyzer implements Analyzer {
      * by another process.
      */
     public void open() throws IOException, DatabaseException {
-        Logger.getLogger(CPEAnalyzer.class.getName()).log(Level.FINE, "Opening the CVE Database");
+        LOGGER.log(Level.FINE, "Opening the CVE Database");
         cve = new CveDB();
         cve.open();
-        Logger.getLogger(CPEAnalyzer.class.getName()).log(Level.FINE, "Creating the Lucene CPE Index");
+        LOGGER.log(Level.FINE, "Creating the Lucene CPE Index");
         cpe = CpeMemoryIndex.getInstance();
         try {
             cpe.open(cve);
         } catch (IndexException ex) {
-            Logger.getLogger(CPEAnalyzer.class.getName()).log(Level.FINE, "IndexException", ex);
+            LOGGER.log(Level.FINE, "IndexException", ex);
             throw new DatabaseException(ex);
         }
     }

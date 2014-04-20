@@ -46,7 +46,11 @@ import org.xml.sax.SAXException;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class ProcessTask implements Callable<ProcessTask> {
-
+    
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(ProcessTask.class.getName());
     /**
      * A field to store any update exceptions that occur during the "call".
      */
@@ -154,7 +158,7 @@ public class ProcessTask implements Callable<ProcessTask> {
      */
     private void processFiles() throws UpdateException {
         String msg = String.format("Processing Started for NVD CVE - %s", filePair.getNvdCveInfo().getId());
-        Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO, msg);
+        LOGGER.log(Level.INFO, msg);
         try {
             importXML(filePair.getFirst(), filePair.getSecond());
             cveDB.commit();
@@ -177,6 +181,6 @@ public class ProcessTask implements Callable<ProcessTask> {
             filePair.cleanup();
         }
         msg = String.format("Processing Complete for NVD CVE - %s", filePair.getNvdCveInfo().getId());
-        Logger.getLogger(StandardUpdate.class.getName()).log(Level.INFO, msg);
+        LOGGER.log(Level.INFO, msg);
     }
 }

@@ -36,7 +36,11 @@ import java.util.logging.Logger;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class DriverLoader {
-
+    
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(DriverLoader.class.getName());
     /**
      * Private constructor for a utility class.
      */
@@ -83,7 +87,7 @@ public final class DriverLoader {
                     } catch (MalformedURLException ex) {
                         final String msg = String.format("Unable to load database driver '%s'; invalid path provided '%s'",
                                 className, f.getAbsoluteFile());
-                        Logger.getLogger(DriverLoader.class.getName()).log(Level.FINE, msg, ex);
+                        LOGGER.log(Level.FINE, msg, ex);
                         throw new DriverLoadException(msg, ex);
                     }
                 }
@@ -93,7 +97,7 @@ public final class DriverLoader {
                 } catch (MalformedURLException ex) {
                     final String msg = String.format("Unable to load database driver '%s'; invalid path provided '%s'",
                             className, file.getAbsoluteFile());
-                    Logger.getLogger(DriverLoader.class.getName()).log(Level.FINE, msg, ex);
+                    LOGGER.log(Level.FINE, msg, ex);
                     throw new DriverLoadException(msg, ex);
                 }
             }
@@ -127,19 +131,19 @@ public final class DriverLoader {
             return shim;
         } catch (ClassNotFoundException ex) {
             final String msg = String.format("Unable to load database driver '%s'", className);
-            Logger.getLogger(DriverLoader.class.getName()).log(Level.FINE, msg, ex);
+            LOGGER.log(Level.FINE, msg, ex);
             throw new DriverLoadException(msg, ex);
         } catch (InstantiationException ex) {
             final String msg = String.format("Unable to load database driver '%s'", className);
-            Logger.getLogger(DriverLoader.class.getName()).log(Level.FINE, msg, ex);
+            LOGGER.log(Level.FINE, msg, ex);
             throw new DriverLoadException(msg, ex);
         } catch (IllegalAccessException ex) {
             final String msg = String.format("Unable to load database driver '%s'", className);
-            Logger.getLogger(DriverLoader.class.getName()).log(Level.FINE, msg, ex);
+            LOGGER.log(Level.FINE, msg, ex);
             throw new DriverLoadException(msg, ex);
         } catch (SQLException ex) {
             final String msg = String.format("Unable to load database driver '%s'", className);
-            Logger.getLogger(DriverLoader.class.getName()).log(Level.FINE, msg, ex);
+            LOGGER.log(Level.FINE, msg, ex);
             throw new DriverLoadException(msg, ex);
         }
     }
