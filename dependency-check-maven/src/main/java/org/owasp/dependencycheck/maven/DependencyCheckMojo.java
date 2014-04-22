@@ -296,19 +296,19 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @Parameter(property = "zipExtensions", required = false)
     private String zipExtensions;
     /**
-     * Skip Analisys for Test Scope Dependencies.
+     * Skip Analysis for Test Scope Dependencies.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "skipTestScope", defaultValue = "true", required = false)
     private boolean skipTestScope = true;
     /**
-     * Skip Analisys for Runtime Scope Dependencies.
+     * Skip Analysis for Runtime Scope Dependencies.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "skipRuntimeScope", defaultValue = "false", required = false)
     private boolean skipRuntimeScope = false;
     /**
-     * Skip Analisys for Provided Scope Dependencies.
+     * Skip Analysis for Provided Scope Dependencies.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "skipProvidedScope", defaultValue = "false", required = false)
@@ -800,7 +800,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
                 } else if (proxies.size() == 1) {
                     return proxies.get(0);
                 } else {
-                    throw new IllegalStateException("Ambigous proxy definition");
+                    throw new IllegalStateException("Ambiguous proxy definition");
                 }
             }
         }
@@ -1012,7 +1012,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         } else if ("VULN".equalsIgnoreCase(this.format)) {
             return "dependency-check-vulnerability";
         } else {
-            logger.log(Level.WARNING, "Unknown report format used during site generatation.");
+            logger.log(Level.WARNING, "Unknown report format used during site generation.");
             return "dependency-check-report";
         }
     }
