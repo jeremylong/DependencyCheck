@@ -26,7 +26,6 @@ import java.util.Properties;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.owasp.dependencycheck.data.update.NvdCveInfo;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 
@@ -36,7 +35,7 @@ import org.owasp.dependencycheck.data.update.exception.UpdateException;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class DatabaseProperties {
-    
+
     /**
      * The Logger.
      */

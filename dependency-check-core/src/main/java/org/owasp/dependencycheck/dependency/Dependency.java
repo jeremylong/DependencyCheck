@@ -36,7 +36,7 @@ import org.owasp.dependencycheck.utils.FileUtils;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class Dependency implements Comparable<Dependency> {
-    
+
     /**
      * The logger.
      */

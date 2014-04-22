@@ -31,11 +31,12 @@ import java.util.logging.SimpleFormatter;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class LogUtils {
-    
+
     /**
      * The logger.
      */
     private static final Logger LOGGER = Logger.getLogger(LogUtils.class.getName());
+
     /**
      * Private constructor for a utility class.
      */

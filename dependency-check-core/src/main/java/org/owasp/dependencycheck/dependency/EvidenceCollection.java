@@ -37,7 +37,7 @@ import org.owasp.dependencycheck.utils.UrlStringUtils;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class EvidenceCollection implements Iterable<Evidence> {
-    
+
     /**
      * The logger.
      */

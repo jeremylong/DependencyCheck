@@ -23,7 +23,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 
 /**
@@ -31,11 +30,12 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class DBUtils {
-    
+
     /**
      * The logger.
      */
     private static final Logger LOGGER = Logger.getLogger(DBUtils.class.getName());
+
     /**
      * Private constructor for a utility class.
      */

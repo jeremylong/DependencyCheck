@@ -49,11 +49,12 @@ import org.owasp.dependencycheck.utils.Settings;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class ReportGenerator {
-    
+
     /**
      * The logger.
      */
     private static final Logger LOGGER = Logger.getLogger(ReportGenerator.class.getName());
+
     /**
      * An enumeration of the report formats.
      */

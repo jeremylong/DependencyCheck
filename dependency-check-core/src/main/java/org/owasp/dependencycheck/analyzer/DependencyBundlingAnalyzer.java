@@ -45,11 +45,12 @@ import org.owasp.dependencycheck.utils.LogUtils;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Analyzer {
+
     /**
      * The Logger.
      */
     private static final Logger LOGGER = Logger.getLogger(DependencyBundlingAnalyzer.class.getName());
-    
+
     //<editor-fold defaultstate="collapsed" desc="Constants and Member Variables">
     /**
      * A pattern for obtaining the first part of a filename.

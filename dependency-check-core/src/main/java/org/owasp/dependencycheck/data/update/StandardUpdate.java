@@ -46,6 +46,10 @@ import org.owasp.dependencycheck.utils.Settings;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class StandardUpdate {
+
+    /**
+     * Static logger.
+     */
     private static final Logger LOGGER = Logger.getLogger(StandardUpdate.class.getName());
     /**
      * The max thread pool size to use when downloading files.

@@ -39,7 +39,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class NvdCve20Handler extends DefaultHandler {
-    
+
     /**
      * The logger.
      */

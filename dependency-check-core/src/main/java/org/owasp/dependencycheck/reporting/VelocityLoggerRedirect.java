@@ -19,7 +19,6 @@ package org.owasp.dependencycheck.reporting;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.velocity.app.Velocity;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.log.LogChute;
 
@@ -36,11 +35,12 @@ import org.apache.velocity.runtime.log.LogChute;
  * @author Steve Springett <steve.springett@owasp.org>
  */
 public class VelocityLoggerRedirect implements LogChute {
-    
+
     /**
      * The Logger.
      */
     private static final Logger LOGGER = Logger.getLogger(VelocityLoggerRedirect.class.getName());
+
     /**
      * This will be invoked once by the LogManager.
      *
