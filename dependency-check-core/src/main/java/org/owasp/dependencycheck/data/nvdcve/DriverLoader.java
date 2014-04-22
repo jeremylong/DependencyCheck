@@ -36,11 +36,12 @@ import java.util.logging.Logger;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class DriverLoader {
-    
+
     /**
      * The logger.
      */
     private static final Logger LOGGER = Logger.getLogger(DriverLoader.class.getName());
+
     /**
      * Private constructor for a utility class.
      */

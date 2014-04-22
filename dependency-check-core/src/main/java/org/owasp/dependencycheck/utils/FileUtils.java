@@ -39,7 +39,7 @@ import org.owasp.dependencycheck.Engine;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class FileUtils {
-    
+
     /**
      * The logger.
      */

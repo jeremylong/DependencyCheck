@@ -30,7 +30,7 @@ import org.owasp.dependencycheck.data.cpe.IndexEntry;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class VulnerableSoftware extends IndexEntry implements Serializable, Comparable<VulnerableSoftware> {
-    
+
     /**
      * The logger.
      */

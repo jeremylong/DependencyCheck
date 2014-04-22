@@ -30,11 +30,12 @@ import org.apache.commons.lang.StringEscapeUtils;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class EscapeTool {
-    
+
     /**
      * The logger.
      */
     private static final Logger LOGGER = Logger.getLogger(EscapeTool.class.getName());
+
     /**
      * URL Encodes the provided text.
      *

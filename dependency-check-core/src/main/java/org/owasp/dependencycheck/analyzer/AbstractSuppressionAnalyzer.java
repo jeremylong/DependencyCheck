@@ -40,12 +40,12 @@ import org.owasp.dependencycheck.utils.Settings;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
-    
+
     /**
      * The Logger for use throughout the class
      */
     private static final Logger LOGGER = Logger.getLogger(AbstractSuppressionAnalyzer.class.getName());
-    
+
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
      * Returns a list of file EXTENSIONS supported by this analyzer.

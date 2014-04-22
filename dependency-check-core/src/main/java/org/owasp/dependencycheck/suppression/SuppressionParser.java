@@ -40,7 +40,7 @@ import org.xml.sax.XMLReader;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class SuppressionParser {
-    
+
     /**
      * The logger.
      */

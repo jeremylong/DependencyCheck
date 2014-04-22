@@ -36,11 +36,12 @@ import java.util.zip.InflaterInputStream;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class Downloader {
-    
+
     /**
      * The logger.
      */
     private static final Logger LOGGER = Logger.getLogger(Downloader.class.getName());
+
     /**
      * Private constructor for utility class.
      */

@@ -38,11 +38,12 @@ import org.owasp.dependencycheck.utils.Settings;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
-    
+
     /**
      * The Logger.
      */
     private static final Logger LOGGER = Logger.getLogger(CallableDownloadTask.class.getName());
+
     /**
      * Simple constructor for the callable download task.
      *

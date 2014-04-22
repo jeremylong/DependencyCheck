@@ -29,11 +29,12 @@ import org.xml.sax.SAXParseException;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class SuppressionErrorHandler implements ErrorHandler {
-    
+
     /**
      * The logger.
      */
     private static final Logger LOGGER = Logger.getLogger(SuppressionErrorHandler.class.getName());
+
     /**
      * Builds a prettier exception message.
      *

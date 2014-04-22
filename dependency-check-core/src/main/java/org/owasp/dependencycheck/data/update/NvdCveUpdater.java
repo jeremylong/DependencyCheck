@@ -29,11 +29,12 @@ import org.owasp.dependencycheck.utils.DownloadFailedException;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class NvdCveUpdater implements CachedWebDataSource {
-    
+
     /**
      * The logger
      */
     private static final Logger LOGGER = Logger.getLogger(NvdCveUpdater.class.getName());
+
     /**
      * <p>
      * Downloads the latest NVD CVE XML file from the web and imports it into the current CVE Database.</p>

@@ -38,7 +38,7 @@ import java.util.logging.Logger;
  * @see java.sql.Driver
  */
 class DriverShim implements Driver {
-    
+
     /**
      * The logger.
      */

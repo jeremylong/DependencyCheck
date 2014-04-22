@@ -32,7 +32,6 @@ import javax.xml.parsers.SAXParserFactory;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
-import org.owasp.dependencycheck.data.update.StandardUpdate;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.data.update.xml.NvdCve12Handler;
 import org.owasp.dependencycheck.data.update.xml.NvdCve20Handler;
@@ -46,7 +45,7 @@ import org.xml.sax.SAXException;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class ProcessTask implements Callable<ProcessTask> {
-    
+
     /**
      * The logger.
      */
