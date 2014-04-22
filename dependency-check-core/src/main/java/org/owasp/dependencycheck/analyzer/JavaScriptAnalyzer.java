@@ -44,7 +44,7 @@ public class JavaScriptAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final Logger LOGGER = Logger.getLogger(JavaScriptAnalyzer.class.getName());
 
-    //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
+    //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
      * The name of the analyzer.
      */
@@ -107,7 +107,7 @@ public class JavaScriptAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException {
-        BufferedReader fin = null;;
+        BufferedReader fin = null;
         try {
             //  /\*([^\*][^/]|[\r\n\f])+?\*/
             final Pattern extractComments = Pattern.compile("(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)|(//.*)", Pattern.MULTILINE);

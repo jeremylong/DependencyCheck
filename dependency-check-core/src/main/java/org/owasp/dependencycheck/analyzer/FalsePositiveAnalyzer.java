@@ -42,7 +42,7 @@ import org.owasp.dependencycheck.dependency.VulnerableSoftware;
  */
 public class FalsePositiveAnalyzer extends AbstractAnalyzer {
 
-    //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
+    //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
      * The name of the analyzer.
      */
@@ -156,7 +156,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      * Regex to identify core java libraries and a few other commonly misidentified ones.
      */
     public static final Pattern CORE_JAVA = Pattern.compile("^cpe:/a:(sun|oracle|ibm):(j2[ems]e|"
-            + "java(_platfrom_micro_edition|_runtime_environment|_se|virtual_machine|se_development_kit|fx)?|"
+            + "java(_platform_micro_edition|_runtime_environment|_se|virtual_machine|se_development_kit|fx)?|"
             + "jdk|jre|jsf|jsse)($|:.*)");
     /**
      * Regex to identify core java library files. This is currently incomplete.
@@ -179,7 +179,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                 itr.remove();
             }
 
-            //replacecd with the regex above.
+            //replaced with the regex above.
             //            if (("cpe:/a:sun:java".equals(i.getValue())
             //                    || "cpe:/a:oracle:java".equals(i.getValue())
             //                    || "cpe:/a:ibm:java".equals(i.getValue())
@@ -242,7 +242,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         //Set<Evidence> artifactId = dependency.getVendorEvidence().getEvidence("pom", "artifactid");
         while (itr.hasNext()) {
             final Identifier i = itr.next();
-            //TODO move this startswith expression to a configuration file?
+            //TODO move this startsWith expression to a configuration file?
             if ("cpe".equals(i.getType())) {
                 if ((i.getValue().matches(".*c\\+\\+.*")
                         || i.getValue().startsWith("cpe:/a:jquery:jquery")

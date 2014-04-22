@@ -45,7 +45,7 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
         try {
             enabled = Settings.getBoolean(key, true);
         } catch (InvalidSettingException ex) {
-            String msg = String.format("Invalid settting for property '%s'", key);
+            String msg = String.format("Invalid setting for property '%s'", key);
             LOGGER.log(Level.WARNING, msg);
             LOGGER.log(Level.FINE, "", ex);
             msg = String.format("%s has been disabled", getName());
@@ -54,7 +54,7 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     }
 //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Field defentitions">
+    //<editor-fold defaultstate="collapsed" desc="Field definitions">
     /**
      * The logger.
      */

@@ -61,7 +61,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The list of supported extensions
      */
-    private static final Set<String> SUPORTED_EXTENSIONS = newHashSet("dll", "exe");
+    private static final Set<String> SUPPORTED_EXTENSIONS = newHashSet("dll", "exe");
     /**
      * The temp value for GrokAssembly.exe
      */
@@ -238,16 +238,16 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             final XPath xpath = XPathFactory.newInstance().newXPath();
             final String error = xpath.evaluate("/assembly/error", doc);
             if (p.waitFor() != 1 || error == null || "".equals(error)) {
-                LOG.warning("An error occured with the .NET AssemblyAnalyzer, please see the log for more details.");
+                LOG.warning("An error occurred with the .NET AssemblyAnalyzer, please see the log for more details.");
                 LOG.fine("GrokAssembly.exe is not working properly");
                 grokAssemblyExe = null;
                 throw new AnalysisException("Could not execute .NET AssemblyAnalyzer");
             }
         } catch (Throwable e) {
-            LOG.warning("An error occured with the .NET AssemblyAnalyzer; "
+            LOG.warning("An error occurred with the .NET AssemblyAnalyzer; "
                     + "this can be ignored unless you are scanning .NET dlls. Please see the log for more details.");
             LOG.log(Level.FINE, "Could not execute GrokAssembly {0}", e.getMessage());
-            throw new AnalysisException("An error occured with the .NET AssemblyAnalyzer", e);
+            throw new AnalysisException("An error occurred with the .NET AssemblyAnalyzer", e);
         } finally {
             if (rdr != null) {
                 try {
@@ -280,7 +280,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public Set<String> getSupportedExtensions() {
-        return SUPORTED_EXTENSIONS;
+        return SUPPORTED_EXTENSIONS;
     }
 
     /**

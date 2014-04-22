@@ -83,7 +83,7 @@ public class NexusSearch {
      *
      * @param sha1 The SHA-1 hash string for which to search
      * @return the populated Maven coordinates
-     * @throws IOException if it's unable to connect to the specified repositor or if the specified artifact is not
+     * @throws IOException if it's unable to connect to the specified repository or if the specified artifact is not
      * found.
      */
     public MavenArtifact searchSha1(String sha1) throws IOException {

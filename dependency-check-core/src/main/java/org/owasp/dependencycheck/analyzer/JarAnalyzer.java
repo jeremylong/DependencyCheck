@@ -364,7 +364,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @param jar the JarFile to search
      * @return a list of pom.xml entries
-     * @throws IOException thrown if there is an exception reading a JarEntryf
+     * @throws IOException thrown if there is an exception reading a JarEntry
      */
     private List<String> retrievePomListing(final JarFile jar) throws IOException {
         final List<String> pomEntries = new ArrayList<String>();
@@ -408,7 +408,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             bos.flush();
             dependency.setActualFilePath(file.getAbsolutePath());
         } catch (IOException ex) {
-            final String msg = String.format("An error occured reading '%s' from '%s'.", path, dependency.getFilePath());
+            final String msg = String.format("An error occurred reading '%s' from '%s'.", path, dependency.getFilePath());
             LOGGER.warning(msg);
             LOGGER.log(Level.SEVERE, "", ex);
         } finally {

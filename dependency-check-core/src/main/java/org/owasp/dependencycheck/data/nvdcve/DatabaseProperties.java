@@ -150,7 +150,7 @@ public class DatabaseProperties {
                         final DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                         final String formatted = format.format(date);
                         map.put(key, formatted);
-                    } catch (Throwable ex) { //deliberatly being broad in this catch clause
+                    } catch (Throwable ex) { //deliberately being broad in this catch clause
                         Logger.getLogger(DatabaseProperties.class.getName()).log(Level.FINE, "Unable to parse timestamp from DB", ex);
                         map.put(key, entry.getValue());
                     }

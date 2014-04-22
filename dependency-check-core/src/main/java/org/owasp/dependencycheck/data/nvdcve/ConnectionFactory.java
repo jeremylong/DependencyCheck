@@ -168,7 +168,7 @@ public final class ConnectionFactory {
                 try {
                     conn.close();
                 } catch (SQLException ex) {
-                    Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, "An error occured closing the connection", ex);
+                    Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, "An error occurred closing the connection", ex);
                 }
             }
         }
@@ -184,10 +184,10 @@ public final class ConnectionFactory {
             try {
                 DriverManager.deregisterDriver(driver);
             } catch (SQLException ex) {
-                Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, "An error occured unloading the databse driver", ex);
+                Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE, "An error occurred unloading the database driver", ex);
             } catch (Throwable unexpected) {
                 Logger.getLogger(ConnectionFactory.class.getName()).log(Level.FINE,
-                        "An unexpected throwable occured unloading the databse driver", unexpected);
+                        "An unexpected throwable occurred unloading the database driver", unexpected);
             }
             driver = null;
         }

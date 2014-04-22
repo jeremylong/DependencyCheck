@@ -65,7 +65,7 @@ public class MavenNamespaceFilter extends XMLFilterImpl {
     }
 
     /**
-     * Indicatees the start of the document.
+     * Indicates the start of the document.
      *
      * @param uri the uri
      * @param localName the localName
