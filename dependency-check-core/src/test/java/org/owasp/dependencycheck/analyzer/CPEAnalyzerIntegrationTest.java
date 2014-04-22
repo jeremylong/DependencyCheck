@@ -35,7 +35,7 @@ import org.owasp.dependencycheck.dependency.Identifier;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class CPEAnalyzerTest extends AbstractDatabaseTestCase {
+public class CPEAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
 
     /**
      * Tests of buildSearch of class CPEAnalyzer.
