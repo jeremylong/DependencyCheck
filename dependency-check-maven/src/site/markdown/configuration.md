@@ -57,7 +57,7 @@ databasePassword     | The password used when connecting to the database.       
 
 Deprecated Configuration
 ====================
-The following properties have been deprecated. These can stell be set in
+The following properties have been deprecated. These can still be set in
 the dependency-check-maven plugin's configuration. However, future versions
 will remove these properties. Instead using these properties you should
 use [Maven's settings](https://maven.apache.org/settings.html#Proxies) to

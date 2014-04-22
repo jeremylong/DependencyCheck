@@ -199,7 +199,7 @@ public final class CliParser {
                 .withDescription("The file path to write verbose logging information.")
                 .create(ArgumentName.VERBOSE_LOG_SHORT);
 
-        final Option suppressionFile = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.SUPPRESION_FILE)
+        final Option suppressionFile = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.SUPPRESSION_FILE)
                 .withDescription("The file path to the suppression XML file.")
                 .create();
 
@@ -301,7 +301,7 @@ public final class CliParser {
 
         final Option additionalZipExtensions = OptionBuilder.withArgName("extensions").hasArg()
                 .withLongOpt(ArgumentName.ADDITIONAL_ZIP_EXTENSIONS)
-                .withDescription("A comma seperated list of additional extensions to be scanned as ZIP files "
+                .withDescription("A comma separated list of additional extensions to be scanned as ZIP files "
                         + "(ZIP, EAR, WAR are already treated as zip files)")
                 .create();
 
@@ -587,7 +587,7 @@ public final class CliParser {
      * @return the path to the suppression file
      */
     public String getSuppressionFile() {
-        return line.getOptionValue(ArgumentName.SUPPRESION_FILE);
+        return line.getOptionValue(ArgumentName.SUPPRESSION_FILE);
     }
 
     /**
@@ -791,7 +791,7 @@ public final class CliParser {
         /**
          * The CLI argument name for setting the location of the suppression file.
          */
-        public static final String SUPPRESION_FILE = "suppression";
+        public static final String SUPPRESSION_FILE = "suppression";
         /**
          * Disables the Jar Analyzer.
          */
