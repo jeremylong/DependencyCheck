@@ -56,7 +56,7 @@ public class NuspecParseException extends Exception {
      * Note that the detail message associated with <code>cause</code> is <em>not</em>
      * automatically incorporated in this exception's detail message.
      *
-     * @param message the detail message (whcih is saved for later retrieval by the
+     * @param message the detail message (which is saved for later retrieval by the
      * {@link java.lang.Throwable#getMessage()} method.
      * @param cause the cause (which is saved for later retrieval by the {@link java.lang.Throwable#getCause()} method).
      * (A <code>null</code> value is permitted, and indicates that the cause is nonexistent or unknown).

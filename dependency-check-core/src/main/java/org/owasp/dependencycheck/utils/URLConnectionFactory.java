@@ -55,7 +55,7 @@ public final class URLConnectionFactory {
         try {
             if (proxyUrl != null) {
                 final int proxyPort = Settings.getInt(Settings.KEYS.PROXY_PORT);
-                final SocketAddress addr = new InetSocketAddress(proxyUrl, proxyPort);
+                final SocketAddress address = new InetSocketAddress(proxyUrl, proxyPort);
 
                 final String username = Settings.getString(Settings.KEYS.PROXY_USERNAME);
                 final String password = Settings.getString(Settings.KEYS.PROXY_PASSWORD);
@@ -72,7 +72,7 @@ public final class URLConnectionFactory {
                     Authenticator.setDefault(auth);
                 }
 
-                proxy = new Proxy(Proxy.Type.HTTP, addr);
+                proxy = new Proxy(Proxy.Type.HTTP, address);
                 conn = (HttpURLConnection) url.openConnection(proxy);
             } else {
                 conn = (HttpURLConnection) url.openConnection();

@@ -168,7 +168,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.info(String.format("invalid sha-1 hash on %s", dependency.getFileName()));
         } catch (FileNotFoundException fnfe) {
             //dependency.addAnalysisException(new AnalysisException("Artifact not found on repository"));
-            LOGGER.fine(String.format("Artificat not found in repository '%s'", dependency.getFileName()));
+            LOGGER.fine(String.format("Artifact not found in repository '%s'", dependency.getFileName()));
             LOGGER.log(Level.FINE, fnfe.getMessage(), fnfe);
         } catch (IOException ioe) {
             //dependency.addAnalysisException(new AnalysisException("Could not connect to repository", ioe));

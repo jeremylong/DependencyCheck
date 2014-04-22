@@ -340,7 +340,7 @@ public class Engine {
                         try {
                             a.analyze(d, this);
                         } catch (AnalysisException ex) {
-                            final String exMsg = String.format("An error occured while analyzing '%s'.", d.getActualFilePath());
+                            final String exMsg = String.format("An error occurred while analyzing '%s'.", d.getActualFilePath());
                             Logger.getLogger(Engine.class.getName()).log(Level.WARNING, exMsg);
                             Logger.getLogger(Engine.class.getName()).log(Level.FINE, "", ex);
                         } catch (Throwable ex) {

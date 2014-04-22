@@ -58,7 +58,7 @@ public final class DriverLoader {
     /**
      * Loads the specified class by registering the supplied paths to the class loader and then registers the driver
      * with the driver manager. The pathToDriver argument is added to the class loader so that an external driver can be
-     * loaded. Note, the pathTodriver can contain a semi-colon separated list of paths so any dependencies can be added
+     * loaded. Note, the pathToDriver can contain a semi-colon separated list of paths so any dependencies can be added
      * as needed. If a path in the pathToDriver argument is a directory all files in the directory are added to the
      * class path.
      *

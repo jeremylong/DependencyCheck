@@ -47,10 +47,10 @@ public class DependencyVersion implements Iterable, Comparable<DependencyVersion
 
     /**
      * Constructor for a DependencyVersion that will parse a version string.
-     * <b>Note</b>, this should only be used when the version passed in is already known to be a well formated version
+     * <b>Note</b>, this should only be used when the version passed in is already known to be a well formatted version
      * number. Otherwise, DependencyVersionUtil.parseVersion() should be used instead.
      *
-     * @param version the well formated version number to parse
+     * @param version the well formatted version number to parse
      */
     public DependencyVersion(String version) {
         parseVersion(version);

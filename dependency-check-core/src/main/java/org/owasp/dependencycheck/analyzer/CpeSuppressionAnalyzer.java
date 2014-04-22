@@ -30,7 +30,7 @@ import org.owasp.dependencycheck.suppression.SuppressionRule;
  */
 public class CpeSuppressionAnalyzer extends AbstractSuppressionAnalyzer {
 
-    //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
+    //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
      * The name of the analyzer.
      */
