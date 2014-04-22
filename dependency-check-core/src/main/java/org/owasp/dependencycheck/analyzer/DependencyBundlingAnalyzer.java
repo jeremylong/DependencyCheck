@@ -341,7 +341,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
              * be shorter:
              * axis2-saaj-1.4.1.jar
              * axis2-1.4.1.jar       <-----
-             * axis2-kernal-1.4.1.jar
+             * axis2-kernel-1.4.1.jar
              */
             returnVal = leftName.length() <= rightName.length();
         }
