@@ -42,6 +42,10 @@ import org.owasp.dependencycheck.dependency.VulnerableSoftware;
  */
 public class FalsePositiveAnalyzer extends AbstractAnalyzer {
 
+    /**
+     * The Logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(FalsePositiveAnalyzer.class.getName());
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
      * The name of the analyzer.
@@ -132,8 +136,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         final String nextVersion = nextCpe.getVersion();
                         if (currentVersion == null && nextVersion == null) {
                             //how did we get here?
-                            Logger.getLogger(FalsePositiveAnalyzer.class
-                                    .getName()).log(Level.FINE, "currentVersion and nextVersion are both null?");
+                            LOGGER.log(Level.FINE, "currentVersion and nextVersion are both null?");
                         } else if (currentVersion == null && nextVersion != null) {
                             dependency.getIdentifiers().remove(currentId);
                         } else if (nextVersion == null && currentVersion != null) {
@@ -217,7 +220,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         try {
             cpe.parseName(value);
         } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(FalsePositiveAnalyzer.class.getName()).log(Level.FINEST, null, ex);
+            LOGGER.log(Level.FINEST, null, ex);
             return null;
         }
         return cpe;
@@ -337,8 +340,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                             newCpe4,
                             String.format("http://web.nvd.nist.gov/view/vuln/search?cpe=%s", URLEncoder.encode(newCpe4, "UTF-8")));
                 } catch (UnsupportedEncodingException ex) {
-                    Logger.getLogger(FalsePositiveAnalyzer.class
-                            .getName()).log(Level.FINE, null, ex);
+                    LOGGER.log(Level.FINE, null, ex);
                 }
             }
         }

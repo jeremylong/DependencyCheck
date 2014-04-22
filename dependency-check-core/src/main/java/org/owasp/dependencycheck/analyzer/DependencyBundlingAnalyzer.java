@@ -45,7 +45,11 @@ import org.owasp.dependencycheck.utils.LogUtils;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Analyzer {
-
+    /**
+     * The Logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(DependencyBundlingAnalyzer.class.getName());
+    
     //<editor-fold defaultstate="collapsed" desc="Constants and Member Variables">
     /**
      * A pattern for obtaining the first part of a filename.
@@ -270,7 +274,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
         }
         if (LogUtils.isVerboseLoggingEnabled()) {
             final String msg = String.format("IdentifiersMatch=%s (%s, %s)", matches, dependency1.getFileName(), dependency2.getFileName());
-            Logger.getLogger(DependencyBundlingAnalyzer.class.getName()).log(Level.FINE, msg);
+            LOGGER.log(Level.FINE, msg);
         }
         return matches;
     }
@@ -347,7 +351,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
         }
         if (LogUtils.isVerboseLoggingEnabled()) {
             final String msg = String.format("IsCore=%s (%s, %s)", returnVal, left.getFileName(), right.getFileName());
-            Logger.getLogger(DependencyBundlingAnalyzer.class.getName()).log(Level.FINE, msg);
+            LOGGER.log(Level.FINE, msg);
         }
         return returnVal;
     }

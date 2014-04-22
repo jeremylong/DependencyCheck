@@ -36,7 +36,11 @@ import org.apache.velocity.runtime.log.LogChute;
  * @author Steve Springett <steve.springett@owasp.org>
  */
 public class VelocityLoggerRedirect implements LogChute {
-
+    
+    /**
+     * The Logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(VelocityLoggerRedirect.class.getName());
     /**
      * This will be invoked once by the LogManager.
      *
@@ -54,7 +58,7 @@ public class VelocityLoggerRedirect implements LogChute {
      * @param message the message to be logged
      */
     public void log(int level, String message) {
-        Logger.getLogger(Velocity.class.getName()).log(getLevel(level), message);
+        LOGGER.log(getLevel(level), message);
     }
 
     /**
@@ -66,7 +70,7 @@ public class VelocityLoggerRedirect implements LogChute {
      * @param t a throwable to log
      */
     public void log(int level, String message, Throwable t) {
-        Logger.getLogger(Velocity.class.getName()).log(getLevel(level), message, t);
+        LOGGER.log(getLevel(level), message, t);
     }
 
     /**

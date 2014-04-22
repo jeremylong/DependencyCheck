@@ -37,7 +37,11 @@ import org.owasp.dependencycheck.utils.UrlStringUtils;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class EvidenceCollection implements Iterable<Evidence> {
-
+    
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(EvidenceCollection.class.getName());
     /**
      * Used to iterate over highest confidence evidence contained in the collection.
      */
@@ -360,7 +364,7 @@ public class EvidenceCollection implements Iterable<Evidence> {
                     final List<String> data = UrlStringUtils.extractImportantUrlData(part);
                     sb.append(' ').append(StringUtils.join(data, ' '));
                 } catch (MalformedURLException ex) {
-                    Logger.getLogger(EvidenceCollection.class.getName()).log(Level.FINE, "error parsing " + part, ex);
+                    LOGGER.log(Level.FINE, "error parsing " + part, ex);
                     sb.append(' ').append(part);
                 }
             } else {

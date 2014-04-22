@@ -64,7 +64,10 @@ public class DependencyCheckScanAgent {
      * System specific new line character.
      */
     private static final String NEW_LINE = System.getProperty("line.separator", "\n").intern();
-
+    /**
+     * Logger for use throughout the class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(DependencyCheckScanAgent.class.getName());
     /**
      * The application name for the report.
      */
@@ -767,7 +770,7 @@ public class DependencyCheckScanAgent {
             cve.open();
             prop = cve.getDatabaseProperties();
         } catch (DatabaseException ex) {
-            Logger.getLogger(DependencyCheckScanAgent.class.getName()).log(Level.FINE, "Unable to retrieve DB Properties", ex);
+            LOGGER.log(Level.FINE, "Unable to retrieve DB Properties", ex);
         } finally {
             if (cve != null) {
                 cve.close();
@@ -777,13 +780,13 @@ public class DependencyCheckScanAgent {
         try {
             r.generateReports(outDirectory.getCanonicalPath(), this.reportFormat.name());
         } catch (IOException ex) {
-            Logger.getLogger(DependencyCheckScanAgent.class.getName()).log(Level.SEVERE,
+            LOGGER.log(Level.SEVERE,
                     "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
-            Logger.getLogger(DependencyCheckScanAgent.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.FINE, null, ex);
         } catch (Throwable ex) {
-            Logger.getLogger(DependencyCheckScanAgent.class.getName()).log(Level.SEVERE,
+            LOGGER.log(Level.SEVERE,
                     "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
-            Logger.getLogger(DependencyCheckScanAgent.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.FINE, null, ex);
         }
     }
 
@@ -881,9 +884,9 @@ public class DependencyCheckScanAgent {
                 checkForFailure(engine.getDependencies());
             }
         } catch (DatabaseException ex) {
-            Logger.getLogger(DependencyCheckScanAgent.class.getName()).log(Level.SEVERE,
+            LOGGER.log(Level.SEVERE,
                     "Unable to connect to the dependency-check database; analysis has stopped");
-            Logger.getLogger(DependencyCheckScanAgent.class.getName()).log(Level.FINE, "", ex);
+            LOGGER.log(Level.FINE, "", ex);
         } finally {
             Settings.cleanup();
             if (engine != null) {
@@ -961,7 +964,7 @@ public class DependencyCheckScanAgent {
             final String msg = String.format("%n%n"
                     + "One or more dependencies were identified with known vulnerabilities:%n%n%s"
                     + "%n%nSee the dependency-check report for more details.%n%n", summary.toString());
-            Logger.getLogger(DependencyCheckScanAgent.class.getName()).log(Level.WARNING, msg);
+            LOGGER.log(Level.WARNING, msg);
         }
     }
 
