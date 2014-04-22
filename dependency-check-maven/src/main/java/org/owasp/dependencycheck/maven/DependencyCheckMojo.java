@@ -69,6 +69,9 @@ import org.owasp.dependencycheck.utils.Settings;
         requiresOnline = true)
 public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageReport {
 
+    /**
+     * Logger field reference.
+     */
     private final Logger logger = Logger.getLogger(DependencyCheckMojo.class.getName());
 
     /**
@@ -358,7 +361,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         LogUtils.prepareLogger(in, logFile);
 
         populateSettings();
-        Engine engine = new Engine();
+        final Engine engine = new Engine();
 
         final Set<Artifact> artifacts = project.getArtifacts();
         for (Artifact a : artifacts) {
