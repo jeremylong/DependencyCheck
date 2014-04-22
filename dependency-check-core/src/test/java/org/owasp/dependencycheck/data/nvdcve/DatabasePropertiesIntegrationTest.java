@@ -27,7 +27,7 @@ import org.owasp.dependencycheck.data.update.NvdCveInfo;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class DatabasePropertiesTest extends BaseDBTestCase {
+public class DatabasePropertiesIntegrationTest extends BaseDBTestCase {
 
     /**
      * Test of isEmpty method, of class DatabaseProperties.

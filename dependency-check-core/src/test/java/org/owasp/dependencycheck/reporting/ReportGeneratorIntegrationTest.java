@@ -36,7 +36,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class ReportGeneratorTest extends BaseTest {
+public class ReportGeneratorIntegrationTest extends BaseTest {
 
     @Before
     public void setUp() throws Exception {
