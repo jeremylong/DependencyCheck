@@ -56,12 +56,12 @@ public class MavenNamespaceFilter extends XMLFilterImpl {
      * @param uri the uri
      * @param localName the localName
      * @param qName the qualified name
-     * @param atts the attributes
+     * @param attributes the attributes
      * @throws SAXException thrown if there is a SAXException
      */
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-        super.startElement(NAMESPACE, localName, qName, atts);
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        super.startElement(NAMESPACE, localName, qName, attributes);
     }
 
     /**
