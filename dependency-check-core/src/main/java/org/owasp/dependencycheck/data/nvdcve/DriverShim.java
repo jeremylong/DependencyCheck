@@ -38,7 +38,11 @@ import java.util.logging.Logger;
  * @see java.sql.Driver
  */
 class DriverShim implements Driver {
-
+    
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(DriverShim.class.getName());
     /**
      * The database driver being wrapped.
      */
@@ -123,11 +127,11 @@ class DriverShim implements Driver {
             try {
                 return (Logger) m.invoke(m);
             } catch (IllegalAccessException ex) {
-                Logger.getLogger(DriverShim.class.getName()).log(Level.FINER, null, ex);
+                LOGGER.log(Level.FINER, null, ex);
             } catch (IllegalArgumentException ex) {
-                Logger.getLogger(DriverShim.class.getName()).log(Level.FINER, null, ex);
+                LOGGER.log(Level.FINER, null, ex);
             } catch (InvocationTargetException ex) {
-                Logger.getLogger(DriverShim.class.getName()).log(Level.FINER, null, ex);
+                LOGGER.log(Level.FINER, null, ex);
             }
         }
         throw new SQLFeatureNotSupportedException();

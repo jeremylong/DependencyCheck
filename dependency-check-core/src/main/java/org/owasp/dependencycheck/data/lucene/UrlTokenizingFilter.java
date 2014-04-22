@@ -36,7 +36,10 @@ import org.owasp.dependencycheck.utils.UrlStringUtils;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class UrlTokenizingFilter extends AbstractTokenizingFilter {
-
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(UrlTokenizingFilter.class.getName());
     /**
      * Constructs a new VersionTokenizingFilter.
      *
@@ -67,7 +70,7 @@ public final class UrlTokenizingFilter extends AbstractTokenizingFilter {
                             final List<String> data = UrlStringUtils.extractImportantUrlData(part);
                             tokens.addAll(data);
                         } catch (MalformedURLException ex) {
-                            Logger.getLogger(UrlTokenizingFilter.class.getName()).log(Level.FINE, "error parsing " + part, ex);
+                            LOGGER.log(Level.FINE, "error parsing " + part, ex);
                             tokens.add(part);
                         }
                     } else {

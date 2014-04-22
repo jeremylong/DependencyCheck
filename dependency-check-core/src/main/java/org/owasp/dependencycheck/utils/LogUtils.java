@@ -31,7 +31,11 @@ import java.util.logging.SimpleFormatter;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class LogUtils {
-
+    
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(LogUtils.class.getName());
     /**
      * Private constructor for a utility class.
      */
@@ -59,15 +63,15 @@ public final class LogUtils {
                 logger.setLevel(Level.FINE);
             }
         } catch (IOException ex) {
-            Logger.getLogger(LogUtils.class.getName()).log(Level.FINE, "IO Error preparing the logger", ex);
+            LOGGER.log(Level.FINE, "IO Error preparing the logger", ex);
         } catch (SecurityException ex) {
-            Logger.getLogger(LogUtils.class.getName()).log(Level.FINE, "Error preparing the logger", ex);
+            LOGGER.log(Level.FINE, "Error preparing the logger", ex);
         } finally {
             if (in != null) {
                 try {
                     in.close();
                 } catch (Throwable ex) {
-                    Logger.getLogger(LogUtils.class.getName()).log(Level.FINEST, "Error closing resource stream", ex);
+                    LOGGER.log(Level.FINEST, "Error closing resource stream", ex);
                 }
             }
         }

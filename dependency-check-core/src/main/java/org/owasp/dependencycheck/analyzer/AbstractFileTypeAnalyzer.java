@@ -194,7 +194,7 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
         if (ext == null) {
             final String msg = String.format("The '%s' analyzer is misconfigured and does not have any file extensions;"
                     + " it will be disabled", getName());
-            Logger.getLogger(AbstractFileTypeAnalyzer.class.getName()).log(Level.SEVERE, msg);
+            LOGGER.log(Level.SEVERE, msg);
             return false;
         } else {
             final boolean match = ext.contains(extension);

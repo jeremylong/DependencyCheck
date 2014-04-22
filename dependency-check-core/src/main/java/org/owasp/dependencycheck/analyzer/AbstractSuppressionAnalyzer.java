@@ -40,7 +40,12 @@ import org.owasp.dependencycheck.utils.Settings;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
-
+    
+    /**
+     * The Logger for use throughout the class
+     */
+    private static final Logger LOGGER = Logger.getLogger(AbstractSuppressionAnalyzer.class.getName());
+    
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
@@ -116,29 +121,29 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                 final SuppressionParser parser = new SuppressionParser();
                 try {
                     rules = parser.parseSuppressionRules(file);
-                    Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.FINE, rules.size() + " suppression rules were loaded.");
+                    LOGGER.log(Level.FINE, rules.size() + " suppression rules were loaded.");
                 } catch (SuppressionParseException ex) {
                     final String msg = String.format("Unable to parse suppression xml file '%s'", file.getPath());
-                    Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.WARNING, msg);
-                    Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.WARNING, ex.getMessage());
-                    Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.FINE, "", ex);
+                    LOGGER.log(Level.WARNING, msg);
+                    LOGGER.log(Level.WARNING, ex.getMessage());
+                    LOGGER.log(Level.FINE, "", ex);
                     throw ex;
                 }
             }
         } catch (DownloadFailedException ex) {
-            Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.WARNING,
+            LOGGER.log(Level.WARNING,
                     "Unable to fetch the configured suppression file");
-            Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.FINE, "", ex);
+            LOGGER.log(Level.FINE, "", ex);
             throw new SuppressionParseException("Unable to fetch the configured suppression file", ex);
         } catch (MalformedURLException ex) {
-            Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.WARNING,
+            LOGGER.log(Level.WARNING,
                     "Configured suppression file has an invalid URL");
-            Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.FINE, "", ex);
+            LOGGER.log(Level.FINE, "", ex);
             throw new SuppressionParseException("Configured suppression file has an invalid URL", ex);
         } catch (IOException ex) {
-            Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.WARNING,
+            LOGGER.log(Level.WARNING,
                     "Unable to create temp file for suppressions");
-            Logger.getLogger(AbstractSuppressionAnalyzer.class.getName()).log(Level.FINE, "", ex);
+            LOGGER.log(Level.FINE, "", ex);
             throw new SuppressionParseException("Unable to create temp file for suppressions", ex);
         } finally {
             if (deleteTempFile && file != null) {

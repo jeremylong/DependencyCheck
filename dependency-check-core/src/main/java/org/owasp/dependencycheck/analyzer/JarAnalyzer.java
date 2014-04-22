@@ -496,11 +496,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 model = readPom(source);
             } catch (SecurityException ex) {
                 final String msg = String.format("Unable to parse pom '%s' in jar '%s'; invalid signature", path, jar.getName());
-                Logger
-                        .getLogger(JarAnalyzer.class
-                                .getName()).log(Level.WARNING, msg);
-                Logger.getLogger(JarAnalyzer.class
-                        .getName()).log(Level.FINE, null, ex);
+                LOGGER.log(Level.WARNING, msg);
+                LOGGER.log(Level.FINE, null, ex);
                 throw new AnalysisException(ex);
             } catch (IOException ex) {
                 final String msg = String.format("Unable to parse pom '%s' in jar '%s' (IO Exception)", path, jar.getName());
@@ -693,8 +690,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                         && !dependency.getFileName().toLowerCase().endsWith("-javadoc.jar")
                         && !dependency.getFileName().toLowerCase().endsWith("-src.jar")
                         && !dependency.getFileName().toLowerCase().endsWith("-doc.jar")) {
-                    Logger.getLogger(JarAnalyzer.class
-                            .getName()).log(Level.INFO,
+                    LOGGER.log(Level.INFO,
                                     String.format("Jar file '%s' does not contain a manifest.",
                                             dependency.getFileName()));
                 }
@@ -1050,11 +1046,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             }
         } catch (IOException ex) {
             final String msg = String.format("Unable to open jar file '%s'.", dependency.getFileName());
-            Logger
-                    .getLogger(JarAnalyzer.class
-                            .getName()).log(Level.WARNING, msg);
-            Logger.getLogger(JarAnalyzer.class
-                    .getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.WARNING, msg);
+            LOGGER.log(Level.FINE, null, ex);
         } finally {
             if (jar != null) {
                 try {
