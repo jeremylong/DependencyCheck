@@ -62,6 +62,10 @@ public class DependencyCheckTask extends Task {
      * System specific new line character.
      */
     private static final String NEW_LINE = System.getProperty("line.separator", "\n").intern();
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(DependencyCheckTask.class.getName());
 
     /**
      * Construct a new DependencyCheckTask.
@@ -882,7 +886,7 @@ public class DependencyCheckTask extends Task {
                     cve.open();
                     prop = cve.getDatabaseProperties();
                 } catch (DatabaseException ex) {
-                    Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, "Unable to retrieve DB Properties", ex);
+                    LOGGER.log(Level.FINE, "Unable to retrieve DB Properties", ex);
                 } finally {
                     if (cve != null) {
                         cve.close();
@@ -898,18 +902,15 @@ public class DependencyCheckTask extends Task {
                     showSummary(engine.getDependencies());
                 }
             } catch (IOException ex) {
-                Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE,
-                        "Unable to generate dependency-check report", ex);
+                LOGGER.log(Level.FINE, "Unable to generate dependency-check report", ex);
                 throw new BuildException("Unable to generate dependency-check report", ex);
             } catch (Exception ex) {
-                Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE,
-                        "An exception occurred; unable to continue task", ex);
+                LOGGER.log(Level.FINE, "An exception occurred; unable to continue task", ex);
                 throw new BuildException("An exception occurred; unable to continue task", ex);
             }
         } catch (DatabaseException ex) {
-            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.SEVERE,
-                    "Unable to connect to the dependency-check database; analysis has stopped");
-            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, "", ex);
+            LOGGER.log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
+            LOGGER.log(Level.FINE, "", ex);
         } finally {
             Settings.cleanup();
             if (engine != null) {
@@ -943,14 +944,14 @@ public class DependencyCheckTask extends Task {
             taskProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);
             Settings.mergeProperties(taskProperties);
         } catch (IOException ex) {
-            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.WARNING, "Unable to load the dependency-check ant task.properties file.");
-            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINE, null, ex);
+            LOGGER.log(Level.WARNING, "Unable to load the dependency-check ant task.properties file.");
+            LOGGER.log(Level.FINE, null, ex);
         } finally {
             if (taskProperties != null) {
                 try {
                     taskProperties.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.FINEST, null, ex);
+                    LOGGER.log(Level.FINEST, null, ex);
                 }
             }
         }
@@ -1100,7 +1101,7 @@ public class DependencyCheckTask extends Task {
             final String msg = String.format("%n%n"
                     + "One or more dependencies were identified with known vulnerabilities:%n%n%s"
                     + "%n%nSee the dependency-check report for more details.%n%n", summary.toString());
-            Logger.getLogger(DependencyCheckTask.class.getName()).log(Level.WARNING, msg);
+            LOGGER.log(Level.WARNING, msg);
         }
     }
 

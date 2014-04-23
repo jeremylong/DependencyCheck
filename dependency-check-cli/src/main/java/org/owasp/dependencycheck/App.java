@@ -45,7 +45,12 @@ public class App {
      * The location of the log properties configuration file.
      */
     private static final String LOG_PROPERTIES_FILE = "log.properties";
-
+    
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(App.class.getName());
+    
     /**
      * The main method for the application.
      *
@@ -115,7 +120,7 @@ public class App {
                 cve.open();
                 prop = cve.getDatabaseProperties();
             } catch (DatabaseException ex) {
-                Logger.getLogger(App.class.getName()).log(Level.FINE, "Unable to retrieve DB Properties", ex);
+                LOGGER.log(Level.FINE, "Unable to retrieve DB Properties", ex);
             } finally {
                 if (cve != null) {
                     cve.close();
@@ -125,15 +130,15 @@ public class App {
             try {
                 report.generateReports(reportDirectory, outputFormat);
             } catch (IOException ex) {
-                Logger.getLogger(App.class.getName()).log(Level.SEVERE, "There was an IO error while attempting to generate the report.");
-                Logger.getLogger(App.class.getName()).log(Level.FINE, null, ex);
+                LOGGER.log(Level.SEVERE, "There was an IO error while attempting to generate the report.");
+                LOGGER.log(Level.FINE, null, ex);
             } catch (Throwable ex) {
-                Logger.getLogger(App.class.getName()).log(Level.SEVERE, "There was an error while attempting to generate the report.");
-                Logger.getLogger(App.class.getName()).log(Level.FINE, null, ex);
+                LOGGER.log(Level.SEVERE, "There was an error while attempting to generate the report.");
+                LOGGER.log(Level.FINE, null, ex);
             }
         } catch (DatabaseException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
-            Logger.getLogger(App.class.getName()).log(Level.FINE, "", ex);
+            LOGGER.log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
+            LOGGER.log(Level.FINE, "", ex);
         } finally {
             Settings.cleanup();
             if (scanner != null) {
@@ -180,12 +185,12 @@ public class App {
                 Settings.mergeProperties(propertiesFile);
             } catch (FileNotFoundException ex) {
                 final String msg = String.format("Unable to load properties file '%s'", propertiesFile.getPath());
-                Logger.getLogger(App.class.getName()).log(Level.SEVERE, msg);
-                Logger.getLogger(App.class.getName()).log(Level.FINE, null, ex);
+                LOGGER.log(Level.SEVERE, msg);
+                LOGGER.log(Level.FINE, null, ex);
             } catch (IOException ex) {
                 final String msg = String.format("Unable to find properties file '%s'", propertiesFile.getPath());
-                Logger.getLogger(App.class.getName()).log(Level.SEVERE, msg);
-                Logger.getLogger(App.class.getName()).log(Level.FINE, null, ex);
+                LOGGER.log(Level.SEVERE, msg);
+                LOGGER.log(Level.FINE, null, ex);
             }
         }
         // We have to wait until we've merged the properties before attempting to set whether we use

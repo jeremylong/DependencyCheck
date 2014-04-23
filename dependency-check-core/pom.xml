@@ -366,7 +366,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                                     <exclude>**/generated/*.java</exclude>
                                 </excludes>
                                 <rulesets>
-                                  <ruleset>dc-rules/dcrules.xml</ruleset>
+                                  <ruleset>../dc-rules/dcrules.xml</ruleset>
                                   <ruleset>/rulesets/java/basic.xml</ruleset>
                                   <ruleset>/rulesets/java/imports.xml</ruleset>
                                   <ruleset>/rulesets/java/unusedcode.xml</ruleset>
