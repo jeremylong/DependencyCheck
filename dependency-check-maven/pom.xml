@@ -233,7 +233,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-pmd-plugin</artifactId>
-                            <version>3.0.1</version>
+                            <version>3.1</version>
                             <configuration>
                                 <targetJdk>1.6</targetJdk>
                                 <linkXref>true</linkXref>
@@ -241,6 +241,12 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                                 <excludes>
                                     <exclude>**/generated/*.java</exclude>
                                 </excludes>
+                                <rulesets>
+                                  <ruleset>../dc-rules/dcrules.xml</ruleset>
+                                  <ruleset>/rulesets/java/basic.xml</ruleset>
+                                  <ruleset>/rulesets/java/imports.xml</ruleset>
+                                  <ruleset>/rulesets/java/unusedcode.xml</ruleset>
+                                </rulesets>
                             </configuration>
                         </plugin>
                         <plugin>
