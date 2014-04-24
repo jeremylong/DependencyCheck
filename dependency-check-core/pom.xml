@@ -366,10 +366,10 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                                     <exclude>**/generated/*.java</exclude>
                                 </excludes>
                                 <rulesets>
-                                  <ruleset>../dc-rules/dcrules.xml</ruleset>
-                                  <ruleset>/rulesets/java/basic.xml</ruleset>
-                                  <ruleset>/rulesets/java/imports.xml</ruleset>
-                                  <ruleset>/rulesets/java/unusedcode.xml</ruleset>
+                                    <ruleset>../dc-rules/dcrules.xml</ruleset>
+                                    <ruleset>/rulesets/java/basic.xml</ruleset>
+                                    <ruleset>/rulesets/java/imports.xml</ruleset>
+                                    <ruleset>/rulesets/java/unusedcode.xml</ruleset>
                                 </rulesets>
                             </configuration>
                         </plugin>
@@ -591,6 +591,13 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <groupId>org.apache.openjpa</groupId>
             <artifactId>openjpa</artifactId>
             <version>2.0.1</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>3.0</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
