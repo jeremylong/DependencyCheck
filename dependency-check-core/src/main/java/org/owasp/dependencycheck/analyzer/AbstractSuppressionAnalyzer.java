@@ -17,16 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import org.owasp.dependencycheck.suppression.SuppressionParseException;
 import org.owasp.dependencycheck.suppression.SuppressionParser;
 import org.owasp.dependencycheck.suppression.SuppressionRule;
@@ -34,6 +24,17 @@ import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  * Abstract base suppression analyzer that contains methods for parsing the suppression xml file.
@@ -48,6 +49,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     private static final Logger LOGGER = Logger.getLogger(AbstractSuppressionAnalyzer.class.getName());
 
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
+
     /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
      *
@@ -58,6 +60,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     }
 
     //</editor-fold>
+
     /**
      * The initialize method loads the suppression XML file.
      *
@@ -68,6 +71,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         super.initialize();
         loadSuppressionData();
     }
+
     /**
      * The list of suppression rules
      */
@@ -124,9 +128,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                         try {
                             org.apache.commons.io.FileUtils.copyInputStreamToFile(suppressionsFromClasspath, file);
                         } catch (IOException ex) {
-                            LOGGER.log(Level.WARNING, "Unable to locate suppressions file in classpath");
-                            LOGGER.log(Level.FINE, "", ex);
-                            throw new SuppressionParseException("Unable to locate suppressions file in classpath", ex);
+                            throwSuppressionParseException("Unable to locate suppressions file in classpath", ex);
                         }
                     }
                 }
@@ -146,24 +148,21 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                 }
             }
         } catch (DownloadFailedException ex) {
-            LOGGER.log(Level.WARNING,
-                    "Unable to fetch the configured suppression file");
-            LOGGER.log(Level.FINE, "", ex);
-            throw new SuppressionParseException("Unable to fetch the configured suppression file", ex);
+            throwSuppressionParseException("Unable to fetch the configured suppression file", ex);
         } catch (MalformedURLException ex) {
-            LOGGER.log(Level.WARNING,
-                    "Configured suppression file has an invalid URL");
-            LOGGER.log(Level.FINE, "", ex);
-            throw new SuppressionParseException("Configured suppression file has an invalid URL", ex);
+            throwSuppressionParseException("Configured suppression file has an invalid URL", ex);
         } catch (IOException ex) {
-            LOGGER.log(Level.WARNING,
-                    "Unable to create temp file for suppressions");
-            LOGGER.log(Level.FINE, "", ex);
-            throw new SuppressionParseException("Unable to create temp file for suppressions", ex);
+            throwSuppressionParseException("Unable to create temp file for suppressions", ex);
         } finally {
             if (deleteTempFile && file != null) {
                 FileUtils.delete(file);
             }
         }
+    }
+
+    private void throwSuppressionParseException(String message, Exception exception) throws SuppressionParseException {
+        LOGGER.log(Level.WARNING, message);
+        LOGGER.log(Level.FINE, "", exception);
+        throw new SuppressionParseException(message, exception);
     }
 }
