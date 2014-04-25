@@ -17,10 +17,11 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -115,6 +116,20 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                 }
             } else {
                 file = new File(suppressionFilePath);
+                if (!file.exists()) {
+                    InputStream suppressionsFromClasspath = this.getClass().getClassLoader().getResourceAsStream(suppressionFilePath);
+                    if (suppressionsFromClasspath != null) {
+                        deleteTempFile = true;
+                        file = FileUtils.getTempFile("suppression", "xml");
+                        try {
+                            org.apache.commons.io.FileUtils.copyInputStreamToFile(suppressionsFromClasspath, file);
+                        } catch (IOException ex) {
+                            LOGGER.log(Level.WARNING, "Unable to locate suppressions file in classpath");
+                            LOGGER.log(Level.FINE, "", ex);
+                            throw new SuppressionParseException("Unable to locate suppressions file in classpath", ex);
+                        }
+                    }
+                }
             }
 
             if (file != null) {
