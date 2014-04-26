@@ -36,8 +36,8 @@ public class UpdateService {
     /**
      * Creates a new instance of UpdateService.
      */
-    public UpdateService() {
-        loader = ServiceLoader.load(CachedWebDataSource.class);
+    public UpdateService(ClassLoader classLoader) {
+        loader = ServiceLoader.load(CachedWebDataSource.class, classLoader);
     }
 
     /**
