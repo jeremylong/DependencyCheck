@@ -35,6 +35,8 @@ public class AnalyzerService {
 
     /**
      * Creates a new instance of AnalyzerService.
+     *
+     * @param classLoader the ClassLoader to use when dynamically loading Analyzer and Update services
      */
     public AnalyzerService(ClassLoader classLoader) {
         loader = ServiceLoader.load(Analyzer.class, classLoader);

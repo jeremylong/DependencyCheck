@@ -17,14 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.owasp.dependencycheck.suppression.SuppressionParseException;
-import org.owasp.dependencycheck.suppression.SuppressionParser;
-import org.owasp.dependencycheck.suppression.SuppressionRule;
-import org.owasp.dependencycheck.utils.DownloadFailedException;
-import org.owasp.dependencycheck.utils.Downloader;
-import org.owasp.dependencycheck.utils.FileUtils;
-import org.owasp.dependencycheck.utils.Settings;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +27,13 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import org.owasp.dependencycheck.suppression.SuppressionParseException;
+import org.owasp.dependencycheck.suppression.SuppressionParser;
+import org.owasp.dependencycheck.suppression.SuppressionRule;
+import org.owasp.dependencycheck.utils.DownloadFailedException;
+import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.FileUtils;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * Abstract base suppression analyzer that contains methods for parsing the suppression xml file.
@@ -49,7 +48,6 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     private static final Logger LOGGER = Logger.getLogger(AbstractSuppressionAnalyzer.class.getName());
 
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
-
     /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
      *
@@ -60,7 +58,6 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     }
 
     //</editor-fold>
-
     /**
      * The initialize method loads the suppression XML file.
      *
@@ -121,7 +118,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
             } else {
                 file = new File(suppressionFilePath);
                 if (!file.exists()) {
-                    InputStream suppressionsFromClasspath = this.getClass().getClassLoader().getResourceAsStream(suppressionFilePath);
+                    final InputStream suppressionsFromClasspath = this.getClass().getClassLoader().getResourceAsStream(suppressionFilePath);
                     if (suppressionsFromClasspath != null) {
                         deleteTempFile = true;
                         file = FileUtils.getTempFile("suppression", "xml");
@@ -160,6 +157,13 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         }
     }
 
+    /**
+     * Utility method to throw parse exceptions.
+     *
+     * @param message the exception message
+     * @param exception the cause of the exception
+     * @throws SuppressionParseException throws the generated SuppressionParseException
+     */
     private void throwSuppressionParseException(String message, Exception exception) throws SuppressionParseException {
         LOGGER.log(Level.WARNING, message);
         LOGGER.log(Level.FINE, "", exception);

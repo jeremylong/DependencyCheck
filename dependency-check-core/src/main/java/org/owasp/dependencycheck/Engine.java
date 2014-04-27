@@ -87,6 +87,7 @@ public class Engine {
     /**
      * Creates a new Engine using the specified classloader to dynamically load Analyzer and Update services.
      *
+     * @param serviceClassLoader the ClassLoader to use when dynamically loading Analyzer and Update services
      * @throws DatabaseException thrown if there is an error connecting to the database
      */
     public Engine(ClassLoader serviceClassLoader) throws DatabaseException {
