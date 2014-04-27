@@ -249,6 +249,9 @@ public final class Settings {
      * Cleans up resources to prevent memory leaks.
      */
     public static void cleanup() {
+        if (tempDirectory != null && tempDirectory.exists()) {
+            FileUtils.delete(tempDirectory);
+        }
         try {
             localSettings.remove();
         } catch (Throwable ex) {
@@ -463,12 +466,26 @@ public final class Settings {
     }
 
     /**
+     * A reference to the temporary directory; used incase it needs to be deleted during cleanup.
+     */
+    private static File tempDirectory = null;
+
+    /**
      * Returns the temporary directory.
      *
      * @return the temporary directory
      */
-    public static File getTempDirectory() {
-        return new File(Settings.getString(Settings.KEYS.TEMP_DIRECTORY, System.getProperty("java.io.tmpdir")));
+    public static File getTempDirectory() throws IOException {
+        File tmpDir = new File(Settings.getString(Settings.KEYS.TEMP_DIRECTORY, System.getProperty("java.io.tmpdir")));
+        if (!tmpDir.exists()) {
+            if (!tmpDir.mkdirs()) {
+                final String msg = String.format("Unable to make a temporary folder '%s'", tmpDir.getPath());
+                throw new IOException(msg);
+            } else {
+                tempDirectory = tmpDir;
+            }
+        }
+        return tmpDir;
     }
 
     /**

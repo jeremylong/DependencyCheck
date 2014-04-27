@@ -691,8 +691,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                         && !dependency.getFileName().toLowerCase().endsWith("-src.jar")
                         && !dependency.getFileName().toLowerCase().endsWith("-doc.jar")) {
                     LOGGER.log(Level.INFO,
-                                    String.format("Jar file '%s' does not contain a manifest.",
-                                            dependency.getFileName()));
+                            String.format("Jar file '%s' does not contain a manifest.",
+                                    dependency.getFileName()));
                 }
                 return false;
             }
@@ -920,12 +920,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void initializeFileTypeAnalyzer() throws Exception {
         final File baseDir = Settings.getTempDirectory();
-        if (!baseDir.exists()) {
-            if (!baseDir.mkdirs()) {
-                final String msg = String.format("Unable to make a temporary folder '%s'", baseDir.getPath());
-                throw new AnalysisException(msg);
-            }
-        }
         tempFileLocation = File.createTempFile("check", "tmp", baseDir);
         if (!tempFileLocation.delete()) {
             final String msg = String.format("Unable to delete temporary file '%s'.", tempFileLocation.getAbsolutePath());

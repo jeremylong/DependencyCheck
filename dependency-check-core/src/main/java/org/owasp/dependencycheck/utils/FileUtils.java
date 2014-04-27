@@ -107,11 +107,6 @@ public final class FileUtils {
      */
     public static File getTempFile(String prefix, String extension) throws IOException {
         final File dir = Settings.getTempDirectory();
-        if (!dir.exists()) {
-            if (!dir.mkdirs()) {
-                throw new IOException("Unable to create temporary folder");
-            }
-        }
         final String tempFileName = String.format("%s%s.%s", prefix, UUID.randomUUID().toString(), extension);
         final File tempFile = new File(dir, tempFileName);
         if (tempFile.exists()) {
