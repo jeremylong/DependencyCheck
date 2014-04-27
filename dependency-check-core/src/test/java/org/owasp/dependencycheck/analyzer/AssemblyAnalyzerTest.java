@@ -59,7 +59,11 @@ public class AssemblyAnalyzerTest extends BaseTest {
             analyzer.supportsExtension("dll");
             analyzer.initialize();
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Exception setting up AssemblyAnalyzer. Tests will be incomplete", e);
+            if (e.getMessage().contains("Could not execute .NET AssemblyAnalyzer")) {
+                LOGGER.log(Level.WARNING, "Exception setting up AssemblyAnalyzer. Tests will be incomplete");
+            } else {
+                LOGGER.log(Level.WARNING, "Exception setting up AssemblyAnalyzer. Tests will be incomplete", e);
+            }
             Assume.assumeNoException("Is mono installed? TESTS WILL BE INCOMPLETE", e);
         }
     }
