@@ -36,7 +36,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.runtime.RuntimeConstants;
-import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -123,29 +122,19 @@ public class ReportGenerator {
      * @return a velocity engine.
      */
     private VelocityEngine createVelocityEngine() {
-        final VelocityEngine ve = new VelocityEngine();
-        ve.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, VelocityLoggerRedirect.class.getName());
-        ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
-        ve.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
-        return ve;
+        final VelocityEngine engine = new VelocityEngine();
+        // Logging redirection for Velocity - Required by Jenkins and other server applications
+        engine.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, VelocityLoggerRedirect.class.getName());
+        return engine;
     }
 
     /**
-     * Creates a new Velocity Context initialized with escape and date tools.
+     * Creates a new Velocity Context.
      *
      * @return a Velocity Context.
      */
     private Context createContext() {
-        //REMOVED all of the velocity tools to simplify the engine trying to resolve issues running this in Jenkins
-//        final ToolManager manager = new ToolManager();
-//        final Context c = manager.createContext();
-//        final EasyFactoryConfiguration config = new EasyFactoryConfiguration();
-//        config.addDefaultTools();
-//        config.toolbox("application").tool("esc", "org.apache.velocity.tools.generic.EscapeTool").
-//        tool("org.apache.velocity.tools.generic.DateTool");
-//        manager.configure(config);
-        final VelocityContext c = new VelocityContext();
-        return c;
+        return new VelocityContext();
     }
 
     /**
