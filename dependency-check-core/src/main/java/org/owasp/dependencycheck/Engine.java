@@ -67,18 +67,33 @@ public class Engine {
      */
     private final Set<FileTypeAnalyzer> fileTypeAnalyzers;
     /**
+     * The ClassLoader to use when dynamically loading Analyzer and Update services.
+     */
+    private ClassLoader serviceClassLoader;
+    /**
      * The Logger for use throughout the class.
      */
     private static final Logger LOGGER = Logger.getLogger(Engine.class.getName());
+
     /**
      * Creates a new Engine.
      *
      * @throws DatabaseException thrown if there is an error connecting to the database
      */
     public Engine() throws DatabaseException {
+        this(Thread.currentThread().getContextClassLoader());
+    }
+
+    /**
+     * Creates a new Engine using the specified classloader to dynamically load Analyzer and Update services.
+     *
+     * @throws DatabaseException thrown if there is an error connecting to the database
+     */
+    public Engine(ClassLoader serviceClassLoader) throws DatabaseException {
         this.dependencies = new ArrayList<Dependency>();
         this.analyzers = new EnumMap<AnalysisPhase, List<Analyzer>>(AnalysisPhase.class);
         this.fileTypeAnalyzers = new HashSet<FileTypeAnalyzer>();
+        this.serviceClassLoader = serviceClassLoader;
 
         ConnectionFactory.initialize();
 
@@ -110,7 +125,7 @@ public class Engine {
             analyzers.put(phase, new ArrayList<Analyzer>());
         }
 
-        final AnalyzerService service = new AnalyzerService();
+        final AnalyzerService service = new AnalyzerService(serviceClassLoader);
         final Iterator<Analyzer> iterator = service.getAnalyzers();
         while (iterator.hasNext()) {
             final Analyzer a = iterator.next();
@@ -413,7 +428,7 @@ public class Engine {
      * Cycles through the cached web data sources and calls update on all of them.
      */
     private void doUpdates() {
-        final UpdateService service = new UpdateService();
+        final UpdateService service = new UpdateService(serviceClassLoader);
         final Iterator<CachedWebDataSource> iterator = service.getDataSources();
         while (iterator.hasNext()) {
             final CachedWebDataSource source = iterator.next();

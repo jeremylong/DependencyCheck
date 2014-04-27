@@ -36,8 +36,8 @@ public class AnalyzerService {
     /**
      * Creates a new instance of AnalyzerService.
      */
-    public AnalyzerService() {
-        loader = ServiceLoader.load(Analyzer.class);
+    public AnalyzerService(ClassLoader classLoader) {
+        loader = ServiceLoader.load(Analyzer.class, classLoader);
     }
 
     /**
