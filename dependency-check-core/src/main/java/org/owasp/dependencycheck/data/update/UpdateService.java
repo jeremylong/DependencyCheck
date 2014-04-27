@@ -35,6 +35,8 @@ public class UpdateService {
 
     /**
      * Creates a new instance of UpdateService.
+     *
+     * @param classLoader the ClassLoader to use when dynamically loading Analyzer and Update services
      */
     public UpdateService(ClassLoader classLoader) {
         loader = ServiceLoader.load(CachedWebDataSource.class, classLoader);

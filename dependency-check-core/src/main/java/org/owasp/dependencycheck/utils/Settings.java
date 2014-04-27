@@ -474,9 +474,10 @@ public final class Settings {
      * Returns the temporary directory.
      *
      * @return the temporary directory
+     * @throws java.io.IOException thrown if the temporary directory does not exist and cannot be created
      */
     public static File getTempDirectory() throws IOException {
-        File tmpDir = new File(Settings.getString(Settings.KEYS.TEMP_DIRECTORY, System.getProperty("java.io.tmpdir")));
+        final File tmpDir = new File(Settings.getString(Settings.KEYS.TEMP_DIRECTORY, System.getProperty("java.io.tmpdir")));
         if (!tmpDir.exists()) {
             if (!tmpDir.mkdirs()) {
                 final String msg = String.format("Unable to make a temporary folder '%s'", tmpDir.getPath());
