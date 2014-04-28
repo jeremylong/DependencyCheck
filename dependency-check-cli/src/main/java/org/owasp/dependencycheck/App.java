@@ -45,12 +45,12 @@ public class App {
      * The location of the log properties configuration file.
      */
     private static final String LOG_PROPERTIES_FILE = "log.properties";
-    
+
     /**
      * The logger.
      */
     private static final Logger LOGGER = Logger.getLogger(App.class.getName());
-    
+
     /**
      * The main method for the application.
      *
