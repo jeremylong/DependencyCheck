@@ -240,6 +240,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                                 <sourceEncoding>utf-8</sourceEncoding>
                                 <excludes>
                                     <exclude>**/generated/*.java</exclude>
+                                    <exclude>**/HelpMojo.java</exclude>
                                 </excludes>
                                 <rulesets>
                                     <ruleset>../src/main/config/dcrules.xml</ruleset>
