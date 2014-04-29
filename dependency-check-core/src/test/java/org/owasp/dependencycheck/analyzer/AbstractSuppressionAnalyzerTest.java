@@ -18,9 +18,7 @@
 package org.owasp.dependencycheck.analyzer;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -43,9 +41,6 @@ import static org.junit.Assert.assertNull;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class AbstractSuppressionAnalyzerTest extends BaseTest {
-
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
 
     private AbstractSuppressionAnalyzer instance;
 
@@ -87,10 +82,9 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
         assertEquals(expCount, result.size());
     }
 
-    @Test
+    @Test(expected = SuppressionParseException.class)
     public void testFailureToLocateSuppressionFileInClasspath() throws Exception {
         Settings.setString(Settings.KEYS.SUPPRESSION_FILE, "doesnotexist.xml");
-        exception.expect(SuppressionParseException.class);
         instance.initialize();
     }
 
