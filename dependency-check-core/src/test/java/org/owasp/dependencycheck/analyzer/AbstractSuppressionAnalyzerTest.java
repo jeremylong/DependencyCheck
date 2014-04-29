@@ -83,7 +83,7 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
     }
 
     @Test(expected = SuppressionParseException.class)
-    public void testFailureToLocateSuppressionFileInClasspath() throws Exception {
+    public void testFailureToLocateSuppressionFileAnywhere() throws Exception {
         Settings.setString(Settings.KEYS.SUPPRESSION_FILE, "doesnotexist.xml");
         instance.initialize();
     }
