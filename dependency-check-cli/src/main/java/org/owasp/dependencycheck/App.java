@@ -57,8 +57,13 @@ public class App {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        final App app = new App();
-        app.run(args);
+        try {
+            Settings.initialize();
+            final App app = new App();
+            app.run(args);
+        } finally {
+            Settings.cleanup();
+        }
     }
 
     /**
@@ -67,8 +72,8 @@ public class App {
      * @param args the command line arguments
      */
     public void run(String[] args) {
-
         final CliParser cli = new CliParser();
+
         try {
             cli.parse(args);
         } catch (FileNotFoundException ex) {
@@ -140,7 +145,6 @@ public class App {
             LOGGER.log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
             LOGGER.log(Level.FINE, "", ex);
         } finally {
-            Settings.cleanup();
             if (scanner != null) {
                 scanner.cleanup();
             }
@@ -154,8 +158,6 @@ public class App {
      * settings in the core engine.
      */
     private void populateSettings(CliParser cli) {
-
-        Settings.initialize();
 
         final boolean autoUpdate = cli.isAutoUpdate();
         final String connectionTimeout = cli.getConnectionTimeout();
