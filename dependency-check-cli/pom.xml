@@ -25,6 +25,7 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
     </parent>
 
     <artifactId>dependency-check-cli</artifactId>
+    <version>1.2.0.1</version>
     <packaging>jar</packaging>
 
     <name>Dependency-Check Command Line</name>
