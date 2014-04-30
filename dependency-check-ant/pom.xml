@@ -25,6 +25,8 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
     </parent>
 
     <artifactId>dependency-check-ant</artifactId>
+    <version>1.2.0.1</version>
+
     <packaging>jar</packaging>
 
     <name>Dependency-Check Ant Task</name>
