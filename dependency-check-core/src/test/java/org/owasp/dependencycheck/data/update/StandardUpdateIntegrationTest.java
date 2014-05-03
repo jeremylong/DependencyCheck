@@ -67,16 +67,16 @@ public class StandardUpdateIntegrationTest extends BaseTest {
         result = instance.withinRange(lastRun, current, range);
         assertEquals(expResult, result);
     }
-
-    /**
-     * Test of update method, of class StandardUpdate.
-     */
-    @Test
-    public void testUpdate() throws Exception {
-        StandardUpdate instance = getStandardUpdateTask();
-        instance.update();
-        //TODO make this an actual test
-    }
+// test removed as it is duplicative of the EngineIntegrationTest and the NvdCveUpdaterIntergraionTest
+//    /**
+//     * Test of update method, of class StandardUpdate.
+//     */
+//    @Test
+//    public void testUpdate() throws Exception {
+//        StandardUpdate instance = getStandardUpdateTask();
+//        instance.update();
+//        //TODO make this an actual test
+//    }
 
     /**
      * Test of updatesNeeded method, of class StandardUpdate.
