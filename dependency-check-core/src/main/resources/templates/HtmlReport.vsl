@@ -612,7 +612,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                             #end
                         #end
                         <h4 id="header$cnt" class="subsectionheader white">Identifiers</h4>
-                        ##:&nbsp;<a href="http://web.nvd.nist.gov/view/vuln/search-results?cpe=$enc.url($cpevalue)" target="_blank">$enc.html($cpevalue)</a></h4>
+                        ##:&nbsp;<a href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($cpevalue)" target="_blank">$enc.html($cpevalue)</a></h4>
                         <div id="content$cnt" class="subsectioncontent standardsubsection">
                         #if ($dependency.getIdentifiers().size()==0)
                             <ul><li><b>None</b></li></ul>
@@ -669,10 +669,10 @@ arising out of or in connection with the use of this tool, the analysis performe
                                 #end
                             </p>
                             <p>Vulnerable Software &amp; Versions:&nbsp;(<a href="#" onclick="toggleDisplay(this,'.vs$vsctr'); return false;">show all</a>)<ul>
-                                <li class="vs$vsctr"><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/search-results?cpe=$enc.url($vuln.matchedCPE)">$enc.html($vuln.matchedCPE)</a> #if($vuln.hasMatchedAllPreviousCPE()) and all previous versions#end</li>
+                                <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedCPE)">$enc.html($vuln.matchedCPE)</a> #if($vuln.hasMatchedAllPreviousCPE()) and all previous versions#end</li>
                                 <li class="vs$vsctr">...</li>
                             #foreach($vs in $vuln.getVulnerableSoftware())
-                                <li class="vs$vsctr hidden"><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/search-results?cpe=$enc.url($vs.name)">$enc.html($vs.name)</a> #if($vs.hasPreviousVersion()) and all previous versions#end</li>
+                                <li class="vs$vsctr hidden"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vs.name)">$enc.html($vs.name)</a> #if($vs.hasPreviousVersion()) and all previous versions#end</li>
                             #end
                             </ul></p>
                         #end
@@ -744,7 +744,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                                     #end
                                 #end
                                 <h4 id="header$cnt" class="subsectionheader white">Suppressed Identifiers</h4>
-                                ##:&nbsp;<a href="http://web.nvd.nist.gov/view/vuln/search-results?cpe=$enc.url($cpevalue)" target="_blank">$enc.html($cpevalue)</a></h4>
+                                ##:&nbsp;<a href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($cpevalue)" target="_blank">$enc.html($cpevalue)</a></h4>
                                 <div id="content$cnt" class="subsectioncontent standardsubsection">
                                 #if ($dependency.getSuppressedIdentifiers().size()==0)
                                     <ul><li><b>None</b></li></ul>
@@ -797,10 +797,10 @@ arising out of or in connection with the use of this tool, the analysis performe
                                         #end
                                     </p>
                                     <p>Vulnerable Software &amp; Versions:&nbsp;(<a href="#" onclick="toggleDisplay(this,'.vs$vsctr'); return false;">show all</a>)<ul>
-                                        <li class="vs$vsctr"><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/search-results?cpe=$enc.url($vuln.matchedCPE)">$enc.html($vuln.matchedCPE)</a> #if($vuln.hasMatchedAllPreviousCPE()) and all previous versions#end</li>
+                                        <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedCPE)">$enc.html($vuln.matchedCPE)</a> #if($vuln.hasMatchedAllPreviousCPE()) and all previous versions#end</li>
                                         <li class="vs$vsctr">...</li>
                                     #foreach($vs in $vuln.getVulnerableSoftware())
-                                        <li class="vs$vsctr hidden"><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/search-results?cpe=$enc.url($vs.name)">$enc.html($vs.name)</a> #if($vs.hasPreviousVersion()) and all previous versions#end</li>
+                                        <li class="vs$vsctr hidden"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vs.name)">$enc.html($vs.name)</a> #if($vs.hasPreviousVersion()) and all previous versions#end</li>
                                     #end
                                     </ul></p>
                                 #end
