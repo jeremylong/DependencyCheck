@@ -178,7 +178,9 @@ public class StandardUpdate {
 
             if (maxUpdates >= 1) { //ensure the modified file date gets written (we may not have actually updated it)
                 properties.save(updateable.get(MODIFIED));
+                LOGGER.log(Level.INFO, "Begin database maintenance.");
                 cveDB.cleanupDatabase();
+                LOGGER.log(Level.INFO, "End database maintenance.");
             }
         } finally {
             closeDataStores();
