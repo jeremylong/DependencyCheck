@@ -374,6 +374,15 @@ public class Dependency implements Comparable<Dependency> {
      *
      * @return an EvidenceCollection.
      */
+    public Set<Evidence> getEvidenceForDisplay() {
+        return EvidenceCollection.mergeForDisplay(this.productEvidence, this.vendorEvidence, this.versionEvidence);
+    }
+
+    /**
+     * Returns the evidence used to identify this dependency.
+     *
+     * @return an EvidenceCollection.
+     */
     public EvidenceCollection getEvidenceUsed() {
         return EvidenceCollection.mergeUsed(this.productEvidence, this.vendorEvidence, this.versionEvidence);
     }

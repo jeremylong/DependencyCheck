@@ -571,7 +571,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                         <div id="content$cnt" class="subsectioncontent standardsubsection hidden">
                             <table class="lined fullwidth" border="0">
                                 <tr><th class="left" style="width:10%;">Source</th><th class="left" style="width:20%;">Name</th><th class="left" style="width:70%;">Value</th></tr>
-                                #foreach($evidence in $dependency.getEvidenceUsed())
+                                #foreach($evidence in $dependency.getEvidenceForDisplay())
                                     <tr><td>$enc.html($evidence.getSource())</td><td>$enc.html($evidence.getName())</td><td>$enc.html($evidence.getValue())</td></tr>
                                 #end
                             </table>
@@ -714,7 +714,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                                 <div id="content$cnt" class="subsectioncontent standardsubsection hidden">
                                     <table class="lined fullwidth" border="0">
                                         <tr><th class="left" style="width:10%;">Source</th><th class="left" style="width:20%;">Name</th><th class="left" style="width:70%;">Value</th></tr>
-                                        #foreach($evidence in $dependency.getEvidenceUsed())
+                                        #foreach($evidence in $dependency.getEvidenceForDisplay())
                                             <tr><td>$enc.html($evidence.getSource())</td><td>$enc.html($evidence.getName())</td><td>$enc.html($evidence.getValue())</td></tr>
                                         #end
                                     </table>
