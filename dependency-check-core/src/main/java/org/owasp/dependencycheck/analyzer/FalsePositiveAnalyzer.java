@@ -248,16 +248,26 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
             //TODO move this startsWith expression to a configuration file?
             if ("cpe".equals(i.getType())) {
                 if ((i.getValue().matches(".*c\\+\\+.*")
-                        || i.getValue().startsWith("cpe:/a:jquery:jquery")
-                        || i.getValue().startsWith("cpe:/a:prototypejs:prototype")
-                        || i.getValue().startsWith("cpe:/a:yahoo:yui")
                         || i.getValue().startsWith("cpe:/a:file:file")
                         || i.getValue().startsWith("cpe:/a:mozilla:mozilla")
                         || i.getValue().startsWith("cpe:/a:cvs:cvs")
                         || i.getValue().startsWith("cpe:/a:ftp:ftp")
+                        || i.getValue().startsWith("cpe:/a:tcp:tcp")
                         || i.getValue().startsWith("cpe:/a:ssh:ssh"))
                         && (dependency.getFileName().toLowerCase().endsWith(".jar")
-                        || dependency.getFileName().toLowerCase().endsWith("pom.xml"))) {
+                        || dependency.getFileName().toLowerCase().endsWith("pom.xml")
+                        || dependency.getFileName().toLowerCase().endsWith(".dll")
+                        || dependency.getFileName().toLowerCase().endsWith(".exe")
+                        || dependency.getFileName().toLowerCase().endsWith(".nuspec")
+                        || dependency.getFileName().toLowerCase().endsWith(".nupkg"))) {
+                    itr.remove();
+                } else if ((i.getValue().startsWith("cpe:/a:jquery:jquery")
+                        || i.getValue().startsWith("cpe:/a:prototypejs:prototype")
+                        || i.getValue().startsWith("cpe:/a:yahoo:yui"))
+                        && (dependency.getFileName().toLowerCase().endsWith(".jar")
+                        || dependency.getFileName().toLowerCase().endsWith("pom.xml")
+                        || dependency.getFileName().toLowerCase().endsWith(".dll")
+                        || dependency.getFileName().toLowerCase().endsWith(".exe"))) {
                     itr.remove();
                 } else if (i.getValue().startsWith("cpe:/a:apache:maven")
                         && !dependency.getFileName().toLowerCase().matches("maven-core-[\\d\\.]+\\.jar")) {
@@ -266,7 +276,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         && !dependency.getEvidenceUsed().containsUsedString("m-core")) {
                     itr.remove();
                 } else if (i.getValue().startsWith("cpe:/a:jboss:jboss")
-                        && !dependency.getFileName().toLowerCase().matches("jboss-[\\d\\.]+(GA)?\\.jar")) {
+                        && !dependency.getFileName().toLowerCase().matches("jboss-?[\\d\\.-]+(GA)?\\.jar")) {
                     itr.remove();
                 }
             }
