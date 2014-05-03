@@ -44,7 +44,7 @@ public class CliParserTest {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        Settings.cleanup();
+        Settings.cleanup(true);
     }
 
     @Before

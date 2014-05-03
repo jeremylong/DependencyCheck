@@ -247,9 +247,11 @@ public final class Settings {
 
     /**
      * Cleans up resources to prevent memory leaks.
+     *
+     * @param deleteTemporary flag indicating whether any temporary directories generated should be removed
      */
-    public static void cleanup() {
-        if (tempDirectory != null && tempDirectory.exists()) {
+    public static void cleanup(boolean deleteTemporary) {
+        if (deleteTemporary && tempDirectory != null && tempDirectory.exists()) {
             FileUtils.delete(tempDirectory);
         }
         try {

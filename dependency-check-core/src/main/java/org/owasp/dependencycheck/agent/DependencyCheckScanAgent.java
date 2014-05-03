@@ -888,7 +888,7 @@ public class DependencyCheckScanAgent {
                     "Unable to connect to the dependency-check database; analysis has stopped");
             LOGGER.log(Level.FINE, "", ex);
         } finally {
-            Settings.cleanup();
+            Settings.cleanup(true);
             if (engine != null) {
                 engine.cleanup();
             }

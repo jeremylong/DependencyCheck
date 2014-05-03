@@ -62,7 +62,7 @@ public class App {
             final App app = new App();
             app.run(args);
         } finally {
-            Settings.cleanup();
+            Settings.cleanup(true);
         }
     }
 
