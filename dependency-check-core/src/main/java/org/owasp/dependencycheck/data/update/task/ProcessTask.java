@@ -119,7 +119,7 @@ public class ProcessTask implements Callable<ProcessTask> {
         } catch (UpdateException ex) {
             this.exception = ex;
         } finally {
-            Settings.cleanup();
+            Settings.cleanup(false);
         }
         return this;
     }

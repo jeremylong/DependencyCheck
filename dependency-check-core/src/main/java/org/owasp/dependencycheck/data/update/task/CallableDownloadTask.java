@@ -203,7 +203,7 @@ public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
             LOGGER.log(Level.WARNING, msg);
             LOGGER.log(Level.FINE, "Download Task Failed", ex);
         } finally {
-            Settings.cleanup();
+            Settings.cleanup(false);
         }
         return null;
     }
