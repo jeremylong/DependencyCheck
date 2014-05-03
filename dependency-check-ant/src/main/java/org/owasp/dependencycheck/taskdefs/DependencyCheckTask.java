@@ -912,7 +912,7 @@ public class DependencyCheckTask extends Task {
             LOGGER.log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
             LOGGER.log(Level.FINE, "", ex);
         } finally {
-            Settings.cleanup();
+            Settings.cleanup(true);
             if (engine != null) {
                 engine.cleanup();
             }

@@ -45,7 +45,7 @@ public class DependencyCheckTaskTest extends BuildFileTest {
     public void tearDown() {
         //no cleanup...
         //executeTarget("cleanup");
-        Settings.cleanup();
+        Settings.cleanup(true);
     }
 
     /**
