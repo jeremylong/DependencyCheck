@@ -866,7 +866,7 @@ public class DependencyCheckTask extends Task {
 
         Engine engine = null;
         try {
-            engine = new Engine();
+            engine = new Engine(DependencyCheckTask.class.getClassLoader());
 
             for (Resource resource : path) {
                 final FileProvider provider = resource.as(FileProvider.class);
