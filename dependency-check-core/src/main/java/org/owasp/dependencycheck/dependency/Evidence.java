@@ -220,22 +220,95 @@ public class Evidence implements Comparable<Evidence> {
      * @return an integer indicating the ordering of the two objects
      */
     public int compareTo(Evidence o) {
-        if (source.equals(o.source)) {
-            if (name.equals(o.name)) {
-                if (value.equals(o.value)) {
-                    if (confidence.equals(o.confidence)) {
+        if (o == null) {
+            return 1;
+        }
+        if (equalsWithNullCheck(source, o.source)) {
+            if (equalsWithNullCheck(name, o.name)) {
+                if (equalsWithNullCheck(value, o.value)) {
+                    if (equalsWithNullCheck(confidence, o.confidence)) {
                         return 0; //they are equal
                     } else {
-                        return confidence.compareTo(o.confidence);
+                        return compareToWithNullCheck(confidence, o.confidence);
                     }
                 } else {
-                    return value.compareToIgnoreCase(o.value);
+                    return compareToIgnoreCaseWithNullCheck(value, o.value);
                 }
             } else {
-                return name.compareToIgnoreCase(o.name);
+                return compareToIgnoreCaseWithNullCheck(name, o.name);
             }
         } else {
-            return source.compareToIgnoreCase(o.source);
+            return compareToIgnoreCaseWithNullCheck(source, o.source);
         }
+    }
+
+    /**
+     * Equality check with an exhaustive, possibly duplicative, check against nulls.
+     *
+     * @param me the value to be compared
+     * @param other the other value to be compared
+     * @return true if the values are equal; otherwise false
+     */
+    private boolean equalsWithNullCheck(String me, String other) {
+        if (me == null && other == null) {
+            return true;
+        } else if (me == null || other == null) {
+            return false;
+        }
+        return me.equals(other);
+    }
+
+    /**
+     * Equality check with an exhaustive, possibly duplicative, check against nulls.
+     *
+     * @param me the value to be compared
+     * @param other the other value to be compared
+     * @return true if the values are equal; otherwise false
+     */
+    private boolean equalsWithNullCheck(Confidence me, Confidence other) {
+        if (me == null && other == null) {
+            return true;
+        } else if (me == null || other == null) {
+            return false;
+        }
+        return me.equals(other);
+    }
+
+    /**
+     * Wrapper around {@link java.lang.String#compareToIgnoreCase(java.lang.String) String.compareToIgnoreCase} with an
+     * exhaustive, possibly duplicative, check against nulls.
+     *
+     * @param me the value to be compared
+     * @param other the other value to be compared
+     * @return true if the values are equal; otherwise false
+     */
+    private int compareToIgnoreCaseWithNullCheck(String me, String other) {
+        if (me == null && other == null) {
+            return 0;
+        } else if (me == null) {
+            return -1; //the other string is greater then me
+        } else if (other == null) {
+            return 1; //me is greater then the other string
+        }
+        return me.compareToIgnoreCase(other);
+    }
+
+    /**
+     * Wrapper around {@link java.lang.Enum#compareTo(java.lang.Enum) Enum.compareTo} with an exhaustive, possibly
+     * duplicative, check against nulls.
+     *
+     * @param me the value to be compared
+     * @param other the other value to be compared
+     * @return true if the values are equal; otherwise false
+     */
+    private int compareToWithNullCheck(Confidence me, Confidence other) {
+        if (me == null && other == null) {
+            return 0;
+        } else if (me == null) {
+            return -1; //the other string is greater then me
+        } else if (other == null) {
+            return 1; //me is greater then the other string
+        }
+        return me.compareTo(other);
     }
 }

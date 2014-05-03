@@ -312,6 +312,26 @@ public class EvidenceCollection implements Iterable<Evidence> {
     }
 
     /**
+     * Merges multiple EvidenceCollections together; flattening all of the evidence items by removing the confidence.
+     *
+     * @param ec One or more EvidenceCollections
+     * @return new set of evidence resulting from merging the evidence in the collections
+     */
+    public static Set<Evidence> mergeForDisplay(EvidenceCollection... ec) {
+        final Set<Evidence> ret = new TreeSet<Evidence>();
+        for (EvidenceCollection col : ec) {
+            for (Evidence e : col) {
+                if (e.isUsed()) {
+                    final Evidence newEvidence = new Evidence(e.getSource(), e.getName(), e.getValue(), null);
+                    newEvidence.setUsed(true);
+                    ret.add(newEvidence);
+                }
+            }
+        }
+        return ret;
+    }
+
+    /**
      * Returns a string of evidence 'values'.
      *
      * @return a string containing the evidence.

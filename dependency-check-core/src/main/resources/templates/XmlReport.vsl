@@ -68,7 +68,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             </relatedDependencies>
 #end
             <evidenceCollected>
-#foreach($evidence in $dependency.getEvidenceUsed())
+#foreach($evidence in $dependency.getEvidenceForDisplay())
                 <evidence>
                     <source>$enc.xml($evidence.getSource())</source>
                     <name>$enc.xml($evidence.getName())</name>

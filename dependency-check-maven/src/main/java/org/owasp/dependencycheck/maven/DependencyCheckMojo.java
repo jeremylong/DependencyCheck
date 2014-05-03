@@ -613,7 +613,8 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      */
     private int writeSiteReportDependencyEvidenceUsed(Dependency d, int collapsibleHeaderCount, Sink sink) {
         int cnt = collapsibleHeaderCount;
-        if (d.getEvidenceUsed() != null && d.getEvidenceUsed().size() > 0) {
+        final Set<Evidence> evidence = d.getEvidenceForDisplay();
+        if (evidence != null && evidence.size() > 0) {
             cnt += 1;
             sink.sectionTitle4();
             sink.rawText("Evidence Collected <a href=\"javascript:toggleElement(this, 'evidence" + cnt + "')\">[+]</a>");
@@ -625,7 +626,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
             writeTableHeaderCell(sink, "Name");
             writeTableHeaderCell(sink, "Value");
             sink.tableRow_();
-            for (Evidence e : d.getEvidenceUsed()) {
+            for (Evidence e : evidence) {
                 sink.tableRow();
                 writeTableCell(sink, e.getSource());
                 writeTableCell(sink, e.getName());
