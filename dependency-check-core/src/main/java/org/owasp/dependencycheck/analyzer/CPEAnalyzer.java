@@ -57,6 +57,7 @@ import org.owasp.dependencycheck.utils.DependencyVersionUtil;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class CPEAnalyzer implements Analyzer {
+
     /**
      * The Logger.
      */
@@ -89,6 +90,11 @@ public class CPEAnalyzer implements Analyzer {
      * The CVE Database.
      */
     private CveDB cve;
+
+    /**
+     * The URL to perform a search of the NVD CVE data at NIST.
+     */
+    public static final String NVD_SEARCH_URL = "https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=%s";
 
     /**
      * Returns the name of this analyzer.
@@ -524,7 +530,9 @@ public class CPEAnalyzer implements Analyzer {
                     }
                     if (dbVer == null //special case, no version specified - everything is vulnerable
                             || evVer.equals(dbVer)) { //yeah! exact match
-                        final String url = String.format("http://web.nvd.nist.gov/view/vuln/search?cpe=%s", URLEncoder.encode(vs.getName(), "UTF-8"));
+
+                        //final String url = String.format("http://web.nvd.nist.gov/view/vuln/search?cpe=%s", URLEncoder.encode(vs.getName(), "UTF-8"));
+                        final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getName(), "UTF-8"));
                         final IdentifierMatch match = new IdentifierMatch("cpe", vs.getName(), url, IdentifierConfidence.EXACT_MATCH, conf);
                         collected.add(match);
                     } else {
@@ -549,7 +557,7 @@ public class CPEAnalyzer implements Analyzer {
             }
         }
         final String cpeName = String.format("cpe:/a:%s:%s:%s", vendor, product, bestGuess.toString());
-        final String url = null; //String.format("http://web.nvd.nist.gov/view/vuln/search?cpe=%s", URLEncoder.encode(cpeName, "UTF-8"));
+        final String url = null;
         if (bestGuessConf == null) {
             bestGuessConf = Confidence.LOW;
         }
