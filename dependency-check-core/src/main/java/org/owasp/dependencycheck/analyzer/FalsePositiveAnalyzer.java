@@ -329,20 +329,21 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                 try {
                     dependency.addIdentifier("cpe",
                             newCpe,
-                            String.format("http://web.nvd.nist.gov/view/vuln/search?cpe=%s", URLEncoder.encode(newCpe, "UTF-8")));
+                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe, "UTF-8")));
                     dependency.addIdentifier("cpe",
                             newCpe2,
-                            String.format("http://web.nvd.nist.gov/view/vuln/search?cpe=%s", URLEncoder.encode(newCpe2, "UTF-8")));
+                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe2, "UTF-8")));
                     dependency.addIdentifier("cpe",
                             newCpe3,
-                            String.format("http://web.nvd.nist.gov/view/vuln/search?cpe=%s", URLEncoder.encode(newCpe3, "UTF-8")));
+                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe3, "UTF-8")));
                     dependency.addIdentifier("cpe",
                             newCpe4,
-                            String.format("http://web.nvd.nist.gov/view/vuln/search?cpe=%s", URLEncoder.encode(newCpe4, "UTF-8")));
+                            String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe4, "UTF-8")));
                 } catch (UnsupportedEncodingException ex) {
                     LOGGER.log(Level.FINE, null, ex);
                 }
             }
         }
     }
+
 }
