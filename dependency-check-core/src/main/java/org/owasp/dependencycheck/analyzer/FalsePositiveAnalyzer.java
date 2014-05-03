@@ -88,6 +88,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         removeBadMatches(dependency);
         removeWrongVersionMatches(dependency);
         removeSpuriousCPE(dependency);
+        removeDuplicativePOMEntries(dependency, engine);
         addFalseNegativeCPEs(dependency);
     }
 
@@ -181,27 +182,6 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
             if (coreCPE.matches() && !coreFiles.matches()) {
                 itr.remove();
             }
-
-            //replaced with the regex above.
-            //            if (("cpe:/a:sun:java".equals(i.getValue())
-            //                    || "cpe:/a:oracle:java".equals(i.getValue())
-            //                    || "cpe:/a:ibm:java".equals(i.getValue())
-            //                    || "cpe:/a:sun:j2se".equals(i.getValue())
-            //                    || "cpe:/a:oracle:j2se".equals(i.getValue())
-            //                    || i.getValue().startsWith("cpe:/a:sun:java:")
-            //                    || i.getValue().startsWith("cpe:/a:sun:j2se:")
-            //                    || i.getValue().startsWith("cpe:/a:sun:java:jre")
-            //                    || i.getValue().startsWith("cpe:/a:sun:java:jdk")
-            //                    || i.getValue().startsWith("cpe:/a:sun:java_se")
-            //                    || i.getValue().startsWith("cpe:/a:oracle:java_se")
-            //                    || i.getValue().startsWith("cpe:/a:oracle:java:")
-            //                    || i.getValue().startsWith("cpe:/a:oracle:j2se:")
-            //                    || i.getValue().startsWith("cpe:/a:oracle:jre")
-            //                    || i.getValue().startsWith("cpe:/a:oracle:jdk")
-            //                    || i.getValue().startsWith("cpe:/a:ibm:java:"))
-            //                    && !dependency.getFileName().toLowerCase().endsWith("rt.jar")) {
-            //                itr.remove();
-            //            }
         }
     }
 
@@ -253,7 +233,8 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         || i.getValue().startsWith("cpe:/a:cvs:cvs")
                         || i.getValue().startsWith("cpe:/a:ftp:ftp")
                         || i.getValue().startsWith("cpe:/a:tcp:tcp")
-                        || i.getValue().startsWith("cpe:/a:ssh:ssh"))
+                        || i.getValue().startsWith("cpe:/a:ssh:ssh")
+                        || i.getValue().startsWith("cpe:/a:lookup:lookup"))
                         && (dependency.getFileName().toLowerCase().endsWith(".jar")
                         || dependency.getFileName().toLowerCase().endsWith("pom.xml")
                         || dependency.getFileName().toLowerCase().endsWith(".dll")
@@ -324,6 +305,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      * @param dependency the dependency being analyzed
      */
     private void addFalseNegativeCPEs(Dependency dependency) {
+        //TODO move this to the hint analyzer
         final Iterator<Identifier> itr = dependency.getIdentifiers().iterator();
         while (itr.hasNext()) {
             final Identifier i = itr.next();
@@ -356,4 +338,54 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         }
     }
 
+    private void removeDuplicativePOMEntries(Dependency dependency, Engine engine) {
+        if (dependency.getFileName().toLowerCase().endsWith("pom.xml")) {
+            String parentPath = dependency.getFilePath().toLowerCase();
+            if (parentPath.contains(".jar")) {
+                parentPath = parentPath.substring(0, parentPath.indexOf(".jar") + 4);
+                Dependency parent = findDependency(parentPath, engine.getDependencies());
+                if (parent != null) {
+                    boolean remove = false;
+                    for (Identifier i : dependency.getIdentifiers()) {
+                        if ("cpe".equals(i.getType())) {
+                            String trimmedCPE = trimCpeToVendor(i.getValue());
+                            for (Identifier parentId : parent.getIdentifiers()) {
+                                if ("cpe".equals(parentId.getType()) && parentId.getValue().startsWith(trimmedCPE)) {
+                                    remove |= true;
+                                }
+                            }
+                        }
+                        if (remove == false) {
+                            return;
+                        }
+                    }
+                    if (remove) {
+                        engine.getDependencies().remove(dependency);
+                    }
+                }
+            }
+
+        }
+    }
+
+    private Dependency findDependency(String parentPath, List<Dependency> dependencies) {
+        for (Dependency d : dependencies) {
+            if (d.getFilePath().equalsIgnoreCase(parentPath)) {
+                return d;
+            }
+        }
+        return null;
+    }
+
+    private String trimCpeToVendor(String value) {
+        //cpe:/a:jruby:jruby:1.0.8
+        int pos1 = value.indexOf(":", 7); //right of vendor
+        int pos2 = value.indexOf(":", pos1 + 1); //right of product
+        if (pos2 < 0) {
+            return value;
+        } else {
+            return value.substring(0, pos2 - 1);
+        }
+
+    }
 }

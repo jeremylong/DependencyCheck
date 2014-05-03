@@ -690,7 +690,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                         && !dependency.getFileName().toLowerCase().endsWith("-javadoc.jar")
                         && !dependency.getFileName().toLowerCase().endsWith("-src.jar")
                         && !dependency.getFileName().toLowerCase().endsWith("-doc.jar")) {
-                    LOGGER.log(Level.INFO,
+                    LOGGER.log(Level.FINE,
                             String.format("Jar file '%s' does not contain a manifest.",
                                     dependency.getFileName()));
                 }
