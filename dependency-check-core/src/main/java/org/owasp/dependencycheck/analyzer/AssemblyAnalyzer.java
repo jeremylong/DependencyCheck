@@ -73,7 +73,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Logger
      */
-    private static final Logger LOGGER = Logger.getLogger(AssemblyAnalyzer.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AssemblyAnalyzer.class.getName(), "dependencycheck-resources");
 
     /**
      * Builds the beginnings of a List for ProcessBuilder
@@ -106,7 +106,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     public void analyzeFileType(Dependency dependency, Engine engine)
             throws AnalysisException {
         if (grokAssemblyExe == null) {
-            LOGGER.warning("GrokAssembly didn't get deployed");
+            LOGGER.warning("analyzer.AssemblyAnalyzer.notdeployed");
             return;
         }
 
@@ -114,16 +114,30 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         args.add(dependency.getActualFilePath());
         final ProcessBuilder pb = new ProcessBuilder(args);
         BufferedReader rdr = null;
+        Document doc = null;
         try {
             final Process proc = pb.start();
             // Try evacuating the error stream
             rdr = new BufferedReader(new InputStreamReader(proc.getErrorStream(), "UTF-8"));
             String line = null;
             while (rdr.ready() && (line = rdr.readLine()) != null) {
-                LOGGER.log(Level.WARNING, "Error from GrokAssembly: {0}", line);
+                LOGGER.log(Level.WARNING, "analyzer.AssemblyAnalyzer.grokassembly.stderr", line);
             }
             int rc = 0;
-            final Document doc = builder.parse(proc.getInputStream());
+            doc = builder.parse(proc.getInputStream());
+
+            try {
+                rc = proc.waitFor();
+            } catch (InterruptedException ie) {
+                return;
+            }
+            if (rc == 3) {
+                LOGGER.log(Level.FINE, "analyzer.AssemblyAnalyzer.notassembly", dependency.getActualFilePath());
+                return;
+            } else if (rc != 0) {
+                LOGGER.log(Level.WARNING, "analyzer.AssemblyAnalyzer.grokassembly.rc", rc);
+            }
+            
             final XPath xpath = XPathFactory.newInstance().newXPath();
 
             // First, see if there was an error
@@ -148,18 +162,6 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             if (product != null) {
                 dependency.getProductEvidence().addEvidence(new Evidence("grokassembly", "product",
                         product, Confidence.HIGH));
-            }
-
-            try {
-                rc = proc.waitFor();
-            } catch (InterruptedException ie) {
-                return;
-            }
-            if (rc == 3) {
-                LOGGER.log(Level.INFO, "{0} is not a valid assembly", dependency.getActualFilePath());
-                return;
-            } else if (rc != 0) {
-                LOGGER.log(Level.WARNING, "Return code {0} from GrokAssembly", rc);
             }
 
         } catch (IOException ioe) {
@@ -201,9 +203,9 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             grokAssemblyExe = tempFile;
             // Set the temp file to get deleted when we're done
             grokAssemblyExe.deleteOnExit();
-            LOGGER.log(Level.FINE, "Extracted GrokAssembly.exe to {0}", grokAssemblyExe.getPath());
+            LOGGER.log(Level.FINE, "analyzer.AssemblyAnalyzer.grokassembly.deployed", grokAssemblyExe.getPath());
         } catch (IOException ioe) {
-            LOGGER.log(Level.WARNING, "Could not extract GrokAssembly.exe: {0}", ioe.getMessage());
+            LOGGER.log(Level.WARNING, "analyzer.AssemblyAnalyzer.grokassembly.notdeployed", ioe.getMessage());
             throw new AnalysisException("Could not extract GrokAssembly.exe", ioe);
         } finally {
             if (fos != null) {
@@ -246,9 +248,8 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             if (e instanceof AnalysisException) {
                 throw (AnalysisException) e;
             } else {
-                LOGGER.warning("An error occured with the .NET AssemblyAnalyzer; "
-                        + "this can be ignored unless you are scanning .NET DLLs. Please see the log for more details.");
-                LOGGER.log(Level.FINE, "Could not execute GrokAssembly {0}", e.getMessage());
+                LOGGER.warning("analyzer.AssemblyAnalyzer.grokassembly.initialization.failed");
+                LOGGER.log(Level.FINE, "analyzer.AssemblyAnalyzer.grokassembly.initialization.message", e.getMessage());
                 throw new AnalysisException("An error occured with the .NET AssemblyAnalyzer", e);
             }
         } finally {
@@ -272,7 +273,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 grokAssemblyExe.deleteOnExit();
             }
         } catch (SecurityException se) {
-            LOGGER.fine("Can't delete temporary GrokAssembly.exe");
+            LOGGER.fine("analyzer.AssemblyAnalyzer.grokassembly.notdeleted");
         }
     }
 
