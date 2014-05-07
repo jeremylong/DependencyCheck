@@ -805,7 +805,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                                     </p>
                                     #if ($vuln.getVulnerableSoftware().size()<2)
                                         <p>Vulnerable Software &amp; Versions:<ul>
-                                            <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedCPE)">$enc.html($vuln.matchedCPE)</a> #if($vuln.hasMatchedAllPreviousCPE()) and all previous versions#end</li>
+                                            git st<li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedCPE)">$enc.html($vuln.matchedCPE)</a> #if($vuln.hasMatchedAllPreviousCPE()) and all previous versions#end</li>
                                         </ul></p>
                                     #else
                                         <p>Vulnerable Software &amp; Versions:&nbsp;(<a href="#" onclick="toggleDisplay(this,'.vs$vsctr'); return false;">show all</a>)<ul>
