@@ -77,19 +77,19 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
         if (cpeName != null && cpeName.length() > 7) {
             final String[] data = cpeName.substring(7).split(":");
             if (data.length >= 1) {
-                this.setVendor(URLDecoder.decode(data[0].replace("+", "%2B"), "UTF-8"));
+                this.setVendor(urlDecode(data[0]));
             }
             if (data.length >= 2) {
-                this.setProduct(URLDecoder.decode(data[1].replace("+", "%2B"), "UTF-8"));
+                this.setProduct(urlDecode(data[1]));
             }
             if (data.length >= 3) {
-                version = URLDecoder.decode(data[2].replace("+", "%2B"), "UTF-8");
+                version = urlDecode(data[2]);
             }
             if (data.length >= 4) {
-                revision = URLDecoder.decode(data[3].replace("+", "%2B"), "UTF-8");
+                revision = urlDecode(data[3]);
             }
             if (data.length >= 5) {
-                edition = URLDecoder.decode(data[4].replace("+", "%2B"), "UTF-8");
+                edition = urlDecode(data[4]);
             }
         }
     }
@@ -340,5 +340,26 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
      */
     public void setEdition(String edition) {
         this.edition = edition;
+    }
+
+    /**
+     * Replaces '+' with '%2B' and then URL Decodes the string attempting first UTF-8, then ASCII, then default.
+     *
+     * @param string the string to URL Decode
+     * @return the URL Decoded string
+     */
+    private String urlDecode(String string) {
+        final String text = string.replace("+", "%2B");
+        String result;
+        try {
+            result = URLDecoder.decode(text, "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            try {
+                result = URLDecoder.decode(text, "ASCII");
+            } catch (UnsupportedEncodingException ex1) {
+                result = URLDecoder.decode(text);
+            }
+        }
+        return result;
     }
 }
