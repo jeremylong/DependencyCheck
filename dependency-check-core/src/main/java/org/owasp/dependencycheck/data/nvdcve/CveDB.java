@@ -46,6 +46,7 @@ import org.owasp.dependencycheck.utils.Pair;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class CveDB {
+
     /**
      * The logger.
      */
@@ -733,8 +734,10 @@ public class CveDB {
         final boolean isStruts = "apache".equals(vendor) && "struts".equals(product);
         final DependencyVersion v = parseDependencyVersion(cpeId);
         final boolean prevAffected = previous != null && !previous.isEmpty();
-        if (identifiedVersion == null || "-".equals(identifiedVersion.toString())) {
-            if (v == null || "-".equals(v.toString())) {
+        if (v == null || "-".equals(v.toString())) { //all versions
+            affected = true;
+        } else if (identifiedVersion == null || "-".equals(identifiedVersion.toString())) {
+            if (prevAffected) {
                 affected = true;
             }
         } else if (identifiedVersion.equals(v) || (prevAffected && identifiedVersion.compareTo(v) < 0)) {
