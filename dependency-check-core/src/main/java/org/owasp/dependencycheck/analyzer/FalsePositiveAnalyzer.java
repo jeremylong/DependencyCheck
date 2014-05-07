@@ -384,7 +384,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         if (pos2 < 0) {
             return value;
         } else {
-            return value.substring(0, pos2 - 1);
+            return value.substring(0, pos2);
         }
 
     }
