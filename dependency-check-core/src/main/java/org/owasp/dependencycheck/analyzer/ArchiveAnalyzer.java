@@ -480,7 +480,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.FINE, String.format("Unable to unzip zip file '%s'", dependency.getFilePath()), ex);
         } finally {
             ZipFile.closeQuietly(zip);
         }
