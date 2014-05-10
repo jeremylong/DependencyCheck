@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +36,9 @@ import java.util.logging.Logger;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
@@ -98,6 +101,11 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * to be explicitly handled in extractFiles().
      */
     private static final Set<String> EXTENSIONS = newHashSet("tar", "gz", "tgz");
+
+    /**
+     * The set of file extensions to remove from the engine's collection of dependencies.
+     */
+    private static final Set<String> REMOVE_FROM_ANALYSIS = newHashSet("zip", "tar", "gz", "tgz"); //TODO add nupkg, apk, sar?
 
     static {
         final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
@@ -199,9 +207,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         extractFiles(f, tmpDir, engine);
 
         //make a copy
-        final List<Dependency> dependencies = new ArrayList<Dependency>(engine.getDependencies());
+        List<Dependency> dependencies = new ArrayList<Dependency>(engine.getDependencies());
         engine.scan(tmpDir);
-        final List<Dependency> newDependencies = engine.getDependencies();
+        List<Dependency> newDependencies = engine.getDependencies();
         if (dependencies.size() != newDependencies.size()) {
             //get the new dependencies
             final Set<Dependency> dependencySet = new HashSet<Dependency>();
@@ -228,6 +236,40 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                     scanDepth -= 1;
                 }
             }
+        }
+        if (this.REMOVE_FROM_ANALYSIS.contains(dependency.getFileExtension())) {
+            if ("zip".equals(dependency.getFileExtension()) && isZipFileActuallyJarFile(dependency)) {
+                final File tdir = getNextTempDirectory();
+                final String fileName = dependency.getFileName();
+
+                LOGGER.info(String.format("The zip file '%s' appears to be a JAR file, making a deep copy and analyziing it as a JAR.", fileName));
+
+                final File tmpLoc = new File(tdir, fileName.substring(0, fileName.length() - 3) + "jar");
+                try {
+                    org.apache.commons.io.FileUtils.copyFile(tdir, tmpLoc);
+                    dependencies = new ArrayList<Dependency>(engine.getDependencies());
+                    engine.scan(tmpLoc);
+                    newDependencies = engine.getDependencies();
+                    if (dependencies.size() != newDependencies.size()) {
+                        //get the new dependencies
+                        final Set<Dependency> dependencySet = new HashSet<Dependency>();
+                        dependencySet.addAll(newDependencies);
+                        dependencySet.removeAll(dependencies);
+                        if (dependencySet.size() != 1) {
+                            LOGGER.info("Deep copy of ZIP to JAR file resulted in more then one dependency?");
+                        }
+                        for (Dependency d : dependencySet) {
+                            //fix the dependency's display name and path
+                            d.setFilePath(dependency.getFilePath());
+                            d.setDisplayFileName(dependency.getFileName());
+                        }
+                    }
+                } catch (IOException ex) {
+                    final String msg = String.format("Unable to perform deep copy on '%s'", dependency.getActualFile().getPath());
+                    LOGGER.log(Level.FINE, msg, ex);
+                }
+            }
+            engine.getDependencies().remove(dependency);
         }
         Collections.sort(engine.getDependencies());
     }
@@ -410,5 +452,39 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         }
+    }
+
+    /**
+     * Attempts to determine if a zip file is actually a JAR file.
+     *
+     * @param dependency the dependency to check
+     * @return true if the dependency appears to be a JAR file; otherwise false
+     */
+    private boolean isZipFileActuallyJarFile(Dependency dependency) {
+        boolean isJar = false;
+        ZipFile zip = null;
+        try {
+            zip = new ZipFile(dependency.getActualFilePath());
+            if (zip.getEntry("META-INF/MANIFEST.MF") != null
+                    || zip.getEntry("META-INF/maven") != null) {
+                Enumeration<ZipArchiveEntry> entries = zip.getEntries();
+                while (entries.hasMoreElements()) {
+                    ZipArchiveEntry entry = entries.nextElement();
+                    if (!entry.isDirectory()) {
+                        String name = entry.getName().toLowerCase();
+                        if (name.endsWith(".class")) {
+                            isJar = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ArchiveAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ZipFile.closeQuietly(zip);
+        }
+
+        return isJar;
     }
 }
