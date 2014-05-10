@@ -138,7 +138,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             "include-resource",
             "embed-dependency",
             "ipojo-components",
-            "ipojo-extension");
+            "ipojo-extension",
+            "eclipse-sourcereferences");
     /**
      * item in some manifest, should be considered medium confidence.
      */
@@ -764,6 +765,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                             && !key.endsWith("class-path")
                             && !key.endsWith("-scm") //todo change this to a regex?
                             && !key.startsWith("scm-")
+                            && !value.trim().startsWith("scm:")
                             && !isImportPackage(key, value)
                             && !isPackage(key, value)) {
 
