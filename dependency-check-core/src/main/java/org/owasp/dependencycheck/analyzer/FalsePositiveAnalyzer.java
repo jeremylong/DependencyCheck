@@ -347,24 +347,24 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      */
     private void removeDuplicativeEntriesFromJar(Dependency dependency, Engine engine) {
         if (dependency.getFileName().toLowerCase().endsWith("pom.xml")
-                || dependency.getFileExtension().equals("dll")
-                || dependency.getFileExtension().equals("exe")) {
+                || "dll".equals(dependency.getFileExtension())
+                || "exe".equals(dependency.getFileExtension())) {
             String parentPath = dependency.getFilePath().toLowerCase();
             if (parentPath.contains(".jar")) {
                 parentPath = parentPath.substring(0, parentPath.indexOf(".jar") + 4);
-                Dependency parent = findDependency(parentPath, engine.getDependencies());
+                final Dependency parent = findDependency(parentPath, engine.getDependencies());
                 if (parent != null) {
                     boolean remove = false;
                     for (Identifier i : dependency.getIdentifiers()) {
                         if ("cpe".equals(i.getType())) {
-                            String trimmedCPE = trimCpeToVendor(i.getValue());
+                            final String trimmedCPE = trimCpeToVendor(i.getValue());
                             for (Identifier parentId : parent.getIdentifiers()) {
                                 if ("cpe".equals(parentId.getType()) && parentId.getValue().startsWith(trimmedCPE)) {
                                     remove |= true;
                                 }
                             }
                         }
-                        if (remove == false) {
+                        if (!remove) { //we can escape early
                             return;
                         }
                     }
@@ -377,24 +377,36 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         }
     }
 
-    private Dependency findDependency(String parentPath, List<Dependency> dependencies) {
+    /**
+     * Retrieves a given dependency, based on a given path, from a list of dependencies.
+     *
+     * @param dependencyPath the path of the dependency to return
+     * @param dependencies the collection of dependencies to search
+     * @return the dependency object for the given path, otherwise null
+     */
+    private Dependency findDependency(String dependencyPath, List<Dependency> dependencies) {
         for (Dependency d : dependencies) {
-            if (d.getFilePath().equalsIgnoreCase(parentPath)) {
+            if (d.getFilePath().equalsIgnoreCase(dependencyPath)) {
                 return d;
             }
         }
         return null;
     }
 
+    /**
+     * Takes a full CPE and returns the CPE trimmed to include only vendor and product.
+     *
+     * @param value the CPE value to trim
+     * @return a CPE value that only includes the vendor and product
+     */
     private String trimCpeToVendor(String value) {
         //cpe:/a:jruby:jruby:1.0.8
-        int pos1 = value.indexOf(":", 7); //right of vendor
-        int pos2 = value.indexOf(":", pos1 + 1); //right of product
+        final int pos1 = value.indexOf(":", 7); //right of vendor
+        final int pos2 = value.indexOf(":", pos1 + 1); //right of product
         if (pos2 < 0) {
             return value;
         } else {
             return value.substring(0, pos2);
         }
-
     }
 }

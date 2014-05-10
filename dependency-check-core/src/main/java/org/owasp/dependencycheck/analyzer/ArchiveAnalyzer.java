@@ -467,11 +467,11 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             zip = new ZipFile(dependency.getActualFilePath());
             if (zip.getEntry("META-INF/MANIFEST.MF") != null
                     || zip.getEntry("META-INF/maven") != null) {
-                Enumeration<ZipArchiveEntry> entries = zip.getEntries();
+                final Enumeration<ZipArchiveEntry> entries = zip.getEntries();
                 while (entries.hasMoreElements()) {
-                    ZipArchiveEntry entry = entries.nextElement();
+                    final ZipArchiveEntry entry = entries.nextElement();
                     if (!entry.isDirectory()) {
-                        String name = entry.getName().toLowerCase();
+                        final String name = entry.getName().toLowerCase();
                         if (name.endsWith(".class")) {
                             isJar = true;
                             break;
