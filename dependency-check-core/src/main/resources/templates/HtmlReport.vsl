@@ -532,11 +532,11 @@ arising out of or in connection with the use of this tool, the analysis performe
                 #foreach($dependency in $dependencies)
                     #set($lnkcnt=$lnkcnt+1)
                     <li class="#if($dependency.getVulnerabilities().size()==0)notvulnerable#else vulnerable#end">
-                    <a href="#l${lnkcnt}_$enc.html($enc.url($dependency.Sha1sum))">$enc.html($dependency.FileName)</a>
+                    <a href="#l${lnkcnt}_$enc.html($enc.url($dependency.Sha1sum))">$enc.html($dependency.DisplayFileName)</a>
                     #if($dependency.getRelatedDependencies().size()>0)
                         <ul>
                         #foreach($related in $dependency.getRelatedDependencies())
-                        <li>$enc.html($related.FileName)</li>
+                        <li>$enc.html($related.DisplayFileName)</li>
                         #end
                         </ul>
                     #end
@@ -549,7 +549,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                 #set($vsctr=0) ##counter to create unique groups for vulnerable software
                 #foreach($dependency in $dependencies)
                     #set($lnkcnt=$lnkcnt+1)
-                    <h3 class="subsectionheader standardsubsection#if($dependency.getVulnerabilities().size()==0) notvulnerable#end"><a name="l${lnkcnt}_$enc.html($dependency.Sha1sum)"></a>$enc.html($dependency.FileName)</h3>
+                    <h3 class="subsectionheader standardsubsection#if($dependency.getVulnerabilities().size()==0) notvulnerable#end"><a name="l${lnkcnt}_$enc.html($dependency.Sha1sum)"></a>$enc.html($dependency.DisplayFileName)</h3>
                     <div class="subsectioncontent#if($dependency.getVulnerabilities().size()==0) notvulnerable#end">
                         #if ($dependency.description)
                             <p><b>Description:</b>&nbsp;$enc.html($dependency.description)<br/></p>
@@ -582,7 +582,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                             <div id="content$cnt" class="subsectioncontent standardsubsection hidden">
                             <ul>
                             #foreach($related in $dependency.getRelatedDependencies())
-                                <li>$enc.html($related.FileName)
+                                <li>$enc.html($related.DisplayFileName)
                                     <ul>
                                         <li>File Path:&nbsp;$enc.html($related.FilePath)</li>
                                         <li>SHA1:&nbsp;$enc.html($related.Sha1sum)</li>
@@ -699,7 +699,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                     #foreach($dependency in $dependencies)
                         #if ($dependency.getSuppressedIdentifiers().size()>0 || $dependency.getSuppressedVulnerabilities().size()>0)
                             #set($lnkcnt=$lnkcnt+1)
-                            <h3 class="subsectionheader standardsubsection">$enc.html($dependency.FileName)</h3>
+                            <h3 class="subsectionheader standardsubsection">$enc.html($dependency.DisplayFileName)</h3>
                             <div class="subsectioncontent">
                                 #if ($dependency.description)
                                     <p><b>Description:</b>&nbsp;$enc.html($dependency.description)<br/></p>
@@ -732,7 +732,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                                     <div id="content$cnt" class="subsectioncontent standardsubsection hidden">
                                     <ul>
                                     #foreach($related in $dependency.getRelatedDependencies())
-                                        <li>$enc.html($related.FileName)
+                                        <li>$enc.html($related.DisplayFileName)
                                             <ul>
                                                 <li>File Path:&nbsp;$enc.html($related.FilePath)</li>
                                                 <li>SHA1:&nbsp;$enc.html($related.Sha1sum)</li>
