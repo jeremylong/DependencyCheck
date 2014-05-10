@@ -178,6 +178,33 @@ public class Dependency implements Comparable<Dependency> {
     }
 
     /**
+     * The file name to display in reports.
+     */
+    private String displayName = null;
+
+    /**
+     * Sets the file name to display in reports.
+     *
+     * @param displayName the name to display
+     */
+    public void setDisplayFileName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    /**
+     * Returns the file name to display in reports; if no display file name has been set it will default to the actual
+     * file name.
+     *
+     * @return the file name to display
+     */
+    public String getDisplayFileName() {
+        if (displayName == null) {
+            return this.fileName;
+        }
+        return this.displayName;
+    }
+
+    /**
      * <p>
      * Gets the file path of the dependency.</p>
      * <p>
