@@ -137,7 +137,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             } else if (rc != 0) {
                 LOGGER.log(Level.WARNING, "analyzer.AssemblyAnalyzer.grokassembly.rc", rc);
             }
-            
+
             final XPath xpath = XPathFactory.newInstance().newXPath();
 
             // First, see if there was an error
