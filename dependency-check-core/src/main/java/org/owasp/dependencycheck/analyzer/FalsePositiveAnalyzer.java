@@ -88,7 +88,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         removeBadMatches(dependency);
         removeWrongVersionMatches(dependency);
         removeSpuriousCPE(dependency);
-        removeDuplicativePOMEntries(dependency, engine);
+        removeDuplicativeEntriesFromJar(dependency, engine);
         addFalseNegativeCPEs(dependency);
     }
 
@@ -338,8 +338,17 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         }
     }
 
-    private void removeDuplicativePOMEntries(Dependency dependency, Engine engine) {
-        if (dependency.getFileName().toLowerCase().endsWith("pom.xml")) {
+    /**
+     * Removes duplicate entries identified that are contained within JAR files. These occasionally crop up due to POM
+     * entries or other types of files (such as DLLs and EXEs) being contained within the JAR.
+     *
+     * @param dependency the dependency that might be a duplicate
+     * @param engine the engine used to scan all dependencies
+     */
+    private void removeDuplicativeEntriesFromJar(Dependency dependency, Engine engine) {
+        if (dependency.getFileName().toLowerCase().endsWith("pom.xml")
+                || dependency.getFileExtension().equals("dll")
+                || dependency.getFileExtension().equals("exe")) {
             String parentPath = dependency.getFilePath().toLowerCase();
             if (parentPath.contains(".jar")) {
                 parentPath = parentPath.substring(0, parentPath.indexOf(".jar") + 4);
