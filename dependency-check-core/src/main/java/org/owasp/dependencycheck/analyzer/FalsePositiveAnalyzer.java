@@ -250,6 +250,14 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         || dependency.getFileName().toLowerCase().endsWith(".dll")
                         || dependency.getFileName().toLowerCase().endsWith(".exe"))) {
                     itr.remove();
+                } else if ((i.getValue().startsWith("cpe:/a:microsoft:excel")
+                        || i.getValue().startsWith("cpe:/a:microsoft:word")
+                        || i.getValue().startsWith("cpe:/a:microsoft:visio")
+                        || i.getValue().startsWith("cpe:/a:microsoft:powerpoint")
+                        || i.getValue().startsWith("cpe:/a:microsoft:office"))
+                        && (dependency.getFileName().toLowerCase().endsWith(".jar")
+                        || dependency.getFileName().toLowerCase().endsWith("pom.xml"))) {
+                    itr.remove();
                 } else if (i.getValue().startsWith("cpe:/a:apache:maven")
                         && !dependency.getFileName().toLowerCase().matches("maven-core-[\\d\\.]+\\.jar")) {
                     itr.remove();
