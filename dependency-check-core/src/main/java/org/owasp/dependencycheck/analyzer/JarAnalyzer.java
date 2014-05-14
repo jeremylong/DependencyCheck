@@ -648,7 +648,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 //TODO remove weighting
                 vendor.addWeighting(entry.getKey());
                 if (addPackagesAsEvidence && entry.getKey().length() > 1) {
-                    vendor.addEvidence("jar", "package", entry.getKey(), Confidence.LOW);
+                    vendor.addEvidence("jar", "package name", entry.getKey(), Confidence.LOW);
                 }
             }
         }
@@ -657,7 +657,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             if (ratio > 0.5) {
                 product.addWeighting(entry.getKey());
                 if (addPackagesAsEvidence && entry.getKey().length() > 1) {
-                    product.addEvidence("jar", "package", entry.getKey(), Confidence.LOW);
+                    product.addEvidence("jar", "package name", entry.getKey(), Confidence.LOW);
                 }
             }
         }
