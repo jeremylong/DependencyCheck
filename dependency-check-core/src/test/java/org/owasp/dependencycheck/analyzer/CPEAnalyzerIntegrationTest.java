@@ -115,16 +115,13 @@ public class CPEAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
         FalsePositiveAnalyzer fp = new FalsePositiveAnalyzer();
         fp.analyze(dep, null);
 
-//        for (Identifier i : dep.getIdentifiers()) {
-//            System.out.println(i.getValue());
-//        }
         if (expResult != null) {
             Identifier expIdentifier = new Identifier("cpe", expResult, expResult);
             Assert.assertTrue("Incorrect match: { dep:'" + dep.getFileName() + "' }", dep.getIdentifiers().contains(expIdentifier));
-        } else if (dep.getIdentifiers().isEmpty()) {
-            Assert.assertTrue("Match found when an Identifier should not have been found: { dep:'" + dep.getFileName() + "' }", dep.getIdentifiers().isEmpty());
         } else {
-            Assert.assertTrue("Match found when an Identifier should not have been found: { dep:'" + dep.getFileName() + "', identifier:'" + dep.getIdentifiers().iterator().next().getValue() + "' }", dep.getIdentifiers().isEmpty());
+            for (Identifier i : dep.getIdentifiers()) {
+                Assert.assertFalse(String.format("%s - found a CPE identifier when should have been none (found '%s')", dep.getFileName(), i.getValue()), "cpe".equals(i.getType()));
+            }
         }
     }
 
@@ -170,7 +167,10 @@ public class CPEAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
         String expResultSpring = "cpe:/a:springsource:spring_framework:2.5.5";
         String expResultSpring3 = "cpe:/a:vmware:springsource_spring_framework:3.0.0";
 
-        Assert.assertTrue("Apache Common Validator - found an identifier?", commonValidator.getIdentifiers().isEmpty());
+        for (Identifier i : commonValidator.getIdentifiers()) {
+            Assert.assertFalse("Apache Common Validator - found a CPE identifier?", "cpe".equals(i.getType()));
+        }
+
         Assert.assertTrue("Incorrect match size - struts", struts.getIdentifiers().size() >= 1);
         Assert.assertTrue("Incorrect match - struts", struts.getIdentifiers().contains(expIdentifier));
         Assert.assertTrue("Incorrect match size - spring3 - " + spring3.getIdentifiers().size(), spring3.getIdentifiers().size() >= 1);
