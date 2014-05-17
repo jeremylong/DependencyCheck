@@ -30,6 +30,7 @@ import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nexus.NexusSearch;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -161,7 +162,18 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
                 dependency.getVersionEvidence().addEvidence("nexus", "version", ma.getVersion(), Confidence.HIGH);
             }
             if (ma.getArtifactUrl() != null && !"".equals(ma.getArtifactUrl())) {
-                dependency.addIdentifier("maven", ma.toString(), ma.getArtifactUrl(), Confidence.HIGHEST);
+                boolean found = false;
+                for (Identifier i : dependency.getIdentifiers()) {
+                    if ("maven".equals(i.getType()) && i.getValue().equals(ma.toString())) {
+                        found = true;
+                        i.setConfidence(Confidence.HIGHEST);
+                        i.setUrl(ma.getArtifactUrl());
+                        break;
+                    }
+                }
+                if (!found) {
+                    dependency.addIdentifier("maven", ma.toString(), ma.getArtifactUrl(), Confidence.HIGHEST);
+                }
             }
         } catch (IllegalArgumentException iae) {
             //dependency.addAnalysisException(new AnalysisException("Invalid SHA-1"));
