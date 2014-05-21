@@ -37,12 +37,12 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
+public class DownloadTask implements Callable<Future<ProcessTask>> {
 
     /**
      * The Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(CallableDownloadTask.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DownloadTask.class.getName());
 
     /**
      * Simple constructor for the callable download task.
@@ -54,7 +54,7 @@ public class CallableDownloadTask implements Callable<Future<ProcessTask>> {
      * the dependencies have a correct reference to the global settings.
      * @throws UpdateException thrown if temporary files could not be created
      */
-    public CallableDownloadTask(NvdCveInfo nvdCveInfo, ExecutorService processor, CveDB cveDB, Settings settings) throws UpdateException {
+    public DownloadTask(NvdCveInfo nvdCveInfo, ExecutorService processor, CveDB cveDB, Settings settings) throws UpdateException {
         this.nvdCveInfo = nvdCveInfo;
         this.processorService = processor;
         this.cveDB = cveDB;
