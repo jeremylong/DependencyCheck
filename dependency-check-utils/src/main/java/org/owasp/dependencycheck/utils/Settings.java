@@ -30,6 +30,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.owasp.dependencycheck.utils.FileUtils;
 
 /**
  * A simple settings container that wraps the dependencycheck.properties file.

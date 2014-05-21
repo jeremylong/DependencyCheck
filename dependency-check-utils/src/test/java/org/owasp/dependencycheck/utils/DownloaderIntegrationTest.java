@@ -21,7 +21,6 @@ import java.io.File;
 import java.net.URL;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import org.owasp.dependencycheck.BaseTest;
 
 /**
  *

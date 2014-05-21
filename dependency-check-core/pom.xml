@@ -220,6 +220,11 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                             <name>data.directory</name>
                             <value>${project.build.directory}/data</value>
                         </property>
+                        <property>
+                            <name>temp.directory</name>
+                            <value>${project.build.directory}/temp</value>
+                        </property>
+
                     </systemProperties>
                     <includes>
                         <include>**/*IntegrationTest.java</include>
@@ -399,6 +404,11 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         </plugins>
     </build>
     <dependencies>
+        <dependency>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-utils</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-test-framework</artifactId>
