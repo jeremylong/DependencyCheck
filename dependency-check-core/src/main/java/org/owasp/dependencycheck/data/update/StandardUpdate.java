@@ -34,7 +34,7 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import static org.owasp.dependencycheck.data.nvdcve.DatabaseProperties.MODIFIED;
 import org.owasp.dependencycheck.data.update.exception.InvalidDataException;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
-import org.owasp.dependencycheck.data.update.task.CallableDownloadTask;
+import org.owasp.dependencycheck.data.update.task.DownloadTask;
 import org.owasp.dependencycheck.data.update.task.ProcessTask;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
@@ -122,7 +122,7 @@ public class StandardUpdate {
             final Set<Future<Future<ProcessTask>>> downloadFutures = new HashSet<Future<Future<ProcessTask>>>(maxUpdates);
             for (NvdCveInfo cve : updateable) {
                 if (cve.getNeedsUpdate()) {
-                    final CallableDownloadTask call = new CallableDownloadTask(cve, processExecutor, cveDB, Settings.getInstance());
+                    final DownloadTask call = new DownloadTask(cve, processExecutor, cveDB, Settings.getInstance());
                     downloadFutures.add(downloadExecutors.submit(call));
                 }
             }
