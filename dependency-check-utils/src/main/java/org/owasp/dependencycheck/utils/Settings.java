@@ -30,7 +30,6 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.owasp.dependencycheck.utils.FileUtils;
 
 /**
  * A simple settings container that wraps the dependencycheck.properties file.
@@ -216,12 +215,14 @@ public final class Settings {
 
     /**
      * Private constructor for the Settings class. This class loads the properties files.
+     *
+     * @param propertiesFilePath the path to the base properties file to load
      */
-    private Settings() {
+    private Settings(String propertiesFilePath) {
         InputStream in = null;
         props = new Properties();
         try {
-            in = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);
+            in = this.getClass().getClassLoader().getResourceAsStream(propertiesFilePath);
             props.load(in);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Unable to load default settings.");
@@ -243,7 +244,17 @@ public final class Settings {
      * However, you must also call Settings.cleanup() to properly release resources.
      */
     public static void initialize() {
-        localSettings.set(new Settings());
+        localSettings.set(new Settings(PROPERTIES_FILE));
+    }
+
+    /**
+     * Initializes the thread local settings object. Note, to use the settings object you must call this method.
+     * However, you must also call Settings.cleanup() to properly release resources.
+     *
+     * @param propertiesFilePath the path to the base properties file to load
+     */
+    public static void initialize(String propertiesFilePath) {
+        localSettings.set(new Settings(propertiesFilePath));
     }
 
     /**
