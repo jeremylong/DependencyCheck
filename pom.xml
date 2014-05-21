@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 This file is part of Dependency-Check.
 
@@ -14,8 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 Copyright (c) 2012 - Jeremy Long
--->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+--><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.owasp</groupId>
@@ -29,7 +29,8 @@ Copyright (c) 2012 - Jeremy Long
         <module>dependency-check-ant</module>
         <module>dependency-check-maven</module>
         <module>dependency-check-jenkins</module>
-    </modules>
+    <module>dependency-check-utils</module>
+  </modules>
     <name>Dependency-Check</name>
     <url>https://github.com/jeremylong/DependencyCheck.git</url>
     <description>dependency-check is a utility that identifies project dependencies and checks if there are any known, publicly disclosed, vulnerabilities. This tool can be part of the solution to the OWASP Top 10 2013: A9 - Using Components with Known Vulnerabilities.</description>
