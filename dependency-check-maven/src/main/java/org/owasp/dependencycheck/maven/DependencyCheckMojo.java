@@ -838,7 +838,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
 
         final Proxy proxy = getMavenProxy();
         if (proxy != null) {
-            Settings.setString(Settings.KEYS.PROXY_URL, getMavenSettingsProxyUrl(proxy));
+            Settings.setString(Settings.KEYS.PROXY_SERVER, getMavenSettingsProxyUrl(proxy));
             Settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(proxy.getPort()));
             final String userName = proxy.getUsername();
             final String password = proxy.getPassword();
@@ -849,7 +849,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         }
 
         if (proxyUrl != null && !proxyUrl.isEmpty()) {
-            Settings.setString(Settings.KEYS.PROXY_URL, proxyUrl);
+            Settings.setString(Settings.KEYS.PROXY_SERVER, proxyUrl);
         }
         if (proxyPort != null && !proxyPort.isEmpty()) {
             Settings.setString(Settings.KEYS.PROXY_PORT, proxyPort);

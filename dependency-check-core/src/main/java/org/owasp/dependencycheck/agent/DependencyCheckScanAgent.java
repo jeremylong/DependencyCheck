@@ -809,7 +809,7 @@ public class DependencyCheckScanAgent {
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
 
         if (proxyUrl != null && !proxyUrl.isEmpty()) {
-            Settings.setString(Settings.KEYS.PROXY_URL, proxyUrl);
+            Settings.setString(Settings.KEYS.PROXY_SERVER, proxyUrl);
         }
         if (proxyPort != null && !proxyPort.isEmpty()) {
             Settings.setString(Settings.KEYS.PROXY_PORT, proxyPort);

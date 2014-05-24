@@ -38,7 +38,7 @@ public class DownloaderIntegrationTest extends BaseTest {
 
 //        Settings.setString(Settings.KEYS.CONNECTION_TIMEOUT, "1000");
 //        Settings.setString(Settings.KEYS.PROXY_PORT, "8080");
-//        Settings.setString(Settings.KEYS.PROXY_URL, "127.0.0.1");
+//        Settings.setString(Settings.KEYS.PROXY_SERVER, "127.0.0.1");
         URL url = new URL(Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL));
         File outputPath = new File("target/downloaded_cve.xml");
         Downloader.fetchFile(url, outputPath);
