@@ -205,6 +205,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             grokAssemblyExe.deleteOnExit();
             LOGGER.log(Level.FINE, "analyzer.AssemblyAnalyzer.grokassembly.deployed", grokAssemblyExe.getPath());
         } catch (IOException ioe) {
+            this.setEnabled(false);
             LOGGER.log(Level.WARNING, "analyzer.AssemblyAnalyzer.grokassembly.notdeployed", ioe.getMessage());
             throw new AnalysisException("Could not extract GrokAssembly.exe", ioe);
         } finally {
@@ -242,6 +243,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.warning("An error occurred with the .NET AssemblyAnalyzer, please see the log for more details.");
                 LOGGER.fine("GrokAssembly.exe is not working properly");
                 grokAssemblyExe = null;
+                this.setEnabled(false);
                 throw new AnalysisException("Could not execute .NET AssemblyAnalyzer");
             }
         } catch (Throwable e) {
@@ -250,6 +252,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             } else {
                 LOGGER.warning("analyzer.AssemblyAnalyzer.grokassembly.initialization.failed");
                 LOGGER.log(Level.FINE, "analyzer.AssemblyAnalyzer.grokassembly.initialization.message", e.getMessage());
+                this.setEnabled(false);
                 throw new AnalysisException("An error occured with the .NET AssemblyAnalyzer", e);
             }
         } finally {
@@ -261,7 +264,6 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         }
-
         builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
     }
 
