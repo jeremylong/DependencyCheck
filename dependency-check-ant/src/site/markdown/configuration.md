@@ -32,7 +32,7 @@ failBuildOnCVSS      | Specifies if the build should be failed if a CVSS score a
 format               | The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | HTML
 logFile              | The file path to write verbose logging information. | &nbsp;
 suppressionFile      | The file path to the XML suppression file \- used to suppress [false positives](../suppression.html) | &nbsp;
-proxyUrl             | The Proxy URL.                     | &nbsp;
+proxyServer          | The Proxy Server.                  | &nbsp;
 proxyPort            | The Proxy Port.                    | &nbsp;
 proxyUsername        | Defines the proxy user name.       | &nbsp;
 proxyPassword        | Defines the proxy password.        | &nbsp;

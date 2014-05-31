@@ -3,7 +3,7 @@ Command Line Arguments
 
 The following table lists the command line arguments:
 
-Short  | Argument Name         | Parameter       | Description | Requirement
+Short  | Argument&nbsp;Name&nbsp;&nbsp; | Parameter       | Description | Requirement
 -------|-----------------------|-----------------|-------------|------------
  \-a   | \-\-app               | \<name\>        | The name of the application being scanned. This is a required argument. | Required
  \-s   | \-\-scan              | \<path\>        | The path to scan \- this option can be specified multiple times. It is also possible to specify specific file types that should be scanned by supplying a scan path of '[path]/[to]/[scan]/*.zip'. The wild card can only be used to denote any file-name with a specific extension. | Required
@@ -18,7 +18,7 @@ Short  | Argument Name         | Parameter       | Description | Requirement
 
 Advanced Options
 ================
-Short  | Argument Name         | Parameter       | Description | Default Value
+Short  | Argument&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Parameter       | Description | Default&nbsp;Value
 -------|-----------------------|-----------------|-------------|---------------
        | \-\-disableArchive    |                 | Sets whether the Archive Analyzer will be used.                      | false
        | \-\-zipExtensions     | \<strings\>     | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
@@ -30,7 +30,7 @@ Short  | Argument Name         | Parameter       | Description | Default Value
        | \-\-disableNuspec     |                 | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.     | false
        | \-\-disableAssembly   |                 | Sets whether or not the .NET Assembly Analyzer should be used.       | false
        | \-\-pathToMono        | \<path\>        | The path to Mono for .NET Assembly analysis on non-windows systems.  | &nbsp;
-       | \-\-proxyurl          | \<url\>         | The proxy url to use when downloading resources. | &nbsp;
+       | \-\-proxyserver       | \<server\>      | The proxy server to use when downloading resources. | &nbsp;
        | \-\-proxyport         | \<port\>        | The proxy port to use when downloading resources. | &nbsp;
        | \-\-connectiontimeout | \<timeout\>     | The connection timeout (in milliseconds) to use when downloading resources. | &nbsp;
        | \-\-proxypass         | \<pass\>        | The proxy password to use when downloading resources. | &nbsp;
