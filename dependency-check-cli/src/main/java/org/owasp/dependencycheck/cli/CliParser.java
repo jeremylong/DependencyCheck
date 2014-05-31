@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.cli;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.logging.Logger;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -39,6 +40,10 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 public final class CliParser {
 
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(CliParser.class.getName());
     /**
      * The command line.
      */
@@ -85,16 +90,16 @@ public final class CliParser {
      */
     private void validateArgs() throws FileNotFoundException, ParseException {
         if (isRunScan()) {
-            validatePathExists(getScanFiles(), ArgumentName.SCAN);
-            validatePathExists(getReportDirectory(), ArgumentName.OUT);
+            validatePathExists(getScanFiles(), ARGUMENT.SCAN);
+            validatePathExists(getReportDirectory(), ARGUMENT.OUT);
             if (getPathToMono() != null) {
-                validatePathExists(getPathToMono(), ArgumentName.PATH_TO_MONO);
+                validatePathExists(getPathToMono(), ARGUMENT.PATH_TO_MONO);
             }
-            if (!line.hasOption(ArgumentName.APP_NAME)) {
+            if (!line.hasOption(ARGUMENT.APP_NAME)) {
                 throw new ParseException("Missing 'app' argument; the scan cannot be run without the an application name.");
             }
-            if (line.hasOption(ArgumentName.OUTPUT_FORMAT)) {
-                final String format = line.getOptionValue(ArgumentName.OUTPUT_FORMAT);
+            if (line.hasOption(ARGUMENT.OUTPUT_FORMAT)) {
+                final String format = line.getOptionValue(ARGUMENT.OUTPUT_FORMAT);
                 try {
                     Format.valueOf(format);
                 } catch (IllegalArgumentException ex) {
@@ -150,7 +155,7 @@ public final class CliParser {
         final Options options = new Options();
         addStandardOptions(options);
         addAdvancedOptions(options);
-
+        addDeprecatedOptions(options);
         return options;
     }
 
@@ -162,44 +167,44 @@ public final class CliParser {
      */
     @SuppressWarnings("static-access")
     private void addStandardOptions(final Options options) throws IllegalArgumentException {
-        final Option help = new Option(ArgumentName.HELP_SHORT, ArgumentName.HELP, false,
+        final Option help = new Option(ARGUMENT.HELP_SHORT, ARGUMENT.HELP, false,
                 "Print this message.");
 
-        final Option advancedHelp = OptionBuilder.withLongOpt(ArgumentName.ADVANCED_HELP)
+        final Option advancedHelp = OptionBuilder.withLongOpt(ARGUMENT.ADVANCED_HELP)
                 .withDescription("Print the advanced help message.").create();
 
-        final Option version = new Option(ArgumentName.VERSION_SHORT, ArgumentName.VERSION,
+        final Option version = new Option(ARGUMENT.VERSION_SHORT, ARGUMENT.VERSION,
                 false, "Print the version information.");
 
-        final Option noUpdate = new Option(ArgumentName.DISABLE_AUTO_UPDATE_SHORT, ArgumentName.DISABLE_AUTO_UPDATE,
+        final Option noUpdate = new Option(ARGUMENT.DISABLE_AUTO_UPDATE_SHORT, ARGUMENT.DISABLE_AUTO_UPDATE,
                 false, "Disables the automatic updating of the CPE data.");
 
-        final Option appName = OptionBuilder.withArgName("name").hasArg().withLongOpt(ArgumentName.APP_NAME)
+        final Option appName = OptionBuilder.withArgName("name").hasArg().withLongOpt(ARGUMENT.APP_NAME)
                 .withDescription("The name of the application being scanned. This is a required argument.")
-                .create(ArgumentName.APP_NAME_SHORT);
+                .create(ARGUMENT.APP_NAME_SHORT);
 
-        final Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.SCAN)
+        final Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ARGUMENT.SCAN)
                 .withDescription("The path to scan - this option can be specified multiple times. To limit the scan"
                         + " to specific file types *.[ext] can be added to the end of the path.")
-                .create(ArgumentName.SCAN_SHORT);
+                .create(ARGUMENT.SCAN_SHORT);
 
-        final Option props = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.PROP)
+        final Option props = OptionBuilder.withArgName("file").hasArg().withLongOpt(ARGUMENT.PROP)
                 .withDescription("A property file to load.")
-                .create(ArgumentName.PROP_SHORT);
+                .create(ARGUMENT.PROP_SHORT);
 
-        final Option out = OptionBuilder.withArgName("folder").hasArg().withLongOpt(ArgumentName.OUT)
+        final Option out = OptionBuilder.withArgName("folder").hasArg().withLongOpt(ARGUMENT.OUT)
                 .withDescription("The folder to write reports to. This defaults to the current directory.")
-                .create(ArgumentName.OUT_SHORT);
+                .create(ARGUMENT.OUT_SHORT);
 
-        final Option outputFormat = OptionBuilder.withArgName("format").hasArg().withLongOpt(ArgumentName.OUTPUT_FORMAT)
+        final Option outputFormat = OptionBuilder.withArgName("format").hasArg().withLongOpt(ARGUMENT.OUTPUT_FORMAT)
                 .withDescription("The output format to write to (XML, HTML, VULN, ALL). The default is HTML.")
-                .create(ArgumentName.OUTPUT_FORMAT_SHORT);
+                .create(ARGUMENT.OUTPUT_FORMAT_SHORT);
 
-        final Option verboseLog = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.VERBOSE_LOG)
+        final Option verboseLog = OptionBuilder.withArgName("file").hasArg().withLongOpt(ARGUMENT.VERBOSE_LOG)
                 .withDescription("The file path to write verbose logging information.")
-                .create(ArgumentName.VERBOSE_LOG_SHORT);
+                .create(ARGUMENT.VERBOSE_LOG_SHORT);
 
-        final Option suppressionFile = OptionBuilder.withArgName("file").hasArg().withLongOpt(ArgumentName.SUPPRESSION_FILE)
+        final Option suppressionFile = OptionBuilder.withArgName("file").hasArg().withLongOpt(ARGUMENT.SUPPRESSION_FILE)
                 .withDescription("The file path to the suppression XML file.")
                 .create();
 
@@ -230,87 +235,87 @@ public final class CliParser {
     @SuppressWarnings("static-access")
     private void addAdvancedOptions(final Options options) throws IllegalArgumentException {
 
-        final Option data = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.DATA_DIRECTORY)
+        final Option data = OptionBuilder.withArgName("path").hasArg().withLongOpt(ARGUMENT.DATA_DIRECTORY)
                 .withDescription("The location of the H2 Database file. This option should generally not be set.")
-                .create(ArgumentName.DATA_DIRECTORY_SHORT);
+                .create(ARGUMENT.DATA_DIRECTORY_SHORT);
 
-        final Option connectionTimeout = OptionBuilder.withArgName("timeout").hasArg().withLongOpt(ArgumentName.CONNECTION_TIMEOUT)
+        final Option connectionTimeout = OptionBuilder.withArgName("timeout").hasArg().withLongOpt(ARGUMENT.CONNECTION_TIMEOUT)
                 .withDescription("The connection timeout (in milliseconds) to use when downloading resources.")
-                .create(ArgumentName.CONNECTION_TIMEOUT_SHORT);
+                .create(ARGUMENT.CONNECTION_TIMEOUT_SHORT);
 
-        final Option proxyUrl = OptionBuilder.withArgName("url").hasArg().withLongOpt(ArgumentName.PROXY_URL)
-                .withDescription("The proxy url to use when downloading resources.")
-                .create(ArgumentName.PROXY_URL_SHORT);
+        final Option proxyServer = OptionBuilder.withArgName("server").hasArg().withLongOpt(ARGUMENT.PROXY_SERVER)
+                .withDescription("The proxy server to use when downloading resources.")
+                .create();
 
-        final Option proxyPort = OptionBuilder.withArgName("port").hasArg().withLongOpt(ArgumentName.PROXY_PORT)
+        final Option proxyPort = OptionBuilder.withArgName("port").hasArg().withLongOpt(ARGUMENT.PROXY_PORT)
                 .withDescription("The proxy port to use when downloading resources.")
-                .create(ArgumentName.PROXY_PORT_SHORT);
+                .create();
 
-        final Option proxyUsername = OptionBuilder.withArgName("user").hasArg().withLongOpt(ArgumentName.PROXY_USERNAME)
+        final Option proxyUsername = OptionBuilder.withArgName("user").hasArg().withLongOpt(ARGUMENT.PROXY_USERNAME)
                 .withDescription("The proxy username to use when downloading resources.")
                 .create();
 
-        final Option proxyPassword = OptionBuilder.withArgName("pass").hasArg().withLongOpt(ArgumentName.PROXY_PASSWORD)
+        final Option proxyPassword = OptionBuilder.withArgName("pass").hasArg().withLongOpt(ARGUMENT.PROXY_PASSWORD)
                 .withDescription("The proxy password to use when downloading resources.")
                 .create();
 
-        final Option connectionString = OptionBuilder.withArgName("connStr").hasArg().withLongOpt(ArgumentName.CONNECTION_STRING)
+        final Option connectionString = OptionBuilder.withArgName("connStr").hasArg().withLongOpt(ARGUMENT.CONNECTION_STRING)
                 .withDescription("The connection string to the database.")
                 .create();
 
-        final Option dbUser = OptionBuilder.withArgName("user").hasArg().withLongOpt(ArgumentName.DB_NAME)
+        final Option dbUser = OptionBuilder.withArgName("user").hasArg().withLongOpt(ARGUMENT.DB_NAME)
                 .withDescription("The username used to connect to the database.")
                 .create();
 
-        final Option dbPassword = OptionBuilder.withArgName("password").hasArg().withLongOpt(ArgumentName.DB_PASSWORD)
+        final Option dbPassword = OptionBuilder.withArgName("password").hasArg().withLongOpt(ARGUMENT.DB_PASSWORD)
                 .withDescription("The password for connecting to the database.")
                 .create();
 
-        final Option dbDriver = OptionBuilder.withArgName("driver").hasArg().withLongOpt(ArgumentName.DB_DRIVER)
+        final Option dbDriver = OptionBuilder.withArgName("driver").hasArg().withLongOpt(ARGUMENT.DB_DRIVER)
                 .withDescription("The database driver name.")
                 .create();
 
-        final Option dbDriverPath = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.DB_DRIVER_PATH)
+        final Option dbDriverPath = OptionBuilder.withArgName("path").hasArg().withLongOpt(ARGUMENT.DB_DRIVER_PATH)
                 .withDescription("The path to the database driver; note, this does not need to be set unless the JAR is outside of the classpath.")
                 .create();
 
-        final Option disableJarAnalyzer = OptionBuilder.withLongOpt(ArgumentName.DISABLE_JAR)
+        final Option disableJarAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_JAR)
                 .withDescription("Disable the Jar Analyzer.")
                 .create();
-        final Option disableArchiveAnalyzer = OptionBuilder.withLongOpt(ArgumentName.DISABLE_ARCHIVE)
+        final Option disableArchiveAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_ARCHIVE)
                 .withDescription("Disable the Archive Analyzer.")
                 .create();
-        final Option disableNuspecAnalyzer = OptionBuilder.withLongOpt(ArgumentName.DISABLE_NUSPEC)
+        final Option disableNuspecAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_NUSPEC)
                 .withDescription("Disable the Nuspec Analyzer.")
                 .create();
-        final Option disableAssemblyAnalyzer = OptionBuilder.withLongOpt(ArgumentName.DISABLE_ASSEMBLY)
+        final Option disableAssemblyAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_ASSEMBLY)
                 .withDescription("Disable the .NET Assembly Analyzer.")
                 .create();
 
-        final Option disableNexusAnalyzer = OptionBuilder.withLongOpt(ArgumentName.DISABLE_NEXUS)
+        final Option disableNexusAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_NEXUS)
                 .withDescription("Disable the Nexus Analyzer.")
                 .create();
 
-        final Option nexusUrl = OptionBuilder.withArgName("url").hasArg().withLongOpt(ArgumentName.NEXUS_URL)
+        final Option nexusUrl = OptionBuilder.withArgName("url").hasArg().withLongOpt(ARGUMENT.NEXUS_URL)
                 .withDescription("The url to the Nexus Server.")
                 .create();
 
-        final Option nexusUsesProxy = OptionBuilder.withArgName("true/false").hasArg().withLongOpt(ArgumentName.NEXUS_USES_PROXY)
+        final Option nexusUsesProxy = OptionBuilder.withArgName("true/false").hasArg().withLongOpt(ARGUMENT.NEXUS_USES_PROXY)
                 .withDescription("Whether or not the configured proxy should be used when connecting to Nexus.")
                 .create();
 
         final Option additionalZipExtensions = OptionBuilder.withArgName("extensions").hasArg()
-                .withLongOpt(ArgumentName.ADDITIONAL_ZIP_EXTENSIONS)
+                .withLongOpt(ARGUMENT.ADDITIONAL_ZIP_EXTENSIONS)
                 .withDescription("A comma separated list of additional extensions to be scanned as ZIP files "
                         + "(ZIP, EAR, WAR are already treated as zip files)")
                 .create();
 
-        final Option pathToMono = OptionBuilder.withArgName("path").hasArg().withLongOpt(ArgumentName.PATH_TO_MONO)
+        final Option pathToMono = OptionBuilder.withArgName("path").hasArg().withLongOpt(ARGUMENT.PATH_TO_MONO)
                 .withDescription("The path to Mono for .NET Assembly analysis on non-windows systems.")
                 .create();
 
         options.addOption(proxyPort)
-                .addOption(proxyUrl)
+                .addOption(proxyServer)
                 .addOption(proxyUsername)
                 .addOption(proxyPassword)
                 .addOption(connectionTimeout)
@@ -332,12 +337,29 @@ public final class CliParser {
     }
 
     /**
+     * Adds the deprecated command line options to the given options collection. These are split out for purposes of not
+     * including them in the help message. We need to add the deprecated options so as not to break existing scripts.
+     *
+     * @param options a collection of command line arguments
+     * @throws IllegalArgumentException thrown if there is an exception
+     */
+    @SuppressWarnings("static-access")
+    private void addDeprecatedOptions(final Options options) throws IllegalArgumentException {
+
+        final Option proxyServer = OptionBuilder.withArgName("url").hasArg().withLongOpt(ARGUMENT.PROXY_URL)
+                .withDescription("The proxy url argument is deprecated, use proxyserver instead.")
+                .create();
+
+        options.addOption(proxyServer);
+    }
+
+    /**
      * Determines if the 'version' command line argument was passed in.
      *
      * @return whether or not the 'version' command line argument was passed in
      */
     public boolean isGetVersion() {
-        return (line != null) && line.hasOption(ArgumentName.VERSION);
+        return (line != null) && line.hasOption(ARGUMENT.VERSION);
     }
 
     /**
@@ -346,7 +368,7 @@ public final class CliParser {
      * @return whether or not the 'help' command line argument was passed in
      */
     public boolean isGetHelp() {
-        return (line != null) && line.hasOption(ArgumentName.HELP);
+        return (line != null) && line.hasOption(ARGUMENT.HELP);
     }
 
     /**
@@ -355,7 +377,7 @@ public final class CliParser {
      * @return whether or not the 'scan' command line argument was passed in
      */
     public boolean isRunScan() {
-        return (line != null) && isValid && line.hasOption(ArgumentName.SCAN);
+        return (line != null) && isValid && line.hasOption(ARGUMENT.SCAN);
     }
 
     /**
@@ -364,7 +386,7 @@ public final class CliParser {
      * @return true if the disableJar command line argument was specified; otherwise false
      */
     public boolean isJarDisabled() {
-        return (line != null) && line.hasOption(ArgumentName.DISABLE_JAR);
+        return (line != null) && line.hasOption(ARGUMENT.DISABLE_JAR);
     }
 
     /**
@@ -373,7 +395,7 @@ public final class CliParser {
      * @return true if the disableArchive command line argument was specified; otherwise false
      */
     public boolean isArchiveDisabled() {
-        return (line != null) && line.hasOption(ArgumentName.DISABLE_ARCHIVE);
+        return (line != null) && line.hasOption(ARGUMENT.DISABLE_ARCHIVE);
     }
 
     /**
@@ -382,7 +404,7 @@ public final class CliParser {
      * @return true if the disableNuspec command line argument was specified; otherwise false
      */
     public boolean isNuspecDisabled() {
-        return (line != null) && line.hasOption(ArgumentName.DISABLE_NUSPEC);
+        return (line != null) && line.hasOption(ARGUMENT.DISABLE_NUSPEC);
     }
 
     /**
@@ -391,7 +413,7 @@ public final class CliParser {
      * @return true if the disableAssembly command line argument was specified; otherwise false
      */
     public boolean isAssemblyDisabled() {
-        return (line != null) && line.hasOption(ArgumentName.DISABLE_ASSEMBLY);
+        return (line != null) && line.hasOption(ARGUMENT.DISABLE_ASSEMBLY);
     }
 
     /**
@@ -400,7 +422,7 @@ public final class CliParser {
      * @return true if the disableNexus command line argument was specified; otherwise false
      */
     public boolean isNexusDisabled() {
-        return (line != null) && line.hasOption(ArgumentName.DISABLE_NEXUS);
+        return (line != null) && line.hasOption(ARGUMENT.DISABLE_NEXUS);
     }
 
     /**
@@ -409,10 +431,10 @@ public final class CliParser {
      * @return the url to the nexus server; if none was specified this will return null;
      */
     public String getNexusUrl() {
-        if (line == null || !line.hasOption(ArgumentName.NEXUS_URL)) {
+        if (line == null || !line.hasOption(ARGUMENT.NEXUS_URL)) {
             return null;
         } else {
-            return line.getOptionValue(ArgumentName.NEXUS_URL);
+            return line.getOptionValue(ARGUMENT.NEXUS_URL);
         }
     }
 
@@ -425,14 +447,14 @@ public final class CliParser {
     public boolean isNexusUsesProxy() {
         // If they didn't specify whether Nexus needs to use the proxy, we should
         // still honor the property if it's set.
-        if (line == null || !line.hasOption(ArgumentName.NEXUS_USES_PROXY)) {
+        if (line == null || !line.hasOption(ARGUMENT.NEXUS_USES_PROXY)) {
             try {
                 return Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY);
             } catch (InvalidSettingException ise) {
                 return true;
             }
         } else {
-            return Boolean.parseBoolean(line.getOptionValue(ArgumentName.NEXUS_USES_PROXY));
+            return Boolean.parseBoolean(line.getOptionValue(ARGUMENT.NEXUS_USES_PROXY));
         }
     }
 
@@ -443,7 +465,7 @@ public final class CliParser {
         final HelpFormatter formatter = new HelpFormatter();
         final Options options = new Options();
         addStandardOptions(options);
-        if (line != null && line.hasOption(ArgumentName.ADVANCED_HELP)) {
+        if (line != null && line.hasOption(ARGUMENT.ADVANCED_HELP)) {
             addAdvancedOptions(options);
         }
         final String helpMsg = String.format("%n%s"
@@ -466,7 +488,7 @@ public final class CliParser {
      * @return the file paths specified on the command line for scan
      */
     public String[] getScanFiles() {
-        return line.getOptionValues(ArgumentName.SCAN);
+        return line.getOptionValues(ARGUMENT.SCAN);
     }
 
     /**
@@ -475,7 +497,7 @@ public final class CliParser {
      * @return the path to the reports directory.
      */
     public String getReportDirectory() {
-        return line.getOptionValue(ArgumentName.OUT, ".");
+        return line.getOptionValue(ARGUMENT.OUT, ".");
     }
 
     /**
@@ -484,7 +506,7 @@ public final class CliParser {
      * @return the path to Mono
      */
     public String getPathToMono() {
-        return line.getOptionValue(ArgumentName.PATH_TO_MONO);
+        return line.getOptionValue(ARGUMENT.PATH_TO_MONO);
     }
 
     /**
@@ -493,7 +515,7 @@ public final class CliParser {
      * @return the output format name.
      */
     public String getReportFormat() {
-        return line.getOptionValue(ArgumentName.OUTPUT_FORMAT, "HTML");
+        return line.getOptionValue(ARGUMENT.OUTPUT_FORMAT, "HTML");
     }
 
     /**
@@ -502,7 +524,7 @@ public final class CliParser {
      * @return the application name.
      */
     public String getApplicationName() {
-        return line.getOptionValue(ArgumentName.APP_NAME);
+        return line.getOptionValue(ARGUMENT.APP_NAME);
     }
 
     /**
@@ -511,16 +533,24 @@ public final class CliParser {
      * @return the connection timeout
      */
     public String getConnectionTimeout() {
-        return line.getOptionValue(ArgumentName.CONNECTION_TIMEOUT);
+        return line.getOptionValue(ARGUMENT.CONNECTION_TIMEOUT);
     }
 
     /**
-     * Returns the proxy url.
+     * Returns the proxy server.
      *
-     * @return the proxy url
+     * @return the proxy server
      */
-    public String getProxyUrl() {
-        return line.getOptionValue(ArgumentName.PROXY_URL);
+    public String getProxyServer() {
+
+        String server = line.getOptionValue(ARGUMENT.PROXY_SERVER);
+        if (server == null) {
+            server = line.getOptionValue(ARGUMENT.PROXY_URL);
+            if (server != null) {
+                LOGGER.warning("An old command line argument 'proxyurl' was detected; use proxyserver instead");
+            }
+        }
+        return server;
     }
 
     /**
@@ -529,7 +559,7 @@ public final class CliParser {
      * @return the proxy port
      */
     public String getProxyPort() {
-        return line.getOptionValue(ArgumentName.PROXY_PORT);
+        return line.getOptionValue(ARGUMENT.PROXY_PORT);
     }
 
     /**
@@ -538,7 +568,7 @@ public final class CliParser {
      * @return the proxy username
      */
     public String getProxyUsername() {
-        return line.getOptionValue(ArgumentName.PROXY_USERNAME);
+        return line.getOptionValue(ARGUMENT.PROXY_USERNAME);
     }
 
     /**
@@ -547,7 +577,7 @@ public final class CliParser {
      * @return the proxy password
      */
     public String getProxyPassword() {
-        return line.getOptionValue(ArgumentName.PROXY_PASSWORD);
+        return line.getOptionValue(ARGUMENT.PROXY_PASSWORD);
     }
 
     /**
@@ -556,7 +586,7 @@ public final class CliParser {
      * @return the value of dataDirectory
      */
     public String getDataDirectory() {
-        return line.getOptionValue(ArgumentName.DATA_DIRECTORY);
+        return line.getOptionValue(ARGUMENT.DATA_DIRECTORY);
     }
 
     /**
@@ -565,7 +595,7 @@ public final class CliParser {
      * @return the properties file specified on the command line
      */
     public File getPropertiesFile() {
-        final String path = line.getOptionValue(ArgumentName.PROP);
+        final String path = line.getOptionValue(ARGUMENT.PROP);
         if (path != null) {
             return new File(path);
         }
@@ -578,7 +608,7 @@ public final class CliParser {
      * @return the path to the verbose log file
      */
     public String getVerboseLog() {
-        return line.getOptionValue(ArgumentName.VERBOSE_LOG);
+        return line.getOptionValue(ARGUMENT.VERBOSE_LOG);
     }
 
     /**
@@ -587,7 +617,7 @@ public final class CliParser {
      * @return the path to the suppression file
      */
     public String getSuppressionFile() {
-        return line.getOptionValue(ArgumentName.SUPPRESSION_FILE);
+        return line.getOptionValue(ARGUMENT.SUPPRESSION_FILE);
     }
 
     /**
@@ -610,7 +640,7 @@ public final class CliParser {
      * @return if auto-update is allowed.
      */
     public boolean isAutoUpdate() {
-        return (line == null) || !line.hasOption(ArgumentName.DISABLE_AUTO_UPDATE);
+        return (line == null) || !line.hasOption(ARGUMENT.DISABLE_AUTO_UPDATE);
     }
 
     /**
@@ -619,7 +649,7 @@ public final class CliParser {
      * @return the database driver name if specified; otherwise null is returned
      */
     public String getDatabaseDriverName() {
-        return line.getOptionValue(ArgumentName.DB_DRIVER);
+        return line.getOptionValue(ARGUMENT.DB_DRIVER);
     }
 
     /**
@@ -628,7 +658,7 @@ public final class CliParser {
      * @return the database driver name if specified; otherwise null is returned
      */
     public String getDatabaseDriverPath() {
-        return line.getOptionValue(ArgumentName.DB_DRIVER_PATH);
+        return line.getOptionValue(ARGUMENT.DB_DRIVER_PATH);
     }
 
     /**
@@ -637,7 +667,7 @@ public final class CliParser {
      * @return the database connection string if specified; otherwise null is returned
      */
     public String getConnectionString() {
-        return line.getOptionValue(ArgumentName.CONNECTION_STRING);
+        return line.getOptionValue(ARGUMENT.CONNECTION_STRING);
     }
 
     /**
@@ -646,7 +676,7 @@ public final class CliParser {
      * @return the database database user name if specified; otherwise null is returned
      */
     public String getDatabaseUser() {
-        return line.getOptionValue(ArgumentName.DB_NAME);
+        return line.getOptionValue(ARGUMENT.DB_NAME);
     }
 
     /**
@@ -655,7 +685,7 @@ public final class CliParser {
      * @return the database database password if specified; otherwise null is returned
      */
     public String getDatabasePassword() {
-        return line.getOptionValue(ArgumentName.DB_PASSWORD);
+        return line.getOptionValue(ARGUMENT.DB_PASSWORD);
     }
 
     /**
@@ -664,13 +694,13 @@ public final class CliParser {
      * @return the additional Extensions; otherwise null is returned
      */
     public String getAdditionalZipExtensions() {
-        return line.getOptionValue(ArgumentName.ADDITIONAL_ZIP_EXTENSIONS);
+        return line.getOptionValue(ARGUMENT.ADDITIONAL_ZIP_EXTENSIONS);
     }
 
     /**
      * A collection of static final strings that represent the possible command line arguments.
      */
-    public static class ArgumentName {
+    public static class ARGUMENT {
 
         /**
          * The long CLI argument name specifying the directory/file to scan.
@@ -733,20 +763,19 @@ public final class CliParser {
          */
         public static final String VERSION = "version";
         /**
-         * The short CLI argument name indicating the proxy port.
-         */
-        public static final String PROXY_PORT_SHORT = "p";
-        /**
          * The CLI argument name indicating the proxy port.
          */
         public static final String PROXY_PORT = "proxyport";
         /**
-         * The short CLI argument name indicating the proxy url.
+         * The CLI argument name indicating the proxy server.
          */
-        public static final String PROXY_URL_SHORT = "u";
+        public static final String PROXY_SERVER = "proxyserver";
         /**
          * The CLI argument name indicating the proxy url.
+         *
+         * @deprecated use {@link org.owasp.dependencycheck.cli.CliParser.ArgumentName#PROXY_SERVER} instead
          */
+        @Deprecated
         public static final String PROXY_URL = "proxyurl";
         /**
          * The CLI argument name indicating the proxy username.

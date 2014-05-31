@@ -161,7 +161,7 @@ public class App {
 
         final boolean autoUpdate = cli.isAutoUpdate();
         final String connectionTimeout = cli.getConnectionTimeout();
-        final String proxyUrl = cli.getProxyUrl();
+        final String proxyServer = cli.getProxyServer();
         final String proxyPort = cli.getProxyPort();
         final String proxyUser = cli.getProxyUsername();
         final String proxyPass = cli.getProxyPassword();
@@ -212,8 +212,8 @@ public class App {
             Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());
         }
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
-        if (proxyUrl != null && !proxyUrl.isEmpty()) {
-            Settings.setString(Settings.KEYS.PROXY_SERVER, proxyUrl);
+        if (proxyServer != null && !proxyServer.isEmpty()) {
+            Settings.setString(Settings.KEYS.PROXY_SERVER, proxyServer);
         }
         if (proxyPort != null && !proxyPort.isEmpty()) {
             Settings.setString(Settings.KEYS.PROXY_PORT, proxyPort);
