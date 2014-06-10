@@ -110,9 +110,16 @@ public final class Settings {
          */
         public static final String CVE_SCHEMA_2_0 = "cve.url-2.0.base";
         /**
-         * The properties key for the proxy url.
+         * The properties key for the proxy server.
+         *
+         * @deprecated use {@link org.owasp.dependencycheck.utils.Settings.KEYS#PROXY_SERVER} instead.
          */
-        public static final String PROXY_URL = "proxy.url";
+        @Deprecated
+        public static final String PROXY_URL = "proxy.server";
+        /**
+         * The properties key for the proxy server.
+         */
+        public static final String PROXY_SERVER = "proxy.server";
         /**
          * The properties key for the proxy port - this must be an integer value.
          */
@@ -255,6 +262,14 @@ public final class Settings {
      */
     public static void initialize(String propertiesFilePath) {
         localSettings.set(new Settings(propertiesFilePath));
+    }
+
+    /**
+     * Cleans up resources to prevent memory leaks.
+     *
+     */
+    public static void cleanup() {
+        cleanup(true);
     }
 
     /**

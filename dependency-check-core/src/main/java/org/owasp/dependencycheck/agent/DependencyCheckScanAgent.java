@@ -234,26 +234,49 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * The Proxy URL.
+     * The Proxy Server.
      */
-    private String proxyUrl;
+    private String proxyServer;
 
     /**
-     * Get the value of proxyUrl.
+     * Get the value of proxyServer.
      *
-     * @return the value of proxyUrl
+     * @return the value of proxyServer
      */
-    public String getProxyUrl() {
-        return proxyUrl;
+    public String getProxyServer() {
+        return proxyServer;
     }
 
     /**
-     * Set the value of proxyUrl.
+     * Set the value of proxyServer.
      *
-     * @param proxyUrl new value of proxyUrl
+     * @param proxyServer new value of proxyServer
      */
+    public void setProxyServer(String proxyServer) {
+        this.proxyServer = proxyServer;
+    }
+
+    /**
+     * Get the value of proxyServer.
+     *
+     * @return the value of proxyServer
+     * @deprecated use {@link org.owasp.dependencycheck.agent.DependencyCheckScanAgent#getProxyServer()} instead
+     */
+    @Deprecated
+    public String getProxyUrl() {
+        return proxyServer;
+    }
+
+    /**
+     * Set the value of proxyServer.
+     *
+     * @param proxyUrl new value of proxyServer
+     * @deprecated use {@link org.owasp.dependencycheck.agent.DependencyCheckScanAgent#setProxyServer(java.lang.String)
+     * } instead
+     */
+    @Deprecated
     public void setProxyUrl(String proxyUrl) {
-        this.proxyUrl = proxyUrl;
+        this.proxyServer = proxyUrl;
     }
 
     /**
@@ -792,7 +815,7 @@ public class DependencyCheckScanAgent {
 
     /**
      * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system
-     * properties required to change the proxy url, port, and connection timeout.
+     * properties required to change the proxy server, port, and connection timeout.
      */
     private void populateSettings() {
         Settings.initialize();
@@ -808,8 +831,8 @@ public class DependencyCheckScanAgent {
 
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
 
-        if (proxyUrl != null && !proxyUrl.isEmpty()) {
-            Settings.setString(Settings.KEYS.PROXY_URL, proxyUrl);
+        if (proxyServer != null && !proxyServer.isEmpty()) {
+            Settings.setString(Settings.KEYS.PROXY_SERVER, proxyServer);
         }
         if (proxyPort != null && !proxyPort.isEmpty()) {
             Settings.setString(Settings.KEYS.PROXY_PORT, proxyPort);

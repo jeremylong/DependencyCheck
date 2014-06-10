@@ -51,7 +51,7 @@ public final class URLConnectionFactory {
     public static HttpURLConnection createHttpURLConnection(URL url) throws URLConnectionFailureException {
         HttpURLConnection conn = null;
         Proxy proxy = null;
-        final String proxyUrl = Settings.getString(Settings.KEYS.PROXY_URL);
+        final String proxyUrl = Settings.getString(Settings.KEYS.PROXY_SERVER);
         try {
             if (proxyUrl != null) {
                 final int proxyPort = Settings.getInt(Settings.KEYS.PROXY_PORT);

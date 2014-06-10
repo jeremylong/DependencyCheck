@@ -166,7 +166,7 @@ public final class Downloader {
             try {
                 lastModifiedFile = new File(url.toURI());
             } catch (URISyntaxException ex) {
-                final String msg = String.format("Unable to locate '%s'; is the cve.url-2.0.modified property set correctly?", url.toString());
+                final String msg = String.format("Unable to locate '%s'", url.toString());
                 throw new DownloadFailedException(msg);
             }
             timestamp = lastModifiedFile.lastModified();
@@ -176,7 +176,12 @@ public final class Downloader {
                 conn = URLConnectionFactory.createHttpURLConnection(url);
                 conn.setRequestMethod("HEAD");
                 conn.connect();
-                timestamp = conn.getLastModified();
+                int t = conn.getResponseCode();
+                if (t >= 200 && t < 300) {
+                    timestamp = conn.getLastModified();
+                } else {
+                    throw new DownloadFailedException("HEAD request returned a non-200 status code");
+                }
             } catch (URLConnectionFailureException ex) {
                 throw new DownloadFailedException("Error creating URL Connection for HTTP HEAD request.", ex);
             } catch (IOException ex) {

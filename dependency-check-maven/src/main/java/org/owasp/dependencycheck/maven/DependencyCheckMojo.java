@@ -147,15 +147,6 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "externalReport", defaultValue = "false", required = true)
     private boolean externalReport = false;
-    /**
-     * The Proxy URL.
-     *
-     * @deprecated Please use mavenSettings instead
-     */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
-    @Parameter(property = "proxyUrl", defaultValue = "", required = false)
-    @Deprecated
-    private String proxyUrl = null;
 
     /**
      * The maven settings.
@@ -171,33 +162,6 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     @Parameter(property = "mavenSettingsProxyId", required = false)
     private String mavenSettingsProxyId;
 
-    /**
-     * The Proxy Port.
-     *
-     * @deprecated Please use mavenSettings instead
-     */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
-    @Parameter(property = "proxyPort", defaultValue = "", required = false)
-    @Deprecated
-    private String proxyPort = null;
-    /**
-     * The Proxy username.
-     *
-     * @deprecated Please use mavenSettings instead
-     */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
-    @Parameter(property = "proxyUsername", defaultValue = "", required = false)
-    @Deprecated
-    private String proxyUsername = null;
-    /**
-     * The Proxy password.
-     *
-     * @deprecated Please use mavenSettings instead
-     */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
-    @Parameter(property = "proxyPassword", defaultValue = "", required = false)
-    @Deprecated
-    private String proxyPassword = null;
     /**
      * The Connection Timeout.
      */
@@ -347,6 +311,16 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      */
     @Parameter(property = "pathToMono", defaultValue = "", required = false)
     private String pathToMono;
+
+    /**
+     * The Proxy URL.
+     *
+     * @deprecated Please use mavenSettings instead
+     */
+    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @Parameter(property = "proxyUrl", defaultValue = "", required = false)
+    @Deprecated
+    private String proxyUrl = null;
 
     // </editor-fold>
     /**
@@ -777,12 +751,12 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     // </editor-fold>
 
     /**
-     * Returns the maven settings proxy url.
+     * Returns the maven settings proxy server.
      *
      * @param proxy the maven proxy
      * @return the proxy url
      */
-    private String getMavenSettingsProxyUrl(Proxy proxy) {
+    private String getMavenSettingsProxyServer(Proxy proxy) {
         return new StringBuilder(proxy.getProtocol()).append("://").append(proxy.getHost()).toString();
     }
 
@@ -836,9 +810,13 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
 
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
 
+        if (proxyUrl != null && !proxyUrl.isEmpty()) {
+            logger.warning("Deprecated configuration detected, proxyUrl will be ignored; use the maven settings to configure the proxy instead");
+        }
+
         final Proxy proxy = getMavenProxy();
         if (proxy != null) {
-            Settings.setString(Settings.KEYS.PROXY_URL, getMavenSettingsProxyUrl(proxy));
+            Settings.setString(Settings.KEYS.PROXY_SERVER, getMavenSettingsProxyServer(proxy));
             Settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(proxy.getPort()));
             final String userName = proxy.getUsername();
             final String password = proxy.getPassword();
@@ -848,18 +826,6 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
             }
         }
 
-        if (proxyUrl != null && !proxyUrl.isEmpty()) {
-            Settings.setString(Settings.KEYS.PROXY_URL, proxyUrl);
-        }
-        if (proxyPort != null && !proxyPort.isEmpty()) {
-            Settings.setString(Settings.KEYS.PROXY_PORT, proxyPort);
-        }
-        if (proxyUsername != null && !proxyUsername.isEmpty()) {
-            Settings.setString(Settings.KEYS.PROXY_USERNAME, proxyUsername);
-        }
-        if (proxyPassword != null && !proxyPassword.isEmpty()) {
-            Settings.setString(Settings.KEYS.PROXY_PASSWORD, proxyPassword);
-        }
         if (connectionTimeout != null && !connectionTimeout.isEmpty()) {
             Settings.setString(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
         }

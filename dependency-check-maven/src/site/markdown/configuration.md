@@ -55,17 +55,6 @@ databaseUser         | The username used when connecting to the database.       
 databasePassword     | The password used when connecting to the database.                                          | &nbsp;
 
 
-Deprecated Configuration
+Proxy Configuration
 ====================
-The following properties have been deprecated. These can still be set in
-the dependency-check-maven plugin's configuration. However, future versions
-will remove these properties. Instead using these properties you should
-use [Maven's settings](https://maven.apache.org/settings.html#Proxies) to
-configure a proxy.
-
-Property             | Description                        | Default Value
----------------------|------------------------------------|------------------
-proxyUrl             | The Proxy URL.                     | &nbsp;
-proxyPort            | The Proxy Port.                    | &nbsp;
-proxyUsername        | Defines the proxy user name.       | &nbsp;
-proxyPassword        | Defines the proxy password.        | &nbsp;
+Use [Maven's settings](https://maven.apache.org/settings.html#Proxies) to configure a proxy server.
