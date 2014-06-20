@@ -339,7 +339,7 @@ public class SuppressionRuleTest {
     }
 
     /**
-     * Test of cpeMatches method, of class SuppressionRule.
+     * Test of identifierMatches method, of class SuppressionRule.
      */
     @Test
     public void testCpeMatches() {
@@ -350,44 +350,44 @@ public class SuppressionRuleTest {
 
         SuppressionRule instance = new SuppressionRule();
         boolean expResult = true;
-        boolean result = instance.cpeMatches(cpe, identifier);
+        boolean result = instance.identifierMatches(cpe, identifier);
         assertEquals(expResult, result);
 
         cpe.setValue("cpe:/a:microsoft:.net_framework:4.0");
         expResult = false;
-        result = instance.cpeMatches(cpe, identifier);
+        result = instance.identifierMatches(cpe, identifier);
         assertEquals(expResult, result);
 
         cpe.setValue("CPE:/a:microsoft:.net_framework:4.5");
         cpe.setCaseSensitive(true);
         expResult = false;
-        result = instance.cpeMatches(cpe, identifier);
+        result = instance.identifierMatches(cpe, identifier);
         assertEquals(expResult, result);
 
         cpe.setValue("cpe:/a:microsoft:.net_framework");
         cpe.setCaseSensitive(false);
         expResult = true;
-        result = instance.cpeMatches(cpe, identifier);
+        result = instance.identifierMatches(cpe, identifier);
         assertEquals(expResult, result);
 
         cpe.setValue("cpe:/a:microsoft:.*");
         cpe.setRegex(true);
         expResult = true;
-        result = instance.cpeMatches(cpe, identifier);
+        result = instance.identifierMatches(cpe, identifier);
         assertEquals(expResult, result);
 
         cpe.setValue("CPE:/a:microsoft:.*");
         cpe.setRegex(true);
         cpe.setCaseSensitive(true);
         expResult = false;
-        result = instance.cpeMatches(cpe, identifier);
+        result = instance.identifierMatches(cpe, identifier);
         assertEquals(expResult, result);
 
         cpe.setValue("cpe:/a:apache:.*");
         cpe.setRegex(true);
         cpe.setCaseSensitive(false);
         expResult = false;
-        result = instance.cpeMatches(cpe, identifier);
+        result = instance.identifierMatches(cpe, identifier);
         assertEquals(expResult, result);
     }
 
@@ -398,7 +398,7 @@ public class SuppressionRuleTest {
     public void testProcess() {
         File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
         Dependency dependency = new Dependency(struts);
-        dependency.addIdentifier("cwe", "cpe:/a:microsoft:.net_framework:4.5", "some url not needed for this test");
+        dependency.addIdentifier("cpe", "cpe:/a:microsoft:.net_framework:4.5", "some url not needed for this test");
         String sha1 = dependency.getSha1sum();
         dependency.setSha1sum("384FAA82E193D4E4B0546059CA09572654BC3970");
         Vulnerability v = createVulnerability();
@@ -455,9 +455,9 @@ public class SuppressionRuleTest {
         assertTrue(dependency.getIdentifiers().isEmpty());
         assertTrue(dependency.getSuppressedIdentifiers().size() == 1);
 
-        dependency.addIdentifier("cwe", "cpe:/a:microsoft:.net_framework:4.0", "some url not needed for this test");
-        dependency.addIdentifier("cwe", "cpe:/a:microsoft:.net_framework:4.5", "some url not needed for this test");
-        dependency.addIdentifier("cwe", "cpe:/a:microsoft:.net_framework:5.0", "some url not needed for this test");
+        dependency.addIdentifier("cpe", "cpe:/a:microsoft:.net_framework:4.0", "some url not needed for this test");
+        dependency.addIdentifier("cpe", "cpe:/a:microsoft:.net_framework:4.5", "some url not needed for this test");
+        dependency.addIdentifier("cpe", "cpe:/a:microsoft:.net_framework:5.0", "some url not needed for this test");
         pt = new PropertyType();
         pt.setValue("cpe:/a:microsoft:.net_framework");
         instance.addCpe(pt);
