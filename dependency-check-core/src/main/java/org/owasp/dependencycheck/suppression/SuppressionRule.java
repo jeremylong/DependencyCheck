@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.suppression;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -30,6 +31,10 @@ import org.owasp.dependencycheck.dependency.Vulnerability;
  */
 public class SuppressionRule {
 
+    /**
+     * The Logger for use throughout the class
+     */
+    private static final Logger LOGGER = Logger.getLogger(SuppressionRule.class.getName());
     /**
      * The file path for the suppression.
      */
@@ -280,16 +285,19 @@ public class SuppressionRule {
             return;
         }
         if (gav != null) {
+            LOGGER.info(this.toString());
             final Iterator<Identifier> itr = dependency.getIdentifiers().iterator();
-            boolean hasMatch = false;
+            boolean gavFound = false;
             while (itr.hasNext()) {
                 final Identifier i = itr.next();
+                LOGGER.info(String.format("%nChecking %s for gav:%s", i.getValue(), this.gav));
                 if (identifierMatches("maven", this.gav, i)) {
-                    hasMatch = true;
+                    LOGGER.info("GAV Matched!");
+                    gavFound = true;
                     break;
                 }
             }
-            if (!hasMatch) {
+            if (!gavFound) {
                 return;
             }
         }
@@ -298,8 +306,17 @@ public class SuppressionRule {
             final Iterator<Identifier> itr = dependency.getIdentifiers().iterator();
             while (itr.hasNext()) {
                 final Identifier i = itr.next();
+                if (this.gav != null) {
+                    LOGGER.info(String.format("%nProcessesing %s", i.getValue()));
+                }
                 for (PropertyType c : this.cpe) {
+                    if (this.gav != null) {
+                        LOGGER.info(String.format("%nChecking %s for cpe:%s", i.getValue(), c.getValue()));
+                    }
                     if (identifierMatches("cpe", c, i)) {
+                        if (this.gav != null) {
+                            LOGGER.info(String.format("%nRemoving %s", i.getValue()));
+                        }
                         dependency.addSuppressedIdentifier(i);
                         itr.remove();
                         break;
@@ -355,7 +372,7 @@ public class SuppressionRule {
     boolean cpeHasNoVersion(PropertyType c) {
         if (c.isRegex()) {
             return false;
-        } // cpe:/a:jboss:jboss:1.0.0:
+        } // cpe:/a:jboss:jboss:1.0.0
         if (countCharacter(c.getValue(), ':') == 3) {
             return true;
         }
@@ -390,20 +407,62 @@ public class SuppressionRule {
         if (identifierType.equals(identifier.getType())) {
             if (suppressionEntry.matches(identifier.getValue())) {
                 return true;
-            } else if (cpeHasNoVersion(suppressionEntry)) {
+            } else if ("cpe".equals(identifierType) && cpeHasNoVersion(suppressionEntry)) {
                 if (suppressionEntry.isCaseSensitive()) {
-                    if (identifier.getValue().startsWith(suppressionEntry.getValue())) {
-                        return true;
-                    }
+                    return identifier.getValue().startsWith(suppressionEntry.getValue());
                 } else {
                     final String id = identifier.getValue().toLowerCase();
                     final String check = suppressionEntry.getValue().toLowerCase();
-                    if (id.startsWith(check)) {
-                        return true;
-                    }
+                    return id.startsWith(check);
                 }
             }
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SuppressionRule{");
+        if (filePath != null) {
+            sb.append("filePath=").append(filePath).append(",");
+        }
+        if (sha1 != null) {
+            sb.append("sha1=").append(sha1).append(",");
+        }
+        if (gav != null) {
+            sb.append("gav=").append(gav).append(",");
+        }
+        if (cpe != null && cpe.size() > 0) {
+            sb.append("cpe={");
+            for (PropertyType pt : cpe) {
+                sb.append(pt).append(",");
+            }
+            sb.append("}");
+        }
+        if (cwe != null && cwe.size() > 0) {
+            sb.append("cwe={");
+            for (String s : cwe) {
+                sb.append(s).append(",");
+            }
+            sb.append("}");
+        }
+        if (cve != null && cve.size() > 0) {
+            sb.append("cve={");
+            for (String s : cve) {
+                sb.append(s).append(",");
+            }
+            sb.append("}");
+        }
+        if (cvssBelow != null && cvssBelow.size() > 0) {
+            sb.append("cvssBelow={");
+            for (Float s : cvssBelow) {
+                sb.append(s).append(",");
+            }
+            sb.append("}");
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
 }
