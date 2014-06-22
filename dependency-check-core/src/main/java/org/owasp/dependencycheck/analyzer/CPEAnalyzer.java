@@ -531,7 +531,6 @@ public class CPEAnalyzer implements Analyzer {
                     if (dbVer == null //special case, no version specified - everything is vulnerable
                             || evVer.equals(dbVer)) { //yeah! exact match
 
-                        //final String url = String.format("http://web.nvd.nist.gov/view/vuln/search?cpe=%s", URLEncoder.encode(vs.getName(), "UTF-8"));
                         final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getName(), "UTF-8"));
                         final IdentifierMatch match = new IdentifierMatch("cpe", vs.getName(), url, IdentifierConfidence.EXACT_MATCH, conf);
                         collected.add(match);

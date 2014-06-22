@@ -571,7 +571,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 groupid = parentGroupId;
             }
         }
-        String originalGroupID = groupid;
+        final String originalGroupID = groupid;
 
         if (groupid != null && !groupid.isEmpty()) {
             if (groupid.startsWith("org.") || groupid.startsWith("com.")) {
@@ -601,7 +601,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 artifactid = parentArtifactId;
             }
         }
-        String originalArtifactID = artifactid;
+        final String originalArtifactID = artifactid;
         if (artifactid != null && !artifactid.isEmpty()) {
             if (artifactid.startsWith("org.") || artifactid.startsWith("com.")) {
                 artifactid = artifactid.substring(4);

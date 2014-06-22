@@ -20,7 +20,6 @@ package org.owasp.dependencycheck.suppression;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -31,10 +30,6 @@ import org.owasp.dependencycheck.dependency.Vulnerability;
  */
 public class SuppressionRule {
 
-    /**
-     * The Logger for use throughout the class
-     */
-    private static final Logger LOGGER = Logger.getLogger(SuppressionRule.class.getName());
     /**
      * The file path for the suppression.
      */
@@ -285,14 +280,11 @@ public class SuppressionRule {
             return;
         }
         if (gav != null) {
-            LOGGER.info(this.toString());
             final Iterator<Identifier> itr = dependency.getIdentifiers().iterator();
             boolean gavFound = false;
             while (itr.hasNext()) {
                 final Identifier i = itr.next();
-                LOGGER.info(String.format("%nChecking %s for gav:%s", i.getValue(), this.gav));
                 if (identifierMatches("maven", this.gav, i)) {
-                    LOGGER.info("GAV Matched!");
                     gavFound = true;
                     break;
                 }
@@ -306,17 +298,8 @@ public class SuppressionRule {
             final Iterator<Identifier> itr = dependency.getIdentifiers().iterator();
             while (itr.hasNext()) {
                 final Identifier i = itr.next();
-                if (this.gav != null) {
-                    LOGGER.info(String.format("%nProcessesing %s", i.getValue()));
-                }
                 for (PropertyType c : this.cpe) {
-                    if (this.gav != null) {
-                        LOGGER.info(String.format("%nChecking %s for cpe:%s", i.getValue(), c.getValue()));
-                    }
                     if (identifierMatches("cpe", c, i)) {
-                        if (this.gav != null) {
-                            LOGGER.info(String.format("%nRemoving %s", i.getValue()));
-                        }
                         dependency.addSuppressedIdentifier(i);
                         itr.remove();
                         break;
@@ -372,7 +355,7 @@ public class SuppressionRule {
     boolean cpeHasNoVersion(PropertyType c) {
         if (c.isRegex()) {
             return false;
-        } // cpe:/a:jboss:jboss:1.0.0
+        }
         if (countCharacter(c.getValue(), ':') == 3) {
             return true;
         }
@@ -399,6 +382,7 @@ public class SuppressionRule {
     /**
      * Determines if the cpeEntry specified as a PropertyType matches the given Identifier.
      *
+     * @param identifierType the type of identifier ("cpe", "maven", etc.)
      * @param suppressionEntry a suppression rule entry
      * @param identifier a CPE identifier to check
      * @return true if the entry matches; otherwise false
@@ -420,9 +404,14 @@ public class SuppressionRule {
         return false;
     }
 
+    /**
+     * Standard toString implementation.
+     *
+     * @return a string representation of this object
+     */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append("SuppressionRule{");
         if (filePath != null) {
             sb.append("filePath=").append(filePath).append(",");
@@ -464,5 +453,4 @@ public class SuppressionRule {
         sb.append("}");
         return sb.toString();
     }
-
 }
