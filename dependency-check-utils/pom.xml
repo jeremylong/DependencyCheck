@@ -26,7 +26,7 @@ Copyright (c) 2014 - Jeremy Long. All Rights Reserved.
 
     <artifactId>dependency-check-utils</artifactId>
     <name>Dependency-Check Utils</name>
-    <description>Dependency-check-utils a collection of common utlity classs used within dependency-check.</description>
+    <description>Dependency-check-utils a collection of common utlity classes used within dependency-check.</description>
     <!-- begin copy from http://minds.coremedia.com/2012/09/11/problem-solved-deploy-multi-module-maven-project-site-as-github-pages/ -->
     <distributionManagement>
         <site>
