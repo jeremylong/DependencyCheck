@@ -84,8 +84,22 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             <item name="Sample Report" href="./SampleReport.html">
                 <description>Sample Report</description>
             </item>
+        </menu>
+        <menu name="File Type Analyzers">
+            <item name="Archive Analyzer" href="./archive-analyzer.html">
+                <description>Archive Analyzer</description>
+            </item>
+            <item name="Jar Analyzer" href="./jar-analyzer.html">
+                <description>Jar Analyzer</description>
+            </item>
             <item name="Nexus Analyzer" href="./nexus-analyzer.html">
                 <description>Nexus Analyzer</description>
+            </item>
+            <item name="Assembly Analyzer" href="./assembly-analyzer.html">
+                <description>Assembly Analyzer</description>
+            </item>
+            <item name="Nuspec Analyzer" href="./nuspec-analyzer.html">
+                <description>Nuspec Analyzer</description>
             </item>
         </menu>
         <menu name="Modules">

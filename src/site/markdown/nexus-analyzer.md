@@ -1,7 +1,7 @@
 Nexus Analyzer
 ==============
 
-Dependency Check includes an analyzer which will check for the Maven GAV
+Dependency-check includes an analyzer that will check for the Maven GAV
 (Group/Artifact/Version) information for artifacts in the scanned area. By
 default the information comes from [Maven Central][1], but can be configured to
 use a local repository if necessary. If the artifact's hash is found in the
