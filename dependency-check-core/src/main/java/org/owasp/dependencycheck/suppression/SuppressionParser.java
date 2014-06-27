@@ -27,9 +27,11 @@ import java.io.Reader;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -67,9 +69,24 @@ public class SuppressionParser {
      */
     public List<SuppressionRule> parseSuppressionRules(File file) throws SuppressionParseException {
         try {
+            return parseSuppressionRules(new FileInputStream(file));
+        } catch (IOException ex) {
+            LOGGER.log(Level.FINE, null, ex);
+            throw new SuppressionParseException(ex);
+        }
+    }
+
+    /**
+     * Parses the given xml stream and returns a list of the suppression rules contained.
+     * 
+     * @param inputStream an InputStream containing suppression rues
+     * @return a list of suppression rules
+     * @throws SuppressionParseException if the xml cannot be parsed
+     */
+    public List<SuppressionRule> parseSuppressionRules(InputStream inputStream) throws SuppressionParseException {
+        try {
             final InputStream schemaStream = this.getClass().getClassLoader().getResourceAsStream("schema/suppression.xsd");
             final SuppressionHandler handler = new SuppressionHandler();
-
             final SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
             factory.setValidating(true);
@@ -80,7 +97,6 @@ public class SuppressionParser {
             xmlReader.setErrorHandler(new SuppressionErrorHandler());
             xmlReader.setContentHandler(handler);
 
-            final InputStream inputStream = new FileInputStream(file);
             final Reader reader = new InputStreamReader(inputStream, "UTF-8");
             final InputSource in = new InputSource(reader);
             //in.setEncoding("UTF-8");
