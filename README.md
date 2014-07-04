@@ -40,7 +40,7 @@ The plugin can be configured using the following:
             <plugin>
               <groupId>org.owasp</groupId>
               <artifactId>dependency-check-maven</artifactId>
-              <version>1.0.2</version>
+              <version>1.2.3</version>
               <executions>
                   <execution>
                       <goals>
@@ -59,7 +59,7 @@ The plugin can be configured using the following:
 
 ### Ant Task
 
-For instructions on the use of the Ant Task, please see the [dependency-check-ant github page](http://jeremylong.github.io/DependencyCheck/dependency-check-maven/installation.html).
+For instructions on the use of the Ant Task, please see the [dependency-check-ant github page](http://jeremylong.github.io/DependencyCheck/dependency-check-ant/installation.html).
 
 Development Usage
 -------------
