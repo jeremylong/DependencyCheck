@@ -344,16 +344,25 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @return a Properties object or null if no pom.properties was found
      * @throws IOException thrown if there is an exception reading the pom.properties
      */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "OS_OPEN_STREAM",
-            justification = "The reader is closed by closing the zipEntry")
     private Properties retrievePomProperties(String path, final JarFile jar) throws IOException {
         Properties pomProperties = null;
         final String propPath = path.substring(0, path.length() - 7) + "pom.properies";
         final ZipEntry propEntry = jar.getEntry(propPath);
         if (propEntry != null) {
-            final Reader reader = new InputStreamReader(jar.getInputStream(propEntry), "UTF-8");
-            pomProperties = new Properties();
-            pomProperties.load(reader);
+            Reader reader = null;
+            try {
+                reader = new InputStreamReader(jar.getInputStream(propEntry), "UTF-8");
+                pomProperties = new Properties();
+                pomProperties.load(reader);
+            } finally {
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.FINEST, "close error", ex);
+                    }
+                }
+            }
         }
         return pomProperties;
     }

@@ -382,8 +382,19 @@ public final class Settings {
      * @throws IOException is thrown when there is an exception loading/merging the properties
      */
     public static void mergeProperties(File filePath) throws FileNotFoundException, IOException {
-        final FileInputStream fis = new FileInputStream(filePath);
-        mergeProperties(fis);
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(filePath);
+            mergeProperties(fis);
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.FINEST, "close error", ex);
+                }
+            }
+        }
     }
 
     /**
@@ -396,8 +407,19 @@ public final class Settings {
      * @throws IOException is thrown when there is an exception loading/merging the properties
      */
     public static void mergeProperties(String filePath) throws FileNotFoundException, IOException {
-        final FileInputStream fis = new FileInputStream(filePath);
-        mergeProperties(fis);
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(filePath);
+            mergeProperties(fis);
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.FINEST, "close error", ex);
+                }
+            }
+        }
     }
 
     /**
