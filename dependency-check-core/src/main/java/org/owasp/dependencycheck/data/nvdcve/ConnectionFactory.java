@@ -42,6 +42,7 @@ import org.owasp.dependencycheck.utils.Settings;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class ConnectionFactory {
+
     /**
      * The Logger.
      */
@@ -111,7 +112,7 @@ public final class ConnectionFactory {
             //yes, yes - hard-coded password - only if there isn't one in the properties file.
             password = Settings.getString(Settings.KEYS.DB_PASSWORD, "DC-Pass1337!");
             try {
-                connectionString = getConnectionString();
+                connectionString = Settings.getConnectionString(Settings.KEYS.DB_CONNECTION_STRING);
             } catch (IOException ex) {
                 LOGGER.log(Level.FINE,
                         "Unable to retrieve the database connection string", ex);
@@ -218,48 +219,13 @@ public final class ConnectionFactory {
     }
 
     /**
-     * Returns the configured connection string. If using the embedded H2 database this function will also ensure the
-     * data directory exists and if not create it.
-     *
-     * @return the connection string
-     * @throws IOException thrown the data directory cannot be created
-     */
-    private static String getConnectionString() throws IOException {
-        final String connStr = Settings.getString(Settings.KEYS.DB_CONNECTION_STRING, "jdbc:h2:file:%s;AUTO_SERVER=TRUE");
-        if (connStr.contains("%s")) {
-            final String directory = getDataDirectory().getCanonicalPath();
-            final File dataFile = new File(directory, "cve." + DB_SCHEMA_VERSION);
-            LOGGER.log(Level.FINE, String.format("File path for H2 file: '%s'", dataFile.toString()));
-            return String.format(connStr, dataFile.getAbsolutePath());
-        }
-        return connStr;
-    }
-
-    /**
-     * Retrieves the directory that the JAR file exists in so that we can ensure we always use a common data directory
-     * for the embedded H2 database. This is public solely for some unit tests; otherwise this should be private.
-     *
-     * @return the data directory to store data files
-     * @throws IOException is thrown if an IOException occurs of course...
-     */
-    public static File getDataDirectory() throws IOException {
-        final File path = Settings.getDataFile(Settings.KEYS.DATA_DIRECTORY);
-        if (!path.exists()) {
-            if (!path.mkdirs()) {
-                throw new IOException("Unable to create NVD CVE Data directory");
-            }
-        }
-        return path;
-    }
-
-    /**
      * Determines if the H2 database file exists. If it does not exist then the data structure will need to be created.
      *
      * @return true if the H2 database file does not exist; otherwise false
      * @throws IOException thrown if the data directory does not exist and cannot be created
      */
     private static boolean dbSchemaExists() throws IOException {
-        final File dir = getDataDirectory();
+        final File dir = Settings.getDataDirectory();
         final String name = String.format("cve.%s.h2.db", DB_SCHEMA_VERSION);
         final File file = new File(dir, name);
         return file.exists();
