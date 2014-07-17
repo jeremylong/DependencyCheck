@@ -200,6 +200,28 @@ public final class Settings {
          * The properties key for whether Provided Scope dependencies should be skipped.
          */
         public static final String SKIP_PROVIDED_SCOPE = "skip.provided.scope";
+
+        /**
+         * The key to obtain the path to the VFEED data file.
+         */
+        public static final String VFEED_DATA_FILE = "vfeed.data_file";
+        /**
+         * The key to obtain the VFEED connection string.
+         */
+        public static final String VFEED_CONNECTION_STRING = "vfeed.connection_string";
+
+        /**
+         * The key to obtain the base download URL for the VFeed data file.
+         */
+        public static final String VFEED_DOWNLOAD_URL = "vfeed.download_url";
+        /**
+         * The key to obtain the download file name for the VFeed data.
+         */
+        public static final String VFEED_DOWNLOAD_FILE = "vfeed.download_file";
+        /**
+         * The key to obtain the VFeed update status.
+         */
+        public static final String VFEED_UPDATE_STATUS = "vfeed.update_status";
     }
     //</editor-fold>
 
@@ -662,5 +684,42 @@ public final class Settings {
             throw new InvalidSettingException("Could not convert property '" + key + "' to an int.", ex);
         }
         return value;
+    }
+
+    /**
+     * Returns a connection string from the configured properties. If the connection string contains a %s, this method
+     * will determine the 'data' directory and replace the %s with the path to the data directory. If the data directory
+     * does not exists it will be created.
+     *
+     * @param connectionStringKey the property file key for the connection string
+     * @return the connection string
+     * @throws IOException thrown the data directory cannot be created
+     */
+    public static String getConnectionString(String connectionStringKey) throws IOException {
+        final String connStr = Settings.getString(connectionStringKey, "jdbc:h2:file:%s/cve.2.9;FILE_LOCK=SERIALIZED;AUTOCOMMIT=ON;");
+        if (connStr.contains("%s")) {
+            final File directory = getDataDirectory();
+            final String cString = String.format(connStr, directory.getAbsolutePath());
+            LOGGER.log(Level.FINE, String.format("Connection String: '%s'", cString));
+            return cString;
+        }
+        return connStr;
+    }
+
+    /**
+     * Retrieves the directory that the JAR file exists in so that we can ensure we always use a common data directory
+     * for the embedded H2 database. This is public solely for some unit tests; otherwise this should be private.
+     *
+     * @return the data directory to store data files
+     * @throws IOException is thrown if an IOException occurs of course...
+     */
+    public static File getDataDirectory() throws IOException {
+        final File path = Settings.getDataFile(Settings.KEYS.DATA_DIRECTORY);
+        if (!path.exists()) {
+            if (!path.mkdirs()) {
+                throw new IOException("Unable to create the data directory");
+            }
+        }
+        return path;
     }
 }
