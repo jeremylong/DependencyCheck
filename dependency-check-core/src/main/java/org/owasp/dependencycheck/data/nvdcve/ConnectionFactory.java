@@ -50,7 +50,7 @@ public final class ConnectionFactory {
     /**
      * The version of the current DB Schema.
      */
-    public static final String DB_SCHEMA_VERSION = "2.9";
+    public static final String DB_SCHEMA_VERSION = Settings.getString(Settings.KEYS.DB_VERSION);
     /**
      * Resource location for SQL file used to create the database schema.
      */
@@ -112,7 +112,7 @@ public final class ConnectionFactory {
             //yes, yes - hard-coded password - only if there isn't one in the properties file.
             password = Settings.getString(Settings.KEYS.DB_PASSWORD, "DC-Pass1337!");
             try {
-                connectionString = Settings.getConnectionString(Settings.KEYS.DB_CONNECTION_STRING);
+                connectionString = Settings.getConnectionString(Settings.KEYS.DB_CONNECTION_STRING, Settings.KEYS.DB_FILE_NAME, Settings.KEYS.DB_VERSION);
             } catch (IOException ex) {
                 LOGGER.log(Level.FINE,
                         "Unable to retrieve the database connection string", ex);
@@ -121,7 +121,7 @@ public final class ConnectionFactory {
             boolean shouldCreateSchema = false;
             try {
                 if (connectionString.startsWith("jdbc:h2:file:")) { //H2
-                    shouldCreateSchema = !dbSchemaExists();
+                    shouldCreateSchema = !h2DataFileExists();
                     LOGGER.log(Level.FINE, "Need to create DB Structure: {0}", shouldCreateSchema);
                 }
             } catch (IOException ioex) {
@@ -224,9 +224,10 @@ public final class ConnectionFactory {
      * @return true if the H2 database file does not exist; otherwise false
      * @throws IOException thrown if the data directory does not exist and cannot be created
      */
-    private static boolean dbSchemaExists() throws IOException {
+    private static boolean h2DataFileExists() throws IOException {
         final File dir = Settings.getDataDirectory();
-        final String name = String.format("cve.%s.h2.db", DB_SCHEMA_VERSION);
+        String name = Settings.getString(Settings.KEYS.DB_FILE_NAME);
+        final String fileName = String.format(name, DB_SCHEMA_VERSION);
         final File file = new File(dir, name);
         return file.exists();
     }
