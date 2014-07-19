@@ -228,7 +228,7 @@ public final class ConnectionFactory {
         final File dir = Settings.getDataDirectory();
         String name = Settings.getString(Settings.KEYS.DB_FILE_NAME);
         final String fileName = String.format(name, DB_SCHEMA_VERSION);
-        final File file = new File(dir, name);
+        final File file = new File(dir, fileName);
         return file.exists();
     }
 
