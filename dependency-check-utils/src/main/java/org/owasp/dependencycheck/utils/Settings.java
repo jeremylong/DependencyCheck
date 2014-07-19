@@ -79,6 +79,14 @@ public final class Settings {
          */
         public static final String DATA_DIRECTORY = "data.directory";
         /**
+         * The database file name.
+         */
+        public static final String DB_FILE_NAME = "data.file_name";
+        /**
+         * The database schema version.
+         */
+        public static final String DB_VERSION = "data.version";
+        /**
          * The properties key for the URL to retrieve the "meta" data from about the CVE entries.
          */
         public static final String CVE_META_URL = "cve.url.meta";
@@ -97,7 +105,7 @@ public final class Settings {
          */
         public static final String CVE_MODIFIED_VALID_FOR_DAYS = "cve.url.modified.validfordays";
         /**
-         * The properties key for the telling us how many cvr.url.* URLs exists. This is used in combination with
+         * The properties key for the telling us how many cve.url.* URLs exists. This is used in combination with
          * CVE_BASE_URL to be able to retrieve the URLs for all of the files that make up the NVD CVE listing.
          */
         public static final String CVE_START_YEAR = "cve.startyear";
@@ -485,7 +493,7 @@ public final class Settings {
      * @param key the key to lookup within the properties file
      * @return the property from the properties file converted to a File object
      */
-    public static File getDataFile(String key) {
+    protected static File getDataFile(String key) {
         final String file = getString(key);
         LOGGER.log(Level.FINE, String.format("Settings.getDataFile() - file: '%s'", file));
         if (file == null) {
@@ -692,14 +700,44 @@ public final class Settings {
      * does not exists it will be created.
      *
      * @param connectionStringKey the property file key for the connection string
+     * @param dbFileNameKey the settings key for the db filename
+     * @param dbVersionKey the settings key for the dbVersion
      * @return the connection string
      * @throws IOException thrown the data directory cannot be created
+     * @throws org.owasp.dependencycheck.utils.InvalidSettingException
      */
-    public static String getConnectionString(String connectionStringKey) throws IOException {
-        final String connStr = Settings.getString(connectionStringKey, "jdbc:h2:file:%s/cve.2.9;FILE_LOCK=SERIALIZED;AUTOCOMMIT=ON;");
+    public static String getConnectionString(String connectionStringKey, String dbFileNameKey, String dbVersionKey) throws IOException, InvalidSettingException {
+        final String connStr = Settings.getString(connectionStringKey);
+        if (connStr == null) {
+            throw new InvalidSettingException(String.format("Invalid properties file to get the connection string; '%s' must be defined.", connectionStringKey));
+        }
         if (connStr.contains("%s")) {
             final File directory = getDataDirectory();
-            final String cString = String.format(connStr, directory.getAbsolutePath());
+            String fileName = null;
+            if (dbFileNameKey != null) {
+                fileName = Settings.getString(dbFileNameKey);
+            }
+            if (fileName == null) {
+                throw new InvalidSettingException(String.format("Invalid properties file to get a file based connection string; '%s' must be defined.", dbFileNameKey));
+            }
+            if (fileName.contains("%s")) {
+                String version = null;
+                if (dbVersionKey != null) {
+                    version = Settings.getString(dbVersionKey);
+                }
+                if (version == null) {
+                    throw new InvalidSettingException(String.format("Invalid properties file to get a file based connection string; '%s' must be defined.", dbFileNameKey));
+                }
+                fileName = String.format(fileName, version);
+            }
+            if (connStr.startsWith("jdbc:h2:file:")) {
+                if (fileName.endsWith(".h2.db")) {
+                    fileName = fileName.substring(0, fileName.length() - 6);
+                }
+            }
+            // yes, for H2 this path won't actually exists - but this is sufficient to get the value needed
+            final File dbFile = new File(directory, fileName);
+            final String cString = String.format(connStr, dbFile.getCanonicalPath());
             LOGGER.log(Level.FINE, String.format("Connection String: '%s'", cString));
             return cString;
         }
@@ -717,7 +755,7 @@ public final class Settings {
         final File path = Settings.getDataFile(Settings.KEYS.DATA_DIRECTORY);
         if (!path.exists()) {
             if (!path.mkdirs()) {
-                throw new IOException("Unable to create the data directory");
+                throw new IOException(String.format("Unable to create the data directory '%s'", path.getAbsolutePath()));
             }
         }
         return path;
