@@ -85,7 +85,7 @@ public class HintAnalyzerTest extends BaseTest {
         for (Dependency d : engine.getDependencies()) {
             if (d.getActualFile().equals(guice)) {
                 gdep = d;
-            } else {
+            } else if (d.getActualFile().equals(spring)) {
                 sdep = d;
             }
         }
