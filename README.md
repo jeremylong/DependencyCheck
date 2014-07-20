@@ -40,7 +40,6 @@ The plugin can be configured using the following:
             <plugin>
               <groupId>org.owasp</groupId>
               <artifactId>dependency-check-maven</artifactId>
-              <version>1.2.3</version>
               <executions>
                   <execution>
                       <goals>
