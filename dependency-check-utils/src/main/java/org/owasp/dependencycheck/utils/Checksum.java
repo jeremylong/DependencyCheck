@@ -17,12 +17,11 @@
  */
 package org.owasp.dependencycheck.utils;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.DigestInputStream;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
@@ -57,16 +56,20 @@ public final class Checksum {
      * @throws IOException when the file does not exist
      * @throws NoSuchAlgorithmException when an algorithm is specified that does not exist
      */
+    @SuppressWarnings("empty-statement")
     public static byte[] getChecksum(String algorithm, File file) throws NoSuchAlgorithmException, IOException {
         MessageDigest digest = MessageDigest.getInstance(algorithm);
-        InputStream fis = null;
+        FileInputStream fis = null;
         try {
             fis = new FileInputStream(file);
-            BufferedInputStream bis = new BufferedInputStream(fis);
-            DigestInputStream dis = new DigestInputStream(bis, digest);
-            //yes, we are reading in a buffer for performance reasons - 1 byte at a time is SLOW
-            byte[] buffer = new byte[8192];
-            while (dis.read(buffer) != -1);
+            FileChannel ch = fis.getChannel();
+            MappedByteBuffer byteBuffer = ch.map(FileChannel.MapMode.READ_ONLY, 0, file.length());
+            digest.update(byteBuffer);
+//            BufferedInputStream bis = new BufferedInputStream(fis);
+//            DigestInputStream dis = new DigestInputStream(bis, digest);
+//            //yes, we are reading in a buffer for performance reasons - 1 byte at a time is SLOW
+//            byte[] buffer = new byte[8192];
+//            while (dis.read(buffer) != -1);
         } finally {
             if (fis != null) {
                 try {
