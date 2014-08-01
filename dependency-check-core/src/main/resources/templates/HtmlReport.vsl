@@ -86,10 +86,10 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             }
             function toggleDisplay(el, clzName) {
                 $(clzName).toggle();
-                if (el.innerHTML == 'show all') {
-                    el.innerHTML = 'less';
+                if (el.innerHTML == 'Show All') {
+                    el.innerHTML = 'Showing Vulnerable Dependencies';
                 } else {
-                    el.innerHTML = 'show all';
+                    el.innerHTML = 'Show All';
                 }
             }
         </script>
@@ -481,7 +481,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         <div id="modal-content">
             <div>Press CTR-C to copy XML&nbsp;<a href="http://jeremylong.github.io/DependencyCheck/suppression.html" class="infolink" target="_blank" title="Help with suppressing false positives">[help]</a></div>
                 <textarea id="modal-text" cols="50" rows="10"></textarea><br/>
-                <button id="modal-add-header" class="modal-button">Complete XML Doc</button><button id="modal-close" class="modal-button-right">Close</button>
+                <button id="modal-add-header" title="Add the parent XML nodes to create the complete XML file that can be used to suppress this finding" class="modal-button">Complete XML Doc</button><button id="modal-close" class="modal-button-right">Close</button>
         </div>
         <div class="wrapper">
             <h1>Dependency-Check Report</h1>
@@ -513,7 +513,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                         #set($vulnSuppressedCount=$vulnSuppressedCount+$dependency.getSuppressedVulnerabilities().size())
                     #end
                 #end
-                Scan Information (<a href="#" onclick="toggleDisplay(this, '.scaninfo');  return false;">show all</a>):<br/>
+                Scan Information (<a href="#" onclick="toggleDisplay(this, '.scaninfo');  return false;">Showing Vulnerable Dependencies</a>):<br/>
                     <ul class="indent">
                         <li><i>dependency-check version</i>: $version</li>
                         <li><i>Report Generated On</i>: $scanDate</li>
@@ -630,7 +630,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                                 #end
                                 #if ($id.type=="cpe")
                                     ##yes, we are HTML Encoding into JavaScript... the escape utils don't have a JS Encode and I haven't written one yet
-                                    &nbsp;&nbsp;<button class="copybutton" onclick="copyText('$enc.html($dependency.FileNameForJavaScript)', '$enc.html($dependency.Sha1sum)', 'cpe', '$enc.html($id.value)')">suppress</button>
+                                    &nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CPE for this file" onclick="copyText('$enc.html($dependency.FileNameForJavaScript)', '$enc.html($dependency.Sha1sum)', 'cpe', '$enc.html($id.value)')">suppress</button>
                                 #end
                                 #if ($id.description)
                                     <br/>$enc.html($id.description)
@@ -646,7 +646,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                     <div id="content$cnt" class="subsectioncontent standardsubsection">
                         #foreach($vuln in $dependency.getVulnerabilities())
                             #set($vsctr=$vsctr+1)
-                            <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" onclick="copyText('$enc.html($dependency.FileNameForJavaScript)', '$enc.html($dependency.Sha1sum)', 'cve', '$enc.html($vuln.name)')">suppress</button></p>
+                            <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CCE for this file" onclick="copyText('$enc.html($dependency.FileNameForJavaScript)', '$enc.html($dependency.Sha1sum)', 'cve', '$enc.html($vuln.name)')">suppress</button></p>
                             <p>Severity:
                             #if ($vuln.cvssScore<4.0)
                                 Low
