@@ -4,8 +4,6 @@
 // Any modifications to this file will be lost upon recompilation of the source schema.
 // Generated on: 2012.11.09 at 12:33:57 PM EST
 //
-
-
 package org.owasp.dependencycheck.jaxb.pom.generated;
 
 import java.util.ArrayList;
@@ -15,19 +13,21 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.w3c.dom.Element;
 
-
 /**
  *
- *          The <code>&lt;project&gt;</code> element is the root of the descriptor.
- *          The following table lists all of the possible child elements.
+ * The <code>&lt;project&gt;</code> element is the root of the descriptor. The following table lists all of the possible
+ * child elements.
  *
  *
- * <p>Java class for Model complex type.
+ * <p>
+ * Java class for Model complex type.
  *
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
  * &lt;complexType name="Model">
@@ -183,10 +183,9 @@ import org.w3c.dom.Element;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Model", propOrder = {
-
-})
+@XmlType(name = "Model", propOrder = {})
 @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
+@XmlRootElement
 public class Model {
 
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -254,9 +253,7 @@ public class Model {
     /**
      * Gets the value of the parent property.
      *
-     * @return
-     *     possible object is
-     *     {@link Parent }
+     * @return possible object is {@link Parent }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -267,9 +264,7 @@ public class Model {
     /**
      * Sets the value of the parent property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Parent }
+     * @param value allowed object is {@link Parent }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -280,9 +275,7 @@ public class Model {
     /**
      * Gets the value of the modelVersion property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -293,9 +286,7 @@ public class Model {
     /**
      * Sets the value of the modelVersion property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -306,9 +297,7 @@ public class Model {
     /**
      * Gets the value of the groupId property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -319,9 +308,7 @@ public class Model {
     /**
      * Sets the value of the groupId property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -332,9 +319,7 @@ public class Model {
     /**
      * Gets the value of the artifactId property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -345,9 +330,7 @@ public class Model {
     /**
      * Sets the value of the artifactId property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -358,9 +341,7 @@ public class Model {
     /**
      * Gets the value of the packaging property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -371,9 +352,7 @@ public class Model {
     /**
      * Sets the value of the packaging property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -384,9 +363,7 @@ public class Model {
     /**
      * Gets the value of the name property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -397,9 +374,7 @@ public class Model {
     /**
      * Sets the value of the name property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -410,9 +385,7 @@ public class Model {
     /**
      * Gets the value of the version property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -423,9 +396,7 @@ public class Model {
     /**
      * Sets the value of the version property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -436,9 +407,7 @@ public class Model {
     /**
      * Gets the value of the description property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -449,9 +418,7 @@ public class Model {
     /**
      * Sets the value of the description property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -462,9 +429,7 @@ public class Model {
     /**
      * Gets the value of the url property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -475,9 +440,7 @@ public class Model {
     /**
      * Sets the value of the url property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -488,9 +451,7 @@ public class Model {
     /**
      * Gets the value of the prerequisites property.
      *
-     * @return
-     *     possible object is
-     *     {@link Prerequisites }
+     * @return possible object is {@link Prerequisites }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -501,9 +462,7 @@ public class Model {
     /**
      * Sets the value of the prerequisites property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Prerequisites }
+     * @param value allowed object is {@link Prerequisites }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -514,9 +473,7 @@ public class Model {
     /**
      * Gets the value of the issueManagement property.
      *
-     * @return
-     *     possible object is
-     *     {@link IssueManagement }
+     * @return possible object is {@link IssueManagement }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -527,9 +484,7 @@ public class Model {
     /**
      * Sets the value of the issueManagement property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link IssueManagement }
+     * @param value allowed object is {@link IssueManagement }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -540,9 +495,7 @@ public class Model {
     /**
      * Gets the value of the ciManagement property.
      *
-     * @return
-     *     possible object is
-     *     {@link CiManagement }
+     * @return possible object is {@link CiManagement }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -553,9 +506,7 @@ public class Model {
     /**
      * Sets the value of the ciManagement property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link CiManagement }
+     * @param value allowed object is {@link CiManagement }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -566,9 +517,7 @@ public class Model {
     /**
      * Gets the value of the inceptionYear property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -579,9 +528,7 @@ public class Model {
     /**
      * Sets the value of the inceptionYear property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -592,9 +539,7 @@ public class Model {
     /**
      * Gets the value of the mailingLists property.
      *
-     * @return
-     *     possible object is
-     *     {@link Model.MailingLists }
+     * @return possible object is {@link Model.MailingLists }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -605,9 +550,7 @@ public class Model {
     /**
      * Sets the value of the mailingLists property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Model.MailingLists }
+     * @param value allowed object is {@link Model.MailingLists }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -618,9 +561,7 @@ public class Model {
     /**
      * Gets the value of the developers property.
      *
-     * @return
-     *     possible object is
-     *     {@link Model.Developers }
+     * @return possible object is {@link Model.Developers }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -631,9 +572,7 @@ public class Model {
     /**
      * Sets the value of the developers property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Model.Developers }
+     * @param value allowed object is {@link Model.Developers }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -644,9 +583,7 @@ public class Model {
     /**
      * Gets the value of the contributors property.
      *
-     * @return
-     *     possible object is
-     *     {@link Model.Contributors }
+     * @return possible object is {@link Model.Contributors }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -657,9 +594,7 @@ public class Model {
     /**
      * Sets the value of the contributors property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Model.Contributors }
+     * @param value allowed object is {@link Model.Contributors }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -670,9 +605,7 @@ public class Model {
     /**
      * Gets the value of the licenses property.
      *
-     * @return
-     *     possible object is
-     *     {@link Model.Licenses }
+     * @return possible object is {@link Model.Licenses }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -683,9 +616,7 @@ public class Model {
     /**
      * Sets the value of the licenses property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Model.Licenses }
+     * @param value allowed object is {@link Model.Licenses }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -696,9 +627,7 @@ public class Model {
     /**
      * Gets the value of the scm property.
      *
-     * @return
-     *     possible object is
-     *     {@link Scm }
+     * @return possible object is {@link Scm }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -709,9 +638,7 @@ public class Model {
     /**
      * Sets the value of the scm property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Scm }
+     * @param value allowed object is {@link Scm }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -722,9 +649,7 @@ public class Model {
     /**
      * Gets the value of the organization property.
      *
-     * @return
-     *     possible object is
-     *     {@link Organization }
+     * @return possible object is {@link Organization }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -735,9 +660,7 @@ public class Model {
     /**
      * Sets the value of the organization property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Organization }
+     * @param value allowed object is {@link Organization }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -748,9 +671,7 @@ public class Model {
     /**
      * Gets the value of the build property.
      *
-     * @return
-     *     possible object is
-     *     {@link Build }
+     * @return possible object is {@link Build }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -761,9 +682,7 @@ public class Model {
     /**
      * Sets the value of the build property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Build }
+     * @param value allowed object is {@link Build }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -774,9 +693,7 @@ public class Model {
     /**
      * Gets the value of the profiles property.
      *
-     * @return
-     *     possible object is
-     *     {@link Model.Profiles }
+     * @return possible object is {@link Model.Profiles }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -787,9 +704,7 @@ public class Model {
     /**
      * Sets the value of the profiles property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Model.Profiles }
+     * @param value allowed object is {@link Model.Profiles }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -800,9 +715,7 @@ public class Model {
     /**
      * Gets the value of the modules property.
      *
-     * @return
-     *     possible object is
-     *     {@link Model.Modules }
+     * @return possible object is {@link Model.Modules }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -813,9 +726,7 @@ public class Model {
     /**
      * Sets the value of the modules property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Model.Modules }
+     * @param value allowed object is {@link Model.Modules }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -826,9 +737,7 @@ public class Model {
     /**
      * Gets the value of the repositories property.
      *
-     * @return
-     *     possible object is
-     *     {@link Model.Repositories }
+     * @return possible object is {@link Model.Repositories }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -839,9 +748,7 @@ public class Model {
     /**
      * Sets the value of the repositories property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Model.Repositories }
+     * @param value allowed object is {@link Model.Repositories }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -852,9 +759,7 @@ public class Model {
     /**
      * Gets the value of the pluginRepositories property.
      *
-     * @return
-     *     possible object is
-     *     {@link Model.PluginRepositories }
+     * @return possible object is {@link Model.PluginRepositories }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -865,9 +770,7 @@ public class Model {
     /**
      * Sets the value of the pluginRepositories property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Model.PluginRepositories }
+     * @param value allowed object is {@link Model.PluginRepositories }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -878,9 +781,7 @@ public class Model {
     /**
      * Gets the value of the dependencies property.
      *
-     * @return
-     *     possible object is
-     *     {@link Model.Dependencies }
+     * @return possible object is {@link Model.Dependencies }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -891,9 +792,7 @@ public class Model {
     /**
      * Sets the value of the dependencies property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Model.Dependencies }
+     * @param value allowed object is {@link Model.Dependencies }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -904,9 +803,7 @@ public class Model {
     /**
      * Gets the value of the reports property.
      *
-     * @return
-     *     possible object is
-     *     {@link Model.Reports }
+     * @return possible object is {@link Model.Reports }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -917,9 +814,7 @@ public class Model {
     /**
      * Sets the value of the reports property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Model.Reports }
+     * @param value allowed object is {@link Model.Reports }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -930,9 +825,7 @@ public class Model {
     /**
      * Gets the value of the reporting property.
      *
-     * @return
-     *     possible object is
-     *     {@link Reporting }
+     * @return possible object is {@link Reporting }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -943,9 +836,7 @@ public class Model {
     /**
      * Sets the value of the reporting property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Reporting }
+     * @param value allowed object is {@link Reporting }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -956,9 +847,7 @@ public class Model {
     /**
      * Gets the value of the dependencyManagement property.
      *
-     * @return
-     *     possible object is
-     *     {@link DependencyManagement }
+     * @return possible object is {@link DependencyManagement }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -969,9 +858,7 @@ public class Model {
     /**
      * Sets the value of the dependencyManagement property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link DependencyManagement }
+     * @param value allowed object is {@link DependencyManagement }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -982,9 +869,7 @@ public class Model {
     /**
      * Gets the value of the distributionManagement property.
      *
-     * @return
-     *     possible object is
-     *     {@link DistributionManagement }
+     * @return possible object is {@link DistributionManagement }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -995,9 +880,7 @@ public class Model {
     /**
      * Sets the value of the distributionManagement property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link DistributionManagement }
+     * @param value allowed object is {@link DistributionManagement }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -1008,9 +891,7 @@ public class Model {
     /**
      * Gets the value of the properties property.
      *
-     * @return
-     *     possible object is
-     *     {@link Model.Properties }
+     * @return possible object is {@link Model.Properties }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -1021,9 +902,7 @@ public class Model {
     /**
      * Sets the value of the properties property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Model.Properties }
+     * @param value allowed object is {@link Model.Properties }
      *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2012-11-09T12:33:57-05:00", comments = "JAXB RI vJAXB 2.1.10 in JDK 6")
@@ -1031,11 +910,12 @@ public class Model {
         this.properties = value;
     }
 
-
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>
+     * Java class for anonymous complex type.
      *
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>
+     * The following schema fragment specifies the expected content contained within this class.
      *
      * <pre>
      * &lt;complexType>
@@ -1065,10 +945,9 @@ public class Model {
          * Gets the value of the contributor property.
          *
          * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the contributor property.
+         * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you
+         * make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE>
+         * method for the contributor property.
          *
          * <p>
          * For example, to add a new item, do as follows:
@@ -1078,8 +957,7 @@ public class Model {
          *
          *
          * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link Contributor }
+         * Objects of the following type(s) are allowed in the list {@link Contributor }
          *
          *
          */
@@ -1093,11 +971,12 @@ public class Model {
 
     }
 
-
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>
+     * Java class for anonymous complex type.
      *
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>
+     * The following schema fragment specifies the expected content contained within this class.
      *
      * <pre>
      * &lt;complexType>
@@ -1127,10 +1006,9 @@ public class Model {
          * Gets the value of the dependency property.
          *
          * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the dependency property.
+         * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you
+         * make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE>
+         * method for the dependency property.
          *
          * <p>
          * For example, to add a new item, do as follows:
@@ -1140,8 +1018,7 @@ public class Model {
          *
          *
          * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link Dependency }
+         * Objects of the following type(s) are allowed in the list {@link Dependency }
          *
          *
          */
@@ -1155,11 +1032,12 @@ public class Model {
 
     }
 
-
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>
+     * Java class for anonymous complex type.
      *
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>
+     * The following schema fragment specifies the expected content contained within this class.
      *
      * <pre>
      * &lt;complexType>
@@ -1189,10 +1067,9 @@ public class Model {
          * Gets the value of the developer property.
          *
          * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the developer property.
+         * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you
+         * make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE>
+         * method for the developer property.
          *
          * <p>
          * For example, to add a new item, do as follows:
@@ -1202,8 +1079,7 @@ public class Model {
          *
          *
          * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link Developer }
+         * Objects of the following type(s) are allowed in the list {@link Developer }
          *
          *
          */
@@ -1217,11 +1093,12 @@ public class Model {
 
     }
 
-
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>
+     * Java class for anonymous complex type.
      *
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>
+     * The following schema fragment specifies the expected content contained within this class.
      *
      * <pre>
      * &lt;complexType>
@@ -1251,10 +1128,9 @@ public class Model {
          * Gets the value of the license property.
          *
          * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the license property.
+         * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you
+         * make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE>
+         * method for the license property.
          *
          * <p>
          * For example, to add a new item, do as follows:
@@ -1264,8 +1140,7 @@ public class Model {
          *
          *
          * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link License }
+         * Objects of the following type(s) are allowed in the list {@link License }
          *
          *
          */
@@ -1279,11 +1154,12 @@ public class Model {
 
     }
 
-
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>
+     * Java class for anonymous complex type.
      *
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>
+     * The following schema fragment specifies the expected content contained within this class.
      *
      * <pre>
      * &lt;complexType>
@@ -1313,10 +1189,9 @@ public class Model {
          * Gets the value of the mailingList property.
          *
          * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the mailingList property.
+         * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you
+         * make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE>
+         * method for the mailingList property.
          *
          * <p>
          * For example, to add a new item, do as follows:
@@ -1326,8 +1201,7 @@ public class Model {
          *
          *
          * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link MailingList }
+         * Objects of the following type(s) are allowed in the list {@link MailingList }
          *
          *
          */
@@ -1341,11 +1215,12 @@ public class Model {
 
     }
 
-
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>
+     * Java class for anonymous complex type.
      *
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>
+     * The following schema fragment specifies the expected content contained within this class.
      *
      * <pre>
      * &lt;complexType>
@@ -1375,10 +1250,9 @@ public class Model {
          * Gets the value of the module property.
          *
          * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the module property.
+         * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you
+         * make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE>
+         * method for the module property.
          *
          * <p>
          * For example, to add a new item, do as follows:
@@ -1388,8 +1262,7 @@ public class Model {
          *
          *
          * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link String }
+         * Objects of the following type(s) are allowed in the list {@link String }
          *
          *
          */
@@ -1403,11 +1276,12 @@ public class Model {
 
     }
 
-
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>
+     * Java class for anonymous complex type.
      *
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>
+     * The following schema fragment specifies the expected content contained within this class.
      *
      * <pre>
      * &lt;complexType>
@@ -1437,10 +1311,9 @@ public class Model {
          * Gets the value of the pluginRepository property.
          *
          * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the pluginRepository property.
+         * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you
+         * make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE>
+         * method for the pluginRepository property.
          *
          * <p>
          * For example, to add a new item, do as follows:
@@ -1450,8 +1323,7 @@ public class Model {
          *
          *
          * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link Repository }
+         * Objects of the following type(s) are allowed in the list {@link Repository }
          *
          *
          */
@@ -1465,11 +1337,12 @@ public class Model {
 
     }
 
-
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>
+     * Java class for anonymous complex type.
      *
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>
+     * The following schema fragment specifies the expected content contained within this class.
      *
      * <pre>
      * &lt;complexType>
@@ -1499,10 +1372,9 @@ public class Model {
          * Gets the value of the profile property.
          *
          * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the profile property.
+         * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you
+         * make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE>
+         * method for the profile property.
          *
          * <p>
          * For example, to add a new item, do as follows:
@@ -1512,8 +1384,7 @@ public class Model {
          *
          *
          * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link Profile }
+         * Objects of the following type(s) are allowed in the list {@link Profile }
          *
          *
          */
@@ -1527,11 +1398,12 @@ public class Model {
 
     }
 
-
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>
+     * Java class for anonymous complex type.
      *
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>
+     * The following schema fragment specifies the expected content contained within this class.
      *
      * <pre>
      * &lt;complexType>
@@ -1562,10 +1434,9 @@ public class Model {
          * Gets the value of the any property.
          *
          * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the any property.
+         * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you
+         * make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE>
+         * method for the any property.
          *
          * <p>
          * For example, to add a new item, do as follows:
@@ -1575,8 +1446,7 @@ public class Model {
          *
          *
          * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link Element }
+         * Objects of the following type(s) are allowed in the list {@link Element }
          *
          *
          */
@@ -1590,11 +1460,12 @@ public class Model {
 
     }
 
-
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>
+     * Java class for anonymous complex type.
      *
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>
+     * The following schema fragment specifies the expected content contained within this class.
      *
      * <pre>
      * &lt;complexType>
@@ -1625,10 +1496,9 @@ public class Model {
          * Gets the value of the any property.
          *
          * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the any property.
+         * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you
+         * make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE>
+         * method for the any property.
          *
          * <p>
          * For example, to add a new item, do as follows:
@@ -1638,8 +1508,7 @@ public class Model {
          *
          *
          * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link Element }
+         * Objects of the following type(s) are allowed in the list {@link Element }
          *
          *
          */
@@ -1653,11 +1522,12 @@ public class Model {
 
     }
 
-
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>
+     * Java class for anonymous complex type.
      *
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>
+     * The following schema fragment specifies the expected content contained within this class.
      *
      * <pre>
      * &lt;complexType>
@@ -1687,10 +1557,9 @@ public class Model {
          * Gets the value of the repository property.
          *
          * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the repository property.
+         * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you
+         * make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE>
+         * method for the repository property.
          *
          * <p>
          * For example, to add a new item, do as follows:
@@ -1700,8 +1569,7 @@ public class Model {
          *
          *
          * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link Repository }
+         * Objects of the following type(s) are allowed in the list {@link Repository }
          *
          *
          */
