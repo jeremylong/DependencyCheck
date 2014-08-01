@@ -1,9 +1,17 @@
 Usage
 ====================
-First, add the dependency-check-ant taskdef to your build.xml:
+First, add the dependency-check-ant taskdef to your build.xml (see the [installation guide](installation.html):
 
 ```xml
 <taskdef name="dependency-check" classname="org.owasp.dependencycheck.taskdefs.DependencyCheckTask"/>
+```
+
+Or
+
+```xml
+<taskdef name="dependency-check" classname="org.owasp.dependencycheck.taskdefs.DependencyCheckTask">
+    <classpath path="[path]/[to]/dependency-check-ant-${project.version}.jar"/>
+</taskdef>
 ```
 
 Next, add the task to a target of your choosing:

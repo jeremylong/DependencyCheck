@@ -3,7 +3,20 @@ Installation
 Download dependency-check-ant from [bintray here](http://dl.bintray.com/jeremy-long/owasp/dependency-check-ant-${project.version}.jar).
 To install dependency-check-ant place the dependency-check-ant-${project.version}.jar into
 the lib directory of your Ant instalation directory. Once installed you can add
-the taskdef to you build.xml and add the task to a new or existing target.
+the taskdef to you build.xml and add the task to a new or existing target:
+
+```xml
+<taskdef name="dependency-check" classname="org.owasp.dependencycheck.taskdefs.DependencyCheckTask"/>
+```
+
+If you do not want to install dependency-check-ant into your ant's lib directory when you define the task def you
+must add the classpath to the taskdef:
+
+```xml
+<taskdef name="dependency-check" classname="org.owasp.dependencycheck.taskdefs.DependencyCheckTask">
+    <classpath path="[path]/[to]/dependency-check-ant-${project.version}.jar"/>
+</taskdef>
+```
 
 It is important to understand that the first time this task is executed it may
 take 20 minutes or more as it downloads and processes the data from the National
