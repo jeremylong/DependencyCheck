@@ -242,7 +242,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 final File tdir = getNextTempDirectory();
                 final String fileName = dependency.getFileName();
 
-                LOGGER.info(String.format("The zip file '%s' appears to be a JAR file, making a deep copy and analyzing it as a JAR.", fileName));
+                LOGGER.info(String.format("The zip file '%s' appears to be a JAR file, making a copy and analyzing it as a JAR.", fileName));
 
                 final File tmpLoc = new File(tdir, fileName.substring(0, fileName.length() - 3) + "jar");
                 try {
