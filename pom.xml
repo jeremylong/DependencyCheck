@@ -33,7 +33,7 @@ Copyright (c) 2012 - Jeremy Long
     </modules>
     <name>Dependency-Check</name>
     <url>https://github.com/jeremylong/DependencyCheck.git</url>
-    <description>dependency-check is a utility that identifies project dependencies and checks if there are any known, publicly disclosed, vulnerabilities. This tool can be part of the solution to the OWASP Top 10 2013: A9 - Using Components with Known Vulnerabilities.</description>
+    <description>dependency-check is a utility that identifies project dependencies and checks if there are any known, publicly disclosed vulnerabilities. This tool can be part of the solution to the OWASP Top 10 2013: A9 - Using Components with Known Vulnerabilities.</description>
     <inceptionYear>2012</inceptionYear>
 
     <organization>
@@ -139,14 +139,6 @@ Copyright (c) 2012 - Jeremy Long
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
-                <configuration>
-                    <bottom>Copyright© 2012-13 Jeremy Long. All Rights Reserved.</bottom>
                 </configuration>
             </plugin>
             <!-- begin copy from http://minds.coremedia.com/2012/09/11/problem-solved-deploy-multi-module-maven-project-site-as-github-pages/ -->
