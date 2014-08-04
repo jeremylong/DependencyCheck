@@ -103,12 +103,6 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             </item>
         </menu>
         <menu name="Modules">
-            <item name="dependency-check-core" href="./dependency-check-core/index.html">
-                <description>The core dependency-check library.</description>
-            </item>
-            <item name="dependency-check-utils" href="./dependency-check-utils/index.html">
-                <description>A set of utility classes used by dependency-check.</description>
-            </item>
             <item name="dependency-check-cli" href="./dependency-check-cli/installation.html">
                 <description>The command line interface for dependency-check.</description>
             </item>
@@ -120,6 +114,12 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             </item>
             <item name="dependency-check-jenkins" href="./dependency-check-jenkins/index.html">
                 <description>A Jenkins plugin for dependency-check.</description>
+            </item>
+            <item name="dependency-check-core" href="./dependency-check-core/index.html">
+                <description>The core dependency-check engine and reporting tool.</description>
+            </item>
+            <item name="dependency-check-utils" href="./dependency-check-utils/index.html">
+                <description>A set of utility classes used by dependency-check.</description>
             </item>
         </menu>
         <footer>Copyright © 2012-2014 Jeremy Long. All Rights Reserved.</footer>
