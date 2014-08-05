@@ -53,20 +53,24 @@ public final class LogUtils {
         try {
             LogManager.getLogManager().reset();
             LogManager.getLogManager().readConfiguration(in);
+
             if (verboseLogFile != null && !verboseLogFile.isEmpty()) {
                 verboseLoggingEnabled = true;
                 final Logger logger = Logger.getLogger("");
-                final FileHandler handler = new FileHandler(verboseLogFile, true);
-                handler.setFormatter(new SimpleFormatter());
-                handler.setLevel(Level.FINE);
-                handler.setFilter(new LogFilter());
-                logger.addHandler(handler);
+                final FileHandler fileHandler = new FileHandler(verboseLogFile, true);
+                fileHandler.setFormatter(new SimpleFormatter());
+                fileHandler.setLevel(Level.FINE);
+                fileHandler.setFilter(new LogFilter());
+
+                logger.addHandler(fileHandler);
                 logger.setLevel(Level.FINE);
             }
         } catch (IOException ex) {
-            LOGGER.log(Level.FINE, "IO Error preparing the logger", ex);
+            LOGGER.log(Level.WARNING, "IO Error preparing the logger", ex);
         } catch (SecurityException ex) {
-            LOGGER.log(Level.FINE, "Error preparing the logger", ex);
+            LOGGER.log(Level.WARNING, "Error preparing the logger", ex);
+        } catch (Throwable ex) {
+            LOGGER.log(Level.WARNING, "Error preparing the logger", ex);
         } finally {
             if (in != null) {
                 try {

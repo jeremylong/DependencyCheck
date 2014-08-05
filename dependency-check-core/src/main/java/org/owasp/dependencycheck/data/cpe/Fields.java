@@ -22,7 +22,7 @@ package org.owasp.dependencycheck.data.cpe;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public abstract class Fields {
+public final class Fields {
 
     /**
      * The key for the name document id.
@@ -36,7 +36,10 @@ public abstract class Fields {
      * The key for the product field.
      */
     public static final String PRODUCT = "product";
+
     /**
-     * The key for the version field.
+     * Private constructor as this is more of an enumeration rather then a full class.
      */
+    private Fields() {
+    }
 }

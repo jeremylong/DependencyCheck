@@ -41,6 +41,7 @@
                             <xs:choice minOccurs="0" maxOccurs="1">
                                 <xs:element name="filePath" type="dc:regexStringType"/>
                                 <xs:element name="sha1" type="dc:sha1Type"/>
+                                <xs:element name="gav" type="dc:regexStringType"/>
                             </xs:choice>
                             <xs:choice minOccurs="0" maxOccurs="unbounded">
                                 <xs:element name="cpe" type="dc:regexStringType"/>

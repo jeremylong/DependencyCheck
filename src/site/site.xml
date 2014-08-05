@@ -72,6 +72,12 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
 
         <menu ref="reports" />
         <menu name="General">
+            <item name="How it Works" href="./internals.html">
+                <description>How does dependency-check work?</description>
+            </item>
+            <item name="Reading the Report" href="./thereport.html">
+                <description>How to read the report</description>
+            </item>
             <item name="False Positives" href="./suppression.html">
                 <description>Suppressing False Positives</description>
             </item>
@@ -84,14 +90,25 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             <item name="Sample Report" href="./SampleReport.html">
                 <description>Sample Report</description>
             </item>
+        </menu>
+        <menu name="File Type Analyzers">
+            <item name="Archive Analyzer" href="./archive-analyzer.html">
+                <description>Archive Analyzer</description>
+            </item>
+            <item name="Jar Analyzer" href="./jar-analyzer.html">
+                <description>Jar Analyzer</description>
+            </item>
             <item name="Nexus Analyzer" href="./nexus-analyzer.html">
                 <description>Nexus Analyzer</description>
             </item>
+            <item name="Assembly Analyzer" href="./assembly-analyzer.html">
+                <description>Assembly Analyzer</description>
+            </item>
+            <item name="Nuspec Analyzer" href="./nuspec-analyzer.html">
+                <description>Nuspec Analyzer</description>
+            </item>
         </menu>
         <menu name="Modules">
-            <item name="dependency-check-core" href="./dependency-check-core/index.html">
-                <description>The core dependency-check library</description>
-            </item>
             <item name="dependency-check-cli" href="./dependency-check-cli/installation.html">
                 <description>The command line interface for dependency-check.</description>
             </item>
@@ -103,6 +120,12 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             </item>
             <item name="dependency-check-jenkins" href="./dependency-check-jenkins/index.html">
                 <description>A Jenkins plugin for dependency-check.</description>
+            </item>
+            <item name="dependency-check-core" href="./dependency-check-core/index.html">
+                <description>The core dependency-check engine and reporting tool.</description>
+            </item>
+            <item name="dependency-check-utils" href="./dependency-check-utils/index.html">
+                <description>A set of utility classes used by dependency-check.</description>
             </item>
         </menu>
         <footer>Copyright © 2012-2014 Jeremy Long. All Rights Reserved.</footer>

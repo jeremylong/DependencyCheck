@@ -48,7 +48,7 @@ public class ScanAgentException extends IOException {
     }
 
     /**
-     * Creates a new NoDataException.
+     * Creates a new ScanAgentException.
      *
      * @param ex the cause of the exception.
      */

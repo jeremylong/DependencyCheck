@@ -73,7 +73,6 @@ import org.xml.sax.XMLFilter;
 import org.xml.sax.XMLReader;
 
 /**
- *
  * Used to load a JAR file and collect information that can be used to determine the associated CPE.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
@@ -170,7 +169,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     public JarAnalyzer() {
         try {
-            final JAXBContext jaxbContext = JAXBContext.newInstance("org.owasp.dependencycheck.jaxb.pom.generated");
+            //final JAXBContext jaxbContext = JAXBContext.newInstance("org.owasp.dependencycheck.jaxb.pom.generated");
+            final JAXBContext jaxbContext = JAXBContext.newInstance(Model.class);
             pomUnmarshaller = jaxbContext.createUnmarshaller();
         } catch (JAXBException ex) { //guess we will just have a null pointer exception later...
             LOGGER.log(Level.SEVERE, "Unable to load parser. See the log for more details.");
@@ -345,16 +345,25 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @return a Properties object or null if no pom.properties was found
      * @throws IOException thrown if there is an exception reading the pom.properties
      */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "OS_OPEN_STREAM",
-            justification = "The reader is closed by closing the zipEntry")
     private Properties retrievePomProperties(String path, final JarFile jar) throws IOException {
         Properties pomProperties = null;
         final String propPath = path.substring(0, path.length() - 7) + "pom.properies";
         final ZipEntry propEntry = jar.getEntry(propPath);
         if (propEntry != null) {
-            final Reader reader = new InputStreamReader(jar.getInputStream(propEntry), "UTF-8");
-            pomProperties = new Properties();
-            pomProperties.load(reader);
+            Reader reader = null;
+            try {
+                reader = new InputStreamReader(jar.getInputStream(propEntry), "UTF-8");
+                pomProperties = new Properties();
+                pomProperties.load(reader);
+            } finally {
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.FINEST, "close error", ex);
+                    }
+                }
+            }
         }
         return pomProperties;
     }
@@ -571,7 +580,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 groupid = parentGroupId;
             }
         }
-        String originalGroupID = groupid;
+        final String originalGroupID = groupid;
 
         if (groupid != null && !groupid.isEmpty()) {
             if (groupid.startsWith("org.") || groupid.startsWith("com.")) {
@@ -601,7 +610,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 artifactid = parentArtifactId;
             }
         }
-        String originalArtifactID = artifactid;
+        final String originalArtifactID = artifactid;
         if (artifactid != null && !artifactid.isEmpty()) {
             if (artifactid.startsWith("org.") || artifactid.startsWith("com.")) {
                 artifactid = artifactid.substring(4);

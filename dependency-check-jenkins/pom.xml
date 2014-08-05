@@ -1,17 +1,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <description>This plug-in can independently execute a Dependency-Check analysis and visualize the results.</description>
-    <url>http://wiki.jenkins-ci.org/display/JENKINS/OWASP+Dependency-Check+Plugin</url>
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>1.2.2-SNAPSHOT</version>
+        <version>1.2.4-SNAPSHOT</version>
     </parent>
-
     <groupId>org.owasp</groupId>
     <artifactId>dependency-check-jenkins</artifactId>
     <name>Dependency-Check Jenkins Plugin</name>
+    <url>http://wiki.jenkins-ci.org/display/JENKINS/OWASP+Dependency-Check+Plugin</url>
+    <description>dependency-check-jenkins is a Jenkins plugin that runs dependency-check-core on a project to detect publicly disclosed vulnerabilities associated with the project's dependencies. The plugin will generate a report listing the dependency, any identified Common Platform Enumeration (CPE) identifiers, and the associated Common Vulnerability and Exposure (CVE) entries. This module is simply a placeholder and does not contain the actual plugin source code. The source code and distribution of the plugin is handled via https://github.com/jenkinsci/dependency-check-jenkins and Jenkin's plugin management.</description>
+    <!-- begin copy from http://minds.coremedia.com/2012/09/11/problem-solved-deploy-multi-module-maven-project-site-as-github-pages/ -->
+    <distributionManagement>
+        <site>
+            <id>github-pages-site</id>
+            <name>Deployment through GitHub's site deployment plugin</name>
+            <url>${basedir}/../target/site/${project.version}/dependency-check-jenkins</url>
+        </site>
+    </distributionManagement>
+    <!-- end copy -->
+
     <packaging>pom</packaging>
     <inceptionYear>2012</inceptionYear>
     <organization>
@@ -31,15 +39,6 @@
             </roles>
         </developer>
     </developers>
-    <!-- begin copy from http://minds.coremedia.com/2012/09/11/problem-solved-deploy-multi-module-maven-project-site-as-github-pages/ -->
-    <distributionManagement>
-        <site>
-            <id>github-pages-site</id>
-            <name>Deployment through GitHub's site deployment plugin</name>
-            <url>${basedir}/../target/site/${project.version}/dependency-check-maven</url>
-        </site>
-    </distributionManagement>
-    <!-- end copy -->
     <scm>
         <connection>scm:git:git@github.com:jenkinsci/dependency-check-jenkins.git</connection>
         <url>https://github.com/jenkinsci/dependency-check-jenkins</url>

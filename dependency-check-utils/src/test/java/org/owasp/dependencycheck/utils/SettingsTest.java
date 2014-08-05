@@ -157,4 +157,35 @@ public class SettingsTest extends BaseTest {
         ret = Settings.getString(key, dfault);
         Assert.assertEquals(dfault, ret);
     }
+
+    /**
+     * Test of getConnectionString.
+     */
+    @Test
+    public void testGetConnectionString() throws Exception {
+        String value = Settings.getConnectionString(Settings.KEYS.DB_CONNECTION_STRING, Settings.KEYS.DB_FILE_NAME, Settings.KEYS.DB_VERSION);
+        Assert.assertNotNull(value);
+        String msg = null;
+        try {
+            value = Settings.getConnectionString(Settings.KEYS.DB_CONNECTION_STRING, Settings.KEYS.DB_FILE_NAME, null);
+        } catch (InvalidSettingException e) {
+            msg = e.getMessage();
+        }
+        Assert.assertNotNull(msg, msg);
+        try {
+            value = Settings.getConnectionString("invalidKey", null, null);
+        } catch (InvalidSettingException e) {
+            msg = e.getMessage();
+        }
+        Assert.assertNotNull(msg, msg);
+    }
+
+    /**
+     * Test of getTempDirectory.
+     */
+    @Test
+    public void testGetTempDirectory() throws Exception {
+        File tmp = Settings.getTempDirectory();
+        Assert.assertTrue(tmp.exists());
+    }
 }

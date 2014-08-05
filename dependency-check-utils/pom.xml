@@ -21,18 +21,18 @@ Copyright (c) 2014 - Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>1.2.2-SNAPSHOT</version>
+        <version>1.2.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>dependency-check-utils</artifactId>
     <name>Dependency-Check Utils</name>
-    <description>Dependency-check-utils a collection of common utlity classs used within dependency-check.</description>
+    <description>dependency-check-utils is a collection of common utlity classes used within dependency-check that might be useful in other projects.</description>
     <!-- begin copy from http://minds.coremedia.com/2012/09/11/problem-solved-deploy-multi-module-maven-project-site-as-github-pages/ -->
     <distributionManagement>
         <site>
             <id>github-pages-site</id>
             <name>Deployment through GitHub's site deployment plugin</name>
-            <url>${basedir}/../target/site/${project.version}/dependency-check-ant</url>
+            <url>${basedir}/../target/site/${project.version}/dependency-check-utils</url>
         </site>
     </distributionManagement>
     <!-- end copy -->
@@ -158,6 +158,9 @@ Copyright (c) 2014 - Jeremy Long. All Rights Reserved.
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-javadoc-plugin</artifactId>
                             <version>2.9.1</version>
+                            <configuration>
+                                <bottom>Copyright© 2012-14 Jeremy Long. All Rights Reserved.</bottom>
+                            </configuration>
                             <reportSets>
                                 <reportSet>
                                     <id>default</id>

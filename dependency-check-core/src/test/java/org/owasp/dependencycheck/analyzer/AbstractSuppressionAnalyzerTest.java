@@ -34,8 +34,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Jeremy Long <jeremy.long@owasp.org>
@@ -67,7 +67,7 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
         instance.initialize();
         int expCount = 5;
         List<SuppressionRule> result = instance.getRules();
-        assertEquals(expCount, result.size());
+        assertTrue(expCount <= result.size());
     }
 
     /**
@@ -79,7 +79,7 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
         instance.initialize();
         int expCount = 5;
         List<SuppressionRule> result = instance.getRules();
-        assertEquals(expCount, result.size());
+        assertTrue(expCount <= result.size());
     }
 
     @Test(expected = SuppressionParseException.class)

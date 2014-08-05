@@ -176,7 +176,7 @@ public final class Downloader {
                 conn = URLConnectionFactory.createHttpURLConnection(url);
                 conn.setRequestMethod("HEAD");
                 conn.connect();
-                int t = conn.getResponseCode();
+                final int t = conn.getResponseCode();
                 if (t >= 200 && t < 300) {
                     timestamp = conn.getLastModified();
                 } else {

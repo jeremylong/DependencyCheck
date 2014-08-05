@@ -79,6 +79,14 @@ public final class Settings {
          */
         public static final String DATA_DIRECTORY = "data.directory";
         /**
+         * The database file name.
+         */
+        public static final String DB_FILE_NAME = "data.file_name";
+        /**
+         * The database schema version.
+         */
+        public static final String DB_VERSION = "data.version";
+        /**
          * The properties key for the URL to retrieve the "meta" data from about the CVE entries.
          */
         public static final String CVE_META_URL = "cve.url.meta";
@@ -97,7 +105,7 @@ public final class Settings {
          */
         public static final String CVE_MODIFIED_VALID_FOR_DAYS = "cve.url.modified.validfordays";
         /**
-         * The properties key for the telling us how many cvr.url.* URLs exists. This is used in combination with
+         * The properties key for the telling us how many cve.url.* URLs exists. This is used in combination with
          * CVE_BASE_URL to be able to retrieve the URLs for all of the files that make up the NVD CVE listing.
          */
         public static final String CVE_START_YEAR = "cve.startyear";
@@ -200,6 +208,28 @@ public final class Settings {
          * The properties key for whether Provided Scope dependencies should be skipped.
          */
         public static final String SKIP_PROVIDED_SCOPE = "skip.provided.scope";
+
+        /**
+         * The key to obtain the path to the VFEED data file.
+         */
+        public static final String VFEED_DATA_FILE = "vfeed.data_file";
+        /**
+         * The key to obtain the VFEED connection string.
+         */
+        public static final String VFEED_CONNECTION_STRING = "vfeed.connection_string";
+
+        /**
+         * The key to obtain the base download URL for the VFeed data file.
+         */
+        public static final String VFEED_DOWNLOAD_URL = "vfeed.download_url";
+        /**
+         * The key to obtain the download file name for the VFeed data.
+         */
+        public static final String VFEED_DOWNLOAD_FILE = "vfeed.download_file";
+        /**
+         * The key to obtain the VFeed update status.
+         */
+        public static final String VFEED_UPDATE_STATUS = "vfeed.update_status";
     }
     //</editor-fold>
 
@@ -382,8 +412,19 @@ public final class Settings {
      * @throws IOException is thrown when there is an exception loading/merging the properties
      */
     public static void mergeProperties(File filePath) throws FileNotFoundException, IOException {
-        final FileInputStream fis = new FileInputStream(filePath);
-        mergeProperties(fis);
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(filePath);
+            mergeProperties(fis);
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.FINEST, "close error", ex);
+                }
+            }
+        }
     }
 
     /**
@@ -396,8 +437,19 @@ public final class Settings {
      * @throws IOException is thrown when there is an exception loading/merging the properties
      */
     public static void mergeProperties(String filePath) throws FileNotFoundException, IOException {
-        final FileInputStream fis = new FileInputStream(filePath);
-        mergeProperties(fis);
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(filePath);
+            mergeProperties(fis);
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.FINEST, "close error", ex);
+                }
+            }
+        }
     }
 
     /**
@@ -441,7 +493,7 @@ public final class Settings {
      * @param key the key to lookup within the properties file
      * @return the property from the properties file converted to a File object
      */
-    public static File getDataFile(String key) {
+    protected static File getDataFile(String key) {
         final String file = getString(key);
         LOGGER.log(Level.FINE, String.format("Settings.getDataFile() - file: '%s'", file));
         if (file == null) {
@@ -640,5 +692,75 @@ public final class Settings {
             throw new InvalidSettingException("Could not convert property '" + key + "' to an int.", ex);
         }
         return value;
+    }
+
+    /**
+     * Returns a connection string from the configured properties. If the connection string contains a %s, this method
+     * will determine the 'data' directory and replace the %s with the path to the data directory. If the data directory
+     * does not exists it will be created.
+     *
+     * @param connectionStringKey the property file key for the connection string
+     * @param dbFileNameKey the settings key for the db filename
+     * @param dbVersionKey the settings key for the dbVersion
+     * @return the connection string
+     * @throws IOException thrown the data directory cannot be created
+     * @throws InvalidSettingException thrown if there is an invalid setting
+     */
+    public static String getConnectionString(String connectionStringKey, String dbFileNameKey, String dbVersionKey)
+            throws IOException, InvalidSettingException {
+        final String connStr = Settings.getString(connectionStringKey);
+        if (connStr == null) {
+            final String msg = String.format("Invalid properties file to get the connection string; '%s' must be defined.",
+                    connectionStringKey);
+            throw new InvalidSettingException(msg);
+        }
+        if (connStr.contains("%s")) {
+            final File directory = getDataDirectory();
+            String fileName = null;
+            if (dbFileNameKey != null) {
+                fileName = Settings.getString(dbFileNameKey);
+            }
+            if (fileName == null) {
+                final String msg = String.format("Invalid properties file to get a file based connection string; '%s' must be defined.",
+                        dbFileNameKey);
+                throw new InvalidSettingException(msg);
+            }
+            if (fileName.contains("%s")) {
+                String version = null;
+                if (dbVersionKey != null) {
+                    version = Settings.getString(dbVersionKey);
+                }
+                if (version == null) {
+                    final String msg = String.format("Invalid properties file to get a file based connection string; '%s' must be defined.",
+                            dbFileNameKey);
+                    throw new InvalidSettingException(msg);
+                }
+                fileName = String.format(fileName, version);
+            }
+            if (connStr.startsWith("jdbc:h2:file:") && fileName.endsWith(".h2.db")) {
+                fileName = fileName.substring(0, fileName.length() - 6);
+            }
+            // yes, for H2 this path won't actually exists - but this is sufficient to get the value needed
+            final File dbFile = new File(directory, fileName);
+            final String cString = String.format(connStr, dbFile.getCanonicalPath());
+            LOGGER.log(Level.FINE, String.format("Connection String: '%s'", cString));
+            return cString;
+        }
+        return connStr;
+    }
+
+    /**
+     * Retrieves the directory that the JAR file exists in so that we can ensure we always use a common data directory
+     * for the embedded H2 database. This is public solely for some unit tests; otherwise this should be private.
+     *
+     * @return the data directory to store data files
+     * @throws IOException is thrown if an IOException occurs of course...
+     */
+    public static File getDataDirectory() throws IOException {
+        final File path = Settings.getDataFile(Settings.KEYS.DATA_DIRECTORY);
+        if (path.exists() || path.mkdirs()) {
+            return path;
+        }
+        throw new IOException(String.format("Unable to create the data directory '%s'", path.getAbsolutePath()));
     }
 }

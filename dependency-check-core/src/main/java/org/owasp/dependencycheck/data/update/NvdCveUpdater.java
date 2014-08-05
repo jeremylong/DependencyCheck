@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * Class responsible for updating the NVD CVE and CPE data stores.
@@ -54,7 +55,11 @@ public class NvdCveUpdater implements CachedWebDataSource {
             LOGGER.log(Level.FINE, null, ex);
         } catch (DownloadFailedException ex) {
             LOGGER.log(Level.WARNING,
-                    "Unable to download the NVD CVE data, unable to update the data to use the most current data.");
+                    "Unable to download the NVD CVE data; the results may not include the most recent CPE/CVEs from the NVD.");
+            if (Settings.getString(Settings.KEYS.PROXY_SERVER) == null) {
+                LOGGER.log(Level.INFO,
+                        "If you are behind a proxy you may need to configure dependency-check to use the proxy.");
+            }
             LOGGER.log(Level.FINE, null, ex);
         }
     }

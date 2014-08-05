@@ -55,6 +55,10 @@ public class SuppressionHandler extends DefaultHandler {
      */
     public static final String CWE = "cwe";
     /**
+     * The GAV element name.
+     */
+    public static final String GAV = "gav";
+    /**
      * The cvssBelow element name.
      */
     public static final String CVSS_BELOW = "cvssBelow";
@@ -95,13 +99,10 @@ public class SuppressionHandler extends DefaultHandler {
      */
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        currentAttributes = null;
+        currentAttributes = attributes;
         currentText = new StringBuffer();
-
         if (SUPPRESS.equals(qName)) {
             rule = new SuppressionRule();
-        } else if (FILE_PATH.equals(qName)) {
-            currentAttributes = attributes;
         }
     }
 
@@ -123,6 +124,9 @@ public class SuppressionHandler extends DefaultHandler {
             rule.setFilePath(pt);
         } else if (SHA1.equals(qName)) {
             rule.setSha1(currentText.toString());
+        } else if (GAV.equals(qName)) {
+            final PropertyType pt = processPropertyType();
+            rule.setGav(pt);
         } else if (CPE.equals(qName)) {
             final PropertyType pt = processPropertyType();
             rule.addCpe(pt);

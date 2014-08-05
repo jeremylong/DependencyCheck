@@ -21,14 +21,14 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>1.2.2-SNAPSHOT</version>
+        <version>1.2.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>dependency-check-cli</artifactId>
     <packaging>jar</packaging>
 
     <name>Dependency-Check Command Line</name>
-    <description>Dependency-Check-Maven is a Maven Plugin that attempts to detect publicly disclosed vulnerabilities contained within project dependencies. It does this by determining if there is a Common Platform Enumeration (CPE) identifier for a given dependency. If found, it will generate a report linking to the associated CVE entries.</description>
+    <description>dependency-check-cli is an command line tool that uses dependency-check-core to detect publicly disclosed vulnerabilities associated with the scanned project dependencies. The tool will generate a report listing the dependency, any identified Common Platform Enumeration (CPE) identifiers, and the associated Common Vulnerability and Exposure (CVE) entries.</description>
     <!-- begin copy from http://minds.coremedia.com/2012/09/11/problem-solved-deploy-multi-module-maven-project-site-as-github-pages/ -->
     <distributionManagement>
         <site>
@@ -174,6 +174,9 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-javadoc-plugin</artifactId>
                             <version>2.9.1</version>
+                            <configuration>
+                                <bottom>Copyright© 2012-14 Jeremy Long. All Rights Reserved.</bottom>
+                            </configuration>
                             <reportSets>
                                 <reportSet>
                                     <id>default</id>

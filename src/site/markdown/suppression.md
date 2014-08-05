@@ -64,6 +64,15 @@ HTML version of the report. The other common scenario would be to ignore all CVE
         ]]></notes>
         <cvssBelow>7</cvssBelow>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+        This suppresses false positives identified on spring security.
+        ]]></notes>
+        <gav regex="true">org\.springframework\.security:spring.*</gav>
+        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
+        <cpe>cpe:/a:springsource:spring_framework</cpe>
+        <cpe>cpe:/a:mod_security:mod_security</cpe>
+    </suppress>
 </suppressions>
 ```
 

@@ -234,6 +234,37 @@ public class SuppressionRule {
     public boolean hasCve() {
         return cve.size() > 0;
     }
+    /**
+     * A Maven GAV to suppression.
+     */
+    private PropertyType gav = null;
+
+    /**
+     * Get the value of Maven GAV.
+     *
+     * @return the value of gav
+     */
+    public PropertyType getGav() {
+        return gav;
+    }
+
+    /**
+     * Set the value of Maven GAV.
+     *
+     * @param gav new value of Maven gav
+     */
+    public void setGav(PropertyType gav) {
+        this.gav = gav;
+    }
+
+    /**
+     * Returns whether or not this suppression rule as GAV entries.
+     *
+     * @return whether or not this suppression rule as GAV entries
+     */
+    public boolean hasGav() {
+        return gav != null;
+    }
 
     /**
      * Processes a given dependency to determine if any CPE, CVE, CWE, or CVSS scores should be suppressed. If any
@@ -248,12 +279,27 @@ public class SuppressionRule {
         if (sha1 != null && !sha1.equalsIgnoreCase(dependency.getSha1sum())) {
             return;
         }
+        if (gav != null) {
+            final Iterator<Identifier> itr = dependency.getIdentifiers().iterator();
+            boolean gavFound = false;
+            while (itr.hasNext()) {
+                final Identifier i = itr.next();
+                if (identifierMatches("maven", this.gav, i)) {
+                    gavFound = true;
+                    break;
+                }
+            }
+            if (!gavFound) {
+                return;
+            }
+        }
+
         if (this.hasCpe()) {
             final Iterator<Identifier> itr = dependency.getIdentifiers().iterator();
             while (itr.hasNext()) {
                 final Identifier i = itr.next();
                 for (PropertyType c : this.cpe) {
-                    if (cpeMatches(c, i)) {
+                    if (identifierMatches("cpe", c, i)) {
                         dependency.addSuppressedIdentifier(i);
                         itr.remove();
                         break;
@@ -309,7 +355,7 @@ public class SuppressionRule {
     boolean cpeHasNoVersion(PropertyType c) {
         if (c.isRegex()) {
             return false;
-        } // cpe:/a:jboss:jboss:1.0.0:
+        }
         if (countCharacter(c.getValue(), ':') == 3) {
             return true;
         }
@@ -336,26 +382,75 @@ public class SuppressionRule {
     /**
      * Determines if the cpeEntry specified as a PropertyType matches the given Identifier.
      *
-     * @param cpeEntry a suppression rule entry
+     * @param identifierType the type of identifier ("cpe", "maven", etc.)
+     * @param suppressionEntry a suppression rule entry
      * @param identifier a CPE identifier to check
      * @return true if the entry matches; otherwise false
      */
-    boolean cpeMatches(PropertyType cpeEntry, Identifier identifier) {
-        if (cpeEntry.matches(identifier.getValue())) {
-            return true;
-        } else if (cpeHasNoVersion(cpeEntry)) {
-            if (cpeEntry.isCaseSensitive()) {
-                if (identifier.getValue().startsWith(cpeEntry.getValue())) {
-                    return true;
-                }
-            } else {
-                final String id = identifier.getValue().toLowerCase();
-                final String check = cpeEntry.getValue().toLowerCase();
-                if (id.startsWith(check)) {
-                    return true;
+    boolean identifierMatches(String identifierType, PropertyType suppressionEntry, Identifier identifier) {
+        if (identifierType.equals(identifier.getType())) {
+            if (suppressionEntry.matches(identifier.getValue())) {
+                return true;
+            } else if ("cpe".equals(identifierType) && cpeHasNoVersion(suppressionEntry)) {
+                if (suppressionEntry.isCaseSensitive()) {
+                    return identifier.getValue().startsWith(suppressionEntry.getValue());
+                } else {
+                    final String id = identifier.getValue().toLowerCase();
+                    final String check = suppressionEntry.getValue().toLowerCase();
+                    return id.startsWith(check);
                 }
             }
         }
         return false;
+    }
+
+    /**
+     * Standard toString implementation.
+     *
+     * @return a string representation of this object
+     */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("SuppressionRule{");
+        if (filePath != null) {
+            sb.append("filePath=").append(filePath).append(",");
+        }
+        if (sha1 != null) {
+            sb.append("sha1=").append(sha1).append(",");
+        }
+        if (gav != null) {
+            sb.append("gav=").append(gav).append(",");
+        }
+        if (cpe != null && cpe.size() > 0) {
+            sb.append("cpe={");
+            for (PropertyType pt : cpe) {
+                sb.append(pt).append(",");
+            }
+            sb.append("}");
+        }
+        if (cwe != null && cwe.size() > 0) {
+            sb.append("cwe={");
+            for (String s : cwe) {
+                sb.append(s).append(",");
+            }
+            sb.append("}");
+        }
+        if (cve != null && cve.size() > 0) {
+            sb.append("cve={");
+            for (String s : cve) {
+                sb.append(s).append(",");
+            }
+            sb.append("}");
+        }
+        if (cvssBelow != null && cvssBelow.size() > 0) {
+            sb.append("cvssBelow={");
+            for (Float s : cvssBelow) {
+                sb.append(s).append(",");
+            }
+            sb.append("}");
+        }
+        sb.append("}");
+        return sb.toString();
     }
 }

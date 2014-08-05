@@ -98,11 +98,17 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      * @throws SuppressionParseException thrown if the XML cannot be parsed.
      */
     private void loadSuppressionData() throws SuppressionParseException {
+        final SuppressionParser parser = new SuppressionParser();
+        File file = null;
+        try {
+            rules = parser.parseSuppressionRules(this.getClass().getClassLoader().getResourceAsStream("dependencycheck-base-suppression.xml"));
+        } catch (SuppressionParseException ex) {
+            LOGGER.log(Level.FINE, "Unable to parse the base suppression data file", ex);
+        }
         final String suppressionFilePath = Settings.getString(Settings.KEYS.SUPPRESSION_FILE);
         if (suppressionFilePath == null) {
             return;
         }
-        File file = null;
         boolean deleteTempFile = false;
         try {
             final Pattern uriRx = Pattern.compile("^(https?|file)\\:.*", Pattern.CASE_INSENSITIVE);
@@ -132,9 +138,9 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
             }
 
             if (file != null) {
-                final SuppressionParser parser = new SuppressionParser();
                 try {
-                    rules = parser.parseSuppressionRules(file);
+                    //rules = parser.parseSuppressionRules(file);
+                    rules.addAll(parser.parseSuppressionRules(file));
                     LOGGER.log(Level.FINE, rules.size() + " suppression rules were loaded.");
                 } catch (SuppressionParseException ex) {
                     final String msg = String.format("Unable to parse suppression xml file '%s'", file.getPath());

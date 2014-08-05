@@ -339,55 +339,70 @@ public class SuppressionRuleTest {
     }
 
     /**
-     * Test of cpeMatches method, of class SuppressionRule.
+     * Test of identifierMatches method, of class SuppressionRule.
      */
     @Test
     public void testCpeMatches() {
-        Identifier identifier = new Identifier("cwe", "cpe:/a:microsoft:.net_framework:4.5", "some url not needed for this test");
+        Identifier identifier = new Identifier("cpe", "cpe:/a:microsoft:.net_framework:4.5", "some url not needed for this test");
 
         PropertyType cpe = new PropertyType();
         cpe.setValue("cpe:/a:microsoft:.net_framework:4.5");
 
         SuppressionRule instance = new SuppressionRule();
         boolean expResult = true;
-        boolean result = instance.cpeMatches(cpe, identifier);
+        boolean result = instance.identifierMatches("cpe", cpe, identifier);
         assertEquals(expResult, result);
 
         cpe.setValue("cpe:/a:microsoft:.net_framework:4.0");
         expResult = false;
-        result = instance.cpeMatches(cpe, identifier);
+        result = instance.identifierMatches("cpe", cpe, identifier);
         assertEquals(expResult, result);
 
         cpe.setValue("CPE:/a:microsoft:.net_framework:4.5");
         cpe.setCaseSensitive(true);
         expResult = false;
-        result = instance.cpeMatches(cpe, identifier);
+        result = instance.identifierMatches("cpe", cpe, identifier);
         assertEquals(expResult, result);
 
         cpe.setValue("cpe:/a:microsoft:.net_framework");
         cpe.setCaseSensitive(false);
         expResult = true;
-        result = instance.cpeMatches(cpe, identifier);
+        result = instance.identifierMatches("cpe", cpe, identifier);
         assertEquals(expResult, result);
 
         cpe.setValue("cpe:/a:microsoft:.*");
         cpe.setRegex(true);
         expResult = true;
-        result = instance.cpeMatches(cpe, identifier);
+        result = instance.identifierMatches("cpe", cpe, identifier);
         assertEquals(expResult, result);
 
         cpe.setValue("CPE:/a:microsoft:.*");
         cpe.setRegex(true);
         cpe.setCaseSensitive(true);
         expResult = false;
-        result = instance.cpeMatches(cpe, identifier);
+        result = instance.identifierMatches("cpe", cpe, identifier);
         assertEquals(expResult, result);
 
         cpe.setValue("cpe:/a:apache:.*");
         cpe.setRegex(true);
         cpe.setCaseSensitive(false);
         expResult = false;
-        result = instance.cpeMatches(cpe, identifier);
+        result = instance.identifierMatches("cpe", cpe, identifier);
+        assertEquals(expResult, result);
+
+        identifier = new Identifier("maven", "org.springframework:spring-core:2.5.5", "https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=org.springframework&a=spring-core&v=2.5.5&e=jar");
+        cpe.setValue("org.springframework:spring-core:2.5.5");
+        cpe.setRegex(false);
+        cpe.setCaseSensitive(false);
+        expResult = true;
+        result = instance.identifierMatches("maven", cpe, identifier);
+        assertEquals(expResult, result);
+
+        cpe.setValue("org\\.springframework\\.security:spring.*");
+        cpe.setRegex(true);
+        cpe.setCaseSensitive(false);
+        expResult = false;
+        result = instance.identifierMatches("maven", cpe, identifier);
         assertEquals(expResult, result);
     }
 
@@ -398,7 +413,7 @@ public class SuppressionRuleTest {
     public void testProcess() {
         File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
         Dependency dependency = new Dependency(struts);
-        dependency.addIdentifier("cwe", "cpe:/a:microsoft:.net_framework:4.5", "some url not needed for this test");
+        dependency.addIdentifier("cpe", "cpe:/a:microsoft:.net_framework:4.5", "some url not needed for this test");
         String sha1 = dependency.getSha1sum();
         dependency.setSha1sum("384FAA82E193D4E4B0546059CA09572654BC3970");
         Vulnerability v = createVulnerability();
@@ -455,9 +470,9 @@ public class SuppressionRuleTest {
         assertTrue(dependency.getIdentifiers().isEmpty());
         assertTrue(dependency.getSuppressedIdentifiers().size() == 1);
 
-        dependency.addIdentifier("cwe", "cpe:/a:microsoft:.net_framework:4.0", "some url not needed for this test");
-        dependency.addIdentifier("cwe", "cpe:/a:microsoft:.net_framework:4.5", "some url not needed for this test");
-        dependency.addIdentifier("cwe", "cpe:/a:microsoft:.net_framework:5.0", "some url not needed for this test");
+        dependency.addIdentifier("cpe", "cpe:/a:microsoft:.net_framework:4.0", "some url not needed for this test");
+        dependency.addIdentifier("cpe", "cpe:/a:microsoft:.net_framework:4.5", "some url not needed for this test");
+        dependency.addIdentifier("cpe", "cpe:/a:microsoft:.net_framework:5.0", "some url not needed for this test");
         pt = new PropertyType();
         pt.setValue("cpe:/a:microsoft:.net_framework");
         instance.addCpe(pt);
@@ -465,6 +480,43 @@ public class SuppressionRuleTest {
         instance.process(dependency);
         assertTrue(dependency.getIdentifiers().isEmpty());
         assertTrue(dependency.getSuppressedIdentifiers().size() == 3);
+    }
+
+    /**
+     * Test of process method, of class SuppressionRule.
+     */
+    @Test
+    public void testProcessGAV() {
+        File spring = new File(this.getClass().getClassLoader().getResource("spring-security-web-3.0.0.RELEASE.jar").getPath());
+        Dependency dependency = new Dependency(spring);
+        dependency.addIdentifier("cpe", "cpe:/a:vmware:springsource_spring_framework:3.0.0", "some url not needed for this test");
+        dependency.addIdentifier("cpe", "cpe:/a:springsource:spring_framework:3.0.0", "some url not needed for this test");
+        dependency.addIdentifier("cpe", "cpe:/a:mod_security:mod_security:3.0.0", "some url not needed for this test");
+        dependency.addIdentifier("cpe", "cpe:/a:vmware:springsource_spring_security:3.0.0", "some url not needed for this test");
+        dependency.addIdentifier("maven", "org.springframework.security:spring-security-web:3.0.0.RELEASE", "some url not needed for this test");
+
+        //cpe
+        SuppressionRule instance = new SuppressionRule();
+        PropertyType pt = new PropertyType();
+
+        pt.setValue("org\\.springframework\\.security:spring.*");
+        pt.setRegex(true);
+        pt.setCaseSensitive(false);
+        instance.setGav(pt);
+
+        pt = new PropertyType();
+        pt.setValue("cpe:/a:mod_security:mod_security");
+        instance.addCpe(pt);
+        pt = new PropertyType();
+        pt.setValue("cpe:/a:springsource:spring_framework");
+        instance.addCpe(pt);
+        pt = new PropertyType();
+        pt.setValue("cpe:/a:vmware:springsource_spring_framework");
+        instance.addCpe(pt);
+
+        instance.process(dependency);
+        assertEquals(2, dependency.getIdentifiers().size());
+
     }
 
     private Vulnerability createVulnerability() {

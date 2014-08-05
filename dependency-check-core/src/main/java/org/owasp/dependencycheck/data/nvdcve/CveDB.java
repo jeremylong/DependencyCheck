@@ -248,6 +248,7 @@ public class CveDB {
     /**
      * SQL Statement to retrieve a property from the database.
      */
+    @SuppressWarnings("unused")
     private static final String SELECT_PROPERTY = "SELECT id, value FROM properties WHERE id = ?";
     /**
      * SQL Statement to insert a new property.
@@ -260,6 +261,7 @@ public class CveDB {
     /**
      * SQL Statement to delete a property.
      */
+    @SuppressWarnings("unused")
     private static final String DELETE_PROPERTY = "DELETE FROM properties WHERE id = ?";
 
     //</editor-fold>

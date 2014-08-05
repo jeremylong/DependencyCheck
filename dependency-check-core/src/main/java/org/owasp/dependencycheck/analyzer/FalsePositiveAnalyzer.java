@@ -161,11 +161,20 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      */
     public static final Pattern CORE_JAVA = Pattern.compile("^cpe:/a:(sun|oracle|ibm):(j2[ems]e|"
             + "java(_platform_micro_edition|_runtime_environment|_se|virtual_machine|se_development_kit|fx)?|"
-            + "jdk|jre|jsf|jsse)($|:.*)");
+            + "jdk|jre|jsse)($|:.*)");
+
+    /**
+     * Regex to identify core jsf libraries.
+     */
+    public static final Pattern CORE_JAVA_JSF = Pattern.compile("^cpe:/a:(sun|oracle|ibm):jsf($|:.*)");
     /**
      * Regex to identify core java library files. This is currently incomplete.
      */
-    public static final Pattern CORE_FILES = Pattern.compile("^((alt[-])?rt|jsf[-].*|jsse|jfxrt|jfr|jce|javaws|deploy|charsets)\\.jar$");
+    public static final Pattern CORE_FILES = Pattern.compile("(^|/)((alt[-])?rt|jsse|jfxrt|jfr|jce|javaws|deploy|charsets)\\.jar$");
+    /**
+     * Regex to identify core jsf java library files. This is currently incomplete.
+     */
+    public static final Pattern CORE_JSF_FILES = Pattern.compile("(^|/)jsf[-][^/]*\\.jar$");
 
     /**
      * Removes any CPE entries for the JDK/JRE unless the filename ends with rt.jar
@@ -180,6 +189,11 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
             final Matcher coreCPE = CORE_JAVA.matcher(i.getValue());
             final Matcher coreFiles = CORE_FILES.matcher(dependency.getFileName());
             if (coreCPE.matches() && !coreFiles.matches()) {
+                itr.remove();
+            }
+            final Matcher coreJsfCPE = CORE_JAVA_JSF.matcher(i.getValue());
+            final Matcher coreJsfFiles = CORE_JSF_FILES.matcher(dependency.getFileName());
+            if (coreJsfCPE.matches() && !coreJsfFiles.matches()) {
                 itr.remove();
             }
         }
