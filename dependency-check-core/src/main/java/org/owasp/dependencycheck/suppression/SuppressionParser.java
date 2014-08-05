@@ -27,11 +27,9 @@ import java.io.Reader;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -68,17 +66,27 @@ public class SuppressionParser {
      * @throws SuppressionParseException thrown if the xml file cannot be parsed
      */
     public List<SuppressionRule> parseSuppressionRules(File file) throws SuppressionParseException {
+        FileInputStream fis = null;
         try {
-            return parseSuppressionRules(new FileInputStream(file));
+            fis = new FileInputStream(file);
+            return parseSuppressionRules(fis);
         } catch (IOException ex) {
             LOGGER.log(Level.FINE, null, ex);
             throw new SuppressionParseException(ex);
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.FINE, "Unable to close stream", ex);
+                }
+            }
         }
     }
 
     /**
      * Parses the given xml stream and returns a list of the suppression rules contained.
-     * 
+     *
      * @param inputStream an InputStream containing suppression rues
      * @return a list of suppression rules
      * @throws SuppressionParseException if the xml cannot be parsed
