@@ -84,13 +84,14 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 $('#modal-text').focus();
                 $('#modal-text').select();
             }
-            function toggleDisplay(el, clzName) {
+            function toggleDisplay(el, clzName, all, some) {
                 $(clzName).toggle();
-                if (el.innerHTML == 'Show All') {
-                    el.innerHTML = 'Showing Vulnerable Dependencies';
+                if (el.innerHTML == all) {
+                    el.innerHTML = some;
                 } else {
-                    el.innerHTML = 'Show All';
+                    el.innerHTML = all;
                 }
+                return false;
             }
         </script>
         <style type="text/css">
@@ -427,15 +428,24 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             .indent {
                 margin-left:20px;
             }
-            td, th {
+            td{
+                vertical-align:text-top;
                 padding:6px;
                 margin:0px;
+            }
+            th {
+                text-align:left
+                vertical-align:text-top;
+                padding:6px;
+                margin:0px;
+                border-bottom:1px;
+                border-color: black;
             }
             table {
                 border: 0px;
             }
             table.lined tr:nth-child(even) {
-                background-color: #fbfbfb;
+                background-color: #f3f3f3;
             }
             .fullwidth {
                 width:100%;
@@ -448,10 +458,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 margin-bottom:3px;
             }
             .vulnerable {
-            	color: #f00;
-            }
-            .vulnerable li {
-            	color: #000;
+                color: #000;
             }
             .notvulnerable {
                 display:none;
@@ -513,7 +520,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                         #set($vulnSuppressedCount=$vulnSuppressedCount+$dependency.getSuppressedVulnerabilities().size())
                     #end
                 #end
-                Scan Information (<a href="#" onclick="toggleDisplay(this, '.scaninfo');  return false;">Showing Vulnerable Dependencies</a>):<br/>
+                Scan Information (<a href="#" title="Click to toggle display" onclick="return toggleDisplay(this, '.scaninfo', 'show all', 'show less');  return false;">show all</a>):<br/>
                     <ul class="indent">
                         <li><i>dependency-check version</i>: $version</li>
                         <li><i>Report Generated On</i>: $scanDate</li>
@@ -526,23 +533,96 @@ arising out of or in connection with the use of this tool, the analysis performe
                         <li class="scaninfo hidden"><i>$enc.html($prop.key)</i>: $enc.html($prop.value)</li>
                         #end
                     </ul><br/>
-                Dependency Display:&nbsp;<a href="#" onclick="toggleDisplay(this,'.notvulnerable'); return false;">show all</a><br/><br/>
-                <ul class="indent">
+                Display:&nbsp;<a href="#" title="Click to toggle display" onclick="return toggleDisplay(this,'.notvulnerable', 'Showing Vulnerable Dependencies', 'Showing All Dependencies'); return false;">Showing Vulnerable Dependencies</a><br/><br/>
                 #set($lnkcnt=0)
-                #foreach($dependency in $dependencies)
+                <table class="lined">
+                    <tr style="text-align:left">
+                        <th title="The name of the dependency">Dependency</th>
+                        <th title="The number of related dependencies">#&nbsp;Related</th>
+                        <th title="The Common Platform Enumeration">CPE</th>
+                        <th title="The Maven GAV Coordinates">GAV</th>
+                        <th title="The highest CVE Impact">CVE&nbsp;Impact</th>
+                        <th title="The number of Common Vulnerability and Exposure (CVE) entries">CVE&nbsp;Count</th>
+                        <th title="The confidence rating dependency-check has for the identified CPE">CPE&nbsp;Confidence</th>
+                        <th title="The count of evidence used to identify the CPE">Evidence&nbsp;Count</th>
+                    </tr>
+                    #foreach($dependency in $dependencies)
                     #set($lnkcnt=$lnkcnt+1)
-                    <li class="#if($dependency.getVulnerabilities().size()==0)notvulnerable#else vulnerable#end">
-                    <a href="#l${lnkcnt}_$enc.html($enc.url($dependency.Sha1sum))">$enc.html($dependency.DisplayFileName)</a>
-                    #if($dependency.getRelatedDependencies().size()>0)
-                        <ul>
-                        #foreach($related in $dependency.getRelatedDependencies())
-                        <li>$enc.html($related.DisplayFileName)</li>
+                    <tr class="#if($dependency.getVulnerabilities().size()==0)notvulnerable#else vulnerable#end">
+                        <td><a href="#l${lnkcnt}_$enc.html($enc.url($dependency.Sha1sum))">$enc.html($dependency.DisplayFileName)</a></td>
+                        <td>$dependency.getRelatedDependencies().size()</td>
+                        #set($mavenlink="")
+                        #set($cpeIdCount=0)
+                        #set($cpeIdConf="")
+                        <td>
+                        #foreach($id in $dependency.getIdentifiers())
+                            #if ($id.type=="maven")
+                                #if ($mavenlink=="" || !$mavenlink.url)
+                                    #set($mavenlink=$id)
+                                #end
+                            #else
+                                #if ($cpeIdCount>=1)
+                                    <br/>
+                                #end
+                                #if( $id.url )
+                                    <a href="$enc.html($id.url)" target="_blank">$enc.html($id.value)</a>
+                                #else
+                                    $enc.html($id.value)
+                                #end
+                                #if ($cpeIdConf == "")
+                                    #set($cpeIdConf=$id.confidence)
+                                #elseif ($cpeIdConf.compareTo($id.confidence)>0)
+                                    #set($cpeIdConf=$id.confidence)
+                                #end
+                                #set($cpeIdCount=$cpeIdCount+1)
+                            #end
                         #end
-                        </ul>
+                        </td>
+                        <td>#if( $mavenlink.url )
+                            ##yes, we are HTML Encoding the href. this is okay. We can't URL encode as we have to trust the analyzer here...
+                            <a href="$enc.html($mavenlink.url)" target="_blank">$enc.html($mavenlink.value)</a>
+                        #elseif ($mavenlink.value)
+                            $enc.html($mavenlink.value)
+                        #end</td>
+                        #set($cveImpact=-1)
+                        #foreach($vuln in $dependency.getVulnerabilities())
+                            #if ($cveImpact<$vuln.cvssScore)
+                                #set($cveImpact=$vuln.cvssScore)
+                            #end
+                        #end
+                        <td>
+                        #if ($cveImpact<0)
+                            &nbsp;
+                        #elseif ($cveImpact<4.0)
+                            Low
+                        #elseif ($cveImpact>=7.0)
+                            High
+                        #else
+                            Medium
+                        #end
+                        </td>
+                        <td>$dependency.getVulnerabilities().size()</td>
+                        <td>$cpeIdConf</td>
+                        <td>$dependency.getEvidenceForDisplay().size()</td>
+                    </tr>
                     #end
-                    </li>
-                #end
-                </ul>
+                </table>
+##                <ul class="indent">
+##                #set($lnkcnt=0)
+##                #foreach($dependency in $dependencies)
+##                    #set($lnkcnt=$lnkcnt+1)
+##                    <li class="#if($dependency.getVulnerabilities().size()==0)notvulnerable#else vulnerable#end">
+##                    <a href="#l${lnkcnt}_$enc.html($enc.url($dependency.Sha1sum))">$enc.html($dependency.DisplayFileName)</a>
+##                    #if($dependency.getRelatedDependencies().size()>0)
+##                        <ul>
+##                        #foreach($related in $dependency.getRelatedDependencies())
+##                        <li>$enc.html($related.DisplayFileName)</li>
+##                        #end
+##                        </ul>
+##                    #end
+##                    </li>
+##                #end
+##                </ul>
                 <h2>Dependencies</h2>
                 #set($lnkcnt=0)
                 #set($cnt=0)
