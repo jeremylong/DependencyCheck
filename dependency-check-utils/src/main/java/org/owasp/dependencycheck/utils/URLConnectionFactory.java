@@ -50,7 +50,7 @@ public final class URLConnectionFactory {
      */
     public static HttpURLConnection createHttpURLConnection(URL url) throws URLConnectionFailureException {
         HttpURLConnection conn = null;
-        Proxy proxy = null;
+        Proxy proxy;
         final String proxyUrl = Settings.getString(Settings.KEYS.PROXY_SERVER);
         try {
             if (proxyUrl != null) {
@@ -96,7 +96,7 @@ public final class URLConnectionFactory {
      * Utility method to create an HttpURLConnection. The use of a proxy here is optional as there may be cases where a
      * proxy is configured but we don't want to use it (for example, if there's an internal repository configured)
      *
-     * @param url the url to connect to
+     * @param url the URL to connect to
      * @param proxy whether to use the proxy (if configured)
      * @return a newly constructed HttpURLConnection
      * @throws URLConnectionFailureException thrown if there is an exception
