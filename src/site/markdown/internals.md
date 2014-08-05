@@ -5,7 +5,9 @@ is called Evidence; there are three types of evidence collected: vendor, product
 JarAnalyzer will collect information from the Manifest, pom.xml, and the package names within the JAR files scanned and
 it has heuristics to place the information from the various sources into one or more buckets of evidence.
 
-Within the NVD CVE Data (schema can be found [here](http://nvd.nist.gov/schema/nvd-cve-feed_2.0.xsd)) each CVE Entry has a list of vulnerable software:
+Within the NVD CVE Data (schema can be found [here](http://nvd.nist.gov/schema/nvd-cve-feed_2.0.xsd)) each CVE Entry has
+a list of vulnerable software:
+
 ```xml
   <entry id="CVE-2012-5055">
   ...
@@ -26,7 +28,7 @@ level that is equal to the lowest level confidence level of evidence used during
 evidence was used in determining the CPE then the CPE would have a highest confidence level.
 
 Because of the way dependency-check works both false positives and false negatives may exist. Please read
-(How to read the report)[thereport.html] to get a better understanding of sorting through the false positives and false
+[How to read the report](thereport.html) to get a better understanding of sorting through the false positives and false
 negatives.
 
 Dependency-check does not currently use file hashes for identification. If the dependency was built from source the hash
