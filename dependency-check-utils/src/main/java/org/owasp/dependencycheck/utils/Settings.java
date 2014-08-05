@@ -704,12 +704,15 @@ public final class Settings {
      * @param dbVersionKey the settings key for the dbVersion
      * @return the connection string
      * @throws IOException thrown the data directory cannot be created
-     * @throws org.owasp.dependencycheck.utils.InvalidSettingException
+     * @throws InvalidSettingException thrown if there is an invalid setting
      */
-    public static String getConnectionString(String connectionStringKey, String dbFileNameKey, String dbVersionKey) throws IOException, InvalidSettingException {
+    public static String getConnectionString(String connectionStringKey, String dbFileNameKey, String dbVersionKey)
+            throws IOException, InvalidSettingException {
         final String connStr = Settings.getString(connectionStringKey);
         if (connStr == null) {
-            throw new InvalidSettingException(String.format("Invalid properties file to get the connection string; '%s' must be defined.", connectionStringKey));
+            final String msg = String.format("Invalid properties file to get the connection string; '%s' must be defined.",
+                    connectionStringKey);
+            throw new InvalidSettingException(msg);
         }
         if (connStr.contains("%s")) {
             final File directory = getDataDirectory();
@@ -718,7 +721,9 @@ public final class Settings {
                 fileName = Settings.getString(dbFileNameKey);
             }
             if (fileName == null) {
-                throw new InvalidSettingException(String.format("Invalid properties file to get a file based connection string; '%s' must be defined.", dbFileNameKey));
+                final String msg = String.format("Invalid properties file to get a file based connection string; '%s' must be defined.",
+                        dbFileNameKey);
+                throw new InvalidSettingException(msg);
             }
             if (fileName.contains("%s")) {
                 String version = null;
@@ -726,14 +731,14 @@ public final class Settings {
                     version = Settings.getString(dbVersionKey);
                 }
                 if (version == null) {
-                    throw new InvalidSettingException(String.format("Invalid properties file to get a file based connection string; '%s' must be defined.", dbFileNameKey));
+                    final String msg = String.format("Invalid properties file to get a file based connection string; '%s' must be defined.",
+                            dbFileNameKey);
+                    throw new InvalidSettingException(msg);
                 }
                 fileName = String.format(fileName, version);
             }
-            if (connStr.startsWith("jdbc:h2:file:")) {
-                if (fileName.endsWith(".h2.db")) {
-                    fileName = fileName.substring(0, fileName.length() - 6);
-                }
+            if (connStr.startsWith("jdbc:h2:file:") && fileName.endsWith(".h2.db")) {
+                fileName = fileName.substring(0, fileName.length() - 6);
             }
             // yes, for H2 this path won't actually exists - but this is sufficient to get the value needed
             final File dbFile = new File(directory, fileName);
@@ -753,11 +758,9 @@ public final class Settings {
      */
     public static File getDataDirectory() throws IOException {
         final File path = Settings.getDataFile(Settings.KEYS.DATA_DIRECTORY);
-        if (!path.exists()) {
-            if (!path.mkdirs()) {
-                throw new IOException(String.format("Unable to create the data directory '%s'", path.getAbsolutePath()));
-            }
+        if (path.exists() || path.mkdirs()) {
+            return path;
         }
-        return path;
+        throw new IOException(String.format("Unable to create the data directory '%s'", path.getAbsolutePath()));
     }
 }
