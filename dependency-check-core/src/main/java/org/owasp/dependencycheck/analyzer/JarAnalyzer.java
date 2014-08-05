@@ -170,7 +170,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     public JarAnalyzer() {
         try {
             //final JAXBContext jaxbContext = JAXBContext.newInstance("org.owasp.dependencycheck.jaxb.pom.generated");
-            final JAXBContext jaxbContext = JAXBContext.newInstance(org.owasp.dependencycheck.jaxb.pom.generated.Model.class);
+            final JAXBContext jaxbContext = JAXBContext.newInstance(Model.class);
             pomUnmarshaller = jaxbContext.createUnmarshaller();
         } catch (JAXBException ex) { //guess we will just have a null pointer exception later...
             LOGGER.log(Level.SEVERE, "Unable to load parser. See the log for more details.");
