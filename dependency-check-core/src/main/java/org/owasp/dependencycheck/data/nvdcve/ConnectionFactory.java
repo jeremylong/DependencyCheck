@@ -112,7 +112,10 @@ public final class ConnectionFactory {
             //yes, yes - hard-coded password - only if there isn't one in the properties file.
             password = Settings.getString(Settings.KEYS.DB_PASSWORD, "DC-Pass1337!");
             try {
-                connectionString = Settings.getConnectionString(Settings.KEYS.DB_CONNECTION_STRING, Settings.KEYS.DB_FILE_NAME, Settings.KEYS.DB_VERSION);
+                connectionString = Settings.getConnectionString(
+                        Settings.KEYS.DB_CONNECTION_STRING,
+                        Settings.KEYS.DB_FILE_NAME,
+                        Settings.KEYS.DB_VERSION);
             } catch (IOException ex) {
                 LOGGER.log(Level.FINE,
                         "Unable to retrieve the database connection string", ex);
@@ -226,7 +229,7 @@ public final class ConnectionFactory {
      */
     private static boolean h2DataFileExists() throws IOException {
         final File dir = Settings.getDataDirectory();
-        String name = Settings.getString(Settings.KEYS.DB_FILE_NAME);
+        final String name = Settings.getString(Settings.KEYS.DB_FILE_NAME);
         final String fileName = String.format(name, DB_SCHEMA_VERSION);
         final File file = new File(dir, fileName);
         return file.exists();
