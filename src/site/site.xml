@@ -72,6 +72,12 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
 
         <menu ref="reports" />
         <menu name="General">
+            <item name="How it Works" href="./internals.html">
+                <description>How does dependency-check work?</description>
+            </item>
+            <item name="Reading the Report" href="./thereport.html">
+                <description>How to read the report</description>
+            </item>
             <item name="False Positives" href="./suppression.html">
                 <description>Suppressing False Positives</description>
             </item>

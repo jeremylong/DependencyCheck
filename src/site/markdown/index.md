@@ -12,11 +12,10 @@ The gist of the paper is that we as a development community include third party
 libraries in our applications that contain well known published vulnerabilities
 \(such as those at the [National Vulnerability Database](http://web.nvd.nist.gov/view/vuln/search)\).
 
-Dependency-check scans directories and files and if it contains an Analyzer that
-can scan a particular file type then information from the file is collected. This
-information is then used to identify the [Common Platform Enumeration](http://nvd.nist.gov/cpe.cfm) \(CPE\). If a
-CPE is identified a listing of associated [Common Vulnerability and Exposure](http://cve.mitre.org/) \(CVE\)
-entries are listed in a report.
+More information about dependency-check can be found here:
+
+* (How does dependency-check work)[internals.html]
+* (How to read the report)[thereport.html]
 
 **IMPORTANT NOTE**: Dependency-check automatically updates itself using the NVD Data Feeds hosted by
 NIST. **The initial download of the data may take fifteen minutes
