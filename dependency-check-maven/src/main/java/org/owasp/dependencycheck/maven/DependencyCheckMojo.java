@@ -485,7 +485,6 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         if (cveUrl20Base != null && !cveUrl20Base.isEmpty()) {
             Settings.setString(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
         }
-
     }
 
     /**
@@ -498,7 +497,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         Engine engine = null;
         try {
             engine = executeDependencyCheck();
-            generateExternalReports(engine, outputDirectory);
+            ReportingUtil.generateExternalReports(engine, outputDirectory, project.getName(), format);
             if (this.showSummary) {
                 showSummary(engine.getDependencies());
             }
@@ -542,9 +541,9 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         try {
             engine = executeDependencyCheck();
             if (this.externalReport) {
-                generateExternalReports(engine, reportOutputDirectory);
+                ReportingUtil.generateExternalReports(engine, reportOutputDirectory, project.getName(), format);
             } else {
-                generateMavenSiteReport(engine, sink);
+                ReportingUtil.generateMavenSiteReport(engine, sink, project.getName());
             }
         } catch (DatabaseException ex) {
             logger.log(Level.SEVERE,
