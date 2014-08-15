@@ -57,4 +57,10 @@ databasePassword     | The password used when connecting to the database.       
 
 Proxy Configuration
 ====================
-Use [Maven's settings](https://maven.apache.org/settings.html#Proxies) to configure a proxy server.
+Use [Maven's settings](https://maven.apache.org/settings.html#Proxies) to configure a proxy server. If multiple proxies
+are configured in the Maven settings file you must tell dependency-check which proxy to use with the following property:
+
+Property             | Description                                                                          | Default Value
+---------------------|--------------------------------------------------------------------------------------|------------------
+mavenSettingsProxyId | The id for the proxy, configured via settings.xml, that dependency-check should use. | &nbsp;
+
