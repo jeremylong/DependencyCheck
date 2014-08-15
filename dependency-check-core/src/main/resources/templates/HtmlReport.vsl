@@ -538,19 +538,17 @@ arising out of or in connection with the use of this tool, the analysis performe
                 <table class="lined">
                     <tr style="text-align:left">
                         <th title="The name of the dependency">Dependency</th>
-                        <th title="The number of related dependencies">#&nbsp;Related</th>
                         <th title="The Common Platform Enumeration">CPE</th>
                         <th title="The Maven GAV Coordinates">GAV</th>
-                        <th title="The highest CVE Impact">CVE&nbsp;Impact</th>
-                        <th title="The number of Common Vulnerability and Exposure (CVE) entries">CVE&nbsp;Count</th>
-                        <th title="The confidence rating dependency-check has for the identified CPE">CPE&nbsp;Confidence</th>
-                        <th title="The count of evidence used to identify the CPE">Evidence&nbsp;Count</th>
+                        <th title="The highest CVE Severity">Highest Severity</th>
+                        <th title="The number of Common Vulnerability and Exposure (CVE) entries">CVE Count</th>
+                        <th title="The confidence rating dependency-check has for the identified CPE">CPE Confidence</th>
+                        <th title="The count of evidence used to identify the CPE">Evidence Count</th>
                     </tr>
                     #foreach($dependency in $dependencies)
                     #set($lnkcnt=$lnkcnt+1)
                     <tr class="#if($dependency.getVulnerabilities().size()==0)notvulnerable#else vulnerable#end">
                         <td><a href="#l${lnkcnt}_$enc.html($enc.url($dependency.Sha1sum))">$enc.html($dependency.DisplayFileName)</a></td>
-                        <td>$dependency.getRelatedDependencies().size()</td>
                         #set($mavenlink="")
                         #set($cpeIdCount=0)
                         #set($cpeIdConf="")
