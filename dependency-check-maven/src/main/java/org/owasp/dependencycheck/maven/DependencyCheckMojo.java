@@ -751,16 +751,6 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     // </editor-fold>
 
     /**
-     * Returns the maven settings proxy server.
-     *
-     * @param proxy the maven proxy
-     * @return the proxy url
-     */
-    private String getMavenSettingsProxyServer(Proxy proxy) {
-        return new StringBuilder(proxy.getProtocol()).append("://").append(proxy.getHost()).toString();
-    }
-
-    /**
      * Returns the maven proxy.
      *
      * @return the maven proxy
@@ -816,7 +806,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
 
         final Proxy proxy = getMavenProxy();
         if (proxy != null) {
-            Settings.setString(Settings.KEYS.PROXY_SERVER, getMavenSettingsProxyServer(proxy));
+            Settings.setString(Settings.KEYS.PROXY_SERVER, proxy.getHost());
             Settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(proxy.getPort()));
             final String userName = proxy.getUsername();
             final String password = proxy.getPassword();
