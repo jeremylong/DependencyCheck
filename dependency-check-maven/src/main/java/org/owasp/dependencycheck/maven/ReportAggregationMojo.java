@@ -299,7 +299,8 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
             if (isMultiModule(proj)) {
                 continue;
             }
-            File outputFile = new File(proj.getBasedir(), getDataFileName());
+            //TODO can we get the path from the context?
+            File outputFile = new File(proj.getBuild().getDirectory(), getDataFileName());
             if (outputFile.exists()) {
                 files.add(outputFile);
             } else {
