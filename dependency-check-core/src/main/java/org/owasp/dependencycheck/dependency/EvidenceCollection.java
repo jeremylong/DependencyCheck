@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.dependency;
 
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -36,7 +37,7 @@ import org.owasp.dependencycheck.utils.UrlStringUtils;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class EvidenceCollection implements Iterable<Evidence> {
+public class EvidenceCollection implements Serializable, Iterable<Evidence> {
 
     /**
      * The logger.

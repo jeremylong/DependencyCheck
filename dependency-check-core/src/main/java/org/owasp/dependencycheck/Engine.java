@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -52,7 +53,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class Engine {
+public class Engine implements Serializable {
 
     /**
      * The list of dependencies.
@@ -61,19 +62,19 @@ public class Engine {
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-    private final EnumMap<AnalysisPhase, List<Analyzer>> analyzers;
+    private transient final EnumMap<AnalysisPhase, List<Analyzer>> analyzers;
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-    private final Set<FileTypeAnalyzer> fileTypeAnalyzers;
+    private transient final Set<FileTypeAnalyzer> fileTypeAnalyzers;
     /**
      * The ClassLoader to use when dynamically loading Analyzer and Update services.
      */
-    private ClassLoader serviceClassLoader;
+    private transient ClassLoader serviceClassLoader;
     /**
      * The Logger for use throughout the class.
      */
-    private static final Logger LOGGER = Logger.getLogger(Engine.class.getName());
+    private transient static final Logger LOGGER = Logger.getLogger(Engine.class.getName());
 
     /**
      * Creates a new Engine.

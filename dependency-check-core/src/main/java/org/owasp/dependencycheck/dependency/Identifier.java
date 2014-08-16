@@ -17,11 +17,13 @@
  */
 package org.owasp.dependencycheck.dependency;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class Identifier implements Comparable<Identifier> {
+public class Identifier implements Serializable, Comparable<Identifier> {
 
     /**
      * Constructs a new Identifier with the specified data.
