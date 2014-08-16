@@ -17,9 +17,14 @@
  */
 package org.owasp.dependencycheck.maven;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -28,7 +33,6 @@ import java.util.logging.Logger;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkFactory;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -37,7 +41,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
@@ -57,7 +60,7 @@ import org.owasp.dependencycheck.utils.Settings;
 @Mojo(name = "check", defaultPhase = LifecyclePhase.COMPILE, threadSafe = true,
         requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM,
         requiresOnline = true)
-public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageReport {
+public class DependencyCheckMojo extends ReportAggregationMojo {
 
     /**
      * Logger field reference.
@@ -76,6 +79,11 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * System specific new line character.
      */
     private static final String NEW_LINE = System.getProperty("line.separator", "\n").intern();
+    /**
+     * The dependency-check engine used to scan the project.
+     */
+    private Engine engine = null;
+
     // <editor-fold defaultstate="collapsed" desc="Maven bound parameters and components">
     /**
      * The Maven Project Object.
@@ -87,18 +95,6 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      */
     @Parameter(property = "logfile", defaultValue = "")
     private String logFile;
-    /**
-     * The name of the report to be displayed in the Maven Generated Reports page.
-     */
-    @Parameter(property = "name", defaultValue = "Dependency-Check")
-    private String name;
-    /**
-     * The description of the Dependency-Check report to be displayed in the Maven Generated Reports page.
-     */
-    @Parameter(property = "description", defaultValue = "A report providing details on any published "
-            + "vulnerabilities within project dependencies. This report is a best effort but may contain "
-            + "false positives and false negatives.")
-    private String description;
     /**
      * Specifies the destination directory for the generated Dependency-Check report. This generally maps to
      * "target/site".
@@ -366,6 +362,8 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
                 } else if (proxies.size() == 1) {
                     return proxies.get(0);
                 } else {
+                    logger.warning("Multiple proxy defentiions exist in the Maven settings. In the dependency-check "
+                            + "configuration set the maveSettingsProxyId so that the correct proxy will be used.");
                     throw new IllegalStateException("Ambiguous proxy definition");
                 }
             }
@@ -493,8 +491,8 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * @throws MojoExecutionException if a maven exception occurs
      * @throws MojoFailureException thrown if a CVSS score is found that is higher then the configured level
      */
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Engine engine = null;
+    @Override
+    protected void performExecute() throws MojoExecutionException, MojoFailureException {
         try {
             engine = executeDependencyCheck();
             ReportingUtil.generateExternalReports(engine, outputDirectory, project.getName(), format);
@@ -508,24 +506,27 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
             logger.log(Level.SEVERE,
                     "Unable to connect to the dependency-check database; analysis has stopped");
             logger.log(Level.FINE, "", ex);
-        } finally {
-            Settings.cleanup(true);
-            if (engine != null) {
-                engine.cleanup();
-            }
         }
     }
 
-    /**
-     * Generates the Dependency-Check Site Report.
-     *
-     * @param sink the sink to write the report to
-     * @param locale the locale to use when generating the report
-     * @throws MavenReportException if a Maven report exception occurs
-     */
-    public void generate(@SuppressWarnings("deprecation") org.codehaus.doxia.sink.Sink sink,
-            Locale locale) throws MavenReportException {
-        generate((Sink) sink, null, locale);
+    @Override
+    protected void postExecute() throws MojoExecutionException, MojoFailureException {
+        super.postExecute();
+        Settings.cleanup(true);
+        if (engine != null) {
+            engine.cleanup();
+            engine = null;
+        }
+    }
+
+    @Override
+    protected void postGenerate() throws MavenReportException {
+        super.postGenerate();
+        Settings.cleanup(true);
+        if (engine != null) {
+            engine.cleanup();
+            engine = null;
+        }
     }
 
     /**
@@ -536,9 +537,10 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * @param locale the locale to use when generating the report
      * @throws MavenReportException if a maven report exception occurs
      */
-    public void generate(Sink sink, SinkFactory sinkFactory, Locale locale) throws MavenReportException {
-        Engine engine = null;
+    @Override
+    protected void executeNonAggregateReport(Sink sink, SinkFactory sinkFactory, Locale locale) throws MavenReportException {
         try {
+            //TODO figure out if the serialized data is present from THIS build and use it instead?
             engine = executeDependencyCheck();
             if (this.externalReport) {
                 ReportingUtil.generateExternalReports(engine, reportOutputDirectory, project.getName(), format);
@@ -549,11 +551,6 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
             logger.log(Level.SEVERE,
                     "Unable to connect to the dependency-check database; analysis has stopped");
             logger.log(Level.FINE, "", ex);
-        } finally {
-            Settings.cleanup(true);
-            if (engine != null) {
-                engine.cleanup();
-            }
         }
     }
 
@@ -593,7 +590,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * @return the report name
      */
     public String getName(Locale locale) {
-        return name;
+        return "dependency-check";
     }
 
     /**
@@ -621,7 +618,9 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * @return the description
      */
     public String getDescription(Locale locale) {
-        return description;
+        return "A report providing details on any published "
+                + "vulnerabilities within project dependencies. This report is a best effort but may contain "
+                + "false positives and false negatives.";
     }
 
     /**
@@ -636,10 +635,10 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
     /**
      * Returns whether or not the plugin can generate a report.
      *
-     * @return true
+     * @return <code>true</code> if a report can be generated; otherwise <code>false</code>
      */
     public boolean canGenerateReport() {
-        return true;
+        return canGenerateNonAggregateReport() || canGenerateAggregateReport();
     }
     // </editor-fold>
 
@@ -711,6 +710,49 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
                     + "One or more dependencies were identified with known vulnerabilities:%n%n%s"
                     + "%n%nSee the dependency-check report for more details.%n%n", summary.toString());
             logger.log(Level.WARNING, msg);
+        }
+    }
+
+    @Override
+    protected void executeAggregateReport(Sink sink, SinkFactory sinkFactory, Locale locale) throws MavenReportException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    protected boolean canGenerateNonAggregateReport() {
+        return true;
+    }
+
+    @Override
+    protected boolean canGenerateAggregateReport() {
+        return isAggregate() && isLastProject();
+    }
+
+    @Override
+    protected String getDataFileName() {
+        return "dependency-check.ser";
+    }
+
+    @Override
+    protected void writeDataFile() {
+        if (engine != null) {
+            File file = new File(project.getBuild().getDirectory(), getDataFileName());
+            try {
+                OutputStream os = new FileOutputStream(file);
+                OutputStream bos = new BufferedOutputStream(os);
+                ObjectOutput out = new ObjectOutputStream(bos);
+                try {
+                    out.writeObject(engine);
+                    out.flush();
+                } finally {
+                    out.close();
+                }
+                project.setContextValue("dependency-check-path", file.getAbsolutePath());
+            } catch (IOException ex) {
+                logger.log(Level.WARNING, "Unable to create data file used for report aggregation; "
+                        + "if report aggregation is being used the results may be incomplete.");
+                logger.log(Level.FINE, ex.getMessage(), ex);
+            }
         }
     }
 }
