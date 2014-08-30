@@ -68,7 +68,7 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
     /**
      * Logger field reference.
      */
-    private static final Logger logger = Logger.getLogger(ReportAggregationMojo.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ReportAggregationMojo.class.getName());
 
     /**
      * List of Maven project of the current build
@@ -114,8 +114,14 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
         return reportOutputDirectory;
     }
 
+    /**
+     * Returns the output directory for the given project.
+     *
+     * @param project the Maven project to get the output directory for
+     * @return the output directory for the given project
+     */
     public File getReportOutputDirectory(MavenProject project) {
-        Object o = project.getContextValue(getOutputDirectoryContextKey());
+        final Object o = project.getContextValue(getOutputDirectoryContextKey());
         if (o != null && o instanceof File) {
             return (File) o;
         }
@@ -135,29 +141,67 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
     /**
      * The collection of child projects.
      */
-    private final Map< MavenProject, Set<MavenProject>> projectChildren = new HashMap<MavenProject, Set<MavenProject>>();
+    private final Map<MavenProject, Set<MavenProject>> projectChildren = new HashMap<MavenProject, Set<MavenProject>>();
 
+    /**
+     * Called before execute; allows for any setup that is needed. If this is overridden you must call
+     * </code>super.preExecute()</code>.
+     *
+     * @throws MojoExecutionException thrown if there is an issue executing the mojo
+     * @throws MojoFailureException thrown if there is an issue executing the mojo
+     */
     protected void preExecute() throws MojoExecutionException, MojoFailureException {
         buildAggregateInfo();
     }
 
+    /**
+     * Called when the mojo is being executed.
+     *
+     * @throws MojoExecutionException thrown if there is an issue executing the mojo
+     * @throws MojoFailureException thrown if there is an issue executing the mojo
+     */
     protected abstract void performExecute() throws MojoExecutionException, MojoFailureException;
 
+    /**
+     * Runs after the mojo has executed. This implementation will call <code>writeDataFile()</code>. As such, it is
+     * important that if this method is overriden that <code>super.postExecute()</code> is called.
+     *
+     * @throws MojoExecutionException thrown if there is an issue executing the mojo
+     * @throws MojoFailureException thrown if there is an issue executing the mojo
+     */
     protected void postExecute() throws MojoExecutionException, MojoFailureException {
-        File written = writeDataFile();
+        final File written = writeDataFile();
         if (written != null) {
             project.setContextValue(getDataFileContextKey(), written.getAbsolutePath());
         }
     }
 
+    /**
+     * Returns the key used to store the path to the data file that is saved by <code>writeDataFile()</code>. This key
+     * is used in the <code>MavenProject.(set|get)ContextValue</code>.
+     *
+     * @return the key used to store the path to the data file
+     */
     protected String getDataFileContextKey() {
         return "dependency-check-path-" + this.getDataFileName();
     }
 
+    /**
+     * Returns the key used to store the path to the output directory. When generating the report in the
+     * <code>executeAggregateReport()</code> the output directory should be obtained by using this key.
+     *
+     * @return the key used to store the path to the output directory
+     */
     protected String getOutputDirectoryContextKey() {
         return "dependency-output-dir-" + this.getDataFileName();
     }
 
+    /**
+     * Is called by Maven to execute the mojo.
+     *
+     * @throws MojoExecutionException thrown if there is an issue executing the mojo
+     * @throws MojoFailureException thrown if there is an issue executing the mojo
+     */
     public final void execute() throws MojoExecutionException, MojoFailureException {
         try {
             preExecute();
@@ -184,7 +228,7 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
      * @throws MavenReportException if a maven report exception occurs
      */
     protected void postGenerate() throws MavenReportException {
-        File written = writeDataFile();
+        final File written = writeDataFile();
         if (written != null) {
             project.setContextValue(getDataFileContextKey(), written.getAbsolutePath());
         }
@@ -308,12 +352,12 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
      * @return a list of child projects
      */
     protected List<MavenProject> getAllChildren(MavenProject parentProject) {
-        Set<MavenProject> children = projectChildren.get(parentProject);
+        final Set<MavenProject> children = projectChildren.get(parentProject);
         if (children == null) {
             return Collections.emptyList();
         }
 
-        List<MavenProject> result = new ArrayList<MavenProject>();
+        final List<MavenProject> result = new ArrayList<MavenProject>();
         for (MavenProject child : children) {
             if (isMultiModule(child)) {
                 result.addAll(getAllChildren(child));
@@ -324,8 +368,14 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
         return result;
     }
 
+    /**
+     * Returns a list of data files that were produced by the direct children of the given MavenProject.
+     *
+     * @param project the Maven project to obtain the child data files from
+     * @return a list of the data files
+     */
     protected List<File> getAllChildDataFiles(MavenProject project) {
-        List<MavenProject> children = getAllChildren(project);
+        final List<MavenProject> children = getAllChildren(project);
         return getDataFiles(children);
     }
 
@@ -336,13 +386,13 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
      * @return a list of output files
      */
     protected List<File> getDataFiles(List<MavenProject> projects) {
-        List<File> files = new ArrayList<File>();
+        final List<File> files = new ArrayList<File>();
         for (MavenProject proj : projects) {
-            Object path = project.getContextValue(getDataFileContextKey());
+            final Object path = project.getContextValue(getDataFileContextKey());
             if (path == null) {
                 final String msg = String.format("Unable to aggregate data for '%s' - aggregate data file was not generated",
                         proj.getName());
-                logger.warning(msg);
+                LOGGER.warning(msg);
             } else {
                 File outputFile = new File((String) path);
                 if (outputFile.exists()) {
@@ -351,7 +401,7 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
                     if (!isMultiModule(project)) {
                         final String msg = String.format("Unable to aggregate data for '%s' - missing data file '%s'",
                                 proj.getName(), outputFile.getPath());
-                        logger.warning(msg);
+                        LOGGER.warning(msg);
                     }
                 }
             }
@@ -372,7 +422,6 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
     /**
      * Test if the current project has pom packaging
      *
-     * @param mavenProject Project to test
      * @return <code>true</code> if it has a pom packaging; otherwise <code>false</code>
      */
     protected boolean isMultiModule() {
@@ -405,7 +454,7 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
      * defined then the abstract class (i.e. this class) will not have access to the current project (just the way Maven
      * works with the binding).
      *
-     * @return
+     * @return returns a reference to the current project
      */
     protected MavenProject getProject() {
         return project;

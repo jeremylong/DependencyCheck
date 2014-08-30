@@ -50,7 +50,7 @@ final class ReportingUtil {
     /**
      * Logger field reference.
      */
-    private static final Logger logger = Logger.getLogger(ReportingUtil.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ReportingUtil.class.getName());
 
     /**
      * Empty private constructor for this utility class.
@@ -63,6 +63,8 @@ final class ReportingUtil {
      *
      * @param engine a dependency-check engine
      * @param outDirectory the directory to write the reports to
+     * @param projectName the name of the project that a report is being generated for
+     * @param format the format of the report to generate
      */
     static void generateExternalReports(Engine engine, File outDirectory, String projectName, String format) {
         DatabaseProperties prop = null;
@@ -72,7 +74,7 @@ final class ReportingUtil {
             cve.open();
             prop = cve.getDatabaseProperties();
         } catch (DatabaseException ex) {
-            logger.log(Level.FINE, "Unable to retrieve DB Properties", ex);
+            LOGGER.log(Level.FINE, "Unable to retrieve DB Properties", ex);
         } finally {
             if (cve != null) {
                 cve.close();
@@ -82,13 +84,13 @@ final class ReportingUtil {
         try {
             r.generateReports(outDirectory.getCanonicalPath(), format);
         } catch (IOException ex) {
-            logger.log(Level.SEVERE,
+            LOGGER.log(Level.SEVERE,
                     "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
-            logger.log(Level.FINE, null, ex);
+            LOGGER.log(Level.FINE, null, ex);
         } catch (Throwable ex) {
-            logger.log(Level.SEVERE,
+            LOGGER.log(Level.SEVERE,
                     "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
-            logger.log(Level.FINE, null, ex);
+            LOGGER.log(Level.FINE, null, ex);
         }
     }
 
@@ -97,6 +99,7 @@ final class ReportingUtil {
      *
      * @param engine the engine used to scan the dependencies
      * @param sink the sink to write the data to
+     * @param projectName the name of the project
      */
     static void generateMavenSiteReport(final Engine engine, Sink sink, String projectName) {
         final List<Dependency> dependencies = engine.getDependencies();

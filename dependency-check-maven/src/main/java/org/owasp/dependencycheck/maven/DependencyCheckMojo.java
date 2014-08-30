@@ -68,7 +68,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     /**
      * Logger field reference.
      */
-    private static final Logger logger = Logger.getLogger(DependencyCheckMojo.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DependencyCheckMojo.class.getName());
     /**
      * The properties file location.
      */
@@ -312,7 +312,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
      * @throws DatabaseException thrown if there is an exception connecting to the database
      */
     private Engine executeDependencyCheck(MavenProject project) throws DatabaseException {
-        Engine localEngine = initializeEngine();
+        final Engine localEngine = initializeEngine();
 
         final Set<Artifact> artifacts = project.getArtifacts();
         for (Artifact a : artifacts) {
@@ -327,6 +327,12 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
         return localEngine;
     }
 
+    /**
+     * Initializes a new <code>Engine</code> that can be used for scanning.
+     *
+     * @return a newly instantiated <code>Engine</code>
+     * @throws DatabaseException thrown if there is a database exception
+     */
     private Engine initializeEngine() throws DatabaseException {
         populateSettings();
         final Engine localEngine = new Engine();
@@ -364,14 +370,14 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
             mojoProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);
             Settings.mergeProperties(mojoProperties);
         } catch (IOException ex) {
-            logger.log(Level.WARNING, "Unable to load the dependency-check ant task.properties file.");
-            logger.log(Level.FINE, null, ex);
+            LOGGER.log(Level.WARNING, "Unable to load the dependency-check ant task.properties file.");
+            LOGGER.log(Level.FINE, null, ex);
         } finally {
             if (mojoProperties != null) {
                 try {
                     mojoProperties.close();
                 } catch (IOException ex) {
-                    logger.log(Level.FINEST, null, ex);
+                    LOGGER.log(Level.FINEST, null, ex);
                 }
             }
         }
@@ -379,7 +385,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
 
         if (proxyUrl != null && !proxyUrl.isEmpty()) {
-            logger.warning("Deprecated configuration detected, proxyUrl will be ignored; use the maven settings to configure the proxy instead");
+            LOGGER.warning("Deprecated configuration detected, proxyUrl will be ignored; use the maven settings to configure the proxy instead");
         }
 
         final Proxy proxy = getMavenProxy();
@@ -485,7 +491,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
                 } else if (proxies.size() == 1) {
                     return proxies.get(0);
                 } else {
-                    logger.warning("Multiple proxy defentiions exist in the Maven settings. In the dependency-check "
+                    LOGGER.warning("Multiple proxy defentiions exist in the Maven settings. In the dependency-check "
                             + "configuration set the maveSettingsProxyId so that the correct proxy will be used.");
                     throw new IllegalStateException("Ambiguous proxy definition");
                 }
@@ -513,9 +519,9 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
                 checkForFailure(engine.getDependencies());
             }
         } catch (DatabaseException ex) {
-            logger.log(Level.SEVERE,
+            LOGGER.log(Level.SEVERE,
                     "Unable to connect to the dependency-check database; analysis has stopped");
-            logger.log(Level.FINE, "", ex);
+            LOGGER.log(Level.FINE, "", ex);
         }
     }
 
@@ -537,6 +543,9 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
         }
     }
 
+    /**
+     * Calls <code>engine.cleanup()</code> to release resources.
+     */
     private void cleanupEngine() {
         if (engine != null) {
             engine.cleanup();
@@ -554,7 +563,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     @Override
     protected void executeNonAggregateReport(Locale locale) throws MavenReportException {
 
-        List<Dependency> deps = readDataFile();
+        final List<Dependency> deps = readDataFile();
         if (deps != null) {
             try {
                 engine = initializeEngine();
@@ -584,14 +593,16 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
                 engine = initializeEngine();
                 engine.getDependencies().addAll(deps);
             } catch (DatabaseException ex) {
-                final String msg = String.format("An unrecoverable exception with the dependency-check initialization occured while scanning %s", project.getName());
+                final String msg = String.format("An unrecoverable exception with the dependency-check initialization occured while scanning %s",
+                        project.getName());
                 throw new MavenReportException(msg, ex);
             }
         } else {
             try {
                 engine = executeDependencyCheck(project);
             } catch (DatabaseException ex) {
-                final String msg = String.format("An unrecoverable exception with the dependency-check scan occured while scanning %s", project.getName());
+                final String msg = String.format("An unrecoverable exception with the dependency-check scan occured while scanning %s",
+                        project.getName());
                 throw new MavenReportException(msg, ex);
             }
         }
@@ -599,19 +610,19 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
             deps = readDataFile(child);
             if (deps == null) {
                 final String msg = String.format("Unable to include information on %s in the dependency-check aggregate report", child.getName());
-                logger.severe(msg);
+                LOGGER.severe(msg);
             } else {
                 engine.getDependencies().addAll(deps);
             }
         }
-        DependencyBundlingAnalyzer bundler = new DependencyBundlingAnalyzer();
+        final DependencyBundlingAnalyzer bundler = new DependencyBundlingAnalyzer();
         try {
             bundler.analyze(null, engine);
         } catch (AnalysisException ex) {
-            logger.log(Level.WARNING, "An error occured grouping the dependencies; duplicate entries may exist in the report", ex);
-            logger.log(Level.FINE, "Bundling Exception", ex);
+            LOGGER.log(Level.WARNING, "An error occured grouping the dependencies; duplicate entries may exist in the report", ex);
+            LOGGER.log(Level.FINE, "Bundling Exception", ex);
         }
-        File outputDir = getReportOutputDirectory(project);
+        final File outputDir = getReportOutputDirectory(project);
         if (outputDir != null) {
             ReportingUtil.generateExternalReports(engine, outputDir, project.getName(), format);
         }
@@ -632,7 +643,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
         } else if ("VULN".equalsIgnoreCase(this.format)) {
             return "dependency-check-vulnerability";
         } else {
-            logger.log(Level.WARNING, "Unknown report format used during site generation.");
+            LOGGER.log(Level.WARNING, "Unknown report format used during site generation.");
             return "dependency-check-report";
         }
     }
@@ -686,7 +697,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
             } else {
                 msg = "No project dependencies exist - dependency-check:check is unable to generate a report.";
             }
-            logger.warning(msg);
+            LOGGER.warning(msg);
         }
 
         return false;
@@ -788,7 +799,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
             final String msg = String.format("%n%n"
                     + "One or more dependencies were identified with known vulnerabilities:%n%n%s"
                     + "%n%nSee the dependency-check report for more details.%n%n", summary.toString());
-            logger.log(Level.WARNING, msg);
+            LOGGER.log(Level.WARNING, msg);
         }
     }
     //</editor-fold>
@@ -805,9 +816,9 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
         if (engine != null && getProject().getContextValue(this.getDataFileContextKey()) == null) {
             file = new File(getProject().getBuild().getDirectory(), getDataFileName());
             try {
-                OutputStream os = new FileOutputStream(file);
-                OutputStream bos = new BufferedOutputStream(os);
-                ObjectOutput out = new ObjectOutputStream(bos);
+                final OutputStream os = new FileOutputStream(file);
+                final OutputStream bos = new BufferedOutputStream(os);
+                final ObjectOutput out = new ObjectOutputStream(bos);
                 try {
                     out.writeObject(engine.getDependencies());
                     out.flush();
@@ -816,9 +827,9 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
                 }
                 //getProject().setContextValue(this.getDataFileContextKey(), file.getAbsolutePath());
             } catch (IOException ex) {
-                logger.log(Level.WARNING, "Unable to create data file used for report aggregation; "
+                LOGGER.log(Level.WARNING, "Unable to create data file used for report aggregation; "
                         + "if report aggregation is being used the results may be incomplete.");
-                logger.log(Level.FINE, ex.getMessage(), ex);
+                LOGGER.log(Level.FINE, ex.getMessage(), ex);
             }
         }
         return file;
@@ -844,29 +855,29 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
      * <code>null</code> is returned
      */
     protected List<Dependency> readDataFile(MavenProject project) {
-        Object oPath = project.getContextValue(this.getDataFileContextKey());
+        final Object oPath = project.getContextValue(this.getDataFileContextKey());
         if (oPath == null) {
             return null;
         }
         List<Dependency> ret = null;
-        String path = (String) oPath;
+        final String path = (String) oPath;
         ObjectInputStream ois = null;
         try {
             ois = new ObjectInputStream(new FileInputStream(path));
             ret = (List<Dependency>) ois.readObject();
         } catch (FileNotFoundException ex) {
             //TODO fix logging
-            logger.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         } finally {
             if (ois != null) {
                 try {
                     ois.close();
                 } catch (IOException ex) {
-                    logger.log(Level.SEVERE, null, ex);
+                    LOGGER.log(Level.SEVERE, null, ex);
                 }
             }
         }
