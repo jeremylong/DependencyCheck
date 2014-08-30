@@ -92,7 +92,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
      * The path to the verbose log.
      */
     @Parameter(property = "logfile", defaultValue = "")
-    private String logFile;
+    private String logFile = null;
     /**
      * The output directory. This generally maps to "target".
      */
@@ -815,21 +815,41 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
         File file = null;
         if (engine != null && getProject().getContextValue(this.getDataFileContextKey()) == null) {
             file = new File(getProject().getBuild().getDirectory(), getDataFileName());
+            OutputStream os = null;
+            OutputStream bos = null;
+            ObjectOutput out = null;
             try {
-                final OutputStream os = new FileOutputStream(file);
-                final OutputStream bos = new BufferedOutputStream(os);
-                final ObjectOutput out = new ObjectOutputStream(bos);
-                try {
-                    out.writeObject(engine.getDependencies());
-                    out.flush();
-                } finally {
-                    out.close();
-                }
-                //getProject().setContextValue(this.getDataFileContextKey(), file.getAbsolutePath());
+                os = new FileOutputStream(file);
+                bos = new BufferedOutputStream(os);
+                out = new ObjectOutputStream(bos);
+                out.writeObject(engine.getDependencies());
+                out.flush();
             } catch (IOException ex) {
                 LOGGER.log(Level.WARNING, "Unable to create data file used for report aggregation; "
                         + "if report aggregation is being used the results may be incomplete.");
                 LOGGER.log(Level.FINE, ex.getMessage(), ex);
+            } finally {
+                if (out != null) {
+                    try {
+                        out.close();
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.FINEST, "ignore", ex);
+                    }
+                }
+                if (bos != null) {
+                    try {
+                        bos.close();
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.FINEST, "ignore", ex);
+                    }
+                }
+                if (os != null) {
+                    try {
+                        os.close();
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.FINEST, "ignore", ex);
+                    }
+                }
             }
         }
         return file;

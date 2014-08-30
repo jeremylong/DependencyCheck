@@ -394,7 +394,7 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
                         proj.getName());
                 LOGGER.warning(msg);
             } else {
-                File outputFile = new File((String) path);
+                final File outputFile = new File((String) path);
                 if (outputFile.exists()) {
                     files.add(outputFile);
                 } else {
