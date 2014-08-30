@@ -17,4 +17,11 @@
         <gav regex="true">com\.thoughtworks\.xstream:xstream:.*</gav>
         <cpe>cpe:/a:springsource:spring_framework</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+        Suppresses false positives on velocity tools.
+        ]]></notes>
+        <gav regex="true">org.apache.velocity:velocity-tools:.*</gav>
+        <cpe>cpe:/a:apache:struts</cpe>
+    </suppress>
 </suppressions>
