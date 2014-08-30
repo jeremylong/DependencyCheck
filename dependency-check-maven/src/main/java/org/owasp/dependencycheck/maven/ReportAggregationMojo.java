@@ -21,19 +21,20 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.sink.SinkFactory;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.MavenMultiPageReport;
+import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 
 /**
@@ -56,7 +57,7 @@ import org.apache.maven.reporting.MavenReportException;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public abstract class ReportAggregationMojo extends AbstractMojo implements MavenMultiPageReport {
+public abstract class ReportAggregationMojo extends AbstractMojo implements MavenReport {
 
     /**
      * The Maven Project Object.
@@ -81,18 +82,80 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
     @Parameter(property = "aggregate", defaultValue = "false")
     private boolean aggregate;
 
-    private Map< MavenProject, List< MavenProject>> projectChildren;
+    /**
+     * Sets whether or not the external report format should be used.
+     */
+    @Parameter(property = "metaFileName", defaultValue = "dependency-check.ser", required = true)
+    private String dataFileName;
+    /**
+     * Specifies the destination directory for the generated Dependency-Check report. This generally maps to
+     * "target/site".
+     */
+    @Parameter(property = "reportOutputDirectory", defaultValue = "${project.reporting.outputDirectory}", required = true)
+    private File reportOutputDirectory;
+
+    /**
+     * Sets the Reporting output directory.
+     *
+     * @param directory the output directory
+     */
+    @Override
+    public void setReportOutputDirectory(File directory) {
+        reportOutputDirectory = directory;
+    }
+
+    /**
+     * Returns the output directory.
+     *
+     * @return the output directory
+     */
+    @Override
+    public File getReportOutputDirectory() {
+        return reportOutputDirectory;
+    }
+
+    public File getReportOutputDirectory(MavenProject project) {
+        Object o = project.getContextValue(getOutputDirectoryContextKey());
+        if (o != null && o instanceof File) {
+            return (File) o;
+        }
+        return null;
+    }
+
+    /**
+     * Returns whether this is an external report. This method always returns true.
+     *
+     * @return <code>true</code>
+     */
+    @Override
+    public final boolean isExternalReport() {
+        return true;
+    }
+
+    /**
+     * The collection of child projects.
+     */
+    private final Map< MavenProject, Set<MavenProject>> projectChildren = new HashMap<MavenProject, Set<MavenProject>>();
 
     protected void preExecute() throws MojoExecutionException, MojoFailureException {
-        if (this.canGenerateAggregateReport()) {
-            buildAggregateInfo();
-        }
+        buildAggregateInfo();
     }
 
     protected abstract void performExecute() throws MojoExecutionException, MojoFailureException;
 
     protected void postExecute() throws MojoExecutionException, MojoFailureException {
-        writeDataFile();
+        File written = writeDataFile();
+        if (written != null) {
+            project.setContextValue(getDataFileContextKey(), written.getAbsolutePath());
+        }
+    }
+
+    protected String getDataFileContextKey() {
+        return "dependency-check-path-" + this.getDataFileName();
+    }
+
+    protected String getOutputDirectoryContextKey() {
+        return "dependency-output-dir-" + this.getDataFileName();
     }
 
     public final void execute() throws MojoExecutionException, MojoFailureException {
@@ -110,9 +173,9 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
      * @throws MavenReportException if a maven report exception occurs
      */
     protected void preGenerate() throws MavenReportException {
-        if (canGenerateAggregateReport()) {
-            buildAggregateInfo();
-        }
+        buildAggregateInfo();
+
+        project.setContextValue(getOutputDirectoryContextKey(), getReportOutputDirectory());
     }
 
     /**
@@ -121,28 +184,28 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
      * @throws MavenReportException if a maven report exception occurs
      */
     protected void postGenerate() throws MavenReportException {
-        writeDataFile();
+        File written = writeDataFile();
+        if (written != null) {
+            project.setContextValue(getDataFileContextKey(), written.getAbsolutePath());
+        }
     }
 
     /**
      * Generates the non aggregate report.
      *
-     * @param sink the sink to write the report to
-     * @param sinkFactory the sink factory
      * @param locale the locale to use when generating the report
      * @throws MavenReportException if a maven report exception occurs
      */
-    protected abstract void executeNonAggregateReport(Sink sink, SinkFactory sinkFactory, Locale locale) throws MavenReportException;
+    protected abstract void executeNonAggregateReport(Locale locale) throws MavenReportException;
 
     /**
      * Generates the aggregate Site Report.
      *
-     * @param sink the sink to write the report to
-     * @param sinkFactory the sink factory
+     * @param project the maven project used to generate the aggregate report
      * @param locale the locale to use when generating the report
      * @throws MavenReportException if a maven report exception occurs
      */
-    protected abstract void executeAggregateReport(Sink sink, SinkFactory sinkFactory, Locale locale) throws MavenReportException;
+    protected abstract void executeAggregateReport(MavenProject project, Locale locale) throws MavenReportException;
 
     /**
      * Generates the Dependency-Check Site Report.
@@ -150,11 +213,11 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
      * @param sink the sink to write the report to
      * @param locale the locale to use when generating the report
      * @throws MavenReportException if a maven report exception occurs
-     * @deprecated use {@link #generate(org.apache.maven.doxia.sink.Sink, org.apache.maven.doxia.sink.SinkFactory, java.util.Locale) instead.
+     * @deprecated use {@link #generate(org.apache.maven.doxia.sink.Sink, java.util.Locale) instead.
      */
     @Deprecated
     public final void generate(@SuppressWarnings("deprecation") org.codehaus.doxia.sink.Sink sink, Locale locale) throws MavenReportException {
-        generate((Sink) sink, null, locale);
+        generate((Sink) sink, locale);
     }
 
     /**
@@ -163,30 +226,21 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
      * @param sink the sink to write the report to
      * @param locale the locale to use when generating the report
      * @throws MavenReportException if a maven report exception occurs
-     * @deprecated use {@link #generate(org.apache.maven.doxia.sink.Sink, org.apache.maven.doxia.sink.SinkFactory, java.util.Locale) instead.
      */
-    @Deprecated
     public final void generate(Sink sink, Locale locale) throws MavenReportException {
-        generate(sink, null, locale);
-    }
-
-    /**
-     * Generates the Dependency-Check Site Report.
-     *
-     * @param sink the sink to write the report to
-     * @param sinkFactory the sink factory
-     * @param locale the locale to use when generating the report
-     * @throws MavenReportException if a maven report exception occurs
-     */
-    public final void generate(Sink sink, SinkFactory sinkFactory, Locale locale) throws MavenReportException {
         try {
             preGenerate();
             if (canGenerateNonAggregateReport()) {
-                executeNonAggregateReport(sink, sinkFactory, locale);
+                executeNonAggregateReport(locale);
             }
 
             if (canGenerateAggregateReport()) {
-                executeAggregateReport(sink, sinkFactory, locale);
+                for (MavenProject proj : reactorProjects) {
+                    if (!isMultiModule(proj)) {
+                        continue;
+                    }
+                    executeAggregateReport(proj, locale);
+                }
             }
         } finally {
             postGenerate();
@@ -208,36 +262,30 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
     protected abstract boolean canGenerateAggregateReport();
 
     /**
-     * Returns the data file's names.
+     * Returns the name of the data file that contains the serialized data.
      *
-     * @return the data file's name
+     * @return the name of the data file that contains the serialized data
      */
-    protected abstract String getDataFileName();
+    protected String getDataFileName() {
+        return dataFileName;
+    }
 
     /**
      * Writes the data file to disk in the target directory.
      *
+     * @return the File object referencing the data file that was written
      */
-    protected abstract void writeDataFile();
+    protected abstract File writeDataFile();
 
     /**
      * Collects the information needed for building aggregate reports.
      */
     private void buildAggregateInfo() {
-        if (projectChildren != null) {
-            // already did this work
-            return;
-        }
-        logger.warning("building aggregate info");
-        boolean test = reactorProjects == null;
-        logger.warning("Reactor is " + test);
-
         // build parent-child map
-        projectChildren = new HashMap<MavenProject, List<MavenProject>>();
         for (MavenProject proj : reactorProjects) {
-            List<MavenProject> depList = projectChildren.get(proj.getParent());
+            Set<MavenProject> depList = projectChildren.get(proj.getParent());
             if (depList == null) {
-                depList = new ArrayList<MavenProject>();
+                depList = new HashSet<MavenProject>();
                 projectChildren.put(proj.getParent(), depList);
             }
             depList.add(proj);
@@ -259,8 +307,8 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
      * @param parentProject the parent project to collect the child project references
      * @return a list of child projects
      */
-    private List<MavenProject> getAllChildren(MavenProject parentProject) {
-        List<MavenProject> children = projectChildren.get(parentProject);
+    protected List<MavenProject> getAllChildren(MavenProject parentProject) {
+        Set<MavenProject> children = projectChildren.get(parentProject);
         if (children == null) {
             return Collections.emptyList();
         }
@@ -276,15 +324,9 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
         return result;
     }
 
-    /**
-     * Returns any existing output files from the current projects children.
-     *
-     * @param projects the list of projects to obtain the output files from
-     * @return a list of output files
-     */
-    protected List<File> getChildDataFiles() {
-        List<MavenProject> projects = getAllChildren();
-        return getDataFiles(projects);
+    protected List<File> getAllChildDataFiles(MavenProject project) {
+        List<MavenProject> children = getAllChildren(project);
+        return getDataFiles(children);
     }
 
     /**
@@ -296,18 +338,21 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
     protected List<File> getDataFiles(List<MavenProject> projects) {
         List<File> files = new ArrayList<File>();
         for (MavenProject proj : projects) {
-            if (isMultiModule(proj)) {
-                continue;
-            }
-            //TODO can we get the path from the context?
-            File outputFile = new File(proj.getBuild().getDirectory(), getDataFileName());
-            if (outputFile.exists()) {
-                files.add(outputFile);
+            Object path = project.getContextValue(getDataFileContextKey());
+            if (path == null) {
+                final String msg = String.format("Unable to aggregate data for '%s' - aggregate data file was not generated",
+                        proj.getName());
+                logger.warning(msg);
             } else {
-                if (!isMultiModule(project)) {
-                    final String msg = String.format("Unable to aggregate data for '%s' - missing data file '%s'",
-                            proj.getName(), outputFile.getPath());
-                    logger.warning(msg);
+                File outputFile = new File((String) path);
+                if (outputFile.exists()) {
+                    files.add(outputFile);
+                } else {
+                    if (!isMultiModule(project)) {
+                        final String msg = String.format("Unable to aggregate data for '%s' - missing data file '%s'",
+                                proj.getName(), outputFile.getPath());
+                        logger.warning(msg);
+                    }
                 }
             }
         }
@@ -318,20 +363,20 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
      * Test if the project has pom packaging
      *
      * @param mavenProject Project to test
-     * @return True if it has a pom packaging
+     * @return <code>true</code> if it has a pom packaging; otherwise <code>false</code>
      */
-    private boolean isMultiModule(MavenProject mavenProject) {
+    protected boolean isMultiModule(MavenProject mavenProject) {
         return "pom".equals(mavenProject.getPackaging());
     }
 
     /**
-     * Test if the project has pom packaging
+     * Test if the current project has pom packaging
      *
      * @param mavenProject Project to test
-     * @return True if it has a pom packaging
+     * @return <code>true</code> if it has a pom packaging; otherwise <code>false</code>
      */
     protected boolean isMultiModule() {
-        return "pom".equals(project.getPackaging());
+        return isMultiModule(project);
     }
 
     /**
@@ -352,5 +397,17 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
      */
     public boolean isAggregate() {
         return aggregate;
+    }
+
+    /**
+     * Returns a reference to the current project. This method is used instead of auto-binding the project via component
+     * annotation in concrete implementations of this. If the child has a <code>@Component MavenProject project;</code>
+     * defined then the abstract class (i.e. this class) will not have access to the current project (just the way Maven
+     * works with the binding).
+     *
+     * @return
+     */
+    protected MavenProject getProject() {
+        return project;
     }
 }

@@ -19,9 +19,12 @@ package org.owasp.dependencycheck.maven;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -31,11 +34,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.sink.SinkFactory;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -45,6 +45,8 @@ import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.DependencyBundlingAnalyzer;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
@@ -62,11 +64,11 @@ import org.owasp.dependencycheck.utils.Settings;
         requiresOnline = true)
 public class DependencyCheckMojo extends ReportAggregationMojo {
 
+    //<editor-fold defaultstate="collapsed" desc="Private fields">
     /**
      * Logger field reference.
      */
     private static final Logger logger = Logger.getLogger(DependencyCheckMojo.class.getName());
-
     /**
      * The properties file location.
      */
@@ -83,24 +85,14 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
      * The dependency-check engine used to scan the project.
      */
     private Engine engine = null;
+    //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Maven bound parameters and components">
-    /**
-     * The Maven Project Object.
-     */
-    @Component
-    private MavenProject project;
     /**
      * The path to the verbose log.
      */
     @Parameter(property = "logfile", defaultValue = "")
     private String logFile;
-    /**
-     * Specifies the destination directory for the generated Dependency-Check report. This generally maps to
-     * "target/site".
-     */
-    @Parameter(property = "reportOutputDirectory", defaultValue = "${project.reporting.outputDirectory}", required = true)
-    private File reportOutputDirectory;
     /**
      * The output directory. This generally maps to "target".
      */
@@ -124,123 +116,108 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
      * The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this
      * within the Site plugin unless the externalReport is set to true. Default is HTML.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "format", defaultValue = "HTML", required = true)
     private String format = "HTML";
     /**
-     * Sets whether or not the external report format should be used.
-     */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
-    @Parameter(property = "externalReport", defaultValue = "false", required = true)
-    private boolean externalReport = false;
-
-    /**
      * The maven settings.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "mavenSettings", defaultValue = "${settings}", required = false)
     private org.apache.maven.settings.Settings mavenSettings;
 
     /**
      * The maven settings proxy id.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "mavenSettingsProxyId", required = false)
     private String mavenSettingsProxyId;
 
     /**
      * The Connection Timeout.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "connectionTimeout", defaultValue = "", required = false)
     private String connectionTimeout = null;
     /**
      * The path to the suppression file.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "suppressionFile", defaultValue = "", required = false)
     private String suppressionFile = null;
     /**
      * Flag indicating whether or not to show a summary in the output.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "showSummary", defaultValue = "true", required = false)
     private boolean showSummary = true;
 
     /**
      * Whether or not the Jar Analyzer is enabled.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "jarAnalyzerEnabled", defaultValue = "true", required = false)
     private boolean jarAnalyzerEnabled = true;
 
     /**
      * Whether or not the Archive Analyzer is enabled.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "archiveAnalyzerEnabled", defaultValue = "true", required = false)
     private boolean archiveAnalyzerEnabled = true;
 
     /**
      * Whether or not the .NET Assembly Analyzer is enabled.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "assemblyAnalyzerEnabled", defaultValue = "true", required = false)
     private boolean assemblyAnalyzerEnabled = true;
 
     /**
      * Whether or not the .NET Nuspec Analyzer is enabled.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nuspecAnalyzerEnabled", defaultValue = "true", required = false)
     private boolean nuspecAnalyzerEnabled = true;
 
     /**
      * Whether or not the Nexus Analyzer is enabled.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nexusAnalyzerEnabled", defaultValue = "true", required = false)
     private boolean nexusAnalyzerEnabled = true;
     /**
      * Whether or not the Nexus Analyzer is enabled.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "nexusUrl", defaultValue = "", required = false)
     private String nexusUrl;
     /**
      * Whether or not the configured proxy is used to connect to Nexus.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "nexusUsesProxy", defaultValue = "true", required = false)
     private boolean nexusUsesProxy = true;
     /**
      * The database connection string.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "connectionString", defaultValue = "", required = false)
     private String connectionString;
     /**
      * The database driver name. An example would be org.h2.Driver.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "databaseDriverName", defaultValue = "", required = false)
     private String databaseDriverName;
     /**
      * The path to the database driver if it is not on the class path.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "databaseDriverPath", defaultValue = "", required = false)
     private String databaseDriverPath;
     /**
      * The database user name.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "databaseUser", defaultValue = "", required = false)
     private String databaseUser;
     /**
      * The password to use when connecting to the database.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "databasePassword", defaultValue = "", required = false)
     private String databasePassword;
     /**
@@ -303,12 +280,20 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
      *
      * @deprecated Please use mavenSettings instead
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "proxyUrl", defaultValue = "", required = false)
     @Deprecated
     private String proxyUrl = null;
 
     // </editor-fold>
+    /**
+     * Constructs a new dependency-check-mojo.
+     */
+    public DependencyCheckMojo() {
+        final InputStream in = DependencyCheckMojo.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
+        LogUtils.prepareLogger(in, logFile);
+    }
+
     /**
      * Executes the Dependency-Check on the dependent libraries.
      *
@@ -316,61 +301,58 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
      * @throws DatabaseException thrown if there is an exception connecting to the database
      */
     private Engine executeDependencyCheck() throws DatabaseException {
-
-        final InputStream in = DependencyCheckMojo.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
-        LogUtils.prepareLogger(in, logFile);
-
-        populateSettings();
-        final Engine engine = new Engine();
-
-        final Set<Artifact> artifacts = project.getArtifacts();
-        for (Artifact a : artifacts) {
-            if (skipTestScope && Artifact.SCOPE_TEST.equals(a.getScope())) {
-                continue;
-            }
-
-            if (skipProvidedScope && Artifact.SCOPE_PROVIDED.equals(a.getScope())) {
-                continue;
-            }
-
-            if (skipRuntimeScope && !Artifact.SCOPE_RUNTIME.equals(a.getScope())) {
-                continue;
-            }
-
-            engine.scan(a.getFile().getAbsolutePath());
-        }
-        engine.analyzeDependencies();
-
-        return engine;
+        return executeDependencyCheck(getProject());
     }
 
     /**
-     * Returns the maven proxy.
+     * Executes the Dependency-Check on the dependent libraries.
      *
-     * @return the maven proxy
+     * @param project the project to run dependency-check on
+     * @return the Engine used to scan the dependencies.
+     * @throws DatabaseException thrown if there is an exception connecting to the database
      */
-    private Proxy getMavenProxy() {
-        if (mavenSettings != null) {
-            final List<Proxy> proxies = mavenSettings.getProxies();
-            if (proxies != null && proxies.size() > 0) {
-                if (mavenSettingsProxyId != null) {
-                    for (Proxy proxy : proxies) {
-                        if (mavenSettingsProxyId.equalsIgnoreCase(proxy.getId())) {
-                            return proxy;
-                        }
-                    }
-                } else if (proxies.size() == 1) {
-                    return proxies.get(0);
-                } else {
-                    logger.warning("Multiple proxy defentiions exist in the Maven settings. In the dependency-check "
-                            + "configuration set the maveSettingsProxyId so that the correct proxy will be used.");
-                    throw new IllegalStateException("Ambiguous proxy definition");
-                }
+    private Engine executeDependencyCheck(MavenProject project) throws DatabaseException {
+        Engine localEngine = initializeEngine();
+
+        final Set<Artifact> artifacts = project.getArtifacts();
+        for (Artifact a : artifacts) {
+            if (excludeFromScan(a)) {
+                continue;
             }
+
+            localEngine.scan(a.getFile().getAbsolutePath());
         }
-        return null;
+        localEngine.analyzeDependencies();
+
+        return localEngine;
     }
 
+    private Engine initializeEngine() throws DatabaseException {
+        populateSettings();
+        final Engine localEngine = new Engine();
+        return localEngine;
+    }
+
+    /**
+     * Tests is the artifact should be included in the scan (i.e. is the dependency in a scope that is being scanned).
+     *
+     * @param a the Artifact to test
+     * @return <code>true</code> if the artifact is in an excluded scope; otherwise <code>false</code>
+     */
+    private boolean excludeFromScan(Artifact a) {
+        if (skipTestScope && Artifact.SCOPE_TEST.equals(a.getScope())) {
+            return true;
+        }
+        if (skipProvidedScope && Artifact.SCOPE_PROVIDED.equals(a.getScope())) {
+            return true;
+        }
+        if (skipRuntimeScope && !Artifact.SCOPE_RUNTIME.equals(a.getScope())) {
+            return true;
+        }
+        return false;
+    }
+
+    //<editor-fold defaultstate="collapsed" desc="Methods to populate global settings">
     /**
      * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system
      * properties required to change the proxy url, port, and connection timeout.
@@ -486,6 +468,34 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     }
 
     /**
+     * Returns the maven proxy.
+     *
+     * @return the maven proxy
+     */
+    private Proxy getMavenProxy() {
+        if (mavenSettings != null) {
+            final List<Proxy> proxies = mavenSettings.getProxies();
+            if (proxies != null && proxies.size() > 0) {
+                if (mavenSettingsProxyId != null) {
+                    for (Proxy proxy : proxies) {
+                        if (mavenSettingsProxyId.equalsIgnoreCase(proxy.getId())) {
+                            return proxy;
+                        }
+                    }
+                } else if (proxies.size() == 1) {
+                    return proxies.get(0);
+                } else {
+                    logger.warning("Multiple proxy defentiions exist in the Maven settings. In the dependency-check "
+                            + "configuration set the maveSettingsProxyId so that the correct proxy will be used.");
+                    throw new IllegalStateException("Ambiguous proxy definition");
+                }
+            }
+        }
+        return null;
+    }
+    //</editor-fold>
+
+    /**
      * Executes the dependency-check and generates the report.
      *
      * @throws MojoExecutionException if a maven exception occurs
@@ -495,7 +505,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     protected void performExecute() throws MojoExecutionException, MojoFailureException {
         try {
             engine = executeDependencyCheck();
-            ReportingUtil.generateExternalReports(engine, outputDirectory, project.getName(), format);
+            ReportingUtil.generateExternalReports(engine, outputDirectory, getProject().getName(), format);
             if (this.showSummary) {
                 showSummary(engine.getDependencies());
             }
@@ -511,50 +521,103 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
 
     @Override
     protected void postExecute() throws MojoExecutionException, MojoFailureException {
-        super.postExecute();
-        Settings.cleanup(true);
-        if (engine != null) {
-            engine.cleanup();
-            engine = null;
+        try {
+            super.postExecute();
+        } finally {
+            cleanupEngine();
         }
     }
 
     @Override
     protected void postGenerate() throws MavenReportException {
-        super.postGenerate();
-        Settings.cleanup(true);
+        try {
+            super.postGenerate();
+        } finally {
+            cleanupEngine();
+        }
+    }
+
+    private void cleanupEngine() {
         if (engine != null) {
             engine.cleanup();
             engine = null;
         }
+        Settings.cleanup(true);
     }
 
     /**
      * Generates the Dependency-Check Site Report.
      *
-     * @param sink the sink to write the report to
-     * @param sinkFactory the sink factory
      * @param locale the locale to use when generating the report
      * @throws MavenReportException if a maven report exception occurs
      */
     @Override
-    protected void executeNonAggregateReport(Sink sink, SinkFactory sinkFactory, Locale locale) throws MavenReportException {
-        try {
-            //TODO figure out if the serialized data is present from THIS build and use it instead?
-            engine = executeDependencyCheck();
-            if (this.externalReport) {
-                ReportingUtil.generateExternalReports(engine, reportOutputDirectory, project.getName(), format);
-            } else {
-                ReportingUtil.generateMavenSiteReport(engine, sink, project.getName());
+    protected void executeNonAggregateReport(Locale locale) throws MavenReportException {
+
+        List<Dependency> deps = readDataFile();
+        if (deps != null) {
+            try {
+                engine = initializeEngine();
+                engine.getDependencies().addAll(deps);
+            } catch (DatabaseException ex) {
+                final String msg = String.format("An unrecoverable exception with the dependency-check initialization occured while scanning %s",
+                        getProject().getName());
+                throw new MavenReportException(msg, ex);
             }
-        } catch (DatabaseException ex) {
-            logger.log(Level.SEVERE,
-                    "Unable to connect to the dependency-check database; analysis has stopped");
-            logger.log(Level.FINE, "", ex);
+        } else {
+            try {
+                engine = executeDependencyCheck();
+            } catch (DatabaseException ex) {
+                final String msg = String.format("An unrecoverable exception with the dependency-check scan occured while scanning %s",
+                        getProject().getName());
+                throw new MavenReportException(msg, ex);
+            }
+        }
+        ReportingUtil.generateExternalReports(engine, getReportOutputDirectory(), getProject().getName(), format);
+    }
+
+    @Override
+    protected void executeAggregateReport(MavenProject project, Locale locale) throws MavenReportException {
+        List<Dependency> deps = readDataFile(project);
+        if (deps != null) {
+            try {
+                engine = initializeEngine();
+                engine.getDependencies().addAll(deps);
+            } catch (DatabaseException ex) {
+                final String msg = String.format("An unrecoverable exception with the dependency-check initialization occured while scanning %s", project.getName());
+                throw new MavenReportException(msg, ex);
+            }
+        } else {
+            try {
+                engine = executeDependencyCheck(project);
+            } catch (DatabaseException ex) {
+                final String msg = String.format("An unrecoverable exception with the dependency-check scan occured while scanning %s", project.getName());
+                throw new MavenReportException(msg, ex);
+            }
+        }
+        for (MavenProject child : getAllChildren(project)) {
+            deps = readDataFile(child);
+            if (deps == null) {
+                final String msg = String.format("Unable to include information on %s in the dependency-check aggregate report", child.getName());
+                logger.severe(msg);
+            } else {
+                engine.getDependencies().addAll(deps);
+            }
+        }
+        DependencyBundlingAnalyzer bundler = new DependencyBundlingAnalyzer();
+        try {
+            bundler.analyze(null, engine);
+        } catch (AnalysisException ex) {
+            logger.log(Level.WARNING, "An error occured grouping the dependencies; duplicate entries may exist in the report", ex);
+            logger.log(Level.FINE, "Bundling Exception", ex);
+        }
+        File outputDir = getReportOutputDirectory(project);
+        if (outputDir != null) {
+            ReportingUtil.generateExternalReports(engine, outputDir, project.getName(), format);
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="required setter/getter methods">
+    // <editor-fold defaultstate="collapsed" desc="Mojo interface/abstract required setter/getter methods">
     /**
      * Returns the output name.
      *
@@ -594,24 +657,6 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     }
 
     /**
-     * Sets the Reporting output directory.
-     *
-     * @param directory the output directory
-     */
-    public void setReportOutputDirectory(File directory) {
-        reportOutputDirectory = directory;
-    }
-
-    /**
-     * Returns the output directory.
-     *
-     * @return the output directory
-     */
-    public File getReportOutputDirectory() {
-        return reportOutputDirectory;
-    }
-
-    /**
      * Gets the description of the Dependency-Check report to be displayed in the Maven Generated Reports page.
      *
      * @param locale The Locale to get the description for
@@ -624,24 +669,58 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     }
 
     /**
-     * Returns whether this is an external report.
-     *
-     * @return true or false;
-     */
-    public boolean isExternalReport() {
-        return externalReport;
-    }
-
-    /**
-     * Returns whether or not the plugin can generate a report.
+     * Returns whether or not a report can be generated.
      *
      * @return <code>true</code> if a report can be generated; otherwise <code>false</code>
      */
     public boolean canGenerateReport() {
-        return canGenerateNonAggregateReport() || canGenerateAggregateReport();
+        if (canGenerateAggregateReport() || (isAggregate() && isMultiModule())) {
+            return true;
+        }
+        if (canGenerateNonAggregateReport()) {
+            return true;
+        } else {
+            final String msg;
+            if (getProject().getArtifacts().size() > 0) {
+                msg = "No project dependencies exist in the included scope - dependency-check:check is unable to generate a report.";
+            } else {
+                msg = "No project dependencies exist - dependency-check:check is unable to generate a report.";
+            }
+            logger.warning(msg);
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns whether or not a non-aggregate report can be generated.
+     *
+     * @return <code>true</code> if a non-aggregate report can be generated; otherwise <code>false</code>
+     */
+    @Override
+    protected boolean canGenerateNonAggregateReport() {
+        boolean ability = false;
+        for (Artifact a : getProject().getArtifacts()) {
+            if (!excludeFromScan(a)) {
+                ability = true;
+                break;
+            }
+        }
+        return ability;
+    }
+
+    /**
+     * Returns whether or not an aggregate report can be generated.
+     *
+     * @return <code>true</code> if an aggregate report can be generated; otherwise <code>false</code>
+     */
+    @Override
+    protected boolean canGenerateAggregateReport() {
+        return isAggregate() && isLastProject();
     }
     // </editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Methods to fail build or show summary">
     /**
      * Checks to see if a vulnerability has been identified with a CVSS score that is above the threshold set in the
      * configuration.
@@ -712,47 +791,86 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
             logger.log(Level.WARNING, msg);
         }
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Methods to read/write the serialized data file">
+    /**
+     * Writes the scan data to disk. This is used to serialize the scan data between the "check" and "aggregate" phase.
+     *
+     * @return the File object referencing the data file that was written
+     */
     @Override
-    protected void executeAggregateReport(Sink sink, SinkFactory sinkFactory, Locale locale) throws MavenReportException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    protected boolean canGenerateNonAggregateReport() {
-        return true;
-    }
-
-    @Override
-    protected boolean canGenerateAggregateReport() {
-        return isAggregate() && isLastProject();
-    }
-
-    @Override
-    protected String getDataFileName() {
-        return "dependency-check.ser";
-    }
-
-    @Override
-    protected void writeDataFile() {
-        if (engine != null) {
-            File file = new File(project.getBuild().getDirectory(), getDataFileName());
+    protected File writeDataFile() {
+        File file = null;
+        if (engine != null && getProject().getContextValue(this.getDataFileContextKey()) == null) {
+            file = new File(getProject().getBuild().getDirectory(), getDataFileName());
             try {
                 OutputStream os = new FileOutputStream(file);
                 OutputStream bos = new BufferedOutputStream(os);
                 ObjectOutput out = new ObjectOutputStream(bos);
                 try {
-                    out.writeObject(engine);
+                    out.writeObject(engine.getDependencies());
                     out.flush();
                 } finally {
                     out.close();
                 }
-                project.setContextValue("dependency-check-path", file.getAbsolutePath());
+                //getProject().setContextValue(this.getDataFileContextKey(), file.getAbsolutePath());
             } catch (IOException ex) {
                 logger.log(Level.WARNING, "Unable to create data file used for report aggregation; "
                         + "if report aggregation is being used the results may be incomplete.");
                 logger.log(Level.FINE, ex.getMessage(), ex);
             }
         }
+        return file;
     }
+
+    /**
+     * Reads the serialized scan data from disk. This is used to serialize the scan data between the "check" and
+     * "aggregate" phase.
+     *
+     * @return a <code>Engine</code> object populated with dependencies if the serialized data file exists; otherwise
+     * <code>null</code> is returned
+     */
+    protected List<Dependency> readDataFile() {
+        return readDataFile(getProject());
+    }
+
+    /**
+     * Reads the serialized scan data from disk. This is used to serialize the scan data between the "check" and
+     * "aggregate" phase.
+     *
+     * @param project the Maven project to read the data file from
+     * @return a <code>Engine</code> object populated with dependencies if the serialized data file exists; otherwise
+     * <code>null</code> is returned
+     */
+    protected List<Dependency> readDataFile(MavenProject project) {
+        Object oPath = project.getContextValue(this.getDataFileContextKey());
+        if (oPath == null) {
+            return null;
+        }
+        List<Dependency> ret = null;
+        String path = (String) oPath;
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(new FileInputStream(path));
+            ret = (List<Dependency>) ois.readObject();
+        } catch (FileNotFoundException ex) {
+            //TODO fix logging
+            logger.log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        } finally {
+            if (ois != null) {
+                try {
+                    ois.close();
+                } catch (IOException ex) {
+                    logger.log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        return ret;
+    }
+    //</editor-fold>
 }
