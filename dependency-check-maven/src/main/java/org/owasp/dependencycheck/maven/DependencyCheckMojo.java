@@ -289,7 +289,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
      *
      * @deprecated the internal report is no longer supported
      */
-    @SuppressWarnings({"CanBeFinal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "externalReport")
     @Deprecated
     private String externalReport = null;
@@ -392,11 +392,13 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
 
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
         if (externalReport != null) {
-            LOGGER.warning("The 'externalReport' option was set; this configuration option has been removed. Please update the dependency-check-maven plugin's configuration");
+            LOGGER.warning("The 'externalReport' option was set; this configuration option has been removed. "
+                    + "Please update the dependency-check-maven plugin's configuration");
         }
 
         if (proxyUrl != null && !proxyUrl.isEmpty()) {
-            LOGGER.warning("Deprecated configuration detected, proxyUrl will be ignored; use the maven settings to configure the proxy instead");
+            LOGGER.warning("Deprecated configuration detected, proxyUrl will be ignored; use the maven settings "
+                    + "to configure the proxy instead");
         }
         final Proxy proxy = getMavenProxy();
         if (proxy != null) {
