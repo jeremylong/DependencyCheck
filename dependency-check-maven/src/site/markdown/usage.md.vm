@@ -17,7 +17,9 @@ Create the DependencyCheck-report.html in the target directory
 
 ```xml
 <project>
+    ...
     <build>
+        ...
         <plugins>
             ...
             <plugin>
@@ -41,11 +43,47 @@ Create the DependencyCheck-report.html in the target directory
 ```
 
 $H$H$H Example 2:
+Create an aggregated dependency-check report within the site
+
+```xml
+<project>
+    ...
+    <reporting>
+        ...
+        <plugins>
+            ...
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <reportPlugins>
+                        <plugin>
+                            <groupId>org.owasp</groupId>
+                            <artifactId>dependency-check-maven</artifactId>
+                            <version>${project.version}</version>
+                            <configuration>
+                                <aggregate>true</aggregate>
+                            </configuration>
+                        </plugin>
+                    </reportPlugins>
+                </configuration>
+            </plugin>
+            ...
+        </plugins>
+        ...
+    </reporting>
+    ...
+</project>
+```
+
+$H$H$H Example 3:
 Create the DependencyCheck-report.html and fail the build for CVSS greater then 8
 
 ```xml
 <project>
+    ...
     <build>
+        ...
         <plugins>
             ...
             <plugin>
@@ -71,44 +109,14 @@ Create the DependencyCheck-report.html and fail the build for CVSS greater then 
 </project>
 ```
 
-$H$H$H Example 3:
-Create the dependency-check report within the site
-
-```xml
-<project>
-    <build>
-        <plugins>
-            ...
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <configuration>
-                    <reportPlugins>
-                        <plugin>
-                            <groupId>org.owasp</groupId>
-                            <artifactId>dependency-check-maven</artifactId>
-                            <version>${project.version}</version>
-                            <configuration>
-                                <externalReport>false</externalReport>
-                            </configuration>
-                        </plugin>
-                    </reportPlugins>
-                </configuration>
-            </plugin>
-            ...
-        </plugins>
-        ...
-    </build>
-    ...
-</project>
-```
-
 $H$H$H Example 4:
-Create the DependencyCheck-report.html and skip artifacts no bundled in distribution (Provided and Runtime scope)
+Create the DependencyCheck-report.html and skip artifacts not bundled in distribution (Provided and Runtime scope)
 
 ```xml
 <project>
+    ...
     <build>
+        ...
         <plugins>
             ...
             <plugin>
@@ -140,7 +148,9 @@ Create the DependencyCheck-report.html and use internal mirroring of CVE content
 
 ```xml
 <project>
+    ...
     <build>
+        ...
         <plugins>
             ...
             <plugin>

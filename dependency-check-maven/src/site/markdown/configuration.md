@@ -4,6 +4,7 @@ The following properties can be set on the dependency-check-maven plugin.
 
 Property             | Description                        | Default Value
 ---------------------|------------------------------------|------------------
+aggregate            | Sets whether report aggregation will be performed for multi-module site reports. This option only affects the report generation when configured within the reporting section. | false
 autoUpdate           | Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. | true
 outputDirectory      | The location to write the report(s). Note, this is not used if generating the report as part of a `mvn site` build | 'target'
 failBuildOnCVSS      | Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11 which means since the CVSS scores are 0-10, by default the build will never fail.         | 11
