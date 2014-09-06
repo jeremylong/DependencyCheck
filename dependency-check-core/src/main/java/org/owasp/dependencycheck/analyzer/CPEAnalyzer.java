@@ -170,11 +170,10 @@ public class CPEAnalyzer implements Analyzer {
      * @throws ParseException is thrown when the Lucene query cannot be parsed.
      */
     protected void determineCPE(Dependency dependency) throws CorruptIndexException, IOException, ParseException {
-        Confidence confidence = Confidence.HIGHEST;
-
+        //TODO test dojo-war against this. we shold get dojo-toolkit:dojo-toolkit AND dojo-toolkit:toolkit
         String vendors = "";
         String products = "";
-        for (Confidence l : Confidence.values()) {
+        for (Confidence confidence : Confidence.values()) {
             if (dependency.getVendorEvidence().contains(confidence)) {
                 vendors = addEvidenceWithoutDuplicateTerms(vendors, dependency.getVendorEvidence(), confidence);
             }
@@ -190,15 +189,18 @@ public class CPEAnalyzer implements Analyzer {
                 final List<IndexEntry> entries = searchCPE(vendors, products, dependency.getProductEvidence().getWeighting(),
                         dependency.getVendorEvidence().getWeighting());
 
+                boolean identifierAdded = false;
                 for (IndexEntry e : entries) {
                     if (verifyEntry(e, dependency)) {
                         final String vendor = e.getVendor();
                         final String product = e.getProduct();
-                        determineIdentifiers(dependency, vendor, product);
+                        identifierAdded |= determineIdentifiers(dependency, vendor, product);
                     }
                 }
+                if (identifierAdded) {
+                    break;
+                }
             }
-            confidence = reduceConfidence(confidence);
         }
     }
 
@@ -232,22 +234,6 @@ public class CPEAnalyzer implements Analyzer {
             }
         }
         return sb.toString().trim();
-    }
-
-    /**
-     * Reduces the given confidence by one level. This returns LOW if the confidence passed in is not HIGH.
-     *
-     * @param c the confidence to reduce.
-     * @return One less then the confidence passed in.
-     */
-    private Confidence reduceConfidence(final Confidence c) {
-        if (c == Confidence.HIGHEST) {
-            return Confidence.HIGH;
-        } else if (c == Confidence.HIGH) {
-            return Confidence.MEDIUM;
-        } else {
-            return Confidence.LOW;
-        }
     }
 
     /**
@@ -503,9 +489,10 @@ public class CPEAnalyzer implements Analyzer {
      * @param dependency the Dependency being analyzed
      * @param vendor the vendor for the CPE being analyzed
      * @param product the product for the CPE being analyzed
+     * @return <code>true</code> if an identifier was added to the dependency; otherwise <code>false</code>
      * @throws UnsupportedEncodingException is thrown if UTF-8 is not supported
      */
-    private void determineIdentifiers(Dependency dependency, String vendor, String product) throws UnsupportedEncodingException {
+    private boolean determineIdentifiers(Dependency dependency, String vendor, String product) throws UnsupportedEncodingException {
         final Set<VulnerableSoftware> cpes = cve.getCPEs(vendor, product);
         DependencyVersion bestGuess = new DependencyVersion("-");
         Confidence bestGuessConf = null;
@@ -561,6 +548,7 @@ public class CPEAnalyzer implements Analyzer {
         Collections.sort(collected);
         final IdentifierConfidence bestIdentifierQuality = collected.get(0).getConfidence();
         final Confidence bestEvidenceQuality = collected.get(0).getEvidenceConfidence();
+        boolean identifierAdded = false;
         for (IdentifierMatch m : collected) {
             if (bestIdentifierQuality.equals(m.getConfidence())
                     && bestEvidenceQuality.equals(m.getEvidenceConfidence())) {
@@ -571,8 +559,10 @@ public class CPEAnalyzer implements Analyzer {
                     i.setConfidence(bestEvidenceQuality);
                 }
                 dependency.addIdentifier(i);
+                identifierAdded = true;
             }
         }
+        return identifierAdded;
     }
 
     /**
