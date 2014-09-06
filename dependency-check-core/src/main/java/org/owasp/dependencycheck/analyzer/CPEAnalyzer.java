@@ -172,14 +172,20 @@ public class CPEAnalyzer implements Analyzer {
     protected void determineCPE(Dependency dependency) throws CorruptIndexException, IOException, ParseException {
         Confidence confidence = Confidence.HIGHEST;
 
-        String vendors = addEvidenceWithoutDuplicateTerms("", dependency.getVendorEvidence(), confidence);
-        String products = addEvidenceWithoutDuplicateTerms("", dependency.getProductEvidence(), confidence);
-        /* bug fix for #40 - version evidence is not showing up as "used" in the reports if there is no
-         * CPE identified. As such, we are "using" the evidence and ignoring the results. */
-        addEvidenceWithoutDuplicateTerms("", dependency.getVersionEvidence(), confidence);
-
-        int ctr = 0;
-        do {
+        String vendors = "";
+        String products = "";
+        for (Confidence l : Confidence.values()) {
+            if (dependency.getVendorEvidence().contains(confidence)) {
+                vendors = addEvidenceWithoutDuplicateTerms(vendors, dependency.getVendorEvidence(), confidence);
+            }
+            if (dependency.getProductEvidence().contains(confidence)) {
+                products = addEvidenceWithoutDuplicateTerms(products, dependency.getProductEvidence(), confidence);
+            }
+            /* bug fix for #40 - version evidence is not showing up as "used" in the reports if there is no
+             * CPE identified. As such, we are "using" the evidence and ignoring the results. */
+            if (dependency.getVersionEvidence().contains(confidence)) {
+                addEvidenceWithoutDuplicateTerms("", dependency.getVersionEvidence(), confidence);
+            }
             if (!vendors.isEmpty() && !products.isEmpty()) {
                 final List<IndexEntry> entries = searchCPE(vendors, products, dependency.getProductEvidence().getWeighting(),
                         dependency.getVendorEvidence().getWeighting());
@@ -193,18 +199,7 @@ public class CPEAnalyzer implements Analyzer {
                 }
             }
             confidence = reduceConfidence(confidence);
-            if (dependency.getVendorEvidence().contains(confidence)) {
-                vendors = addEvidenceWithoutDuplicateTerms(vendors, dependency.getVendorEvidence(), confidence);
-            }
-            if (dependency.getProductEvidence().contains(confidence)) {
-                products = addEvidenceWithoutDuplicateTerms(products, dependency.getProductEvidence(), confidence);
-            }
-            /* bug fix for #40 - version evidence is not showing up as "used" in the reports if there is no
-             * CPE identified. As such, we are "using" the evidence and ignoring the results. */
-            if (dependency.getVersionEvidence().contains(confidence)) {
-                addEvidenceWithoutDuplicateTerms("", dependency.getVersionEvidence(), confidence);
-            }
-        } while ((++ctr) < 4);
+        }
     }
 
     /**
