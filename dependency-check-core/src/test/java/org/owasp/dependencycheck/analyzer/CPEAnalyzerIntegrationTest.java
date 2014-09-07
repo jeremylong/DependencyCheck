@@ -81,12 +81,23 @@ public class CPEAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
      */
     @Test
     public void testDetermineCPE_full() throws Exception {
-        callDetermineCPE_full("hazelcast-2.5.jar", null);
-        callDetermineCPE_full("spring-context-support-2.5.5.jar", "cpe:/a:vmware:springsource_spring_framework:2.5.5");
-        callDetermineCPE_full("spring-core-3.0.0.RELEASE.jar", "cpe:/a:vmware:springsource_spring_framework:3.0.0");
-        callDetermineCPE_full("org.mortbay.jetty.jar", "cpe:/a:mortbay_jetty:jetty:4.2");
-        callDetermineCPE_full("jaxb-xercesImpl-1.5.jar", null);
-        callDetermineCPE_full("ehcache-core-2.2.0.jar", null);
+        CPEAnalyzer instance = new CPEAnalyzer();
+        instance.open();
+        FileNameAnalyzer fnAnalyzer = new FileNameAnalyzer();
+        JarAnalyzer jarAnalyzer = new JarAnalyzer();
+        HintAnalyzer hAnalyzer = new HintAnalyzer();
+        FalsePositiveAnalyzer fp = new FalsePositiveAnalyzer();
+
+        try {
+            callDetermineCPE_full("hazelcast-2.5.jar", null, instance, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
+            callDetermineCPE_full("spring-context-support-2.5.5.jar", "cpe:/a:vmware:springsource_spring_framework:2.5.5", instance, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
+            callDetermineCPE_full("spring-core-3.0.0.RELEASE.jar", "cpe:/a:vmware:springsource_spring_framework:3.0.0", instance, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
+            callDetermineCPE_full("org.mortbay.jetty.jar", "cpe:/a:mortbay_jetty:jetty:4.2", instance, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
+            callDetermineCPE_full("jaxb-xercesImpl-1.5.jar", null, instance, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
+            callDetermineCPE_full("ehcache-core-2.2.0.jar", null, instance, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
+        } finally {
+            instance.close();
+        }
     }
 
     /**
@@ -94,25 +105,20 @@ public class CPEAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
      *
      * @throws Exception is thrown when an exception occurs
      */
-    public void callDetermineCPE_full(String depName, String expResult) throws Exception {
+    public void callDetermineCPE_full(String depName, String expResult, CPEAnalyzer instance, FileNameAnalyzer fnAnalyzer, JarAnalyzer jarAnalyzer, HintAnalyzer hAnalyzer, FalsePositiveAnalyzer fp) throws Exception {
 
         File file = new File(this.getClass().getClassLoader().getResource(depName).getPath());
 
         Dependency dep = new Dependency(file);
 
-        FileNameAnalyzer fnAnalyzer = new FileNameAnalyzer();
         fnAnalyzer.analyze(dep, null);
 
-        JarAnalyzer jarAnalyzer = new JarAnalyzer();
         jarAnalyzer.analyze(dep, null);
-        HintAnalyzer hAnalyzer = new HintAnalyzer();
+
         hAnalyzer.analyze(dep, null);
 
-        CPEAnalyzer instance = new CPEAnalyzer();
-        instance.open();
         instance.analyze(dep, null);
-        instance.close();
-        FalsePositiveAnalyzer fp = new FalsePositiveAnalyzer();
+
         fp.analyze(dep, null);
 
         if (expResult != null) {
