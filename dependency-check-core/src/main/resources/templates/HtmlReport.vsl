@@ -33,8 +33,8 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         </script>
         <script type="text/javascript">
             $(document).ready(function() {
-                $(".expandable").click(function (e) {
-                    e = e || window.event;
+                $(".expandable").click(function (event) {
+                    e = event || window.event;
                     var h = e.target || e.srcElement;
                     var content = "#content" + h.id.substr(6);
                     var header = "#" + h.id;
@@ -56,6 +56,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         $(header).addClass("expandablesubsection");
                         $(header).removeClass("collaspablesubsection");
                     }
+                    return false;
                 });
             });
 
@@ -533,7 +534,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                         <li class="scaninfo hidden"><i>$enc.html($prop.key)</i>: $enc.html($prop.value)</li>
                         #end
                     </ul><br/>
-                Display:&nbsp;<a href="#" title="Click to toggle display" onclick="return toggleDisplay(this,'.notvulnerable', 'Showing Vulnerable Dependencies', 'Showing All Dependencies'); return false;">Showing Vulnerable Dependencies</a><br/><br/>
+                Display:&nbsp;<a href="#" title="Click to toggle display" onclick="return toggleDisplay(this, '.notvulnerable', 'Showing Vulnerable Dependencies', 'Showing All Dependencies'); return false;">Showing Vulnerable Dependencies</a><br/><br/>
                 #set($lnkcnt=0)
                 <table class="lined">
                     <tr style="text-align:left">
@@ -752,7 +753,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                                     <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedCPE)">$enc.html($vuln.matchedCPE)</a> #if($vuln.hasMatchedAllPreviousCPE()) and all previous versions#end</li>
                                 </ul></p>
                             #else
-                                <p>Vulnerable Software &amp; Versions:&nbsp;(<a href="#" onclick="toggleDisplay(this,'.vs$vsctr'); return false;">show all</a>)<ul>
+                                <p>Vulnerable Software &amp; Versions:&nbsp;(<a href="#" onclick="return toggleDisplay(this,'.vs$vsctr', 'show all', 'show less');">show all</a>)<ul>
                                     <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedCPE)">$enc.html($vuln.matchedCPE)</a> #if($vuln.hasMatchedAllPreviousCPE()) and all previous versions#end</li>
                                     <li class="vs$vsctr">...</li>
                                 #foreach($vs in $vuln.getVulnerableSoftware())
@@ -886,7 +887,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                                             git st<li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedCPE)">$enc.html($vuln.matchedCPE)</a> #if($vuln.hasMatchedAllPreviousCPE()) and all previous versions#end</li>
                                         </ul></p>
                                     #else
-                                        <p>Vulnerable Software &amp; Versions:&nbsp;(<a href="#" onclick="toggleDisplay(this,'.vs$vsctr'); return false;">show all</a>)<ul>
+                                        <p>Vulnerable Software &amp; Versions:&nbsp;(<a href="#" onclick="return toggleDisplay(this,'.vs$vsctr', 'show all', 'show less');">show all</a>)<ul>
                                             <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedCPE)">$enc.html($vuln.matchedCPE)</a> #if($vuln.hasMatchedAllPreviousCPE()) and all previous versions#end</li>
                                             <li class="vs$vsctr">...</li>
                                         #foreach($vs in $vuln.getVulnerableSoftware())
