@@ -182,9 +182,9 @@ public class CPEAnalyzer implements Analyzer {
             }
             /* bug fix for #40 - version evidence is not showing up as "used" in the reports if there is no
              * CPE identified. As such, we are "using" the evidence and ignoring the results. */
-            if (dependency.getVersionEvidence().contains(confidence)) {
-                addEvidenceWithoutDuplicateTerms("", dependency.getVersionEvidence(), confidence);
-            }
+//            if (dependency.getVersionEvidence().contains(confidence)) {
+//                addEvidenceWithoutDuplicateTerms("", dependency.getVersionEvidence(), confidence);
+//            }
             if (!vendors.isEmpty() && !products.isEmpty()) {
                 final List<IndexEntry> entries = searchCPE(vendors, products, dependency.getProductEvidence().getWeighting(),
                         dependency.getVendorEvidence().getWeighting());
@@ -194,7 +194,7 @@ public class CPEAnalyzer implements Analyzer {
                     if (verifyEntry(e, dependency)) {
                         final String vendor = e.getVendor();
                         final String product = e.getProduct();
-                        identifierAdded |= determineIdentifiers(dependency, vendor, product);
+                        identifierAdded |= determineIdentifiers(dependency, vendor, product, confidence);
                     }
                 }
                 if (identifierAdded) {
@@ -492,12 +492,16 @@ public class CPEAnalyzer implements Analyzer {
      * @return <code>true</code> if an identifier was added to the dependency; otherwise <code>false</code>
      * @throws UnsupportedEncodingException is thrown if UTF-8 is not supported
      */
-    private boolean determineIdentifiers(Dependency dependency, String vendor, String product) throws UnsupportedEncodingException {
+    private boolean determineIdentifiers(Dependency dependency, String vendor, String product, Confidence currentConfidence) throws UnsupportedEncodingException {
         final Set<VulnerableSoftware> cpes = cve.getCPEs(vendor, product);
         DependencyVersion bestGuess = new DependencyVersion("-");
         Confidence bestGuessConf = null;
+        boolean hasBroadMatch = false;
         final List<IdentifierMatch> collected = new ArrayList<IdentifierMatch>();
         for (Confidence conf : Confidence.values()) {
+//            if (conf.compareTo(currentConfidence) > 0) {
+//                break;
+//            }
             for (Evidence evidence : dependency.getVersionEvidence().iterator(conf)) {
                 final DependencyVersion evVer = DependencyVersionUtil.parseVersion(evidence.getValue());
                 if (evVer == null) {
@@ -510,9 +514,12 @@ public class CPEAnalyzer implements Analyzer {
                     } else {
                         dbVer = DependencyVersionUtil.parseVersion(vs.getVersion());
                     }
-                    if (dbVer == null //special case, no version specified - everything is vulnerable
-                            || evVer.equals(dbVer)) { //yeah! exact match
-
+                    if (dbVer == null) { //special case, no version specified - everything is vulnerable
+                        hasBroadMatch = true;
+                        final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getName(), "UTF-8"));
+                        final IdentifierMatch match = new IdentifierMatch("cpe", vs.getName(), url, IdentifierConfidence.BROAD_MATCH, conf);
+                        collected.add(match);
+                    } else if (evVer.equals(dbVer)) { //yeah! exact match
                         final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getName(), "UTF-8"));
                         final IdentifierMatch match = new IdentifierMatch("cpe", vs.getName(), url, IdentifierConfidence.EXACT_MATCH, conf);
                         collected.add(match);
@@ -538,7 +545,11 @@ public class CPEAnalyzer implements Analyzer {
             }
         }
         final String cpeName = String.format("cpe:/a:%s:%s:%s", vendor, product, bestGuess.toString());
-        final String url = null;
+        String url = null;
+        if (hasBroadMatch) { //if we have a broad match we can add the URL to the best guess.
+            final String cpeUrlName = String.format("cpe:/a:%s:%s", vendor, product);
+            url = String.format(NVD_SEARCH_URL, URLEncoder.encode(cpeUrlName, "UTF-8"));
+        }
         if (bestGuessConf == null) {
             bestGuessConf = Confidence.LOW;
         }
@@ -577,7 +588,12 @@ public class CPEAnalyzer implements Analyzer {
         /**
          * A best guess for the CPE.
          */
-        BEST_GUESS
+        BEST_GUESS,
+        /**
+         * The entire vendor/product group must be added (without a guess at version) because there is a CVE with a VS
+         * that only specifies vendor/product.
+         */
+        BROAD_MATCH
     }
 
     /**
