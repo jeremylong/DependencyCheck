@@ -86,10 +86,39 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
         removeJreEntries(dependency);
         removeBadMatches(dependency);
+        removeBadSpringMatches(dependency);
         removeWrongVersionMatches(dependency);
         removeSpuriousCPE(dependency);
         removeDuplicativeEntriesFromJar(dependency, engine);
         addFalseNegativeCPEs(dependency);
+    }
+
+    private void removeBadSpringMatches(Dependency dependency) {
+        String mustContain = null;
+        for (Identifier i : dependency.getIdentifiers()) {
+            if ("maven".contains(i.getType())) {
+                if (i.getValue() != null && i.getValue().startsWith("org.springframework.")) {
+                    int endPoint = i.getValue().indexOf(":", 19);
+                    if (endPoint >= 0) {
+                        mustContain = i.getValue().substring(19, endPoint).toLowerCase();
+                        break;
+                    }
+                }
+            }
+        }
+        if (mustContain != null) {
+            Iterator<Identifier> itr = dependency.getIdentifiers().iterator();
+            while (itr.hasNext()) {
+                Identifier i = itr.next();
+                if ("cpe".contains(i.getType())
+                        && i.getValue() != null
+                        && i.getValue().startsWith("cpe:/a:springsource:")
+                        && !i.getValue().toLowerCase().contains(mustContain)) {
+                    dependency.getIdentifiers().remove(i);
+                }
+
+            }
+        }
     }
 
     /**
