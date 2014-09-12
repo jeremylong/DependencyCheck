@@ -14,8 +14,8 @@ libraries in our applications that contain well known published vulnerabilities
 
 More information about dependency-check can be found here:
 
-* (How does dependency-check work)[internals.html]
-* (How to read the report)[thereport.html]
+* [How does dependency-check work](./internals.html)
+* [How to read the report](./thereport.html)
 
 **IMPORTANT NOTE**: Dependency-check automatically updates itself using the NVD Data Feeds hosted by
 NIST. **The initial download of the data may take fifteen minutes

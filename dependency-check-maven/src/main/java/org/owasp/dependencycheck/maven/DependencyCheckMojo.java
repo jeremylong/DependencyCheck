@@ -17,45 +17,39 @@
  */
 package org.owasp.dependencycheck.maven;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.DateFormat;
-import java.util.Date;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.sink.SinkFactory;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
 import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.analyzer.DependencyBundlingAnalyzer;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
-import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.dependency.Identifier;
-import org.owasp.dependencycheck.dependency.Reference;
 import org.owasp.dependencycheck.dependency.Vulnerability;
-import org.owasp.dependencycheck.dependency.VulnerableSoftware;
-import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.LogUtils;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -67,13 +61,13 @@ import org.owasp.dependencycheck.utils.Settings;
 @Mojo(name = "check", defaultPhase = LifecyclePhase.COMPILE, threadSafe = true,
         requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM,
         requiresOnline = true)
-public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageReport {
+public class DependencyCheckMojo extends ReportAggregationMojo {
 
+    //<editor-fold defaultstate="collapsed" desc="Private fields">
     /**
      * Logger field reference.
      */
-    private final Logger logger = Logger.getLogger(DependencyCheckMojo.class.getName());
-
+    private static final Logger LOGGER = Logger.getLogger(DependencyCheckMojo.class.getName());
     /**
      * The properties file location.
      */
@@ -86,35 +80,18 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * System specific new line character.
      */
     private static final String NEW_LINE = System.getProperty("line.separator", "\n").intern();
-    // <editor-fold defaultstate="collapsed" desc="Maven bound parameters and components">
     /**
-     * The Maven Project Object.
+     * The dependency-check engine used to scan the project.
      */
-    @Component
-    private MavenProject project;
+    private Engine engine = null;
+    //</editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Maven bound parameters and components">
     /**
      * The path to the verbose log.
      */
     @Parameter(property = "logfile", defaultValue = "")
-    private String logFile;
-    /**
-     * The name of the report to be displayed in the Maven Generated Reports page.
-     */
-    @Parameter(property = "name", defaultValue = "Dependency-Check")
-    private String name;
-    /**
-     * The description of the Dependency-Check report to be displayed in the Maven Generated Reports page.
-     */
-    @Parameter(property = "description", defaultValue = "A report providing details on any published "
-            + "vulnerabilities within project dependencies. This report is a best effort but may contain "
-            + "false positives and false negatives.")
-    private String description;
-    /**
-     * Specifies the destination directory for the generated Dependency-Check report. This generally maps to
-     * "target/site".
-     */
-    @Parameter(property = "reportOutputDirectory", defaultValue = "${project.reporting.outputDirectory}", required = true)
-    private File reportOutputDirectory;
+    private String logFile = null;
     /**
      * The output directory. This generally maps to "target".
      */
@@ -138,123 +115,108 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this
      * within the Site plugin unless the externalReport is set to true. Default is HTML.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "format", defaultValue = "HTML", required = true)
     private String format = "HTML";
     /**
-     * Sets whether or not the external report format should be used.
-     */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
-    @Parameter(property = "externalReport", defaultValue = "false", required = true)
-    private boolean externalReport = false;
-
-    /**
      * The maven settings.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "mavenSettings", defaultValue = "${settings}", required = false)
     private org.apache.maven.settings.Settings mavenSettings;
 
     /**
      * The maven settings proxy id.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "mavenSettingsProxyId", required = false)
     private String mavenSettingsProxyId;
 
     /**
      * The Connection Timeout.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "connectionTimeout", defaultValue = "", required = false)
     private String connectionTimeout = null;
     /**
      * The path to the suppression file.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "suppressionFile", defaultValue = "", required = false)
     private String suppressionFile = null;
     /**
      * Flag indicating whether or not to show a summary in the output.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "showSummary", defaultValue = "true", required = false)
     private boolean showSummary = true;
 
     /**
      * Whether or not the Jar Analyzer is enabled.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "jarAnalyzerEnabled", defaultValue = "true", required = false)
     private boolean jarAnalyzerEnabled = true;
 
     /**
      * Whether or not the Archive Analyzer is enabled.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "archiveAnalyzerEnabled", defaultValue = "true", required = false)
     private boolean archiveAnalyzerEnabled = true;
 
     /**
      * Whether or not the .NET Assembly Analyzer is enabled.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "assemblyAnalyzerEnabled", defaultValue = "true", required = false)
     private boolean assemblyAnalyzerEnabled = true;
 
     /**
      * Whether or not the .NET Nuspec Analyzer is enabled.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nuspecAnalyzerEnabled", defaultValue = "true", required = false)
     private boolean nuspecAnalyzerEnabled = true;
 
     /**
      * Whether or not the Nexus Analyzer is enabled.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nexusAnalyzerEnabled", defaultValue = "true", required = false)
     private boolean nexusAnalyzerEnabled = true;
     /**
      * Whether or not the Nexus Analyzer is enabled.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "nexusUrl", defaultValue = "", required = false)
     private String nexusUrl;
     /**
      * Whether or not the configured proxy is used to connect to Nexus.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "nexusUsesProxy", defaultValue = "true", required = false)
     private boolean nexusUsesProxy = true;
     /**
      * The database connection string.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "connectionString", defaultValue = "", required = false)
     private String connectionString;
     /**
      * The database driver name. An example would be org.h2.Driver.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "databaseDriverName", defaultValue = "", required = false)
     private String databaseDriverName;
     /**
      * The path to the database driver if it is not on the class path.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "databaseDriverPath", defaultValue = "", required = false)
     private String databaseDriverPath;
     /**
      * The database user name.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "databaseUser", defaultValue = "", required = false)
     private String databaseUser;
     /**
      * The password to use when connecting to the database.
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
     @Parameter(property = "databasePassword", defaultValue = "", required = false)
     private String databasePassword;
     /**
@@ -317,12 +279,28 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      *
      * @deprecated Please use mavenSettings instead
      */
-    @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal"})
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "proxyUrl", defaultValue = "", required = false)
     @Deprecated
     private String proxyUrl = null;
-
+    /**
+     * Sets whether or not the external report format should be used.
+     *
+     * @deprecated the internal report is no longer supported
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "externalReport")
+    @Deprecated
+    private String externalReport = null;
     // </editor-fold>
+    /**
+     * Constructs a new dependency-check-mojo.
+     */
+    public DependencyCheckMojo() {
+        final InputStream in = DependencyCheckMojo.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
+        LogUtils.prepareLogger(in, logFile);
+    }
+
     /**
      * Executes the Dependency-Check on the dependent libraries.
      *
@@ -330,461 +308,64 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * @throws DatabaseException thrown if there is an exception connecting to the database
      */
     private Engine executeDependencyCheck() throws DatabaseException {
+        return executeDependencyCheck(getProject());
+    }
 
-        final InputStream in = DependencyCheckMojo.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
-        LogUtils.prepareLogger(in, logFile);
-
-        populateSettings();
-        final Engine engine = new Engine();
+    /**
+     * Executes the Dependency-Check on the dependent libraries.
+     *
+     * @param project the project to run dependency-check on
+     * @return the Engine used to scan the dependencies.
+     * @throws DatabaseException thrown if there is an exception connecting to the database
+     */
+    private Engine executeDependencyCheck(MavenProject project) throws DatabaseException {
+        final Engine localEngine = initializeEngine();
 
         final Set<Artifact> artifacts = project.getArtifacts();
         for (Artifact a : artifacts) {
-            if (skipTestScope && Artifact.SCOPE_TEST.equals(a.getScope())) {
+            if (excludeFromScan(a)) {
                 continue;
             }
 
-            if (skipProvidedScope && Artifact.SCOPE_PROVIDED.equals(a.getScope())) {
-                continue;
-            }
-
-            if (skipRuntimeScope && !Artifact.SCOPE_RUNTIME.equals(a.getScope())) {
-                continue;
-            }
-
-            engine.scan(a.getFile().getAbsolutePath());
+            localEngine.scan(a.getFile().getAbsolutePath());
         }
-        engine.analyzeDependencies();
+        localEngine.analyzeDependencies();
 
-        return engine;
+        return localEngine;
     }
 
     /**
-     * Generates the reports for a given dependency-check engine.
+     * Initializes a new <code>Engine</code> that can be used for scanning.
      *
-     * @param engine a dependency-check engine
-     * @param outDirectory the directory to write the reports to
+     * @return a newly instantiated <code>Engine</code>
+     * @throws DatabaseException thrown if there is a database exception
      */
-    private void generateExternalReports(Engine engine, File outDirectory) {
-        DatabaseProperties prop = null;
-        CveDB cve = null;
-        try {
-            cve = new CveDB();
-            cve.open();
-            prop = cve.getDatabaseProperties();
-        } catch (DatabaseException ex) {
-            logger.log(Level.FINE, "Unable to retrieve DB Properties", ex);
-        } finally {
-            if (cve != null) {
-                cve.close();
-            }
+    private Engine initializeEngine() throws DatabaseException {
+        populateSettings();
+        final Engine localEngine = new Engine();
+        return localEngine;
+    }
+
+    /**
+     * Tests is the artifact should be included in the scan (i.e. is the dependency in a scope that is being scanned).
+     *
+     * @param a the Artifact to test
+     * @return <code>true</code> if the artifact is in an excluded scope; otherwise <code>false</code>
+     */
+    private boolean excludeFromScan(Artifact a) {
+        if (skipTestScope && Artifact.SCOPE_TEST.equals(a.getScope())) {
+            return true;
         }
-        final ReportGenerator r = new ReportGenerator(project.getName(), engine.getDependencies(), engine.getAnalyzers(), prop);
-        try {
-            r.generateReports(outDirectory.getCanonicalPath(), format);
-        } catch (IOException ex) {
-            logger.log(Level.SEVERE,
-                    "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
-            logger.log(Level.FINE, null, ex);
-        } catch (Throwable ex) {
-            logger.log(Level.SEVERE,
-                    "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
-            logger.log(Level.FINE, null, ex);
+        if (skipProvidedScope && Artifact.SCOPE_PROVIDED.equals(a.getScope())) {
+            return true;
         }
-    }
-
-    /**
-     * Generates a dependency-check report using the Maven Site format.
-     *
-     * @param engine the engine used to scan the dependencies
-     * @param sink the sink to write the data to
-     */
-    private void generateMavenSiteReport(final Engine engine, Sink sink) {
-        final List<Dependency> dependencies = engine.getDependencies();
-
-        writeSiteReportHeader(sink, project.getName());
-        writeSiteReportTOC(sink, dependencies);
-
-        int cnt = 0;
-        for (Dependency d : dependencies) {
-            writeSiteReportDependencyHeader(sink, d);
-            cnt = writeSiteReportDependencyEvidenceUsed(d, cnt, sink);
-            cnt = writeSiteReportDependencyRelatedDependencies(d, cnt, sink);
-            writeSiteReportDependencyIdentifiers(d, sink);
-            writeSiteReportDependencyVulnerabilities(d, sink, cnt);
+        if (skipRuntimeScope && !Artifact.SCOPE_RUNTIME.equals(a.getScope())) {
+            return true;
         }
-        sink.body_();
+        return false;
     }
 
-    // <editor-fold defaultstate="collapsed" desc="various writeXXXXX methods to generate the Site Report">
-    /**
-     * Writes the vulnerabilities to the site report.
-     *
-     * @param d the dependency
-     * @param sink the sink to write the data to
-     * @param collapsibleHeaderCount the collapsible header count
-     */
-    private void writeSiteReportDependencyVulnerabilities(Dependency d, Sink sink, int collapsibleHeaderCount) {
-        int cnt = collapsibleHeaderCount;
-        if (d.getVulnerabilities() != null && !d.getVulnerabilities().isEmpty()) {
-            for (Vulnerability v : d.getVulnerabilities()) {
-
-                sink.paragraph();
-                sink.bold();
-                try {
-                    sink.link("http://web.nvd.nist.gov/view/vuln/detail?vulnId=" + URLEncoder.encode(v.getName(), "US-ASCII"));
-                    sink.text(v.getName());
-                    sink.link_();
-                    sink.bold_();
-                } catch (UnsupportedEncodingException ex) {
-                    sink.text(v.getName());
-                    sink.bold_();
-                    sink.lineBreak();
-                    sink.text("http://web.nvd.nist.gov/view/vuln/detail?vulnId=" + v.getName());
-                }
-                sink.paragraph_();
-                sink.paragraph();
-                sink.text("Severity: ");
-                if (v.getCvssScore() < 4.0) {
-                    sink.text("Low");
-                } else {
-                    if (v.getCvssScore() >= 7.0) {
-                        sink.text("High");
-                    } else {
-                        sink.text("Medium");
-                    }
-                }
-                sink.lineBreak();
-                sink.text("CVSS Score: " + v.getCvssScore());
-                if (v.getCwe() != null && !v.getCwe().isEmpty()) {
-                    sink.lineBreak();
-                    sink.text("CWE: ");
-                    sink.text(v.getCwe());
-                }
-                sink.paragraph_();
-                sink.paragraph();
-                sink.text(v.getDescription());
-                if (v.getReferences() != null && !v.getReferences().isEmpty()) {
-                    sink.list();
-                    for (Reference ref : v.getReferences()) {
-                        sink.listItem();
-                        sink.text(ref.getSource());
-                        sink.text(" - ");
-                        sink.link(ref.getUrl());
-                        sink.text(ref.getName());
-                        sink.link_();
-                        sink.listItem_();
-                    }
-                    sink.list_();
-                }
-                sink.paragraph_();
-                if (v.getVulnerableSoftware() != null && !v.getVulnerableSoftware().isEmpty()) {
-                    sink.paragraph();
-
-                    cnt += 1;
-                    sink.rawText("Vulnerable Software <a href=\"javascript:toggleElement(this, 'vulnSoft" + cnt + "')\">[-]</a>");
-                    sink.rawText("<div id=\"vulnSoft" + cnt + "\" style=\"display:block\">");
-                    sink.list();
-                    for (VulnerableSoftware vs : v.getVulnerableSoftware()) {
-                        sink.listItem();
-                        try {
-                            sink.link("http://web.nvd.nist.gov/view/vuln/search-results?cpe=" + URLEncoder.encode(vs.getName(), "US-ASCII"));
-                            sink.text(vs.getName());
-                            sink.link_();
-                            if (vs.hasPreviousVersion()) {
-                                sink.text(" and all previous versions.");
-                            }
-                        } catch (UnsupportedEncodingException ex) {
-                            sink.text(vs.getName());
-                            if (vs.hasPreviousVersion()) {
-                                sink.text(" and all previous versions.");
-                            }
-                            sink.text(" (http://web.nvd.nist.gov/view/vuln/search-results?cpe=" + vs.getName() + ")");
-                        }
-
-                        sink.listItem_();
-                    }
-                    sink.list_();
-                    sink.rawText("</div>");
-                    sink.paragraph_();
-                }
-            }
-        }
-    }
-
-    /**
-     * Writes the identifiers to the site report.
-     *
-     * @param d the dependency
-     * @param sink the sink to write the data to
-     */
-    private void writeSiteReportDependencyIdentifiers(Dependency d, Sink sink) {
-        if (d.getIdentifiers() != null && !d.getIdentifiers().isEmpty()) {
-            sink.sectionTitle4();
-            sink.text("Identifiers");
-            sink.sectionTitle4_();
-            sink.list();
-            for (Identifier i : d.getIdentifiers()) {
-                sink.listItem();
-                sink.text(i.getType());
-                sink.text(": ");
-                if (i.getUrl() != null && i.getUrl().length() > 0) {
-                    sink.link(i.getUrl());
-                    sink.text(i.getValue());
-                    sink.link_();
-                } else {
-                    sink.text(i.getValue());
-                }
-                if (i.getDescription() != null && i.getDescription().length() > 0) {
-                    sink.lineBreak();
-                    sink.text(i.getDescription());
-                }
-                sink.listItem_();
-            }
-            sink.list_();
-        }
-    }
-
-    /**
-     * Writes the related dependencies to the site report.
-     *
-     * @param d the dependency
-     * @param sink the sink to write the data to
-     * @param collapsibleHeaderCount the collapsible header count
-     * @return the collapsible header count
-     */
-    private int writeSiteReportDependencyRelatedDependencies(Dependency d, int collapsibleHeaderCount, Sink sink) {
-        int cnt = collapsibleHeaderCount;
-        if (d.getRelatedDependencies() != null && !d.getRelatedDependencies().isEmpty()) {
-            cnt += 1;
-            sink.sectionTitle4();
-            sink.rawText("Related Dependencies <a href=\"javascript:toggleElement(this, 'related" + cnt + "')\">[+]</a>");
-            sink.sectionTitle4_();
-            sink.rawText("<div id=\"related" + cnt + "\" style=\"display:none\">");
-            sink.list();
-            for (Dependency r : d.getRelatedDependencies()) {
-                sink.listItem();
-                sink.text(r.getFileName());
-                sink.list();
-                writeListItem(sink, "File Path: " + r.getFilePath());
-                writeListItem(sink, "SHA1: " + r.getSha1sum());
-                writeListItem(sink, "MD5: " + r.getMd5sum());
-                sink.list_();
-                sink.listItem_();
-            }
-            sink.list_();
-            sink.rawText("</div>");
-        }
-        return cnt;
-    }
-
-    /**
-     * Writes the evidence used to the site report.
-     *
-     * @param d the dependency
-     * @param sink the sink to write the data to
-     * @param collapsibleHeaderCount the collapsible header count
-     * @return the collapsible header count
-     */
-    private int writeSiteReportDependencyEvidenceUsed(Dependency d, int collapsibleHeaderCount, Sink sink) {
-        int cnt = collapsibleHeaderCount;
-        final Set<Evidence> evidence = d.getEvidenceForDisplay();
-        if (evidence != null && evidence.size() > 0) {
-            cnt += 1;
-            sink.sectionTitle4();
-            sink.rawText("Evidence Collected <a href=\"javascript:toggleElement(this, 'evidence" + cnt + "')\">[+]</a>");
-            sink.sectionTitle4_();
-            sink.rawText("<div id=\"evidence" + cnt + "\" style=\"display:none\">");
-            sink.table();
-            sink.tableRow();
-            writeTableHeaderCell(sink, "Source");
-            writeTableHeaderCell(sink, "Name");
-            writeTableHeaderCell(sink, "Value");
-            sink.tableRow_();
-            for (Evidence e : evidence) {
-                sink.tableRow();
-                writeTableCell(sink, e.getSource());
-                writeTableCell(sink, e.getName());
-                writeTableCell(sink, e.getValue());
-                sink.tableRow_();
-            }
-            sink.table_();
-            sink.rawText("</div>");
-        }
-        return cnt;
-    }
-
-    /**
-     * Writes the dependency header to the site report.
-     *
-     * @param d the dependency
-     * @param sink the sink to write the data to
-     */
-    private void writeSiteReportDependencyHeader(Sink sink, Dependency d) {
-        sink.sectionTitle2();
-        sink.anchor("sha1" + d.getSha1sum());
-        sink.text(d.getFileName());
-        sink.anchor_();
-        sink.sectionTitle2_();
-        if (d.getDescription() != null && d.getDescription().length() > 0) {
-            sink.paragraph();
-            sink.bold();
-            sink.text("Description: ");
-            sink.bold_();
-            sink.text(d.getDescription());
-            sink.paragraph_();
-        }
-        if (d.getLicense() != null && d.getLicense().length() > 0) {
-            sink.paragraph();
-            sink.bold();
-            sink.text("License: ");
-            sink.bold_();
-            if (d.getLicense().startsWith("http://") && !d.getLicense().contains(" ")) {
-                sink.link(d.getLicense());
-                sink.text(d.getLicense());
-                sink.link_();
-            } else {
-                sink.text(d.getLicense());
-            }
-            sink.paragraph_();
-        }
-    }
-
-    /**
-     * Adds a list item to the site report.
-     *
-     * @param sink the sink to write the data to
-     * @param text the text to write
-     */
-    private void writeListItem(Sink sink, String text) {
-        sink.listItem();
-        sink.text(text);
-        sink.listItem_();
-    }
-
-    /**
-     * Adds a table cell to the site report.
-     *
-     * @param sink the sink to write the data to
-     * @param text the text to write
-     */
-    private void writeTableCell(Sink sink, String text) {
-        sink.tableCell();
-        sink.text(text);
-        sink.tableCell_();
-    }
-
-    /**
-     * Adds a table header cell to the site report.
-     *
-     * @param sink the sink to write the data to
-     * @param text the text to write
-     */
-    private void writeTableHeaderCell(Sink sink, String text) {
-        sink.tableHeaderCell();
-        sink.text(text);
-        sink.tableHeaderCell_();
-    }
-
-    /**
-     * Writes the TOC for the site report.
-     *
-     * @param sink the sink to write the data to
-     * @param dependencies the dependencies that are being reported on
-     */
-    private void writeSiteReportTOC(Sink sink, final List<Dependency> dependencies) {
-        sink.list();
-        for (Dependency d : dependencies) {
-            sink.listItem();
-            sink.link("#sha1" + d.getSha1sum());
-            sink.text(d.getFileName());
-            sink.link_();
-            if (!d.getVulnerabilities().isEmpty()) {
-                sink.rawText(" <font style=\"color:red\">•</font>");
-            }
-            if (!d.getRelatedDependencies().isEmpty()) {
-                sink.list();
-                for (Dependency r : d.getRelatedDependencies()) {
-                    writeListItem(sink, r.getFileName());
-                }
-                sink.list_();
-            }
-            sink.listItem_();
-        }
-        sink.list_();
-    }
-
-    /**
-     * Writes the site report header.
-     *
-     * @param sink the sink to write the data to
-     * @param projectName the name of the project
-     */
-    private void writeSiteReportHeader(Sink sink, String projectName) {
-        sink.head();
-        sink.title();
-        sink.text("Dependency-Check Report: " + projectName);
-        sink.title_();
-        sink.head_();
-        sink.body();
-        sink.rawText("<script type=\"text/javascript\">");
-        sink.rawText("function toggleElement(el, targetId) {");
-        sink.rawText("if (el.innerText == '[+]') {");
-        sink.rawText("    el.innerText = '[-]';");
-        sink.rawText("    document.getElementById(targetId).style.display='block';");
-        sink.rawText("} else {");
-        sink.rawText("    el.innerText = '[+]';");
-        sink.rawText("    document.getElementById(targetId).style.display='none';");
-        sink.rawText("}");
-
-        sink.rawText("}");
-        sink.rawText("</script>");
-        sink.section1();
-        sink.sectionTitle1();
-        sink.text("Project: " + projectName);
-        sink.sectionTitle1_();
-        sink.date();
-        final Date now = new Date();
-        sink.text(DateFormat.getDateTimeInstance().format(now));
-        sink.date_();
-        sink.section1_();
-    }
-    // </editor-fold>
-
-    /**
-     * Returns the maven settings proxy server.
-     *
-     * @param proxy the maven proxy
-     * @return the proxy url
-     */
-    private String getMavenSettingsProxyServer(Proxy proxy) {
-        return new StringBuilder(proxy.getProtocol()).append("://").append(proxy.getHost()).toString();
-    }
-
-    /**
-     * Returns the maven proxy.
-     *
-     * @return the maven proxy
-     */
-    private Proxy getMavenProxy() {
-        if (mavenSettings != null) {
-            final List<Proxy> proxies = mavenSettings.getProxies();
-            if (proxies != null && proxies.size() > 0) {
-                if (mavenSettingsProxyId != null) {
-                    for (Proxy proxy : proxies) {
-                        if (mavenSettingsProxyId.equalsIgnoreCase(proxy.getId())) {
-                            return proxy;
-                        }
-                    }
-                } else if (proxies.size() == 1) {
-                    return proxies.get(0);
-                } else {
-                    throw new IllegalStateException("Ambiguous proxy definition");
-                }
-            }
-        }
-        return null;
-    }
-
+    //<editor-fold defaultstate="collapsed" desc="Methods to populate global settings">
     /**
      * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system
      * properties required to change the proxy url, port, and connection timeout.
@@ -796,34 +377,41 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
             mojoProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);
             Settings.mergeProperties(mojoProperties);
         } catch (IOException ex) {
-            logger.log(Level.WARNING, "Unable to load the dependency-check ant task.properties file.");
-            logger.log(Level.FINE, null, ex);
+            LOGGER.log(Level.WARNING, "Unable to load the dependency-check ant task.properties file.");
+            LOGGER.log(Level.FINE, null, ex);
         } finally {
             if (mojoProperties != null) {
                 try {
                     mojoProperties.close();
                 } catch (IOException ex) {
-                    logger.log(Level.FINEST, null, ex);
+                    LOGGER.log(Level.FINEST, null, ex);
                 }
             }
         }
 
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
-
-        if (proxyUrl != null && !proxyUrl.isEmpty()) {
-            logger.warning("Deprecated configuration detected, proxyUrl will be ignored; use the maven settings to configure the proxy instead");
+        if (externalReport != null) {
+            LOGGER.warning("The 'externalReport' option was set; this configuration option has been removed. "
+                    + "Please update the dependency-check-maven plugin's configuration");
         }
 
+        if (proxyUrl != null && !proxyUrl.isEmpty()) {
+            LOGGER.warning("Deprecated configuration detected, proxyUrl will be ignored; use the maven settings "
+                    + "to configure the proxy instead");
+        }
         final Proxy proxy = getMavenProxy();
         if (proxy != null) {
-            Settings.setString(Settings.KEYS.PROXY_SERVER, getMavenSettingsProxyServer(proxy));
+            Settings.setString(Settings.KEYS.PROXY_SERVER, proxy.getHost());
             Settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(proxy.getPort()));
             final String userName = proxy.getUsername();
             final String password = proxy.getPassword();
-            if (userName != null && password != null) {
+            if (userName != null) {
                 Settings.setString(Settings.KEYS.PROXY_USERNAME, userName);
+            }
+            if (password != null) {
                 Settings.setString(Settings.KEYS.PROXY_PASSWORD, password);
             }
+
         }
 
         if (connectionTimeout != null && !connectionTimeout.isEmpty()) {
@@ -894,8 +482,35 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         if (cveUrl20Base != null && !cveUrl20Base.isEmpty()) {
             Settings.setString(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
         }
-
     }
+
+    /**
+     * Returns the maven proxy.
+     *
+     * @return the maven proxy
+     */
+    private Proxy getMavenProxy() {
+        if (mavenSettings != null) {
+            final List<Proxy> proxies = mavenSettings.getProxies();
+            if (proxies != null && proxies.size() > 0) {
+                if (mavenSettingsProxyId != null) {
+                    for (Proxy proxy : proxies) {
+                        if (mavenSettingsProxyId.equalsIgnoreCase(proxy.getId())) {
+                            return proxy;
+                        }
+                    }
+                } else if (proxies.size() == 1) {
+                    return proxies.get(0);
+                } else {
+                    LOGGER.warning("Multiple proxy defentiions exist in the Maven settings. In the dependency-check "
+                            + "configuration set the maveSettingsProxyId so that the correct proxy will be used.");
+                    throw new IllegalStateException("Ambiguous proxy definition");
+                }
+            }
+        }
+        return null;
+    }
+    //</editor-fold>
 
     /**
      * Executes the dependency-check and generates the report.
@@ -903,11 +518,11 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * @throws MojoExecutionException if a maven exception occurs
      * @throws MojoFailureException thrown if a CVSS score is found that is higher then the configured level
      */
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Engine engine = null;
+    @Override
+    protected void performExecute() throws MojoExecutionException, MojoFailureException {
         try {
             engine = executeDependencyCheck();
-            generateExternalReports(engine, outputDirectory);
+            ReportingUtil.generateExternalReports(engine, outputDirectory, getProject().getName(), format);
             if (this.showSummary) {
                 showSummary(engine.getDependencies());
             }
@@ -915,59 +530,116 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
                 checkForFailure(engine.getDependencies());
             }
         } catch (DatabaseException ex) {
-            logger.log(Level.SEVERE,
+            LOGGER.log(Level.SEVERE,
                     "Unable to connect to the dependency-check database; analysis has stopped");
-            logger.log(Level.FINE, "", ex);
+            LOGGER.log(Level.FINE, "", ex);
+        }
+    }
+
+    @Override
+    protected void postExecute() throws MojoExecutionException, MojoFailureException {
+        try {
+            super.postExecute();
         } finally {
-            Settings.cleanup(true);
-            if (engine != null) {
-                engine.cleanup();
-            }
+            cleanupEngine();
+        }
+    }
+
+    @Override
+    protected void postGenerate() throws MavenReportException {
+        try {
+            super.postGenerate();
+        } finally {
+            cleanupEngine();
         }
     }
 
     /**
-     * Generates the Dependency-Check Site Report.
-     *
-     * @param sink the sink to write the report to
-     * @param locale the locale to use when generating the report
-     * @throws MavenReportException if a Maven report exception occurs
+     * Calls <code>engine.cleanup()</code> to release resources.
      */
-    public void generate(@SuppressWarnings("deprecation") org.codehaus.doxia.sink.Sink sink,
-            Locale locale) throws MavenReportException {
-        generate((Sink) sink, null, locale);
+    private void cleanupEngine() {
+        if (engine != null) {
+            engine.cleanup();
+            engine = null;
+        }
+        Settings.cleanup(true);
     }
 
     /**
      * Generates the Dependency-Check Site Report.
      *
-     * @param sink the sink to write the report to
-     * @param sinkFactory the sink factory
      * @param locale the locale to use when generating the report
      * @throws MavenReportException if a maven report exception occurs
      */
-    public void generate(Sink sink, SinkFactory sinkFactory, Locale locale) throws MavenReportException {
-        Engine engine = null;
-        try {
-            engine = executeDependencyCheck();
-            if (this.externalReport) {
-                generateExternalReports(engine, reportOutputDirectory);
+    @Override
+    protected void executeNonAggregateReport(Locale locale) throws MavenReportException {
+
+        final List<Dependency> deps = readDataFile();
+        if (deps != null) {
+            try {
+                engine = initializeEngine();
+                engine.getDependencies().addAll(deps);
+            } catch (DatabaseException ex) {
+                final String msg = String.format("An unrecoverable exception with the dependency-check initialization occured while scanning %s",
+                        getProject().getName());
+                throw new MavenReportException(msg, ex);
+            }
+        } else {
+            try {
+                engine = executeDependencyCheck();
+            } catch (DatabaseException ex) {
+                final String msg = String.format("An unrecoverable exception with the dependency-check scan occured while scanning %s",
+                        getProject().getName());
+                throw new MavenReportException(msg, ex);
+            }
+        }
+        ReportingUtil.generateExternalReports(engine, getReportOutputDirectory(), getProject().getName(), format);
+    }
+
+    @Override
+    protected void executeAggregateReport(MavenProject project, Locale locale) throws MavenReportException {
+        List<Dependency> deps = readDataFile(project);
+        if (deps != null) {
+            try {
+                engine = initializeEngine();
+                engine.getDependencies().addAll(deps);
+            } catch (DatabaseException ex) {
+                final String msg = String.format("An unrecoverable exception with the dependency-check initialization occured while scanning %s",
+                        project.getName());
+                throw new MavenReportException(msg, ex);
+            }
+        } else {
+            try {
+                engine = executeDependencyCheck(project);
+            } catch (DatabaseException ex) {
+                final String msg = String.format("An unrecoverable exception with the dependency-check scan occured while scanning %s",
+                        project.getName());
+                throw new MavenReportException(msg, ex);
+            }
+        }
+        for (MavenProject child : getAllChildren(project)) {
+            deps = readDataFile(child);
+            if (deps == null) {
+                final String msg = String.format("Unable to include information on %s in the dependency-check aggregate report", child.getName());
+                LOGGER.severe(msg);
             } else {
-                generateMavenSiteReport(engine, sink);
+                engine.getDependencies().addAll(deps);
             }
-        } catch (DatabaseException ex) {
-            logger.log(Level.SEVERE,
-                    "Unable to connect to the dependency-check database; analysis has stopped");
-            logger.log(Level.FINE, "", ex);
-        } finally {
-            Settings.cleanup(true);
-            if (engine != null) {
-                engine.cleanup();
-            }
+        }
+        final DependencyBundlingAnalyzer bundler = new DependencyBundlingAnalyzer();
+        try {
+            bundler.analyze(null, engine);
+        } catch (AnalysisException ex) {
+            LOGGER.log(Level.WARNING, "An error occured grouping the dependencies; duplicate entries may exist in the report", ex);
+            LOGGER.log(Level.FINE, "Bundling Exception", ex);
+        }
+        final File outputDir = getReportOutputDirectory(project);
+        if (outputDir != null) {
+            ReportingUtil.generateExternalReports(engine, outputDir, project.getName(), format);
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="required setter/getter methods">
+    // <editor-fold defaultstate="collapsed" desc="Mojo interface/abstract required setter/getter methods">
     /**
      * Returns the output name.
      *
@@ -982,7 +654,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
         } else if ("VULN".equalsIgnoreCase(this.format)) {
             return "dependency-check-vulnerability";
         } else {
-            logger.log(Level.WARNING, "Unknown report format used during site generation.");
+            LOGGER.log(Level.WARNING, "Unknown report format used during site generation.");
             return "dependency-check-report";
         }
     }
@@ -1003,25 +675,7 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * @return the report name
      */
     public String getName(Locale locale) {
-        return name;
-    }
-
-    /**
-     * Sets the Reporting output directory.
-     *
-     * @param directory the output directory
-     */
-    public void setReportOutputDirectory(File directory) {
-        reportOutputDirectory = directory;
-    }
-
-    /**
-     * Returns the output directory.
-     *
-     * @return the output directory
-     */
-    public File getReportOutputDirectory() {
-        return reportOutputDirectory;
+        return "dependency-check";
     }
 
     /**
@@ -1031,28 +685,64 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
      * @return the description
      */
     public String getDescription(Locale locale) {
-        return description;
+        return "A report providing details on any published "
+                + "vulnerabilities within project dependencies. This report is a best effort but may contain "
+                + "false positives and false negatives.";
     }
 
     /**
-     * Returns whether this is an external report.
+     * Returns whether or not a report can be generated.
      *
-     * @return true or false;
-     */
-    public boolean isExternalReport() {
-        return externalReport;
-    }
-
-    /**
-     * Returns whether or not the plugin can generate a report.
-     *
-     * @return true
+     * @return <code>true</code> if a report can be generated; otherwise <code>false</code>
      */
     public boolean canGenerateReport() {
-        return true;
+        if (canGenerateAggregateReport() || (isAggregate() && isMultiModule())) {
+            return true;
+        }
+        if (canGenerateNonAggregateReport()) {
+            return true;
+        } else {
+            final String msg;
+            if (getProject().getArtifacts().size() > 0) {
+                msg = "No project dependencies exist in the included scope - dependency-check:check is unable to generate a report.";
+            } else {
+                msg = "No project dependencies exist - dependency-check:check is unable to generate a report.";
+            }
+            LOGGER.warning(msg);
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns whether or not a non-aggregate report can be generated.
+     *
+     * @return <code>true</code> if a non-aggregate report can be generated; otherwise <code>false</code>
+     */
+    @Override
+    protected boolean canGenerateNonAggregateReport() {
+        boolean ability = false;
+        for (Artifact a : getProject().getArtifacts()) {
+            if (!excludeFromScan(a)) {
+                ability = true;
+                break;
+            }
+        }
+        return ability;
+    }
+
+    /**
+     * Returns whether or not an aggregate report can be generated.
+     *
+     * @return <code>true</code> if an aggregate report can be generated; otherwise <code>false</code>
+     */
+    @Override
+    protected boolean canGenerateAggregateReport() {
+        return isAggregate() && isLastProject();
     }
     // </editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Methods to fail build or show summary">
     /**
      * Checks to see if a vulnerability has been identified with a CVSS score that is above the threshold set in the
      * configuration.
@@ -1120,7 +810,114 @@ public class DependencyCheckMojo extends AbstractMojo implements MavenMultiPageR
             final String msg = String.format("%n%n"
                     + "One or more dependencies were identified with known vulnerabilities:%n%n%s"
                     + "%n%nSee the dependency-check report for more details.%n%n", summary.toString());
-            logger.log(Level.WARNING, msg);
+            LOGGER.log(Level.WARNING, msg);
         }
     }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Methods to read/write the serialized data file">
+    /**
+     * Writes the scan data to disk. This is used to serialize the scan data between the "check" and "aggregate" phase.
+     *
+     * @return the File object referencing the data file that was written
+     */
+    @Override
+    protected File writeDataFile() {
+        File file = null;
+        if (engine != null && getProject().getContextValue(this.getDataFileContextKey()) == null) {
+            file = new File(getProject().getBuild().getDirectory(), getDataFileName());
+            OutputStream os = null;
+            OutputStream bos = null;
+            ObjectOutputStream out = null;
+            try {
+                os = new FileOutputStream(file);
+                bos = new BufferedOutputStream(os);
+                out = new ObjectOutputStream(bos);
+                out.writeObject(engine.getDependencies());
+                out.flush();
+
+                //call reset to prevent resource leaks per
+                //https://www.securecoding.cert.org/confluence/display/java/SER10-J.+Avoid+memory+and+resource+leaks+during+serialization
+                out.reset();
+
+            } catch (IOException ex) {
+                LOGGER.log(Level.WARNING, "Unable to create data file used for report aggregation; "
+                        + "if report aggregation is being used the results may be incomplete.");
+                LOGGER.log(Level.FINE, ex.getMessage(), ex);
+            } finally {
+                if (out != null) {
+                    try {
+                        out.close();
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.FINEST, "ignore", ex);
+                    }
+                }
+                if (bos != null) {
+                    try {
+                        bos.close();
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.FINEST, "ignore", ex);
+                    }
+                }
+                if (os != null) {
+                    try {
+                        os.close();
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.FINEST, "ignore", ex);
+                    }
+                }
+            }
+        }
+        return file;
+    }
+
+    /**
+     * Reads the serialized scan data from disk. This is used to serialize the scan data between the "check" and
+     * "aggregate" phase.
+     *
+     * @return a <code>Engine</code> object populated with dependencies if the serialized data file exists; otherwise
+     * <code>null</code> is returned
+     */
+    protected List<Dependency> readDataFile() {
+        return readDataFile(getProject());
+    }
+
+    /**
+     * Reads the serialized scan data from disk. This is used to serialize the scan data between the "check" and
+     * "aggregate" phase.
+     *
+     * @param project the Maven project to read the data file from
+     * @return a <code>Engine</code> object populated with dependencies if the serialized data file exists; otherwise
+     * <code>null</code> is returned
+     */
+    protected List<Dependency> readDataFile(MavenProject project) {
+        final Object oPath = project.getContextValue(this.getDataFileContextKey());
+        if (oPath == null) {
+            return null;
+        }
+        List<Dependency> ret = null;
+        final String path = (String) oPath;
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(new FileInputStream(path));
+            ret = (List<Dependency>) ois.readObject();
+        } catch (FileNotFoundException ex) {
+            //TODO fix logging
+            LOGGER.log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        } finally {
+            if (ois != null) {
+                try {
+                    ois.close();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        return ret;
+    }
+    //</editor-fold>
 }

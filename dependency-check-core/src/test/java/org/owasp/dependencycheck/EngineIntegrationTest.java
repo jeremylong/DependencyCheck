@@ -70,10 +70,10 @@ public class EngineIntegrationTest extends BaseTest {
     @Test
     public void testEngine() throws Exception {
         String testClasses = "target/test-classes";
-//        boolean autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
-//        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+        boolean autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
+        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
         Engine instance = new Engine();
-//        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
+        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
         instance.scan(testClasses);
         assertTrue(instance.getDependencies().size() > 0);
         instance.analyzeDependencies();

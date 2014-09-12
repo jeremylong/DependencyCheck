@@ -3,8 +3,8 @@ How To Read The Report
 There is a lot of information contained in the HTML version of the report. When analyzing the results, the first thing one should do is determine if the CPE looks
 appropriate. Due to the way dependency-check works (see above) the report may contain false positives; these false positives are primarily on the CPE values. If the CPE value
 is wrong, this is usually obvious and one should use the suppression feature in the report to generate a suppression XML file that can be used on future scans. In addition
-to just looking at the CPE values in comparison to the name of the dependency - one may also consider the confidence of the CPE (as discussed in (How does dependency-check
-work)[internals.html]). See the (Suppression False Positives)[suppression.html] page for more information on how to generate and use the suppression file.
+to just looking at the CPE values in comparison to the name of the dependency - one may also consider the confidence of the CPE (as discussed in [How does dependency-check
+work](./internals.html)). See the [Suppressing False Positives](./suppression.html) page for more information on how to generate and use the suppression file.
 
 Once you have weeded out any obvious false positives one can then look at the remaining entries and determine if any of the identified CVE entries are actually
 exploitable in your environment. Determining if a CVE is exploitable in your environment can be tricky - for this I do not currently have any tips other then

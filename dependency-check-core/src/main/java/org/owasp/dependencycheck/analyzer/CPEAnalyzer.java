@@ -170,29 +170,10 @@ public class CPEAnalyzer implements Analyzer {
      * @throws ParseException is thrown when the Lucene query cannot be parsed.
      */
     protected void determineCPE(Dependency dependency) throws CorruptIndexException, IOException, ParseException {
-        Confidence confidence = Confidence.HIGHEST;
-
-        String vendors = addEvidenceWithoutDuplicateTerms("", dependency.getVendorEvidence(), confidence);
-        String products = addEvidenceWithoutDuplicateTerms("", dependency.getProductEvidence(), confidence);
-        /* bug fix for #40 - version evidence is not showing up as "used" in the reports if there is no
-         * CPE identified. As such, we are "using" the evidence and ignoring the results. */
-        addEvidenceWithoutDuplicateTerms("", dependency.getVersionEvidence(), confidence);
-
-        int ctr = 0;
-        do {
-            if (!vendors.isEmpty() && !products.isEmpty()) {
-                final List<IndexEntry> entries = searchCPE(vendors, products, dependency.getProductEvidence().getWeighting(),
-                        dependency.getVendorEvidence().getWeighting());
-
-                for (IndexEntry e : entries) {
-                    if (verifyEntry(e, dependency)) {
-                        final String vendor = e.getVendor();
-                        final String product = e.getProduct();
-                        determineIdentifiers(dependency, vendor, product);
-                    }
-                }
-            }
-            confidence = reduceConfidence(confidence);
+        //TODO test dojo-war against this. we shold get dojo-toolkit:dojo-toolkit AND dojo-toolkit:toolkit
+        String vendors = "";
+        String products = "";
+        for (Confidence confidence : Confidence.values()) {
             if (dependency.getVendorEvidence().contains(confidence)) {
                 vendors = addEvidenceWithoutDuplicateTerms(vendors, dependency.getVendorEvidence(), confidence);
             }
@@ -201,10 +182,26 @@ public class CPEAnalyzer implements Analyzer {
             }
             /* bug fix for #40 - version evidence is not showing up as "used" in the reports if there is no
              * CPE identified. As such, we are "using" the evidence and ignoring the results. */
-            if (dependency.getVersionEvidence().contains(confidence)) {
-                addEvidenceWithoutDuplicateTerms("", dependency.getVersionEvidence(), confidence);
+//            if (dependency.getVersionEvidence().contains(confidence)) {
+//                addEvidenceWithoutDuplicateTerms("", dependency.getVersionEvidence(), confidence);
+//            }
+            if (!vendors.isEmpty() && !products.isEmpty()) {
+                final List<IndexEntry> entries = searchCPE(vendors, products, dependency.getProductEvidence().getWeighting(),
+                        dependency.getVendorEvidence().getWeighting());
+
+                boolean identifierAdded = false;
+                for (IndexEntry e : entries) {
+                    if (verifyEntry(e, dependency)) {
+                        final String vendor = e.getVendor();
+                        final String product = e.getProduct();
+                        identifierAdded |= determineIdentifiers(dependency, vendor, product, confidence);
+                    }
+                }
+                if (identifierAdded) {
+                    break;
+                }
             }
-        } while ((++ctr) < 4);
+        }
     }
 
     /**
@@ -237,22 +234,6 @@ public class CPEAnalyzer implements Analyzer {
             }
         }
         return sb.toString().trim();
-    }
-
-    /**
-     * Reduces the given confidence by one level. This returns LOW if the confidence passed in is not HIGH.
-     *
-     * @param c the confidence to reduce.
-     * @return One less then the confidence passed in.
-     */
-    private Confidence reduceConfidence(final Confidence c) {
-        if (c == Confidence.HIGHEST) {
-            return Confidence.HIGH;
-        } else if (c == Confidence.HIGH) {
-            return Confidence.MEDIUM;
-        } else {
-            return Confidence.LOW;
-        }
     }
 
     /**
@@ -508,14 +489,19 @@ public class CPEAnalyzer implements Analyzer {
      * @param dependency the Dependency being analyzed
      * @param vendor the vendor for the CPE being analyzed
      * @param product the product for the CPE being analyzed
+     * @return <code>true</code> if an identifier was added to the dependency; otherwise <code>false</code>
      * @throws UnsupportedEncodingException is thrown if UTF-8 is not supported
      */
-    private void determineIdentifiers(Dependency dependency, String vendor, String product) throws UnsupportedEncodingException {
+    private boolean determineIdentifiers(Dependency dependency, String vendor, String product, Confidence currentConfidence) throws UnsupportedEncodingException {
         final Set<VulnerableSoftware> cpes = cve.getCPEs(vendor, product);
         DependencyVersion bestGuess = new DependencyVersion("-");
         Confidence bestGuessConf = null;
+        boolean hasBroadMatch = false;
         final List<IdentifierMatch> collected = new ArrayList<IdentifierMatch>();
         for (Confidence conf : Confidence.values()) {
+//            if (conf.compareTo(currentConfidence) > 0) {
+//                break;
+//            }
             for (Evidence evidence : dependency.getVersionEvidence().iterator(conf)) {
                 final DependencyVersion evVer = DependencyVersionUtil.parseVersion(evidence.getValue());
                 if (evVer == null) {
@@ -528,9 +514,12 @@ public class CPEAnalyzer implements Analyzer {
                     } else {
                         dbVer = DependencyVersionUtil.parseVersion(vs.getVersion());
                     }
-                    if (dbVer == null //special case, no version specified - everything is vulnerable
-                            || evVer.equals(dbVer)) { //yeah! exact match
-
+                    if (dbVer == null) { //special case, no version specified - everything is vulnerable
+                        hasBroadMatch = true;
+                        final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getName(), "UTF-8"));
+                        final IdentifierMatch match = new IdentifierMatch("cpe", vs.getName(), url, IdentifierConfidence.BROAD_MATCH, conf);
+                        collected.add(match);
+                    } else if (evVer.equals(dbVer)) { //yeah! exact match
                         final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getName(), "UTF-8"));
                         final IdentifierMatch match = new IdentifierMatch("cpe", vs.getName(), url, IdentifierConfidence.EXACT_MATCH, conf);
                         collected.add(match);
@@ -556,7 +545,11 @@ public class CPEAnalyzer implements Analyzer {
             }
         }
         final String cpeName = String.format("cpe:/a:%s:%s:%s", vendor, product, bestGuess.toString());
-        final String url = null;
+        String url = null;
+        if (hasBroadMatch) { //if we have a broad match we can add the URL to the best guess.
+            final String cpeUrlName = String.format("cpe:/a:%s:%s", vendor, product);
+            url = String.format(NVD_SEARCH_URL, URLEncoder.encode(cpeUrlName, "UTF-8"));
+        }
         if (bestGuessConf == null) {
             bestGuessConf = Confidence.LOW;
         }
@@ -566,6 +559,7 @@ public class CPEAnalyzer implements Analyzer {
         Collections.sort(collected);
         final IdentifierConfidence bestIdentifierQuality = collected.get(0).getConfidence();
         final Confidence bestEvidenceQuality = collected.get(0).getEvidenceConfidence();
+        boolean identifierAdded = false;
         for (IdentifierMatch m : collected) {
             if (bestIdentifierQuality.equals(m.getConfidence())
                     && bestEvidenceQuality.equals(m.getEvidenceConfidence())) {
@@ -576,8 +570,10 @@ public class CPEAnalyzer implements Analyzer {
                     i.setConfidence(bestEvidenceQuality);
                 }
                 dependency.addIdentifier(i);
+                identifierAdded = true;
             }
         }
+        return identifierAdded;
     }
 
     /**
@@ -592,7 +588,12 @@ public class CPEAnalyzer implements Analyzer {
         /**
          * A best guess for the CPE.
          */
-        BEST_GUESS
+        BEST_GUESS,
+        /**
+         * The entire vendor/product group must be added (without a guess at version) because there is a CVE with a VS
+         * that only specifies vendor/product.
+         */
+        BROAD_MATCH
     }
 
     /**

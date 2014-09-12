@@ -587,7 +587,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 groupid = groupid.substring(4);
             }
             foundSomething = true;
-            dependency.getVendorEvidence().addEvidence("pom", "groupid", groupid, Confidence.HIGH);
+            dependency.getVendorEvidence().addEvidence("pom", "groupid", groupid, Confidence.HIGHEST);
             dependency.getProductEvidence().addEvidence("pom", "groupid", groupid, Confidence.LOW);
             addMatchingValues(classes, groupid, dependency.getVendorEvidence());
             addMatchingValues(classes, groupid, dependency.getProductEvidence());
@@ -616,7 +616,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 artifactid = artifactid.substring(4);
             }
             foundSomething = true;
-            dependency.getProductEvidence().addEvidence("pom", "artifactid", artifactid, Confidence.HIGH);
+            dependency.getProductEvidence().addEvidence("pom", "artifactid", artifactid, Confidence.HIGHEST);
             dependency.getVendorEvidence().addEvidence("pom", "artifactid", artifactid, Confidence.LOW);
             addMatchingValues(classes, artifactid, dependency.getVendorEvidence());
             addMatchingValues(classes, artifactid, dependency.getProductEvidence());

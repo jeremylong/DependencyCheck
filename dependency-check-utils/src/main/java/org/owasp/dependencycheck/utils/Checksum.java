@@ -63,8 +63,22 @@ public final class Checksum {
         try {
             fis = new FileInputStream(file);
             FileChannel ch = fis.getChannel();
-            MappedByteBuffer byteBuffer = ch.map(FileChannel.MapMode.READ_ONLY, 0, file.length());
-            digest.update(byteBuffer);
+            long remainingToRead = file.length();
+            long start = 0;
+            while (remainingToRead > 0) {
+                long amountToRead;
+                if (remainingToRead > Integer.MAX_VALUE) {
+                    remainingToRead -= Integer.MAX_VALUE;
+                    amountToRead = Integer.MAX_VALUE;
+                } else {
+                    amountToRead = remainingToRead;
+                    remainingToRead = 0;
+                }
+                MappedByteBuffer byteBuffer = ch.map(FileChannel.MapMode.READ_ONLY, start, amountToRead);
+                digest.update(byteBuffer);
+                start += amountToRead;
+            }
+
 //            BufferedInputStream bis = new BufferedInputStream(fis);
 //            DigestInputStream dis = new DigestInputStream(bis, digest);
 //            //yes, we are reading in a buffer for performance reasons - 1 byte at a time is SLOW

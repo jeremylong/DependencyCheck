@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.dependency;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.util.Set;
 import java.util.SortedSet;
@@ -35,7 +36,7 @@ import org.owasp.dependencycheck.utils.FileUtils;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class Dependency implements Comparable<Dependency> {
+public class Dependency implements Serializable, Comparable<Dependency> {
 
     /**
      * The logger.

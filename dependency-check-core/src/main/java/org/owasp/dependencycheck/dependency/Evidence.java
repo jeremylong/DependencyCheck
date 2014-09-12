@@ -17,12 +17,14 @@
  */
 package org.owasp.dependencycheck.dependency;
 
+import java.io.Serializable;
+
 /**
  * Evidence is a piece of information about a Dependency.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class Evidence implements Comparable<Evidence> {
+public class Evidence implements Serializable, Comparable<Evidence> {
 
     /**
      * Creates a new Evidence object.
