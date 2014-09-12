@@ -24,4 +24,11 @@
         <gav regex="true">org.apache.velocity:velocity-tools:.*</gav>
         <cpe>cpe:/a:apache:struts</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+        Sandbox is a php blog platform and should not be flagged as a CPE for java or .net dependencies.
+        ]]></notes>
+        <filePath regex="true">.*\.(jar|dll|exe|ear|war|pom)</filePath>
+        <cpe>cpe:/a:sandbox:sandbox</cpe>
+    </suppress>
 </suppressions>
