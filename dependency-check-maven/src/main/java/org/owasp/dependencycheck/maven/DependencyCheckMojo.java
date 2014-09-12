@@ -25,7 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -829,13 +828,18 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
             file = new File(getProject().getBuild().getDirectory(), getDataFileName());
             OutputStream os = null;
             OutputStream bos = null;
-            ObjectOutput out = null;
+            ObjectOutputStream out = null;
             try {
                 os = new FileOutputStream(file);
                 bos = new BufferedOutputStream(os);
                 out = new ObjectOutputStream(bos);
                 out.writeObject(engine.getDependencies());
                 out.flush();
+
+                //call reset to prevent resource leaks per
+                //https://www.securecoding.cert.org/confluence/display/java/SER10-J.+Avoid+memory+and+resource+leaks+during+serialization
+                out.reset();
+
             } catch (IOException ex) {
                 LOGGER.log(Level.WARNING, "Unable to create data file used for report aggregation; "
                         + "if report aggregation is being used the results may be incomplete.");
