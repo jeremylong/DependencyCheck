@@ -21,7 +21,7 @@
         <notes><![CDATA[
         Suppresses false positives on velocity tools.
         ]]></notes>
-        <gav regex="true">org.apache.velocity:velocity-tools:.*</gav>
+        <gav regex="true">org\.apache\.velocity:velocity-tools:.*</gav>
         <cpe>cpe:/a:apache:struts</cpe>
     </suppress>
     <suppress base="true">
@@ -30,5 +30,12 @@
         ]]></notes>
         <filePath regex="true">.*\.(jar|dll|exe|ear|war|pom)</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives on Jersey core client.
+        ]]></notes>
+        <gav regex="true">org\.glassfish\.jersey\.core:jersey-(client|common):.*</gav>
+        <cpe>cpe:/a:oracle:glassfish</cpe>
     </suppress>
 </suppressions>
