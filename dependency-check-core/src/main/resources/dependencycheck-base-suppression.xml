@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://www.owasp.org/index.php/OWASP_Dependency_Check_Suppression">
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         This suppresses false positives identified on spring security.
         ]]></notes>
@@ -9,7 +9,7 @@
         <cpe>cpe:/a:springsource:spring_framework</cpe>
         <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         This suppreses additional false positives for the xstream library that occur because spring has a copy of this library.
             com.springsource.com.thoughtworks.xstream-1.3.1.jar
@@ -17,14 +17,14 @@
         <gav regex="true">com\.thoughtworks\.xstream:xstream:.*</gav>
         <cpe>cpe:/a:springsource:spring_framework</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         Suppresses false positives on velocity tools.
         ]]></notes>
         <gav regex="true">org.apache.velocity:velocity-tools:.*</gav>
         <cpe>cpe:/a:apache:struts</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         Sandbox is a php blog platform and should not be flagged as a CPE for java or .net dependencies.
         ]]></notes>
