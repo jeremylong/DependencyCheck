@@ -103,6 +103,12 @@ public class SuppressionHandler extends DefaultHandler {
         currentText = new StringBuffer();
         if (SUPPRESS.equals(qName)) {
             rule = new SuppressionRule();
+            final String base = currentAttributes.getValue("base");
+            if (base != null) {
+                rule.setBase(Boolean.parseBoolean(base));
+            } else {
+                rule.setBase(false);
+            }
         }
     }
 
