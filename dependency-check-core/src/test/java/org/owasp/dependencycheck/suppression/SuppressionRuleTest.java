@@ -148,7 +148,7 @@ public class SuppressionRuleTest {
     }
 
     /**
-     * Test of Cve property, of class SuppressionRule.
+     * Test of base property, of class SuppressionRule.
      */
     @Test
     public void testBase() {
