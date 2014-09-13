@@ -146,6 +146,17 @@ public class SuppressionRuleTest {
         List<String> result = instance.getCve();
         assertEquals(cve, result);
     }
+
+    /**
+     * Test of Cve property, of class SuppressionRule.
+     */
+    @Test
+    public void testBase() {
+        SuppressionRule instance = new SuppressionRule();
+        assertFalse(instance.isBase());
+        instance.setBase(true);
+        assertTrue(instance.isBase());
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Ignored duplicate tests, left in, as empty tests, so IDE doesn't re-generate them">
@@ -424,33 +435,33 @@ public class SuppressionRuleTest {
         instance.setSha1(sha1);
         instance.addCwe("287");
         instance.process(dependency);
-        assertTrue(dependency.getVulnerabilities().size() == 1);
+        assertEquals(1, dependency.getVulnerabilities().size());
         dependency.setSha1sum(sha1);
         instance.process(dependency);
         assertTrue(dependency.getVulnerabilities().isEmpty());
-        assertTrue(dependency.getSuppressedVulnerabilities().size() == 1);
+        assertEquals(1, dependency.getSuppressedVulnerabilities().size());
 
         //cvss
         dependency.addVulnerability(v);
         instance = new SuppressionRule();
         instance.addCvssBelow(5f);
         instance.process(dependency);
-        assertTrue(dependency.getVulnerabilities().size() == 1);
+        assertEquals(1, dependency.getVulnerabilities().size());
         instance.addCvssBelow(8f);
         instance.process(dependency);
         assertTrue(dependency.getVulnerabilities().isEmpty());
-        assertTrue(dependency.getSuppressedVulnerabilities().size() == 1);
+        assertEquals(1, dependency.getSuppressedVulnerabilities().size());
 
         //cve
         dependency.addVulnerability(v);
         instance = new SuppressionRule();
         instance.addCve("CVE-2012-1337");
         instance.process(dependency);
-        assertTrue(dependency.getVulnerabilities().size() == 1);
+        assertEquals(1, dependency.getVulnerabilities().size());
         instance.addCve("CVE-2013-1337");
         instance.process(dependency);
         assertTrue(dependency.getVulnerabilities().isEmpty());
-        assertTrue(dependency.getSuppressedVulnerabilities().size() == 1);
+        assertEquals(1, dependency.getSuppressedVulnerabilities().size());
 
         //cpe
         instance = new SuppressionRule();
@@ -468,18 +479,21 @@ public class SuppressionRuleTest {
         instance.setFilePath(pt);
         instance.process(dependency);
         assertTrue(dependency.getIdentifiers().isEmpty());
-        assertTrue(dependency.getSuppressedIdentifiers().size() == 1);
+        assertEquals(1, dependency.getSuppressedIdentifiers().size());
 
+        instance = new SuppressionRule();
         dependency.addIdentifier("cpe", "cpe:/a:microsoft:.net_framework:4.0", "some url not needed for this test");
         dependency.addIdentifier("cpe", "cpe:/a:microsoft:.net_framework:4.5", "some url not needed for this test");
         dependency.addIdentifier("cpe", "cpe:/a:microsoft:.net_framework:5.0", "some url not needed for this test");
         pt = new PropertyType();
         pt.setValue("cpe:/a:microsoft:.net_framework");
         instance.addCpe(pt);
-        assertTrue(dependency.getIdentifiers().size() == 3);
+        instance.setBase(true);
+        assertEquals(3, dependency.getIdentifiers().size());
+        assertEquals(1, dependency.getSuppressedIdentifiers().size());
         instance.process(dependency);
         assertTrue(dependency.getIdentifiers().isEmpty());
-        assertTrue(dependency.getSuppressedIdentifiers().size() == 3);
+        assertEquals(1, dependency.getSuppressedIdentifiers().size());
     }
 
     /**
