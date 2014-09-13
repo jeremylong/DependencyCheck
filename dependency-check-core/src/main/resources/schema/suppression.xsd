@@ -50,6 +50,7 @@
                                 <xs:element name="cvssBelow" type="dc:cvssScoreType"/>
                             </xs:choice>
                         </xs:sequence>
+                        <xs:attribute name="base" use="optional" type="xs:boolean" default="false"/>
                     </xs:complexType>
                 </xs:element>
             </xs:sequence>
