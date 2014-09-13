@@ -266,6 +266,26 @@ public class SuppressionRule {
         return gav != null;
     }
 
+    private boolean base;
+
+    /**
+     * Get the value of base
+     *
+     * @return the value of base
+     */
+    public boolean isBase() {
+        return base;
+    }
+
+    /**
+     * Set the value of base
+     *
+     * @param base new value of base
+     */
+    public void setBase(boolean base) {
+        this.base = base;
+    }
+
     /**
      * Processes a given dependency to determine if any CPE, CVE, CWE, or CVSS scores should be suppressed. If any
      * should be, they are removed from the dependency.
@@ -300,7 +320,9 @@ public class SuppressionRule {
                 final Identifier i = itr.next();
                 for (PropertyType c : this.cpe) {
                     if (identifierMatches("cpe", c, i)) {
-                        dependency.addSuppressedIdentifier(i);
+                        if (!isBase()) {
+                            dependency.addSuppressedIdentifier(i);
+                        }
                         itr.remove();
                         break;
                     }
@@ -339,7 +361,9 @@ public class SuppressionRule {
                     }
                 }
                 if (remove) {
-                    dependency.addSuppressedVulnerability(v);
+                    if (!isBase()) {
+                        dependency.addSuppressedVulnerability(v);
+                    }
                     itr.remove();
                 }
             }
