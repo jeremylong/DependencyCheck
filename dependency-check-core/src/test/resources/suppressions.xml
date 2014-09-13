@@ -10,7 +10,7 @@
         <filePath>c:\path\to\some.jar</filePath>
         <cpe>cpe:/a:csv:csv:1.0</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         This suppresses any jboss:jboss cpe for any test.jar in any directory.
         ]]></notes>
