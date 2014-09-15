@@ -114,7 +114,8 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         && i.getValue() != null
                         && i.getValue().startsWith("cpe:/a:springsource:")
                         && !i.getValue().toLowerCase().contains(mustContain)) {
-                    dependency.getIdentifiers().remove(i);
+                    itr.remove();
+                    //dependency.getIdentifiers().remove(i);
                 }
 
             }

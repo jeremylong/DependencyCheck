@@ -88,7 +88,15 @@ public class SuppressionHandlerTest {
 
         xmlReader.parse(in);
 
-        List result = handler.getSuppressionRules();
+        List<SuppressionRule> result = handler.getSuppressionRules();
         assertTrue(result.size() > 3);
+        int baseCount = 0;
+        for (SuppressionRule r : result) {
+            if (r.isBase()) {
+                baseCount++;
+            }
+        }
+        assertTrue(baseCount > 0);
+
     }
 }
