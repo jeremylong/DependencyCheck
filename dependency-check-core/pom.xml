@@ -20,7 +20,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>1.2.5-SNAPSHOT</version>
+        <version>1.2.5</version>
     </parent>
 
     <artifactId>dependency-check-core</artifactId>
@@ -628,13 +628,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-client</artifactId>
-            <version>2.12</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
     </dependencies>
     <profiles>
         <profile>
@@ -748,6 +741,13 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <groupId>org.jruby</groupId>
                     <artifactId>jruby</artifactId>
                     <version>1.6.3</version>
+                    <scope>provided</scope>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>org.glassfish.jersey.core</groupId>
+                    <artifactId>jersey-client</artifactId>
+                    <version>2.12</version>
                     <scope>provided</scope>
                     <optional>true</optional>
                 </dependency>
