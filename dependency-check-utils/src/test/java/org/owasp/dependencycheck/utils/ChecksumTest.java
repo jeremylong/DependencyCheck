@@ -20,12 +20,15 @@ package org.owasp.dependencycheck.utils;
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.Checksum;
 
@@ -50,6 +53,9 @@ public class ChecksumTest {
     @After
     public void tearDown() throws Exception {
     }
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     /**
      * Test of getChecksum method, of class Checksum.
@@ -83,13 +89,9 @@ public class ChecksumTest {
     public void testGetChecksum_FileNotFound() throws Exception {
         String algorithm = "MD5";
         File file = new File("not a valid file");
-        boolean exceptionThrown = false;
-        try {
-            byte[] result = Checksum.getChecksum(algorithm, file);
-        } catch (IOException ex) {
-            exceptionThrown = true;
-        }
-        Assert.assertTrue(exceptionThrown);
+
+        expectedException.expect(IOException.class);
+        Checksum.getChecksum(algorithm, file);
     }
 
     /**
@@ -102,13 +104,9 @@ public class ChecksumTest {
     public void testGetChecksum_NoSuchAlgorithm() throws Exception {
         String algorithm = "some unknown algorithm";
         File file = new File(this.getClass().getClassLoader().getResource("checkSumTest.file").getPath());
-        boolean exceptionThrown = false;
-        try {
-            byte[] result = Checksum.getChecksum(algorithm, file);
-        } catch (NoSuchAlgorithmException ex) {
-            exceptionThrown = true;
-        }
-        Assert.assertTrue(exceptionThrown);
+
+        expectedException.expect(NoSuchAlgorithmException.class);
+        Checksum.getChecksum(algorithm, file);
     }
 
     /**
