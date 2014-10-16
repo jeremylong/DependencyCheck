@@ -31,7 +31,10 @@ import org.owasp.dependencycheck.data.nexus.NexusSearch;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
+
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * Analyzer which will attempt to locate a dependency on a Nexus service by SHA-1 digest of the dependency.
@@ -48,6 +51,10 @@ import org.owasp.dependencycheck.utils.Settings;
  * @author colezlaw
  */
 public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
+    /**
+     * The default URL - this will be used by the SolrAnalyzer to determine whether to enable this.
+     */
+    public static final String DEFAULT_URL = "https://repository.sonatype.org/service/local/";
 
     /**
      * The logger.
@@ -73,6 +80,33 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
      * The Nexus Search to be set up for this analyzer.
      */
     private NexusSearch searcher;
+
+    /**
+     * Determine whether to enable this analyzer or not.
+     *
+     * @return whether the analyzer should be enabled
+     */
+    @Override
+    public boolean isEnabled() {
+        /* Enable this analyzer ONLY if the Nexus URL has been set to something
+           other than the default one (if it's the default one, we'll use the
+           solr one) and it's enabled by the user.
+         */
+        boolean retval = false;
+        try {
+            if ((! DEFAULT_URL.equals(Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL)))
+                && Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED)) {
+                LOGGER.info("Enabling Nexus analyzer");
+                retval = true;
+            } else {
+                LOGGER.info("Nexus analyzer disabled");
+            }
+        } catch (InvalidSettingException ise) {
+            LOGGER.warning("Invalid setting. Disabling Nexus analyzer");
+        }
+
+        return retval;
+    }
 
     /**
      * Initializes the analyzer once before any analysis is performed.
@@ -150,6 +184,9 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException {
+        if (! isEnabled()) {
+            return;
+        }
         try {
             final MavenArtifact ma = searcher.searchSha1(dependency.getSha1sum());
             if (ma.getGroupId() != null && !"".equals(ma.getGroupId())) {
@@ -166,7 +203,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
                 for (Identifier i : dependency.getIdentifiers()) {
                     if ("maven".equals(i.getType()) && i.getValue().equals(ma.toString())) {
                         found = true;
-                        i.setConfidence(Confidence.HIGHEST);
+                        i.setConfidence(Confidence  .HIGHEST);
                         i.setUrl(ma.getArtifactUrl());
                         break;
                     }

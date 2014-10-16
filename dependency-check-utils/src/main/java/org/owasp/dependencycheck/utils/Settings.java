@@ -189,6 +189,18 @@ public final class Settings {
          */
         public static final String ANALYZER_NEXUS_PROXY = "analyzer.nexus.proxy";
         /**
+         * The properties key for whether the Solr analyzer is enabled.
+         */
+        public static final String ANALYZER_SOLR_ENABLED = "analyzer.solr.enabled";
+        /**
+         * The properties key for the Solr search URL.
+         */
+        public static final String ANALYZER_SOLR_URL = "analyzer.solr.url";
+        /**
+         * The properties key for using the proxy to reach Solr.
+         */
+        public static final String ANALYZER_SOLR_PROXY = "analyzer.solr.proxy";
+        /**
          * The path to mono, if available.
          */
         public static final String ANALYZER_ASSEMBLY_MONO_PATH = "analyzer.assembly.mono.path";
