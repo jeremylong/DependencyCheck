@@ -293,13 +293,27 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.log(Level.FINE, msg, ex);
             return false;
         }
+        File externalPom = null;
         if (pomEntries.isEmpty()) {
-            return false;
+            if (dependency.getActualFilePath().matches(".*\\.m2.repository\\b.*")) {
+                String pomPath = dependency.getActualFilePath();
+                pomPath = pomPath.substring(0, pomPath.lastIndexOf('.')) + ".pom";
+                externalPom = new File(pomPath);
+                if (externalPom.isFile()) {
+                    pomEntries.add(pomPath);
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
         }
         for (String path : pomEntries) {
             Properties pomProperties = null;
             try {
-                pomProperties = retrievePomProperties(path, jar);
+                if (externalPom == null) {
+                    pomProperties = retrievePomProperties(path, jar);
+                }
             } catch (IOException ex) {
                 LOGGER.log(Level.FINEST, "ignore this, failed reading a non-existent pom.properties", ex);
             }
@@ -325,7 +339,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     engine.getDependencies().add(newDependency);
                     Collections.sort(engine.getDependencies());
                 } else {
-                    pom = retrievePom(path, jar);
+                    if (externalPom == null) {
+                        pom = retrievePom(path, jar);
+                    } else {
+                        pom = retrievePom(externalPom);
+                    }
                     foundSomething |= setPomEvidence(dependency, pom, pomProperties, classes);
                 }
             } catch (AnalysisException ex) {
@@ -519,6 +537,41 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.log(Level.FINE, "", ex);
                 throw new AnalysisException(ex);
             }
+        }
+        return model;
+    }
+
+    /**
+     * Reads in the specified POM and converts it to a Model.
+     *
+     * @param file the pom.xml file
+     * @return returns a
+     * @throws AnalysisException is thrown if there is an exception extracting or parsing the POM
+     * {@link org.owasp.dependencycheck.jaxb.pom.generated.Model} object
+     */
+    private Model retrievePom(File file) throws AnalysisException {
+        Model model = null;
+        try {
+            final FileInputStream stream = new FileInputStream(file);
+            final InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
+            final InputSource xml = new InputSource(reader);
+            final SAXSource source = new SAXSource(xml);
+            model = readPom(source);
+        } catch (SecurityException ex) {
+            final String msg = String.format("Unable to parse pom '%s'; invalid signature", file.getPath());
+            LOGGER.log(Level.WARNING, msg);
+            LOGGER.log(Level.FINE, null, ex);
+            throw new AnalysisException(ex);
+        } catch (IOException ex) {
+            final String msg = String.format("Unable to parse pom '%s'(IO Exception)", file.getPath());
+            LOGGER.log(Level.WARNING, msg);
+            LOGGER.log(Level.FINE, "", ex);
+            throw new AnalysisException(ex);
+        } catch (Throwable ex) {
+            final String msg = String.format("Unexpected error during parsing of the pom '%s'", file.getPath());
+            LOGGER.log(Level.WARNING, msg);
+            LOGGER.log(Level.FINE, "", ex);
+            throw new AnalysisException(ex);
         }
         return model;
     }
