@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -46,6 +47,7 @@ import org.apache.maven.settings.Proxy;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.DependencyBundlingAnalyzer;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
@@ -58,9 +60,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-@Mojo(name = "check", defaultPhase = LifecyclePhase.COMPILE, threadSafe = true,
-        requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM,
-        requiresOnline = true)
+@Mojo(name = "check", defaultPhase = LifecyclePhase.COMPILE, threadSafe = true, requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM, requiresOnline = true)
 public class DependencyCheckMojo extends ReportAggregationMojo {
 
     //<editor-fold defaultstate="collapsed" desc="Private fields">
@@ -292,6 +292,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     @Parameter(property = "externalReport")
     @Deprecated
     private String externalReport = null;
+
     // </editor-fold>
     /**
      * Constructs a new dependency-check-mojo.
@@ -326,8 +327,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
             if (excludeFromScan(a)) {
                 continue;
             }
-
-            localEngine.scan(a.getFile().getAbsolutePath());
+            localEngine.scan(a.getFile().getAbsoluteFile(), new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion()));
         }
         localEngine.analyzeDependencies();
 
@@ -396,8 +396,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
         }
 
         if (proxyUrl != null && !proxyUrl.isEmpty()) {
-            LOGGER.warning("Deprecated configuration detected, proxyUrl will be ignored; use the maven settings "
-                    + "to configure the proxy instead");
+            LOGGER.warning("Deprecated configuration detected, proxyUrl will be ignored; use the maven settings " + "to configure the proxy instead");
         }
         final Proxy proxy = getMavenProxy();
         if (proxy != null) {
@@ -510,6 +509,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
         }
         return null;
     }
+
     //</editor-fold>
 
     /**
@@ -530,8 +530,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
                 checkForFailure(engine.getDependencies());
             }
         } catch (DatabaseException ex) {
-            LOGGER.log(Level.SEVERE,
-                    "Unable to connect to the dependency-check database; analysis has stopped");
+            LOGGER.log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
             LOGGER.log(Level.FINE, "", ex);
         }
     }
@@ -580,16 +579,15 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
                 engine = initializeEngine();
                 engine.getDependencies().addAll(deps);
             } catch (DatabaseException ex) {
-                final String msg = String.format("An unrecoverable exception with the dependency-check initialization occured while scanning %s",
-                        getProject().getName());
+                final String msg = String.format("An unrecoverable exception with the dependency-check initialization occured while scanning %s", getProject()
+                        .getName());
                 throw new MavenReportException(msg, ex);
             }
         } else {
             try {
                 engine = executeDependencyCheck();
             } catch (DatabaseException ex) {
-                final String msg = String.format("An unrecoverable exception with the dependency-check scan occured while scanning %s",
-                        getProject().getName());
+                final String msg = String.format("An unrecoverable exception with the dependency-check scan occured while scanning %s", getProject().getName());
                 throw new MavenReportException(msg, ex);
             }
         }
@@ -612,8 +610,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
             try {
                 engine = executeDependencyCheck(project);
             } catch (DatabaseException ex) {
-                final String msg = String.format("An unrecoverable exception with the dependency-check scan occured while scanning %s",
-                        project.getName());
+                final String msg = String.format("An unrecoverable exception with the dependency-check scan occured while scanning %s", project.getName());
                 throw new MavenReportException(msg, ex);
             }
         }
@@ -646,8 +643,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
      * @return the output name
      */
     public String getOutputName() {
-        if ("HTML".equalsIgnoreCase(this.format)
-                || "ALL".equalsIgnoreCase(this.format)) {
+        if ("HTML".equalsIgnoreCase(this.format) || "ALL".equalsIgnoreCase(this.format)) {
             return "dependency-check-report";
         } else if ("XML".equalsIgnoreCase(this.format)) {
             return "dependency-check-report.xml#";
@@ -685,8 +681,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
      * @return the description
      */
     public String getDescription(Locale locale) {
-        return "A report providing details on any published "
-                + "vulnerabilities within project dependencies. This report is a best effort but may contain "
+        return "A report providing details on any published " + "vulnerabilities within project dependencies. This report is a best effort but may contain "
                 + "false positives and false negatives.";
     }
 
@@ -740,6 +735,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     protected boolean canGenerateAggregateReport() {
         return isAggregate() && isLastProject();
     }
+
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Methods to fail build or show summary">
@@ -807,12 +803,12 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
             }
         }
         if (summary.length() > 0) {
-            final String msg = String.format("%n%n"
-                    + "One or more dependencies were identified with known vulnerabilities:%n%n%s"
+            final String msg = String.format("%n%n" + "One or more dependencies were identified with known vulnerabilities:%n%n%s"
                     + "%n%nSee the dependency-check report for more details.%n%n", summary.toString());
             LOGGER.log(Level.WARNING, msg);
         }
     }
+
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Methods to read/write the serialized data file">
