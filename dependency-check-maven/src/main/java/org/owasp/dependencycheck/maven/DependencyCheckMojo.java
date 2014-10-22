@@ -245,7 +245,11 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     private boolean skipProvidedScope = false;
     /**
      * Skip Analysis of Dependencies that have a groupId that starts with this string.
-     * Multiple excludes are allowed by repeating the element. 
+     * <pre>
+     * &lt;excludeInternalGroupIds&gt;
+     *  &lt;groupId&gt;some.group.id&lt;/groupId&gt;
+     * &lt;/excludeInternalGroupIds&gt;
+     * </pre> 
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "excludeInternalGroupIds", required = false)
