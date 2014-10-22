@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -243,6 +244,13 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     @Parameter(property = "skipProvidedScope", defaultValue = "false", required = false)
     private boolean skipProvidedScope = false;
     /**
+     * Skip Analysis of Dependencies that have a groupId that starts with this string.
+     * Multiple excludes are allowed by repeating the element. 
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "excludeInternalGroupIds", required = false)
+    private String[] excludeInternalGroupIds = new String[0];
+    /**
      * The data directory, hold DC SQL DB.
      */
     @Parameter(property = "dataDirectory", defaultValue = "", required = false)
@@ -361,6 +369,12 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
         }
         if (skipRuntimeScope && !Artifact.SCOPE_RUNTIME.equals(a.getScope())) {
             return true;
+        }
+        for (String groupId : excludeInternalGroupIds) {
+            if (!StringUtils.isEmpty(groupId) && (a.getGroupId().startsWith(groupId))) {
+                LOGGER.log(Level.INFO, "Excluding " + a.getGroupId() + ":" + a.getArtifactId());
+                return true;
+            }
         }
         return false;
     }
