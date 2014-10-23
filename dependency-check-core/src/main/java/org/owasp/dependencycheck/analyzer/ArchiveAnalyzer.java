@@ -221,7 +221,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 final String displayPath = String.format("%s%s",
                         dependency.getFilePath(),
                         d.getActualFilePath().substring(tmpDir.getAbsolutePath().length()));
-                final String displayName = String.format("%s%s%s",
+                final String displayName = String.format("%s[%s]",
                         dependency.getFileName(),
                         File.separator,
                         d.getFileName());
