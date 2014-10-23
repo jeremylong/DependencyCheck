@@ -579,7 +579,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * @return an integer representing the natural ordering
      */
     public int compareTo(Dependency o) {
-        return this.getFileName().compareToIgnoreCase(o.getFileName());
+        return this.getFilePath().compareToIgnoreCase(o.getFilePath());
     }
 
     /**
