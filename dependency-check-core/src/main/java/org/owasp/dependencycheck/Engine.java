@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.owasp.dependencycheck.analyzer.AnalysisPhase;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.AnalyzerService;
@@ -34,12 +35,14 @@ import org.owasp.dependencycheck.analyzer.FileTypeAnalyzer;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.cpe.CpeMemoryIndex;
 import org.owasp.dependencycheck.data.cpe.IndexException;
+import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nvdcve.ConnectionFactory;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.update.CachedWebDataSource;
 import org.owasp.dependencycheck.data.update.UpdateService;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.exception.NoDataException;
 import org.owasp.dependencycheck.utils.FileUtils;
@@ -188,7 +191,7 @@ public class Engine implements Serializable {
     public void scan(String path) {
         if (path.matches("^.*[\\/]\\*\\.[^\\/:*|?<>\"]+$")) {
             final String[] parts = path.split("\\*\\.");
-            final String[] ext = new String[]{parts[parts.length - 1]};
+            final String[] ext = new String[] { parts[parts.length - 1] };
             final File dir = new File(path.substring(0, path.length() - ext[0].length() - 2));
             if (dir.isDirectory()) {
                 final List<File> files = (List<File>) org.apache.commons.io.FileUtils.listFiles(dir, ext, true);
@@ -287,6 +290,17 @@ public class Engine implements Serializable {
      * @param file The file to scan.
      */
     protected void scanFile(File file) {
+        scan(file, null);
+    }
+
+    /**
+     * Scans a specified file. If a dependency is identified it is added to the dependency collection.
+     * If there is an mavenArtifact present, it will be added to
+     * 
+     * @param file The file to scan.
+     * @param mavenArtifact The (optional) Maven artifact.
+     */
+    public void scan(File file, MavenArtifact mavenArtifact) {
         if (!file.isFile()) {
             final String msg = String.format("Path passed to scanFile(File) is not a file: %s. Skipping the file.", file.toString());
             LOGGER.log(Level.FINE, msg);
@@ -297,11 +311,13 @@ public class Engine implements Serializable {
         if (extension != null) {
             if (supportsExtension(extension)) {
                 final Dependency dependency = new Dependency(file);
+                if (mavenArtifact != null) {
+                    dependency.addAsEvidence("project-pom", mavenArtifact, Confidence.HIGH);
+                }
                 dependencies.add(dependency);
             }
         } else {
-            final String msg = String.format("No file extension found on file '%s'. The file was not analyzed.",
-                    file.toString());
+            final String msg = String.format("No file extension found on file '%s'. The file was not analyzed.", file.toString());
             LOGGER.log(Level.FINEST, msg);
         }
     }
@@ -326,9 +342,7 @@ public class Engine implements Serializable {
 
         }
 
-        final String logHeader = String.format("%n"
-                + "----------------------------------------------------%n"
-                + "BEGIN ANALYSIS%n"
+        final String logHeader = String.format("%n" + "----------------------------------------------------%n" + "BEGIN ANALYSIS%n"
                 + "----------------------------------------------------");
         LOGGER.log(Level.FINE, logHeader);
         LOGGER.log(Level.INFO, "Analysis Starting");
@@ -381,9 +395,7 @@ public class Engine implements Serializable {
             }
         }
 
-        final String logFooter = String.format("%n"
-                + "----------------------------------------------------%n"
-                + "END ANALYSIS%n"
+        final String logFooter = String.format("%n" + "----------------------------------------------------%n" + "END ANALYSIS%n"
                 + "----------------------------------------------------");
         LOGGER.log(Level.FINE, logFooter);
         LOGGER.log(Level.INFO, "Analysis Complete");
@@ -437,10 +449,8 @@ public class Engine implements Serializable {
             try {
                 source.update();
             } catch (UpdateException ex) {
-                LOGGER.log(Level.WARNING,
-                        "Unable to update Cached Web DataSource, using local data instead. Results may not include recent vulnerabilities.");
-                LOGGER.log(Level.FINE,
-                        String.format("Unable to update details for %s", source.getClass().getName()), ex);
+                LOGGER.log(Level.WARNING, "Unable to update Cached Web DataSource, using local data instead. Results may not include recent vulnerabilities.");
+                LOGGER.log(Level.FINE, String.format("Unable to update details for %s", source.getClass().getName()), ex);
             }
         }
     }
@@ -503,4 +513,5 @@ public class Engine implements Serializable {
             throw new NoDataException("No documents exist");
         }
     }
+
 }
