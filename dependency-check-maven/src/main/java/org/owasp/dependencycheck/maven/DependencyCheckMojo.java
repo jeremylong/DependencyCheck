@@ -32,8 +32,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -50,6 +48,7 @@ import org.owasp.dependencycheck.analyzer.DependencyBundlingAnalyzer;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -244,17 +243,6 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     @Parameter(property = "skipProvidedScope", defaultValue = "false", required = false)
     private boolean skipProvidedScope = false;
     /**
-     * Skip Analysis of Dependencies that have a groupId that starts with this string.
-     * <pre>
-     * &lt;excludeInternalGroupIds&gt;
-     *  &lt;groupId&gt;some.group.id&lt;/groupId&gt;
-     * &lt;/excludeInternalGroupIds&gt;
-     * </pre> 
-     */
-    @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "excludeInternalGroupIds", required = false)
-    private String[] excludeInternalGroupIds = new String[0];
-    /**
      * The data directory, hold DC SQL DB.
      */
     @Parameter(property = "dataDirectory", defaultValue = "", required = false)
@@ -339,7 +327,20 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
             if (excludeFromScan(a)) {
                 continue;
             }
-            localEngine.scan(a.getFile().getAbsoluteFile(), new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion()));
+            List<Dependency> deps = localEngine.scan(a.getFile().getAbsoluteFile());
+            if (deps != null) {
+                if (deps.size() == 1) {
+                    Dependency d = deps.get(0);
+                    if (d != null) {
+                        MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
+                        d.addAsEvidence("pom", ma, Confidence.HIGHEST);
+                    }
+                } else {
+                    final String msg = String.format("More then 1 dependency was identified in first pass scan of '%s:%s:%s'",
+                            a.getGroupId(), a.getArtifactId(), a.getVersion());
+                    LOGGER.info(msg);
+                }
+            }
         }
         localEngine.analyzeDependencies();
 
@@ -373,12 +374,6 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
         }
         if (skipRuntimeScope && !Artifact.SCOPE_RUNTIME.equals(a.getScope())) {
             return true;
-        }
-        for (String groupId : excludeInternalGroupIds) {
-            if (!StringUtils.isEmpty(groupId) && (a.getGroupId().startsWith(groupId))) {
-                LOGGER.log(Level.INFO, "Excluding " + a.getGroupId() + ":" + a.getArtifactId());
-                return true;
-            }
         }
         return false;
     }
@@ -529,7 +524,6 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     }
 
     //</editor-fold>
-
     /**
      * Executes the dependency-check and generates the report.
      *
@@ -755,7 +749,6 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     }
 
     // </editor-fold>
-
     //<editor-fold defaultstate="collapsed" desc="Methods to fail build or show summary">
     /**
      * Checks to see if a vulnerability has been identified with a CVSS score that is above the threshold set in the
@@ -828,7 +821,6 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     }
 
     //</editor-fold>
-
     //<editor-fold defaultstate="collapsed" desc="Methods to read/write the serialized data file">
     /**
      * Writes the scan data to disk. This is used to serialize the scan data between the "check" and "aggregate" phase.
