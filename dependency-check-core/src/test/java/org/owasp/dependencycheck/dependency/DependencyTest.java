@@ -17,16 +17,14 @@
  */
 package org.owasp.dependencycheck.dependency;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -156,7 +154,7 @@ public class DependencyTest {
     public void testGetMd5sum() {
         File file = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
         Dependency instance = new Dependency(file);
-        //        assertEquals("89CE9E36AA9A9E03F1450936D2F4F8DD0F961F8B", result.getSha1sum());
+        //assertEquals("89CE9E36AA9A9E03F1450936D2F4F8DD0F961F8B", result.getSha1sum());
         String expResult = "C30B57142E1CCBC1EFD5CD15F307358F";
         String result = instance.getMd5sum();
         assertEquals(expResult, result);
