@@ -26,7 +26,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.FileUtils;
@@ -320,21 +319,22 @@ public class Dependency implements Serializable, Comparable<Dependency> {
 
     /**
      * Adds the maven artifact as evidence.
-     * @param source The source of the evidence.
-     * @param mavenArtifact The maven artifact.
-     * @param confidence The confidence level of this evidence.
+     *
+     * @param source The source of the evidence
+     * @param mavenArtifact The maven artifact
+     * @param confidence The confidence level of this evidence
      */
     public void addAsEvidence(String source, MavenArtifact mavenArtifact, Confidence confidence) {
-        if (mavenArtifact.getGroupId() != null && !"".equals(mavenArtifact.getGroupId())) {
+        if (mavenArtifact.getGroupId() != null && !mavenArtifact.getGroupId().isEmpty()) {
             this.getVendorEvidence().addEvidence(source, "groupid", mavenArtifact.getGroupId(), confidence);
         }
-        if (mavenArtifact.getArtifactId() != null && !"".equals(mavenArtifact.getArtifactId())) {
+        if (mavenArtifact.getArtifactId() != null && !mavenArtifact.getArtifactId().isEmpty()) {
             this.getProductEvidence().addEvidence(source, "artifactid", mavenArtifact.getArtifactId(), confidence);
         }
-        if (mavenArtifact.getVersion() != null && !"".equals(mavenArtifact.getVersion())) {
+        if (mavenArtifact.getVersion() != null && !mavenArtifact.getVersion().isEmpty()) {
             this.getVersionEvidence().addEvidence(source, "version", mavenArtifact.getVersion(), confidence);
         }
-        if (mavenArtifact.getArtifactUrl() != null && !"".equals(mavenArtifact.getArtifactUrl())) {
+        if (mavenArtifact.getArtifactUrl() != null && !mavenArtifact.getArtifactUrl().isEmpty()) {
             boolean found = false;
             for (Identifier i : this.getIdentifiers()) {
                 if ("maven".equals(i.getType()) && i.getValue().equals(mavenArtifact.toString())) {
