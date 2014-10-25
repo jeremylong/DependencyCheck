@@ -400,6 +400,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 <version>3.1</version>
                 <configuration>
                     <showDeprecation>false</showDeprecation>
+                    <compilerArgument>-Xlint:unchecked</compilerArgument>
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>

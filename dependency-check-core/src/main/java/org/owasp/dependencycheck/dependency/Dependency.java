@@ -26,6 +26,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.FileUtils;
 
@@ -317,6 +318,39 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
+     * Adds the maven artifact as evidence.
+     *
+     * @param source The source of the evidence
+     * @param mavenArtifact The maven artifact
+     * @param confidence The confidence level of this evidence
+     */
+    public void addAsEvidence(String source, MavenArtifact mavenArtifact, Confidence confidence) {
+        if (mavenArtifact.getGroupId() != null && !mavenArtifact.getGroupId().isEmpty()) {
+            this.getVendorEvidence().addEvidence(source, "groupid", mavenArtifact.getGroupId(), confidence);
+        }
+        if (mavenArtifact.getArtifactId() != null && !mavenArtifact.getArtifactId().isEmpty()) {
+            this.getProductEvidence().addEvidence(source, "artifactid", mavenArtifact.getArtifactId(), confidence);
+        }
+        if (mavenArtifact.getVersion() != null && !mavenArtifact.getVersion().isEmpty()) {
+            this.getVersionEvidence().addEvidence(source, "version", mavenArtifact.getVersion(), confidence);
+        }
+        if (mavenArtifact.getArtifactUrl() != null && !mavenArtifact.getArtifactUrl().isEmpty()) {
+            boolean found = false;
+            for (Identifier i : this.getIdentifiers()) {
+                if ("maven".equals(i.getType()) && i.getValue().equals(mavenArtifact.toString())) {
+                    found = true;
+                    i.setConfidence(Confidence.HIGHEST);
+                    i.setUrl(mavenArtifact.getArtifactUrl());
+                    break;
+                }
+            }
+            if (!found) {
+                this.addIdentifier("maven", mavenArtifact.toString(), mavenArtifact.getArtifactUrl(), Confidence.HIGHEST);
+            }
+        }
+    }
+
+    /**
      * Adds an entry to the list of detected Identifiers for the dependency file.
      *
      * @param identifier the identifier to add
@@ -324,6 +358,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     public void addIdentifier(Identifier identifier) {
         this.identifiers.add(identifier);
     }
+
     /**
      * A set of identifiers that have been suppressed.
      */
@@ -441,6 +476,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     public EvidenceCollection getVersionEvidence() {
         return this.versionEvidence;
     }
+
     /**
      * The description of the JAR file.
      */
@@ -463,6 +499,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     public void setDescription(String description) {
         this.description = description;
     }
+
     /**
      * The license that this dependency uses.
      */
@@ -485,6 +522,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     public void setLicense(String license) {
         this.license = license;
     }
+
     /**
      * A list of vulnerabilities for this dependency.
      */
@@ -540,6 +578,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     public void addVulnerability(Vulnerability vulnerability) {
         this.vulnerabilities.add(vulnerability);
     }
+
     /**
      * A collection of related dependencies.
      */

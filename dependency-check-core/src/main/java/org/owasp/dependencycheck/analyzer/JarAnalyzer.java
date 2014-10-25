@@ -327,11 +327,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     final String displayPath = String.format("%s%s%s",
                             dependency.getFilePath(),
                             File.separator,
-                            path); //.replaceAll("[\\/]", File.separator));
+                            path);
                     final String displayName = String.format("%s%s%s",
                             dependency.getFileName(),
                             File.separator,
-                            path); //.replaceAll("[\\/]", File.separator));
+                            path);
 
                     newDependency.setFileName(displayName);
                     newDependency.setFilePath(displayPath);

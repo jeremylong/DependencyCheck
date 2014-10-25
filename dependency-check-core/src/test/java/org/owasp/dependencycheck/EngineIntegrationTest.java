@@ -17,7 +17,9 @@
  */
 package org.owasp.dependencycheck;
 
+import java.util.List;
 import org.junit.After;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,8 +56,8 @@ public class EngineIntegrationTest extends BaseTest {
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
         Engine instance = new Engine();
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
-        instance.scan(testClasses);
-        assertTrue(instance.getDependencies().size() > 0);
+        List<Dependency> deps = instance.scan(testClasses);
+        assertFalse(deps.isEmpty());
         for (Dependency d : instance.getDependencies()) {
             assertTrue("non-zip file collected " + d.getFileName(), d.getFileName().toLowerCase().endsWith(".zip"));
         }
@@ -81,8 +83,7 @@ public class EngineIntegrationTest extends BaseTest {
         cveDB.open();
         DatabaseProperties dbProp = cveDB.getDatabaseProperties();
         cveDB.close();
-        ReportGenerator rg = new ReportGenerator("DependencyCheck",
-                instance.getDependencies(), instance.getAnalyzers(), dbProp);
+        ReportGenerator rg = new ReportGenerator("DependencyCheck", instance.getDependencies(), instance.getAnalyzers(), dbProp);
         rg.generateReports("./target/", "ALL");
         instance.cleanup();
     }

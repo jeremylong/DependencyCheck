@@ -906,6 +906,6 @@ arising out of or in connection with the use of this tool, the analysis performe
 ## END SUPPRESSED VULNERABILITIES
             </div>
         </div>
-        <div><br/><br/>This report contains data retrieved from the <a href="nvd.nist.gov">National Vulnerability Database</a>.</div>
+        <div><br/><br/>This report contains data retrieved from the <a href="http://nvd.nist.gov">National Vulnerability Database</a>.</div>
     </body>
 </html>
