@@ -708,6 +708,13 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <scope>provided</scope>
                     <optional>true</optional>
                 </dependency>
+                <dependency>
+                    <groupId>com.sun.jersey</groupId>
+                    <artifactId>jersey-client</artifactId>
+                    <version>1.11.1</version>
+                    <scope>provided</scope>
+                    <optional>true</optional>
+                </dependency>
             </dependencies>
         </profile>
     </profiles>
