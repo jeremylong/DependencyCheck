@@ -636,9 +636,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         final String originalGroupID = groupid;
 
         if (groupid != null && !groupid.isEmpty()) {
-            if (groupid.startsWith("org.") || groupid.startsWith("com.")) {
-                groupid = groupid.substring(4);
-            }
             foundSomething = true;
             dependency.getVendorEvidence().addEvidence("pom", "groupid", groupid, Confidence.HIGHEST);
             dependency.getProductEvidence().addEvidence("pom", "groupid", groupid, Confidence.LOW);
