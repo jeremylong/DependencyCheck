@@ -44,7 +44,8 @@
         <notes><![CDATA[
         Suppresses false positives on Jersey core client.
         ]]></notes>
-        <gav regex="true">org\.glassfish\.jersey\.core:jersey-(client|common):.*</gav>
+        <gav regex="true">(com\.sun\.jersey|org\.glassfish\.jersey\.core):jersey-(client|common):.*</gav>
         <cpe>cpe:/a:oracle:glassfish</cpe>
+        <cpe>cpe:/a:oracle:oracle_client</cpe>
     </suppress>
 </suppressions>
