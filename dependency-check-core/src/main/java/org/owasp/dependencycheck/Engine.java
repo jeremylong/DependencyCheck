@@ -193,22 +193,8 @@ public class Engine implements Serializable {
      * @return the list of dependencies scanned
      */
     public List<Dependency> scan(String path) {
-        if (path.matches("^.*[\\/]\\*\\.[^\\/:*|?<>\"]+$")) {
-            final String[] parts = path.split("\\*\\.");
-            final String[] ext = new String[]{parts[parts.length - 1]};
-            final File dir = new File(path.substring(0, path.length() - ext[0].length() - 2));
-            if (dir.isDirectory()) {
-                final List<File> files = (List<File>) org.apache.commons.io.FileUtils.listFiles(dir, ext, true);
-                return scan(files);
-            } else {
-                final String msg = String.format("Invalid file path provided to scan '%s'", path);
-                LOGGER.log(Level.SEVERE, msg);
-            }
-        } else {
-            final File file = new File(path);
-            return scan(file);
-        }
-        return null;
+        final File file = new File(path);
+        return scan(file);
     }
 
     /**
