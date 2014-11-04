@@ -15,7 +15,7 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.cli;
+package org.owasp.dependencycheck;
 
 import java.io.File;
 import java.io.FileNotFoundException;
