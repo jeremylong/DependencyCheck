@@ -186,7 +186,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         if (tempFileLocation != null && tempFileLocation.exists()) {
             LOGGER.log(Level.FINE, "Attempting to delete temporary files");
             final boolean success = FileUtils.delete(tempFileLocation);
-            if (!success && tempFileLocation != null & tempFileLocation.exists()) {
+            if (!success && tempFileLocation != null && tempFileLocation.exists() && tempFileLocation.list().length > 0) {
                 LOGGER.log(Level.WARNING, "Failed to delete some temporary files, see the log for more details");
             }
         }
