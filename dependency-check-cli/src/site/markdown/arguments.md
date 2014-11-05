@@ -6,7 +6,8 @@ The following table lists the command line arguments:
 Short  | Argument&nbsp;Name&nbsp;&nbsp; | Parameter       | Description | Requirement
 -------|-----------------------|-----------------|-------------|------------
  \-a   | \-\-app               | \<name\>        | The name of the application being scanned. This is a required argument. | Required
- \-s   | \-\-scan              | \<path\>        | The path to scan \- this option can be specified multiple times. It is also possible to specify specific file types that should be scanned by supplying a scan path of '[path]/[to]/[scan]/*.zip'. The wild card can only be used to denote any file-name with a specific extension. | Required
+ \-s   | \-\-scan              | \<path\>        | The path to scan \- this option can be specified multiple times. It is also possible to specify Ant style paths (e.g. directory/**/*.jar). | Required
+       | \-\-exclude           | \<pattern\>     | The path patterns to exclude from the scan \- this option can be specified multiple times. This accepts Ant style path patterns (e.g. **/exclude/**) . | Optional
  \-o   | \-\-out               | \<folder\>      | The folder to write reports to. This defaults to the current directory. | Optional
  \-f   | \-\-format            | \<format\>      | The output format to write to (XML, HTML, VULN, ALL). The default is HTML. | Required
  \-l   | \-\-log               | \<file\>        | The file path to write verbose logging information. | Optional
