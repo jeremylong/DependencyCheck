@@ -134,7 +134,7 @@ public final class CliParser {
      * @throws FileNotFoundException is thrown if the path being validated does not exist.
      */
     private void validatePathExists(String path, String argumentName) throws FileNotFoundException {
-        if (!path.contains("*.")) {
+        if (!path.contains("*") && !path.contains("?")) {
             final File f = new File(path);
             if (!f.exists()) {
                 isValid = false;
@@ -151,7 +151,6 @@ public final class CliParser {
      */
     @SuppressWarnings("static-access")
     private Options createCommandLineOptions() {
-
         final Options options = new Options();
         addStandardOptions(options);
         addAdvancedOptions(options);
@@ -184,9 +183,14 @@ public final class CliParser {
                 .create(ARGUMENT.APP_NAME_SHORT);
 
         final Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ARGUMENT.SCAN)
-                .withDescription("The path to scan - this option can be specified multiple times. To limit the scan"
-                        + " to specific file types *.[ext] can be added to the end of the path.")
+                .withDescription("The path to scan - this option can be specified multiple times. Ant style"
+                        + " paths are supported (e.g. path/**/*.jar).")
                 .create(ARGUMENT.SCAN_SHORT);
+
+        final Option excludes = OptionBuilder.withArgName("pattern").hasArg().withLongOpt(ARGUMENT.EXCLUDE)
+                .withDescription("Specify and exclusion pattern. This option can be specified multiple times"
+                        + " and it accepts Ant style excludsions.")
+                .create();
 
         final Option props = OptionBuilder.withArgName("file").hasArg().withLongOpt(ARGUMENT.PROP)
                 .withDescription("A property file to load.")
@@ -212,7 +216,11 @@ public final class CliParser {
         final OptionGroup og = new OptionGroup();
         og.addOption(path);
 
+        final OptionGroup exog = new OptionGroup();
+        exog.addOption(excludes);
+
         options.addOptionGroup(og)
+                .addOptionGroup(exog)
                 .addOption(out)
                 .addOption(outputFormat)
                 .addOption(appName)
@@ -479,7 +487,6 @@ public final class CliParser {
                 options,
                 "",
                 true);
-
     }
 
     /**
@@ -489,6 +496,15 @@ public final class CliParser {
      */
     public String[] getScanFiles() {
         return line.getOptionValues(ARGUMENT.SCAN);
+    }
+
+    /**
+     * Retrieves the list of excluded file patterns specified by the 'exclude' argument.
+     *
+     * @return the excluded file patterns
+     */
+    public String[] getExcludeList() {
+        return line.getOptionValues(ARGUMENT.EXCLUDE);
     }
 
     /**
@@ -877,5 +893,9 @@ public final class CliParser {
          * The CLI argument name for setting extra extensions.
          */
         public static final String ADDITIONAL_ZIP_EXTENSIONS = "zipExtensions";
+        /**
+         * Exclude path argument
+         */
+        public static final String EXCLUDE = "exclude";
     }
 }
