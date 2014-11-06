@@ -60,7 +60,13 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-@Mojo(name = "check", defaultPhase = LifecyclePhase.COMPILE, threadSafe = true, requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM, requiresOnline = true)
+@Mojo(
+        name = "check",
+        defaultPhase = LifecyclePhase.COMPILE,
+        threadSafe = true,
+        requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM,
+        requiresOnline = true
+)
 public class DependencyCheckMojo extends ReportAggregationMojo {
 
     //<editor-fold defaultstate="collapsed" desc="Private fields">
@@ -327,12 +333,12 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
             if (excludeFromScan(a)) {
                 continue;
             }
-            List<Dependency> deps = localEngine.scan(a.getFile().getAbsoluteFile());
+            final List<Dependency> deps = localEngine.scan(a.getFile().getAbsoluteFile());
             if (deps != null) {
                 if (deps.size() == 1) {
-                    Dependency d = deps.get(0);
+                    final Dependency d = deps.get(0);
                     if (d != null) {
-                        MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
+                        final MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
                         d.addAsEvidence("pom", ma, Confidence.HIGHEST);
                     }
                 } else {
@@ -591,15 +597,16 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
                 engine = initializeEngine();
                 engine.getDependencies().addAll(deps);
             } catch (DatabaseException ex) {
-                final String msg = String.format("An unrecoverable exception with the dependency-check initialization occured while scanning %s", getProject()
-                        .getName());
+                final String msg = String.format("An unrecoverable exception with the dependency-check initialization occured while scanning %s",
+                        getProject().getName());
                 throw new MavenReportException(msg, ex);
             }
         } else {
             try {
                 engine = executeDependencyCheck();
             } catch (DatabaseException ex) {
-                final String msg = String.format("An unrecoverable exception with the dependency-check scan occured while scanning %s", getProject().getName());
+                final String msg = String.format("An unrecoverable exception with the dependency-check scan occured while scanning %s",
+                        getProject().getName());
                 throw new MavenReportException(msg, ex);
             }
         }
@@ -622,14 +629,16 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
             try {
                 engine = executeDependencyCheck(project);
             } catch (DatabaseException ex) {
-                final String msg = String.format("An unrecoverable exception with the dependency-check scan occured while scanning %s", project.getName());
+                final String msg = String.format("An unrecoverable exception with the dependency-check scan occured while scanning %s",
+                        project.getName());
                 throw new MavenReportException(msg, ex);
             }
         }
         for (MavenProject child : getAllChildren(project)) {
             deps = readDataFile(child);
             if (deps == null) {
-                final String msg = String.format("Unable to include information on %s in the dependency-check aggregate report", child.getName());
+                final String msg = String.format("Unable to include information on %s in the dependency-check aggregate report",
+                        child.getName());
                 LOGGER.severe(msg);
             } else {
                 engine.getDependencies().addAll(deps);
@@ -693,7 +702,8 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
      * @return the description
      */
     public String getDescription(Locale locale) {
-        return "A report providing details on any published " + "vulnerabilities within project dependencies. This report is a best effort but may contain "
+        return "A report providing details on any published "
+                + "vulnerabilities within project dependencies. This report is a best effort but may contain "
                 + "false positives and false negatives.";
     }
 
