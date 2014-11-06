@@ -62,11 +62,11 @@ public class Engine implements Serializable {
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-    private transient final EnumMap<AnalysisPhase, List<Analyzer>> analyzers;
+    private final transient EnumMap<AnalysisPhase, List<Analyzer>> analyzers;
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-    private transient final Set<FileTypeAnalyzer> fileTypeAnalyzers;
+    private final transient Set<FileTypeAnalyzer> fileTypeAnalyzers;
     /**
      * The ClassLoader to use when dynamically loading Analyzer and Update services.
      */
@@ -74,7 +74,7 @@ public class Engine implements Serializable {
     /**
      * The Logger for use throughout the class.
      */
-    private transient static final Logger LOGGER = Logger.getLogger(Engine.class.getName());
+    private static final transient Logger LOGGER = Logger.getLogger(Engine.class.getName());
 
     /**
      * Creates a new Engine.
@@ -174,10 +174,10 @@ public class Engine implements Serializable {
      * @since v0.3.2.5
      */
     public List<Dependency> scan(String[] paths) {
-        List<Dependency> deps = new ArrayList<Dependency>();
+        final List<Dependency> deps = new ArrayList<Dependency>();
         for (String path : paths) {
             final File file = new File(path);
-            List<Dependency> d = scan(file);
+            final List<Dependency> d = scan(file);
             if (d != null) {
                 deps.addAll(d);
             }
@@ -207,9 +207,9 @@ public class Engine implements Serializable {
      * @since v0.3.2.5
      */
     public List<Dependency> scan(File[] files) {
-        List<Dependency> deps = new ArrayList<Dependency>();
+        final List<Dependency> deps = new ArrayList<Dependency>();
         for (File file : files) {
-            List<Dependency> d = scan(file);
+            final List<Dependency> d = scan(file);
             if (d != null) {
                 deps.addAll(d);
             }
@@ -227,9 +227,9 @@ public class Engine implements Serializable {
      * @since v0.3.2.5
      */
     public List<Dependency> scan(Set<File> files) {
-        List<Dependency> deps = new ArrayList<Dependency>();
+        final List<Dependency> deps = new ArrayList<Dependency>();
         for (File file : files) {
-            List<Dependency> d = scan(file);
+            final List<Dependency> d = scan(file);
             if (d != null) {
                 deps.addAll(d);
             }
@@ -247,9 +247,9 @@ public class Engine implements Serializable {
      * @since v0.3.2.5
      */
     public List<Dependency> scan(List<File> files) {
-        List<Dependency> deps = new ArrayList<Dependency>();
+        final List<Dependency> deps = new ArrayList<Dependency>();
         for (File file : files) {
-            List<Dependency> d = scan(file);
+            final List<Dependency> d = scan(file);
             if (d != null) {
                 deps.addAll(d);
             }
@@ -272,9 +272,9 @@ public class Engine implements Serializable {
             if (file.isDirectory()) {
                 return scanDirectory(file);
             } else {
-                Dependency d = scanFile(file);
+                final Dependency d = scanFile(file);
                 if (d != null) {
-                    List<Dependency> deps = new ArrayList<Dependency>();
+                    final List<Dependency> deps = new ArrayList<Dependency>();
                     deps.add(d);
                     return deps;
                 }
@@ -286,20 +286,21 @@ public class Engine implements Serializable {
     /**
      * Recursively scans files and directories. Any dependencies identified are added to the dependency collection.
      *
-     * @param dir the directory to scan.
+     * @param dir the directory to scan
+     * @return the list of Dependency objects scanned
      */
     protected List<Dependency> scanDirectory(File dir) {
         final File[] files = dir.listFiles();
-        List<Dependency> deps = new ArrayList<Dependency>();
+        final List<Dependency> deps = new ArrayList<Dependency>();
         if (files != null) {
             for (File f : files) {
                 if (f.isDirectory()) {
-                    List<Dependency> d = scanDirectory(f);
+                    final List<Dependency> d = scanDirectory(f);
                     if (d != null) {
                         deps.addAll(d);
                     }
                 } else {
-                    Dependency d = scanFile(f);
+                    final Dependency d = scanFile(f);
                     deps.add(d);
                 }
             }

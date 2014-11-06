@@ -403,8 +403,8 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
         final String leftPath = right.replace('\\', '/');
         final String rightPath = right.replace('\\', '/');
 
-        int leftCount = countChar(leftPath, '/');
-        int rightCount = countChar(rightPath, '/');
+        final int leftCount = countChar(leftPath, '/');
+        final int rightCount = countChar(rightPath, '/');
         if (leftCount == rightCount) {
             return leftPath.compareTo(rightPath) <= 0;
         } else {

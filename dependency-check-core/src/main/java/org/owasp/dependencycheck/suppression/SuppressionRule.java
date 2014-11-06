@@ -266,6 +266,10 @@ public class SuppressionRule {
         return gav != null;
     }
 
+    /**
+     * A flag indicating whether or not the suppression rule is a core/base rule that should not be included in the
+     * resulting report in the "suppressed" section.
+     */
     private boolean base;
 
     /**
