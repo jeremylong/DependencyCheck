@@ -114,7 +114,9 @@ public class App {
      * @param outputFormat the output format of the report
      * @param applicationName the application name for the report
      * @param files the files/directories to scan
-     * @param files the patterns for files/directories to exclude
+     * @param excludes the patterns for files/directories to exclude
+     *
+     * @throws InvalidScanPathException thrown if the path to scan starts with "//"
      */
     private void runScan(String reportDirectory, String outputFormat, String applicationName, String[] files,
             String[] excludes) throws InvalidScanPathException {
@@ -134,9 +136,9 @@ public class App {
                 antStylePaths = Arrays.asList(files);
             }
 
-            Set<File> paths = new HashSet<File>();
+            final Set<File> paths = new HashSet<File>();
             for (String file : antStylePaths) {
-                DirectoryScanner scanner = new DirectoryScanner();
+                final DirectoryScanner scanner = new DirectoryScanner();
                 String include = file.replace('\\', '/');
                 File baseDir;
 
@@ -150,7 +152,7 @@ public class App {
                     include = include.substring(1);
                 } else if (include.contains("/")) {
                     final int pos = include.indexOf('/');
-                    String tmp = include.substring(0, pos);
+                    final String tmp = include.substring(0, pos);
                     if (tmp.contains("*") || tmp.contains("?")) {
                         baseDir = new File(".");
                     } else {
@@ -168,7 +170,7 @@ public class App {
                 scanner.scan();
                 if (scanner.getIncludedFilesCount() > 0) {
                     for (String s : scanner.getIncludedFiles()) {
-                        File f = new File(baseDir, s);
+                        final File f = new File(baseDir, s);
                         paths.add(f);
                     }
                 }

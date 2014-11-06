@@ -894,7 +894,7 @@ public final class CliParser {
          */
         public static final String ADDITIONAL_ZIP_EXTENSIONS = "zipExtensions";
         /**
-         * Exclude path argument
+         * Exclude path argument.
          */
         public static final String EXCLUDE = "exclude";
     }
