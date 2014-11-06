@@ -395,13 +395,13 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      * Determines which path is shortest; if path lengths are equal then we use compareTo of the string method to
      * determine if the first path is smaller.
      *
-     * @param leftPath the first path to compare
-     * @param rightPath the second path to compare
+     * @param left the first path to compare
+     * @param right the second path to compare
      * @return <code>true</code> if the leftPath is the shortest; otherwise <code>false</code>
      */
-    protected boolean firstPathIsShortest(String leftPath, String rightPath) {
-        leftPath = leftPath.replace('\\', '/');
-        rightPath = rightPath.replace('\\', '/');
+    protected boolean firstPathIsShortest(String left, String right) {
+        final String leftPath = right.replace('\\', '/');
+        final String rightPath = right.replace('\\', '/');
 
         int leftCount = countChar(leftPath, '/');
         int rightCount = countChar(rightPath, '/');
@@ -421,7 +421,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      */
     private int countChar(String string, char c) {
         int count = 0;
-        int max = string.length();
+        final int max = string.length();
         for (int i = 0; i < max; i++) {
             if (c == string.charAt(i)) {
                 count++;

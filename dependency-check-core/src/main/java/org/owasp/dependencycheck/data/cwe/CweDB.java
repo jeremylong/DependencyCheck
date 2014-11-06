@@ -58,7 +58,7 @@ public final class CweDB {
             final InputStream input = CweDB.class.getClassLoader().getResourceAsStream(filePath);
             oin = new ObjectInputStream(input);
             @SuppressWarnings("unchecked")
-            HashMap<String, String> ret = (HashMap<String, String>) oin.readObject();
+            final HashMap<String, String> ret = (HashMap<String, String>) oin.readObject();
             return ret;
         } catch (ClassNotFoundException ex) {
             LOGGER.log(Level.WARNING, "Unable to load CWE data. This should not be an issue.");

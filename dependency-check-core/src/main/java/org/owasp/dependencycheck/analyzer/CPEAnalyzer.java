@@ -500,10 +500,12 @@ public class CPEAnalyzer implements Analyzer {
      * @param dependency the Dependency being analyzed
      * @param vendor the vendor for the CPE being analyzed
      * @param product the product for the CPE being analyzed
+     * @param currentConfidence the current confidence being used during analysis
      * @return <code>true</code> if an identifier was added to the dependency; otherwise <code>false</code>
      * @throws UnsupportedEncodingException is thrown if UTF-8 is not supported
      */
-    private boolean determineIdentifiers(Dependency dependency, String vendor, String product, Confidence currentConfidence) throws UnsupportedEncodingException {
+    private boolean determineIdentifiers(Dependency dependency, String vendor, String product,
+            Confidence currentConfidence) throws UnsupportedEncodingException {
         final Set<VulnerableSoftware> cpes = cve.getCPEs(vendor, product);
         DependencyVersion bestGuess = new DependencyVersion("-");
         Confidence bestGuessConf = null;

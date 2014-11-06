@@ -269,7 +269,7 @@ public class SuppressionRule {
     private boolean base;
 
     /**
-     * Get the value of base
+     * Get the value of base.
      *
      * @return the value of base
      */
@@ -278,7 +278,7 @@ public class SuppressionRule {
     }
 
     /**
-     * Set the value of base
+     * Set the value of base.
      *
      * @param base new value of base
      */

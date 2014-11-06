@@ -198,8 +198,8 @@ public class DependencyVersion implements Iterable, Comparable<DependencyVersion
 
         boolean ret = true;
         for (int i = 0; i < max; i++) {
-            String thisVersion = this.versionParts.get(i);
-            String otherVersion = version.getVersionParts().get(i);
+            final String thisVersion = this.versionParts.get(i);
+            final String otherVersion = version.getVersionParts().get(i);
             if (i >= 3) {
                 if (thisVersion.compareToIgnoreCase(otherVersion) >= 0) {
                     ret = false;
