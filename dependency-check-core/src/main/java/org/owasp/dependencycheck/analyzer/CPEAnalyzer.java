@@ -286,14 +286,12 @@ public class CPEAnalyzer implements Analyzer {
             return ret;
         } catch (ParseException ex) {
             final String msg = String.format("Unable to parse: %s", searchString);
-            Logger.getLogger(CPEAnalyzer.class.getName()).log(Level.WARNING,
-                    "An error occured querying the CPE data. See the log for more details.");
-            Logger.getLogger(CPEAnalyzer.class.getName()).log(Level.INFO, msg, ex);
+            LOGGER.log(Level.WARNING, "An error occured querying the CPE data. See the log for more details.");
+            LOGGER.log(Level.INFO, msg, ex);
         } catch (IOException ex) {
             final String msg = String.format("IO Error with search string: %s", searchString);
-            Logger.getLogger(CPEAnalyzer.class.getName()).log(Level.WARNING,
-                    "An error occured reading CPE data. See the log for more details.");
-            Logger.getLogger(CPEAnalyzer.class.getName()).log(Level.INFO, msg, ex);
+            LOGGER.log(Level.WARNING, "An error occured reading CPE data. See the log for more details.");
+            LOGGER.log(Level.INFO, msg, ex);
         }
         return null;
     }
