@@ -25,9 +25,11 @@ import java.util.Set;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.junit.Assert;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.data.cpe.AbstractDatabaseTestCase;
 import org.owasp.dependencycheck.data.cpe.IndexEntry;
+import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 
@@ -184,6 +186,30 @@ public class CPEAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
     }
 
     /**
+     * Test of determineIdentifiers method, of class CPEAnalyzer.
+     *
+     * @throws Exception is thrown when an exception occurs
+     */
+    @Test
+    public void testDetermineIdentifiers() throws Exception {
+        Dependency openssl = new Dependency();
+        openssl.getVendorEvidence().addEvidence("test", "vendor", "openssl", Confidence.HIGHEST);
+        openssl.getProductEvidence().addEvidence("test", "product", "openssl", Confidence.HIGHEST);
+        openssl.getVersionEvidence().addEvidence("test", "version", "1.0.1c", Confidence.HIGHEST);
+
+        CPEAnalyzer instance = new CPEAnalyzer();
+        instance.open();
+        instance.determineIdentifiers(openssl, "openssl", "openssl", Confidence.HIGHEST);
+        instance.close();
+
+        String expResult = "cpe:/a:openssl:openssl:1.0.1c";
+        Identifier expIdentifier = new Identifier("cpe", expResult, expResult);
+
+        assertTrue(openssl.getIdentifiers().contains(expIdentifier));
+
+    }
+
+    /**
      * Test of searchCPE method, of class CPEAnalyzer.
      *
      * @throws Exception is thrown when an exception occurs
@@ -193,12 +219,12 @@ public class CPEAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
         String vendor = "apache software foundation";
         String product = "struts 2 core";
         String version = "2.1.2";
-        String expResult = "cpe:/a:apache:struts:2.1.2";
+        String expVendor = "apache";
+        String expProduct = "struts";
 
         CPEAnalyzer instance = new CPEAnalyzer();
         instance.open();
 
-        //TODO - yeah, not a very good test as the results are the same with or without weighting...
         Set<String> productWeightings = new HashSet<String>(1);
         productWeightings.add("struts2");
 
@@ -206,9 +232,16 @@ public class CPEAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
         vendorWeightings.add("apache");
 
         List<IndexEntry> result = instance.searchCPE(vendor, product, productWeightings, vendorWeightings);
-        //TODO fix this assert
-        //Assert.assertEquals(expResult, result.get(0).getName());
-
         instance.close();
+
+        boolean found = false;
+        for (IndexEntry entry : result) {
+            if (expVendor.equals(entry.getVendor()) && expProduct.equals(entry.getProduct())) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("apache:struts was not identified", found);
+
     }
 }

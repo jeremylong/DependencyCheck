@@ -400,7 +400,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      * @return <code>true</code> if the leftPath is the shortest; otherwise <code>false</code>
      */
     protected boolean firstPathIsShortest(String left, String right) {
-        final String leftPath = right.replace('\\', '/');
+        final String leftPath = left.replace('\\', '/');
         final String rightPath = right.replace('\\', '/');
 
         final int leftCount = countChar(leftPath, '/');
