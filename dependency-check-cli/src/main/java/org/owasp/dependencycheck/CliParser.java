@@ -134,14 +134,20 @@ public final class CliParser {
      * @throws FileNotFoundException is thrown if the path being validated does not exist.
      */
     private void validatePathExists(String path, String argumentName) throws FileNotFoundException {
-        if (!path.contains("*") && !path.contains("?")) {
+        if (path == null) {
+            final String msg = String.format("Invalid '%s' argument: null", argumentName);
+            throw new FileNotFoundException(msg);
+        } else if (!path.contains("*") && !path.contains("?")) {
             final File f = new File(path);
             if (!f.exists()) {
                 isValid = false;
                 final String msg = String.format("Invalid '%s' argument: '%s'", argumentName, path);
                 throw new FileNotFoundException(msg);
             }
-        } // else { // TODO add a validation for *.zip extensions rather then relying on the engine to validate it.
+        } else if (path.startsWith("//") || path.startsWith("\\\\")) {
+            final String msg = String.format("Invalid '%s' argument: '%s'%nUnable to scan paths that start with '//'.", argumentName, path);
+            throw new FileNotFoundException(msg);
+        }
     }
 
     /**
