@@ -3,7 +3,7 @@ package org.owasp.dependencycheck.analyzer;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
-import org.owasp.dependencycheck.data.solr.SolrSearch;
+import org.owasp.dependencycheck.data.central.CentralSearch;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
@@ -12,6 +12,7 @@ import org.owasp.dependencycheck.utils.Settings;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,11 +20,11 @@ import java.util.logging.Logger;
 /**
  * Created by colezlaw on 10/9/14.
  */
-public class SolrAnalyzer extends AbstractFileTypeAnalyzer {
+public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(SolrAnalyzer.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CentralAnalyzer.class.getName());
 
     /**
      * The name of the analyzer.
@@ -49,7 +50,7 @@ public class SolrAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The searcher itself.
      */
-    private SolrSearch searcher;
+    private CentralSearch searcher;
 
     /**
      * Determine whether to enable this analyzer or not.
@@ -91,7 +92,7 @@ public class SolrAnalyzer extends AbstractFileTypeAnalyzer {
         if (isEnabled()) {
             final String searchUrl = Settings.getString(Settings.KEYS.ANALYZER_SOLR_URL);
             LOGGER.fine(String.format("Solr Analyzer URL: %s", searchUrl));
-            searcher = new SolrSearch(new URL(searchUrl));
+            searcher = new CentralSearch(new URL(searchUrl));
         }
     }
 
@@ -143,20 +144,16 @@ public class SolrAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException {
-        if (errorFlag) {
+        if (errorFlag || !isEnabled()) {
             return;
         }
 
         try {
-            final MavenArtifact ma = searcher.searchSha1(dependency.getSha1sum());
-            if (ma.getGroupId() != null && !"".equals(ma.getGroupId())) {
-                dependency.getVendorEvidence().addEvidence("solr", "groupid", ma.getGroupId(), Confidence.HIGH);
-            }
-            if (ma.getArtifactId() != null && !"".equals(ma.getArtifactId())) {
-                dependency.getProductEvidence().addEvidence("solr", "artifactid", ma.getArtifactId(), Confidence.HIGH);
-            }
-            if (ma.getVersion() != null && !"".equals(ma.getVersion())) {
-                dependency.getVersionEvidence().addEvidence("solr", "version", ma.getVersion(), Confidence.HIGH);
+            final List<MavenArtifact> mas = searcher.searchSha1(dependency.getSha1sum());
+            final Confidence confidence = mas.size() > 1 ? Confidence.HIGH : Confidence.HIGHEST;
+            for (MavenArtifact ma : mas) {
+                LOGGER.fine(String.format("Central analyzer found artifact (%s) for dependency (%s)", ma.toString(), dependency.getFileName()));
+                dependency.addAsEvidence("central", ma, confidence);
             }
         } catch (IllegalArgumentException iae) {
             LOGGER.info(String.format("invalid sha1-hash on %s", dependency.getFileName()));

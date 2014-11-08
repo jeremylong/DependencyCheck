@@ -90,7 +90,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
     public boolean isEnabled() {
         /* Enable this analyzer ONLY if the Nexus URL has been set to something
            other than the default one (if it's the default one, we'll use the
-           solr one) and it's enabled by the user.
+           central one) and it's enabled by the user.
          */
         boolean retval = false;
         try {

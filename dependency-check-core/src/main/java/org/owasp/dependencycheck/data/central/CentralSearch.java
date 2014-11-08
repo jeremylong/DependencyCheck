@@ -1,19 +1,23 @@
-package org.owasp.dependencycheck.data.solr;
+package org.owasp.dependencycheck.data.central;
 
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.URLConnectionFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -21,7 +25,7 @@ import java.util.logging.Logger;
  *
  * @author colezlaw
  */
-public class SolrSearch {
+public class CentralSearch {
     /**
      * The URL for the Solr service
      */
@@ -35,7 +39,7 @@ public class SolrSearch {
     /**
      * Used for logging.
      */
-    private static final Logger LOGGER = Logger.getLogger(SolrSearch.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CentralSearch.class.getName());
 
     /**
      * Determines whether we'll continue using the analyzer. If there's some sort
@@ -49,7 +53,7 @@ public class SolrSearch {
      * @param rootURL the URL of the repository on which searches should execute.
      *                Only parameters are added to this (so it should end in /select)
      */
-    public SolrSearch(URL rootURL) {
+    public CentralSearch(URL rootURL) {
         this.rootURL = rootURL;
         try {
             if (null != Settings.getString(Settings.KEYS.PROXY_SERVER)
@@ -74,7 +78,7 @@ public class SolrSearch {
      * @throws IOException if it's unable to connect to the specified repository or if
      *         the specified artifact is not found.
      */
-    public MavenArtifact searchSha1(String sha1) throws IOException {
+    public List<MavenArtifact> searchSha1(String sha1) throws IOException {
         if (null == sha1 || !sha1.matches("^[0-9A-Fa-f]{40}$")) {
             throw new IllegalArgumentException("Invalid SHA1 format");
         }
@@ -107,13 +111,19 @@ public class SolrSearch {
                 if ("0".equals(numFound)) {
                     missing = true;
                 } else {
-                    final String g = xpath.evaluate("/response/result/doc[1]/str[@name='g']", doc);
-                    LOGGER.finest(String.format("GroupId: %s", g));
-                    final String a = xpath.evaluate("/response/result/doc[1]/str[@name='a']", doc);
-                    LOGGER.finest(String.format("ArtifactId: %s", a));
-                    final String v = xpath.evaluate("/response/result/doc[1]/str[@name='v']", doc);
-                    LOGGER.finest(String.format("Version: %s", v));
-                    return new MavenArtifact(g, a, v);
+                    ArrayList<MavenArtifact> result = new ArrayList<MavenArtifact>();
+                    NodeList docs = (NodeList)xpath.evaluate("/response/result/doc", doc, XPathConstants.NODESET);
+                    for (int i = 0; i < docs.getLength(); i++) {
+                        final String g = xpath.evaluate("./str[@name='g']", docs.item(i));
+                        LOGGER.finest(String.format("GroupId: %s", g));
+                        final String a = xpath.evaluate("./str[@name='a']", docs.item(i));
+                        LOGGER.finest(String.format("ArtifactId: %s", a));
+                        final String v = xpath.evaluate("./str[@name='v']", docs.item(i));
+                        LOGGER.finest(String.format("Version: %s", v));
+                        result.add(new MavenArtifact(g, a, v, url.toString()));
+                    }
+
+                    return result;
                 }
             } catch (Throwable e) {
                 // Anything else is jacked up XML stuff that we really can't recover
