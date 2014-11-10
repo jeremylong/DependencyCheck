@@ -341,10 +341,12 @@ public class Dependency implements Serializable, Comparable<Dependency> {
                     found = true;
                     i.setConfidence(Confidence.HIGHEST);
                     i.setUrl(mavenArtifact.getArtifactUrl());
+                    LOGGER.fine(String.format("Already found identifier %s. Confidence set to highest", i.getValue()));
                     break;
                 }
             }
             if (!found) {
+                LOGGER.fine(String.format("Adding new maven identifier %s", mavenArtifact.toString()));
                 this.addIdentifier("maven", mavenArtifact.toString(), mavenArtifact.getArtifactUrl(), Confidence.HIGHEST);
             }
         }
