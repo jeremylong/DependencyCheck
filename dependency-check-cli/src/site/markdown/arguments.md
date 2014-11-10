@@ -25,7 +25,7 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Paramete
        | \-\-zipExtensions     | \<strings\>     | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
        | \-\-disableJar        |                 | Sets whether Jar Analyzer will be used.                                     | false
        | \-\-disableNexus      |                 | Sets whether Nexus Analyzer will be used.                                   | false
-       | \-\-nexus             | \<url\>         | The url to the Nexus Pro Server. If not set, the Nexus Analyzer will be disabled. | &nbsp;
+       | \-\-nexus             | \<url\>         | The url to the Nexus Pro Server. If not set the Nexus Analyzer will be disabled. | &nbsp;
        | \-\-nexusUsesProxy    | \<true\|false\> | Whether or not the defined proxy should be used when connecting to Nexus.   | true
        | \-\-disableNuspec     |                 | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.            | false
        | \-\-disableAssembly   |                 | Sets whether or not the .NET Assembly Analyzer should be used.              | false
