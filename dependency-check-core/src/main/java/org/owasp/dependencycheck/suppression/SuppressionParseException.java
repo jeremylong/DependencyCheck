@@ -27,11 +27,6 @@ import java.io.IOException;
 public class SuppressionParseException extends IOException {
 
     /**
-     * The serial version UID.
-     */
-    private static final long serialVersionUID = 1L;
-
-    /**
      * Creates a new SuppressionParseException.
      */
     public SuppressionParseException() {
@@ -50,7 +45,7 @@ public class SuppressionParseException extends IOException {
     /**
      * Creates a new SuppressionParseException.
      *
-     * @param ex the cause of the download failure.
+     * @param ex the cause of the parse exception
      */
     public SuppressionParseException(Throwable ex) {
         super(ex);
@@ -60,7 +55,7 @@ public class SuppressionParseException extends IOException {
      * Creates a new SuppressionParseException.
      *
      * @param msg a message for the exception.
-     * @param ex the cause of the download failure.
+     * @param ex the cause of the parse exception
      */
     public SuppressionParseException(String msg, Throwable ex) {
         super(msg, ex);

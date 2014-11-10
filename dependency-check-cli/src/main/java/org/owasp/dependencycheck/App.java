@@ -21,15 +21,19 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.cli.ParseException;
-import org.owasp.dependencycheck.cli.CliParser;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.org.apache.tools.ant.DirectoryScanner;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.LogUtils;
 import org.owasp.dependencycheck.utils.Settings;
@@ -93,7 +97,11 @@ public class App {
             cli.printVersionInfo();
         } else if (cli.isRunScan()) {
             populateSettings(cli);
-            runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles());
+            try {
+                runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles(), cli.getExcludeList());
+            } catch (InvalidScanPathException ex) {
+                Logger.getLogger(App.class.getName()).log(Level.SEVERE, "An invalid scan path was detected; unable to scan '//*' paths");
+            }
         } else {
             cli.printHelp();
         }
@@ -106,18 +114,71 @@ public class App {
      * @param outputFormat the output format of the report
      * @param applicationName the application name for the report
      * @param files the files/directories to scan
+     * @param excludes the patterns for files/directories to exclude
+     *
+     * @throws InvalidScanPathException thrown if the path to scan starts with "//"
      */
-    private void runScan(String reportDirectory, String outputFormat, String applicationName, String[] files) {
-        Engine scanner = null;
+    private void runScan(String reportDirectory, String outputFormat, String applicationName, String[] files,
+            String[] excludes) throws InvalidScanPathException {
+        Engine engine = null;
         try {
-            scanner = new Engine();
-
-            for (String file : files) {
-                scanner.scan(file);
+            engine = new Engine();
+            List<String> antStylePaths = new ArrayList<String>();
+            if (excludes == null || excludes.length == 0) {
+                for (String file : files) {
+                    if (file.contains("*") || file.contains("?")) {
+                        antStylePaths.add(file);
+                    } else {
+                        engine.scan(file);
+                    }
+                }
+            } else {
+                antStylePaths = Arrays.asList(files);
             }
 
-            scanner.analyzeDependencies();
-            final List<Dependency> dependencies = scanner.getDependencies();
+            final Set<File> paths = new HashSet<File>();
+            for (String file : antStylePaths) {
+                final DirectoryScanner scanner = new DirectoryScanner();
+                String include = file.replace('\\', '/');
+                File baseDir;
+
+                if (include.startsWith("//")) {
+                    throw new InvalidScanPathException("Unable to scan paths specified by //");
+                } else if (include.startsWith("./")) {
+                    baseDir = new File(".");
+                    include = include.substring(2);
+                } else if (include.startsWith("/")) {
+                    baseDir = new File("/");
+                    include = include.substring(1);
+                } else if (include.contains("/")) {
+                    final int pos = include.indexOf('/');
+                    final String tmp = include.substring(0, pos);
+                    if (tmp.contains("*") || tmp.contains("?")) {
+                        baseDir = new File(".");
+                    } else {
+                        baseDir = new File(tmp);
+                        include = include.substring(pos + 1);
+                    }
+                } else { //no path info - must just be a file in the working directory
+                    baseDir = new File(".");
+                }
+                scanner.setBasedir(baseDir);
+                scanner.setIncludes(include);
+                if (excludes != null && excludes.length > 0) {
+                    scanner.addExcludes(excludes);
+                }
+                scanner.scan();
+                if (scanner.getIncludedFilesCount() > 0) {
+                    for (String s : scanner.getIncludedFiles()) {
+                        final File f = new File(baseDir, s);
+                        paths.add(f);
+                    }
+                }
+            }
+            engine.scan(paths);
+
+            engine.analyzeDependencies();
+            final List<Dependency> dependencies = engine.getDependencies();
             DatabaseProperties prop = null;
             CveDB cve = null;
             try {
@@ -131,7 +192,7 @@ public class App {
                     cve.close();
                 }
             }
-            final ReportGenerator report = new ReportGenerator(applicationName, dependencies, scanner.getAnalyzers(), prop);
+            final ReportGenerator report = new ReportGenerator(applicationName, dependencies, engine.getAnalyzers(), prop);
             try {
                 report.generateReports(reportDirectory, outputFormat);
             } catch (IOException ex) {
@@ -145,8 +206,8 @@ public class App {
             LOGGER.log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
             LOGGER.log(Level.FINE, "", ex);
         } finally {
-            if (scanner != null) {
-                scanner.cleanup();
+            if (engine != null) {
+                engine.cleanup();
             }
         }
     }

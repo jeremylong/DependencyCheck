@@ -78,7 +78,7 @@ public final class FileUtils {
         if (!org.apache.commons.io.FileUtils.deleteQuietly(file)) {
             success = false;
             final String msg = String.format("Failed to delete file: %s; attempting to delete on exit.", file.getPath());
-            LOGGER.log(Level.FINE, msg);
+            LOGGER.log(Level.INFO, msg);
             file.deleteOnExit();
         }
         return success;

@@ -110,7 +110,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     static {
         final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
         if (additionalZipExt != null) {
-            final HashSet ext = new HashSet<String>(Arrays.asList(additionalZipExt));
+            final HashSet<String> ext = new HashSet<String>(Arrays.asList(additionalZipExt));
             ZIPPABLES.addAll(ext);
         }
         EXTENSIONS.addAll(ZIPPABLES);
@@ -186,7 +186,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         if (tempFileLocation != null && tempFileLocation.exists()) {
             LOGGER.log(Level.FINE, "Attempting to delete temporary files");
             final boolean success = FileUtils.delete(tempFileLocation);
-            if (!success && tempFileLocation != null & tempFileLocation.exists()) {
+            if (!success && tempFileLocation != null && tempFileLocation.exists() && tempFileLocation.list().length > 0) {
                 LOGGER.log(Level.WARNING, "Failed to delete some temporary files, see the log for more details");
             }
         }
@@ -221,9 +221,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 final String displayPath = String.format("%s%s",
                         dependency.getFilePath(),
                         d.getActualFilePath().substring(tmpDir.getAbsolutePath().length()));
-                final String displayName = String.format("%s%s%s",
+                final String displayName = String.format("%s: %s",
                         dependency.getFileName(),
-                        File.separator,
                         d.getFileName());
                 d.setFilePath(displayPath);
                 d.setFileName(displayName);

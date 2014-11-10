@@ -266,10 +266,14 @@ public class SuppressionRule {
         return gav != null;
     }
 
+    /**
+     * A flag indicating whether or not the suppression rule is a core/base rule that should not be included in the
+     * resulting report in the "suppressed" section.
+     */
     private boolean base;
 
     /**
-     * Get the value of base
+     * Get the value of base.
      *
      * @return the value of base
      */
@@ -278,7 +282,7 @@ public class SuppressionRule {
     }
 
     /**
-     * Set the value of base
+     * Set the value of base.
      *
      * @param base new value of base
      */

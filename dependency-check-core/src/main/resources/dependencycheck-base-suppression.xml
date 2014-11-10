@@ -11,6 +11,15 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        This suppresses false positives identified on spring security.
+        ]]></notes>
+        <filePath regex="true">.*spring-security-[^\\/]*\.jar$</filePath>
+        <cpe>cpe:/a:mod_security:mod_security</cpe>
+        <cpe>cpe:/a:springsource:spring_framework</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         This suppreses additional false positives for the xstream library that occur because spring has a copy of this library.
             com.springsource.com.thoughtworks.xstream-1.3.1.jar
         ]]></notes>
@@ -35,7 +44,22 @@
         <notes><![CDATA[
         Suppresses false positives on Jersey core client.
         ]]></notes>
-        <gav regex="true">org\.glassfish\.jersey\.core:jersey-(client|common):.*</gav>
+        <gav regex="true">(com\.sun\.jersey|org\.glassfish\.jersey\.core):jersey-(client|common):.*</gav>
         <cpe>cpe:/a:oracle:glassfish</cpe>
+        <cpe>cpe:/a:oracle:oracle_client</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+        Suppresses false positives on the grizzly-framework
+        ]]></notes>
+        <gav regex="true">org\.glassfish\.grizzly:grizzly-framework:.*</gav>
+        <cpe>cpe:/a:oracle:glassfish</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+        Suppresses false positives on the grizzly-framework
+        ]]></notes>
+        <gav regex="true">org\.forgerock\.opendj:opendj-ldap-sdk:.*</gav>
+        <cpe>cpe:/a:ldap_project:ldap</cpe>
     </suppress>
 </suppressions>

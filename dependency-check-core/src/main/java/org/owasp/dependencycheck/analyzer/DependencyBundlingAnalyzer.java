@@ -112,7 +112,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                     while (subIterator.hasNext()) {
                         final Dependency nextDependency = subIterator.next();
                         if (hashesMatch(dependency, nextDependency)) {
-                            if (isCore(dependency, nextDependency)) {
+                            if (firstPathIsShortest(dependency.getFilePath(), nextDependency.getFilePath())) {
                                 mergeDependencies(dependency, nextDependency, dependenciesToRemove);
                             } else {
                                 mergeDependencies(nextDependency, dependency, dependenciesToRemove);
@@ -389,5 +389,44 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             return nextDependency.getIdentifiers().containsAll(dependency.getIdentifiers());
         }
         return false;
+    }
+
+    /**
+     * Determines which path is shortest; if path lengths are equal then we use compareTo of the string method to
+     * determine if the first path is smaller.
+     *
+     * @param left the first path to compare
+     * @param right the second path to compare
+     * @return <code>true</code> if the leftPath is the shortest; otherwise <code>false</code>
+     */
+    protected boolean firstPathIsShortest(String left, String right) {
+        final String leftPath = left.replace('\\', '/');
+        final String rightPath = right.replace('\\', '/');
+
+        final int leftCount = countChar(leftPath, '/');
+        final int rightCount = countChar(rightPath, '/');
+        if (leftCount == rightCount) {
+            return leftPath.compareTo(rightPath) <= 0;
+        } else {
+            return leftCount < rightCount;
+        }
+    }
+
+    /**
+     * Counts the number of times the character is present in the string.
+     *
+     * @param string the string to count the characters in
+     * @param c the character to count
+     * @return the number of times the character is present in the string
+     */
+    private int countChar(String string, char c) {
+        int count = 0;
+        final int max = string.length();
+        for (int i = 0; i < max; i++) {
+            if (c == string.charAt(i)) {
+                count++;
+            }
+        }
+        return count;
     }
 }

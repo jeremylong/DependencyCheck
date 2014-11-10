@@ -62,11 +62,11 @@ public class Engine implements Serializable {
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-    private transient final EnumMap<AnalysisPhase, List<Analyzer>> analyzers;
+    private final transient EnumMap<AnalysisPhase, List<Analyzer>> analyzers;
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-    private transient final Set<FileTypeAnalyzer> fileTypeAnalyzers;
+    private final transient Set<FileTypeAnalyzer> fileTypeAnalyzers;
     /**
      * The ClassLoader to use when dynamically loading Analyzer and Update services.
      */
@@ -74,7 +74,7 @@ public class Engine implements Serializable {
     /**
      * The Logger for use throughout the class.
      */
-    private transient static final Logger LOGGER = Logger.getLogger(Engine.class.getName());
+    private static final transient Logger LOGGER = Logger.getLogger(Engine.class.getName());
 
     /**
      * Creates a new Engine.
@@ -168,142 +168,171 @@ public class Engine implements Serializable {
      * Scans an array of files or directories. If a directory is specified, it will be scanned recursively. Any
      * dependencies identified are added to the dependency collection.
      *
-     * @since v0.3.2.5
+     * @param paths an array of paths to files or directories to be analyzed
+     * @return the list of dependencies scanned
      *
-     * @param paths an array of paths to files or directories to be analyzed.
+     * @since v0.3.2.5
      */
-    public void scan(String[] paths) {
+    public List<Dependency> scan(String[] paths) {
+        final List<Dependency> deps = new ArrayList<Dependency>();
         for (String path : paths) {
             final File file = new File(path);
-            scan(file);
+            final List<Dependency> d = scan(file);
+            if (d != null) {
+                deps.addAll(d);
+            }
         }
+        return deps;
     }
 
     /**
      * Scans a given file or directory. If a directory is specified, it will be scanned recursively. Any dependencies
      * identified are added to the dependency collection.
      *
-     * @param path the path to a file or directory to be analyzed.
+     * @param path the path to a file or directory to be analyzed
+     * @return the list of dependencies scanned
      */
-    public void scan(String path) {
-        if (path.matches("^.*[\\/]\\*\\.[^\\/:*|?<>\"]+$")) {
-            final String[] parts = path.split("\\*\\.");
-            final String[] ext = new String[]{parts[parts.length - 1]};
-            final File dir = new File(path.substring(0, path.length() - ext[0].length() - 2));
-            if (dir.isDirectory()) {
-                final List<File> files = (List<File>) org.apache.commons.io.FileUtils.listFiles(dir, ext, true);
-                scan(files);
-            } else {
-                final String msg = String.format("Invalid file path provided to scan '%s'", path);
-                LOGGER.log(Level.SEVERE, msg);
-            }
-        } else {
-            final File file = new File(path);
-            scan(file);
-        }
+    public List<Dependency> scan(String path) {
+        final File file = new File(path);
+        return scan(file);
     }
 
     /**
      * Scans an array of files or directories. If a directory is specified, it will be scanned recursively. Any
      * dependencies identified are added to the dependency collection.
      *
-     * @since v0.3.2.5
-     *
      * @param files an array of paths to files or directories to be analyzed.
+     * @return the list of dependencies
+     *
+     * @since v0.3.2.5
      */
-    public void scan(File[] files) {
+    public List<Dependency> scan(File[] files) {
+        final List<Dependency> deps = new ArrayList<Dependency>();
         for (File file : files) {
-            scan(file);
+            final List<Dependency> d = scan(file);
+            if (d != null) {
+                deps.addAll(d);
+            }
         }
+        return deps;
     }
 
     /**
      * Scans a list of files or directories. If a directory is specified, it will be scanned recursively. Any
      * dependencies identified are added to the dependency collection.
      *
-     * @since v0.3.2.5
+     * @param files a set of paths to files or directories to be analyzed
+     * @return the list of dependencies scanned
      *
-     * @param files a set of paths to files or directories to be analyzed.
+     * @since v0.3.2.5
      */
-    public void scan(Set<File> files) {
+    public List<Dependency> scan(Set<File> files) {
+        final List<Dependency> deps = new ArrayList<Dependency>();
         for (File file : files) {
-            scan(file);
+            final List<Dependency> d = scan(file);
+            if (d != null) {
+                deps.addAll(d);
+            }
         }
+        return deps;
     }
 
     /**
      * Scans a list of files or directories. If a directory is specified, it will be scanned recursively. Any
      * dependencies identified are added to the dependency collection.
      *
-     * @since v0.3.2.5
+     * @param files a set of paths to files or directories to be analyzed
+     * @return the list of dependencies scanned
      *
-     * @param files a set of paths to files or directories to be analyzed.
+     * @since v0.3.2.5
      */
-    public void scan(List<File> files) {
+    public List<Dependency> scan(List<File> files) {
+        final List<Dependency> deps = new ArrayList<Dependency>();
         for (File file : files) {
-            scan(file);
+            final List<Dependency> d = scan(file);
+            if (d != null) {
+                deps.addAll(d);
+            }
         }
+        return deps;
     }
 
     /**
      * Scans a given file or directory. If a directory is specified, it will be scanned recursively. Any dependencies
      * identified are added to the dependency collection.
      *
+     * @param file the path to a file or directory to be analyzed
+     * @return the list of dependencies scanned
+     *
      * @since v0.3.2.4
      *
-     * @param file the path to a file or directory to be analyzed.
      */
-    public void scan(File file) {
+    public List<Dependency> scan(File file) {
         if (file.exists()) {
             if (file.isDirectory()) {
-                scanDirectory(file);
+                return scanDirectory(file);
             } else {
-                scanFile(file);
+                final Dependency d = scanFile(file);
+                if (d != null) {
+                    final List<Dependency> deps = new ArrayList<Dependency>();
+                    deps.add(d);
+                    return deps;
+                }
             }
         }
+        return null;
     }
 
     /**
      * Recursively scans files and directories. Any dependencies identified are added to the dependency collection.
      *
-     * @param dir the directory to scan.
+     * @param dir the directory to scan
+     * @return the list of Dependency objects scanned
      */
-    protected void scanDirectory(File dir) {
+    protected List<Dependency> scanDirectory(File dir) {
         final File[] files = dir.listFiles();
+        final List<Dependency> deps = new ArrayList<Dependency>();
         if (files != null) {
             for (File f : files) {
                 if (f.isDirectory()) {
-                    scanDirectory(f);
+                    final List<Dependency> d = scanDirectory(f);
+                    if (d != null) {
+                        deps.addAll(d);
+                    }
                 } else {
-                    scanFile(f);
+                    final Dependency d = scanFile(f);
+                    deps.add(d);
                 }
             }
         }
+        return deps;
     }
 
     /**
      * Scans a specified file. If a dependency is identified it is added to the dependency collection.
      *
-     * @param file The file to scan.
+     * @param file The file to scan
+     * @return the scanned dependency
      */
-    protected void scanFile(File file) {
+    protected Dependency scanFile(File file) {
         if (!file.isFile()) {
             final String msg = String.format("Path passed to scanFile(File) is not a file: %s. Skipping the file.", file.toString());
             LOGGER.log(Level.FINE, msg);
-            return;
+            return null;
         }
         final String fileName = file.getName();
         final String extension = FileUtils.getFileExtension(fileName);
+        Dependency dependency = null;
         if (extension != null) {
             if (supportsExtension(extension)) {
-                final Dependency dependency = new Dependency(file);
+                dependency = new Dependency(file);
                 dependencies.add(dependency);
             }
         } else {
-            final String msg = String.format("No file extension found on file '%s'. The file was not analyzed.",
-                    file.toString());
+            final String msg = String.format("No file extension found on file '%s'. The file was not analyzed.", file.toString());
             LOGGER.log(Level.FINEST, msg);
         }
+        return dependency;
     }
 
     /**
@@ -439,8 +468,7 @@ public class Engine implements Serializable {
             } catch (UpdateException ex) {
                 LOGGER.log(Level.WARNING,
                         "Unable to update Cached Web DataSource, using local data instead. Results may not include recent vulnerabilities.");
-                LOGGER.log(Level.FINE,
-                        String.format("Unable to update details for %s", source.getClass().getName()), ex);
+                LOGGER.log(Level.FINE, String.format("Unable to update details for %s", source.getClass().getName()), ex);
             }
         }
     }

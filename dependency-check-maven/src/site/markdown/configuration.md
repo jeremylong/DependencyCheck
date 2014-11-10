@@ -23,17 +23,17 @@ Note, that specific analyzers will automatically disable themselves if no file
 types that they support are detected - so specifically disabling them may not
 be needed.
 
-Property                | Description                        | Default Value
-------------------------|------------------------------------|------------------
-archiveAnalyzerEnabled  | Sets whether the Archive Analyzer will be used.                    | true
+Property                | Description                                                               | Default Value
+------------------------|---------------------------------------------------------------------------|------------------
+archiveAnalyzerEnabled  | Sets whether the Archive Analyzer will be used.                           | true
 zipExtensions           | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
-jarAnalyzer             | Sets whether Jar Analyzer will be used.                            | true
-nexusAnalyzerEnabled    | Sets whether Nexus Analyzer will be used.                          | true
-nexusUrl                | Defines the Nexus URL. | https://repository.sonatype.org/service/local/
+jarAnalyzer             | Sets whether Jar Analyzer will be used.                                   | true
+nexusAnalyzerEnabled    | Sets whether Nexus Analyzer will be used.                                 | true
+nexusUrl                | Defines the Nexus Pro Server URL. If not set the Nexus Analyzer will be disabled. | &nbsp;
 nexusUsesProxy          | Whether or not the defined proxy should be used when connecting to Nexus. | true
-nuspecAnalyzerEnabled   | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.   | true
-assemblyAnalyzerEnabled | Sets whether or not the .NET Assembly Analyzer should be used.     | true
-pathToMono              | The path to Mono for .NET assembly analysis on non-windows systems | &nbsp;
+nuspecAnalyzerEnabled   | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.          | true
+assemblyAnalyzerEnabled | Sets whether or not the .NET Assembly Analyzer should be used.            | true
+pathToMono              | The path to Mono for .NET assembly analysis on non-windows systems.       | &nbsp;
 
 Advanced Configuration
 ====================

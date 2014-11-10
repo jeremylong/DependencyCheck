@@ -23,7 +23,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
-import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -40,26 +39,6 @@ public class EngineIntegrationTest extends BaseTest {
 
     @After
     public void tearDown() {
-    }
-
-    /**
-     * Test of scan method, of class Engine.
-     *
-     * @throws Exception is thrown when an exception occurs.
-     */
-    @Test
-    public void testScan() throws Exception {
-        String testClasses = "target/test-classes/*.zip";
-        boolean autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
-        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
-        Engine instance = new Engine();
-        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
-        instance.scan(testClasses);
-        assertTrue(instance.getDependencies().size() > 0);
-        for (Dependency d : instance.getDependencies()) {
-            assertTrue("non-zip file collected " + d.getFileName(), d.getFileName().toLowerCase().endsWith(".zip"));
-        }
-        instance.cleanup();
     }
 
     /**
@@ -81,8 +60,7 @@ public class EngineIntegrationTest extends BaseTest {
         cveDB.open();
         DatabaseProperties dbProp = cveDB.getDatabaseProperties();
         cveDB.close();
-        ReportGenerator rg = new ReportGenerator("DependencyCheck",
-                instance.getDependencies(), instance.getAnalyzers(), dbProp);
+        ReportGenerator rg = new ReportGenerator("DependencyCheck", instance.getDependencies(), instance.getAnalyzers(), dbProp);
         rg.generateReports("./target/", "ALL");
         instance.cleanup();
     }

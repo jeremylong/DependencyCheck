@@ -188,7 +188,9 @@ public class CPEAnalyzer implements Analyzer {
             if (!vendors.isEmpty() && !products.isEmpty()) {
                 final List<IndexEntry> entries = searchCPE(vendors, products, dependency.getProductEvidence().getWeighting(),
                         dependency.getVendorEvidence().getWeighting());
-
+                if (entries == null) {
+                    continue;
+                }
                 boolean identifierAdded = false;
                 for (IndexEntry e : entries) {
                     if (verifyEntry(e, dependency)) {
@@ -250,27 +252,24 @@ public class CPEAnalyzer implements Analyzer {
      * @param vendorWeightings a list of strings to use to add weighting factors to the vendor field
      * @param productWeightings Adds a list of strings that will be used to add weighting factors to the product search
      * @return a list of possible CPE values
-     * @throws CorruptIndexException when the Lucene index is corrupt
-     * @throws IOException when the Lucene index is not found
-     * @throws ParseException when the generated query is not valid
      */
     protected List<IndexEntry> searchCPE(String vendor, String product,
-            Set<String> vendorWeightings, Set<String> productWeightings)
-            throws CorruptIndexException, IOException, ParseException {
+            Set<String> vendorWeightings, Set<String> productWeightings) {
+
         final ArrayList<IndexEntry> ret = new ArrayList<IndexEntry>(MAX_QUERY_RESULTS);
 
         final String searchString = buildSearch(vendor, product, vendorWeightings, productWeightings);
         if (searchString == null) {
             return ret;
         }
-
-        final TopDocs docs = cpe.search(searchString, MAX_QUERY_RESULTS);
-        for (ScoreDoc d : docs.scoreDocs) {
-            if (d.score >= 0.08) {
-                final Document doc = cpe.getDocument(d.doc);
-                final IndexEntry entry = new IndexEntry();
-                entry.setVendor(doc.get(Fields.VENDOR));
-                entry.setProduct(doc.get(Fields.PRODUCT));
+        try {
+            final TopDocs docs = cpe.search(searchString, MAX_QUERY_RESULTS);
+            for (ScoreDoc d : docs.scoreDocs) {
+                if (d.score >= 0.08) {
+                    final Document doc = cpe.getDocument(d.doc);
+                    final IndexEntry entry = new IndexEntry();
+                    entry.setVendor(doc.get(Fields.VENDOR));
+                    entry.setProduct(doc.get(Fields.PRODUCT));
 //                if (d.score < 0.08) {
 //                    System.out.print(entry.getVendor());
 //                    System.out.print(":");
@@ -278,13 +277,23 @@ public class CPEAnalyzer implements Analyzer {
 //                    System.out.print(":");
 //                    System.out.println(d.score);
 //                }
-                entry.setSearchScore(d.score);
-                if (!ret.contains(entry)) {
-                    ret.add(entry);
+                    entry.setSearchScore(d.score);
+                    if (!ret.contains(entry)) {
+                        ret.add(entry);
+                    }
                 }
             }
+            return ret;
+        } catch (ParseException ex) {
+            final String msg = String.format("Unable to parse: %s", searchString);
+            LOGGER.log(Level.WARNING, "An error occured querying the CPE data. See the log for more details.");
+            LOGGER.log(Level.INFO, msg, ex);
+        } catch (IOException ex) {
+            final String msg = String.format("IO Error with search string: %s", searchString);
+            LOGGER.log(Level.WARNING, "An error occured reading CPE data. See the log for more details.");
+            LOGGER.log(Level.INFO, msg, ex);
         }
-        return ret;
+        return null;
     }
 
     /**
@@ -489,10 +498,12 @@ public class CPEAnalyzer implements Analyzer {
      * @param dependency the Dependency being analyzed
      * @param vendor the vendor for the CPE being analyzed
      * @param product the product for the CPE being analyzed
+     * @param currentConfidence the current confidence being used during analysis
      * @return <code>true</code> if an identifier was added to the dependency; otherwise <code>false</code>
      * @throws UnsupportedEncodingException is thrown if UTF-8 is not supported
      */
-    private boolean determineIdentifiers(Dependency dependency, String vendor, String product, Confidence currentConfidence) throws UnsupportedEncodingException {
+    protected boolean determineIdentifiers(Dependency dependency, String vendor, String product,
+            Confidence currentConfidence) throws UnsupportedEncodingException {
         final Set<VulnerableSoftware> cpes = cve.getCPEs(vendor, product);
         DependencyVersion bestGuess = new DependencyVersion("-");
         Confidence bestGuessConf = null;

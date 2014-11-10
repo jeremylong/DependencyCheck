@@ -189,6 +189,14 @@ public final class Settings {
          */
         public static final String ANALYZER_NEXUS_PROXY = "analyzer.nexus.proxy";
         /**
+         * The properties key for whether the Central analyzer is enabled.
+         */
+        public static final String ANALYZER_CENTRAL_ENABLED = "analyzer.central.enabled";
+        /**
+         * The properties key for the Central search URL.
+         */
+        public static final String ANALYZER_CENTRAL_URL = "analyzer.central.url";
+        /**
          * The path to mono, if available.
          */
         public static final String ANALYZER_ASSEMBLY_MONO_PATH = "analyzer.assembly.mono.path";

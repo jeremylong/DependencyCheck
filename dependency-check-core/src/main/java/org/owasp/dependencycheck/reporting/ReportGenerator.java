@@ -167,15 +167,28 @@ public class ReportGenerator {
      */
     public void generateReports(String outputDir, String outputFormat) throws IOException, Exception {
         final String format = outputFormat.toUpperCase();
+        final String pathToCheck = outputDir.toLowerCase();
         if (format.matches("^(XML|HTML|VULN|ALL)$")) {
             if ("XML".equalsIgnoreCase(format)) {
-                generateReports(outputDir, Format.XML);
+                if (pathToCheck.endsWith(".xml")) {
+                    generateReport("XmlReport", outputDir);
+                } else {
+                    generateReports(outputDir, Format.XML);
+                }
             }
             if ("HTML".equalsIgnoreCase(format)) {
-                generateReports(outputDir, Format.HTML);
+                if (pathToCheck.endsWith(".html") || pathToCheck.endsWith(".htm")) {
+                    generateReport("HtmlReport", outputDir);
+                } else {
+                    generateReports(outputDir, Format.HTML);
+                }
             }
             if ("VULN".equalsIgnoreCase(format)) {
-                generateReports(outputDir, Format.VULN);
+                if (pathToCheck.endsWith(".html") || pathToCheck.endsWith(".htm")) {
+                    generateReport("VulnReport", outputDir);
+                } else {
+                    generateReports(outputDir, Format.VULN);
+                }
             }
             if ("ALL".equalsIgnoreCase(format)) {
                 generateReports(outputDir, Format.ALL);

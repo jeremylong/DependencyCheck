@@ -73,7 +73,7 @@ public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
 
         //strip any path information that may get added by ArchiveAnalyzer, etc.
-        final File f = new File(dependency.getFileName());
+        final File f = dependency.getActualFile();
         String fileName = f.getName();
 
         //remove file extension

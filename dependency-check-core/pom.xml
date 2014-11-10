@@ -20,7 +20,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>1.2.5</version>
+        <version>1.2.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>dependency-check-core</artifactId>
@@ -400,6 +400,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 <version>3.1</version>
                 <configuration>
                     <showDeprecation>false</showDeprecation>
+                    <compilerArgument>-Xlint:unchecked</compilerArgument>
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
@@ -463,50 +464,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
             <version>1.7</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity-tools</artifactId>
-            <version>2.0</version>
-            <!-- very limited use of the velocity-tools, not all of the dependencies are needed-->
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-chain</groupId>
-                    <artifactId>commons-chain</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-validator</groupId>
-                    <artifactId>commons-validator</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>dom4j</groupId>
-                    <artifactId>dom4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>sslext</groupId>
-                    <artifactId>sslext</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.struts</groupId>
-                    <artifactId>struts-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>antlr</groupId>
-                    <artifactId>antlr</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.struts</groupId>
-                    <artifactId>struts-taglib</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.struts</groupId>
-                    <artifactId>struts-tiles</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -751,6 +708,21 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <scope>provided</scope>
                     <optional>true</optional>
                 </dependency>
+                <dependency>
+                    <groupId>com.sun.jersey</groupId>
+                    <artifactId>jersey-client</artifactId>
+                    <version>1.11.1</version>
+                    <scope>provided</scope>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>com.sun.faces</groupId>
+                    <artifactId>jsf-impl</artifactId>
+                    <version>2.2.8-02</version>
+                    <scope>provided</scope>
+                    <optional>true</optional>
+                </dependency>
+
             </dependencies>
         </profile>
     </profiles>

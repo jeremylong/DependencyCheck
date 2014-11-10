@@ -29,10 +29,12 @@ import java.util.logging.Logger;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class CweDB {
+
     /**
      * The Logger.
      */
     private static final Logger LOGGER = Logger.getLogger(CweDB.class.getName());
+
     /**
      * Empty private constructor as this is a utility class.
      */
@@ -55,7 +57,9 @@ public final class CweDB {
             final String filePath = "data/cwe.hashmap.serialized";
             final InputStream input = CweDB.class.getClassLoader().getResourceAsStream(filePath);
             oin = new ObjectInputStream(input);
-            return (HashMap<String, String>) oin.readObject();
+            @SuppressWarnings("unchecked")
+            final HashMap<String, String> ret = (HashMap<String, String>) oin.readObject();
+            return ret;
         } catch (ClassNotFoundException ex) {
             LOGGER.log(Level.WARNING, "Unable to load CWE data. This should not be an issue.");
             LOGGER.log(Level.FINE, null, ex);
