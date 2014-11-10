@@ -22,9 +22,9 @@ public class CentralSearchTest extends BaseTest {
 
     @Before
     public void setUp() throws Exception {
-        String solrUrl = Settings.getString(Settings.KEYS.ANALYZER_SOLR_URL);
-        LOGGER.fine(solrUrl);
-        searcher = new CentralSearch(new URL(solrUrl));
+        String centralUrl = Settings.getString(Settings.KEYS.ANALYZER_CENTRAL_URL);
+        LOGGER.fine(centralUrl);
+        searcher = new CentralSearch(new URL(centralUrl));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -54,7 +54,7 @@ public class CentralSearchTest extends BaseTest {
         searcher.searchSha1("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     }
 
-    // This test should give us multiple results back from Solr
+    // This test should give us multiple results back from Central
     @Test
     public void testMultipleReturns() throws Exception {
         List<MavenArtifact> ma = searcher.searchSha1("94A9CE681A42D0352B3AD22659F67835E560D107");

@@ -21,13 +21,13 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * Class of methods to search Maven Central via Solr.
+ * Class of methods to search Maven Central via Central.
  *
  * @author colezlaw
  */
 public class CentralSearch {
     /**
-     * The URL for the Solr service
+     * The URL for the Central service
      */
     private final URL rootURL;
 
@@ -55,22 +55,17 @@ public class CentralSearch {
      */
     public CentralSearch(URL rootURL) {
         this.rootURL = rootURL;
-        try {
-            if (null != Settings.getString(Settings.KEYS.PROXY_SERVER)
-                    && Settings.getBoolean(Settings.KEYS.ANALYZER_SOLR_PROXY)) {
-                useProxy = true;
-                LOGGER.fine("Using proxy");
-            } else {
-                useProxy = false;
-                LOGGER.fine("Not using proxy");
-            }
-        } catch (InvalidSettingException ise) {
+        if (null != Settings.getString(Settings.KEYS.PROXY_SERVER)) {
+            useProxy = true;
+            LOGGER.fine("Using proxy");
+        } else {
             useProxy = false;
+            LOGGER.fine("Not using proxy");
         }
     }
 
     /**
-     * Searches the configured Solr URL for the given sha1 hash. If the artifact is found, a
+     * Searches the configured Central URL for the given sha1 hash. If the artifact is found, a
      * <code>MavenArtifact</code> is populated with the GAV.
      *
      * @param sha1 the SHA-1 hash string for which to search
@@ -85,7 +80,7 @@ public class CentralSearch {
 
         final URL url = new URL(rootURL + String.format("?q=1:\"%s\"&wt=xml", sha1));
 
-        LOGGER.info(String.format("Searching Solr url %s", url.toString()));
+        LOGGER.info(String.format("Searching Central url %s", url.toString()));
 
         // Determine if we need to use a proxy. The rules:
         // 1) If the proxy is set, AND the setting is set to true, use the proxy
@@ -132,10 +127,10 @@ public class CentralSearch {
             }
 
             if (missing) {
-                throw new FileNotFoundException("Artifact not found in Solr");
+                throw new FileNotFoundException("Artifact not found in Central");
             }
         } else {
-            final String msg = String.format("Could not connect to Solr received response code: %d %s",
+            final String msg = String.format("Could not connect to Central received response code: %d %s",
                     conn.getResponseCode(), conn.getResponseMessage());
             LOGGER.fine(msg);
             throw new IOException(msg);

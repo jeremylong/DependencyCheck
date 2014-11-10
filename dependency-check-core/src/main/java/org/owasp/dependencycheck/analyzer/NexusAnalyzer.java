@@ -52,7 +52,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  */
 public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
     /**
-     * The default URL - this will be used by the SolrAnalyzer to determine whether to enable this.
+     * The default URL - this will be used by the CentralAnalyzer to determine whether to enable this.
      */
     public static final String DEFAULT_URL = "https://repository.sonatype.org/service/local/";
 

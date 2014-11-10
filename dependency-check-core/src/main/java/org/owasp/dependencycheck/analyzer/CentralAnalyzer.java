@@ -29,7 +29,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The name of the analyzer.
      */
-   private static final String ANALYZER_NAME = "Solr Analyzer";
+   private static final String ANALYZER_NAME = "Central Analyzer";
 
     /**
      * The phase in which this analyzer runs.
@@ -62,19 +62,19 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
         boolean retval = false;
 
         try {
-            if (Settings.getBoolean(Settings.KEYS.ANALYZER_SOLR_ENABLED)) {
+            if (Settings.getBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED)) {
                 if (!Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED)
                         || NexusAnalyzer.DEFAULT_URL.equals(Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL))) {
-                    LOGGER.info("Enabling the Solr analyzer");
+                    LOGGER.info("Enabling the Central analyzer");
                     retval = true;
                 } else {
-                    LOGGER.info("Nexus analyzer is enabled, disabling Solr");
+                    LOGGER.info("Nexus analyzer is enabled, disabling Central");
                 }
             } else {
-                LOGGER.info("Solr analyzer disabled");
+                LOGGER.info("Central analyzer disabled");
             }
         } catch (InvalidSettingException ise) {
-            LOGGER.warning("Invalid setting. Disabling the Solr analyzer");
+            LOGGER.warning("Invalid setting. Disabling the Central analyzer");
         }
 
         return retval;
@@ -87,11 +87,11 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void initializeFileTypeAnalyzer() throws Exception {
-        LOGGER.fine("Initializing Solr analyzer");
-        LOGGER.fine(String.format("Solr analyzer enabled: %s", isEnabled()));
+        LOGGER.fine("Initializing Central analyzer");
+        LOGGER.fine(String.format("Central analyzer enabled: %s", isEnabled()));
         if (isEnabled()) {
-            final String searchUrl = Settings.getString(Settings.KEYS.ANALYZER_SOLR_URL);
-            LOGGER.fine(String.format("Solr Analyzer URL: %s", searchUrl));
+            final String searchUrl = Settings.getString(Settings.KEYS.ANALYZER_CENTRAL_URL);
+            LOGGER.fine(String.format("Central Analyzer URL: %s", searchUrl));
             searcher = new CentralSearch(new URL(searchUrl));
         }
     }
@@ -112,7 +112,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-        return Settings.KEYS.ANALYZER_SOLR_ENABLED;
+        return Settings.KEYS.ANALYZER_CENTRAL_ENABLED;
     }
 
     /**
@@ -160,7 +160,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (FileNotFoundException fnfe) {
             LOGGER.fine(String.format("Artifact not found in repository: '%s", dependency.getFileName()));
         } catch (IOException ioe) {
-            LOGGER.log(Level.FINE, "Could not connect to Solr search", ioe);
+            LOGGER.log(Level.FINE, "Could not connect to Central search", ioe);
             errorFlag = true;
         }
     }
