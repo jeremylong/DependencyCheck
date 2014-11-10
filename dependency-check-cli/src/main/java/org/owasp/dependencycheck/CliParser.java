@@ -325,7 +325,7 @@ public final class CliParser {
                 .create();
 
         final Option nexusUrl = OptionBuilder.withArgName("url").hasArg().withLongOpt(ARGUMENT.NEXUS_URL)
-                .withDescription("The url to the Nexus Server.")
+                .withDescription("The url to the Nexus Pro Server.")
                 .create();
 
         final Option nexusUsesProxy = OptionBuilder.withArgName("true/false").hasArg().withLongOpt(ARGUMENT.NEXUS_USES_PROXY)
