@@ -135,16 +135,29 @@ public final class CliParser {
      */
     private void validatePathExists(String path, String argumentName) throws FileNotFoundException {
         if (path == null) {
+            isValid = false;
             final String msg = String.format("Invalid '%s' argument: null", argumentName);
             throw new FileNotFoundException(msg);
         } else if (!path.contains("*") && !path.contains("?")) {
             final File f = new File(path);
-            if (!f.exists()) {
-                isValid = false;
-                final String msg = String.format("Invalid '%s' argument: '%s'", argumentName, path);
-                throw new FileNotFoundException(msg);
+            if ("o".equals(argumentName.substring(0, 1).toLowerCase()) && !"ALL".equals(this.getReportFormat().toUpperCase())) {
+                final String checkPath = path.toLowerCase();
+                if (checkPath.endsWith(".html") || checkPath.endsWith(".xml") || checkPath.endsWith(".htm")) {
+                    if (!f.getParentFile().isDirectory()) {
+                        isValid = false;
+                        final String msg = String.format("Invalid '%s' argument: '%s'", argumentName, path);
+                        throw new FileNotFoundException(msg);
+                    }
+                }
+            } else {
+                if (!f.exists()) {
+                    isValid = false;
+                    final String msg = String.format("Invalid '%s' argument: '%s'", argumentName, path);
+                    throw new FileNotFoundException(msg);
+                }
             }
         } else if (path.startsWith("//") || path.startsWith("\\\\")) {
+            isValid = false;
             final String msg = String.format("Invalid '%s' argument: '%s'%nUnable to scan paths that start with '//'.", argumentName, path);
             throw new FileNotFoundException(msg);
         }
@@ -202,8 +215,9 @@ public final class CliParser {
                 .withDescription("A property file to load.")
                 .create(ARGUMENT.PROP_SHORT);
 
-        final Option out = OptionBuilder.withArgName("folder").hasArg().withLongOpt(ARGUMENT.OUT)
-                .withDescription("The folder to write reports to. This defaults to the current directory.")
+        final Option out = OptionBuilder.withArgName("path").hasArg().withLongOpt(ARGUMENT.OUT)
+                .withDescription("The folder to write reports to. This defaults to the current directory. "
+                        + "It is possible to set this to a specific file name if the format argument is not set to ALL.")
                 .create(ARGUMENT.OUT_SHORT);
 
         final Option outputFormat = OptionBuilder.withArgName("format").hasArg().withLongOpt(ARGUMENT.OUTPUT_FORMAT)
