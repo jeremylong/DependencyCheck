@@ -1,7 +1,6 @@
 package org.owasp.dependencycheck.data.central;
 
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
-import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.URLConnectionFactory;
 import org.w3c.dom.Document;
@@ -26,6 +25,7 @@ import java.util.logging.Logger;
  * @author colezlaw
  */
 public class CentralSearch {
+
     /**
      * The URL for the Central service
      */
@@ -42,16 +42,16 @@ public class CentralSearch {
     private static final Logger LOGGER = Logger.getLogger(CentralSearch.class.getName());
 
     /**
-     * Determines whether we'll continue using the analyzer. If there's some sort
-     * of HTTP failure, we'll disable the analyzer.
+     * Determines whether we'll continue using the analyzer. If there's some sort of HTTP failure, we'll disable the
+     * analyzer.
      */
     private boolean isEnabled = true;
 
     /**
      * Creates a NexusSearch for the given repository URL.
      *
-     * @param rootURL the URL of the repository on which searches should execute.
-     *                Only parameters are added to this (so it should end in /select)
+     * @param rootURL the URL of the repository on which searches should execute. Only parameters are added to this (so
+     * it should end in /select)
      */
     public CentralSearch(URL rootURL) {
         this.rootURL = rootURL;
@@ -70,8 +70,8 @@ public class CentralSearch {
      *
      * @param sha1 the SHA-1 hash string for which to search
      * @return the populated Maven GAV.
-     * @throws IOException if it's unable to connect to the specified repository or if
-     *         the specified artifact is not found.
+     * @throws IOException if it's unable to connect to the specified repository or if the specified artifact is not
+     * found.
      */
     public List<MavenArtifact> searchSha1(String sha1) throws IOException {
         if (null == sha1 || !sha1.matches("^[0-9A-Fa-f]{40}$")) {
@@ -80,7 +80,7 @@ public class CentralSearch {
 
         final URL url = new URL(rootURL + String.format("?q=1:\"%s\"&wt=xml", sha1));
 
-        LOGGER.info(String.format("Searching Central url %s", url.toString()));
+        LOGGER.fine(String.format("Searching Central url %s", url.toString()));
 
         // Determine if we need to use a proxy. The rules:
         // 1) If the proxy is set, AND the setting is set to true, use the proxy
@@ -107,7 +107,7 @@ public class CentralSearch {
                     missing = true;
                 } else {
                     ArrayList<MavenArtifact> result = new ArrayList<MavenArtifact>();
-                    NodeList docs = (NodeList)xpath.evaluate("/response/result/doc", doc, XPathConstants.NODESET);
+                    NodeList docs = (NodeList) xpath.evaluate("/response/result/doc", doc, XPathConstants.NODESET);
                     for (int i = 0; i < docs.getLength(); i++) {
                         final String g = xpath.evaluate("./str[@name='g']", docs.item(i));
                         LOGGER.finest(String.format("GroupId: %s", g));
