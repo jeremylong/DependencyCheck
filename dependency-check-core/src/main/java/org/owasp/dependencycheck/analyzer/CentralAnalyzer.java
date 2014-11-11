@@ -52,6 +52,9 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private CentralSearch searcher;
 
+    /**
+     * Field indicating if the analyzer is enabled.
+     */
     private boolean enabled = checkEnabled();
 
     /**
@@ -64,6 +67,11 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
         return enabled;
     }
 
+    /**
+     * Determines if this analyzer is enabled
+     *
+     * @return <code>true</code> if the analyzer is enabled; otherwise <code>false</code>
+     */
     private boolean checkEnabled() {
         boolean retval = false;
 

@@ -79,8 +79,16 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private NexusSearch searcher;
 
+    /**
+     * Field indicating if the analyzer is enabled.
+     */
     private boolean enabled = checkEnabled();
 
+    /**
+     * Determines if this analyzer is enabled
+     *
+     * @return <code>true</code> if the analyzer is enabled; otherwise <code>false</code>
+     */
     private boolean checkEnabled() {
         /* Enable this analyzer ONLY if the Nexus URL has been set to something
          other than the default one (if it's the default one, we'll use the
