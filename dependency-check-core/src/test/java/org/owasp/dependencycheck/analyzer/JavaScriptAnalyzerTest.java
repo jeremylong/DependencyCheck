@@ -38,7 +38,7 @@ public class JavaScriptAnalyzerTest extends BaseTest {
     @Test
     public void testGetSupportedExtensions() {
         JavaScriptAnalyzer instance = new JavaScriptAnalyzer();
-        Set expResult = new HashSet<String>();
+        Set<String> expResult = new HashSet<String>();
         expResult.add("js");
         Set result = instance.getSupportedExtensions();
         assertEquals(expResult, result);
