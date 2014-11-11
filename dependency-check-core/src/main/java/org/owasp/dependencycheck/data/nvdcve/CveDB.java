@@ -731,7 +731,7 @@ public class CveDB {
      * @param previous a flag indicating if previous versions of the product are vulnerable
      * @return true if the identified version is affected, otherwise false
      */
-    private boolean isAffected(String vendor, String product, DependencyVersion identifiedVersion, String cpeId, String previous) {
+    protected boolean isAffected(String vendor, String product, DependencyVersion identifiedVersion, String cpeId, String previous) {
         boolean affected = false;
         final boolean isStruts = "apache".equals(vendor) && "struts".equals(product);
         final DependencyVersion v = parseDependencyVersion(cpeId);
