@@ -82,7 +82,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Field indicating if the analyzer is enabled.
      */
-    private boolean enabled = checkEnabled();
+    private final boolean enabled = checkEnabled();
 
     /**
      * Determines if this analyzer is enabled
