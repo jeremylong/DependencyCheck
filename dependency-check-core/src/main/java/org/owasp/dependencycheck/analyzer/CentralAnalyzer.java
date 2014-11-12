@@ -1,3 +1,20 @@
+/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ */
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.FileNotFoundException;
@@ -17,7 +34,10 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * Created by colezlaw on 10/9/14.
+ * Analyzer which will attempt to locate a dependency, and the GAV information, by querying Central for the dependency's
+ * SHA-1 digest.
+ *
+ * @author colezlaw
  */
 public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
 
@@ -45,7 +65,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      * The analyzer should be disabled if there are errors, so this is a flag to determine if such an error has
      * occurred.
      */
-    protected boolean errorFlag = false;
+    private boolean errorFlag = false;
 
     /**
      * The searcher itself.
@@ -55,7 +75,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Field indicating if the analyzer is enabled.
      */
-    private boolean enabled = checkEnabled();
+    private final boolean enabled = checkEnabled();
 
     /**
      * Determine whether to enable this analyzer or not.
@@ -68,7 +88,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Determines if this analyzer is enabled
+     * Determines if this analyzer is enabled.
      *
      * @return <code>true</code> if the analyzer is enabled; otherwise <code>false</code>
      */
@@ -90,14 +110,13 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (InvalidSettingException ise) {
             LOGGER.warning("Invalid setting. Disabling the Central analyzer");
         }
-
         return retval;
     }
 
     /**
      * Initializes the analyzer once before any analysis is performed.
      *
-     * @throws Exception if there's an error during initalization
+     * @throws Exception if there's an error during initialization
      */
     @Override
     public void initializeFileTypeAnalyzer() throws Exception {
