@@ -419,6 +419,12 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <version>4.3.1</version>
             <scope>test</scope>
         </dependency>
+        <!--dependency>
+            <groupId>org.jmockit</groupId>
+            <artifactId>jmockit</artifactId>
+            <version>1.12</version>
+            <scope>test</scope>
+        </dependency-->
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>annotations</artifactId>
