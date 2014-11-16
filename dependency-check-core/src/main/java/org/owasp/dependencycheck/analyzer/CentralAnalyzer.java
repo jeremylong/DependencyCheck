@@ -1,13 +1,21 @@
+/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ */
 package org.owasp.dependencycheck.analyzer;
-
-import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.data.nexus.MavenArtifact;
-import org.owasp.dependencycheck.data.central.CentralSearch;
-import org.owasp.dependencycheck.dependency.Confidence;
-import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.utils.InvalidSettingException;
-import org.owasp.dependencycheck.utils.Settings;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,11 +24,23 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.central.CentralSearch;
+import org.owasp.dependencycheck.data.nexus.MavenArtifact;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * Created by colezlaw on 10/9/14.
+ * Analyzer which will attempt to locate a dependency, and the GAV information, by querying Central for the dependency's
+ * SHA-1 digest.
+ *
+ * @author colezlaw
  */
 public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
+
     /**
      * The logger.
      */
@@ -29,7 +49,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The name of the analyzer.
      */
-   private static final String ANALYZER_NAME = "Central Analyzer";
+    private static final String ANALYZER_NAME = "Central Analyzer";
 
     /**
      * The phase in which this analyzer runs.
@@ -42,15 +62,20 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     private static final Set<String> SUPPORTED_EXTENSIONS = newHashSet("jar");
 
     /**
-     * The analyzer should be disabled if there are errors, so this is a flag
-     * to determine if such an error has occurred.
+     * The analyzer should be disabled if there are errors, so this is a flag to determine if such an error has
+     * occurred.
      */
-    protected boolean errorFlag = false;
+    private boolean errorFlag = false;
 
     /**
      * The searcher itself.
      */
     private CentralSearch searcher;
+
+    /**
+     * Field indicating if the analyzer is enabled.
+     */
+    private final boolean enabled = checkEnabled();
 
     /**
      * Determine whether to enable this analyzer or not.
@@ -59,6 +84,15 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * Determines if this analyzer is enabled.
+     *
+     * @return <code>true</code> if the analyzer is enabled; otherwise <code>false</code>
+     */
+    private boolean checkEnabled() {
         boolean retval = false;
 
         try {
@@ -68,7 +102,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                     LOGGER.info("Enabling the Central analyzer");
                     retval = true;
                 } else {
-                    LOGGER.info("Nexus analyzer is enabled, disabling Central");
+                    LOGGER.info("Nexus analyzer is enabled, disabling the Central Analyzer");
                 }
             } else {
                 LOGGER.info("Central analyzer disabled");
@@ -76,14 +110,13 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (InvalidSettingException ise) {
             LOGGER.warning("Invalid setting. Disabling the Central analyzer");
         }
-
         return retval;
     }
 
     /**
      * Initializes the analyzer once before any analysis is performed.
      *
-     * @throws Exception if there's an error during initalization
+     * @throws Exception if there's an error during initialization
      */
     @Override
     public void initializeFileTypeAnalyzer() throws Exception {
@@ -106,7 +139,8 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
         return ANALYZER_NAME;
     }
 
-    /** Returns the key used in the properties file to to reference the analyzer's enabled property.
+    /**
+     * Returns the key used in the properties file to to reference the analyzer's enabled property.
      *
      * @return the analyzer's enabled property setting key.
      */

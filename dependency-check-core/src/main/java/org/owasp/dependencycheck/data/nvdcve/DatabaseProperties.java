@@ -142,8 +142,8 @@ public class DatabaseProperties {
      *
      * @return a map of the database meta data
      */
-    public Map getMetaData() {
-        final TreeMap map = new TreeMap();
+    public Map<String, String> getMetaData() {
+        final TreeMap<String, String> map = new TreeMap<String, String>();
         for (Entry<Object, Object> entry : properties.entrySet()) {
             final String key = (String) entry.getKey();
             if (!"version".equals(key)) {
@@ -156,10 +156,10 @@ public class DatabaseProperties {
                         map.put(key, formatted);
                     } catch (Throwable ex) { //deliberately being broad in this catch clause
                         LOGGER.log(Level.FINE, "Unable to parse timestamp from DB", ex);
-                        map.put(key, entry.getValue());
+                        map.put(key, (String) entry.getValue());
                     }
                 } else {
-                    map.put(key, entry.getValue());
+                    map.put(key, (String) entry.getValue());
                 }
             }
         }

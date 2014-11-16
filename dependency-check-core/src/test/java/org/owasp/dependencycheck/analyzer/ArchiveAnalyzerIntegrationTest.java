@@ -40,7 +40,7 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
     @Test
     public void testGetSupportedExtensions() {
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
-        Set expResult = new HashSet<String>();
+        Set<String> expResult = new HashSet<String>();
         expResult.add("zip");
         expResult.add("war");
         expResult.add("ear");

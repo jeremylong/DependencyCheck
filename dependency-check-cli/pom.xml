@@ -20,7 +20,7 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>1.2.6-SNAPSHOT</version>
+        <version>1.2.6</version>
     </parent>
 
     <artifactId>dependency-check-cli</artifactId>
@@ -286,12 +286,12 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>appassembler-maven-plugin</artifactId>
-                <version>1.7</version>
+                <version>1.8.1</version>
                 <configuration>
                     <programs>
                         <program>
                             <mainClass>org.owasp.dependencycheck.App</mainClass>
-                            <name>dependency-check</name>
+                            <id>dependency-check</id>
                         </program>
                     </programs>
                     <assembleDirectory>${project.build.directory}/release</assembleDirectory>

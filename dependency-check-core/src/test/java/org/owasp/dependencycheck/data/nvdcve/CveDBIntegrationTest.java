@@ -19,9 +19,11 @@ package org.owasp.dependencycheck.data.nvdcve;
 
 import java.util.List;
 import java.util.Set;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
+import org.owasp.dependencycheck.utils.DependencyVersion;
 
 /**
  *
@@ -72,4 +74,21 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
             instance.close();
         }
     }
+
+    /**
+     * Test of isAffected method, of class CveDB.
+     */
+    @Test
+    public void testIsAffected() throws Exception {
+        String vendor = "openssl";
+        String product = "openssl";
+        DependencyVersion identifiedVersion = new DependencyVersion("1.0.1o");
+        String cpeId = "cpe:/a:openssl:openssl:1.0.1e";
+        String previous = "y";
+
+        CveDB instance = new CveDB();
+        assertFalse(instance.isAffected(vendor, product, identifiedVersion, cpeId, previous));
+
+    }
+
 }

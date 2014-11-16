@@ -24,7 +24,6 @@ import java.net.URL;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
@@ -33,8 +32,6 @@ import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
-
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * Analyzer which will attempt to locate a dependency on a Nexus service by SHA-1 digest of the dependency.
@@ -51,6 +48,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * @author colezlaw
  */
 public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
+
     /**
      * The default URL - this will be used by the CentralAnalyzer to determine whether to enable this.
      */
@@ -82,30 +80,44 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
     private NexusSearch searcher;
 
     /**
-     * Determine whether to enable this analyzer or not.
-     *
-     * @return whether the analyzer should be enabled
+     * Field indicating if the analyzer is enabled.
      */
-    @Override
-    public boolean isEnabled() {
+    private final boolean enabled = checkEnabled();
+
+    /**
+     * Determines if this analyzer is enabled
+     *
+     * @return <code>true</code> if the analyzer is enabled; otherwise <code>false</code>
+     */
+    private boolean checkEnabled() {
         /* Enable this analyzer ONLY if the Nexus URL has been set to something
-           other than the default one (if it's the default one, we'll use the
-           central one) and it's enabled by the user.
+         other than the default one (if it's the default one, we'll use the
+         central one) and it's enabled by the user.
          */
         boolean retval = false;
         try {
-            if ((! DEFAULT_URL.equals(Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL)))
-                && Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED)) {
+            if ((!DEFAULT_URL.equals(Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL)))
+                    && Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED)) {
                 LOGGER.info("Enabling Nexus analyzer");
                 retval = true;
             } else {
-                LOGGER.info("Nexus analyzer disabled");
+                LOGGER.info("Nexus analyzer disabled, using Central instead");
             }
         } catch (InvalidSettingException ise) {
             LOGGER.warning("Invalid setting. Disabling Nexus analyzer");
         }
 
         return retval;
+    }
+
+    /**
+     * Determine whether to enable this analyzer or not.
+     *
+     * @return whether the analyzer should be enabled
+     */
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
     /**
@@ -184,7 +196,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException {
-        if (! isEnabled()) {
+        if (!isEnabled()) {
             return;
         }
         try {

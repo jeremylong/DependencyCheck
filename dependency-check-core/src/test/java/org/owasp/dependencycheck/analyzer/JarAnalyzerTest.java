@@ -93,7 +93,7 @@ public class JarAnalyzerTest extends BaseTest {
     @Test
     public void testGetSupportedExtensions() {
         JarAnalyzer instance = new JarAnalyzer();
-        Set expResult = new HashSet();
+        Set<String> expResult = new HashSet<String>();
         expResult.add("jar");
         expResult.add("war");
         Set result = instance.getSupportedExtensions();

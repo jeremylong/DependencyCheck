@@ -54,6 +54,7 @@ import org.owasp.dependencycheck.utils.Pair;
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class CpeMemoryIndex {
+
     /**
      * The logger.
      */
@@ -160,7 +161,7 @@ public final class CpeMemoryIndex {
      */
     @SuppressWarnings("unchecked")
     private Analyzer createSearchingAnalyzer() {
-        final Map fieldAnalyzers = new HashMap();
+        final Map<String, Analyzer> fieldAnalyzers = new HashMap<String, Analyzer>();
         fieldAnalyzers.put(Fields.DOCUMENT_KEY, new KeywordAnalyzer());
         productSearchFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
         vendorSearchFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);

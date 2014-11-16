@@ -306,14 +306,14 @@ public class CveDB {
      * @throws DatabaseException thrown when there is an error retrieving the data from the DB
      */
     public Set<Pair<String, String>> getVendorProductList() throws DatabaseException {
-        final HashSet data = new HashSet<Pair<String, String>>();
+        final Set<Pair<String, String>> data = new HashSet<Pair<String, String>>();
         ResultSet rs = null;
         PreparedStatement ps = null;
         try {
             ps = getConnection().prepareStatement(SELECT_VENDOR_PRODUCT_LIST);
             rs = ps.executeQuery();
             while (rs.next()) {
-                data.add(new Pair(rs.getString(1), rs.getString(2)));
+                data.add(new Pair<String, String>(rs.getString(1), rs.getString(2)));
             }
         } catch (SQLException ex) {
             final String msg = "An unexpected SQL Exception occurred; please see the verbose log for more details.";
@@ -731,7 +731,7 @@ public class CveDB {
      * @param previous a flag indicating if previous versions of the product are vulnerable
      * @return true if the identified version is affected, otherwise false
      */
-    private boolean isAffected(String vendor, String product, DependencyVersion identifiedVersion, String cpeId, String previous) {
+    protected boolean isAffected(String vendor, String product, DependencyVersion identifiedVersion, String cpeId, String previous) {
         boolean affected = false;
         final boolean isStruts = "apache".equals(vendor) && "struts".equals(product);
         final DependencyVersion v = parseDependencyVersion(cpeId);

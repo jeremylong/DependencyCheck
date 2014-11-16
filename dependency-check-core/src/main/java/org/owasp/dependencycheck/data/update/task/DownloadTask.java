@@ -18,6 +18,9 @@
 package org.owasp.dependencycheck.data.update.task;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.Callable;
@@ -25,6 +28,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
+import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.update.NvdCveInfo;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
@@ -195,10 +200,18 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
                 LOGGER.log(Level.FINE, null, ex);
                 return null;
             }
+            if (url1.toExternalForm().endsWith(".xml.gz")) {
+                extractGzip(first);
+            }
+            if (url2.toExternalForm().endsWith(".xml.gz")) {
+                extractGzip(second);
+            }
 
             msg = String.format("Download Complete for NVD CVE - %s", nvdCveInfo.getId());
             LOGGER.log(Level.INFO, msg);
-
+            if (this.processorService == null) {
+                return null;
+            }
             final ProcessTask task = new ProcessTask(cveDB, this, settings);
             return this.processorService.submit(task);
 
@@ -234,6 +247,50 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
         } finally {
             if (second != null && (second.exists() || !deleted)) {
                 second.deleteOnExit();
+            }
+        }
+    }
+
+    /**
+     * Extracts the file contained in a gzip archive. The extracted file is placed in the exact same path as the file
+     * specified.
+     *
+     * @param file the archive file
+     * @throws FileNotFoundException thrown if the file does not exist
+     * @throws IOException thrown if there is an error extracting the file.
+     */
+    private void extractGzip(File file) throws FileNotFoundException, IOException {
+        final String originalPath = file.getPath();
+        File gzip = new File(originalPath + ".gz");
+        if (gzip.isFile()) {
+            gzip.delete();
+        }
+        if (!file.renameTo(gzip)) {
+            throw new IOException("Unable to rename '" + file.getPath() + "'");
+        }
+        final File newfile = new File(originalPath);
+
+        final byte[] buffer = new byte[4096];
+
+        GZIPInputStream cin = null;
+        FileOutputStream out = null;
+        try {
+            cin = new GZIPInputStream(new FileInputStream(gzip));
+            out = new FileOutputStream(newfile);
+
+            int len;
+            while ((len = cin.read(buffer)) > 0) {
+                out.write(buffer, 0, len);
+            }
+        } finally {
+            if (cin != null) {
+                cin.close();
+            }
+            if (out != null) {
+                out.close();
+            }
+            if (gzip.isFile()) {
+                FileUtils.deleteQuietly(gzip);
             }
         }
     }
