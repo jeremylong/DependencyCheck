@@ -260,26 +260,38 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
      * @throws IOException thrown if there is an error extracting the file.
      */
     private void extractGzip(File file) throws FileNotFoundException, IOException {
-        String originalPath = file.getPath();
+        final String originalPath = file.getPath();
         File gzip = new File(originalPath + ".gz");
         if (gzip.isFile()) {
             gzip.delete();
         }
-        file.renameTo(gzip);
-        file = new File(originalPath);
-
-        byte[] buffer = new byte[4096];
-
-        GZIPInputStream cin = new GZIPInputStream(new FileInputStream(gzip));
-
-        FileOutputStream out = new FileOutputStream(file);
-
-        int len;
-        while ((len = cin.read(buffer)) > 0) {
-            out.write(buffer, 0, len);
+        if (!file.renameTo(gzip)) {
+            throw new IOException("Unable to rename '" + file.getPath() + "'");
         }
-        cin.close();
-        out.close();
-        FileUtils.delete(gzip);
+        final File newfile = new File(originalPath);
+
+        final byte[] buffer = new byte[4096];
+
+        GZIPInputStream cin = null;
+        FileOutputStream out = null;
+        try {
+            cin = new GZIPInputStream(new FileInputStream(gzip));
+            out = new FileOutputStream(newfile);
+
+            int len;
+            while ((len = cin.read(buffer)) > 0) {
+                out.write(buffer, 0, len);
+            }
+        } finally {
+            if (cin != null) {
+                cin.close();
+            }
+            if (out != null) {
+                out.close();
+            }
+            if (gzip.isFile()) {
+                FileUtils.delete(gzip);
+            }
+        }
     }
 }
