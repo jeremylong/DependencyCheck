@@ -29,7 +29,7 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
-import org.apache.tools.ant.util.FileUtils;
+import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.update.NvdCveInfo;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
@@ -290,7 +290,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
                 out.close();
             }
             if (gzip.isFile()) {
-                FileUtils.delete(gzip);
+                FileUtils.deleteQuietly(gzip);
             }
         }
     }
