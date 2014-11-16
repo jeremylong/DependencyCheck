@@ -120,9 +120,11 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             // Try evacuating the error stream
             rdr = new BufferedReader(new InputStreamReader(proc.getErrorStream(), "UTF-8"));
             String line = null;
+            // CheckStyle:VisibilityModifier OFF
             while (rdr.ready() && (line = rdr.readLine()) != null) {
                 LOGGER.log(Level.WARNING, "analyzer.AssemblyAnalyzer.grokassembly.stderr", line);
             }
+            // CheckStyle:VisibilityModifier ON
             int rc = 0;
             doc = builder.parse(proc.getInputStream());
 
@@ -233,9 +235,11 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             final Process p = pb.start();
             // Try evacuating the error stream
             rdr = new BufferedReader(new InputStreamReader(p.getErrorStream(), "UTF-8"));
+            // CheckStyle:VisibilityModifier OFF
             while (rdr.ready() && rdr.readLine() != null) {
                 // We expect this to complain
             }
+            // CheckStyle:VisibilityModifier ON
             final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(p.getInputStream());
             final XPath xpath = XPathFactory.newInstance().newXPath();
             final String error = xpath.evaluate("/assembly/error", doc);
