@@ -101,7 +101,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.info("Enabling Nexus analyzer");
                 retval = true;
             } else {
-                LOGGER.info("Nexus analyzer disabled");
+                LOGGER.info("Nexus analyzer disabled, using Central instead");
             }
         } catch (InvalidSettingException ise) {
             LOGGER.warning("Invalid setting. Disabling Nexus analyzer");

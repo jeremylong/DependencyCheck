@@ -102,7 +102,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                     LOGGER.info("Enabling the Central analyzer");
                     retval = true;
                 } else {
-                    LOGGER.info("Nexus analyzer is enabled, disabling Central");
+                    LOGGER.info("Nexus analyzer is enabled, disabling the Central Analyzer");
                 }
             } else {
                 LOGGER.info("Central analyzer disabled");
