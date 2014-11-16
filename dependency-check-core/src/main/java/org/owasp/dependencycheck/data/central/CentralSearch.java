@@ -58,12 +58,6 @@ public class CentralSearch {
     private static final Logger LOGGER = Logger.getLogger(CentralSearch.class.getName());
 
     /**
-     * Determines whether we'll continue using the analyzer. If there's some sort of HTTP failure, we'll disable the
-     * analyzer.
-     */
-    private boolean isEnabled = true;
-
-    /**
      * Creates a NexusSearch for the given repository URL.
      *
      * @param rootURL the URL of the repository on which searches should execute. Only parameters are added to this (so
