@@ -140,6 +140,26 @@ public class ReportGenerator {
     /**
      * Generates the Dependency Reports for the identified dependencies.
      *
+     * @param outputStream the OutputStream to send the generated report to
+     * @param format the format the report should be written in
+     * @throws IOException is thrown when the template file does not exist
+     * @throws Exception is thrown if there is an error writing out the reports.
+     */
+    public void generateReports(OutputStream outputStream, Format format) throws IOException, Exception {
+        if (format == Format.XML || format == Format.ALL) {
+            generateReport("XmlReport", outputStream);
+        }
+        if (format == Format.HTML || format == Format.ALL) {
+            generateReport("HtmlReport", outputStream);
+        }
+        if (format == Format.VULN || format == Format.ALL) {
+            generateReport("VulnerabilityReport", outputStream);
+        }
+    }
+
+    /**
+     * Generates the Dependency Reports for the identified dependencies.
+     *
      * @param outputDir the path where the reports should be written
      * @param format the format the report should be written in
      * @throws IOException is thrown when the template file does not exist
@@ -202,11 +222,11 @@ public class ReportGenerator {
      * template file.
      *
      * @param templateName the name of the template to load.
-     * @param outFileName the filename and path to write the report to.
+     * @param outputStream the OutputStream to write the report to.
      * @throws IOException is thrown when the template file does not exist.
      * @throws Exception is thrown when an exception occurs.
      */
-    protected void generateReport(String templateName, String outFileName) throws IOException, Exception {
+    protected void generateReport(String templateName, OutputStream outputStream) throws IOException, Exception {
         InputStream input = null;
         String templatePath = null;
         final File f = new File(templateName);
@@ -229,18 +249,8 @@ public class ReportGenerator {
 
         final InputStreamReader reader = new InputStreamReader(input, "UTF-8");
         OutputStreamWriter writer = null;
-        OutputStream outputStream = null;
 
         try {
-            final File outDir = new File(outFileName).getParentFile();
-            if (!outDir.exists()) {
-                final boolean created = outDir.mkdirs();
-                if (!created) {
-                    throw new Exception("Unable to create directory '" + outDir.getAbsolutePath() + "'.");
-                }
-            }
-
-            outputStream = new FileOutputStream(outFileName);
             writer = new OutputStreamWriter(outputStream, "UTF-8");
 
             if (!engine.evaluate(context, writer, templatePath, reader)) {
@@ -269,4 +279,34 @@ public class ReportGenerator {
             }
         }
     }
+
+    /**
+     * Generates a report from a given Velocity Template. The template name provided can be the name of a template
+     * contained in the jar file, such as 'XmlReport' or 'HtmlReport', or the template name can be the path to a
+     * template file.
+     *
+     * @param templateName the name of the template to load.
+     * @param outFileName the filename and path to write the report to.
+     * @throws IOException is thrown when the template file does not exist.
+     * @throws Exception is thrown when an exception occurs.
+     */
+    protected void generateReport(String templateName, String outFileName) throws Exception {
+        final File outDir = new File(outFileName).getParentFile();
+        if (!outDir.exists()) {
+            final boolean created = outDir.mkdirs();
+            if (!created) {
+                throw new Exception("Unable to create directory '" + outDir.getAbsolutePath() + "'.");
+            }
+        }
+
+        OutputStream outputSteam = new FileOutputStream(outFileName);
+        generateReport(templateName, outputSteam);
+
+        try {
+            outputSteam.close();
+        } catch (IOException ex) {
+            LOGGER.log(Level.FINEST, null, ex);
+        }
+    }
+
 }

@@ -26,6 +26,15 @@ import java.io.Serializable;
 public class Identifier implements Serializable, Comparable<Identifier> {
 
     /**
+     * Default constructor. Should only be used for automatic class
+     * creation as is the case with many XML parsers (for the parsing
+     * of the Dependency-Check XML report). For all other use-cases,
+     * please use the non-default constructors.
+     */
+    public Identifier() {
+    }
+
+    /**
      * Constructs a new Identifier with the specified data.
      *
      * @param type the identifier type.
