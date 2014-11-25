@@ -701,6 +701,31 @@ public class CveDB {
     }
 
     /**
+     * Checks to see if data exists so that analysis can be performed.
+     *
+     * @return <code>true</code if data exists; otherwise <code>false</code>
+     */
+    public boolean dataExists() {
+        Statement cs = null;
+        ResultSet rs = null;
+        try {
+            cs = conn.createStatement();
+            rs = cs.executeQuery("SELECT COUNT(*) records FROM cpeEntry");
+            if (rs.next()) {
+                if (rs.getInt(1) > 0) {
+                    return true;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            DBUtils.closeResultSet(rs);
+            DBUtils.closeStatement(cs);
+        }
+        return false;
+    }
+
+    /**
      * It is possible that orphaned rows may be generated during database updates. This should be called after all
      * updates have been completed to ensure orphan entries are removed.
      */
