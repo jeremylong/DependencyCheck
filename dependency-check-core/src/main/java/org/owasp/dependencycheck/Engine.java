@@ -32,8 +32,6 @@ import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.AnalyzerService;
 import org.owasp.dependencycheck.analyzer.FileTypeAnalyzer;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.data.cpe.CpeMemoryIndex;
-import org.owasp.dependencycheck.data.cpe.IndexException;
 import org.owasp.dependencycheck.data.nvdcve.ConnectionFactory;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -513,22 +511,20 @@ public class Engine implements Serializable {
      * @throws DatabaseException thrown if there is an exception opening the database
      */
     private void ensureDataExists() throws NoDataException, DatabaseException {
-        final CpeMemoryIndex cpe = CpeMemoryIndex.getInstance();
+        //final CpeMemoryIndex cpe = CpeMemoryIndex.getInstance();
         final CveDB cve = new CveDB();
-
         try {
             cve.open();
-            cpe.open(cve);
-        } catch (IndexException ex) {
-            throw new NoDataException(ex.getMessage(), ex);
+            if (!cve.dataExists()) {
+                throw new NoDataException("No documents exist");
+            }
+//            cpe.open(cve);
+//        } catch (IndexException ex) {
+//            throw new NoDataException(ex.getMessage(), ex);
         } catch (DatabaseException ex) {
             throw new NoDataException(ex.getMessage(), ex);
         } finally {
             cve.close();
-        }
-        if (cpe.numDocs() <= 0) {
-            cpe.close();
-            throw new NoDataException("No documents exist");
         }
     }
 }
