@@ -338,7 +338,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             try {
                 fis.close();
             } catch (IOException ex) {
-                LOGGER.log(Level.FINEST, null, ex);
+                LOGGER.log(Level.FINE, null, ex);
             }
         }
     }
@@ -367,8 +367,10 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                     final File file = new File(destination, entry.getName());
                     final String ext = FileUtils.getFileExtension(file.getName());
                     if (engine.supportsExtension(ext)) {
+                        final String extracting = String.format("Extracting '%s'", file.getPath());
+                        LOGGER.fine(extracting);
                         BufferedOutputStream bos = null;
-                        FileOutputStream fos;
+                        FileOutputStream fos = null;
                         try {
                             final File parent = file.getParentFile();
                             if (!parent.isDirectory()) {
@@ -401,6 +403,13 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                                     LOGGER.log(Level.FINEST, null, ex);
                                 }
                             }
+                            if (fos != null) {
+                                try {
+                                    fos.close();
+                                } catch (IOException ex) {
+                                    LOGGER.log(Level.FINEST, null, ex);
+                                }
+                            }
                         }
                     }
                 }
@@ -428,6 +437,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws ArchiveExtractionException thrown if there is an exception decompressing the file
      */
     private void decompressFile(CompressorInputStream inputStream, File outputFile) throws ArchiveExtractionException {
+        final String msg = String.format("Decompressing '%s'", outputFile.getPath());
+        LOGGER.fine(msg);
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(outputFile);
