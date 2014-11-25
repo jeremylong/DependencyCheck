@@ -87,7 +87,9 @@ public class CveDB {
      * @throws DatabaseException thrown if there is an error opening the database connection
      */
     public final void open() throws DatabaseException {
-        conn = ConnectionFactory.getConnection();
+        if (!isOpen()) {
+            conn = ConnectionFactory.getConnection();
+        }
     }
 
     /**
