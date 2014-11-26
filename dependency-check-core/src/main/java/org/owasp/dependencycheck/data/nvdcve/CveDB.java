@@ -87,7 +87,9 @@ public class CveDB {
      * @throws DatabaseException thrown if there is an error opening the database connection
      */
     public final void open() throws DatabaseException {
-        conn = ConnectionFactory.getConnection();
+        if (!isOpen()) {
+            conn = ConnectionFactory.getConnection();
+        }
     }
 
     /**
@@ -698,6 +700,31 @@ public class CveDB {
             DBUtils.closeStatement(insertCpe);
             DBUtils.closeStatement(insertSoftware);
         }
+    }
+
+    /**
+     * Checks to see if data exists so that analysis can be performed.
+     *
+     * @return <code>true</code if data exists; otherwise <code>false</code>
+     */
+    public boolean dataExists() {
+        Statement cs = null;
+        ResultSet rs = null;
+        try {
+            cs = conn.createStatement();
+            rs = cs.executeQuery("SELECT COUNT(*) records FROM cpeEntry");
+            if (rs.next()) {
+                if (rs.getInt(1) > 0) {
+                    return true;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            DBUtils.closeResultSet(rs);
+            DBUtils.closeStatement(cs);
+        }
+        return false;
     }
 
     /**
