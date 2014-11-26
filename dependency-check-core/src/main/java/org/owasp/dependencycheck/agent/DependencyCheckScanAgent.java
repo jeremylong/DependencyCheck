@@ -441,6 +441,52 @@ public class DependencyCheckScanAgent {
     }
 
     /**
+     * Whether or not the Maven Central analyzer is enabled.
+     */
+    private boolean centralAnalyzerEnabled = true;
+
+    /**
+     * Get the value of centralAnalyzerEnabled.
+     *
+     * @return the value of centralAnalyzerEnabled
+     */
+    public boolean isCentralAnalyzerEnabled() {
+        return centralAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of centralAnalyzerEnabled.
+     *
+     * @param centralAnalyzerEnabled new value of centralAnalyzerEnabled
+     */
+    public void setCentralAnalyzerEnabled(boolean centralAnalyzerEnabled) {
+        this.centralAnalyzerEnabled = centralAnalyzerEnabled;
+    }
+
+    /**
+     * The URL of Maven Central.
+     */
+    private String centralUrl;
+
+    /**
+     * Get the value of centralUrl.
+     *
+     * @return the value of centralUrl
+     */
+    public String getCentralUrl() {
+        return centralUrl;
+    }
+
+    /**
+     * Set the value of centralUrl.
+     *
+     * @param centralUrl new value of centralUrl
+     */
+    public void setCentralUrl(String centralUrl) {
+        this.centralUrl = centralUrl;
+    }
+
+    /**
      * Whether or not the nexus analyzer is enabled.
      */
     private boolean nexusAnalyzerEnabled = true;
@@ -848,6 +894,10 @@ public class DependencyCheckScanAgent {
         }
         if (suppressionFile != null && !suppressionFile.isEmpty()) {
             Settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
+        }
+        Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
+        if (centralUrl != null && !centralUrl.isEmpty()) {
+            Settings.setString(Settings.KEYS.ANALYZER_CENTRAL_URL, centralUrl);
         }
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
         if (nexusUrl != null && !nexusUrl.isEmpty()) {
