@@ -55,7 +55,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     /**
      * A pattern for obtaining the first part of a filename.
      */
-    private static final Pattern STARTING_TEXT_PATTERN = Pattern.compile("^[a-zA-Z]*");
+    private static final Pattern STARTING_TEXT_PATTERN = Pattern.compile("^[a-zA-Z0-9]*");
     /**
      * a flag indicating if this analyzer has run. This analyzer only runs once.
      */
@@ -107,7 +107,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             //for (Dependency nextDependency : engine.getDependencies()) {
             while (mainIterator.hasNext()) {
                 final Dependency dependency = mainIterator.next();
-                if (mainIterator.hasNext()) {
+                if (mainIterator.hasNext() && !dependenciesToRemove.contains(dependency)) {
                     final ListIterator<Dependency> subIterator = engine.getDependencies().listIterator(mainIterator.nextIndex());
                     while (subIterator.hasNext()) {
                         final Dependency nextDependency = subIterator.next();
@@ -116,12 +116,16 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                                 mergeDependencies(dependency, nextDependency, dependenciesToRemove);
                             } else {
                                 mergeDependencies(nextDependency, dependency, dependenciesToRemove);
+                                break; //since we merged into the next dependency - skip forward to the next in mainIterator
                             }
                         } else if (isShadedJar(dependency, nextDependency)) {
                             if (dependency.getFileName().toLowerCase().endsWith("pom.xml")) {
-                                dependenciesToRemove.add(dependency);
+                                mergeDependencies(nextDependency, dependency, dependenciesToRemove);
+                                nextDependency.getRelatedDependencies().remove(dependency);
+                                break;
                             } else {
-                                dependenciesToRemove.add(nextDependency);
+                                mergeDependencies(dependency, nextDependency, dependenciesToRemove);
+                                nextDependency.getRelatedDependencies().remove(nextDependency);
                             }
                         } else if (cpeIdentifiersMatch(dependency, nextDependency)
                                 && hasSameBasePath(dependency, nextDependency)
@@ -131,6 +135,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                                 mergeDependencies(dependency, nextDependency, dependenciesToRemove);
                             } else {
                                 mergeDependencies(nextDependency, dependency, dependenciesToRemove);
+                                break; //since we merged into the next dependency - skip forward to the next in mainIterator
                             }
                         }
                     }
@@ -138,9 +143,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             }
             //removing dependencies here as ensuring correctness and avoiding ConcurrentUpdateExceptions
             // was difficult because of the inner iterator.
-            for (Dependency d : dependenciesToRemove) {
-                engine.getDependencies().remove(d);
-            }
+            engine.getDependencies().removeAll(dependenciesToRemove);
         }
     }
 
@@ -201,26 +204,24 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                 || dependency2 == null || dependency2.getFileName() == null) {
             return false;
         }
-        String fileName1 = dependency1.getFileName();
-        String fileName2 = dependency2.getFileName();
+        final String fileName1 = dependency1.getActualFile().getName();
+        final String fileName2 = dependency2.getActualFile().getName();
 
-        //update to deal with archive analyzer, the starting name maybe the same
-        // as this is incorrectly looking at the starting path
-        final File one = new File(fileName1);
-        final File two = new File(fileName2);
-        final String oneParent = one.getParent();
-        final String twoParent = two.getParent();
-        if (oneParent != null) {
-            if (oneParent.equals(twoParent)) {
-                fileName1 = one.getName();
-                fileName2 = two.getName();
-            } else {
-                return false;
-            }
-        } else if (twoParent != null) {
-            return false;
-        }
-
+//        //REMOVED because this is attempting to duplicate what is in the hasSameBasePath function.
+//        final File one = new File(fileName1);
+//        final File two = new File(fileName2);
+//        final String oneParent = one.getParent();
+//        final String twoParent = two.getParent();
+//        if (oneParent != null) {
+//            if (oneParent.equals(twoParent)) {
+//                fileName1 = one.getName();
+//                fileName2 = two.getName();
+//            } else {
+//                return false;
+//            }
+//        } else if (twoParent != null) {
+//            return false;
+//        }
         //version check
         final DependencyVersion version1 = DependencyVersionUtil.parseVersion(fileName1);
         final DependencyVersion version2 = DependencyVersionUtil.parseVersion(fileName2);
@@ -267,9 +268,11 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
         }
         if (cpeCount1 > 0 && cpeCount1 == cpeCount2) {
             for (Identifier i : dependency1.getIdentifiers()) {
-                matches |= dependency2.getIdentifiers().contains(i);
-                if (!matches) {
-                    break;
+                if ("cpe".equals(i.getType())) {
+                    matches |= dependency2.getIdentifiers().contains(i);
+                    if (!matches) {
+                        break;
+                    }
                 }
             }
         }
@@ -338,6 +341,10 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                 || !rightName.contains("core") && leftName.contains("core")
                 || !rightName.contains("kernel") && leftName.contains("kernel")) {
             returnVal = true;
+//        } else if (leftName.matches(".*struts2\\-core.*") && rightName.matches(".*xwork\\-core.*")) {
+//            returnVal = true;
+//        } else if (rightName.matches(".*struts2\\-core.*") && leftName.matches(".*xwork\\-core.*")) {
+//            returnVal = false;
         } else {
             /*
              * considered splitting the names up and comparing the components,
