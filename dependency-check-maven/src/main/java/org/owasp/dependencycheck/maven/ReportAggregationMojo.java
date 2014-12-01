@@ -277,17 +277,16 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
             if (canGenerateNonAggregateReport()) {
                 executeNonAggregateReport(locale);
             }
-
-            if (canGenerateAggregateReport()) {
-                for (MavenProject proj : reactorProjects) {
-                    if (!isMultiModule(proj)) {
-                        continue;
-                    }
-                    executeAggregateReport(proj, locale);
-                }
-            }
         } finally {
             postGenerate();
+        }
+        if (canGenerateAggregateReport()) {
+            for (MavenProject proj : reactorProjects) {
+                if (!isMultiModule(proj)) {
+                    continue;
+                }
+                executeAggregateReport(proj, locale);
+            }
         }
     }
 
