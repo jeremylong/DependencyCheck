@@ -43,7 +43,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
-import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.DependencyBundlingAnalyzer;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
@@ -326,7 +325,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
      * @throws DatabaseException thrown if there is an exception connecting to the database
      */
     private Engine executeDependencyCheck(MavenProject project) throws DatabaseException {
-        final Engine localEngine = initializeEngine();
+        final Engine localEngine = initializeEngine(project);
 
         final Set<Artifact> artifacts = project.getArtifacts();
         for (Artifact a : artifacts) {
@@ -359,9 +358,9 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
      * @return a newly instantiated <code>Engine</code>
      * @throws DatabaseException thrown if there is a database exception
      */
-    private Engine initializeEngine() throws DatabaseException {
+    private Engine initializeEngine(MavenProject project) throws DatabaseException {
         populateSettings();
-        final Engine localEngine = new Engine();
+        final Engine localEngine = new Engine(project);
         return localEngine;
     }
 
@@ -594,7 +593,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
         final List<Dependency> deps = readDataFile();
         if (deps != null) {
             try {
-                engine = initializeEngine();
+                engine = initializeEngine(getProject());
                 engine.getDependencies().addAll(deps);
             } catch (DatabaseException ex) {
                 final String msg = String.format("An unrecoverable exception with the dependency-check initialization occured while scanning %s",
@@ -618,7 +617,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
         List<Dependency> deps = readDataFile(project);
         if (deps != null) {
             try {
-                engine = initializeEngine();
+                engine = initializeEngine(project);
                 engine.getDependencies().addAll(deps);
             } catch (DatabaseException ex) {
                 final String msg = String.format("An unrecoverable exception with the dependency-check initialization occured while scanning %s",

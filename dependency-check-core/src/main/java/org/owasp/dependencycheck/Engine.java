@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -51,7 +50,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class Engine implements Serializable {
+public class Engine {
 
     /**
      * The list of dependencies.
@@ -60,19 +59,32 @@ public class Engine implements Serializable {
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-    private final transient EnumMap<AnalysisPhase, List<Analyzer>> analyzers;
+    private EnumMap<AnalysisPhase, List<Analyzer>> analyzers;
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-    private final transient Set<FileTypeAnalyzer> fileTypeAnalyzers;
+    private Set<FileTypeAnalyzer> fileTypeAnalyzers;
     /**
      * The ClassLoader to use when dynamically loading Analyzer and Update services.
      */
-    private transient ClassLoader serviceClassLoader;
+    private ClassLoader serviceClassLoader;
     /**
      * The Logger for use throughout the class.
      */
-    private static final transient Logger LOGGER = Logger.getLogger(Engine.class.getName());
+    private static Logger LOGGER = Logger.getLogger(Engine.class.getName());
+    /**
+     * A flag indicating whether or not an update has been performed.
+     */
+    private boolean hasBeenUpdated = false;
+
+    /**
+     * Returns <code>true</code> if an update has been performed.
+     *
+     * @return <code>true</code> if an update has been performed; otherwise <code>false</code>.
+     */
+    public boolean getHasBeenUpdated() {
+        return this.hasBeenUpdated;
+    }
 
     /**
      * Creates a new Engine.
@@ -80,7 +92,26 @@ public class Engine implements Serializable {
      * @throws DatabaseException thrown if there is an error connecting to the database
      */
     public Engine() throws DatabaseException {
-        this(Thread.currentThread().getContextClassLoader());
+        initializeEngine();
+    }
+
+    /**
+     * Creates a new Engine.
+     *
+     * @param serviceClassLoader a reference the class loader being used
+     * @throws DatabaseException thrown if there is an error connecting to the database
+     */
+    public Engine(ClassLoader serviceClassLoader) throws DatabaseException {
+        initializeEngine(serviceClassLoader);
+    }
+
+    /**
+     * Initializes the engine.
+     *
+     * @throws DatabaseException thrown if there is an error connecting to the database
+     */
+    protected final void initializeEngine() throws DatabaseException {
+        initializeEngine(Thread.currentThread().getContextClassLoader());
     }
 
     /**
@@ -89,7 +120,7 @@ public class Engine implements Serializable {
      * @param serviceClassLoader the ClassLoader to use when dynamically loading Analyzer and Update services
      * @throws DatabaseException thrown if there is an error connecting to the database
      */
-    public Engine(ClassLoader serviceClassLoader) throws DatabaseException {
+    protected final void initializeEngine(ClassLoader serviceClassLoader) throws DatabaseException {
         this.dependencies = new ArrayList<Dependency>();
         this.analyzers = new EnumMap<AnalysisPhase, List<Analyzer>>(AnalysisPhase.class);
         this.fileTypeAnalyzers = new HashSet<FileTypeAnalyzer>();
@@ -157,9 +188,6 @@ public class Engine implements Serializable {
 
     public void setDependencies(List<Dependency> dependencies) {
         this.dependencies = dependencies;
-        //for (Dependency dependency: dependencies) {
-        //    dependencies.add(dependency);
-        //}
     }
 
     /**
@@ -365,7 +393,7 @@ public class Engine implements Serializable {
             final List<Analyzer> analyzerList = analyzers.get(phase);
 
             for (Analyzer a : analyzerList) {
-                initializeAnalyzer(a);
+                a = initializeAnalyzer(a);
 
                 /* need to create a copy of the collection because some of the
                  * analyzers may modify it. This prevents ConcurrentModificationExceptions.
@@ -420,8 +448,9 @@ public class Engine implements Serializable {
      * Initializes the given analyzer.
      *
      * @param analyzer the analyzer to initialize
+     * @return the initialized analyzer
      */
-    private void initializeAnalyzer(Analyzer analyzer) {
+    protected Analyzer initializeAnalyzer(Analyzer analyzer) {
         try {
             final String msg = String.format("Initializing %s", analyzer.getName());
             LOGGER.log(Level.FINE, msg);
@@ -436,6 +465,7 @@ public class Engine implements Serializable {
                 LOGGER.log(Level.FINEST, null, ex1);
             }
         }
+        return analyzer;
     }
 
     /**
@@ -443,7 +473,7 @@ public class Engine implements Serializable {
      *
      * @param analyzer the analyzer to close
      */
-    private void closeAnalyzer(Analyzer analyzer) {
+    protected void closeAnalyzer(Analyzer analyzer) {
         final String msg = String.format("Closing Analyzer '%s'", analyzer.getName());
         LOGGER.log(Level.FINE, msg);
         try {
@@ -457,6 +487,7 @@ public class Engine implements Serializable {
      * Cycles through the cached web data sources and calls update on all of them.
      */
     private void doUpdates() {
+        LOGGER.info("Checking for updates");
         final UpdateService service = new UpdateService(serviceClassLoader);
         final Iterator<CachedWebDataSource> iterator = service.getDataSources();
         while (iterator.hasNext()) {
@@ -469,6 +500,8 @@ public class Engine implements Serializable {
                 LOGGER.log(Level.FINE, String.format("Unable to update details for %s", source.getClass().getName()), ex);
             }
         }
+        this.hasBeenUpdated = true;
+        LOGGER.info("Updates complete");
     }
 
     /**
@@ -511,16 +544,12 @@ public class Engine implements Serializable {
      * @throws DatabaseException thrown if there is an exception opening the database
      */
     private void ensureDataExists() throws NoDataException, DatabaseException {
-        //final CpeMemoryIndex cpe = CpeMemoryIndex.getInstance();
         final CveDB cve = new CveDB();
         try {
             cve.open();
             if (!cve.dataExists()) {
                 throw new NoDataException("No documents exist");
             }
-//            cpe.open(cve);
-//        } catch (IndexException ex) {
-//            throw new NoDataException(ex.getMessage(), ex);
         } catch (DatabaseException ex) {
             throw new NoDataException(ex.getMessage(), ex);
         } finally {
