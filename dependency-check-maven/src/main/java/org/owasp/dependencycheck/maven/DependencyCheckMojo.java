@@ -95,7 +95,8 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     /**
      * The path to the verbose log.
      */
-    @Parameter(property = "logfile", defaultValue = "")
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "logFile", defaultValue = "")
     private String logFile = null;
     /**
      * The output directory. This generally maps to "target".
@@ -118,13 +119,13 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     private boolean autoUpdate = true;
     /**
      * The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this
-     * within the Site plugin unless the externalReport is set to true. Default is HTML.
+     * within the Site plug-in unless the externalReport is set to true. Default is HTML.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "format", defaultValue = "HTML", required = true)
     private String format = "HTML";
     /**
-     * The maven settings.
+     * The Maven settings.
      */
     @Parameter(property = "mavenSettings", defaultValue = "${settings}", required = false)
     private org.apache.maven.settings.Settings mavenSettings;
@@ -300,14 +301,6 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
 
     // </editor-fold>
     /**
-     * Constructs a new dependency-check-mojo.
-     */
-    public DependencyCheckMojo() {
-        final InputStream in = DependencyCheckMojo.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
-        LogUtils.prepareLogger(in, logFile);
-    }
-
-    /**
      * Executes the Dependency-Check on the dependent libraries.
      *
      * @return the Engine used to scan the dependencies.
@@ -325,7 +318,12 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
      * @throws DatabaseException thrown if there is an exception connecting to the database
      */
     private Engine executeDependencyCheck(MavenProject project) throws DatabaseException {
-        final Engine localEngine = initializeEngine(project);
+        final Engine localEngine;
+        if (engine == null) {
+            localEngine = initializeEngine(project);
+        } else {
+            localEngine = engine;
+        }
 
         final Set<Artifact> artifacts = project.getArtifacts();
         for (Artifact a : artifacts) {
@@ -530,6 +528,15 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
 
     //</editor-fold>
     /**
+     * Initialize the mojo.
+     */
+    @Override
+    protected void initialize() {
+        final InputStream in = DependencyCheckMojo.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
+        LogUtils.prepareLogger(in, logFile);
+    }
+
+    /**
      * Executes the dependency-check and generates the report.
      *
      * @throws MojoExecutionException if a maven exception occurs
@@ -589,11 +596,12 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
      */
     @Override
     protected void executeNonAggregateReport(Locale locale) throws MavenReportException {
-
         final List<Dependency> deps = readDataFile();
         if (deps != null) {
             try {
-                engine = initializeEngine(getProject());
+                if (engine != null) {
+                    engine = initializeEngine(getProject());
+                }
                 engine.getDependencies().addAll(deps);
             } catch (DatabaseException ex) {
                 final String msg = String.format("An unrecoverable exception with the dependency-check initialization occured while scanning %s",
@@ -617,7 +625,9 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
         List<Dependency> deps = readDataFile(project);
         if (deps != null) {
             try {
-                engine = initializeEngine(project);
+                if (engine != null) {
+                    engine = initializeEngine(project);
+                }
                 engine.getDependencies().addAll(deps);
             } catch (DatabaseException ex) {
                 final String msg = String.format("An unrecoverable exception with the dependency-check initialization occured while scanning %s",
@@ -935,4 +945,5 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
         return ret;
     }
     //</editor-fold>
+
 }
