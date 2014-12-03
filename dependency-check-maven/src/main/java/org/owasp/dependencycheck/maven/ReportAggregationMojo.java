@@ -139,6 +139,11 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
     }
 
     /**
+     * Initializes the mojo.
+     */
+    protected abstract void initialize();
+
+    /**
      * The collection of child projects.
      */
     private final Map<MavenProject, Set<MavenProject>> projectChildren = new HashMap<MavenProject, Set<MavenProject>>();
@@ -204,6 +209,7 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
      */
     public final void execute() throws MojoExecutionException, MojoFailureException {
         try {
+            initialize();
             preExecute();
             performExecute();
         } finally {
@@ -273,6 +279,7 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
      */
     public final void generate(Sink sink, Locale locale) throws MavenReportException {
         try {
+            initialize();
             preGenerate();
             if (canGenerateNonAggregateReport()) {
                 executeNonAggregateReport(locale);
