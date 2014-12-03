@@ -22,6 +22,7 @@ import org.apache.maven.project.MavenProject;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.CPEAnalyzer;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * A modified version of the core engine specifically designed to persist some data between multiple executions of a
@@ -44,21 +45,40 @@ public class Engine extends org.owasp.dependencycheck.Engine {
      */
     private MavenProject currentProject;
 
-    private Engine() throws DatabaseException {
-    }
-
+    /**
+     * Creates a new Engine to perform anyalsis on dependencies.
+     *
+     * @param project the current Maven project
+     * @throws DatabaseException thrown if there is an issue connecting to the database
+     */
     public Engine(MavenProject project) throws DatabaseException {
         this.currentProject = project;
         MavenProject parent = getRootParent();
-        if ((parent != null) && (parent.getContextValue("dependency-check-data-was-updated") != null)) {
-            System.setProperty("autoupdate", Boolean.FALSE.toString());
+        if (parent != null && parent.getContextValue("dependency-check-data-was-updated") != null) {
+            System.setProperty(Settings.KEYS.AUTO_UPDATE, Boolean.FALSE.toString());
         }
         initializeEngine();
-        if (getHasBeenUpdated()) {
-            getRootParent().setContextValue("dependency-check-data-was-updated", Boolean.valueOf(true));
+        if (parent != null) {
+            parent.setContextValue("dependency-check-data-was-updated", Boolean.valueOf(true));
         }
     }
 
+    /**
+     * This constructor should not be called. Use Engine(MavenProject) instead.
+     *
+     * @throws DatabaseException thrown if there is an issue connecting to the database
+     */
+    private Engine() throws DatabaseException {
+    }
+
+    /**
+     * Initializes the given analyzer. This skips the initialization of the CPEAnalyzer if it has been initialized by a
+     * previous execution.
+     *
+     * @param analyzer the analyzer to initialize
+     * @return the initialized analyzer
+     */
+    @Override
     protected Analyzer initializeAnalyzer(Analyzer analyzer) {
         if ((analyzer instanceof CPEAnalyzer)) {
             CPEAnalyzer cpe = getPreviouslyLoadedAnalyzer();
@@ -71,6 +91,12 @@ public class Engine extends org.owasp.dependencycheck.Engine {
         return super.initializeAnalyzer(analyzer);
     }
 
+    /**
+     * Closes the given analyzer. This skips closing the CPEAnalyzer.
+     *
+     * @param analyzer
+     */
+    @Override
     protected void closeAnalyzer(Analyzer analyzer) {
         if ((analyzer instanceof CPEAnalyzer)) {
             if (getPreviouslyLoadedAnalyzer() == null) {
@@ -81,10 +107,9 @@ public class Engine extends org.owasp.dependencycheck.Engine {
         }
     }
 
-    public void cleanup() {
-        super.cleanup();
-    }
-
+    /**
+     * Closes the CPEAnalyzer if it has been created and persisted in the root parent MavenProject context.
+     */
     public void cleanupFinal() {
         CPEAnalyzer cpe = getPreviouslyLoadedAnalyzer();
         if (cpe != null) {
@@ -92,6 +117,11 @@ public class Engine extends org.owasp.dependencycheck.Engine {
         }
     }
 
+    /**
+     * Gets the CPEAnalyzer from the root Maven Project.
+     *
+     * @return an initialized CPEAnalyzer
+     */
     private CPEAnalyzer getPreviouslyLoadedAnalyzer() {
         CPEAnalyzer cpe = null;
         MavenProject project = getRootParent();
@@ -101,6 +131,11 @@ public class Engine extends org.owasp.dependencycheck.Engine {
         return cpe;
     }
 
+    /**
+     * Stores a CPEAnalyzer in the root Maven Project.
+     *
+     * @param cpe the CPEAnalyzer to store
+     */
     private void storeCPEAnalyzer(CPEAnalyzer cpe) {
         MavenProject p = getRootParent();
         if (p != null) {
@@ -108,6 +143,11 @@ public class Engine extends org.owasp.dependencycheck.Engine {
         }
     }
 
+    /**
+     * Returns the root Maven Project.
+     *
+     * @return the root Maven Project
+     */
     private MavenProject getRootParent() {
         if (this.currentProject == null) {
             return null;
