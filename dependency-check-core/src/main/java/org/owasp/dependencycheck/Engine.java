@@ -55,36 +55,25 @@ public class Engine {
     /**
      * The list of dependencies.
      */
-    private List<Dependency> dependencies;
+    private List<Dependency> dependencies = new ArrayList<Dependency>();
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-    private EnumMap<AnalysisPhase, List<Analyzer>> analyzers;
+    private EnumMap<AnalysisPhase, List<Analyzer>> analyzers = new EnumMap<AnalysisPhase, List<Analyzer>>(AnalysisPhase.class);
+    ;
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-    private Set<FileTypeAnalyzer> fileTypeAnalyzers;
+    private Set<FileTypeAnalyzer> fileTypeAnalyzers = new HashSet<FileTypeAnalyzer>();
+    ;
     /**
      * The ClassLoader to use when dynamically loading Analyzer and Update services.
      */
-    private ClassLoader serviceClassLoader;
+    private ClassLoader serviceClassLoader = Thread.currentThread().getContextClassLoader();
     /**
      * The Logger for use throughout the class.
      */
     private static Logger LOGGER = Logger.getLogger(Engine.class.getName());
-    /**
-     * A flag indicating whether or not an update has been performed.
-     */
-    private boolean hasBeenUpdated = false;
-
-    /**
-     * Returns <code>true</code> if an update has been performed.
-     *
-     * @return <code>true</code> if an update has been performed; otherwise <code>false</code>.
-     */
-    public boolean getHasBeenUpdated() {
-        return this.hasBeenUpdated;
-    }
 
     /**
      * Creates a new Engine.
@@ -102,41 +91,17 @@ public class Engine {
      * @throws DatabaseException thrown if there is an error connecting to the database
      */
     public Engine(ClassLoader serviceClassLoader) throws DatabaseException {
-        initializeEngine(serviceClassLoader);
-    }
-
-    /**
-     * Initializes the engine.
-     *
-     * @throws DatabaseException thrown if there is an error connecting to the database
-     */
-    protected final void initializeEngine() throws DatabaseException {
-        initializeEngine(Thread.currentThread().getContextClassLoader());
+        this.serviceClassLoader = serviceClassLoader;
+        initializeEngine();
     }
 
     /**
      * Creates a new Engine using the specified classloader to dynamically load Analyzer and Update services.
      *
-     * @param serviceClassLoader the ClassLoader to use when dynamically loading Analyzer and Update services
      * @throws DatabaseException thrown if there is an error connecting to the database
      */
-    protected final void initializeEngine(ClassLoader serviceClassLoader) throws DatabaseException {
-        this.dependencies = new ArrayList<Dependency>();
-        this.analyzers = new EnumMap<AnalysisPhase, List<Analyzer>>(AnalysisPhase.class);
-        this.fileTypeAnalyzers = new HashSet<FileTypeAnalyzer>();
-        this.serviceClassLoader = serviceClassLoader;
-
+    protected final void initializeEngine() throws DatabaseException {
         ConnectionFactory.initialize();
-
-        boolean autoUpdate = true;
-        try {
-            autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
-        } catch (InvalidSettingException ex) {
-            LOGGER.log(Level.FINE, "Invalid setting for auto-update; using true.");
-        }
-        if (autoUpdate) {
-            doUpdates();
-        }
         loadAnalyzers();
     }
 
@@ -151,7 +116,9 @@ public class Engine {
      * Loads the analyzers specified in the configuration file (or system properties).
      */
     private void loadAnalyzers() {
-
+        if (analyzers.size() > 0) {
+            return;
+        }
         for (AnalysisPhase phase : AnalysisPhase.values()) {
             analyzers.put(phase, new ArrayList<Analyzer>());
         }
@@ -365,6 +332,16 @@ public class Engine {
      * Runs the analyzers against all of the dependencies.
      */
     public void analyzeDependencies() {
+        boolean autoUpdate = true;
+        try {
+            autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
+        } catch (InvalidSettingException ex) {
+            LOGGER.log(Level.FINE, "Invalid setting for auto-update; using true.");
+        }
+        if (autoUpdate) {
+            doUpdates();
+        }
+
         //need to ensure that data exists
         try {
             ensureDataExists();
@@ -500,8 +477,7 @@ public class Engine {
                 LOGGER.log(Level.FINE, String.format("Unable to update details for %s", source.getClass().getName()), ex);
             }
         }
-        this.hasBeenUpdated = true;
-        LOGGER.info("Updates complete");
+        LOGGER.info("Check for updates complete");
     }
 
     /**
