@@ -75,7 +75,7 @@ public final class LogUtils {
             if (in != null) {
                 try {
                     in.close();
-                } catch (Throwable ex) {
+                } catch (IOException ex) {
                     LOGGER.log(Level.FINEST, "Error closing resource stream", ex);
                 }
             }
