@@ -113,7 +113,7 @@ public class ReportGenerator {
         context.put("scanDate", scanDate);
         context.put("scanDateXML", scanDateXML);
         context.put("enc", enc);
-        context.put("version", Settings.getString("application.version", "Unknown"));
+        context.put("version", Settings.getString(Settings.KEYS.APPLICATION_VERSION, "Unknown"));
     }
 
     /**
