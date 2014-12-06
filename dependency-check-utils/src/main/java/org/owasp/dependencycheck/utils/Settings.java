@@ -51,6 +51,18 @@ public final class Settings {
             //do nothing
         }
         /**
+         * The key to obtain the application name.
+         */
+        public static final String APPLICATION_VAME = "application.name";
+        /**
+         * The key to obtain the application version.
+         */
+        public static final String APPLICATION_VERSION = "application.version";
+        /**
+         * The key to obtain the URL to retrieve the current release version from.
+         */
+        public static final String ENGINE_VERSION_CHECK_URL = "engine.version.url";
+        /**
          * The properties key indicating whether or not the cached data sources should be updated.
          */
         public static final String AUTO_UPDATE = "autoupdate";
