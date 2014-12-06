@@ -91,7 +91,7 @@ public class DatabaseProperties {
     }
 
     /**
-     * Writes a properties file containing the last updated date to the VULNERABLE_CPE directory.
+     * Saves the last updated information to the properties file.
      *
      * @param updatedValue the updated NVD CVE entry
      * @throws UpdateException is thrown if there is an update exception
@@ -100,8 +100,19 @@ public class DatabaseProperties {
         if (updatedValue == null) {
             return;
         }
-        properties.put(LAST_UPDATED_BASE + updatedValue.getId(), String.valueOf(updatedValue.getTimestamp()));
-        cveDB.saveProperty(LAST_UPDATED_BASE + updatedValue.getId(), String.valueOf(updatedValue.getTimestamp()));
+        save(LAST_UPDATED_BASE + updatedValue.getId(), String.valueOf(updatedValue.getTimestamp()));
+    }
+
+    /**
+     * Saves the key value pair to the properties store.
+     *
+     * @param key the property key
+     * @param value the property value
+     * @throws UpdateException is thrown if there is an update exception
+     */
+    public void save(String key, String value) throws UpdateException {
+        properties.put(key, value);
+        cveDB.saveProperty(key, value);
     }
 
     /**
