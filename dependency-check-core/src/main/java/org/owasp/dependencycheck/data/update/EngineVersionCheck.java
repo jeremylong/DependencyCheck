@@ -68,7 +68,6 @@ public class EngineVersionCheck implements CachedWebDataSource {
      *
      * @return the version to test
      */
-
     protected String getUpdateToVersion() {
         return updateToVersion;
     }
@@ -90,8 +89,8 @@ public class EngineVersionCheck implements CachedWebDataSource {
             final long lastChecked = Long.parseLong(properties.getProperty(ENGINE_VERSION_CHECKED_ON, "0"));
             final long now = (new Date()).getTime();
             updateToVersion = properties.getProperty(CURRENT_ENGINE_RELEASE, "");
-            String currentVersion = Settings.getString(Settings.KEYS.APPLICATION_VERSION, "0.0.0");
-            boolean updateNeeded = shouldUpdate(lastChecked, now, properties, currentVersion);
+            final String currentVersion = Settings.getString(Settings.KEYS.APPLICATION_VERSION, "0.0.0");
+            final boolean updateNeeded = shouldUpdate(lastChecked, now, properties, currentVersion);
             if (updateNeeded) {
                 final String msg = String.format("A new version of dependency-check is available. Consider updating to version %s.",
                         updateToVersion);
@@ -105,7 +104,19 @@ public class EngineVersionCheck implements CachedWebDataSource {
         }
     }
 
-    protected boolean shouldUpdate(final long lastChecked, final long now, final DatabaseProperties properties, String currentVersion) throws UpdateException {
+    /**
+     * Determines if a new version of the dependency-check engine has been released.
+     *
+     * @param lastChecked the epoch time of the last version check
+     * @param now the current epoch time
+     * @param properties the database properties object
+     * @param currentVersion the current version of dependency-check
+     * @return <code>true</code> if a newer version of the database has been released; otherwise <code>false</code>
+     * @throws UpdateException thrown if there is an error connecting to the github documentation site or accessing the
+     * local database.
+     */
+    protected boolean shouldUpdate(final long lastChecked, final long now, final DatabaseProperties properties,
+            String currentVersion) throws UpdateException {
         //check every 30 days if we know there is an update, otherwise check every 7 days
         int checkRange = 30;
         if (updateToVersion.isEmpty()) {
@@ -114,18 +125,20 @@ public class EngineVersionCheck implements CachedWebDataSource {
         if (!DateUtil.withinDateRange(lastChecked, now, checkRange)) {
             final String currentRelease = getCurrentReleaseVersion();
             if (currentRelease != null) {
-                DependencyVersion v = new DependencyVersion(currentRelease);
+                final DependencyVersion v = new DependencyVersion(currentRelease);
                 if (v.getVersionParts() != null && v.getVersionParts().size() >= 3) {
                     if (!currentRelease.equals(updateToVersion)) {
                         properties.save(CURRENT_ENGINE_RELEASE, v.toString());
+                    } else {
+                        properties.save(CURRENT_ENGINE_RELEASE, "");
                     }
                     properties.save(ENGINE_VERSION_CHECKED_ON, Long.toString(now));
                     updateToVersion = v.toString();
                 }
             }
         }
-        DependencyVersion running = new DependencyVersion(currentVersion);
-        DependencyVersion released = new DependencyVersion(updateToVersion);
+        final DependencyVersion running = new DependencyVersion(currentVersion);
+        final DependencyVersion released = new DependencyVersion(updateToVersion);
         if (running.compareTo(released) < 0) {
             return true;
         }
@@ -135,7 +148,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
     /**
      * Opens the CVE and CPE data stores.
      *
-     * @throws UpdateException thrown if a data store cannot be opened
+     * @throws DatabaseException thrown if a data store cannot be opened
      */
     protected final void openDatabase() throws DatabaseException {
         if (cveDB != null) {
@@ -158,6 +171,11 @@ public class EngineVersionCheck implements CachedWebDataSource {
         }
     }
 
+    /**
+     * Retrieves the current released version number from the github documentation site.
+     *
+     * @return the current released version number
+     */
     protected String getCurrentReleaseVersion() {
         HttpURLConnection conn = null;
         try {
@@ -168,7 +186,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
             if (conn.getResponseCode() != 200) {
                 return null;
             }
-            String releaseVersion = IOUtils.toString(conn.getInputStream(), "UTF-8");
+            final String releaseVersion = IOUtils.toString(conn.getInputStream(), "UTF-8");
             if (releaseVersion != null) {
                 return releaseVersion.trim();
             }

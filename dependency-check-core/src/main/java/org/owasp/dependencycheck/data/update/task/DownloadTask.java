@@ -262,8 +262,8 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
     private void extractGzip(File file) throws FileNotFoundException, IOException {
         final String originalPath = file.getPath();
         File gzip = new File(originalPath + ".gz");
-        if (gzip.isFile()) {
-            gzip.delete();
+        if (gzip.isFile() && !gzip.delete()) {
+            gzip.deleteOnExit();
         }
         if (!file.renameTo(gzip)) {
             throw new IOException("Unable to rename '" + file.getPath() + "'");
@@ -284,10 +284,18 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
             }
         } finally {
             if (cin != null) {
-                cin.close();
+                try {
+                    cin.close();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.FINEST, "ignore", ex);
+                }
             }
             if (out != null) {
-                out.close();
+                try {
+                    out.close();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.FINEST, "ignore", ex);
+                }
             }
             if (gzip.isFile()) {
                 FileUtils.deleteQuietly(gzip);

@@ -353,6 +353,7 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     /**
      * Initializes a new <code>Engine</code> that can be used for scanning.
      *
+     * @param project the current MavenProject
      * @return a newly instantiated <code>Engine</code>
      * @throws DatabaseException thrown if there is a database exception
      */

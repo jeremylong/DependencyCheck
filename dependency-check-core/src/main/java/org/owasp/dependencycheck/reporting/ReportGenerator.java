@@ -299,14 +299,18 @@ public class ReportGenerator {
             }
         }
 
-        OutputStream outputSteam = new FileOutputStream(outFileName);
-        generateReport(templateName, outputSteam);
-
+        OutputStream outputSteam = null;
         try {
-            outputSteam.close();
-        } catch (IOException ex) {
-            LOGGER.log(Level.FINEST, null, ex);
+            outputSteam = new FileOutputStream(outFileName);
+            generateReport(templateName, outputSteam);
+        } finally {
+            if (outputSteam != null) {
+                try {
+                    outputSteam.close();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.FINEST, "ignore", ex);
+                }
+            }
         }
     }
-
 }

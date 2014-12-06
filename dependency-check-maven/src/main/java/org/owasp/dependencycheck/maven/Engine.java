@@ -53,7 +53,7 @@ public class Engine extends org.owasp.dependencycheck.Engine {
      */
     public Engine(MavenProject project) throws DatabaseException {
         this.currentProject = project;
-        MavenProject parent = getRootParent();
+        final MavenProject parent = getRootParent();
         if (parent != null && parent.getContextValue("dependency-check-data-was-updated") != null) {
             System.setProperty(Settings.KEYS.AUTO_UPDATE, Boolean.FALSE.toString());
         }
@@ -94,7 +94,7 @@ public class Engine extends org.owasp.dependencycheck.Engine {
     /**
      * Closes the given analyzer. This skips closing the CPEAnalyzer.
      *
-     * @param analyzer
+     * @param analyzer the analyzer to close
      */
     @Override
     protected void closeAnalyzer(Analyzer analyzer) {
@@ -111,7 +111,7 @@ public class Engine extends org.owasp.dependencycheck.Engine {
      * Closes the CPEAnalyzer if it has been created and persisted in the root parent MavenProject context.
      */
     public void cleanupFinal() {
-        CPEAnalyzer cpe = getPreviouslyLoadedAnalyzer();
+        final CPEAnalyzer cpe = getPreviouslyLoadedAnalyzer();
         if (cpe != null) {
             cpe.close();
         }
@@ -124,7 +124,7 @@ public class Engine extends org.owasp.dependencycheck.Engine {
      */
     private CPEAnalyzer getPreviouslyLoadedAnalyzer() {
         CPEAnalyzer cpe = null;
-        MavenProject project = getRootParent();
+        final MavenProject project = getRootParent();
         if (project != null) {
             cpe = (CPEAnalyzer) project.getContextValue(CPE_ANALYZER_KEY);
         }
@@ -137,7 +137,7 @@ public class Engine extends org.owasp.dependencycheck.Engine {
      * @param cpe the CPEAnalyzer to store
      */
     private void storeCPEAnalyzer(CPEAnalyzer cpe) {
-        MavenProject p = getRootParent();
+        final MavenProject p = getRootParent();
         if (p != null) {
             p.setContextValue(CPE_ANALYZER_KEY, cpe);
         }

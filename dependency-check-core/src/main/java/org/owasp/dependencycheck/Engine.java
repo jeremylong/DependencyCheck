@@ -60,12 +60,12 @@ public class Engine {
      * A Map of analyzers grouped by Analysis phase.
      */
     private EnumMap<AnalysisPhase, List<Analyzer>> analyzers = new EnumMap<AnalysisPhase, List<Analyzer>>(AnalysisPhase.class);
-    ;
+
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
     private Set<FileTypeAnalyzer> fileTypeAnalyzers = new HashSet<FileTypeAnalyzer>();
-    ;
+
     /**
      * The ClassLoader to use when dynamically loading Analyzer and Update services.
      */
@@ -73,7 +73,7 @@ public class Engine {
     /**
      * The Logger for use throughout the class.
      */
-    private static Logger LOGGER = Logger.getLogger(Engine.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Engine.class.getName());
 
     /**
      * Creates a new Engine.

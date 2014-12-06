@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -39,6 +40,7 @@ import org.owasp.dependencycheck.utils.DBUtils;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 import org.owasp.dependencycheck.utils.Pair;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * The database holding information about the NVD CVE data.
@@ -705,7 +707,7 @@ public class CveDB {
     /**
      * Checks to see if data exists so that analysis can be performed.
      *
-     * @return <code>true</code if data exists; otherwise <code>false</code>
+     * @return <code>true</code> if data exists; otherwise <code>false</code>
      */
     public boolean dataExists() {
         Statement cs = null;
@@ -719,7 +721,19 @@ public class CveDB {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(CveDB.class.getName()).log(Level.SEVERE, null, ex);
+            String dd;
+            try {
+                dd = Settings.getDataDirectory().getAbsolutePath();
+            } catch (IOException ex1) {
+                dd = Settings.getString(Settings.KEYS.DATA_DIRECTORY);
+            }
+            final String msg = String.format("Unable to access the local database.%n%nEnsure that '%s' is a writable directory. "
+                    + "If the problem persist try deleting the files in '%s' and running %s again. If the problem continues, please "
+                    + "create a log file (see documentation at http://jeremylong.github.io/DependencyCheck/) and open a ticket at "
+                    + "https://github.com/jeremylong/DependencyCheck/issues and include the log file.%n%n",
+                    dd, dd, Settings.getString(Settings.KEYS.APPLICATION_VAME));
+            LOGGER.log(Level.SEVERE, msg);
+            LOGGER.log(Level.FINE, "", ex);
         } finally {
             DBUtils.closeResultSet(rs);
             DBUtils.closeStatement(cs);
