@@ -58,6 +58,30 @@ public class EngineVersionCheck implements CachedWebDataSource {
      */
     private CveDB cveDB = null;
 
+    /**
+     * The version retrieved from the database properties or web to check against.
+     */
+    private String updateToVersion;
+
+    /**
+     * Getter for updateToVersion - only used for testing. Represents the version retrieved from the database.
+     *
+     * @return the version to test
+     */
+
+    protected String getUpdateToVersion() {
+        return updateToVersion;
+    }
+
+    /**
+     * Setter for updateToVersion - only used for testing. Represents the version retrieved from the database.
+     *
+     * @param version the version to test
+     */
+    protected void setUpdateToVersion(String version) {
+        updateToVersion = version;
+    }
+
     @Override
     public void update() throws UpdateException {
         try {
@@ -65,31 +89,12 @@ public class EngineVersionCheck implements CachedWebDataSource {
             final DatabaseProperties properties = cveDB.getDatabaseProperties();
             final long lastChecked = Long.parseLong(properties.getProperty(ENGINE_VERSION_CHECKED_ON, "0"));
             final long now = (new Date()).getTime();
-            String updateToVersion = properties.getProperty(CURRENT_ENGINE_RELEASE, "");
+            updateToVersion = properties.getProperty(CURRENT_ENGINE_RELEASE, "");
             String currentVersion = Settings.getString(Settings.KEYS.APPLICATION_VERSION, "0.0.0");
-            //check every 30 days if we know there is an update, otherwise check every 7 days
-            int checkRange = 30;
-            if (updateToVersion.isEmpty()) {
-                checkRange = 7;
-            }
-            if (!DateUtil.withinDateRange(lastChecked, now, checkRange)) {
-                final String currentRelease = getCurrentReleaseVersion();
-                if (currentRelease != null) {
-                    DependencyVersion v = new DependencyVersion(currentRelease);
-                    if (v.getVersionParts() != null && v.getVersionParts().size() >= 3) {
-                        if (!currentRelease.equals(updateToVersion)) {
-                            properties.save(CURRENT_ENGINE_RELEASE, v.toString());
-                        }
-                        properties.save(ENGINE_VERSION_CHECKED_ON, Long.toString(now));
-                        updateToVersion = v.toString();
-                    }
-                }
-            }
-            DependencyVersion running = new DependencyVersion(currentVersion);
-            DependencyVersion released = new DependencyVersion(updateToVersion);
-            if (running.compareTo(released) < 0) {
+            boolean updateNeeded = shouldUpdate(lastChecked, now, properties, currentVersion);
+            if (updateNeeded) {
                 final String msg = String.format("A new version of dependency-check is available. Consider updating to version %s.",
-                        released.toString());
+                        updateToVersion);
                 LOGGER.warning(msg);
             }
         } catch (DatabaseException ex) {
@@ -98,6 +103,33 @@ public class EngineVersionCheck implements CachedWebDataSource {
         } finally {
             closeDatabase();
         }
+    }
+
+    protected boolean shouldUpdate(final long lastChecked, final long now, final DatabaseProperties properties, String currentVersion) throws UpdateException {
+        //check every 30 days if we know there is an update, otherwise check every 7 days
+        int checkRange = 30;
+        if (updateToVersion.isEmpty()) {
+            checkRange = 7;
+        }
+        if (!DateUtil.withinDateRange(lastChecked, now, checkRange)) {
+            final String currentRelease = getCurrentReleaseVersion();
+            if (currentRelease != null) {
+                DependencyVersion v = new DependencyVersion(currentRelease);
+                if (v.getVersionParts() != null && v.getVersionParts().size() >= 3) {
+                    if (!currentRelease.equals(updateToVersion)) {
+                        properties.save(CURRENT_ENGINE_RELEASE, v.toString());
+                    }
+                    properties.save(ENGINE_VERSION_CHECKED_ON, Long.toString(now));
+                    updateToVersion = v.toString();
+                }
+            }
+        }
+        DependencyVersion running = new DependencyVersion(currentVersion);
+        DependencyVersion released = new DependencyVersion(updateToVersion);
+        if (running.compareTo(released) < 0) {
+            return true;
+        }
+        return false;
     }
 
     /**
