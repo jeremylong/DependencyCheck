@@ -141,6 +141,31 @@ Copyright (c) 2012 - Jeremy Long
                     <target>1.6</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                    <execution>
+                        <id>site-filtering-hack</id>
+                        <phase>pre-site</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/site/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/site-resources/</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                            <encoding>UTF-8</encoding>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- begin copy from http://minds.coremedia.com/2012/09/11/problem-solved-deploy-multi-module-maven-project-site-as-github-pages/ -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -183,7 +208,6 @@ Copyright (c) 2012 - Jeremy Long
                                         <report>project-team</report>
                                         <report>scm</report>
                                         <report>license</report>
-                                        <report>help</report>
                                     </reports>
                                 </reportSet>
                             </reportSets>
