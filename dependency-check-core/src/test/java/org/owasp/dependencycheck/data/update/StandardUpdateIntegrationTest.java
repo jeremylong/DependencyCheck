@@ -18,8 +18,6 @@
 package org.owasp.dependencycheck.data.update;
 
 import java.net.MalformedURLException;
-import java.util.Calendar;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
@@ -47,26 +45,6 @@ public class StandardUpdateIntegrationTest extends BaseTest {
         instance.closeDataStores();
     }
 
-    /**
-     * Test of withinRange method, of class StandardUpdate.
-     */
-    @Test
-    public void testWithinRange() throws Exception {
-        Calendar c = Calendar.getInstance();
-
-        long current = c.getTimeInMillis();
-        long lastRun = c.getTimeInMillis() - (3 * (1000 * 60 * 60 * 24));
-        int range = 7; // 7 days
-        StandardUpdate instance = getStandardUpdateTask();
-        boolean expResult = true;
-        boolean result = instance.withinRange(lastRun, current, range);
-        assertEquals(expResult, result);
-
-        lastRun = c.getTimeInMillis() - (8 * (1000 * 60 * 60 * 24));
-        expResult = false;
-        result = instance.withinRange(lastRun, current, range);
-        assertEquals(expResult, result);
-    }
 // test removed as it is duplicative of the EngineIntegrationTest and the NvdCveUpdaterIntergraionTest
 //    /**
 //     * Test of update method, of class StandardUpdate.
@@ -77,7 +55,6 @@ public class StandardUpdateIntegrationTest extends BaseTest {
 //        instance.update();
 //        //TODO make this an actual test
 //    }
-
     /**
      * Test of updatesNeeded method, of class StandardUpdate.
      */
