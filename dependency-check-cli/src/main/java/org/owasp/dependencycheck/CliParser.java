@@ -139,10 +139,13 @@ public final class CliParser {
             final String msg = String.format("Invalid '%s' argument: null", argumentName);
             throw new FileNotFoundException(msg);
         } else if (!path.contains("*") && !path.contains("?")) {
-            final File f = new File(path);
+            File f = new File(path);
             if ("o".equals(argumentName.substring(0, 1).toLowerCase()) && !"ALL".equals(this.getReportFormat().toUpperCase())) {
                 final String checkPath = path.toLowerCase();
                 if (checkPath.endsWith(".html") || checkPath.endsWith(".xml") || checkPath.endsWith(".htm")) {
+                    if (f.getParentFile() == null) {
+                        f = new File(".", path);
+                    }
                     if (!f.getParentFile().isDirectory()) {
                         isValid = false;
                         final String msg = String.format("Invalid '%s' argument: '%s'", argumentName, path);
