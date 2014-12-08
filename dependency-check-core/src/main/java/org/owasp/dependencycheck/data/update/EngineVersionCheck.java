@@ -85,11 +85,15 @@ public class EngineVersionCheck implements CachedWebDataSource {
     public void update() throws UpdateException {
         try {
             openDatabase();
+            LOGGER.fine("Begin Engine Version Check");
             final DatabaseProperties properties = cveDB.getDatabaseProperties();
             final long lastChecked = Long.parseLong(properties.getProperty(ENGINE_VERSION_CHECKED_ON, "0"));
             final long now = (new Date()).getTime();
             updateToVersion = properties.getProperty(CURRENT_ENGINE_RELEASE, "");
             final String currentVersion = Settings.getString(Settings.KEYS.APPLICATION_VERSION, "0.0.0");
+            LOGGER.fine("Last checked: " + lastChecked);
+            LOGGER.fine("Now: " + now);
+            LOGGER.fine("Current version: " + currentVersion);
             final boolean updateNeeded = shouldUpdate(lastChecked, now, properties, currentVersion);
             if (updateNeeded) {
                 final String msg = String.format("A new version of dependency-check is available. Consider updating to version %s.",
@@ -123,25 +127,29 @@ public class EngineVersionCheck implements CachedWebDataSource {
             checkRange = 7;
         }
         if (!DateUtil.withinDateRange(lastChecked, now, checkRange)) {
+            LOGGER.fine("Checking web for new version.");
             final String currentRelease = getCurrentReleaseVersion();
             if (currentRelease != null) {
                 final DependencyVersion v = new DependencyVersion(currentRelease);
                 if (v.getVersionParts() != null && v.getVersionParts().size() >= 3) {
+                    updateToVersion = v.toString();
                     if (!currentRelease.equals(updateToVersion)) {
-                        properties.save(CURRENT_ENGINE_RELEASE, v.toString());
+                        properties.save(CURRENT_ENGINE_RELEASE, updateToVersion);
                     } else {
                         properties.save(CURRENT_ENGINE_RELEASE, "");
                     }
                     properties.save(ENGINE_VERSION_CHECKED_ON, Long.toString(now));
-                    updateToVersion = v.toString();
                 }
             }
+            LOGGER.log(Level.FINE, "Current Release: {0}", updateToVersion);
         }
         final DependencyVersion running = new DependencyVersion(currentVersion);
         final DependencyVersion released = new DependencyVersion(updateToVersion);
         if (running.compareTo(released) < 0) {
+            LOGGER.fine("Upgrade recommended");
             return true;
         }
+        LOGGER.fine("Upgrade not needed");
         return false;
     }
 
