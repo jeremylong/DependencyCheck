@@ -291,17 +291,20 @@ public class ReportGenerator {
      * @throws Exception is thrown when an exception occurs.
      */
     protected void generateReport(String templateName, String outFileName) throws Exception {
-        final File outDir = new File(outFileName).getParentFile();
-        if (!outDir.exists()) {
-            final boolean created = outDir.mkdirs();
+        File outFile = new File(outFileName);
+        if (outFile.getParentFile() == null) {
+            outFile = new File(".", outFileName);
+        }
+        if (!outFile.getParentFile().exists()) {
+            final boolean created = outFile.getParentFile().mkdirs();
             if (!created) {
-                throw new Exception("Unable to create directory '" + outDir.getAbsolutePath() + "'.");
+                throw new Exception("Unable to create directory '" + outFile.getParentFile().getAbsolutePath() + "'.");
             }
         }
 
         OutputStream outputSteam = null;
         try {
-            outputSteam = new FileOutputStream(outFileName);
+            outputSteam = new FileOutputStream(outFile);
             generateReport(templateName, outputSteam);
         } finally {
             if (outputSteam != null) {
