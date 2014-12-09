@@ -21,6 +21,7 @@ import java.util.Properties;
 import mockit.Mock;
 import mockit.MockUp;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
@@ -136,9 +137,9 @@ public class EngineVersionCheckTest extends BaseTest {
     @Test
     public void testGetCurrentReleaseVersion() {
         EngineVersionCheck instance = new EngineVersionCheck();
-        DependencyVersion expResult = new DependencyVersion("1.2.6");
+        DependencyVersion minExpResult = new DependencyVersion("1.2.6");
         String release = instance.getCurrentReleaseVersion();
         DependencyVersion result = new DependencyVersion(release);
-        assertEquals(expResult, result);
+        assertTrue(minExpResult.compareTo(result) <= 0);
     }
 }
