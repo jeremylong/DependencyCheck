@@ -610,7 +610,14 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * @param dependency a reference to the related dependency
      */
     public void addRelatedDependency(Dependency dependency) {
-        relatedDependencies.add(dependency);
+        if (this == dependency) {
+            LOGGER.warning("Attempted to add a circular reference - please post the log file to issue #172 here "
+                    + "https://github.com/jeremylong/DependencyCheck/issues/172 ");
+            LOGGER.log(Level.FINE, "this: {0}", this.toString());
+            LOGGER.log(Level.FINE, "dependency: {0}", dependency.toString());
+        } else {
+            relatedDependencies.add(dependency);
+        }
     }
 
     /**
