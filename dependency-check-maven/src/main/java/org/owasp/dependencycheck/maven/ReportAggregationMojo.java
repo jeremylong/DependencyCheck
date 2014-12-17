@@ -177,6 +177,7 @@ public abstract class ReportAggregationMojo extends AbstractMojo implements Mave
     protected void postExecute() throws MojoExecutionException, MojoFailureException {
         final File written = writeDataFile();
         if (written != null) {
+            LOGGER.fine(String.format("Data file written to %s", written.getAbsolutePath()));
             project.setContextValue(getDataFileContextKey(), written.getAbsolutePath());
         }
     }
