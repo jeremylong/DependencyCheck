@@ -131,7 +131,10 @@ public class Engine extends org.owasp.dependencycheck.Engine {
         CPEAnalyzer cpe = null;
         final MavenProject project = getRootParent();
         if (project != null) {
-            cpe = (CPEAnalyzer) project.getContextValue(CPE_ANALYZER_KEY);
+            Object obj = project.getContextValue(CPE_ANALYZER_KEY);
+            if (obj instanceof CPEAnalyzer) {
+                cpe = (CPEAnalyzer) project.getContextValue(CPE_ANALYZER_KEY);
+            }
         }
         return cpe;
     }
