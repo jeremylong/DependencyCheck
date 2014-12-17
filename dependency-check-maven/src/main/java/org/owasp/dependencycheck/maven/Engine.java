@@ -54,6 +54,11 @@ public class Engine extends org.owasp.dependencycheck.Engine {
     public Engine(MavenProject project) throws DatabaseException {
         this.currentProject = project;
         final MavenProject parent = getRootParent();
+        if (parent != null) {
+            LOGGER.fine(String.format("Checking root project, %s, if updates have already been completed", parent.getArtifactId()));
+        } else {
+            LOGGER.fine("Checking root project, null, if updates have already been completed");
+        }
         if (parent != null && parent.getContextValue("dependency-check-data-was-updated") != null) {
             System.setProperty(Settings.KEYS.AUTO_UPDATE, Boolean.FALSE.toString());
         }
