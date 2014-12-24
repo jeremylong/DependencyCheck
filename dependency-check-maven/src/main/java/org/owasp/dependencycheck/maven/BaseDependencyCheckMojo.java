@@ -332,9 +332,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
     private void validateAggregate() throws MojoExecutionException {
         if (aggregate == true) {
-            String msg = "Aggregate configuration detected - as of dependency-check 1.2.8 this no longer works and has "
-                    + "been deprecated. Please use the aggregate goal instead.";
-            LOGGER.warning(msg);
+            String msg = "Aggregate configuration detected - as of dependency-check 1.2.8 this no longer supported. "
+                    + "Please use the aggregate goal instead.";
             throw new MojoExecutionException(msg);
         }
     }
