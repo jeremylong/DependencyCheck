@@ -30,6 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
@@ -63,8 +64,14 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
      */
     private static final Logger LOGGER = Logger.getLogger(AggregateMojo.class.getName());
 
+    /**
+     * Executes the aggregate dependency-check goal. This runs dependency-check and generates the subsequent reports.
+     *
+     * @throws MojoExecutionException thrown if there is ane exception running the mojo
+     * @throws MojoFailureException thrown if dependency-check is configured to fail the build
+     */
     @Override
-    public void runCheck() throws MojoExecutionException {
+    public void runCheck() throws MojoExecutionException, MojoFailureException {
         final Engine engine = generateDataFile();
         if (getProject() == getReactorProjects().get(getReactorProjects().size() - 1)) {
             final Map<MavenProject, Set<MavenProject>> children = buildAggregateInfo();
@@ -82,7 +89,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                 }
 
                 for (MavenProject reportOn : childProjects) {
-                    List<Dependency> childDeps = readDataFile(reportOn);
+                    final List<Dependency> childDeps = readDataFile(reportOn);
                     if (childDeps != null && !childDeps.isEmpty()) {
                         dependencies.addAll(childDeps);
                     }
@@ -98,7 +105,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                     LOGGER.log(Level.FINE, "Bundling Exception", ex);
                 }
 
-                File outputDir = getCorrectOutputDirectory(current);
+                final File outputDir = getCorrectOutputDirectory(current);
 
                 writeReports(engine, current, outputDir);
             }
@@ -142,9 +149,11 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
 
     /**
      * Builds the parent-child map.
+     *
+     * @return a map of the parent/child relationships
      */
     private Map<MavenProject, Set<MavenProject>> buildAggregateInfo() {
-        Map<MavenProject, Set<MavenProject>> parentChildMap = new HashMap<MavenProject, Set<MavenProject>>();
+        final Map<MavenProject, Set<MavenProject>> parentChildMap = new HashMap<MavenProject, Set<MavenProject>>();
         for (MavenProject proj : getReactorProjects()) {
             Set<MavenProject> depList = parentChildMap.get(proj.getParent());
             if (depList == null) {
@@ -156,7 +165,15 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         return parentChildMap;
     }
 
-    protected Engine generateDataFile() throws MojoExecutionException {
+    /**
+     * Runs dependency-check's Engine and writes the serialized dependencies to disk.
+     *
+     * @return the Engine used to execute dependency-check
+     * @throws MojoExecutionException thrown if there is an exception running the mojo
+     * @throws MojoFailureException thrown if dependency-check is configured to fail the build if severe CVEs are
+     * identified.
+     */
+    protected Engine generateDataFile() throws MojoExecutionException, MojoFailureException {
         final Engine engine;
         try {
             engine = initializeEngine();
@@ -186,6 +203,8 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         }
         engine.analyzeDependencies();
         writeDataFile(engine.getDependencies());
+        showSummary(engine.getDependencies());
+        checkForFailure(engine.getDependencies());
         return engine;
     }
 

@@ -330,9 +330,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         runCheck();
     }
 
+    /**
+     * Checks if the aggregate configuration parameter has been set to true. If it has a MojoExecutionException is
+     * thrown because the aggregate configuration parameter is no longer supported.
+     *
+     * @throws MojoExecutionException thrown if aggregate is set to true
+     */
     private void validateAggregate() throws MojoExecutionException {
-        if (aggregate == true) {
-            String msg = "Aggregate configuration detected - as of dependency-check 1.2.8 this no longer supported. "
+        if (aggregate) {
+            final String msg = "Aggregate configuration detected - as of dependency-check 1.2.8 this no longer supported. "
                     + "Please use the aggregate goal instead.";
             throw new MojoExecutionException(msg);
         }
@@ -369,6 +375,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             runCheck();
         } catch (MojoExecutionException ex) {
             throw new MavenReportException(ex.getMessage(), ex);
+        } catch (MojoFailureException ex) {
+            LOGGER.warning("Vulnerabilities were identifies that exceed the CVSS threshold for failing the build");
         }
     }
 
@@ -390,7 +398,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @throws MojoExecutionException thrown if there is an error loading the file path
      */
     protected File getCorrectOutputDirectory(MavenProject current) throws MojoExecutionException {
-        Object obj = current.getContextValue(getOutputDirectoryContextKey());
+        final Object obj = current.getContextValue(getOutputDirectoryContextKey());
         if (obj != null && obj instanceof File) {
             return (File) obj;
         } else {
@@ -402,8 +410,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Executes the dependency-check scan and generates the necassary report.
      *
      * @throws MojoExecutionException thrown if there is an exception running the scan
+     * @throws MojoFailureException thrown if dependency-check is configured to fail the build
      */
-    public abstract void runCheck() throws MojoExecutionException;
+    public abstract void runCheck() throws MojoExecutionException, MojoFailureException;
 
     /**
      * Sets the Reporting output directory.
@@ -722,26 +731,28 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @throws MojoFailureException thrown if a CVSS score is found that is higher then the threshold set
      */
     protected void checkForFailure(List<Dependency> dependencies) throws MojoFailureException {
-        final StringBuilder ids = new StringBuilder();
-        for (Dependency d : dependencies) {
-            boolean addName = true;
-            for (Vulnerability v : d.getVulnerabilities()) {
-                if (v.getCvssScore() >= failBuildOnCVSS) {
-                    if (addName) {
-                        addName = false;
-                        ids.append(NEW_LINE).append(d.getFileName()).append(": ");
-                        ids.append(v.getName());
-                    } else {
-                        ids.append(", ").append(v.getName());
+        if (failBuildOnCVSS <= 10) {
+            final StringBuilder ids = new StringBuilder();
+            for (Dependency d : dependencies) {
+                boolean addName = true;
+                for (Vulnerability v : d.getVulnerabilities()) {
+                    if (v.getCvssScore() >= failBuildOnCVSS) {
+                        if (addName) {
+                            addName = false;
+                            ids.append(NEW_LINE).append(d.getFileName()).append(": ");
+                            ids.append(v.getName());
+                        } else {
+                            ids.append(", ").append(v.getName());
+                        }
                     }
                 }
             }
-        }
-        if (ids.length() > 0) {
-            final String msg = String.format("%n%nDependency-Check Failure:%n"
-                    + "One or more dependencies were identified with vulnerabilities that have a CVSS score greater then '%.1f': %s%n"
-                    + "See the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
-            throw new MojoFailureException(msg);
+            if (ids.length() > 0) {
+                final String msg = String.format("%n%nDependency-Check Failure:%n"
+                        + "One or more dependencies were identified with vulnerabilities that have a CVSS score greater then '%.1f': %s%n"
+                        + "See the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
+                throw new MojoFailureException(msg);
+            }
         }
     }
 
@@ -751,36 +762,38 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @param dependencies a list of dependency objects
      */
     protected void showSummary(List<Dependency> dependencies) {
-        final StringBuilder summary = new StringBuilder();
-        for (Dependency d : dependencies) {
-            boolean firstEntry = true;
-            final StringBuilder ids = new StringBuilder();
-            for (Vulnerability v : d.getVulnerabilities()) {
-                if (firstEntry) {
-                    firstEntry = false;
-                } else {
-                    ids.append(", ");
-                }
-                ids.append(v.getName());
-            }
-            if (ids.length() > 0) {
-                summary.append(d.getFileName()).append(" (");
-                firstEntry = true;
-                for (Identifier id : d.getIdentifiers()) {
+        if (showSummary) {
+            final StringBuilder summary = new StringBuilder();
+            for (Dependency d : dependencies) {
+                boolean firstEntry = true;
+                final StringBuilder ids = new StringBuilder();
+                for (Vulnerability v : d.getVulnerabilities()) {
                     if (firstEntry) {
                         firstEntry = false;
                     } else {
-                        summary.append(", ");
+                        ids.append(", ");
                     }
-                    summary.append(id.getValue());
+                    ids.append(v.getName());
                 }
-                summary.append(") : ").append(ids).append(NEW_LINE);
+                if (ids.length() > 0) {
+                    summary.append(d.getFileName()).append(" (");
+                    firstEntry = true;
+                    for (Identifier id : d.getIdentifiers()) {
+                        if (firstEntry) {
+                            firstEntry = false;
+                        } else {
+                            summary.append(", ");
+                        }
+                        summary.append(id.getValue());
+                    }
+                    summary.append(") : ").append(ids).append(NEW_LINE);
+                }
             }
-        }
-        if (summary.length() > 0) {
-            final String msg = String.format("%n%n" + "One or more dependencies were identified with known vulnerabilities:%n%n%s"
-                    + "%n%nSee the dependency-check report for more details.%n%n", summary.toString());
-            LOGGER.log(Level.WARNING, msg);
+            if (summary.length() > 0) {
+                final String msg = String.format("%n%n" + "One or more dependencies were identified with known vulnerabilities:%n%n%s"
+                        + "%n%nSee the dependency-check report for more details.%n%n", summary.toString());
+                LOGGER.log(Level.WARNING, msg);
+            }
         }
     }
 

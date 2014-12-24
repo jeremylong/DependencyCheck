@@ -24,6 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
@@ -69,7 +70,13 @@ public class CheckMojo extends BaseDependencyCheckMojo {
         return isCapable;
     }
 
-    public void runCheck() throws MojoExecutionException {
+    /**
+     * Executes the dependency-check engine on the project's dependencies and generates the report.
+     *
+     * @throws MojoExecutionException thrown if there is an exception executing the goal
+     * @throws MojoFailureException thrown if dependency-check is configured to fail the build
+     */
+    public void runCheck() throws MojoExecutionException, MojoFailureException {
         final Engine engine;
         try {
             engine = initializeEngine();
@@ -104,7 +111,10 @@ public class CheckMojo extends BaseDependencyCheckMojo {
             engine.analyzeDependencies();
             writeReports(engine, getProject(), getCorrectOutputDirectory());
             writeDataFile(engine.getDependencies());
+            showSummary(engine.getDependencies());
+            checkForFailure(engine.getDependencies());
         }
+
         engine.cleanup();
         Settings.cleanup();
     }
