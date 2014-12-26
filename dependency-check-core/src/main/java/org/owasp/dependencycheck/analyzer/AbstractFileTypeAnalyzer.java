@@ -41,16 +41,7 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
      * enabled.
      */
     public AbstractFileTypeAnalyzer() {
-        final String key = getAnalyzerEnabledSettingKey();
-        try {
-            enabled = Settings.getBoolean(key, true);
-        } catch (InvalidSettingException ex) {
-            String msg = String.format("Invalid setting for property '%s'", key);
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, "", ex);
-            msg = String.format("%s has been disabled", getName());
-            LOGGER.log(Level.WARNING, msg);
-        }
+        reset();
     }
 //</editor-fold>
 
@@ -161,6 +152,23 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
             initializeFileTypeAnalyzer();
         } else {
             enabled = false;
+        }
+    }
+
+    /**
+     * Resets the enabled flag on the analyzer.
+     */
+    @Override
+    public final void reset() {
+        final String key = getAnalyzerEnabledSettingKey();
+        try {
+            enabled = Settings.getBoolean(key, true);
+        } catch (InvalidSettingException ex) {
+            String msg = String.format("Invalid setting for property '%s'", key);
+            LOGGER.log(Level.WARNING, msg);
+            LOGGER.log(Level.FINE, "", ex);
+            msg = String.format("%s has been disabled", getName());
+            LOGGER.log(Level.WARNING, msg);
         }
     }
 
