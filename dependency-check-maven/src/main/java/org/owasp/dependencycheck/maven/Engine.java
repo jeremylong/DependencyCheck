@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import org.apache.maven.project.MavenProject;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.CPEAnalyzer;
+import org.owasp.dependencycheck.analyzer.FileTypeAnalyzer;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -58,6 +59,7 @@ public class Engine extends org.owasp.dependencycheck.Engine {
      * Creates a new Engine to perform anyalsis on dependencies.
      *
      * @param project the current Maven project
+     * @param reactorProjects the reactor projects for the current Maven execution
      * @throws DatabaseException thrown if there is an issue connecting to the database
      */
     public Engine(MavenProject project, List<MavenProject> reactorProjects) throws DatabaseException {
@@ -112,6 +114,9 @@ public class Engine extends org.owasp.dependencycheck.Engine {
     @Override
     public void cleanup() {
         super.cleanup();
+        if (currentProject == null || reactorProjects == null) {
+            return;
+        }
         if (this.currentProject == reactorProjects.get(reactorProjects.size() - 1)) {
             final CPEAnalyzer cpe = getPreviouslyLoadedCPEAnalyzer();
             if (cpe != null) {
@@ -145,7 +150,7 @@ public class Engine extends org.owasp.dependencycheck.Engine {
         CPEAnalyzer cpe = null;
         final MavenProject project = getExecutionRoot();
         if (project != null) {
-            Object obj = project.getContextValue(CPE_ANALYZER_KEY);
+            final Object obj = project.getContextValue(CPE_ANALYZER_KEY);
             if (obj != null && obj instanceof CPEAnalyzer) {
                 cpe = (CPEAnalyzer) project.getContextValue(CPE_ANALYZER_KEY);
             }
@@ -188,5 +193,11 @@ public class Engine extends org.owasp.dependencycheck.Engine {
             p = p.getParent();
         }
         return p;
+    }
+
+    public void resetFileTypeAnalyzers() {
+        for (FileTypeAnalyzer a : getFileTypeAnalyzers()) {
+            a.reset();
+        }
     }
 }
