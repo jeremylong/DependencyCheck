@@ -42,9 +42,11 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
+import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
+import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -403,6 +405,34 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             return (File) obj;
         } else {
             throw new MojoExecutionException(String.format("Unable to determine output directory for '%s'", current.getName()));
+        }
+    }
+
+    /**
+     * Scans the project's artifacts and adds them to the engine's dependency list.
+     *
+     * @param project the project to scan the dependencies of
+     * @param engine the engine to use to scan the dependencies
+     */
+    protected void scanArtifacts(MavenProject project, Engine engine) {
+        for (Artifact a : project.getArtifacts()) {
+            if (excludeFromScan(a)) {
+                continue;
+            }
+            final List<Dependency> deps = engine.scan(a.getFile().getAbsoluteFile());
+            if (deps != null) {
+                if (deps.size() == 1) {
+                    final Dependency d = deps.get(0);
+                    if (d != null) {
+                        final MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
+                        d.addAsEvidence("pom", ma, Confidence.HIGHEST);
+                    }
+                } else {
+                    final String msg = String.format("More then 1 dependency was identified in first pass scan of '%s:%s:%s'",
+                            a.getGroupId(), a.getArtifactId(), a.getVersion());
+                    LOGGER.info(msg);
+                }
+            }
         }
     }
 
