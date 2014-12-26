@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -37,9 +36,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.owasp.dependencycheck.analyzer.DependencyBundlingAnalyzer;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
-import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -73,41 +70,57 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
     @Override
     public void runCheck() throws MojoExecutionException, MojoFailureException {
         final Engine engine = generateDataFile();
+
         if (getProject() == getReactorProjects().get(getReactorProjects().size() - 1)) {
             final Map<MavenProject, Set<MavenProject>> children = buildAggregateInfo();
+            boolean hasOrchestration = false;
+            for (MavenProject current : getReactorProjects()) {
+                final List<Dependency> dependencies = readDataFile(current);
+                final List<MavenProject> childProjects = getAllChildren(current, children);
+                //check for orchestration build - execution root with no children or dependencies
+                if ((dependencies == null || dependencies.isEmpty()) && childProjects.isEmpty() && current.isExecutionRoot()) {
+                    hasOrchestration = true;
+                }
+            }
 
             for (MavenProject current : getReactorProjects()) {
                 List<Dependency> dependencies = readDataFile(current);
-                if (dependencies == null) {
-                    dependencies = new ArrayList<Dependency>();
-                }
-                List<MavenProject> childProjects = getAllChildren(current, children);
+                final List<MavenProject> childProjects = getAllChildren(current, children);
                 //check for orchestration build - execution root with no children or dependencies
-                if (dependencies.isEmpty() && childProjects.isEmpty() && current.isExecutionRoot()) {
-                    childProjects = new ArrayList<MavenProject>(getReactorProjects().size());
-                    childProjects.addAll(getReactorProjects());
-                }
-
-                for (MavenProject reportOn : childProjects) {
-                    final List<Dependency> childDeps = readDataFile(reportOn);
-                    if (childDeps != null && !childDeps.isEmpty()) {
-                        dependencies.addAll(childDeps);
+                if ((dependencies == null || dependencies.isEmpty()) && childProjects.isEmpty() && current.isExecutionRoot()) {
+                    engine.resetFileTypeAnalyzers();
+                    for (MavenProject mod : getReactorProjects()) {
+                        scanArtifacts(mod, engine);
+                    }
+                    engine.analyzeDependencies();
+                } else {
+                    if (dependencies == null) {
+                        dependencies = new ArrayList<Dependency>();
+                    }
+                    for (MavenProject reportOn : childProjects) {
+                        final List<Dependency> childDeps = readDataFile(reportOn);
+                        if (childDeps != null && !childDeps.isEmpty()) {
+                            dependencies.addAll(childDeps);
+                        }
+                    }
+                    engine.getDependencies().clear();
+                    engine.getDependencies().addAll(dependencies);
+                    final DependencyBundlingAnalyzer bundler = new DependencyBundlingAnalyzer();
+                    try {
+                        bundler.analyze(null, engine);
+                    } catch (AnalysisException ex) {
+                        LOGGER.log(Level.WARNING, "An error occured grouping the dependencies; duplicate entries may exist in the report", ex);
+                        LOGGER.log(Level.FINE, "Bundling Exception", ex);
                     }
                 }
-
-                engine.getDependencies().clear();
-                engine.getDependencies().addAll(dependencies);
-                final DependencyBundlingAnalyzer bundler = new DependencyBundlingAnalyzer();
                 try {
-                    bundler.analyze(null, engine);
-                } catch (AnalysisException ex) {
-                    LOGGER.log(Level.WARNING, "An error occured grouping the dependencies; duplicate entries may exist in the report", ex);
-                    LOGGER.log(Level.FINE, "Bundling Exception", ex);
+                    final File outputDir = getCorrectOutputDirectory(current);
+                    writeReports(engine, current, outputDir);
+                } catch (MojoExecutionException ex) {
+                    if (!hasOrchestration) {
+                        throw ex;
+                    } // else ignore this
                 }
-
-                final File outputDir = getCorrectOutputDirectory(current);
-
-                writeReports(engine, current, outputDir);
             }
         }
         engine.cleanup();
@@ -181,26 +194,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
             Logger.getLogger(CheckMojo.class.getName()).log(Level.SEVERE, null, ex);
             throw new MojoExecutionException("An exception occured connecting to the local database. Please see the log file for more details.", ex);
         }
-        final Set<Artifact> artifacts = getProject().getArtifacts();
-        for (Artifact a : artifacts) {
-            if (excludeFromScan(a)) {
-                continue;
-            }
-            final List<Dependency> deps = engine.scan(a.getFile().getAbsoluteFile());
-            if (deps != null) {
-                if (deps.size() == 1) {
-                    final Dependency d = deps.get(0);
-                    if (d != null) {
-                        final MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
-                        d.addAsEvidence("pom", ma, Confidence.HIGHEST);
-                    }
-                } else {
-                    final String msg = String.format("More then 1 dependency was identified in first pass scan of '%s:%s:%s'",
-                            a.getGroupId(), a.getArtifactId(), a.getVersion());
-                    LOGGER.info(msg);
-                }
-            }
-        }
+        scanArtifacts(getProject(), engine);
         engine.analyzeDependencies();
         writeDataFile(engine.getDependencies());
         showSummary(engine.getDependencies());
