@@ -124,11 +124,11 @@ public final class Downloader {
                     writer.write(buffer, 0, bytesRead);
                 }
             } catch (IOException ex) {
-                String msg = String.format("Error saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
+                final String msg = String.format("Error saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
                         url.toString(), outputPath.getAbsolutePath(), conn.getConnectTimeout(), encoding);
                 throw new DownloadFailedException(msg, ex);
             } catch (Throwable ex) {
-                String msg = String.format("Unexpected exception saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
+                final String msg = String.format("Unexpected exception saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
                         url.toString(), outputPath.getAbsolutePath(), conn.getConnectTimeout(), encoding);
                 throw new DownloadFailedException(msg, ex);
             } finally {
