@@ -77,7 +77,7 @@ public class CheckMojo extends BaseDependencyCheckMojo {
         try {
             engine = initializeEngine();
         } catch (DatabaseException ex) {
-            Logger.getLogger(CheckMojo.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.FINE, "Database connection error", ex);
             throw new MojoExecutionException("An exception occured connecting to the local database. Please see the log file for more details.", ex);
         }
         scanArtifacts(getProject(), engine);
