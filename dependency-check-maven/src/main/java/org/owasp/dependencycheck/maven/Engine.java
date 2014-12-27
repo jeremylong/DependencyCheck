@@ -195,6 +195,11 @@ public class Engine extends org.owasp.dependencycheck.Engine {
         return p;
     }
 
+    /**
+     * Resets the file type analyzers so that they can be re-used to scan additional directories. Without the reset the
+     * analyzer might be disabled because the first scan/analyze did not identify any files that could be processed by
+     * the analyzer.
+     */
     public void resetFileTypeAnalyzers() {
         for (FileTypeAnalyzer a : getFileTypeAnalyzers()) {
             a.reset();
