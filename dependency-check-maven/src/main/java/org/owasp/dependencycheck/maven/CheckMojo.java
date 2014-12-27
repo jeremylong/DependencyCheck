@@ -17,9 +17,7 @@
  */
 package org.owasp.dependencycheck.maven;
 
-import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.maven.artifact.Artifact;
@@ -28,10 +26,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
-import org.owasp.dependencycheck.dependency.Confidence;
-import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -76,6 +71,7 @@ public class CheckMojo extends BaseDependencyCheckMojo {
      * @throws MojoExecutionException thrown if there is an exception executing the goal
      * @throws MojoFailureException thrown if dependency-check is configured to fail the build
      */
+    @Override
     public void runCheck() throws MojoExecutionException, MojoFailureException {
         final Engine engine;
         try {
@@ -84,27 +80,7 @@ public class CheckMojo extends BaseDependencyCheckMojo {
             Logger.getLogger(CheckMojo.class.getName()).log(Level.SEVERE, null, ex);
             throw new MojoExecutionException("An exception occured connecting to the local database. Please see the log file for more details.", ex);
         }
-
-        final Set<Artifact> artifacts = getProject().getArtifacts();
-        for (Artifact a : artifacts) {
-            if (excludeFromScan(a)) {
-                continue;
-            }
-            final List<Dependency> deps = engine.scan(a.getFile().getAbsoluteFile());
-            if (deps != null) {
-                if (deps.size() == 1) {
-                    final Dependency d = deps.get(0);
-                    if (d != null) {
-                        final MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
-                        d.addAsEvidence("pom", ma, Confidence.HIGHEST);
-                    }
-                } else {
-                    final String msg = String.format("More then 1 dependency was identified in first pass scan of '%s:%s:%s'",
-                            a.getGroupId(), a.getArtifactId(), a.getVersion());
-                    LOGGER.info(msg);
-                }
-            }
-        }
+        scanArtifacts(getProject(), engine);
         if (engine.getDependencies().isEmpty()) {
             LOGGER.info("No dependencies were identified that could be analyzed by dependency-check");
         } else {
@@ -114,7 +90,6 @@ public class CheckMojo extends BaseDependencyCheckMojo {
             showSummary(engine.getDependencies());
             checkForFailure(engine.getDependencies());
         }
-
         engine.cleanup();
         Settings.cleanup();
     }
