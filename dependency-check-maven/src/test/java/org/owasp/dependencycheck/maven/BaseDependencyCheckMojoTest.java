@@ -31,10 +31,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 import org.apache.maven.project.MavenProject;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
@@ -44,17 +42,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class BaseDependencyCheckMojoTest {
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        Settings.initialize();
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        Settings.cleanup(true);
-    }
+public class BaseDependencyCheckMojoTest extends BaseTest {
 
     /**
      * Test of scanArtifacts method, of class BaseDependencyCheckMojo.
