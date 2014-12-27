@@ -80,11 +80,11 @@ public final class Downloader {
                 try {
                     org.apache.commons.io.FileUtils.copyFile(file, outputPath);
                 } catch (IOException ex) {
-                    final String msg = String.format("Download failed, unable to copy '%s'", url.toString());
+                    final String msg = String.format("Download failed, unable to copy '%s' to '%s'", url.toString(), outputPath.getAbsolutePath());
                     throw new DownloadFailedException(msg);
                 }
             } else {
-                final String msg = String.format("Download failed, file does not exist '%s'", url.toString());
+                final String msg = String.format("Download failed, file ('%s') does not exist", url.toString());
                 throw new DownloadFailedException(msg);
             }
         } else {
@@ -101,7 +101,8 @@ public final class Downloader {
                 } finally {
                     conn = null;
                 }
-                throw new DownloadFailedException("Error downloading file.", ex);
+                final String msg = String.format("Error downloading file %s; unable to connect.", url.toString());
+                throw new DownloadFailedException(msg, ex);
             }
             final String encoding = conn.getContentEncoding();
 
@@ -122,13 +123,19 @@ public final class Downloader {
                 while ((bytesRead = reader.read(buffer)) > 0) {
                     writer.write(buffer, 0, bytesRead);
                 }
+            } catch (IOException ex) {
+                String msg = String.format("Error saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
+                        url.toString(), outputPath.getAbsolutePath(), conn.getConnectTimeout(), encoding);
+                throw new DownloadFailedException(msg, ex);
             } catch (Throwable ex) {
-                throw new DownloadFailedException("Error saving downloaded file.", ex);
+                String msg = String.format("Unexpected exception saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
+                        url.toString(), outputPath.getAbsolutePath(), conn.getConnectTimeout(), encoding);
+                throw new DownloadFailedException(msg, ex);
             } finally {
                 if (writer != null) {
                     try {
                         writer.close();
-                    } catch (Throwable ex) {
+                    } catch (IOException ex) {
                         LOGGER.log(Level.FINEST,
                                 "Error closing the writer in Downloader.", ex);
                     }
@@ -136,7 +143,7 @@ public final class Downloader {
                 if (reader != null) {
                     try {
                         reader.close();
-                    } catch (Throwable ex) {
+                    } catch (IOException ex) {
                         LOGGER.log(Level.FINEST,
                                 "Error closing the reader in Downloader.", ex);
                     }
