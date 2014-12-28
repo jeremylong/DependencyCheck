@@ -323,6 +323,10 @@ public final class CliParser {
                 .withDescription("Disable the .NET Assembly Analyzer.")
                 .create();
 
+        final Option disableCentralAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_CENTRAL)
+                .withDescription("Disable the Central Analyzer. If this analyzer is disabled it is likely you also want to disable the Nexus Analyzer.")
+                .create();
+
         final Option disableNexusAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_NEXUS)
                 .withDescription("Disable the Nexus Analyzer.")
                 .create();
@@ -360,6 +364,7 @@ public final class CliParser {
                 .addOption(disableArchiveAnalyzer)
                 .addOption(disableAssemblyAnalyzer)
                 .addOption(disableNuspecAnalyzer)
+                .addOption(disableCentralAnalyzer)
                 .addOption(disableNexusAnalyzer)
                 .addOption(nexusUrl)
                 .addOption(nexusUsesProxy)
@@ -454,6 +459,15 @@ public final class CliParser {
      */
     public boolean isNexusDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_NEXUS);
+    }
+
+    /**
+     * Returns true if the disableCentral command line argument was specified.
+     *
+     * @return true if the disableCentral command line argument was specified; otherwise false
+     */
+    public boolean isCentralDisabled() {
+        return (line != null) && line.hasOption(ARGUMENT.DISABLE_CENTRAL);
     }
 
     /**
@@ -876,6 +890,10 @@ public final class CliParser {
          * Disables the Nuspec Analyzer.
          */
         public static final String DISABLE_NUSPEC = "disableNuspec";
+        /**
+         * Disables the Central Analyzer.
+         */
+        public static final String DISABLE_CENTRAL = "disableCentral";
         /**
          * Disables the Nexus Analyzer.
          */
