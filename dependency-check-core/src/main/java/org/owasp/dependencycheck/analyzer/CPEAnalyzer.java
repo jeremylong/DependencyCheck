@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -57,12 +56,7 @@ import org.owasp.dependencycheck.utils.DependencyVersionUtil;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-public class CPEAnalyzer implements Analyzer, Serializable {
-
-    /**
-     * The serial version uid.
-     */
-    static final long serialVersionUID = 8321724465936326935L;
+public class CPEAnalyzer implements Analyzer {
 
     /**
      * The Logger.
