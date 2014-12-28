@@ -26,7 +26,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-class BaseTest {
+public class BaseTest {
 
     /**
      * The properties file location.
