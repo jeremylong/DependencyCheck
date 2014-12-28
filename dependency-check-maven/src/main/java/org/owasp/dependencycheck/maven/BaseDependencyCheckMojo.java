@@ -196,13 +196,21 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private boolean nuspecAnalyzerEnabled = true;
 
     /**
+     * Whether or not the Central Analyzer is enabled.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "centralAnalyzerEnabled", defaultValue = "true", required = false)
+    private boolean centralAnalyzerEnabled = true;
+
+    /**
      * Whether or not the Nexus Analyzer is enabled.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nexusAnalyzerEnabled", defaultValue = "true", required = false)
     private boolean nexusAnalyzerEnabled = true;
+
     /**
-     * Whether or not the Nexus Analyzer is enabled.
+     * The URL of a Nexus Pro server.
      */
     @Parameter(property = "nexusUrl", defaultValue = "", required = false)
     private String nexusUrl;
@@ -583,6 +591,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         Settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
         //NUSPEC ANALYZER
         Settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
+        //NEXUS ANALYZER
+        Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
         //NEXUS ANALYZER
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
         if (nexusUrl != null && !nexusUrl.isEmpty()) {
