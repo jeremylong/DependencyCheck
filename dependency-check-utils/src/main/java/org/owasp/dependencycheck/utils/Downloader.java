@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.InvalidAlgorithmParameterException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -124,6 +125,7 @@ public final class Downloader {
                     writer.write(buffer, 0, bytesRead);
                 }
             } catch (IOException ex) {
+                analyzeException(ex);
                 final String msg = String.format("Error saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
                         url.toString(), outputPath.getAbsolutePath(), conn.getConnectTimeout(), encoding);
                 throw new DownloadFailedException(msg, ex);
@@ -192,6 +194,7 @@ public final class Downloader {
             } catch (URLConnectionFailureException ex) {
                 throw new DownloadFailedException("Error creating URL Connection for HTTP HEAD request.", ex);
             } catch (IOException ex) {
+                analyzeException(ex);
                 throw new DownloadFailedException("Error making HTTP HEAD request.", ex);
             } finally {
                 if (conn != null) {
@@ -204,5 +207,23 @@ public final class Downloader {
             }
         }
         return timestamp;
+    }
+
+    protected static void analyzeException(IOException ex) throws DownloadFailedException {
+        Throwable cause = ex;
+        do {
+            if (cause instanceof InvalidAlgorithmParameterException) {
+                String keystore = System.getProperty("javax.net.ssl.keyStore");
+                String version = System.getProperty("java.version");
+                String vendor = System.getProperty("java.vendor");
+                LOGGER.info("Error making HTTPS request - InvalidAlgorithmParameterException");
+                LOGGER.info("There appears to be an issue with the installation of Java and the cacerts."
+                        + "See closed issue #177 here: https://github.com/jeremylong/DependencyCheck/issues/177");
+                LOGGER.info(String.format("Java Info:%njavax.net.ssl.keyStore='%s'%njava.version='%s'%njava.vendor='%s'",
+                        keystore, version, vendor));
+                throw new DownloadFailedException("Error making HTTPS request. Please see the log for more details.");
+            }
+            cause = cause.getCause();
+        } while (cause.getCause() != null);
     }
 }
