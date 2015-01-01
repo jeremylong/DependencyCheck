@@ -416,7 +416,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-test-framework</artifactId>
-            <version>4.3.1</version>
+            <version>${apache.lucene.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -454,17 +454,17 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
-            <version>4.5.1</version>
+            <version>${apache.lucene.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-analyzers-common</artifactId>
-            <version>4.5.1</version>
+            <version>${apache.lucene.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-queryparser</artifactId>
-            <version>4.5.1</version>
+            <version>${apache.lucene.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.velocity</groupId>
@@ -732,4 +732,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             </dependencies>
         </profile>
     </profiles>
+    <properties>
+        <apache.lucene.version>4.5.1</apache.lucene.version>
+    </properties>
 </project>
