@@ -146,6 +146,11 @@ Copyright (c) 2012 - Jeremy Long
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>2.7</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.18.1</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
