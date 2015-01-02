@@ -60,17 +60,12 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
                 <configuration>
                     <archive>
                         <manifest>
                             <mainClass>org.owasp.dependencycheck.App</mainClass>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>
-                    <excludes>
-                        <exclude>**/checkstyle*</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
