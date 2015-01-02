@@ -201,31 +201,14 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.16</version>
                 <configuration>
                     <systemProperties>
                         <property>
                             <name>data.directory</name>
                             <value>${project.build.directory}/data</value>
                         </property>
-                        <property>
-                            <name>temp.directory</name>
-                            <value>${project.build.directory}/temp</value>
-                        </property>
-
                     </systemProperties>
-                    <includes>
-                        <include>**/*IntegrationTest.java</include>
-                    </includes>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
