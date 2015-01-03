@@ -66,7 +66,6 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.2</version>
                 <configuration>
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                     <goalPrefix>dependency-check</goalPrefix>
@@ -106,7 +105,6 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 <inherited>true</inherited>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>1.2</version>
                 <executions>
                     <execution>
                         <id>enforce-maven-3</id>
