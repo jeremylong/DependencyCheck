@@ -39,17 +39,6 @@ public class AlphaNumericTokenizer extends CharTokenizer {
     }
 
     /**
-     * Constructs a new AlphaNumericTokenizer.
-     *
-     * @param matchVersion the lucene version
-     * @param factory the AttributeFactory
-     * @param in the Reader
-     */
-    public AlphaNumericTokenizer(Version matchVersion, AttributeFactory factory, Reader in) {
-        super(matchVersion, factory, in);
-    }
-
-    /**
      * Determines if the char passed in is part of a token.
      *
      * @param c the char being analyzed
