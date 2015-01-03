@@ -45,7 +45,6 @@ Copyright (c) 2014 - Jeremy Long. All Rights Reserved.
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.6</version>
                 <configuration>
                     <instrumentation>
                         <ignoreTrivial>true</ignoreTrivial>
