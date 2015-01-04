@@ -13,7 +13,7 @@ seven days the update will only take a few seconds.
 #set( $H = '#' )
 
 $H$H$H Example 1:
-Create the DependencyCheck-report.html in the target directory
+Create the DependencyCheck-report.html in the target directory.
 
 ```xml
 <project>
@@ -43,7 +43,7 @@ Create the DependencyCheck-report.html in the target directory
 ```
 
 $H$H$H Example 2:
-Create an aggregated dependency-check report within the site
+Create an aggregated dependency-check report within the site.
 
 ```xml
 <project>
@@ -57,13 +57,10 @@ Create an aggregated dependency-check report within the site
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
                     <version>${project.version}</version>
-                    <configuration>
-                        <aggregate>true</aggregate>
-                    </configuration>
                     <reportSets>
                         <reportSet>
                             <reports>
-                                <report>check</report>
+                                <report>aggregate</report>
                             </reports>
                         </reportSet>
                     </reportSets>
@@ -78,7 +75,7 @@ Create an aggregated dependency-check report within the site
 ```
 
 $H$H$H Example 3:
-Create the DependencyCheck-report.html and fail the build for CVSS greater then 8
+Create the DependencyCheck-report.html and fail the build for CVSS greater then 8.
 
 ```xml
 <project>
@@ -111,7 +108,7 @@ Create the DependencyCheck-report.html and fail the build for CVSS greater then 
 ```
 
 $H$H$H Example 4:
-Create the DependencyCheck-report.html and skip artifacts not bundled in distribution (Provided and Runtime scope)
+Create the DependencyCheck-report.html and skip artifacts not bundled in distribution (Provided and Runtime scope).
 
 ```xml
 <project>
@@ -145,7 +142,7 @@ Create the DependencyCheck-report.html and skip artifacts not bundled in distrib
 ```
 
 $H$H$H Example 5:
-Create the DependencyCheck-report.html and use internal mirroring of CVE contents
+Create the DependencyCheck-report.html and use internal mirroring of CVE contents.
 
 ```xml
 <project>

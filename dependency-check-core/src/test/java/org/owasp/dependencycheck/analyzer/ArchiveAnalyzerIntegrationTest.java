@@ -134,6 +134,7 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
             Dependency dependency = new Dependency(file);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
+            Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
             Engine engine = new Engine();
 
             int initial_size = engine.getDependencies().size();
@@ -165,6 +166,7 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
             Dependency dependency = new Dependency(file);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
+            Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
             Engine engine = new Engine();
 
             int initial_size = engine.getDependencies().size();
@@ -193,6 +195,7 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
             //Dependency dependency = new Dependency(file);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
+            Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
             Engine engine = new Engine();
 
             int initial_size = engine.getDependencies().size();
@@ -220,6 +223,7 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
 //            File file = new File(this.getClass().getClassLoader().getResource("nested.zip").getPath());
 //            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
 //            Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
+//            Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
 //            Engine engine = new Engine();
 //
 //            engine.scan(file);
@@ -242,6 +246,7 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
             File file = new File(this.getClass().getClassLoader().getResource("file.tgz").getPath());
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
+            Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
             Engine engine = new Engine();
 
             int initial_size = engine.getDependencies().size();
@@ -269,6 +274,7 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
             Dependency dependency = new Dependency(file);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
+            Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
             Engine engine = new Engine();
             int initial_size = engine.getDependencies().size();
 //            boolean failed = false;

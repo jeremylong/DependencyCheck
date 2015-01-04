@@ -153,6 +153,11 @@ public class Engine {
         return dependencies;
     }
 
+    /**
+     * Sets the dependencies.
+     *
+     * @param dependencies the dependencies
+     */
     public void setDependencies(List<Dependency> dependencies) {
         this.dependencies = dependencies;
     }
@@ -323,7 +328,7 @@ public class Engine {
             }
         } else {
             final String msg = String.format("No file extension found on file '%s'. The file was not analyzed.", file.toString());
-            LOGGER.log(Level.FINEST, msg);
+            LOGGER.log(Level.FINE, msg);
         }
         return dependency;
     }
@@ -511,6 +516,15 @@ public class Engine {
             scan |= a.supportsExtension(ext);
         }
         return scan;
+    }
+
+    /**
+     * Returns the set of file type analyzers.
+     *
+     * @return the set of file type analyzers
+     */
+    public Set<FileTypeAnalyzer> getFileTypeAnalyzers() {
+        return this.fileTypeAnalyzers;
     }
 
     /**

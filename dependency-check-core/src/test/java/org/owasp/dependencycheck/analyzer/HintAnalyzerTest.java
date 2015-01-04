@@ -75,6 +75,7 @@ public class HintAnalyzerTest extends BaseTest {
         //Dependency spring = new Dependency(files);
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
         Engine engine = new Engine();
 
         engine.scan(guice);

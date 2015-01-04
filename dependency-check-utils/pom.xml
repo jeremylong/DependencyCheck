@@ -21,7 +21,7 @@ Copyright (c) 2014 - Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>1.2.8-SNAPSHOT</version>
+        <version>1.2.8</version>
     </parent>
 
     <artifactId>dependency-check-utils</artifactId>
@@ -278,12 +278,6 @@ Copyright (c) 2014 - Jeremy Long. All Rights Reserved.
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

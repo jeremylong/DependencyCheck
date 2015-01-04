@@ -20,7 +20,7 @@ Copyright (c) 2012 - Jeremy Long
 
     <groupId>org.owasp</groupId>
     <artifactId>dependency-check-parent</artifactId>
-    <version>1.2.8-SNAPSHOT</version>
+    <version>1.2.8</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -256,9 +256,8 @@ Copyright (c) 2012 - Jeremy Long
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>4.12</version>
             <scope>test</scope>
-            <type>jar</type>
         </dependency>
     </dependencies>
 </project>

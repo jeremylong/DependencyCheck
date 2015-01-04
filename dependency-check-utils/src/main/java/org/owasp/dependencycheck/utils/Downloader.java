@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.InvalidAlgorithmParameterException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -80,11 +81,11 @@ public final class Downloader {
                 try {
                     org.apache.commons.io.FileUtils.copyFile(file, outputPath);
                 } catch (IOException ex) {
-                    final String msg = String.format("Download failed, unable to copy '%s'", url.toString());
+                    final String msg = String.format("Download failed, unable to copy '%s' to '%s'", url.toString(), outputPath.getAbsolutePath());
                     throw new DownloadFailedException(msg);
                 }
             } else {
-                final String msg = String.format("Download failed, file does not exist '%s'", url.toString());
+                final String msg = String.format("Download failed, file ('%s') does not exist", url.toString());
                 throw new DownloadFailedException(msg);
             }
         } else {
@@ -101,7 +102,8 @@ public final class Downloader {
                 } finally {
                     conn = null;
                 }
-                throw new DownloadFailedException("Error downloading file.", ex);
+                final String msg = String.format("Error downloading file %s; unable to connect.", url.toString());
+                throw new DownloadFailedException(msg, ex);
             }
             final String encoding = conn.getContentEncoding();
 
@@ -122,13 +124,20 @@ public final class Downloader {
                 while ((bytesRead = reader.read(buffer)) > 0) {
                     writer.write(buffer, 0, bytesRead);
                 }
+            } catch (IOException ex) {
+                analyzeException(ex);
+                final String msg = String.format("Error saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
+                        url.toString(), outputPath.getAbsolutePath(), conn.getConnectTimeout(), encoding);
+                throw new DownloadFailedException(msg, ex);
             } catch (Throwable ex) {
-                throw new DownloadFailedException("Error saving downloaded file.", ex);
+                final String msg = String.format("Unexpected exception saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
+                        url.toString(), outputPath.getAbsolutePath(), conn.getConnectTimeout(), encoding);
+                throw new DownloadFailedException(msg, ex);
             } finally {
                 if (writer != null) {
                     try {
                         writer.close();
-                    } catch (Throwable ex) {
+                    } catch (IOException ex) {
                         LOGGER.log(Level.FINEST,
                                 "Error closing the writer in Downloader.", ex);
                     }
@@ -136,7 +145,7 @@ public final class Downloader {
                 if (reader != null) {
                     try {
                         reader.close();
-                    } catch (Throwable ex) {
+                    } catch (IOException ex) {
                         LOGGER.log(Level.FINEST,
                                 "Error closing the reader in Downloader.", ex);
                     }
@@ -185,6 +194,7 @@ public final class Downloader {
             } catch (URLConnectionFailureException ex) {
                 throw new DownloadFailedException("Error creating URL Connection for HTTP HEAD request.", ex);
             } catch (IOException ex) {
+                analyzeException(ex);
                 throw new DownloadFailedException("Error making HTTP HEAD request.", ex);
             } finally {
                 if (conn != null) {
@@ -197,5 +207,23 @@ public final class Downloader {
             }
         }
         return timestamp;
+    }
+
+    protected static void analyzeException(IOException ex) throws DownloadFailedException {
+        Throwable cause = ex;
+        do {
+            if (cause instanceof InvalidAlgorithmParameterException) {
+                String keystore = System.getProperty("javax.net.ssl.keyStore");
+                String version = System.getProperty("java.version");
+                String vendor = System.getProperty("java.vendor");
+                LOGGER.info("Error making HTTPS request - InvalidAlgorithmParameterException");
+                LOGGER.info("There appears to be an issue with the installation of Java and the cacerts."
+                        + "See closed issue #177 here: https://github.com/jeremylong/DependencyCheck/issues/177");
+                LOGGER.info(String.format("Java Info:%njavax.net.ssl.keyStore='%s'%njava.version='%s'%njava.vendor='%s'",
+                        keystore, version, vendor));
+                throw new DownloadFailedException("Error making HTTPS request. Please see the log for more details.");
+            }
+            cause = cause.getCause();
+        } while (cause.getCause() != null);
     }
 }

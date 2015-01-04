@@ -50,8 +50,9 @@ Property                | Description                                           
 ------------------------|---------------------------------------------------------------------------|------------------
 archiveAnalyzerEnabled  | Sets whether the Archive Analyzer will be used.                           | true
 zipExtensions           | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
-jarAnalyzer             | Sets whether Jar Analyzer will be used.                                   | true
-nexusAnalyzerEnabled    | Sets whether Nexus Analyzer will be used.                                 | true
+jarAnalyzer             | Sets whether the Jar Analyzer will be used.                                   | true
+centralAnalyzerEnabled  | Sets whether the Central Analyzer will be used. If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer (see below).                                  | true
+nexusAnalyzerEnabled    | Sets whether Nexus Analyzer will be used. This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
 nexusUrl                | Defines the Nexus Pro URL. If not set the Nexus Analyzer will be disabled. | &nbsp;
 nexusUsesProxy          | Whether or not the defined proxy should be used when connecting to Nexus. | true
 nuspecAnalyzerEnabled   | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.          | true

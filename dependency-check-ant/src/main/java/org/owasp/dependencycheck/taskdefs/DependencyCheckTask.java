@@ -559,6 +559,28 @@ public class DependencyCheckTask extends Task {
     public void setNuspecAnalyzerEnabled(boolean nuspecAnalyzerEnabled) {
         this.nuspecAnalyzerEnabled = nuspecAnalyzerEnabled;
     }
+    /**
+     * Whether or not the central analyzer is enabled.
+     */
+    private boolean centralAnalyzerEnabled = false;
+
+    /**
+     * Get the value of centralAnalyzerEnabled
+     *
+     * @return the value of centralAnalyzerEnabled
+     */
+    public boolean isCentralAnalyzerEnabled() {
+        return centralAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of centralAnalyzerEnabled
+     *
+     * @param centralAnalyzerEnabled new value of centralAnalyzerEnabled
+     */
+    public void setCentralAnalyzerEnabled(boolean centralAnalyzerEnabled) {
+        this.centralAnalyzerEnabled = centralAnalyzerEnabled;
+    }
 
     /**
      * Whether or not the nexus analyzer is enabled.
@@ -1015,6 +1037,8 @@ public class DependencyCheckTask extends Task {
         Settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
         //NUSPEC ANALYZER
         Settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
+        //CENTRAL ANALYZER
+        Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
         //NEXUS ANALYZER
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
         if (nexusUrl != null && !nexusUrl.isEmpty()) {

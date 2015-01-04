@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.maven;
 
@@ -29,50 +29,42 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
-import org.owasp.dependencycheck.analyzer.DependencyBundlingAnalyzer;
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.LogUtils;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * Maven Plugin that checks project dependencies to see if they have any known published vulnerabilities.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
-@Mojo(
-        name = "check",
-        defaultPhase = LifecyclePhase.COMPILE,
-        threadSafe = true,
-        requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM,
-        requiresOnline = true
-)
-public class DependencyCheckMojo extends ReportAggregationMojo {
+public abstract class BaseDependencyCheckMojo extends AbstractMojo implements MavenReport {
 
     //<editor-fold defaultstate="collapsed" desc="Private fields">
     /**
      * Logger field reference.
      */
-    private static final Logger LOGGER = Logger.getLogger(DependencyCheckMojo.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(BaseDependencyCheckMojo.class.getName());
     /**
      * The properties file location.
      */
@@ -86,12 +78,23 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
      */
     private static final String NEW_LINE = System.getProperty("line.separator", "\n").intern();
     /**
-     * The dependency-check engine used to scan the project.
+     * Sets whether or not the external report format should be used.
      */
-    private Engine engine = null;
-    //</editor-fold>
+    @Parameter(property = "metaFileName", defaultValue = "dependency-check.ser", required = true)
+    private String dataFileName;
 
+    //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Maven bound parameters and components">
+    /**
+     * The Maven Project Object.
+     */
+    @Component
+    private MavenProject project;
+    /**
+     * List of Maven project of the current build
+     */
+    @Parameter(readonly = true, required = true, property = "reactorProjects")
+    private List<MavenProject> reactorProjects;
     /**
      * The path to the verbose log.
      */
@@ -117,6 +120,14 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "autoupdate", defaultValue = "true", required = true)
     private boolean autoUpdate = true;
+    /**
+     * Generate aggregate reports in multi-module projects.
+     *
+     * @deprecated use the aggregate goal instead
+     */
+    @Parameter(property = "aggregate", defaultValue = "false")
+    @Deprecated
+    private boolean aggregate;
     /**
      * The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this
      * within the Site plug-in unless the externalReport is set to true. Default is HTML.
@@ -185,13 +196,21 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     private boolean nuspecAnalyzerEnabled = true;
 
     /**
+     * Whether or not the Central Analyzer is enabled.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "centralAnalyzerEnabled", defaultValue = "true", required = false)
+    private boolean centralAnalyzerEnabled = true;
+
+    /**
      * Whether or not the Nexus Analyzer is enabled.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nexusAnalyzerEnabled", defaultValue = "true", required = false)
     private boolean nexusAnalyzerEnabled = true;
+
     /**
-     * Whether or not the Nexus Analyzer is enabled.
+     * The URL of a Nexus Pro server.
      */
     @Parameter(property = "nexusUrl", defaultValue = "", required = false)
     private String nexusUrl;
@@ -299,38 +318,116 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
     @Deprecated
     private String externalReport = null;
 
-    // </editor-fold>
     /**
-     * Executes the Dependency-Check on the dependent libraries.
-     *
-     * @return the Engine used to scan the dependencies.
-     * @throws DatabaseException thrown if there is an exception connecting to the database
+     * Specifies the destination directory for the generated Dependency-Check report. This generally maps to
+     * "target/site".
      */
-    private Engine executeDependencyCheck() throws DatabaseException {
-        return executeDependencyCheck(getProject());
+    @Parameter(property = "reportOutputDirectory", defaultValue = "${project.reporting.outputDirectory}", required = true)
+    private File reportOutputDirectory;
+    // </editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="Base Maven implementation">
+
+    /**
+     * Executes dependency-check.
+     *
+     * @throws MojoExecutionException thrown if there is an exception executing the mojo
+     * @throws MojoFailureException thrown if dependency-check failed the build
+     */
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        validateAggregate();
+        project.setContextValue(getOutputDirectoryContextKey(), this.outputDirectory);
+        runCheck();
     }
 
     /**
-     * Executes the Dependency-Check on the dependent libraries.
+     * Checks if the aggregate configuration parameter has been set to true. If it has a MojoExecutionException is
+     * thrown because the aggregate configuration parameter is no longer supported.
      *
-     * @param project the project to run dependency-check on
-     * @return the Engine used to scan the dependencies.
-     * @throws DatabaseException thrown if there is an exception connecting to the database
+     * @throws MojoExecutionException thrown if aggregate is set to true
      */
-    private Engine executeDependencyCheck(MavenProject project) throws DatabaseException {
-        final Engine localEngine;
-        if (engine == null) {
-            localEngine = initializeEngine(project);
-        } else {
-            localEngine = engine;
+    private void validateAggregate() throws MojoExecutionException {
+        if (aggregate) {
+            final String msg = "Aggregate configuration detected - as of dependency-check 1.2.8 this no longer supported. "
+                    + "Please use the aggregate goal instead.";
+            throw new MojoExecutionException(msg);
         }
+    }
 
-        final Set<Artifact> artifacts = project.getArtifacts();
-        for (Artifact a : artifacts) {
+    /**
+     * Generates the Dependency-Check Site Report.
+     *
+     * @param sink the sink to write the report to
+     * @param locale the locale to use when generating the report
+     * @throws MavenReportException if a maven report exception occurs
+     * @deprecated use {@link #generate(org.apache.maven.doxia.sink.Sink, java.util.Locale) instead.
+     */
+    @Deprecated
+    public final void generate(@SuppressWarnings("deprecation") org.codehaus.doxia.sink.Sink sink, Locale locale) throws MavenReportException {
+        generate((Sink) sink, locale);
+    }
+
+    /**
+     * Generates the Dependency-Check Site Report.
+     *
+     * @param sink the sink to write the report to
+     * @param locale the locale to use when generating the report
+     * @throws MavenReportException if a maven report exception occurs
+     */
+    public void generate(Sink sink, Locale locale) throws MavenReportException {
+        try {
+            validateAggregate();
+        } catch (MojoExecutionException ex) {
+            throw new MavenReportException(ex.getMessage());
+        }
+        project.setContextValue(getOutputDirectoryContextKey(), getReportOutputDirectory());
+        try {
+            runCheck();
+        } catch (MojoExecutionException ex) {
+            throw new MavenReportException(ex.getMessage(), ex);
+        } catch (MojoFailureException ex) {
+            LOGGER.warning("Vulnerabilities were identifies that exceed the CVSS threshold for failing the build");
+        }
+    }
+
+    /**
+     * Returns the correct output directory depending on if a site is being executed or not.
+     *
+     * @return the directory to write the report(s)
+     * @throws MojoExecutionException thrown if there is an error loading the file path
+     */
+    protected File getCorrectOutputDirectory() throws MojoExecutionException {
+        return getCorrectOutputDirectory(this.project);
+    }
+
+    /**
+     * Returns the correct output directory depending on if a site is being executed or not.
+     *
+     * @param current the Maven project to get the output directory from
+     * @return the directory to write the report(s)
+     * @throws MojoExecutionException thrown if there is an error loading the file path
+     */
+    protected File getCorrectOutputDirectory(MavenProject current) throws MojoExecutionException {
+        final Object obj = current.getContextValue(getOutputDirectoryContextKey());
+        if (obj != null && obj instanceof File) {
+            return (File) obj;
+        } else {
+            throw new MojoExecutionException(String.format("Unable to determine output directory for '%s'", current.getName()));
+        }
+    }
+
+    /**
+     * Scans the project's artifacts and adds them to the engine's dependency list.
+     *
+     * @param project the project to scan the dependencies of
+     * @param engine the engine to use to scan the dependencies
+     */
+    protected void scanArtifacts(MavenProject project, Engine engine) {
+        for (Artifact a : project.getArtifacts()) {
             if (excludeFromScan(a)) {
                 continue;
             }
-            final List<Dependency> deps = localEngine.scan(a.getFile().getAbsoluteFile());
+            final List<Dependency> deps = engine.scan(a.getFile().getAbsoluteFile());
             if (deps != null) {
                 if (deps.size() == 1) {
                     final Dependency d = deps.get(0);
@@ -345,44 +442,96 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
                 }
             }
         }
-        localEngine.analyzeDependencies();
-
-        return localEngine;
     }
+
+    /**
+     * Executes the dependency-check scan and generates the necassary report.
+     *
+     * @throws MojoExecutionException thrown if there is an exception running the scan
+     * @throws MojoFailureException thrown if dependency-check is configured to fail the build
+     */
+    public abstract void runCheck() throws MojoExecutionException, MojoFailureException;
+
+    /**
+     * Sets the Reporting output directory.
+     *
+     * @param directory the output directory
+     */
+    @Override
+    public void setReportOutputDirectory(File directory) {
+        reportOutputDirectory = directory;
+    }
+
+    /**
+     * Returns the report output directory.
+     *
+     * @return the report output directory
+     */
+    @Override
+    public File getReportOutputDirectory() {
+        return reportOutputDirectory;
+    }
+
+    /**
+     * Returns the output directory.
+     *
+     * @return the output directory
+     */
+    public File getOutputDirectory() {
+        return outputDirectory;
+    }
+
+    /**
+     * Returns whether this is an external report. This method always returns true.
+     *
+     * @return <code>true</code>
+     */
+    @Override
+    public final boolean isExternalReport() {
+        return true;
+    }
+
+    /**
+     * Returns the output name.
+     *
+     * @return the output name
+     */
+    public String getOutputName() {
+        if ("HTML".equalsIgnoreCase(this.format) || "ALL".equalsIgnoreCase(this.format)) {
+            return "dependency-check-report";
+        } else if ("XML".equalsIgnoreCase(this.format)) {
+            return "dependency-check-report.xml#";
+        } else if ("VULN".equalsIgnoreCase(this.format)) {
+            return "dependency-check-vulnerability";
+        } else {
+            LOGGER.log(Level.WARNING, "Unknown report format used during site generation.");
+            return "dependency-check-report";
+        }
+    }
+
+    /**
+     * Returns the category name.
+     *
+     * @return the category name
+     */
+    public String getCategoryName() {
+        return MavenReport.CATEGORY_PROJECT_REPORTS;
+    }
+    //</editor-fold>
 
     /**
      * Initializes a new <code>Engine</code> that can be used for scanning.
      *
-     * @param project the current MavenProject
      * @return a newly instantiated <code>Engine</code>
      * @throws DatabaseException thrown if there is a database exception
      */
-    private Engine initializeEngine(MavenProject project) throws DatabaseException {
+    protected Engine initializeEngine() throws DatabaseException {
+        final InputStream in = BaseDependencyCheckMojo.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
+        LogUtils.prepareLogger(in, logFile);
         populateSettings();
-        final Engine localEngine = new Engine(project);
-        return localEngine;
+        return new Engine(this.project, this.reactorProjects);
     }
 
-    /**
-     * Tests is the artifact should be included in the scan (i.e. is the dependency in a scope that is being scanned).
-     *
-     * @param a the Artifact to test
-     * @return <code>true</code> if the artifact is in an excluded scope; otherwise <code>false</code>
-     */
-    private boolean excludeFromScan(Artifact a) {
-        if (skipTestScope && Artifact.SCOPE_TEST.equals(a.getScope())) {
-            return true;
-        }
-        if (skipProvidedScope && Artifact.SCOPE_PROVIDED.equals(a.getScope())) {
-            return true;
-        }
-        if (skipRuntimeScope && !Artifact.SCOPE_RUNTIME.equals(a.getScope())) {
-            return true;
-        }
-        return false;
-    }
-
-    //<editor-fold defaultstate="collapsed" desc="Methods to populate global settings">
     /**
      * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system
      * properties required to change the proxy url, port, and connection timeout.
@@ -442,6 +591,8 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
         Settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
         //NUSPEC ANALYZER
         Settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
+        //NEXUS ANALYZER
+        Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
         //NEXUS ANALYZER
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
         if (nexusUrl != null && !nexusUrl.isEmpty()) {
@@ -527,248 +678,90 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
         return null;
     }
 
-    //</editor-fold>
     /**
-     * Initialize the mojo.
-     */
-    @Override
-    protected void initialize() {
-        final InputStream in = DependencyCheckMojo.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
-        LogUtils.prepareLogger(in, logFile);
-    }
-
-    /**
-     * Executes the dependency-check and generates the report.
+     * Tests is the artifact should be included in the scan (i.e. is the dependency in a scope that is being scanned).
      *
-     * @throws MojoExecutionException if a maven exception occurs
-     * @throws MojoFailureException thrown if a CVSS score is found that is higher then the configured level
+     * @param a the Artifact to test
+     * @return <code>true</code> if the artifact is in an excluded scope; otherwise <code>false</code>
      */
-    @Override
-    protected void performExecute() throws MojoExecutionException, MojoFailureException {
-        try {
-            engine = executeDependencyCheck();
-            ReportingUtil.generateExternalReports(engine, outputDirectory, getProject().getName(), format);
-            if (this.showSummary) {
-                showSummary(engine.getDependencies());
-            }
-            if (this.failBuildOnCVSS <= 10) {
-                checkForFailure(engine.getDependencies());
-            }
-        } catch (DatabaseException ex) {
-            LOGGER.log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
-            LOGGER.log(Level.FINE, "", ex);
-        }
-    }
-
-    @Override
-    protected void postExecute() throws MojoExecutionException, MojoFailureException {
-        try {
-            super.postExecute();
-        } finally {
-            cleanupEngine();
-        }
-    }
-
-    @Override
-    protected void postGenerate() throws MavenReportException {
-        try {
-            super.postGenerate();
-        } finally {
-            cleanupEngine();
-        }
-    }
-
-    /**
-     * Calls <code>engine.cleanup()</code> to release resources.
-     */
-    private void cleanupEngine() {
-        if (engine != null) {
-            engine.cleanup();
-            engine = null;
-        }
-        Settings.cleanup(true);
-    }
-
-    /**
-     * Generates the Dependency-Check Site Report.
-     *
-     * @param locale the locale to use when generating the report
-     * @throws MavenReportException if a maven report exception occurs
-     */
-    @Override
-    protected void executeNonAggregateReport(Locale locale) throws MavenReportException {
-        final List<Dependency> deps = readDataFile();
-        if (deps != null) {
-            try {
-                if (engine != null) {
-                    engine = initializeEngine(getProject());
-                }
-                engine.getDependencies().addAll(deps);
-            } catch (DatabaseException ex) {
-                final String msg = String.format("An unrecoverable exception with the dependency-check initialization occured while scanning %s",
-                        getProject().getName());
-                throw new MavenReportException(msg, ex);
-            }
-        } else {
-            try {
-                engine = executeDependencyCheck();
-            } catch (DatabaseException ex) {
-                final String msg = String.format("An unrecoverable exception with the dependency-check scan occured while scanning %s",
-                        getProject().getName());
-                throw new MavenReportException(msg, ex);
-            }
-        }
-        ReportingUtil.generateExternalReports(engine, getReportOutputDirectory(), getProject().getName(), format);
-    }
-
-    @Override
-    protected void executeAggregateReport(MavenProject project, Locale locale) throws MavenReportException {
-        List<Dependency> deps = readDataFile(project);
-        if (deps != null) {
-            try {
-                if (engine != null) {
-                    engine = initializeEngine(project);
-                }
-                engine.getDependencies().addAll(deps);
-            } catch (DatabaseException ex) {
-                final String msg = String.format("An unrecoverable exception with the dependency-check initialization occured while scanning %s",
-                        project.getName());
-                throw new MavenReportException(msg, ex);
-            }
-        } else {
-            try {
-                engine = executeDependencyCheck(project);
-            } catch (DatabaseException ex) {
-                final String msg = String.format("An unrecoverable exception with the dependency-check scan occured while scanning %s",
-                        project.getName());
-                throw new MavenReportException(msg, ex);
-            }
-        }
-        for (MavenProject child : getAllChildren(project)) {
-            deps = readDataFile(child);
-            if (deps == null) {
-                final String msg = String.format("Unable to include information on %s in the dependency-check aggregate report",
-                        child.getName());
-                LOGGER.severe(msg);
-            } else {
-                engine.getDependencies().addAll(deps);
-            }
-        }
-        final DependencyBundlingAnalyzer bundler = new DependencyBundlingAnalyzer();
-        try {
-            bundler.analyze(null, engine);
-        } catch (AnalysisException ex) {
-            LOGGER.log(Level.WARNING, "An error occured grouping the dependencies; duplicate entries may exist in the report", ex);
-            LOGGER.log(Level.FINE, "Bundling Exception", ex);
-        }
-        final File outputDir = getReportOutputDirectory(project);
-        if (outputDir != null) {
-            ReportingUtil.generateExternalReports(engine, outputDir, project.getName(), format);
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="Mojo interface/abstract required setter/getter methods">
-    /**
-     * Returns the output name.
-     *
-     * @return the output name
-     */
-    public String getOutputName() {
-        if ("HTML".equalsIgnoreCase(this.format) || "ALL".equalsIgnoreCase(this.format)) {
-            return "dependency-check-report";
-        } else if ("XML".equalsIgnoreCase(this.format)) {
-            return "dependency-check-report.xml#";
-        } else if ("VULN".equalsIgnoreCase(this.format)) {
-            return "dependency-check-vulnerability";
-        } else {
-            LOGGER.log(Level.WARNING, "Unknown report format used during site generation.");
-            return "dependency-check-report";
-        }
-    }
-
-    /**
-     * Returns the category name.
-     *
-     * @return the category name
-     */
-    public String getCategoryName() {
-        return MavenReport.CATEGORY_PROJECT_REPORTS;
-    }
-
-    /**
-     * Returns the report name.
-     *
-     * @param locale the location
-     * @return the report name
-     */
-    public String getName(Locale locale) {
-        return "dependency-check";
-    }
-
-    /**
-     * Gets the description of the Dependency-Check report to be displayed in the Maven Generated Reports page.
-     *
-     * @param locale The Locale to get the description for
-     * @return the description
-     */
-    public String getDescription(Locale locale) {
-        return "A report providing details on any published "
-                + "vulnerabilities within project dependencies. This report is a best effort but may contain "
-                + "false positives and false negatives.";
-    }
-
-    /**
-     * Returns whether or not a report can be generated.
-     *
-     * @return <code>true</code> if a report can be generated; otherwise <code>false</code>
-     */
-    public boolean canGenerateReport() {
-        if (canGenerateAggregateReport() || (isAggregate() && isMultiModule())) {
+    protected boolean excludeFromScan(Artifact a) {
+        if (skipTestScope && Artifact.SCOPE_TEST.equals(a.getScope())) {
             return true;
         }
-        if (canGenerateNonAggregateReport()) {
+        if (skipProvidedScope && Artifact.SCOPE_PROVIDED.equals(a.getScope())) {
             return true;
-        } else {
-            final String msg;
-            if (getProject().getArtifacts().size() > 0) {
-                msg = "No project dependencies exist in the included scope - dependency-check:check is unable to generate a report.";
-            } else {
-                msg = "No project dependencies exist - dependency-check:check is unable to generate a report.";
-            }
-            LOGGER.warning(msg);
         }
-
+        if (skipRuntimeScope && !Artifact.SCOPE_RUNTIME.equals(a.getScope())) {
+            return true;
+        }
         return false;
     }
 
     /**
-     * Returns whether or not a non-aggregate report can be generated.
+     * Returns a reference to the current project. This method is used instead of auto-binding the project via component
+     * annotation in concrete implementations of this. If the child has a <code>@Component MavenProject project;</code>
+     * defined then the abstract class (i.e. this class) will not have access to the current project (just the way Maven
+     * works with the binding).
      *
-     * @return <code>true</code> if a non-aggregate report can be generated; otherwise <code>false</code>
+     * @return returns a reference to the current project
      */
-    @Override
-    protected boolean canGenerateNonAggregateReport() {
-        boolean ability = false;
-        for (Artifact a : getProject().getArtifacts()) {
-            if (!excludeFromScan(a)) {
-                ability = true;
-                break;
-            }
-        }
-        return ability;
+    protected MavenProject getProject() {
+        return project;
     }
 
     /**
-     * Returns whether or not an aggregate report can be generated.
+     * Returns the list of Maven Projects in this build.
      *
-     * @return <code>true</code> if an aggregate report can be generated; otherwise <code>false</code>
+     * @return the list of Maven Projects in this build
      */
-    @Override
-    protected boolean canGenerateAggregateReport() {
-        return isAggregate() && isLastProject();
+    protected List<MavenProject> getReactorProjects() {
+        return reactorProjects;
     }
 
-    // </editor-fold>
+    /**
+     * Returns the report format.
+     *
+     * @return the report format
+     */
+    protected String getFormat() {
+        return format;
+    }
+
+    /**
+     * Generates the reports for a given dependency-check engine.
+     *
+     * @param engine a dependency-check engine
+     * @param p the maven project
+     * @param outputDir the directory path to write the report(s).
+     */
+    protected void writeReports(Engine engine, MavenProject p, File outputDir) {
+        DatabaseProperties prop = null;
+        CveDB cve = null;
+        try {
+            cve = new CveDB();
+            cve.open();
+            prop = cve.getDatabaseProperties();
+        } catch (DatabaseException ex) {
+            LOGGER.log(Level.FINE, "Unable to retrieve DB Properties", ex);
+        } finally {
+            if (cve != null) {
+                cve.close();
+            }
+        }
+        final ReportGenerator r = new ReportGenerator(p.getName(), engine.getDependencies(), engine.getAnalyzers(), prop);
+        try {
+            r.generateReports(outputDir.getAbsolutePath(), format);
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE,
+                    "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
+            LOGGER.log(Level.FINE, null, ex);
+        } catch (Throwable ex) {
+            LOGGER.log(Level.SEVERE,
+                    "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
+            LOGGER.log(Level.FINE, null, ex);
+        }
+    }
+
     //<editor-fold defaultstate="collapsed" desc="Methods to fail build or show summary">
     /**
      * Checks to see if a vulnerability has been identified with a CVSS score that is above the threshold set in the
@@ -777,27 +770,29 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
      * @param dependencies the list of dependency objects
      * @throws MojoFailureException thrown if a CVSS score is found that is higher then the threshold set
      */
-    private void checkForFailure(List<Dependency> dependencies) throws MojoFailureException {
-        final StringBuilder ids = new StringBuilder();
-        for (Dependency d : dependencies) {
-            boolean addName = true;
-            for (Vulnerability v : d.getVulnerabilities()) {
-                if (v.getCvssScore() >= failBuildOnCVSS) {
-                    if (addName) {
-                        addName = false;
-                        ids.append(NEW_LINE).append(d.getFileName()).append(": ");
-                        ids.append(v.getName());
-                    } else {
-                        ids.append(", ").append(v.getName());
+    protected void checkForFailure(List<Dependency> dependencies) throws MojoFailureException {
+        if (failBuildOnCVSS <= 10) {
+            final StringBuilder ids = new StringBuilder();
+            for (Dependency d : dependencies) {
+                boolean addName = true;
+                for (Vulnerability v : d.getVulnerabilities()) {
+                    if (v.getCvssScore() >= failBuildOnCVSS) {
+                        if (addName) {
+                            addName = false;
+                            ids.append(NEW_LINE).append(d.getFileName()).append(": ");
+                            ids.append(v.getName());
+                        } else {
+                            ids.append(", ").append(v.getName());
+                        }
                     }
                 }
             }
-        }
-        if (ids.length() > 0) {
-            final String msg = String.format("%n%nDependency-Check Failure:%n"
-                    + "One or more dependencies were identified with vulnerabilities that have a CVSS score greater then '%.1f': %s%n"
-                    + "See the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
-            throw new MojoFailureException(msg);
+            if (ids.length() > 0) {
+                final String msg = String.format("%n%nDependency-Check Failure:%n"
+                        + "One or more dependencies were identified with vulnerabilities that have a CVSS score greater then '%.1f': %s%n"
+                        + "See the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
+                throw new MojoFailureException(msg);
+            }
         }
     }
 
@@ -806,52 +801,73 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
      *
      * @param dependencies a list of dependency objects
      */
-    private void showSummary(List<Dependency> dependencies) {
-        final StringBuilder summary = new StringBuilder();
-        for (Dependency d : dependencies) {
-            boolean firstEntry = true;
-            final StringBuilder ids = new StringBuilder();
-            for (Vulnerability v : d.getVulnerabilities()) {
-                if (firstEntry) {
-                    firstEntry = false;
-                } else {
-                    ids.append(", ");
-                }
-                ids.append(v.getName());
-            }
-            if (ids.length() > 0) {
-                summary.append(d.getFileName()).append(" (");
-                firstEntry = true;
-                for (Identifier id : d.getIdentifiers()) {
+    protected void showSummary(List<Dependency> dependencies) {
+        if (showSummary) {
+            final StringBuilder summary = new StringBuilder();
+            for (Dependency d : dependencies) {
+                boolean firstEntry = true;
+                final StringBuilder ids = new StringBuilder();
+                for (Vulnerability v : d.getVulnerabilities()) {
                     if (firstEntry) {
                         firstEntry = false;
                     } else {
-                        summary.append(", ");
+                        ids.append(", ");
                     }
-                    summary.append(id.getValue());
+                    ids.append(v.getName());
                 }
-                summary.append(") : ").append(ids).append(NEW_LINE);
+                if (ids.length() > 0) {
+                    summary.append(d.getFileName()).append(" (");
+                    firstEntry = true;
+                    for (Identifier id : d.getIdentifiers()) {
+                        if (firstEntry) {
+                            firstEntry = false;
+                        } else {
+                            summary.append(", ");
+                        }
+                        summary.append(id.getValue());
+                    }
+                    summary.append(") : ").append(ids).append(NEW_LINE);
+                }
             }
-        }
-        if (summary.length() > 0) {
-            final String msg = String.format("%n%n" + "One or more dependencies were identified with known vulnerabilities:%n%n%s"
-                    + "%n%nSee the dependency-check report for more details.%n%n", summary.toString());
-            LOGGER.log(Level.WARNING, msg);
+            if (summary.length() > 0) {
+                final String msg = String.format("%n%n" + "One or more dependencies were identified with known vulnerabilities:%n%n%s"
+                        + "%n%nSee the dependency-check report for more details.%n%n", summary.toString());
+                LOGGER.log(Level.WARNING, msg);
+            }
         }
     }
 
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Methods to read/write the serialized data file">
     /**
+     * Returns the key used to store the path to the data file that is saved by <code>writeDataFile()</code>. This key
+     * is used in the <code>MavenProject.(set|get)ContextValue</code>.
+     *
+     * @return the key used to store the path to the data file
+     */
+    protected String getDataFileContextKey() {
+        return "dependency-check-path-" + dataFileName;
+    }
+
+    /**
+     * Returns the key used to store the path to the output directory. When generating the report in the
+     * <code>executeAggregateReport()</code> the output directory should be obtained by using this key.
+     *
+     * @return the key used to store the path to the output directory
+     */
+    protected String getOutputDirectoryContextKey() {
+        return "dependency-output-dir-" + dataFileName;
+    }
+
+    /**
      * Writes the scan data to disk. This is used to serialize the scan data between the "check" and "aggregate" phase.
      *
-     * @return the File object referencing the data file that was written
+     * @param dependencies the list of dependencies to serialize
      */
-    @Override
-    protected File writeDataFile() {
+    protected void writeDataFile(List<Dependency> dependencies) {
         File file = null;
-        if (engine != null && getProject().getContextValue(this.getDataFileContextKey()) == null) {
-            file = new File(getProject().getBuild().getDirectory(), getDataFileName());
+        if (dependencies != null && project.getContextValue(this.getDataFileContextKey()) == null) {
+            file = new File(project.getBuild().getDirectory(), dataFileName);
             OutputStream os = null;
             OutputStream bos = null;
             ObjectOutputStream out = null;
@@ -859,13 +875,14 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
                 os = new FileOutputStream(file);
                 bos = new BufferedOutputStream(os);
                 out = new ObjectOutputStream(bos);
-                out.writeObject(engine.getDependencies());
+                out.writeObject(dependencies);
                 out.flush();
 
                 //call reset to prevent resource leaks per
                 //https://www.securecoding.cert.org/confluence/display/java/SER10-J.+Avoid+memory+and+resource+leaks+during+serialization
                 out.reset();
-
+                project.setContextValue(this.getDataFileContextKey(), file.getAbsolutePath());
+                LOGGER.fine(String.format("Serialized data file written to '%s'", file.getAbsolutePath()));
             } catch (IOException ex) {
                 LOGGER.log(Level.WARNING, "Unable to create data file used for report aggregation; "
                         + "if report aggregation is being used the results may be incomplete.");
@@ -894,18 +911,6 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
                 }
             }
         }
-        return file;
-    }
-
-    /**
-     * Reads the serialized scan data from disk. This is used to serialize the scan data between the "check" and
-     * "aggregate" phase.
-     *
-     * @return a <code>Engine</code> object populated with dependencies if the serialized data file exists; otherwise
-     * <code>null</code> is returned
-     */
-    protected List<Dependency> readDataFile() {
-        return readDataFile(getProject());
     }
 
     /**
@@ -946,5 +951,4 @@ public class DependencyCheckMojo extends ReportAggregationMojo {
         return ret;
     }
     //</editor-fold>
-
 }

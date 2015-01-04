@@ -261,7 +261,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
      */
     private void extractGzip(File file) throws FileNotFoundException, IOException {
         final String originalPath = file.getPath();
-        File gzip = new File(originalPath + ".gz");
+        final File gzip = new File(originalPath + ".gz");
         if (gzip.isFile() && !gzip.delete()) {
             gzip.deleteOnExit();
         }

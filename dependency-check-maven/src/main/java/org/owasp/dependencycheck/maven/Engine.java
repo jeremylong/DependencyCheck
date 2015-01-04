@@ -17,10 +17,12 @@
  */
 package org.owasp.dependencycheck.maven;
 
+import java.util.List;
 import java.util.logging.Logger;
 import org.apache.maven.project.MavenProject;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.CPEAnalyzer;
+import org.owasp.dependencycheck.analyzer.FileTypeAnalyzer;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -44,22 +46,37 @@ public class Engine extends org.owasp.dependencycheck.Engine {
      * The current MavenProject.
      */
     private MavenProject currentProject;
+    /**
+     * The list of MavenProjects that are part of the current build.
+     */
+    private List<MavenProject> reactorProjects;
+    /**
+     * Key used in the MavenProject context values to note whether or not an update has been executed.
+     */
+    public static final String UPDATE_EXECUTED_FLAG = "dependency-check-update-executed";
 
     /**
      * Creates a new Engine to perform anyalsis on dependencies.
      *
      * @param project the current Maven project
+     * @param reactorProjects the reactor projects for the current Maven execution
      * @throws DatabaseException thrown if there is an issue connecting to the database
      */
-    public Engine(MavenProject project) throws DatabaseException {
+    public Engine(MavenProject project, List<MavenProject> reactorProjects) throws DatabaseException {
         this.currentProject = project;
-        final MavenProject parent = getRootParent();
-        if (parent != null && parent.getContextValue("dependency-check-data-was-updated") != null) {
+        this.reactorProjects = reactorProjects;
+        final MavenProject root = getExecutionRoot();
+        if (root != null) {
+            LOGGER.fine(String.format("Checking root project, %s, if updates have already been completed", root.getArtifactId()));
+        } else {
+            LOGGER.fine("Checking root project, null, if updates have already been completed");
+        }
+        if (root != null && root.getContextValue(UPDATE_EXECUTED_FLAG) != null) {
             System.setProperty(Settings.KEYS.AUTO_UPDATE, Boolean.FALSE.toString());
         }
         initializeEngine();
-        if (parent != null) {
-            parent.setContextValue("dependency-check-data-was-updated", Boolean.valueOf(true));
+        if (root != null) {
+            root.setContextValue(UPDATE_EXECUTED_FLAG, Boolean.TRUE);
         }
     }
 
@@ -81,7 +98,7 @@ public class Engine extends org.owasp.dependencycheck.Engine {
     @Override
     protected Analyzer initializeAnalyzer(Analyzer analyzer) {
         if ((analyzer instanceof CPEAnalyzer)) {
-            CPEAnalyzer cpe = getPreviouslyLoadedAnalyzer();
+            CPEAnalyzer cpe = getPreviouslyLoadedCPEAnalyzer();
             if (cpe != null) {
                 return cpe;
             }
@@ -92,6 +109,23 @@ public class Engine extends org.owasp.dependencycheck.Engine {
     }
 
     /**
+     * Releases resources used by the analyzers by calling close() on each analyzer.
+     */
+    @Override
+    public void cleanup() {
+        super.cleanup();
+        if (currentProject == null || reactorProjects == null) {
+            return;
+        }
+        if (this.currentProject == reactorProjects.get(reactorProjects.size() - 1)) {
+            final CPEAnalyzer cpe = getPreviouslyLoadedCPEAnalyzer();
+            if (cpe != null) {
+                cpe.close();
+            }
+        }
+    }
+
+    /**
      * Closes the given analyzer. This skips closing the CPEAnalyzer.
      *
      * @param analyzer the analyzer to close
@@ -99,7 +133,7 @@ public class Engine extends org.owasp.dependencycheck.Engine {
     @Override
     protected void closeAnalyzer(Analyzer analyzer) {
         if ((analyzer instanceof CPEAnalyzer)) {
-            if (getPreviouslyLoadedAnalyzer() == null) {
+            if (getPreviouslyLoadedCPEAnalyzer() == null) {
                 super.closeAnalyzer(analyzer);
             }
         } else {
@@ -108,25 +142,18 @@ public class Engine extends org.owasp.dependencycheck.Engine {
     }
 
     /**
-     * Closes the CPEAnalyzer if it has been created and persisted in the root parent MavenProject context.
-     */
-    public void cleanupFinal() {
-        final CPEAnalyzer cpe = getPreviouslyLoadedAnalyzer();
-        if (cpe != null) {
-            cpe.close();
-        }
-    }
-
-    /**
      * Gets the CPEAnalyzer from the root Maven Project.
      *
      * @return an initialized CPEAnalyzer
      */
-    private CPEAnalyzer getPreviouslyLoadedAnalyzer() {
+    private CPEAnalyzer getPreviouslyLoadedCPEAnalyzer() {
         CPEAnalyzer cpe = null;
-        final MavenProject project = getRootParent();
+        final MavenProject project = getExecutionRoot();
         if (project != null) {
-            cpe = (CPEAnalyzer) project.getContextValue(CPE_ANALYZER_KEY);
+            final Object obj = project.getContextValue(CPE_ANALYZER_KEY);
+            if (obj != null && obj instanceof CPEAnalyzer) {
+                cpe = (CPEAnalyzer) project.getContextValue(CPE_ANALYZER_KEY);
+            }
         }
         return cpe;
     }
@@ -137,7 +164,7 @@ public class Engine extends org.owasp.dependencycheck.Engine {
      * @param cpe the CPEAnalyzer to store
      */
     private void storeCPEAnalyzer(CPEAnalyzer cpe) {
-        final MavenProject p = getRootParent();
+        final MavenProject p = getExecutionRoot();
         if (p != null) {
             p.setContextValue(CPE_ANALYZER_KEY, cpe);
         }
@@ -148,7 +175,16 @@ public class Engine extends org.owasp.dependencycheck.Engine {
      *
      * @return the root Maven Project
      */
-    private MavenProject getRootParent() {
+    private MavenProject getExecutionRoot() {
+        if (reactorProjects == null) {
+            return null;
+        }
+        for (MavenProject p : reactorProjects) {
+            if (p.isExecutionRoot()) {
+                return p;
+            }
+        }
+        //the following should  never run, but leaving it as a failsafe.
         if (this.currentProject == null) {
             return null;
         }
@@ -157,5 +193,16 @@ public class Engine extends org.owasp.dependencycheck.Engine {
             p = p.getParent();
         }
         return p;
+    }
+
+    /**
+     * Resets the file type analyzers so that they can be re-used to scan additional directories. Without the reset the
+     * analyzer might be disabled because the first scan/analyze did not identify any files that could be processed by
+     * the analyzer.
+     */
+    public void resetFileTypeAnalyzers() {
+        for (FileTypeAnalyzer a : getFileTypeAnalyzers()) {
+            a.reset();
+        }
     }
 }
