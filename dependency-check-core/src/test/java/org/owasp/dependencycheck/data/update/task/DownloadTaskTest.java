@@ -68,7 +68,7 @@ public class DownloadTaskTest {
         cve.setOldSchemaVersionUrl(Settings.getString(Settings.KEYS.CVE_MODIFIED_12_URL));
         ExecutorService processExecutor = null;
         CveDB cveDB = null;
-        DownloadTask instance = new DownloadTask(cve, processExecutor, cveDB, Settings.getInstance());;
+        DownloadTask instance = new DownloadTask(cve, processExecutor, cveDB, Settings.getInstance());
         Future<ProcessTask> result = instance.call();
         assertNull(result);
     }

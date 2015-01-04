@@ -5,7 +5,6 @@
         <artifactId>dependency-check-parent</artifactId>
         <version>1.2.8</version>
     </parent>
-    <groupId>org.owasp</groupId>
     <artifactId>dependency-check-jenkins</artifactId>
     <name>Dependency-Check Jenkins Plugin</name>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/OWASP+Dependency-Check+Plugin</url>
