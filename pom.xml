@@ -126,7 +126,7 @@ Copyright (c) 2012 - Jeremy Long
     </distributionManagement>
     <!-- end copy -->
     <prerequisites>
-        <maven>2.2.1</maven>
+        <maven>3.0</maven>
     </prerequisites>
     <build>
         <pluginManagement>
