@@ -23,7 +23,6 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.LowerCaseFilter;
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
-import org.apache.lucene.util.Version;
 
 /**
  * VersionAnalyzer is a Lucene Analyzer used to analyze version information.
@@ -41,18 +40,10 @@ public class VersionAnalyzer extends Analyzer {
     // http://www.codewrecks.com/blog/index.php/2012/08/25/index-your-blog-using-tags-and-lucene-net/
 
     /**
-     * The Lucene Version used.
-     */
-    private final Version version;
-
-    /**
      * Creates a new VersionAnalyzer.
      *
-     * @param version the Lucene version
      */
-    public VersionAnalyzer(Version version) {
-        this.version = version;
-    }
+    public VersionAnalyzer() {}
 
     /**
      * Creates the TokenStreamComponents
@@ -63,9 +54,9 @@ public class VersionAnalyzer extends Analyzer {
      */
     @Override
     protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
-        final Tokenizer source = new WhitespaceTokenizer(version, reader);
+        final Tokenizer source = new WhitespaceTokenizer(reader);
         TokenStream stream = source;
-        stream = new LowerCaseFilter(version, stream);
+        stream = new LowerCaseFilter(stream);
         return new TokenStreamComponents(source, stream);
     }
 }

@@ -59,7 +59,7 @@ public class FieldAnalyzer extends Analyzer {
      */
     @Override
     protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
-        final Tokenizer source = new AlphaNumericTokenizer(version, reader);
+        final Tokenizer source = new AlphaNumericTokenizer(reader);
 
         TokenStream stream = source;
 
@@ -72,7 +72,7 @@ public class FieldAnalyzer extends Analyzer {
                 | WordDelimiterFilter.SPLIT_ON_NUMERICS
                 | WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE, null);
 
-        stream = new LowerCaseFilter(version, stream);
+        stream = new LowerCaseFilter(stream);
         stream = new StopFilter(version, stream, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
 
         return new TokenStreamComponents(source, stream);

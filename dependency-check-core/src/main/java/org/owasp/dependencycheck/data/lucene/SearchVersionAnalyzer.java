@@ -41,17 +41,10 @@ public class SearchVersionAnalyzer extends Analyzer {
     // http://www.codewrecks.com/blog/index.php/2012/08/25/index-your-blog-using-tags-and-lucene-net/
 
     /**
-     * The Lucene Version used.
-     */
-    private final Version version;
-
-    /**
      * Creates a new SearchVersionAnalyzer.
      *
-     * @param version the Lucene version
      */
-    public SearchVersionAnalyzer(Version version) {
-        this.version = version;
+    public SearchVersionAnalyzer() {
     }
 
     /**
@@ -63,9 +56,9 @@ public class SearchVersionAnalyzer extends Analyzer {
      */
     @Override
     protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
-        final Tokenizer source = new WhitespaceTokenizer(version, reader);
+        final Tokenizer source = new WhitespaceTokenizer(reader);
         TokenStream stream = source;
-        stream = new LowerCaseFilter(version, stream);
+        stream = new LowerCaseFilter(stream);
         stream = new VersionTokenizingFilter(stream);
         return new TokenStreamComponents(source, stream);
     }

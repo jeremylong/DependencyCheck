@@ -19,7 +19,6 @@ package org.owasp.dependencycheck.data.lucene;
 
 import java.io.Reader;
 import org.apache.lucene.analysis.util.CharTokenizer;
-import org.apache.lucene.util.Version;
 
 /**
  * Tokenizes the input breaking it into tokens when non-alpha/numeric characters are found.
@@ -31,11 +30,10 @@ public class AlphaNumericTokenizer extends CharTokenizer {
     /**
      * Constructs a new AlphaNumericTokenizer.
      *
-     * @param matchVersion the lucene version
      * @param in the Reader
      */
-    public AlphaNumericTokenizer(Version matchVersion, Reader in) {
-        super(matchVersion, in);
+    public AlphaNumericTokenizer(Reader in) {
+        super(in);
     }
 
     /**
