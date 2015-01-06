@@ -89,7 +89,7 @@ public class FieldAnalyzerTest {
         map.put(field1, searchAnalyzerProduct);
         map.put(field2, searchAnalyzerVendor);
         PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(new StandardAnalyzer(LuceneUtils.CURRENT_VERSION), map);
-        QueryParser parser = new QueryParser(LuceneUtils.CURRENT_VERSION, field1, wrapper);
+        QueryParser parser = new QueryParser(field1, wrapper);
 
         Query q = parser.parse(querystr);
         //System.out.println(q.toString());

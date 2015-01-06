@@ -62,7 +62,7 @@ public class SearchFieldAnalyzer extends Analyzer {
      */
     @Override
     protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
-        final Tokenizer source = new AlphaNumericTokenizer(version, reader);
+        final Tokenizer source = new AlphaNumericTokenizer(reader);
 
         TokenStream stream = source;
 
@@ -74,7 +74,7 @@ public class SearchFieldAnalyzer extends Analyzer {
                 | WordDelimiterFilter.SPLIT_ON_NUMERICS
                 | WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE, null);
 
-        stream = new LowerCaseFilter(version, stream);
+        stream = new LowerCaseFilter(stream);
         stream = new UrlTokenizingFilter(stream);
         concatenatingFilter = new TokenPairConcatenatingFilter(stream);
         stream = concatenatingFilter;

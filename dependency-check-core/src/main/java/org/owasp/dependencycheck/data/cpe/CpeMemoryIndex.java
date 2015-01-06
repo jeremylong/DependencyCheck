@@ -125,7 +125,7 @@ public final class CpeMemoryIndex {
                 }
                 indexSearcher = new IndexSearcher(indexReader);
                 searchingAnalyzer = createSearchingAnalyzer();
-                queryParser = new QueryParser(LuceneUtils.CURRENT_VERSION, Fields.DOCUMENT_KEY, searchingAnalyzer);
+                queryParser = new QueryParser(Fields.DOCUMENT_KEY, searchingAnalyzer);
                 openState = true;
             }
         }
