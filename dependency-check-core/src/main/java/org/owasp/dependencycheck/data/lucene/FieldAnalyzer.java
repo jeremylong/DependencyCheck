@@ -25,7 +25,6 @@ import org.apache.lucene.analysis.core.LowerCaseFilter;
 import org.apache.lucene.analysis.core.StopAnalyzer;
 import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter;
-import org.apache.lucene.util.Version;
 
 /**
  * <p>
@@ -37,18 +36,10 @@ import org.apache.lucene.util.Version;
 public class FieldAnalyzer extends Analyzer {
 
     /**
-     * The Lucene Version used.
-     */
-    private final Version version;
-
-    /**
      * Creates a new FieldAnalyzer.
      *
-     * @param version the Lucene version
      */
-    public FieldAnalyzer(Version version) {
-        this.version = version;
-    }
+    public FieldAnalyzer() { }
 
     /**
      * Creates the TokenStreamComponents
@@ -73,7 +64,7 @@ public class FieldAnalyzer extends Analyzer {
                 | WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE, null);
 
         stream = new LowerCaseFilter(stream);
-        stream = new StopFilter(version, stream, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+        stream = new StopFilter(stream, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
 
         return new TokenStreamComponents(source, stream);
     }
