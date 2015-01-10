@@ -31,8 +31,9 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 public class DependencyCheckTaskTest extends BuildFileTest {
     //TODO: The use of deprecated class BuildFileTestcan possibly
-    //be replaced with BuildFileRule. However, it doesn't seem to be included
-    //in the ant-testutil jar.
+    //be replaced with BuildFileRule. However, it currently isn't included in the ant-testutil jar.
+    //This should be fixed in ant-testutil 1.9.5, so we can check back once that has been released.
+    //Reference: http://mail-archives.apache.org/mod_mbox/ant-user/201406.mbox/%3C000001cf87ba$8949b690$9bdd23b0$@de%3E
 
     @Before
     @Override
