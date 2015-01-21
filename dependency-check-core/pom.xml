@@ -655,6 +655,20 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <scope>provided</scope>
                     <optional>true</optional>
                 </dependency>
+                <dependency>
+                    <groupId>com.google.inject</groupId>
+                    <artifactId>guice</artifactId>
+                    <version>3.0</version>
+                    <scope>provided</scope>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>org.opensaml</groupId>
+                    <artifactId>xmltooling</artifactId>
+                    <version>1.4.1</version>
+                    <scope>provided</scope>
+                    <optional>true</optional>
+                </dependency>
             </dependencies>
         </profile>
     </profiles>
