@@ -153,7 +153,7 @@ public final class CpeMemoryIndex {
     private Analyzer createIndexingAnalyzer() {
         final Map fieldAnalyzers = new HashMap();
         fieldAnalyzers.put(Fields.DOCUMENT_KEY, new KeywordAnalyzer());
-        return new PerFieldAnalyzerWrapper(new FieldAnalyzer(LuceneUtils.CURRENT_VERSION), fieldAnalyzers);
+        return new PerFieldAnalyzerWrapper(new FieldAnalyzer(), fieldAnalyzers);
     }
 
     /**
@@ -165,12 +165,12 @@ public final class CpeMemoryIndex {
     private Analyzer createSearchingAnalyzer() {
         final Map<String, Analyzer> fieldAnalyzers = new HashMap<String, Analyzer>();
         fieldAnalyzers.put(Fields.DOCUMENT_KEY, new KeywordAnalyzer());
-        productSearchFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
-        vendorSearchFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
+        productSearchFieldAnalyzer = new SearchFieldAnalyzer();
+        vendorSearchFieldAnalyzer = new SearchFieldAnalyzer();
         fieldAnalyzers.put(Fields.PRODUCT, productSearchFieldAnalyzer);
         fieldAnalyzers.put(Fields.VENDOR, vendorSearchFieldAnalyzer);
 
-        return new PerFieldAnalyzerWrapper(new FieldAnalyzer(LuceneUtils.CURRENT_VERSION), fieldAnalyzers);
+        return new PerFieldAnalyzerWrapper(new FieldAnalyzer(), fieldAnalyzers);
     }
 
     /**

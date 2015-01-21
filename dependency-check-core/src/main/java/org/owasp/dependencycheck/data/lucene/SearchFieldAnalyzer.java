@@ -25,7 +25,6 @@ import org.apache.lucene.analysis.core.LowerCaseFilter;
 import org.apache.lucene.analysis.core.StopAnalyzer;
 import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter;
-import org.apache.lucene.util.Version;
 
 /**
  * A Lucene field analyzer used to analyzer queries against the CPE data.
@@ -35,10 +34,6 @@ import org.apache.lucene.util.Version;
 public class SearchFieldAnalyzer extends Analyzer {
 
     /**
-     * The Lucene Version used.
-     */
-    private final Version version;
-    /**
      * A local reference to the TokenPairConcatenatingFilter so that we can clear any left over state if this analyzer
      * is re-used.
      */
@@ -47,11 +42,8 @@ public class SearchFieldAnalyzer extends Analyzer {
     /**
      * Constructs a new SearchFieldAnalyzer.
      *
-     * @param version the Lucene version
      */
-    public SearchFieldAnalyzer(Version version) {
-        this.version = version;
-    }
+    public SearchFieldAnalyzer() {  }
 
     /**
      * Creates a the TokenStreamComponents used to analyze the stream.
@@ -78,7 +70,7 @@ public class SearchFieldAnalyzer extends Analyzer {
         stream = new UrlTokenizingFilter(stream);
         concatenatingFilter = new TokenPairConcatenatingFilter(stream);
         stream = concatenatingFilter;
-        stream = new StopFilter(version, stream, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+        stream = new StopFilter(stream, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
 
         return new TokenStreamComponents(source, stream);
     }
