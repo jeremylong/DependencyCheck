@@ -48,18 +48,25 @@
         <cpe>cpe:/a:oracle:glassfish</cpe>
         <cpe>cpe:/a:oracle:oracle_client</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         Suppresses false positives on the grizzly-framework
         ]]></notes>
         <gav regex="true">org\.glassfish\.grizzly:grizzly-framework:.*</gav>
         <cpe>cpe:/a:oracle:glassfish</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         Suppresses false positives on the grizzly-framework
         ]]></notes>
         <gav regex="true">org\.forgerock\.opendj:opendj-ldap-sdk:.*</gav>
         <cpe>cpe:/a:ldap_project:ldap</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives on the org.opensaml:xmltooling
+        ]]></notes>
+        <gav regex="true">org\.opensaml:xmltooling:.*</gav>
+        <cpe>cpe:/a:shibboleth:opensaml</cpe>
     </suppress>
 </suppressions>
