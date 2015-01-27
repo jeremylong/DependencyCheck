@@ -18,14 +18,13 @@
 package org.owasp.dependencycheck.data.nvdcve;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.junit.Assert;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 
@@ -70,13 +69,35 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
     public void testGetVulnerabilities() throws Exception {
         String cpeStr = "cpe:/a:apache:struts:2.1.2";
         CveDB instance = new CveDB();
+        List<Vulnerability> results;
         try {
             instance.open();
-            List result = instance.getVulnerabilities(cpeStr);
-            assertTrue(result.size() > 5);
+            results = instance.getVulnerabilities(cpeStr);
+            assertTrue(results.size() > 5);
             cpeStr = "cpe:/a:jruby:jruby:1.6.3";
-            result = instance.getVulnerabilities(cpeStr);
-            assertTrue(result.size() > 1);
+            results = instance.getVulnerabilities(cpeStr);
+            assertTrue(results.size() > 1);
+
+            boolean found = false;
+            String expected = "CVE-2011-4838";
+            for (Vulnerability v : results) {
+                if (expected.equals(v.getName())) {
+                    found = true;
+                    break;
+                }
+            }
+            assertTrue("Expected " + expected + ", but was not identified", found);
+
+            found = false;
+            expected = "CVE-2012-5370";
+            for (Vulnerability v : results) {
+                if (expected.equals(v.getName())) {
+                    found = true;
+                    break;
+                }
+            }
+            assertTrue("Expected " + expected + ", but was not identified", found);
+
         } finally {
             instance.close();
         }

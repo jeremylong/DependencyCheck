@@ -61,11 +61,10 @@ public class CveDB {
     private Connection conn;
 
     /**
-     * Creates a new CveDB object and opens the database connection. Note, the
-     * connection must be closed by the caller by calling the close method.
+     * Creates a new CveDB object and opens the database connection. Note, the connection must be closed by the caller by calling
+     * the close method.
      *
-     * @throws DatabaseException thrown if there is an exception opening the
-     * database.
+     * @throws DatabaseException thrown if there is an exception opening the database.
      */
     public CveDB() throws DatabaseException {
         super();
@@ -87,11 +86,9 @@ public class CveDB {
     }
 
     /**
-     * Opens the database connection. If the database does not exist, it will
-     * create a new one.
+     * Opens the database connection. If the database does not exist, it will create a new one.
      *
-     * @throws DatabaseException thrown if there is an error opening the
-     * database connection
+     * @throws DatabaseException thrown if there is an error opening the database connection
      */
     public final void open() throws DatabaseException {
         if (!isOpen()) {
@@ -100,8 +97,7 @@ public class CveDB {
     }
 
     /**
-     * Closes the DB4O database. Close should be called on this object when it
-     * is done being used.
+     * Closes the DB4O database. Close should be called on this object when it is done being used.
      */
     public void close() {
         if (conn != null) {
@@ -154,8 +150,7 @@ public class CveDB {
         super.finalize();
     }
     /**
-     * Database properties object containing the 'properties' from the database
-     * table.
+     * Database properties object containing the 'properties' from the database table.
      */
     private DatabaseProperties databaseProperties;
 
@@ -181,9 +176,8 @@ public class CveDB {
      */
     private static final String DELETE_VULNERABILITY = "DELETE FROM vulnerability WHERE id = ?";
     /**
-     * SQL Statement to cleanup orphan entries. Yes, the db schema could be a
-     * little tighter, but what we have works well to keep the data file size
-     * down a bit.
+     * SQL Statement to cleanup orphan entries. Yes, the db schema could be a little tighter, but what we have works well to keep
+     * the data file size down a bit.
      */
     private static final String CLEANUP_ORPHANS = "DELETE FROM CpeEntry WHERE id not in (SELECT CPEEntryId FROM Software); ";
     /**
@@ -221,7 +215,7 @@ public class CveDB {
             + "FROM software INNER JOIN vulnerability ON vulnerability.id = software.cveId "
             + "INNER JOIN cpeEntry ON cpeEntry.id = software.cpeEntryId "
             + "WHERE vendor = ? AND product = ? "
-            + "ORDER BY cve, cpe, previousVersion";
+            + "ORDER BY cve, cpe DESC, previousVersion";
     //unfortunately, the version info is too complicated to do in a select. Need to filter this afterwards
     //        + " AND (version = '-' OR previousVersion IS NOT NULL OR version=?)";
     //
@@ -279,13 +273,11 @@ public class CveDB {
 
     //</editor-fold>
     /**
-     * Searches the CPE entries in the database and retrieves all entries for a
-     * given vendor and product combination. The returned list will include all
-     * versions of the product that are registered in the NVD CVE data.
+     * Searches the CPE entries in the database and retrieves all entries for a given vendor and product combination. The returned
+     * list will include all versions of the product that are registered in the NVD CVE data.
      *
      * @param vendor the identified vendor name of the dependency being analyzed
-     * @param product the identified name of the product of the dependency being
-     * analyzed
+     * @param product the identified name of the product of the dependency being analyzed
      * @return a set of vulnerable software
      */
     public Set<VulnerableSoftware> getCPEs(String vendor, String product) {
@@ -318,8 +310,7 @@ public class CveDB {
      * Returns the entire list of vendor/product combinations.
      *
      * @return the entire list of vendor/product combinations
-     * @throws DatabaseException thrown when there is an error retrieving the
-     * data from the DB
+     * @throws DatabaseException thrown when there is an error retrieving the data from the DB
      */
     public Set<Pair<String, String>> getVendorProductList() throws DatabaseException {
         final Set<Pair<String, String>> data = new HashSet<Pair<String, String>>();
@@ -481,8 +472,8 @@ public class CveDB {
                 if (!currentCVE.equals(cveId)) { //check for match and add
                     final Entry<String, Boolean> matchedCPE = getMatchingSoftware(vulnSoftware, detectedVersion);
                     if (matchedCPE != null) {
-                        cveEntries.add(cveId);
-                        final Vulnerability v = getVulnerability(cveId);
+                        cveEntries.add(currentCVE);
+                        final Vulnerability v = getVulnerability(currentCVE);
                         v.setMatchedCPE(matchedCPE.getKey(), matchedCPE.getValue() ? "Y" : null);
                         vulnerabilities.add(v);
                     }
@@ -586,8 +577,7 @@ public class CveDB {
     }
 
     /**
-     * Updates the vulnerability within the database. If the vulnerability does
-     * not exist it will be added.
+     * Updates the vulnerability within the database. If the vulnerability does not exist it will be added.
      *
      * @param vuln the vulnerability to add to the database
      * @throws DatabaseException is thrown if the database
@@ -768,9 +758,8 @@ public class CveDB {
     }
 
     /**
-     * It is possible that orphaned rows may be generated during database
-     * updates. This should be called after all updates have been completed to
-     * ensure orphan entries are removed.
+     * It is possible that orphaned rows may be generated during database updates. This should be called after all updates have
+     * been completed to ensure orphan entries are removed.
      */
     public void cleanupDatabase() {
         PreparedStatement ps = null;
@@ -789,15 +778,11 @@ public class CveDB {
     }
 
     /**
-     * Determines if the given identifiedVersion is affected by the given cpeId
-     * and previous version flag. A non-null, non-empty string passed to the
-     * previous version argument indicates that all previous versions are
-     * affected.
+     * Determines if the given identifiedVersion is affected by the given cpeId and previous version flag. A non-null, non-empty
+     * string passed to the previous version argument indicates that all previous versions are affected.
      *
-     * @param vulnerableSoftware a map of the vulnerable software with a boolean
-     * indicating if all previous versions are affected
-     * @param identifiedVersion the identified version of the dependency being
-     * analyzed
+     * @param vulnerableSoftware a map of the vulnerable software with a boolean indicating if all previous versions are affected
+     * @param identifiedVersion the identified version of the dependency being analyzed
      * @return true if the identified version is affected, otherwise false
      */
     protected Entry<String, Boolean> getMatchingSoftware(HashMap<String, Boolean> vulnerableSoftware, DependencyVersion identifiedVersion) {
@@ -841,8 +826,7 @@ public class CveDB {
     }
 
     /**
-     * Parses the version (including revision) from a CPE identifier. If no
-     * version is identified then a '-' is returned.
+     * Parses the version (including revision) from a CPE identifier. If no version is identified then a '-' is returned.
      *
      * @param cpeStr a cpe identifier
      * @return a dependency version
@@ -859,8 +843,7 @@ public class CveDB {
     }
 
     /**
-     * Takes a CPE and parses out the version number. If no version is
-     * identified then a '-' is returned.
+     * Takes a CPE and parses out the version number. If no version is identified then a '-' is returned.
      *
      * @param cpe a cpe object
      * @return a dependency version
