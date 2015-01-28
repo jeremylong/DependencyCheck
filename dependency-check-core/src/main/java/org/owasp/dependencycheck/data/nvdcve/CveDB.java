@@ -215,7 +215,7 @@ public class CveDB {
             + "FROM software INNER JOIN vulnerability ON vulnerability.id = software.cveId "
             + "INNER JOIN cpeEntry ON cpeEntry.id = software.cpeEntryId "
             + "WHERE vendor = ? AND product = ? "
-            + "ORDER BY cve, cpe DESC, previousVersion";
+            + "ORDER BY cve, cpe"; //, previousVersion
     //unfortunately, the version info is too complicated to do in a select. Need to filter this afterwards
     //        + " AND (version = '-' OR previousVersion IS NOT NULL OR version=?)";
     //
@@ -466,11 +466,12 @@ public class CveDB {
             ps.setString(2, cpe.getProduct());
             rs = ps.executeQuery();
             String currentCVE = "";
+
             final HashMap<String, Boolean> vulnSoftware = new HashMap<String, Boolean>();
             while (rs.next()) {
                 final String cveId = rs.getString(1);
                 if (!currentCVE.equals(cveId)) { //check for match and add
-                    final Entry<String, Boolean> matchedCPE = getMatchingSoftware(vulnSoftware, detectedVersion);
+                    final Entry<String, Boolean> matchedCPE = getMatchingSoftware(vulnSoftware, cpe.getVendor(), cpe.getProduct(), detectedVersion);
                     if (matchedCPE != null) {
                         cveEntries.add(currentCVE);
                         final Vulnerability v = getVulnerability(currentCVE);
@@ -487,7 +488,7 @@ public class CveDB {
                 vulnSoftware.put(cpeId, p);
             }
             //remember to process the last set of CVE/CPE entries
-            final Entry<String, Boolean> matchedCPE = getMatchingSoftware(vulnSoftware, detectedVersion);
+            final Entry<String, Boolean> matchedCPE = getMatchingSoftware(vulnSoftware, cpe.getVendor(), cpe.getProduct(), detectedVersion);
             if (matchedCPE != null) {
                 cveEntries.add(currentCVE);
                 final Vulnerability v = getVulnerability(currentCVE);
@@ -781,11 +782,16 @@ public class CveDB {
      * Determines if the given identifiedVersion is affected by the given cpeId and previous version flag. A non-null, non-empty
      * string passed to the previous version argument indicates that all previous versions are affected.
      *
+     * @param vendor the vendor of the dependency being analyzed
+     * @param product the product name of the dependency being analyzed
      * @param vulnerableSoftware a map of the vulnerable software with a boolean indicating if all previous versions are affected
      * @param identifiedVersion the identified version of the dependency being analyzed
      * @return true if the identified version is affected, otherwise false
      */
-    protected Entry<String, Boolean> getMatchingSoftware(HashMap<String, Boolean> vulnerableSoftware, DependencyVersion identifiedVersion) {
+    protected Entry<String, Boolean> getMatchingSoftware(HashMap<String, Boolean> vulnerableSoftware, String vendor, String product, DependencyVersion identifiedVersion) {
+
+        final boolean isVersionTwoADifferentProduct = "apache".equals(vendor) && "struts".equals(product);
+
         HashSet<String> majorVersionsAffectingAllPrevious = new HashSet<String>();
         boolean matchesAnyPrevious = identifiedVersion == null || "-".equals(identifiedVersion.toString());
         String majorVersionMatch = null;
@@ -809,17 +815,36 @@ public class CveDB {
         }
 
         boolean canSkipVersions = majorVersionMatch != null && majorVersionsAffectingAllPrevious.size() > 1;
-        for (Iterator<Entry<String, Boolean>> it = vulnerableSoftware.entrySet().iterator(); it.hasNext();) {
-            Entry<String, Boolean> entry = it.next();
-            final DependencyVersion v = parseDependencyVersion(entry.getKey());
-            //this can't dereference a null 'majorVersionMatch' as canSkipVersions accounts for this.
-            if (canSkipVersions && !majorVersionMatch.equals(v.getVersionParts().get(0))) {
-                continue;
+        //yes, we are iterating over this twice. The first time we are skipping versions those that affect all versions
+        //then later we process those that affect all versions. This could be done with sorting...
+        for (Entry<String, Boolean> entry : vulnerableSoftware.entrySet()) {
+            if (!entry.getValue()) {
+                final DependencyVersion v = parseDependencyVersion(entry.getKey());
+                //this can't dereference a null 'majorVersionMatch' as canSkipVersions accounts for this.
+                if (canSkipVersions && !majorVersionMatch.equals(v.getVersionParts().get(0))) {
+                    continue;
+                }
+                //this can't dereference a null 'identifiedVersion' because if it was null we would have exited
+                //in the above loop or just after loop (if matchesAnyPrevious return null).
+                if (identifiedVersion.equals(v)) {
+                    return entry;
+                }
             }
-            //this can't dereference a null 'identifiedVersion' because if it was null we would have exited
-            //in the above loop or just after loop (if matchesAnyPrevious return null).
-            if (identifiedVersion.equals(v) || (entry.getValue() && identifiedVersion.compareTo(v) < 0)) {
-                return entry;
+        }
+        for (Entry<String, Boolean> entry : vulnerableSoftware.entrySet()) {
+            if (entry.getValue()) {
+                final DependencyVersion v = parseDependencyVersion(entry.getKey());
+                //this can't dereference a null 'majorVersionMatch' as canSkipVersions accounts for this.
+                if (canSkipVersions && !majorVersionMatch.equals(v.getVersionParts().get(0))) {
+                    continue;
+                }
+                //this can't dereference a null 'identifiedVersion' because if it was null we would have exited
+                //in the above loop or just after loop (if matchesAnyPrevious return null).
+                if (entry.getValue() && identifiedVersion.compareTo(v) <= 0) {
+                    if (!(isVersionTwoADifferentProduct && !identifiedVersion.getVersionParts().get(0).equals(v.getVersionParts().get(0)))) {
+                        return entry;
+                    }
+                }
             }
         }
         return null;
