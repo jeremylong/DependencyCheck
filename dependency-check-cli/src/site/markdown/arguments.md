@@ -21,6 +21,7 @@ Advanced Options
 ================
 Short  | Argument&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Parameter | Description                                | Default&nbsp;Value
 -------|-----------------------|-----------------|-----------------------------------------------------------------------------|---------------
+ \-P   | \-\-propertyfile      | \<file\>        | Specifies a file that contains properties to use instead of applicaion defaults. | &nbsp;
        | \-\-disableArchive    |                 | Sets whether the Archive Analyzer will be used.                             | false
        | \-\-zipExtensions     | \<strings\>     | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
        | \-\-disableJar        |                 | Sets whether the Jar Analyzer will be used.                                     | false
