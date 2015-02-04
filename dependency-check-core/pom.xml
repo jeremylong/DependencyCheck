@@ -131,7 +131,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 <artifactId>cobertura-maven-plugin</artifactId>
                 <configuration>
                     <instrumentation>
-                        <ignoreTrivial>true</ignoreTrivial>
+                        <!--ignoreTrivial>true</ignoreTrivial-->
                         <ignores>
                             <ignore>.*\$KEYS\.class</ignore>
                             <ignore>.*\$Element\.class</ignore>
