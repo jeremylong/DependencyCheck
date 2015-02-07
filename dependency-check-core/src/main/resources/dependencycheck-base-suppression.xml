@@ -69,4 +69,19 @@
         <gav regex="true">org\.opensaml:xmltooling:.*</gav>
         <cpe>cpe:/a:shibboleth:opensaml</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives on the org.opensaml:openws
+        ]]></notes>
+        <gav regex="true">org\.opensaml:openws:.*</gav>
+        <cpe>cpe:/a:internet2:opensaml</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives on the org.opensaml:xmltooling
+        ]]></notes>
+        <gav regex="true">org\.opensaml:xmltooling:.*</gav>
+        <cpe>cpe:/a:internet2:opensaml</cpe>
+    </suppress>
+
 </suppressions>
