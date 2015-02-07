@@ -86,8 +86,8 @@ public class CheckMojo extends BaseDependencyCheckMojo {
         } else {
             engine.analyzeDependencies();
             writeReports(engine, getProject(), getCorrectOutputDirectory());
-            writeDataFile(engine.getDependencies());
-            showSummary(engine.getDependencies());
+            writeDataFile(getProject(), null, engine.getDependencies());
+            showSummary(getProject(), engine.getDependencies());
             checkForFailure(engine.getDependencies());
         }
         engine.cleanup();

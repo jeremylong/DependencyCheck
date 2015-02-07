@@ -41,8 +41,8 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * Maven Plugin that checks project dependencies and the dependencies of all child modules to see if they have any known
- * published vulnerabilities.
+ * Maven Plugin that checks project dependencies and the dependencies of all child modules to see if they have any known published
+ * vulnerabilities.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -73,21 +73,27 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
 
         if (getProject() == getReactorProjects().get(getReactorProjects().size() - 1)) {
             final Map<MavenProject, Set<MavenProject>> children = buildAggregateInfo();
-            boolean hasOrchestration = false;
+
             for (MavenProject current : getReactorProjects()) {
-                final List<Dependency> dependencies = readDataFile(current);
-                final List<MavenProject> childProjects = getAllChildren(current, children);
-                //check for orchestration build - execution root with no children or dependencies
-                if ((dependencies == null || dependencies.isEmpty()) && childProjects.isEmpty() && current.isExecutionRoot()) {
-                    hasOrchestration = true;
+                final File outputDir = getCorrectOutputDirectory(current);
+                if (outputDir == null) { //dc was never run on this project. write the ser to the target.
+                    engine.getDependencies().clear();
+                    engine.resetFileTypeAnalyzers();
+                    scanArtifacts(current, engine);
+                    engine.analyzeDependencies();
+                    final File target = new File(current.getBuild().getOutputDirectory()).getParentFile();
+                    writeDataFile(current, target, engine.getDependencies());
+                    showSummary(current, engine.getDependencies());
                 }
             }
 
             for (MavenProject current : getReactorProjects()) {
                 List<Dependency> dependencies = readDataFile(current);
                 final List<MavenProject> childProjects = getAllChildren(current, children);
+
                 //check for orchestration build - execution root with no children or dependencies
                 if ((dependencies == null || dependencies.isEmpty()) && childProjects.isEmpty() && current.isExecutionRoot()) {
+                    engine.getDependencies().clear();
                     engine.resetFileTypeAnalyzers();
                     for (MavenProject mod : getReactorProjects()) {
                         scanArtifacts(mod, engine);
@@ -113,14 +119,13 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                         LOGGER.log(Level.FINE, "Bundling Exception", ex);
                     }
                 }
-                try {
-                    final File outputDir = getCorrectOutputDirectory(current);
-                    writeReports(engine, current, outputDir);
-                } catch (MojoExecutionException ex) {
-                    if (!hasOrchestration) {
-                        throw ex;
-                    } // else ignore this
+                File outputDir = getCorrectOutputDirectory(current);
+                if (outputDir == null) {
+                    //in some regards we shouldn't be writting this, but we are anyway.
+                    //we shouldn't write this because nothing is configured to generate this report.
+                    outputDir = new File(current.getBuild().getOutputDirectory()).getParentFile();
                 }
+                writeReports(engine, current, outputDir);
             }
         }
         engine.cleanup();
@@ -183,8 +188,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
      *
      * @return the Engine used to execute dependency-check
      * @throws MojoExecutionException thrown if there is an exception running the mojo
-     * @throws MojoFailureException thrown if dependency-check is configured to fail the build if severe CVEs are
-     * identified.
+     * @throws MojoFailureException thrown if dependency-check is configured to fail the build if severe CVEs are identified.
      */
     protected Engine generateDataFile() throws MojoExecutionException, MojoFailureException {
         final Engine engine;
@@ -196,8 +200,8 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         }
         scanArtifacts(getProject(), engine);
         engine.analyzeDependencies();
-        writeDataFile(engine.getDependencies());
-        showSummary(engine.getDependencies());
+        writeDataFile(getProject(), null, engine.getDependencies());
+        showSummary(getProject(), engine.getDependencies());
         checkForFailure(engine.getDependencies());
         return engine;
     }
