@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -31,9 +33,9 @@ import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.FileUtils;
 
 /**
- * A program dependency. This object is one of the core components within DependencyCheck. It is used to collect
- * information about the dependency in the form of evidence. The Evidence is then used to determine if there are any
- * known, published, vulnerabilities associated with the program dependency.
+ * A program dependency. This object is one of the core components within DependencyCheck. It is used to collect information about
+ * the dependency in the form of evidence. The Evidence is then used to determine if there are any known, published,
+ * vulnerabilities associated with the program dependency.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -121,8 +123,8 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * Returns the file name of the dependency with the backslash escaped for use in JavaScript. This is a complete hack
-     * as I could not get the replace to work in the template itself.
+     * Returns the file name of the dependency with the backslash escaped for use in JavaScript. This is a complete hack as I
+     * could not get the replace to work in the template itself.
      *
      * @return the file name of the dependency with the backslash escaped for use in JavaScript
      */
@@ -194,8 +196,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * Returns the file name to display in reports; if no display file name has been set it will default to the actual
-     * file name.
+     * Returns the file name to display in reports; if no display file name has been set it will default to the actual file name.
      *
      * @return the file name to display
      */
@@ -210,8 +211,8 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * <p>
      * Gets the file path of the dependency.</p>
      * <p>
-     * <b>NOTE:</b> This may not be the actual path of the file on disk. The actual path of the file on disk can be
-     * obtained via the getActualFilePath().</p>
+     * <b>NOTE:</b> This may not be the actual path of the file on disk. The actual path of the file on disk can be obtained via
+     * the getActualFilePath().</p>
      *
      * @return the file path of the dependency
      */
@@ -593,6 +594,38 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      */
     public Set<Dependency> getRelatedDependencies() {
         return relatedDependencies;
+    }
+
+    /**
+     * A list of projects that reference this dependency.
+     */
+    private List<String> projectReferences = new ArrayList<String>();
+
+    /**
+     * Get the value of projectReferences
+     *
+     * @return the value of projectReferences
+     */
+    public List<String> getProjectReferences() {
+        return projectReferences;
+    }
+
+    /**
+     * Set the value of projectReferences
+     *
+     * @param projectReferences new value of projectReferences
+     */
+    public void setProjectReferences(List<String> projectReferences) {
+        this.projectReferences = projectReferences;
+    }
+
+    /**
+     * Adds a project reference.
+     *
+     * @param projectReference
+     */
+    public void addProjectReference(String projectReference) {
+        this.projectReferences.add(projectReference);
     }
 
     /**
