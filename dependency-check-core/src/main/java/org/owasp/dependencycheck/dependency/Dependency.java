@@ -340,7 +340,9 @@ public class Dependency implements Serializable, Comparable<Dependency> {
                 if ("maven".equals(i.getType()) && i.getValue().equals(mavenArtifact.toString())) {
                     found = true;
                     i.setConfidence(Confidence.HIGHEST);
-                    i.setUrl(mavenArtifact.getArtifactUrl());
+                    final String url = "http://search.maven.org/#search|ga|1|1%3A%" + this.getSha1sum() + "%22";
+                    i.setUrl(url);
+                    //i.setUrl(mavenArtifact.getArtifactUrl());
                     LOGGER.fine(String.format("Already found identifier %s. Confidence set to highest", i.getValue()));
                     break;
                 }
