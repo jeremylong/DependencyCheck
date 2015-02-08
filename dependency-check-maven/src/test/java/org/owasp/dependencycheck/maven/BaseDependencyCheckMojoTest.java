@@ -65,6 +65,11 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
 
                 return artifacts;
             }
+
+            @Mock
+            public String getName() {
+                return "test-project";
+            }
         }.getMockInstance();
 
         boolean autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
