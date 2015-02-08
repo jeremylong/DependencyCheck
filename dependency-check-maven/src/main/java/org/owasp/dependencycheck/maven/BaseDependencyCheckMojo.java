@@ -430,6 +430,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             if (deps != null) {
                 if (deps.size() == 1) {
                     final Dependency d = deps.get(0);
+                    d.addProjectReference(project.getName());
                     if (d != null) {
                         final MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
                         d.addAsEvidence("pom", ma, Confidence.HIGHEST);

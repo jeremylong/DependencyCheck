@@ -36,9 +36,9 @@ import org.owasp.dependencycheck.utils.LogUtils;
 
 /**
  * <p>
- * This analyzer ensures dependencies that should be grouped together, to remove excess noise from the report, are
- * grouped. An example would be Spring, Spring Beans, Spring MVC, etc. If they are all for the same version and have the
- * same relative path then these should be grouped into a single dependency under the core/main library.</p>
+ * This analyzer ensures dependencies that should be grouped together, to remove excess noise from the report, are grouped. An
+ * example would be Spring, Spring Beans, Spring MVC, etc. If they are all for the same version and have the same relative path
+ * then these should be grouped into a single dependency under the core/main library.</p>
  * <p>
  * Note, this grouping only works on dependencies with identified CVE entries</p>
  *
@@ -91,8 +91,8 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     //</editor-fold>
 
     /**
-     * Analyzes a set of dependencies. If they have been found to have the same base path and the same set of
-     * identifiers they are likely related. The related dependencies are bundled into a single reportable item.
+     * Analyzes a set of dependencies. If they have been found to have the same base path and the same set of identifiers they are
+     * likely related. The related dependencies are bundled into a single reportable item.
      *
      * @param ignore this analyzer ignores the dependency being analyzed
      * @param engine the engine that is scanning the dependencies
@@ -151,10 +151,10 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      * Adds the relatedDependency to the dependency's related dependencies.
      *
      * @param dependency the main dependency
-     * @param relatedDependency a collection of dependencies to be removed from the main analysis loop, this is the
-     * source of dependencies to remove
-     * @param dependenciesToRemove a collection of dependencies that will be removed from the main analysis loop, this
-     * function adds to this collection
+     * @param relatedDependency a collection of dependencies to be removed from the main analysis loop, this is the source of
+     * dependencies to remove
+     * @param dependenciesToRemove a collection of dependencies that will be removed from the main analysis loop, this function
+     * adds to this collection
      */
     private void mergeDependencies(final Dependency dependency, final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove) {
         dependency.addRelatedDependency(relatedDependency);
@@ -163,12 +163,12 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             dependency.addRelatedDependency(i.next());
             i.remove();
         }
+        //dependency.addAllProjectReferences(relatedDependency.getProjectReferences());
         dependenciesToRemove.add(relatedDependency);
     }
 
     /**
-     * Attempts to trim a maven repo to a common base path. This is typically
-     * [drive]\[repo_location]\repository\[path1]\[path2].
+     * Attempts to trim a maven repo to a common base path. This is typically [drive]\[repo_location]\repository\[path1]\[path2].
      *
      * @param path the path to trim
      * @return a string representing the base path.
@@ -321,8 +321,8 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     }
 
     /**
-     * This is likely a very broken attempt at determining if the 'left' dependency is the 'core' library in comparison
-     * to the 'right' library.
+     * This is likely a very broken attempt at determining if the 'left' dependency is the 'core' library in comparison to the
+     * 'right' library.
      *
      * @param left the dependency to test
      * @param right the dependency to test against
@@ -379,13 +379,12 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     }
 
     /**
-     * Determines if the jar is shaded and the created pom.xml identified the same CPE as the jar - if so, the pom.xml
-     * dependency should be removed.
+     * Determines if the jar is shaded and the created pom.xml identified the same CPE as the jar - if so, the pom.xml dependency
+     * should be removed.
      *
      * @param dependency a dependency to check
      * @param nextDependency another dependency to check
-     * @return true if on of the dependencies is a pom.xml and the identifiers between the two collections match;
-     * otherwise false
+     * @return true if on of the dependencies is a pom.xml and the identifiers between the two collections match; otherwise false
      */
     private boolean isShadedJar(Dependency dependency, Dependency nextDependency) {
         final String mainName = dependency.getFileName().toLowerCase();
@@ -399,8 +398,8 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     }
 
     /**
-     * Determines which path is shortest; if path lengths are equal then we use compareTo of the string method to
-     * determine if the first path is smaller.
+     * Determines which path is shortest; if path lengths are equal then we use compareTo of the string method to determine if the
+     * first path is smaller.
      *
      * @param left the first path to compare
      * @param right the second path to compare

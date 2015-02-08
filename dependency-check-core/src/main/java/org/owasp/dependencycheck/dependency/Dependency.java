@@ -21,8 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -599,14 +598,14 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     /**
      * A list of projects that reference this dependency.
      */
-    private List<String> projectReferences = new ArrayList<String>();
+    private Set<String> projectReferences = new HashSet<String>();
 
     /**
      * Get the value of projectReferences
      *
      * @return the value of projectReferences
      */
-    public List<String> getProjectReferences() {
+    public Set<String> getProjectReferences() {
         return projectReferences;
     }
 
@@ -615,17 +614,26 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      *
      * @param projectReferences new value of projectReferences
      */
-    public void setProjectReferences(List<String> projectReferences) {
+    public void setProjectReferences(Set<String> projectReferences) {
         this.projectReferences = projectReferences;
     }
 
     /**
      * Adds a project reference.
      *
-     * @param projectReference
+     * @param projectReference a project reference
      */
     public void addProjectReference(String projectReference) {
         this.projectReferences.add(projectReference);
+    }
+
+    /**
+     * Add a collection of project reference.
+     *
+     * @param projectReferences a set of project references
+     */
+    public void addAllProjectReferences(Set<String> projectReferences) {
+        this.projectReferences.addAll(projectReferences);
     }
 
     /**
