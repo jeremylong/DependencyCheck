@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -433,6 +434,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     d.addProjectReference(project.getName());
                     if (d != null) {
                         final MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
+//                        for (ArtifactVersion av : a.getAvailableVersions()) {
+//                            av.toString();
+//                        }
                         d.addAsEvidence("pom", ma, Confidence.HIGHEST);
                     }
                 } else {
