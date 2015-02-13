@@ -207,21 +207,6 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
         final String fileName1 = dependency1.getActualFile().getName();
         final String fileName2 = dependency2.getActualFile().getName();
 
-//        //REMOVED because this is attempting to duplicate what is in the hasSameBasePath function.
-//        final File one = new File(fileName1);
-//        final File two = new File(fileName2);
-//        final String oneParent = one.getParent();
-//        final String twoParent = two.getParent();
-//        if (oneParent != null) {
-//            if (oneParent.equals(twoParent)) {
-//                fileName1 = one.getName();
-//                fileName2 = two.getName();
-//            } else {
-//                return false;
-//            }
-//        } else if (twoParent != null) {
-//            return false;
-//        }
         //version check
         final DependencyVersion version1 = DependencyVersionUtil.parseVersion(fileName1);
         final DependencyVersion version2 = DependencyVersionUtil.parseVersion(fileName2);
