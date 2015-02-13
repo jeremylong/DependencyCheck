@@ -28,6 +28,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 
 /**
@@ -60,7 +61,8 @@ public class NvdCve_1_2_HandlerTest {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser saxParser = factory.newSAXParser();
 
-        File file = new File(this.getClass().getClassLoader().getResource("nvdcve-2012.xml").getPath());
+        //File file = new File(this.getClass().getClassLoader().getResource("nvdcve-2012.xml").getPath());
+        File file = BaseTest.getResourceAsFile(this, "nvdcve-2012.xml");
 
         NvdCve12Handler instance = new NvdCve12Handler();
         saxParser.parse(file, instance);

@@ -23,6 +23,7 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.cpe.AbstractDatabaseTestCase;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -129,8 +130,8 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
         instance.supportsExtension("ear");
         try {
             instance.initialize();
-
-            File file = new File(this.getClass().getClassLoader().getResource("daytrader-ear-2.1.7.ear").getPath());
+            File file = BaseTest.getResourceAsFile(this, "daytrader-ear-2.1.7.ear");
+            //File file = new File(this.getClass().getClassLoader().getResource("daytrader-ear-2.1.7.ear").getPath());
             Dependency dependency = new Dependency(file);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
@@ -162,7 +163,8 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
             instance.initialize();
 
             //File file = new File(this.getClass().getClassLoader().getResource("file.tar").getPath());
-            File file = new File(this.getClass().getClassLoader().getResource("stagedhttp-modified.tar").getPath());
+            //File file = new File(this.getClass().getClassLoader().getResource("stagedhttp-modified.tar").getPath());
+            File file = BaseTest.getResourceAsFile(this, "stagedhttp-modified.tar");
             Dependency dependency = new Dependency(file);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
@@ -191,7 +193,8 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
         try {
             instance.initialize();
 
-            File file = new File(this.getClass().getClassLoader().getResource("file.tar.gz").getPath());
+            //File file = new File(this.getClass().getClassLoader().getResource("file.tar.gz").getPath());
+            File file = BaseTest.getResourceAsFile(this, "file.tar.gz");
             //Dependency dependency = new Dependency(file);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
@@ -243,7 +246,8 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
         try {
             instance.initialize();
 
-            File file = new File(this.getClass().getClassLoader().getResource("file.tgz").getPath());
+            //File file = new File(this.getClass().getClassLoader().getResource("file.tgz").getPath());
+            File file = BaseTest.getResourceAsFile(this, "file.tgz");
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
             Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
@@ -270,7 +274,8 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
         try {
             instance.initialize();
 
-            File file = new File(this.getClass().getClassLoader().getResource("test.zip").getPath());
+            //File file = new File(this.getClass().getClassLoader().getResource("test.zip").getPath());
+            File file = BaseTest.getResourceAsFile(this, "test.zip");
             Dependency dependency = new Dependency(file);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);

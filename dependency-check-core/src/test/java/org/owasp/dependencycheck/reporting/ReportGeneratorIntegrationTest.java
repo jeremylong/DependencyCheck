@@ -105,8 +105,8 @@ public class ReportGeneratorIntegrationTest extends BaseTest {
     }
 
     /**
-     * Generates an XML report containing known vulnerabilities and realistic data and validates the generated XML
-     * document against the XSD.
+     * Generates an XML report containing known vulnerabilities and realistic data and validates the generated XML document
+     * against the XSD.
      *
      * @throws Exception
      */
@@ -120,9 +120,12 @@ public class ReportGeneratorIntegrationTest extends BaseTest {
         }
         String writeTo = "target/test-reports/Report.xml";
 
-        File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
-        File axis = new File(this.getClass().getClassLoader().getResource("axis2-adb-1.4.1.jar").getPath());
-        File jetty = new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath());
+        //File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
+        File struts = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
+        //File axis = new File(this.getClass().getClassLoader().getResource("axis2-adb-1.4.1.jar").getPath());
+        File axis = BaseTest.getResourceAsFile(this, "axis2-adb-1.4.1.jar");
+        //File jetty = new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath());
+        File jetty = BaseTest.getResourceAsFile(this, "org.mortbay.jetty.jar");
 
         boolean autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);

@@ -28,6 +28,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 
 /**
@@ -152,7 +153,9 @@ public class DependencyTest {
      */
     @Test
     public void testGetMd5sum() {
-        File file = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
+        //File file = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
+        File file = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
+
         Dependency instance = new Dependency(file);
         //assertEquals("89CE9E36AA9A9E03F1450936D2F4F8DD0F961F8B", result.getSha1sum());
         String expResult = "C30B57142E1CCBC1EFD5CD15F307358F";
@@ -176,7 +179,8 @@ public class DependencyTest {
      */
     @Test
     public void testGetSha1sum() {
-        File file = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
+        //File file = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
+        File file = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
         Dependency instance = new Dependency(file);
         String expResult = "89CE9E36AA9A9E03F1450936D2F4F8DD0F961F8B";
         String result = instance.getSha1sum();

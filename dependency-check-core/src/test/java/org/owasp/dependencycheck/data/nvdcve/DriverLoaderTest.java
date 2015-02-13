@@ -27,6 +27,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 
 /**
  *
@@ -85,7 +86,8 @@ public class DriverLoaderTest {
     public void testLoad_String_String() throws Exception {
         String className = "com.mysql.jdbc.Driver";
         //we know this is in target/test-classes
-        File testClassPath = (new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath())).getParentFile();
+        //File testClassPath = (new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath())).getParentFile();
+        File testClassPath = BaseTest.getResourceAsFile(this, "org.mortbay.jetty.jar").getParentFile();
         File driver = new File(testClassPath, "../../src/test/resources/mysql-connector-java-5.1.27-bin.jar");
         assertTrue("MySQL Driver JAR file not found in src/test/resources?", driver.isFile());
 
@@ -108,7 +110,8 @@ public class DriverLoaderTest {
     public void testLoad_String_String_multiple_paths() throws Exception {
         final String className = "com.mysql.jdbc.Driver";
         //we know this is in target/test-classes
-        final File testClassPath = (new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath())).getParentFile();
+        //final File testClassPath = (new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath())).getParentFile();
+        final File testClassPath = BaseTest.getResourceAsFile(this, "org.mortbay.jetty.jar").getParentFile();
         final File dir1 = new File(testClassPath, "../../src/test/");
         final File dir2 = new File(testClassPath, "../../src/test/resources/");
         final String paths = String.format("%s" + File.pathSeparator + "%s", dir1.getAbsolutePath(), dir2.getAbsolutePath());
@@ -130,7 +133,8 @@ public class DriverLoaderTest {
     public void testLoad_String_String_badClassName() throws Exception {
         String className = "com.mybad.jdbc.Driver";
         //we know this is in target/test-classes
-        File testClassPath = (new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath())).getParentFile();
+        //File testClassPath = (new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath())).getParentFile();
+        File testClassPath = BaseTest.getResourceAsFile(this, "org.mortbay.jetty.jar").getParentFile();
         File driver = new File(testClassPath, "../../src/test/resources/mysql-connector-java-5.1.27-bin.jar");
         assertTrue("MySQL Driver JAR file not found in src/test/resources?", driver.isFile());
 
@@ -144,7 +148,8 @@ public class DriverLoaderTest {
     public void testLoad_String_String_badPath() throws Exception {
         String className = "com.mysql.jdbc.Driver";
         //we know this is in target/test-classes
-        File testClassPath = (new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath())).getParentFile();
+        //File testClassPath = (new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath())).getParentFile();
+        File testClassPath = BaseTest.getResourceAsFile(this, "org.mortbay.jetty.jar").getParentFile();
         File driver = new File(testClassPath, "../../src/test/bad/mysql-connector-java-5.1.27-bin.jar");
         Driver d = DriverLoader.load(className, driver.getAbsolutePath());
     }

@@ -78,7 +78,8 @@ public class AssemblyAnalyzerTest extends BaseTest {
 
     @Test
     public void testAnalysis() throws Exception {
-        File f = new File(AssemblyAnalyzerTest.class.getClassLoader().getResource("GrokAssembly.exe").getPath());
+        //File f = new File(AssemblyAnalyzerTest.class.getClassLoader().getResource("GrokAssembly.exe").getPath());
+        File f = BaseTest.getResourceAsFile(this, "GrokAssembly.exe");
         Dependency d = new Dependency(f);
         analyzer.analyze(d, null);
         boolean foundVendor = false;
@@ -100,7 +101,9 @@ public class AssemblyAnalyzerTest extends BaseTest {
 
     @Test
     public void testLog4Net() throws Exception {
-        File f = new File(AssemblyAnalyzerTest.class.getClassLoader().getResource("log4net.dll").getPath());
+        //File f = new File(AssemblyAnalyzerTest.class.getClassLoader().getResource("log4net.dll").getPath());
+        File f = BaseTest.getResourceAsFile(this, "log4net.dll");
+
         Dependency d = new Dependency(f);
         analyzer.analyze(d, null);
         assertTrue(d.getVersionEvidence().getEvidence().contains(new Evidence("grokassembly", "version", "1.2.13.0", Confidence.HIGHEST)));
@@ -115,7 +118,8 @@ public class AssemblyAnalyzerTest extends BaseTest {
         // Tweak the log level so the warning doesn't show in the console
         Logger.getLogger(AssemblyAnalyzer.class.getName()).setLevel(Level.OFF);
         Logger.getLogger(Dependency.class.getName()).setLevel(Level.OFF);
-        File f = new File(AssemblyAnalyzerTest.class.getClassLoader().getResource("log4net.dll").getPath());
+        //File f = new File(AssemblyAnalyzerTest.class.getClassLoader().getResource("log4net.dll").getPath());
+        File f = BaseTest.getResourceAsFile(this, "log4net.dll");
         File test = new File(f.getParent(), "nonexistent.dll");
         Dependency d = new Dependency(test);
 

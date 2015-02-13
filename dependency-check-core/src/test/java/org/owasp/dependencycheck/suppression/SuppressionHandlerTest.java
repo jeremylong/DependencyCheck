@@ -31,6 +31,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -66,9 +67,11 @@ public class SuppressionHandlerTest {
      */
     @Test
     public void testHandler() throws Exception {
-        File file = new File(this.getClass().getClassLoader().getResource("suppressions.xml").getPath());
+        //File file = new File(this.getClass().getClassLoader().getResource("suppressions.xml").getPath());
+        File file = BaseTest.getResourceAsFile(this, "suppressions.xml");
 
-        File schema = new File(this.getClass().getClassLoader().getResource("schema/suppression.xsd").getPath());
+        //File schema = new File(this.getClass().getClassLoader().getResource("schema/suppression.xsd").getPath());
+        File schema = BaseTest.getResourceAsFile(this, "schema/suppression.xsd");
         SuppressionHandler handler = new SuppressionHandler();
 
         SAXParserFactory factory = SAXParserFactory.newInstance();

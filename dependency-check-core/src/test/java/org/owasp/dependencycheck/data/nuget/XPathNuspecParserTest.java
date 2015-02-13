@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.data.nuget;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
 import static org.junit.Assert.assertEquals;
@@ -39,7 +40,8 @@ public class XPathNuspecParserTest extends BaseTest {
     @Test
     public void testGoodDocument() throws Exception {
         NuspecParser parser = new XPathNuspecParser();
-        InputStream is = XPathNuspecParserTest.class.getClassLoader().getResourceAsStream("log4net.2.0.3.nuspec");
+        //InputStream is = XPathNuspecParserTest.class.getClassLoader().getResourceAsStream("log4net.2.0.3.nuspec");
+        InputStream is = BaseTest.getResourceAsStream(this, "log4net.2.0.3.nuspec");
         NugetPackage np = parser.parse(is);
         assertEquals("log4net", np.getId());
         assertEquals("2.0.3", np.getVersion());
@@ -57,7 +59,8 @@ public class XPathNuspecParserTest extends BaseTest {
     @Test(expected = NuspecParseException.class)
     public void testMissingDocument() throws Exception {
         NuspecParser parser = new XPathNuspecParser();
-        InputStream is = XPathNuspecParserTest.class.getClassLoader().getResourceAsStream("dependencycheck.properties");
+        //InputStream is = XPathNuspecParserTest.class.getClassLoader().getResourceAsStream("dependencycheck.properties");
+        InputStream is = BaseTest.getResourceAsStream(this, "dependencycheck.properties");
 
         //hide the fatal message from the core parser
         final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
@@ -74,7 +77,8 @@ public class XPathNuspecParserTest extends BaseTest {
     @Test(expected = NuspecParseException.class)
     public void testNotNuspec() throws Exception {
         NuspecParser parser = new XPathNuspecParser();
-        InputStream is = XPathNuspecParserTest.class.getClassLoader().getResourceAsStream("suppressions.xml");
+        //InputStream is = XPathNuspecParserTest.class.getClassLoader().getResourceAsStream("suppressions.xml");
+        InputStream is = BaseTest.getResourceAsStream(this, "suppressions.xml");
         NugetPackage np = parser.parse(is);
     }
 }
