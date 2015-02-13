@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.utils.Settings;
@@ -42,11 +43,13 @@ public class NexusSearchTest extends BaseTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
+    @Ignore
     public void testNullSha1() throws Exception {
         searcher.searchSha1(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
+    @Ignore
     public void testMalformedSha1() throws Exception {
         searcher.searchSha1("invalid");
     }
@@ -55,6 +58,7 @@ public class NexusSearchTest extends BaseTest {
     // you may not be able to reach. Remove the @Ignore annotation if you want to
     // test it anyway
     @Test
+    @Ignore
     public void testValidSha1() throws Exception {
         MavenArtifact ma = searcher.searchSha1("9977a8d04e75609cf01badc4eb6a9c7198c4c5ea");
         assertEquals("Incorrect group", "org.apache.maven.plugins", ma.getGroupId());
@@ -67,6 +71,7 @@ public class NexusSearchTest extends BaseTest {
     // you may not be able to reach. Remove the @Ignore annotation if you want to
     // test it anyway
     @Test(expected = FileNotFoundException.class)
+    @Ignore
     public void testMissingSha1() throws Exception {
         searcher.searchSha1("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     }
