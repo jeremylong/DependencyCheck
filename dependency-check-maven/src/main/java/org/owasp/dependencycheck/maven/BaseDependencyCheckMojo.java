@@ -32,6 +32,9 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.AbstractMojo;
@@ -52,6 +55,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
+import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.LogUtils;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -91,6 +95,21 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @Component
     private MavenProject project;
+    /**
+     * The meta data source for retrieving artifact version information.
+     */
+    @Component
+    private ArtifactMetadataSource metadataSource;
+    /**
+     * A reference to the local repository.
+     */
+    @Parameter(property = "localRepository", readonly = true)
+    private ArtifactRepository localRepository;
+    /**
+     * References to the remote repositories.
+     */
+    @Parameter(property = "project.remoteArtifactRepositories", readonly = true)
+    private List<ArtifactRepository> remoteRepositories;
     /**
      * List of Maven project of the current build
      */
@@ -431,13 +450,28 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             if (deps != null) {
                 if (deps.size() == 1) {
                     final Dependency d = deps.get(0);
-                    d.addProjectReference(project.getName());
                     if (d != null) {
                         final MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
-//                        for (ArtifactVersion av : a.getAvailableVersions()) {
-//                            av.toString();
-//                        }
                         d.addAsEvidence("pom", ma, Confidence.HIGHEST);
+                        d.addProjectReference(project.getName());
+                        if (metadataSource != null) {
+                            try {
+                                DependencyVersion currentVersion = new DependencyVersion(a.getVersion());
+                                final List<ArtifactVersion> versions = metadataSource.retrieveAvailableVersions(a, localRepository, remoteRepositories);
+                                for (ArtifactVersion av : versions) {
+                                    DependencyVersion newVersion = new DependencyVersion(av.toString());
+                                    if (currentVersion.compareTo(newVersion) < 0) {
+                                        d.addAvailableVersion(av.toString());
+                                    }
+                                }
+                            } catch (ArtifactMetadataRetrievalException ex) {
+                                LOGGER.log(Level.WARNING, "Unable to check for new versions of dependencies; see the log for more details.");
+                                LOGGER.log(Level.FINE, null, ex);
+                            } catch (Throwable t) {
+                                LOGGER.log(Level.WARNING, "Unexpected error occured checking for new versions; see the log for more details.");
+                                LOGGER.log(Level.FINE, "", t);
+                            }
+                        }
                     }
                 } else {
                     final String msg = String.format("More then 1 dependency was identified in first pass scan of '%s:%s:%s'",
