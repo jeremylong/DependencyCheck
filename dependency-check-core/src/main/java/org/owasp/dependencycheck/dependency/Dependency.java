@@ -21,7 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -664,6 +666,38 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
+     * A list of available versions.
+     */
+    private List<String> availableVersions = new ArrayList<String>();
+
+    /**
+     * Get the value of availableVersions
+     *
+     * @return the value of availableVersions
+     */
+    public List<String> getAvailableVersions() {
+        return availableVersions;
+    }
+
+    /**
+     * Set the value of availableVersions
+     *
+     * @param availableVersions new value of availableVersions
+     */
+    public void setAvailableVersions(List<String> availableVersions) {
+        this.availableVersions = availableVersions;
+    }
+
+    /**
+     * Adds a version to the available version list.
+     *
+     * @param version the version to add to the list
+     */
+    public void addAvailableVersion(String version) {
+        this.availableVersions.add(version);
+    }
+
+    /**
      * Implementation of the Comparable<Dependency> interface. The comparison is solely based on the file name.
      *
      * @param o a dependency to compare
@@ -731,6 +765,15 @@ public class Dependency implements Serializable, Comparable<Dependency> {
                 && (this.relatedDependencies == null || !this.relatedDependencies.equals(other.relatedDependencies))) {
             return false;
         }
+        if (this.projectReferences != other.projectReferences
+                && (this.projectReferences == null || !this.projectReferences.equals(other.projectReferences))) {
+            return false;
+        }
+        if (this.availableVersions != other.availableVersions
+                && (this.availableVersions == null || !this.availableVersions.equals(other.availableVersions))) {
+            return false;
+        }
+
         return true;
     }
 
@@ -756,6 +799,8 @@ public class Dependency implements Serializable, Comparable<Dependency> {
         hash = 47 * hash + (this.license != null ? this.license.hashCode() : 0);
         hash = 47 * hash + (this.vulnerabilities != null ? this.vulnerabilities.hashCode() : 0);
         hash = 47 * hash + (this.relatedDependencies != null ? this.relatedDependencies.hashCode() : 0);
+        hash = 47 * hash + (this.projectReferences != null ? this.projectReferences.hashCode() : 0);
+        hash = 47 * hash + (this.availableVersions != null ? this.availableVersions.hashCode() : 0);
         return hash;
     }
 
