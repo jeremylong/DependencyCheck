@@ -295,15 +295,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         }
         File externalPom = null;
         if (pomEntries.isEmpty()) {
-            if (dependency.getActualFilePath().matches(".*\\.m2.repository\\b.*")) {
-                String pomPath = dependency.getActualFilePath();
-                pomPath = pomPath.substring(0, pomPath.lastIndexOf('.')) + ".pom";
-                externalPom = new File(pomPath);
-                if (externalPom.isFile()) {
-                    pomEntries.add(pomPath);
-                } else {
-                    return false;
-                }
+            String pomPath = dependency.getActualFilePath();
+            pomPath = pomPath.substring(0, pomPath.lastIndexOf('.')) + ".pom";
+            externalPom = new File(pomPath);
+            if (externalPom.isFile()) {
+                pomEntries.add(pomPath);
             } else {
                 return false;
             }
