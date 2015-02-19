@@ -94,6 +94,34 @@ public final class Downloader {
                 conn = URLConnectionFactory.createHttpURLConnection(url, useProxy);
                 conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
                 conn.connect();
+                int status = conn.getResponseCode();
+                if (status != HttpURLConnection.HTTP_OK) {
+                    if (status == HttpURLConnection.HTTP_MOVED_TEMP
+                            || status == HttpURLConnection.HTTP_MOVED_PERM
+                            || status == HttpURLConnection.HTTP_SEE_OTHER) {
+                        String location = conn.getHeaderField("Location");
+                        try {
+                            conn.disconnect();
+                        } finally {
+                            conn = null;
+                        }
+                        LOGGER.fine(String.format("Download is being redirected from %s to %s", url.toString(), location));
+                        conn = URLConnectionFactory.createHttpURLConnection(new URL(location), useProxy);
+                        conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
+                        conn.connect();
+                        status = conn.getResponseCode();
+                    }
+                }
+                if (status != 200) {
+                    try {
+                        conn.disconnect();
+                    } finally {
+                        conn = null;
+                    }
+                    final String msg = String.format("Error downloading file %s; received response code %s.", url.toString(), status);
+                    throw new DownloadFailedException(msg);
+
+                }
             } catch (IOException ex) {
                 try {
                     if (conn != null) {
@@ -105,8 +133,8 @@ public final class Downloader {
                 final String msg = String.format("Error downloading file %s; unable to connect.", url.toString());
                 throw new DownloadFailedException(msg, ex);
             }
-            final String encoding = conn.getContentEncoding();
 
+            final String encoding = conn.getContentEncoding();
             BufferedOutputStream writer = null;
             InputStream reader = null;
             try {
@@ -138,16 +166,14 @@ public final class Downloader {
                     try {
                         writer.close();
                     } catch (IOException ex) {
-                        LOGGER.log(Level.FINEST,
-                                "Error closing the writer in Downloader.", ex);
+                        LOGGER.log(Level.FINEST, "Error closing the writer in Downloader.", ex);
                     }
                 }
                 if (reader != null) {
                     try {
                         reader.close();
                     } catch (IOException ex) {
-                        LOGGER.log(Level.FINEST,
-                                "Error closing the reader in Downloader.", ex);
+                        LOGGER.log(Level.FINEST, "Error closing the reader in Downloader.", ex);
                     }
                 }
                 try {
@@ -160,8 +186,8 @@ public final class Downloader {
     }
 
     /**
-     * Makes an HTTP Head request to retrieve the last modified date of the given URL. If the file:// protocol is
-     * specified, then the lastTimestamp of the file is returned.
+     * Makes an HTTP Head request to retrieve the last modified date of the given URL. If the file:// protocol is specified, then
+     * the lastTimestamp of the file is returned.
      *
      * @param url the URL to retrieve the timestamp from
      * @return an epoch timestamp
