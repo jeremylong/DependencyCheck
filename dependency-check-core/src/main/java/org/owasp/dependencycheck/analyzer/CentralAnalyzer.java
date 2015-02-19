@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
@@ -24,18 +25,25 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.central.CentralSearch;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.jaxb.pom.PomUtils;
+import org.owasp.dependencycheck.jaxb.pom.generated.Model;
+import org.owasp.dependencycheck.jaxb.pom.generated.Organization;
+import org.owasp.dependencycheck.utils.DownloadFailedException;
+import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * Analyzer which will attempt to locate a dependency, and the GAV information, by querying Central for the dependency's
- * SHA-1 digest.
+ * Analyzer which will attempt to locate a dependency, and the GAV information, by querying Central for the dependency's SHA-1
+ * digest.
  *
  * @author colezlaw
  */
@@ -62,8 +70,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     private static final Set<String> SUPPORTED_EXTENSIONS = newHashSet("jar");
 
     /**
-     * The analyzer should be disabled if there are errors, so this is a flag to determine if such an error has
-     * occurred.
+     * The analyzer should be disabled if there are errors, so this is a flag to determine if such an error has occurred.
      */
     private boolean errorFlag = false;
 
@@ -71,7 +78,10 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      * The searcher itself.
      */
     private CentralSearch searcher;
-
+    /**
+     * Utility to read POM files.
+     */
+    private PomUtils pomUtil = new PomUtils();
     /**
      * Field indicating if the analyzer is enabled.
      */
@@ -188,6 +198,37 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
             for (MavenArtifact ma : mas) {
                 LOGGER.fine(String.format("Central analyzer found artifact (%s) for dependency (%s)", ma.toString(), dependency.getFileName()));
                 dependency.addAsEvidence("central", ma, confidence);
+                boolean pomAnalyzed = false;
+                for (Evidence e : dependency.getVendorEvidence()) {
+                    if ("pom".equals(e.getSource())) {
+                        pomAnalyzed = true;
+                        break;
+                    }
+                }
+                if (!pomAnalyzed && ma.getPomUrl() != null) {
+                    File pomFile = null;
+                    try {
+                        final File baseDir = Settings.getTempDirectory();
+                        pomFile = File.createTempFile("pom", "xml", baseDir);
+                        if (!pomFile.delete()) {
+                            final String msg = String.format("Unable to fetch pom.xml for %s from Central; this could result in undetected CPE/CVEs.", dependency.getFileName());
+                            LOGGER.warning(msg);
+                            LOGGER.fine("Unable to delete temp file");
+                        }
+                        LOGGER.fine(String.format("Downloading %s", ma.getPomUrl()));
+                        Downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);
+                        analyzePOM(dependency, pomFile);
+
+                    } catch (DownloadFailedException ex) {
+                        final String msg = String.format("Unable to download pom.xml for %s from Central; this could result in undetected CPE/CVEs.", dependency.getFileName());
+                        LOGGER.warning(msg);
+                    } finally {
+//                        if (pomFile != null && !FileUtils.deleteQuietly(pomFile)) {
+//                            pomFile.deleteOnExit();
+//                        }
+                    }
+                }
+
             }
         } catch (IllegalArgumentException iae) {
             LOGGER.info(String.format("invalid sha1-hash on %s", dependency.getFileName()));
@@ -197,5 +238,89 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.log(Level.FINE, "Could not connect to Central search", ioe);
             errorFlag = true;
         }
+    }
+
+    /**
+     * Reads in the pom file and adds elements as evidence to the given dependency.
+     *
+     * @param dependency the dependency being analyzed
+     * @param pomFile the pom file to read
+     * @throws AnalysisException is thrown if there is an exception parsing the pom
+     */
+    protected void analyzePOM(Dependency dependency, File pomFile) throws AnalysisException {
+        Model pom = pomUtil.readPom(pomFile);
+
+        String groupid = pom.getGroupId();
+        String parentGroupId = null;
+
+        if (pom.getParent() != null) {
+            parentGroupId = pom.getParent().getGroupId();
+            if ((groupid == null || groupid.isEmpty()) && parentGroupId != null && !parentGroupId.isEmpty()) {
+                groupid = parentGroupId;
+            }
+        }
+        if (groupid != null && !groupid.isEmpty()) {
+            dependency.getVendorEvidence().addEvidence("pom", "groupid", groupid, Confidence.HIGHEST);
+            dependency.getProductEvidence().addEvidence("pom", "groupid", groupid, Confidence.LOW);
+            if (parentGroupId != null && !parentGroupId.isEmpty() && !parentGroupId.equals(groupid)) {
+                dependency.getVendorEvidence().addEvidence("pom", "parent-groupid", parentGroupId, Confidence.MEDIUM);
+                dependency.getProductEvidence().addEvidence("pom", "parent-groupid", parentGroupId, Confidence.LOW);
+            }
+        }
+        String artifactid = pom.getArtifactId();
+        String parentArtifactId = null;
+        if (pom.getParent() != null) {
+            parentArtifactId = pom.getParent().getArtifactId();
+            if ((artifactid == null || artifactid.isEmpty()) && parentArtifactId != null && !parentArtifactId.isEmpty()) {
+                artifactid = parentArtifactId;
+            }
+        }
+        if (artifactid != null && !artifactid.isEmpty()) {
+            if (artifactid.startsWith("org.") || artifactid.startsWith("com.")) {
+                artifactid = artifactid.substring(4);
+            }
+            dependency.getProductEvidence().addEvidence("pom", "artifactid", artifactid, Confidence.HIGHEST);
+            dependency.getVendorEvidence().addEvidence("pom", "artifactid", artifactid, Confidence.LOW);
+            if (parentArtifactId != null && !parentArtifactId.isEmpty() && !parentArtifactId.equals(artifactid)) {
+                dependency.getProductEvidence().addEvidence("pom", "parent-artifactid", parentArtifactId, Confidence.MEDIUM);
+                dependency.getVendorEvidence().addEvidence("pom", "parent-artifactid", parentArtifactId, Confidence.LOW);
+            }
+        }
+        //version
+        String version = pom.getVersion();
+        String parentVersion = null;
+        if (pom.getParent() != null) {
+            parentVersion = pom.getParent().getVersion();
+            if ((version == null || version.isEmpty()) && parentVersion != null && !parentVersion.isEmpty()) {
+                version = parentVersion;
+            }
+        }
+        if (version != null && !version.isEmpty()) {
+            dependency.getVersionEvidence().addEvidence("pom", "version", version, Confidence.HIGHEST);
+            if (parentVersion != null && !parentVersion.isEmpty() && !parentVersion.equals(version)) {
+                dependency.getVersionEvidence().addEvidence("pom", "parent-version", version, Confidence.LOW);
+            }
+        }
+
+        final Organization org = pom.getOrganization();
+        if (org != null) {
+            final String orgName = org.getName();
+            if (orgName != null && !orgName.isEmpty()) {
+                dependency.getVendorEvidence().addEvidence("pom", "organization name", orgName, Confidence.HIGH);
+            }
+        }
+        final String pomName = pom.getName();
+        if (pomName != null && !pomName.isEmpty()) {
+            dependency.getProductEvidence().addEvidence("pom", "name", pomName, Confidence.HIGH);
+            dependency.getVendorEvidence().addEvidence("pom", "name", pomName, Confidence.HIGH);
+        }
+
+        if (pom.getDescription() != null) {
+            final String description = pom.getDescription();
+            if (description != null && !description.isEmpty()) {
+                JarAnalyzer.addDescription(dependency, description, "pom", "description");
+            }
+        }
+        JarAnalyzer.extractLicense(pom, null, dependency);
     }
 }
