@@ -61,6 +61,7 @@ import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.jaxb.pom.MavenNamespaceFilter;
+import org.owasp.dependencycheck.jaxb.pom.PomUtils;
 import org.owasp.dependencycheck.jaxb.pom.generated.License;
 import org.owasp.dependencycheck.jaxb.pom.generated.Model;
 import org.owasp.dependencycheck.jaxb.pom.generated.Organization;
@@ -158,24 +159,15 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * A pattern to detect HTML within text.
      */
     private static final Pattern HTML_DETECTION_PATTERN = Pattern.compile("\\<[a-z]+.*/?\\>", Pattern.CASE_INSENSITIVE);
-    /**
-     * The unmarshaller used to parse the pom.xml from a JAR file.
-     */
-    private Unmarshaller pomUnmarshaller;
+
+    private PomUtils pomUtils = null;
     //</editor-fold>
 
     /**
      * Constructs a new JarAnalyzer.
      */
     public JarAnalyzer() {
-        try {
-            //final JAXBContext jaxbContext = JAXBContext.newInstance("org.owasp.dependencycheck.jaxb.pom.generated");
-            final JAXBContext jaxbContext = JAXBContext.newInstance(Model.class);
-            pomUnmarshaller = jaxbContext.createUnmarshaller();
-        } catch (JAXBException ex) { //guess we will just have a null pointer exception later...
-            LOGGER.log(Level.SEVERE, "Unable to load parser. See the log for more details.");
-            LOGGER.log(Level.FINE, null, ex);
-        }
+        pomUtils = new PomUtils();
     }
 
     //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
@@ -262,8 +254,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Attempts to find a pom.xml within the JAR file. If found it extracts information and adds it to the evidence.
-     * This will attempt to interpolate the strings contained within the pom.properties if one exists.
+     * Attempts to find a pom.xml within the JAR file. If found it extracts information and adds it to the evidence. This will
+     * attempt to interpolate the strings contained within the pom.properties if one exists.
      *
      * @param dependency the dependency being analyzed
      * @param classes a collection of class name information
@@ -342,7 +334,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     if (externalPom == null) {
                         pom = retrievePom(path, jar);
                     } else {
-                        pom = retrievePom(externalPom);
+                        pom = pomUtils.readPom(externalPom);
                     }
                     foundSomething |= setPomEvidence(dependency, pom, pomProperties, classes);
                 }
@@ -450,7 +442,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             final InputStreamReader reader = new InputStreamReader(fis, "UTF-8");
             final InputSource xml = new InputSource(reader);
             final SAXSource source = new SAXSource(xml);
-            model = readPom(source);
+            model = pomUtils.readPom(source);
         } catch (FileNotFoundException ex) {
             final String msg = String.format("Unable to parse pom '%s' in jar '%s' (File Not Found)", path, jar.getName());
             LOGGER.log(Level.WARNING, msg);
@@ -520,7 +512,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 final InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
                 final InputSource xml = new InputSource(reader);
                 final SAXSource source = new SAXSource(xml);
-                model = readPom(source);
+                model = pomUtils.readPom(source);
             } catch (SecurityException ex) {
                 final String msg = String.format("Unable to parse pom '%s' in jar '%s'; invalid signature", path, jar.getName());
                 LOGGER.log(Level.WARNING, msg);
@@ -542,80 +534,13 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Reads in the specified POM and converts it to a Model.
-     *
-     * @param file the pom.xml file
-     * @return returns a
-     * @throws AnalysisException is thrown if there is an exception extracting or parsing the POM
-     * {@link org.owasp.dependencycheck.jaxb.pom.generated.Model} object
-     */
-    private Model retrievePom(File file) throws AnalysisException {
-        Model model = null;
-        try {
-            final FileInputStream stream = new FileInputStream(file);
-            final InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
-            final InputSource xml = new InputSource(reader);
-            final SAXSource source = new SAXSource(xml);
-            model = readPom(source);
-        } catch (SecurityException ex) {
-            final String msg = String.format("Unable to parse pom '%s'; invalid signature", file.getPath());
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, null, ex);
-            throw new AnalysisException(ex);
-        } catch (IOException ex) {
-            final String msg = String.format("Unable to parse pom '%s'(IO Exception)", file.getPath());
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, "", ex);
-            throw new AnalysisException(ex);
-        } catch (Throwable ex) {
-            final String msg = String.format("Unexpected error during parsing of the pom '%s'", file.getPath());
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, "", ex);
-            throw new AnalysisException(ex);
-        }
-        return model;
-    }
-
-    /**
-     * Retrieves the specified POM from a jar file and converts it to a Model.
-     *
-     * @param source the SAXSource input stream to read the POM from
-     * @return returns the POM object
-     * @throws AnalysisException is thrown if there is an exception extracting or parsing the POM
-     * {@link org.owasp.dependencycheck.jaxb.pom.generated.Model} object
-     */
-    private Model readPom(SAXSource source) throws AnalysisException {
-        Model model = null;
-        try {
-            final XMLFilter filter = new MavenNamespaceFilter();
-            final SAXParserFactory spf = SAXParserFactory.newInstance();
-            final SAXParser sp = spf.newSAXParser();
-            final XMLReader xr = sp.getXMLReader();
-            filter.setParent(xr);
-            final JAXBElement<Model> el = pomUnmarshaller.unmarshal(source, Model.class);
-            model = el.getValue();
-        } catch (SecurityException ex) {
-            throw new AnalysisException(ex);
-        } catch (ParserConfigurationException ex) {
-            throw new AnalysisException(ex);
-        } catch (SAXException ex) {
-            throw new AnalysisException(ex);
-        } catch (JAXBException ex) {
-            throw new AnalysisException(ex);
-        } catch (Throwable ex) {
-            throw new AnalysisException(ex);
-        }
-        return model;
-    }
-
-    /**
      * Sets evidence from the pom on the supplied dependency.
      *
      * @param dependency the dependency to set data on
      * @param pom the information from the pom
      * @param pomProperties the pom properties file (null if none exists)
-     * @param classes a collection of ClassNameInformation - containing data about the fully qualified class names
-     * within the JAR file being analyzed
+     * @param classes a collection of ClassNameInformation - containing data about the fully qualified class names within the JAR
+     * file being analyzed
      * @return true if there was evidence within the pom that we could use; otherwise false
      */
     private boolean setPomEvidence(Dependency dependency, Model pom, Properties pomProperties, ArrayList<ClassNameInformation> classes) {
@@ -739,8 +664,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Analyzes the path information of the classes contained within the JarAnalyzer to try and determine possible
-     * vendor or product names. If any are found they are stored in the packageVendor and packageProduct hashSets.
+     * Analyzes the path information of the classes contained within the JarAnalyzer to try and determine possible vendor or
+     * product names. If any are found they are stored in the packageVendor and packageProduct hashSets.
      *
      * @param classNames a list of class names
      * @param dependency a dependency to analyze
@@ -948,18 +873,17 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Adds a description to the given dependency. If the description contains one of the following strings beyond 100
-     * characters, then the description used will be trimmed to that position:
+     * Adds a description to the given dependency. If the description contains one of the following strings beyond 100 characters,
+     * then the description used will be trimmed to that position:
      * <ul><li>"such as"</li><li>"like "</li><li>"will use "</li><li>"* uses "</li></ul>
      *
      * @param dependency a dependency
      * @param description the description
      * @param source the source of the evidence
      * @param key the "name" of the evidence
-     * @return if the description is trimmed, the trimmed version is returned; otherwise the original description is
-     * returned
+     * @return if the description is trimmed, the trimmed version is returned; otherwise the original description is returned
      */
-    private String addDescription(Dependency dependency, String description, String source, String key) {
+    public static String addDescription(Dependency dependency, String description, String source, String key) {
         if (dependency.getDescription() == null) {
             dependency.setDescription(description);
         }
@@ -1064,12 +988,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
      * <p>
-     * A utility function that will interpolate strings based on values given in the properties file. It will also
-     * interpolate the strings contained within the properties file so that properties can reference other
-     * properties.</p>
+     * A utility function that will interpolate strings based on values given in the properties file. It will also interpolate the
+     * strings contained within the properties file so that properties can reference other properties.</p>
      * <p>
-     * <b>Note:</b> if there is no property found the reference will be removed. In other words, if the interpolated
-     * string will be replaced with an empty string.
+     * <b>Note:</b> if there is no property found the reference will be removed. In other words, if the interpolated string will
+     * be replaced with an empty string.
      * </p>
      * <p>
      * Example:</p>
@@ -1089,13 +1012,13 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @param properties a collection of properties that may be referenced within the text.
      * @return the interpolated text.
      */
-    protected String interpolateString(String text, Properties properties) {
+    public static String interpolateString(String text, Properties properties) {
         Properties props = properties;
         if (text == null) {
             return text;
         }
         if (props == null) {
-            props = new Properties();
+            return text;
         }
 
         final int pos = text.indexOf("${");
@@ -1133,8 +1056,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Cycles through an enumeration of JarEntries, contained within the dependency, and returns a list of the class
-     * names. This does not include core Java package names (i.e. java.* or javax.*).
+     * Cycles through an enumeration of JarEntries, contained within the dependency, and returns a list of the class names. This
+     * does not include core Java package names (i.e. java.* or javax.*).
      *
      * @param dependency the dependency being analyzed
      * @return an list of fully qualified class names
@@ -1171,8 +1094,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Cycles through the list of class names and places the package levels 0-3 into the provided maps for vendor and
-     * product. This is helpful when analyzing vendor/product as many times this is included in the package name.
+     * Cycles through the list of class names and places the package levels 0-3 into the provided maps for vendor and product.
+     * This is helpful when analyzing vendor/product as many times this is included in the package name.
      *
      * @param classNames a list of class names
      * @param vendor HashMap of possible vendor names from package names (e.g. owasp)
@@ -1203,8 +1126,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Adds an entry to the specified collection and sets the Integer (e.g. the count) to 1. If the entry already exists
-     * in the collection then the Integer is incremented by 1.
+     * Adds an entry to the specified collection and sets the Integer (e.g. the count) to 1. If the entry already exists in the
+     * collection then the Integer is incremented by 1.
      *
      * @param collection a collection of strings and their occurrence count
      * @param key the key to add to the collection
@@ -1218,9 +1141,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Cycles through the collection of class name information to see if parts of the package names are contained in the
-     * provided value. If found, it will be added as the HIGHEST confidence evidence because we have more then one
-     * source corroborating the value.
+     * Cycles through the collection of class name information to see if parts of the package names are contained in the provided
+     * value. If found, it will be added as the HIGHEST confidence evidence because we have more then one source corroborating the
+     * value.
      *
      * @param classes a collection of class name information
      * @param value the value to check to see if it contains a package name
@@ -1261,7 +1184,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @param pomProperties the properties, used for string interpolation
      * @param dependency the dependency to add license information too
      */
-    private void extractLicense(Model pom, Properties pomProperties, Dependency dependency) {
+    public static void extractLicense(Model pom, Properties pomProperties, Dependency dependency) {
         //license
         if (pom.getLicenses() != null) {
             String license = null;
@@ -1302,9 +1225,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
         /**
          * <p>
-         * Stores information about a given class name. This class will keep the fully qualified class name and a list
-         * of the important parts of the package structure. Up to the first four levels of the package structure are
-         * stored, excluding a leading "org" or "com". Example:</p>
+         * Stores information about a given class name. This class will keep the fully qualified class name and a list of the
+         * important parts of the package structure. Up to the first four levels of the package structure are stored, excluding a
+         * leading "org" or "com". Example:</p>
          * <code>ClassNameInformation obj = new ClassNameInformation("org.owasp.dependencycheck.analyzer.JarAnalyzer");
          * System.out.println(obj.getName());
          * for (String p : obj.getPackageStructure())
