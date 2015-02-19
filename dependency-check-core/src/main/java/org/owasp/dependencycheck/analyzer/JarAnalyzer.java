@@ -46,13 +46,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 import org.jsoup.Jsoup;
 import org.owasp.dependencycheck.Engine;
@@ -60,7 +53,6 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
-import org.owasp.dependencycheck.jaxb.pom.MavenNamespaceFilter;
 import org.owasp.dependencycheck.jaxb.pom.PomUtils;
 import org.owasp.dependencycheck.jaxb.pom.generated.License;
 import org.owasp.dependencycheck.jaxb.pom.generated.Model;
@@ -69,9 +61,6 @@ import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.NonClosingStream;
 import org.owasp.dependencycheck.utils.Settings;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLFilter;
-import org.xml.sax.XMLReader;
 
 /**
  * Used to load a JAR file and collect information that can be used to determine the associated CPE.
@@ -160,6 +149,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final Pattern HTML_DETECTION_PATTERN = Pattern.compile("\\<[a-z]+.*/?\\>", Pattern.CASE_INSENSITIVE);
 
+    /**
+     * The POM Utility for parsing POM files.
+     */
     private PomUtils pomUtils = null;
     //</editor-fold>
 
@@ -1009,7 +1001,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @return the interpolated text.
      */
     public static String interpolateString(String text, Properties properties) {
-        Properties props = properties;
+        final Properties props = properties;
         if (text == null) {
             return text;
         }

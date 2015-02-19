@@ -27,7 +27,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -788,12 +787,13 @@ public class CveDB {
      * @param identifiedVersion the identified version of the dependency being analyzed
      * @return true if the identified version is affected, otherwise false
      */
-    protected Entry<String, Boolean> getMatchingSoftware(HashMap<String, Boolean> vulnerableSoftware, String vendor, String product, DependencyVersion identifiedVersion) {
+    protected Entry<String, Boolean> getMatchingSoftware(HashMap<String, Boolean> vulnerableSoftware, String vendor, String product,
+            DependencyVersion identifiedVersion) {
 
         final boolean isVersionTwoADifferentProduct = "apache".equals(vendor) && "struts".equals(product);
 
-        HashSet<String> majorVersionsAffectingAllPrevious = new HashSet<String>();
-        boolean matchesAnyPrevious = identifiedVersion == null || "-".equals(identifiedVersion.toString());
+        final HashSet<String> majorVersionsAffectingAllPrevious = new HashSet<String>();
+        final boolean matchesAnyPrevious = identifiedVersion == null || "-".equals(identifiedVersion.toString());
         String majorVersionMatch = null;
         for (Entry<String, Boolean> entry : vulnerableSoftware.entrySet()) {
             final DependencyVersion v = parseDependencyVersion(entry.getKey());
@@ -814,7 +814,7 @@ public class CveDB {
             return null;
         }
 
-        boolean canSkipVersions = majorVersionMatch != null && majorVersionsAffectingAllPrevious.size() > 1;
+        final boolean canSkipVersions = majorVersionMatch != null && majorVersionsAffectingAllPrevious.size() > 1;
         //yes, we are iterating over this twice. The first time we are skipping versions those that affect all versions
         //then later we process those that affect all versions. This could be done with sorting...
         for (Entry<String, Boolean> entry : vulnerableSoftware.entrySet()) {

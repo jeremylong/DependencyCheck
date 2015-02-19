@@ -25,7 +25,6 @@ import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.SocketAddress;
 import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * A URLConnection Factory to create new connections. This encapsulates several configuration checks to ensure that the connection

@@ -84,8 +84,8 @@ public final class CliParser {
     /**
      * Validates that the command line arguments are valid.
      *
-     * @throws FileNotFoundException if there is a file specified by either the SCAN or CPE command line arguments that
-     * does not exist.
+     * @throws FileNotFoundException if there is a file specified by either the SCAN or CPE command line arguments that does not
+     * exist.
      * @throws ParseException is thrown if there is an exception parsing the command line.
      */
     private void validateArgs() throws FileNotFoundException, ParseException {
@@ -112,8 +112,8 @@ public final class CliParser {
     }
 
     /**
-     * Validates whether or not the path(s) points at a file that exists; if the path(s) does not point to an existing
-     * file a FileNotFoundException is thrown.
+     * Validates whether or not the path(s) points at a file that exists; if the path(s) does not point to an existing file a
+     * FileNotFoundException is thrown.
      *
      * @param paths the paths to validate if they exists
      * @param optType the option being validated (e.g. scan, out, etc.)
@@ -257,8 +257,8 @@ public final class CliParser {
     }
 
     /**
-     * Adds the advanced command line options to the given options collection. These are split out for purposes of being
-     * able to display two different help messages.
+     * Adds the advanced command line options to the given options collection. These are split out for purposes of being able to
+     * display two different help messages.
      *
      * @param options a collection of command line arguments
      * @throws IllegalArgumentException thrown if there is an exception
@@ -324,7 +324,8 @@ public final class CliParser {
                 .create();
 
         final Option disableCentralAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_CENTRAL)
-                .withDescription("Disable the Central Analyzer. If this analyzer is disabled it is likely you also want to disable the Nexus Analyzer.")
+                .withDescription("Disable the Central Analyzer. If this analyzer is disabled it is likely you also want to disable "
+                        + "the Nexus Analyzer.")
                 .create();
 
         final Option disableNexusAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_NEXUS)
@@ -373,8 +374,8 @@ public final class CliParser {
     }
 
     /**
-     * Adds the deprecated command line options to the given options collection. These are split out for purposes of not
-     * including them in the help message. We need to add the deprecated options so as not to break existing scripts.
+     * Adds the deprecated command line options to the given options collection. These are split out for purposes of not including
+     * them in the help message. We need to add the deprecated options so as not to break existing scripts.
      *
      * @param options a collection of command line arguments
      * @throws IllegalArgumentException thrown if there is an exception
@@ -484,8 +485,7 @@ public final class CliParser {
     }
 
     /**
-     * Returns true if the Nexus Analyzer should use the configured proxy to connect to Nexus; otherwise false is
-     * returned.
+     * Returns true if the Nexus Analyzer should use the configured proxy to connect to Nexus; otherwise false is returned.
      *
      * @return true if the Nexus Analyzer should use the configured proxy to connect to Nexus; otherwise false
      */
@@ -687,8 +687,7 @@ public final class CliParser {
     }
 
     /**
-     * Checks if the auto update feature has been disabled. If it has been disabled via the command line this will
-     * return false.
+     * Checks if the auto update feature has been disabled. If it has been disabled via the command line this will return false.
      *
      * @return if auto-update is allowed.
      */

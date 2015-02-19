@@ -235,13 +235,20 @@ public final class Downloader {
         return timestamp;
     }
 
+    /**
+     * Analyzes the IOException, logs the appropriate information for debugging purposes, and then throws a
+     * DownloadFailedException that wraps the IO Exception.
+     *
+     * @param ex the original exception
+     * @throws DownloadFailedException a wrapper exception that contains the original exception as the cause
+     */
     protected static void analyzeException(IOException ex) throws DownloadFailedException {
         Throwable cause = ex;
         do {
             if (cause instanceof InvalidAlgorithmParameterException) {
-                String keystore = System.getProperty("javax.net.ssl.keyStore");
-                String version = System.getProperty("java.version");
-                String vendor = System.getProperty("java.vendor");
+                final String keystore = System.getProperty("javax.net.ssl.keyStore");
+                final String version = System.getProperty("java.version");
+                final String vendor = System.getProperty("java.vendor");
                 LOGGER.info("Error making HTTPS request - InvalidAlgorithmParameterException");
                 LOGGER.info("There appears to be an issue with the installation of Java and the cacerts."
                         + "See closed issue #177 here: https://github.com/jeremylong/DependencyCheck/issues/177");

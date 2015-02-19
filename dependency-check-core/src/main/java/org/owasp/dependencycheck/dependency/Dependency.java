@@ -605,7 +605,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     private Set<String> projectReferences = new HashSet<String>();
 
     /**
-     * Get the value of projectReferences
+     * Get the value of projectReferences.
      *
      * @return the value of projectReferences
      */
@@ -614,7 +614,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * Set the value of projectReferences
+     * Set the value of projectReferences.
      *
      * @param projectReferences new value of projectReferences
      */
@@ -671,7 +671,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     private List<String> availableVersions = new ArrayList<String>();
 
     /**
-     * Get the value of availableVersions
+     * Get the value of availableVersions.
      *
      * @return the value of availableVersions
      */
@@ -680,7 +680,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * Set the value of availableVersions
+     * Set the value of availableVersions.
      *
      * @param availableVersions new value of availableVersions
      */

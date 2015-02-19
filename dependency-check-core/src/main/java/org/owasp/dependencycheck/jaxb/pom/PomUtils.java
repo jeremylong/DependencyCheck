@@ -54,6 +54,9 @@ public class PomUtils {
      */
     private Unmarshaller pomUnmarshaller;
 
+    /**
+     * Constructs a new POM Utility.
+     */
     public PomUtils() {
         try {
             //final JAXBContext jaxbContext = JAXBContext.newInstance("org.owasp.dependencycheck.jaxb.pom.generated");

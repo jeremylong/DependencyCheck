@@ -27,7 +27,7 @@ public class MavenArtifact {
     /**
      * The base URL for download artifacts from Central.
      */
-    private final String CENTRAL_CONTENT_URL = "http://search.maven.org/remotecontent?filepath=";
+    private static final String CENTRAL_CONTENT_URL = "http://search.maven.org/remotecontent?filepath=";
 
     /**
      * The groupId
@@ -87,11 +87,13 @@ public class MavenArtifact {
         this.version = version;
         if (jarAvailable) {
             //org/springframework/spring-core/3.2.0.RELEASE/spring-core-3.2.0.RELEASE.pom
-            this.artifactUrl = this.CENTRAL_CONTENT_URL + groupId.replace('.', '/') + "/" + artifactId.replace('.', '/') + "/" + version + "/" + artifactId + "-" + version + ".jar";
+            this.artifactUrl = this.CENTRAL_CONTENT_URL + groupId.replace('.', '/') + "/" + artifactId.replace('.', '/') + "/"
+                    + version + "/" + artifactId + "-" + version + ".jar";
         }
         if (pomAvailable) {
             //org/springframework/spring-core/3.2.0.RELEASE/spring-core-3.2.0.RELEASE.pom
-            this.pomUrl = this.CENTRAL_CONTENT_URL + groupId.replace('.', '/') + "/" + artifactId.replace('.', '/') + "/" + version + "/" + artifactId + "-" + version + ".pom";
+            this.pomUrl = this.CENTRAL_CONTENT_URL + groupId.replace('.', '/') + "/" + artifactId.replace('.', '/') + "/"
+                    + version + "/" + artifactId + "-" + version + ".pom";
         }
     }
 

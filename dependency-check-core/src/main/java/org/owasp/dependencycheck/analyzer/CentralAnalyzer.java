@@ -209,9 +209,10 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                     File pomFile = null;
                     try {
                         final File baseDir = Settings.getTempDirectory();
-                        pomFile = File.createTempFile("pom", "xml", baseDir);
+                        pomFile = File.createTempFile("pom", ".xml", baseDir);
                         if (!pomFile.delete()) {
-                            final String msg = String.format("Unable to fetch pom.xml for %s from Central; this could result in undetected CPE/CVEs.", dependency.getFileName());
+                            final String msg = String.format("Unable to fetch pom.xml for %s from Central; "
+                                    + "this could result in undetected CPE/CVEs.", dependency.getFileName());
                             LOGGER.warning(msg);
                             LOGGER.fine("Unable to delete temp file");
                         }
@@ -220,12 +221,13 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                         analyzePOM(dependency, pomFile);
 
                     } catch (DownloadFailedException ex) {
-                        final String msg = String.format("Unable to download pom.xml for %s from Central; this could result in undetected CPE/CVEs.", dependency.getFileName());
+                        final String msg = String.format("Unable to download pom.xml for %s from Central; "
+                                + "this could result in undetected CPE/CVEs.", dependency.getFileName());
                         LOGGER.warning(msg);
                     } finally {
-//                        if (pomFile != null && !FileUtils.deleteQuietly(pomFile)) {
-//                            pomFile.deleteOnExit();
-//                        }
+                        if (pomFile != null && !FileUtils.deleteQuietly(pomFile)) {
+                            pomFile.deleteOnExit();
+                        }
                     }
                 }
 
@@ -248,7 +250,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws AnalysisException is thrown if there is an exception parsing the pom
      */
     protected void analyzePOM(Dependency dependency, File pomFile) throws AnalysisException {
-        Model pom = pomUtil.readPom(pomFile);
+        final Model pom = pomUtil.readPom(pomFile);
 
         String groupid = pom.getGroupId();
         String parentGroupId = null;
