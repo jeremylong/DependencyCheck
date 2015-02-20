@@ -131,7 +131,18 @@ public class NexusSearch {
                         .evaluate(
                                 "/org.sonatype.nexus.rest.model.NexusArtifact/artifactLink",
                                 doc);
-                return new MavenArtifact(groupId, artifactId, version, link);
+                final String pomLink = xpath
+                        .evaluate(
+                                "/org.sonatype.nexus.rest.model.NexusArtifact/pomLink",
+                                doc);
+                MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
+                if (link != null && !"".equals(link)) {
+                  ma.setArtifactUrl(link);
+                }
+                if (pomLink != null & !"".equals(pomLink)) {
+                  ma.setPomUrl(pomLink);
+                }
+                return ma;
             } catch (Throwable e) {
                 // Anything else is jacked-up XML stuff that we really can't recover
                 // from well

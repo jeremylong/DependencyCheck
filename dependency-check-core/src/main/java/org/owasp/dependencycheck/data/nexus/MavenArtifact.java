@@ -17,6 +17,8 @@
  */
 package org.owasp.dependencycheck.data.nexus;
 
+import java.io.File;
+
 /**
  * Simple bean representing a Maven Artifact.
  *
