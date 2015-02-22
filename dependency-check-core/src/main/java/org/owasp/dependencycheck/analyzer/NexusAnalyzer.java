@@ -226,7 +226,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
                     final File baseDir = Settings.getTempDirectory();
                     pomFile = File.createTempFile("pom", ".xml", baseDir);
                     if (!pomFile.delete()) {
-                        final String msg = String.format("Unable to fetch pom.xml for %s from Central; "
+                        final String msg = String.format("Unable to fetch pom.xml for %s from Nexus repository; "
                                 + "this could result in undetected CPE/CVEs.", dependency.getFileName());
                         LOGGER.warning(msg);
                         LOGGER.fine("Unable to delete temp file");
@@ -235,7 +235,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
                     Downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);
                     pomUtil.analyzePOM(dependency, pomFile);
                 } catch (DownloadFailedException ex) {
-                    final String msg = String.format("Unable to download pom.xml for %s from Central; "
+                    final String msg = String.format("Unable to download pom.xml for %s from Nexus repository; "
                             + "this could result in undetected CPE/CVEs.", dependency.getFileName());
                     LOGGER.warning(msg);
                 } finally {
