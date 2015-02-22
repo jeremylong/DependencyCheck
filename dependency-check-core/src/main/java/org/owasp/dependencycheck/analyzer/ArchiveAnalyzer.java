@@ -110,7 +110,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     static {
         final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
         if (additionalZipExt != null) {
-            final HashSet<String> ext = new HashSet<String>(Arrays.asList(additionalZipExt));
+            final Set<String> ext = new HashSet<String>(Arrays.asList(additionalZipExt));
             ZIPPABLES.addAll(ext);
         }
         EXTENSIONS.addAll(ZIPPABLES);
@@ -382,7 +382,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                             fos = new FileOutputStream(file);
                             bos = new BufferedOutputStream(fos, BUFFER_SIZE);
                             int count;
-                            final byte data[] = new byte[BUFFER_SIZE];
+                            final byte[] data = new byte[BUFFER_SIZE];
                             while ((count = input.read(data, 0, BUFFER_SIZE)) != -1) {
                                 bos.write(data, 0, count);
                             }

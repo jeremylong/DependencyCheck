@@ -227,7 +227,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException {
         try {
-            final ArrayList<ClassNameInformation> classNames = collectClassNames(dependency);
+            final List<ClassNameInformation> classNames = collectClassNames(dependency);
             final String fileName = dependency.getFileName().toLowerCase();
             if (classNames.isEmpty()
                     && (fileName.endsWith("-sources.jar")
@@ -255,7 +255,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws AnalysisException is thrown if there is an exception parsing the pom
      * @return whether or not evidence was added to the dependency
      */
-    protected boolean analyzePOM(Dependency dependency, ArrayList<ClassNameInformation> classes, Engine engine) throws AnalysisException {
+    protected boolean analyzePOM(Dependency dependency, List<ClassNameInformation> classes, Engine engine) throws AnalysisException {
         boolean foundSomething = false;
         final JarFile jar;
         try {
@@ -408,7 +408,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             fos = new FileOutputStream(file);
             bos = new BufferedOutputStream(fos, BUFFER_SIZE);
             int count;
-            final byte data[] = new byte[BUFFER_SIZE];
+            final byte[] data = new byte[BUFFER_SIZE];
             while ((count = input.read(data, 0, BUFFER_SIZE)) != -1) {
                 bos.write(data, 0, count);
             }
@@ -531,7 +531,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * file being analyzed
      * @return true if there was evidence within the pom that we could use; otherwise false
      */
-    private boolean setPomEvidence(Dependency dependency, Model pom, Properties pomProperties, ArrayList<ClassNameInformation> classes) {
+    private boolean setPomEvidence(Dependency dependency, Model pom, Properties pomProperties, List<ClassNameInformation> classes) {
         boolean foundSomething = false;
         boolean addAsIdentifier = true;
         if (pom == null) {
@@ -659,10 +659,10 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @param dependency a dependency to analyze
      * @param addPackagesAsEvidence a flag indicating whether or not package names should be added as evidence.
      */
-    protected void analyzePackageNames(ArrayList<ClassNameInformation> classNames,
+    protected void analyzePackageNames(List<ClassNameInformation> classNames,
             Dependency dependency, boolean addPackagesAsEvidence) {
-        final HashMap<String, Integer> vendorIdentifiers = new HashMap<String, Integer>();
-        final HashMap<String, Integer> productIdentifiers = new HashMap<String, Integer>();
+        final Map<String, Integer> vendorIdentifiers = new HashMap<String, Integer>();
+        final Map<String, Integer> productIdentifiers = new HashMap<String, Integer>();
         analyzeFullyQualifiedClassNames(classNames, vendorIdentifiers, productIdentifiers);
 
         final int classCount = classNames.size();
@@ -704,7 +704,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @return whether evidence was identified parsing the manifest
      * @throws IOException if there is an issue reading the JAR file
      */
-    protected boolean parseManifest(Dependency dependency, ArrayList<ClassNameInformation> classInformation) throws IOException {
+    protected boolean parseManifest(Dependency dependency, List<ClassNameInformation> classInformation) throws IOException {
         boolean foundSomething = false;
         JarFile jar = null;
         try {
@@ -1050,8 +1050,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @param dependency the dependency being analyzed
      * @return an list of fully qualified class names
      */
-    private ArrayList<ClassNameInformation> collectClassNames(Dependency dependency) {
-        final ArrayList<ClassNameInformation> classNames = new ArrayList<ClassNameInformation>();
+    private List<ClassNameInformation> collectClassNames(Dependency dependency) {
+        final List<ClassNameInformation> classNames = new ArrayList<ClassNameInformation>();
         JarFile jar = null;
         try {
             jar = new JarFile(dependency.getActualFilePath());
@@ -1089,10 +1089,10 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @param vendor HashMap of possible vendor names from package names (e.g. owasp)
      * @param product HashMap of possible product names from package names (e.g. dependencycheck)
      */
-    private void analyzeFullyQualifiedClassNames(ArrayList<ClassNameInformation> classNames,
-            HashMap<String, Integer> vendor, HashMap<String, Integer> product) {
+    private void analyzeFullyQualifiedClassNames(List<ClassNameInformation> classNames,
+            Map<String, Integer> vendor, Map<String, Integer> product) {
         for (ClassNameInformation entry : classNames) {
-            final ArrayList<String> list = entry.getPackageStructure();
+            final List<String> list = entry.getPackageStructure();
             addEntry(vendor, list.get(0));
 
             if (list.size() == 2) {
@@ -1120,7 +1120,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @param collection a collection of strings and their occurrence count
      * @param key the key to add to the collection
      */
-    private void addEntry(HashMap<String, Integer> collection, String key) {
+    private void addEntry(Map<String, Integer> collection, String key) {
         if (collection.containsKey(key)) {
             collection.put(key, collection.get(key) + 1);
         } else {
@@ -1137,7 +1137,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @param value the value to check to see if it contains a package name
      * @param evidence the evidence collection to add new entries too
      */
-    private void addMatchingValues(ArrayList<ClassNameInformation> classes, String value, EvidenceCollection evidence) {
+    private void addMatchingValues(List<ClassNameInformation> classes, String value, EvidenceCollection evidence) {
         if (value == null || value.isEmpty() || classes == null || classes.isEmpty()) {
             return;
         }
