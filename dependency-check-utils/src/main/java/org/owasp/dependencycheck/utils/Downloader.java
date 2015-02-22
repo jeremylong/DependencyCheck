@@ -244,7 +244,7 @@ public final class Downloader {
      */
     protected static void analyzeException(IOException ex) throws DownloadFailedException {
         Throwable cause = ex;
-        do {
+        while (cause != null) {
             if (cause instanceof InvalidAlgorithmParameterException) {
                 final String keystore = System.getProperty("javax.net.ssl.keyStore");
                 final String version = System.getProperty("java.version");
@@ -257,6 +257,6 @@ public final class Downloader {
                 throw new DownloadFailedException("Error making HTTPS request. Please see the log for more details.");
             }
             cause = cause.getCause();
-        } while (cause.getCause() != null);
+        }
     }
 }

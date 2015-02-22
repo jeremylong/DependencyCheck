@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
@@ -458,7 +459,8 @@ public class CveDB {
         final List<Vulnerability> vulnerabilities = new ArrayList<Vulnerability>();
 
         PreparedStatement ps;
-        final HashSet<String> cveEntries = new HashSet<String>();
+        //TODO(code review): Looks like things are only added to this map, but never retrieved or checked
+        final Set<String> cveEntries = new HashSet<String>();
         try {
             ps = getConnection().prepareStatement(SELECT_CVE_FROM_SOFTWARE);
             ps.setString(1, cpe.getVendor());
@@ -466,7 +468,7 @@ public class CveDB {
             rs = ps.executeQuery();
             String currentCVE = "";
 
-            final HashMap<String, Boolean> vulnSoftware = new HashMap<String, Boolean>();
+            final Map<String, Boolean> vulnSoftware = new HashMap<String, Boolean>();
             while (rs.next()) {
                 final String cveId = rs.getString(1);
                 if (!currentCVE.equals(cveId)) { //check for match and add
@@ -787,12 +789,12 @@ public class CveDB {
      * @param identifiedVersion the identified version of the dependency being analyzed
      * @return true if the identified version is affected, otherwise false
      */
-    protected Entry<String, Boolean> getMatchingSoftware(HashMap<String, Boolean> vulnerableSoftware, String vendor, String product,
+    protected Entry<String, Boolean> getMatchingSoftware(Map<String, Boolean> vulnerableSoftware, String vendor, String product,
             DependencyVersion identifiedVersion) {
 
         final boolean isVersionTwoADifferentProduct = "apache".equals(vendor) && "struts".equals(product);
 
-        final HashSet<String> majorVersionsAffectingAllPrevious = new HashSet<String>();
+        final Set<String> majorVersionsAffectingAllPrevious = new HashSet<String>();
         final boolean matchesAnyPrevious = identifiedVersion == null || "-".equals(identifiedVersion.toString());
         String majorVersionMatch = null;
         for (Entry<String, Boolean> entry : vulnerableSoftware.entrySet()) {
@@ -875,9 +877,9 @@ public class CveDB {
      */
     private DependencyVersion parseDependencyVersion(VulnerableSoftware cpe) {
         DependencyVersion cpeVersion;
-        if (cpe.getVersion() != null && cpe.getVersion().length() > 0) {
+        if (cpe.getVersion() != null && !cpe.getVersion().isEmpty()) {
             String versionText;
-            if (cpe.getRevision() != null && cpe.getRevision().length() > 0) {
+            if (cpe.getRevision() != null && !cpe.getRevision().isEmpty()) {
                 versionText = String.format("%s.%s", cpe.getVersion(), cpe.getRevision());
             } else {
                 versionText = cpe.getVersion();
