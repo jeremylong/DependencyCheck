@@ -875,9 +875,9 @@ public class CveDB {
      */
     private DependencyVersion parseDependencyVersion(VulnerableSoftware cpe) {
         DependencyVersion cpeVersion;
-        if (cpe.getVersion() != null && cpe.getVersion().length() > 0) {
+        if (cpe.getVersion() != null && !cpe.getVersion().isEmpty()) {
             String versionText;
-            if (cpe.getRevision() != null && cpe.getRevision().length() > 0) {
+            if (cpe.getRevision() != null && !cpe.getRevision().isEmpty()) {
                 versionText = String.format("%s.%s", cpe.getVersion(), cpe.getRevision());
             } else {
                 versionText = cpe.getVersion();

@@ -701,7 +701,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private Proxy getMavenProxy() {
         if (mavenSettings != null) {
             final List<Proxy> proxies = mavenSettings.getProxies();
-            if (proxies != null && proxies.size() > 0) {
+            if (proxies != null && !proxies.isEmpty()) {
                 if (mavenSettingsProxyId != null) {
                     for (Proxy proxy : proxies) {
                         if (mavenSettingsProxyId.equalsIgnoreCase(proxy.getId())) {
@@ -711,8 +711,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 } else if (proxies.size() == 1) {
                     return proxies.get(0);
                 } else {
-                    LOGGER.warning("Multiple proxy defentiions exist in the Maven settings. In the dependency-check "
-                            + "configuration set the maveSettingsProxyId so that the correct proxy will be used.");
+                    LOGGER.warning("Multiple proxy definitions exist in the Maven settings. In the dependency-check "
+                            + "configuration set the mavenSettingsProxyId so that the correct proxy will be used.");
                     throw new IllegalStateException("Ambiguous proxy definition");
                 }
             }

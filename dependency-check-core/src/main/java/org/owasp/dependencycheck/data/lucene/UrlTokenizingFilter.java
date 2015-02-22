@@ -60,7 +60,7 @@ public final class UrlTokenizingFilter extends AbstractTokenizingFilter {
     public boolean incrementToken() throws IOException {
         final LinkedList<String> tokens = getTokens();
         final CharTermAttribute termAtt = getTermAtt();
-        if (tokens.size() == 0 && input.incrementToken()) {
+        if (tokens.isEmpty() && input.incrementToken()) {
             final String text = new String(termAtt.buffer(), 0, termAtt.length());
             if (UrlStringUtils.containsUrl(text)) {
                 final String[] parts = text.split("\\s");
