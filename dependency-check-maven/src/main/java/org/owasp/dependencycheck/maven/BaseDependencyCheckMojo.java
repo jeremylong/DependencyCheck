@@ -429,8 +429,33 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     protected File getCorrectOutputDirectory(MavenProject current) {
         final Object obj = current.getContextValue(getOutputDirectoryContextKey());
-        if (obj != null && obj instanceof File) {
-            return (File) obj;
+        if (obj != null) {
+            if (obj instanceof File) {
+                return (File) obj;
+            }
+        }
+        File target = new File(current.getBuild().getDirectory());
+        if (target.getParentFile() != null && "target".equals(target.getParentFile().getName())) {
+            target = target.getParentFile();
+        }
+        return target;
+    }
+
+    /**
+     * Returns the correct output directory depending on if a site is being executed or not.
+     *
+     * @param current the Maven project to get the output directory from
+     * @return the directory to write the report(s)
+     */
+    protected File getDataFile(MavenProject current) {
+        LOGGER.fine(String.format("Getting data filefor %s using key '%s'", current.getName(), getDataFileContextKey()));
+        final Object obj = current.getContextValue(getDataFileContextKey());
+        if (obj != null) {
+            if (obj instanceof File) {
+                return (File) obj;
+            }
+        } else {
+            LOGGER.info("Context value not found");
         }
         return null;
     }
@@ -454,6 +479,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         final MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
                         d.addAsEvidence("pom", ma, Confidence.HIGHEST);
                         d.addProjectReference(project.getName());
+                        LOGGER.info(String.format("Adding project reference %s on dependency %s", project.getName(), d.getDisplayFileName()));
                         if (metadataSource != null) {
                             try {
                                 DependencyVersion currentVersion = new DependencyVersion(a.getVersion());
@@ -911,9 +937,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     protected void writeDataFile(MavenProject mp, File writeTo, List<Dependency> dependencies) {
         File file;
-        if (dependencies != null && mp.getContextValue(this.getDataFileContextKey()) == null) {
-            if (writeTo != null) {
-                file = new File(mp.getBuild().getDirectory(), dataFileName);
+        //check to see if this was already written out
+        if (mp.getContextValue(this.getDataFileContextKey()) == null) {
+            if (writeTo == null) {
+                file = new File(mp.getBuild().getDirectory());
+                if ("target".equals(file.getParentFile().getName())) {
+                    file = file.getParentFile();
+                }
+                file = new File(file, dataFileName);
             } else {
                 file = new File(writeTo, dataFileName);
             }
@@ -921,17 +952,20 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             OutputStream bos = null;
             ObjectOutputStream out = null;
             try {
-                os = new FileOutputStream(file);
-                bos = new BufferedOutputStream(os);
-                out = new ObjectOutputStream(bos);
-                out.writeObject(dependencies);
-                out.flush();
+                if (dependencies != null) {
+                    os = new FileOutputStream(file);
+                    bos = new BufferedOutputStream(os);
+                    out = new ObjectOutputStream(bos);
+                    out.writeObject(dependencies);
+                    out.flush();
 
-                //call reset to prevent resource leaks per
-                //https://www.securecoding.cert.org/confluence/display/java/SER10-J.+Avoid+memory+and+resource+leaks+during+serialization
-                out.reset();
+                    //call reset to prevent resource leaks per
+                    //https://www.securecoding.cert.org/confluence/display/java/SER10-J.+Avoid+memory+and+resource+leaks+during+serialization
+                    out.reset();
+                }
+                LOGGER.fine(String.format("Serialized data file written to '%s' for %s, referenced by key %s",
+                        file.getAbsolutePath(), mp.getName(), this.getDataFileContextKey()));
                 mp.setContextValue(this.getDataFileContextKey(), file.getAbsolutePath());
-                LOGGER.fine(String.format("Serialized data file written to '%s' for %s", file.getAbsolutePath(), mp.getName()));
             } catch (IOException ex) {
                 LOGGER.log(Level.WARNING, "Unable to create data file used for report aggregation; "
                         + "if report aggregation is being used the results may be incomplete.");
