@@ -459,8 +459,6 @@ public class CveDB {
         final List<Vulnerability> vulnerabilities = new ArrayList<Vulnerability>();
 
         PreparedStatement ps;
-        //TODO(code review): Looks like things are only added to this map, but never retrieved or checked
-        final Set<String> cveEntries = new HashSet<String>();
         try {
             ps = getConnection().prepareStatement(SELECT_CVE_FROM_SOFTWARE);
             ps.setString(1, cpe.getVendor());
@@ -474,7 +472,6 @@ public class CveDB {
                 if (!currentCVE.equals(cveId)) { //check for match and add
                     final Entry<String, Boolean> matchedCPE = getMatchingSoftware(vulnSoftware, cpe.getVendor(), cpe.getProduct(), detectedVersion);
                     if (matchedCPE != null) {
-                        cveEntries.add(currentCVE);
                         final Vulnerability v = getVulnerability(currentCVE);
                         v.setMatchedCPE(matchedCPE.getKey(), matchedCPE.getValue() ? "Y" : null);
                         vulnerabilities.add(v);
@@ -491,7 +488,6 @@ public class CveDB {
             //remember to process the last set of CVE/CPE entries
             final Entry<String, Boolean> matchedCPE = getMatchingSoftware(vulnSoftware, cpe.getVendor(), cpe.getProduct(), detectedVersion);
             if (matchedCPE != null) {
-                cveEntries.add(currentCVE);
                 final Vulnerability v = getVulnerability(currentCVE);
                 v.setMatchedCPE(matchedCPE.getKey(), matchedCPE.getValue() ? "Y" : null);
                 vulnerabilities.add(v);
