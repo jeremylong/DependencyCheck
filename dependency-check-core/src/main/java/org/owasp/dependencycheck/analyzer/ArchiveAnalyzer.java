@@ -110,7 +110,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     static {
         final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
         if (additionalZipExt != null) {
-            final HashSet<String> ext = new HashSet<String>(Arrays.asList(additionalZipExt));
+            final Set<String> ext = new HashSet<String>(Arrays.asList(additionalZipExt));
             ZIPPABLES.addAll(ext);
         }
         EXTENSIONS.addAll(ZIPPABLES);

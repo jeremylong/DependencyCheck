@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.analyzer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -101,7 +102,7 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
             dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
         }
         final Iterator<Evidence> itr = dependency.getVendorEvidence().iterator();
-        final ArrayList<Evidence> newEntries = new ArrayList<Evidence>();
+        final List<Evidence> newEntries = new ArrayList<Evidence>();
         while (itr.hasNext()) {
             final Evidence e = itr.next();
             if ("sun".equalsIgnoreCase(e.getValue(false))) {

@@ -27,6 +27,7 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -75,7 +76,7 @@ public final class DriverLoader {
      */
     public static Driver load(String className, String pathToDriver) throws DriverLoadException {
         final URLClassLoader parent = (URLClassLoader) ClassLoader.getSystemClassLoader();
-        final ArrayList<URL> urls = new ArrayList<URL>();
+        final List<URL> urls = new ArrayList<URL>();
         final String[] paths = pathToDriver.split(File.pathSeparator);
         for (String path : paths) {
             final File file = new File(path);
