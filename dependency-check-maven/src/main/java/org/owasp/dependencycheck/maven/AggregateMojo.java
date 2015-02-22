@@ -75,15 +75,10 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
             final Map<MavenProject, Set<MavenProject>> children = buildAggregateInfo();
 
             for (MavenProject current : getReactorProjects()) {
-                final File outputDir = getCorrectOutputDirectory(current);
-                if (outputDir == null) { //dc was never run on this project. write the ser to the target.
-                    engine.getDependencies().clear();
-                    engine.resetFileTypeAnalyzers();
-                    scanArtifacts(current, engine);
-                    engine.analyzeDependencies();
-                    final File target = new File(current.getBuild().getOutputDirectory()).getParentFile();
-                    writeDataFile(current, target, engine.getDependencies());
-                    showSummary(current, engine.getDependencies());
+                final File dataFile = getDataFile(current);
+                if (dataFile == null) { //dc was never run on this project. write the ser to the target.
+                    LOGGER.fine(String.format("Executing dependency-check on %s", current.getName()));
+                    generateDataFile(engine, current);
                 }
             }
 
@@ -144,13 +139,18 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         if (children == null) {
             return Collections.emptyList();
         }
+        LOGGER.info("Children of " + project.getId());
+        for (String mod : project.getModules()) {
+            LOGGER.info("  mod: " + mod);
+        }
         final List<MavenProject> result = new ArrayList<MavenProject>();
         for (MavenProject child : children) {
             if (isMultiModule(child)) {
+                LOGGER.info("* adding multi-module children " + child.getId());
                 result.addAll(getAllChildren(child, childMap));
-            } else {
-                result.add(child);
             }
+            LOGGER.info("* " + child.getId());
+            result.add(child);
         }
         return result;
     }
@@ -184,7 +184,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
     }
 
     /**
-     * Runs dependency-check's Engine and writes the serialized dependencies to disk.
+     * Initilizes the engine, runs a scan, and writes the serialized dependencies to disk.
      *
      * @return the Engine used to execute dependency-check
      * @throws MojoExecutionException thrown if there is an exception running the mojo
@@ -198,9 +198,26 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
             LOGGER.log(Level.FINE, "Database connection error", ex);
             throw new MojoExecutionException("An exception occured connecting to the local database. Please see the log file for more details.", ex);
         }
-        scanArtifacts(getProject(), engine);
+        return generateDataFile(engine, getProject());
+    }
+
+    /**
+     * Runs dependency-check's Engine and writes the serialized dependencies to disk.
+     *
+     * @param engine the Engine to use when scanning.
+     * @param project the project to scan and generate the data file for
+     * @return the Engine used to execute dependency-check
+     * @throws MojoExecutionException thrown if there is an exception running the mojo
+     * @throws MojoFailureException thrown if dependency-check is configured to fail the build if severe CVEs are identified.
+     */
+    protected Engine generateDataFile(Engine engine, MavenProject project) throws MojoExecutionException, MojoFailureException {
+        LOGGER.fine(String.format("Begin Scanning: %s", project.getName()));
+        engine.getDependencies().clear();
+        engine.resetFileTypeAnalyzers();
+        scanArtifacts(project, engine);
         engine.analyzeDependencies();
-        writeDataFile(getProject(), null, engine.getDependencies());
+        File target = this.getCorrectOutputDirectory(project);
+        writeDataFile(getProject(), target, engine.getDependencies());
         showSummary(getProject(), engine.getDependencies());
         checkForFailure(engine.getDependencies());
         return engine;
