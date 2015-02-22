@@ -255,7 +255,7 @@ public class CPEAnalyzer implements Analyzer {
     protected List<IndexEntry> searchCPE(String vendor, String product,
             Set<String> vendorWeightings, Set<String> productWeightings) {
 
-        final ArrayList<IndexEntry> ret = new ArrayList<IndexEntry>(MAX_QUERY_RESULTS);
+        final List<IndexEntry> ret = new ArrayList<IndexEntry>(MAX_QUERY_RESULTS);
 
         final String searchString = buildSearch(vendor, product, vendorWeightings, productWeightings);
         if (searchString == null) {

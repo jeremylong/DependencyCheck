@@ -116,7 +116,7 @@ public class Engine {
      * Loads the analyzers specified in the configuration file (or system properties).
      */
     private void loadAnalyzers() {
-        if (analyzers.size() > 0) {
+        if (!analyzers.isEmpty()) {
             return;
         }
         for (AnalysisPhase phase : AnalysisPhase.values()) {

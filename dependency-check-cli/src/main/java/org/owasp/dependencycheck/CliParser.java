@@ -140,7 +140,7 @@ public final class CliParser {
             throw new FileNotFoundException(msg);
         } else if (!path.contains("*") && !path.contains("?")) {
             File f = new File(path);
-            if ("o".equals(argumentName.substring(0, 1).toLowerCase()) && !"ALL".equals(this.getReportFormat().toUpperCase())) {
+            if ("o".equalsIgnoreCase(argumentName.substring(0, 1)) && !"ALL".equalsIgnoreCase(this.getReportFormat())) {
                 final String checkPath = path.toLowerCase();
                 if (checkPath.endsWith(".html") || checkPath.endsWith(".xml") || checkPath.endsWith(".htm")) {
                     if (f.getParentFile() == null) {
