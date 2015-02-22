@@ -31,7 +31,7 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Project_QNAME = new QName("http://maven.apache.org/POM/4.0.0", "project");
+    private static final QName _Project_QNAME = new QName("http://maven.apache.org/POM/4.0.0", "project");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.owasp.dependencycheck.analyzer.pom.generated
