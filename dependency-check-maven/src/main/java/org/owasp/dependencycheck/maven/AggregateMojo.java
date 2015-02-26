@@ -21,11 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -133,7 +131,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         if (project == null) {
             return Collections.emptySet();
         }
-        Set<MavenProject> descendants = new HashSet<MavenProject>();
+        final Set<MavenProject> descendants = new HashSet<MavenProject>();
         int size = 0;
         LOGGER.fine(String.format("Collecting descendants of %s", project.getName()));
         for (String m : project.getModules()) {
@@ -230,7 +228,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         engine.resetFileTypeAnalyzers();
         scanArtifacts(project, engine);
         engine.analyzeDependencies();
-        File target = new File(project.getBuild().getDirectory());
+        final File target = new File(project.getBuild().getDirectory());
         writeDataFile(project, target, engine.getDependencies());
         showSummary(project, engine.getDependencies());
         checkForFailure(engine.getDependencies());

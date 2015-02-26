@@ -99,7 +99,7 @@ public final class Downloader {
                     if (status == HttpURLConnection.HTTP_MOVED_TEMP
                             || status == HttpURLConnection.HTTP_MOVED_PERM
                             || status == HttpURLConnection.HTTP_SEE_OTHER) {
-                        String location = conn.getHeaderField("Location");
+                        final String location = conn.getHeaderField("Location");
                         try {
                             conn.disconnect();
                         } finally {
