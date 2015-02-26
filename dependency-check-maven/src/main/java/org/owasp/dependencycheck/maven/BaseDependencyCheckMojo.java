@@ -455,7 +455,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 return (File) obj;
             }
         } else {
-            LOGGER.info("Context value not found");
+            LOGGER.fine("Context value not found");
         }
         return null;
     }
@@ -479,7 +479,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         final MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
                         d.addAsEvidence("pom", ma, Confidence.HIGHEST);
                         d.addProjectReference(project.getName());
-                        LOGGER.info(String.format("Adding project reference %s on dependency %s", project.getName(), d.getDisplayFileName()));
+                        LOGGER.fine(String.format("Adding project reference %s on dependency %s", project.getName(), d.getDisplayFileName()));
                         if (metadataSource != null) {
                             try {
                                 DependencyVersion currentVersion = new DependencyVersion(a.getVersion());
@@ -502,7 +502,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 } else {
                     final String msg = String.format("More then 1 dependency was identified in first pass scan of '%s:%s:%s'",
                             a.getGroupId(), a.getArtifactId(), a.getVersion());
-                    LOGGER.info(msg);
+                    LOGGER.fine(msg);
                 }
             }
         }
@@ -941,9 +941,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         if (mp.getContextValue(this.getDataFileContextKey()) == null) {
             if (writeTo == null) {
                 file = new File(mp.getBuild().getDirectory());
-                if ("target".equals(file.getParentFile().getName())) {
-                    file = file.getParentFile();
-                }
                 file = new File(file, dataFileName);
             } else {
                 file = new File(writeTo, dataFileName);

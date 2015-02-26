@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.maven;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -72,8 +73,8 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         final Engine engine = generateDataFile();
 
         if (getProject() == getReactorProjects().get(getReactorProjects().size() - 1)) {
-            final Map<MavenProject, Set<MavenProject>> children = buildAggregateInfo();
 
+            //ensure that the .ser file was created for each.
             for (MavenProject current : getReactorProjects()) {
                 final File dataFile = getDataFile(current);
                 if (dataFile == null) { //dc was never run on this project. write the ser to the target.
@@ -84,41 +85,36 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
 
             for (MavenProject current : getReactorProjects()) {
                 List<Dependency> dependencies = readDataFile(current);
-                final List<MavenProject> childProjects = getAllChildren(current, children);
-
-                //check for orchestration build - execution root with no children or dependencies
-                if ((dependencies == null || dependencies.isEmpty()) && childProjects.isEmpty() && current.isExecutionRoot()) {
-                    engine.getDependencies().clear();
-                    engine.resetFileTypeAnalyzers();
-                    for (MavenProject mod : getReactorProjects()) {
-                        scanArtifacts(mod, engine);
-                    }
-                    engine.analyzeDependencies();
-                } else {
-                    if (dependencies == null) {
-                        dependencies = new ArrayList<Dependency>();
-                    }
-                    for (MavenProject reportOn : childProjects) {
-                        final List<Dependency> childDeps = readDataFile(reportOn);
-                        if (childDeps != null && !childDeps.isEmpty()) {
-                            dependencies.addAll(childDeps);
-                        }
-                    }
-                    engine.getDependencies().clear();
-                    engine.getDependencies().addAll(dependencies);
-                    final DependencyBundlingAnalyzer bundler = new DependencyBundlingAnalyzer();
-                    try {
-                        bundler.analyze(null, engine);
-                    } catch (AnalysisException ex) {
-                        LOGGER.log(Level.WARNING, "An error occured grouping the dependencies; duplicate entries may exist in the report", ex);
-                        LOGGER.log(Level.FINE, "Bundling Exception", ex);
+                if (dependencies == null) {
+                    dependencies = new ArrayList<Dependency>();
+                }
+                final Set<MavenProject> childProjects = getDescendants(current);
+                for (MavenProject reportOn : childProjects) {
+                    final List<Dependency> childDeps = readDataFile(reportOn);
+                    if (childDeps != null && !childDeps.isEmpty()) {
+                        LOGGER.fine(String.format("Adding %d dependencies from %s", childDeps.size(), reportOn.getName()));
+                        dependencies.addAll(childDeps);
+                    } else {
+                        LOGGER.fine(String.format("No dependencies read for %s", reportOn.getName()));
                     }
                 }
+                engine.getDependencies().clear();
+                engine.getDependencies().addAll(dependencies);
+                final DependencyBundlingAnalyzer bundler = new DependencyBundlingAnalyzer();
+                try {
+                    LOGGER.fine(String.format("Dependency count pre-bundler: %s", engine.getDependencies().size()));
+                    bundler.analyze(null, engine);
+                    LOGGER.fine(String.format("Dependency count post-bundler: %s", engine.getDependencies().size()));
+                } catch (AnalysisException ex) {
+                    LOGGER.log(Level.WARNING, "An error occured grouping the dependencies; duplicate entries may exist in the report", ex);
+                    LOGGER.log(Level.FINE, "Bundling Exception", ex);
+                }
+
                 File outputDir = getCorrectOutputDirectory(current);
                 if (outputDir == null) {
                     //in some regards we shouldn't be writting this, but we are anyway.
                     //we shouldn't write this because nothing is configured to generate this report.
-                    outputDir = new File(current.getBuild().getOutputDirectory()).getParentFile();
+                    outputDir = new File(current.getBuild().getDirectory());
                 }
                 writeReports(engine, current, outputDir);
             }
@@ -128,31 +124,67 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
     }
 
     /**
-     * Returns a list containing all the recursive, non-pom children of the given project, never <code>null</code>.
+     * Returns a set containing all the descendant projects of the given project.
      *
-     * @param project the parent project to collect the child project references
-     * @param childMap a map of the parent-child relationships
-     * @return a list of child projects
+     * @param project the project for which all descendants will be returned
+     * @return the set of descendant projects
      */
-    protected List<MavenProject> getAllChildren(MavenProject project, Map<MavenProject, Set<MavenProject>> childMap) {
-        final Set<MavenProject> children = childMap.get(project);
-        if (children == null) {
-            return Collections.emptyList();
+    protected Set<MavenProject> getDescendants(MavenProject project) {
+        if (project == null) {
+            return Collections.emptySet();
         }
-        LOGGER.info("Children of " + project.getId());
-        for (String mod : project.getModules()) {
-            LOGGER.info("  mod: " + mod);
-        }
-        final List<MavenProject> result = new ArrayList<MavenProject>();
-        for (MavenProject child : children) {
-            if (isMultiModule(child)) {
-                LOGGER.info("* adding multi-module children " + child.getId());
-                result.addAll(getAllChildren(child, childMap));
+        Set<MavenProject> descendants = new HashSet<MavenProject>();
+        int size = 0;
+        LOGGER.fine(String.format("Collecting descendants of %s", project.getName()));
+        for (String m : project.getModules()) {
+            for (MavenProject mod : getReactorProjects()) {
+                try {
+                    File mpp = new File(project.getBasedir(), m);
+                    mpp = mpp.getCanonicalFile();
+                    if (mpp.compareTo(mod.getBasedir()) == 0) {
+                        if (descendants.add(mod)) {
+                            LOGGER.fine(String.format("Decendent module %s added", mod.getName()));
+                        }
+                    }
+                } catch (IOException ex) {
+                    LOGGER.log(Level.FINE, "Unable to determine module path", ex);
+                }
             }
-            LOGGER.info("* " + child.getId());
-            result.add(child);
         }
-        return result;
+        do {
+            size = descendants.size();
+            for (MavenProject p : getReactorProjects()) {
+                if (project.equals(p.getParent()) || descendants.contains(p.getParent())) {
+                    if (descendants.add(p)) {
+                        LOGGER.fine(String.format("Decendent %s added", p.getName()));
+                    }
+                    for (MavenProject modTest : getReactorProjects()) {
+                        if (p.getModules() != null && p.getModules().contains(modTest.getName())) {
+                            if (descendants.add(modTest)) {
+                                LOGGER.fine(String.format("Decendent %s added", modTest.getName()));
+                            }
+                        }
+                    }
+                }
+                for (MavenProject dec : descendants) {
+                    for (String mod : dec.getModules()) {
+                        try {
+                            File mpp = new File(dec.getBasedir(), mod);
+                            mpp = mpp.getCanonicalFile();
+                            if (mpp.compareTo(p.getBasedir()) == 0) {
+                                if (descendants.add(p)) {
+                                    LOGGER.fine(String.format("Decendent module %s added", p.getName()));
+                                }
+                            }
+                        } catch (IOException ex) {
+                            LOGGER.log(Level.FINE, "Unable to determine module path", ex);
+                        }
+                    }
+                }
+            }
+        } while (size != 0 && size != descendants.size());
+        LOGGER.fine(String.format("%s has %d children", project, descendants.size()));
+        return descendants;
     }
 
     /**
@@ -163,24 +195,6 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
      */
     protected boolean isMultiModule(MavenProject mavenProject) {
         return "pom".equals(mavenProject.getPackaging());
-    }
-
-    /**
-     * Builds the parent-child map.
-     *
-     * @return a map of the parent/child relationships
-     */
-    private Map<MavenProject, Set<MavenProject>> buildAggregateInfo() {
-        final Map<MavenProject, Set<MavenProject>> parentChildMap = new HashMap<MavenProject, Set<MavenProject>>();
-        for (MavenProject proj : getReactorProjects()) {
-            Set<MavenProject> depList = parentChildMap.get(proj.getParent());
-            if (depList == null) {
-                depList = new HashSet<MavenProject>();
-                parentChildMap.put(proj.getParent(), depList);
-            }
-            depList.add(proj);
-        }
-        return parentChildMap;
     }
 
     /**
@@ -216,9 +230,9 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         engine.resetFileTypeAnalyzers();
         scanArtifacts(project, engine);
         engine.analyzeDependencies();
-        File target = this.getCorrectOutputDirectory(project);
-        writeDataFile(getProject(), target, engine.getDependencies());
-        showSummary(getProject(), engine.getDependencies());
+        File target = new File(project.getBuild().getDirectory());
+        writeDataFile(project, target, engine.getDependencies());
+        showSummary(project, engine.getDependencies());
         checkForFailure(engine.getDependencies());
         return engine;
     }

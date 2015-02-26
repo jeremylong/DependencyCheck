@@ -130,7 +130,6 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                         } else if (cpeIdentifiersMatch(dependency, nextDependency)
                                 && hasSameBasePath(dependency, nextDependency)
                                 && fileNameMatch(dependency, nextDependency)) {
-
                             if (isCore(dependency, nextDependency)) {
                                 mergeDependencies(dependency, nextDependency, dependenciesToRemove);
                             } else {
@@ -163,7 +162,9 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             dependency.addRelatedDependency(i.next());
             i.remove();
         }
-        //dependency.addAllProjectReferences(relatedDependency.getProjectReferences());
+        if (dependency.getSha1sum().equals(relatedDependency.getSha1sum())) {
+            dependency.addAllProjectReferences(relatedDependency.getProjectReferences());
+        }
         dependenciesToRemove.add(relatedDependency);
     }
 
