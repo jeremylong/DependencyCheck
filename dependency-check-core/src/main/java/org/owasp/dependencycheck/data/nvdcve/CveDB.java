@@ -785,7 +785,7 @@ public class CveDB {
      * @param identifiedVersion the identified version of the dependency being analyzed
      * @return true if the identified version is affected, otherwise false
      */
-    protected Entry<String, Boolean> getMatchingSoftware(Map<String, Boolean> vulnerableSoftware, String vendor, String product,
+    Entry<String, Boolean> getMatchingSoftware(Map<String, Boolean> vulnerableSoftware, String vendor, String product,
             DependencyVersion identifiedVersion) {
 
         final boolean isVersionTwoADifferentProduct = "apache".equals(vendor) && "struts".equals(product);
