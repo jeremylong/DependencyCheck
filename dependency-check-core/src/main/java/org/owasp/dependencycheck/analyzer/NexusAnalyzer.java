@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -24,13 +25,18 @@ import java.net.URL;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nexus.NexusSearch;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.jaxb.pom.PomUtils;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.DownloadFailedException;
+import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -83,6 +89,10 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
      * Field indicating if the analyzer is enabled.
      */
     private final boolean enabled = checkEnabled();
+    /**
+     * Field for doing POM work
+     */
+    private final PomUtils pomUtil = new PomUtils();
 
     /**
      * Determines if this analyzer is enabled
@@ -202,6 +212,38 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
         try {
             final MavenArtifact ma = searcher.searchSha1(dependency.getSha1sum());
             dependency.addAsEvidence("nexus", ma, Confidence.HIGH);
+            boolean pomAnalyzed = false;
+            LOGGER.fine("POM URL " + ma.getPomUrl());
+            for (Evidence e : dependency.getVendorEvidence()) {
+                if ("pom".equals(e.getSource())) {
+                    pomAnalyzed = true;
+                    break;
+                }
+            }
+            if (!pomAnalyzed && ma.getPomUrl() != null) {
+                File pomFile = null;
+                try {
+                    final File baseDir = Settings.getTempDirectory();
+                    pomFile = File.createTempFile("pom", ".xml", baseDir);
+                    if (!pomFile.delete()) {
+                        final String msg = String.format("Unable to fetch pom.xml for %s from Nexus repository; "
+                                + "this could result in undetected CPE/CVEs.", dependency.getFileName());
+                        LOGGER.warning(msg);
+                        LOGGER.fine("Unable to delete temp file");
+                    }
+                    LOGGER.fine(String.format("Downloading %s", ma.getPomUrl()));
+                    Downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);
+                    pomUtil.analyzePOM(dependency, pomFile);
+                } catch (DownloadFailedException ex) {
+                    final String msg = String.format("Unable to download pom.xml for %s from Nexus repository; "
+                            + "this could result in undetected CPE/CVEs.", dependency.getFileName());
+                    LOGGER.warning(msg);
+                } finally {
+                    if (pomFile != null && !FileUtils.deleteQuietly(pomFile)) {
+                        pomFile.deleteOnExit();
+                    }
+                }
+            }
         } catch (IllegalArgumentException iae) {
             //dependency.addAnalysisException(new AnalysisException("Invalid SHA-1"));
             LOGGER.info(String.format("invalid sha-1 hash on %s", dependency.getFileName()));
