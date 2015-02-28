@@ -479,22 +479,26 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         final MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
                         d.addAsEvidence("pom", ma, Confidence.HIGHEST);
                         d.addProjectReference(project.getName());
-                        LOGGER.fine(String.format("Adding project reference %s on dependency %s", project.getName(), d.getDisplayFileName()));
+                        LOGGER.fine(String.format("Adding project reference %s on dependency %s", project.getName(),
+                                d.getDisplayFileName()));
                         if (metadataSource != null) {
                             try {
-                                DependencyVersion currentVersion = new DependencyVersion(a.getVersion());
-                                final List<ArtifactVersion> versions = metadataSource.retrieveAvailableVersions(a, localRepository, remoteRepositories);
+                                final DependencyVersion currentVersion = new DependencyVersion(a.getVersion());
+                                final List<ArtifactVersion> versions = metadataSource.retrieveAvailableVersions(a,
+                                        localRepository, remoteRepositories);
                                 for (ArtifactVersion av : versions) {
-                                    DependencyVersion newVersion = new DependencyVersion(av.toString());
+                                    final DependencyVersion newVersion = new DependencyVersion(av.toString());
                                     if (currentVersion.compareTo(newVersion) < 0) {
                                         d.addAvailableVersion(av.toString());
                                     }
                                 }
                             } catch (ArtifactMetadataRetrievalException ex) {
-                                LOGGER.log(Level.WARNING, "Unable to check for new versions of dependencies; see the log for more details.");
+                                LOGGER.log(Level.WARNING,
+                                        "Unable to check for new versions of dependencies; see the log for more details.");
                                 LOGGER.log(Level.FINE, null, ex);
                             } catch (Throwable t) {
-                                LOGGER.log(Level.WARNING, "Unexpected error occured checking for new versions; see the log for more details.");
+                                LOGGER.log(Level.WARNING,
+                                        "Unexpected error occured checking for new versions; see the log for more details.");
                                 LOGGER.log(Level.FINE, "", t);
                             }
                         }
