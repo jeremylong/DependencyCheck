@@ -65,8 +65,8 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
     //</editor-fold>
 
     /**
-     * The HintAnalyzer uses knowledge about a dependency to add additional information to help in identification of
-     * identifiers or vulnerabilities.
+     * The HintAnalyzer uses knowledge about a dependency to add additional information to help in identification of identifiers
+     * or vulnerabilities.
      *
      * @param dependency The dependency being analyzed
      * @param engine The scanning engine
@@ -85,22 +85,30 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
                 Confidence.HIGH);
 
         final Evidence springTest3 = new Evidence("Manifest",
+                "Implementation-Title",
+                "spring-core",
+                Confidence.HIGH);
+
+        final Evidence springTest4 = new Evidence("Manifest",
                 "Bundle-Vendor",
                 "SpringSource",
                 Confidence.HIGH);
 
+        //springsource/vware problem
         Set<Evidence> evidence = dependency.getProductEvidence().getEvidence();
-        if (evidence.contains(springTest1) || evidence.contains(springTest2)) {
-            dependency.getProductEvidence().addEvidence("hint analyzer", "product", "springsource_spring_framework", Confidence.HIGH);
+        if (evidence.contains(springTest1) || evidence.contains(springTest2) || evidence.contains(springTest3)) {
+            dependency.getProductEvidence().addEvidence("hint analyzer", "product", "springsource spring framework", Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "SpringSource", Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
         }
 
         evidence = dependency.getVendorEvidence().getEvidence();
-        if (evidence.contains(springTest3)) {
+        if (evidence.contains(springTest4)) {
             dependency.getProductEvidence().addEvidence("hint analyzer", "product", "springsource_spring_framework", Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
         }
+
+        //sun/oracle problem
         final Iterator<Evidence> itr = dependency.getVendorEvidence().iterator();
         final List<Evidence> newEntries = new ArrayList<Evidence>();
         while (itr.hasNext()) {
