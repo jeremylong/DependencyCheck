@@ -94,16 +94,24 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
                 "SpringSource",
                 Confidence.HIGH);
 
+        final Evidence springTest5 = new Evidence("jar",
+                "package name",
+                "springframework",
+                Confidence.LOW);
+
         //springsource/vware problem
-        Set<Evidence> evidence = dependency.getProductEvidence().getEvidence();
-        if (evidence.contains(springTest1) || evidence.contains(springTest2) || evidence.contains(springTest3)) {
+        Set<Evidence> product = dependency.getProductEvidence().getEvidence();
+        Set<Evidence> vendor = dependency.getVendorEvidence().getEvidence();
+
+        if (product.contains(springTest1) || product.contains(springTest2) || product.contains(springTest3)
+                || (dependency.getFileName().contains("spring") && (product.contains(springTest5) || vendor.contains(springTest5)))) {
             dependency.getProductEvidence().addEvidence("hint analyzer", "product", "springsource spring framework", Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "SpringSource", Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
         }
 
-        evidence = dependency.getVendorEvidence().getEvidence();
-        if (evidence.contains(springTest4)) {
+        product = dependency.getVendorEvidence().getEvidence();
+        if (product.contains(springTest4)) {
             dependency.getProductEvidence().addEvidence("hint analyzer", "product", "springsource_spring_framework", Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
         }
