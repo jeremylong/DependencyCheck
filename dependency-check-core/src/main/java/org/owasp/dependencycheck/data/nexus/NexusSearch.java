@@ -58,8 +58,8 @@ public class NexusSearch {
     /**
      * Creates a NexusSearch for the given repository URL.
      *
-     * @param rootURL the root URL of the repository on which searches should execute. full URL's are calculated
-     * relative to this URL, so it should end with a /
+     * @param rootURL the root URL of the repository on which searches should execute. full URL's are calculated relative to this
+     * URL, so it should end with a /
      */
     public NexusSearch(URL rootURL) {
         this.rootURL = rootURL;
@@ -78,13 +78,12 @@ public class NexusSearch {
     }
 
     /**
-     * Searches the configured Nexus repository for the given sha1 hash. If the artifact is found, a
-     * <code>MavenArtifact</code> is populated with the coordinate information.
+     * Searches the configured Nexus repository for the given sha1 hash. If the artifact is found, a <code>MavenArtifact</code> is
+     * populated with the coordinate information.
      *
      * @param sha1 The SHA-1 hash string for which to search
      * @return the populated Maven coordinates
-     * @throws IOException if it's unable to connect to the specified repository or if the specified artifact is not
-     * found.
+     * @throws IOException if it's unable to connect to the specified repository or if the specified artifact is not found.
      */
     public MavenArtifact searchSha1(String sha1) throws IOException {
         if (null == sha1 || !sha1.matches("^[0-9A-Fa-f]{40}$")) {
@@ -135,12 +134,12 @@ public class NexusSearch {
                         .evaluate(
                                 "/org.sonatype.nexus.rest.model.NexusArtifact/pomLink",
                                 doc);
-                MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
+                final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
                 if (link != null && !"".equals(link)) {
-                  ma.setArtifactUrl(link);
+                    ma.setArtifactUrl(link);
                 }
                 if (pomLink != null & !"".equals(pomLink)) {
-                  ma.setPomUrl(pomLink);
+                    ma.setPomUrl(pomLink);
                 }
                 return ma;
             } catch (Throwable e) {
