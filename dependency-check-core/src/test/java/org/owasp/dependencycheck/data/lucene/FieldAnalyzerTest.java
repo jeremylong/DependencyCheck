@@ -69,7 +69,7 @@ public class FieldAnalyzerTest {
     @Test
     public void testAnalyzers() throws Exception {
 
-        Analyzer analyzer = new FieldAnalyzer();
+        Analyzer analyzer = new FieldAnalyzer(LuceneUtils.CURRENT_VERSION);
         Directory index = new RAMDirectory();
 
         String field1 = "product";
@@ -83,13 +83,13 @@ public class FieldAnalyzerTest {
         //Analyzer searchingAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
         String querystr = "product:\"(Spring Framework Core)\" vendor:(SpringSource)";
 
-        SearchFieldAnalyzer searchAnalyzerProduct = new SearchFieldAnalyzer();
-        SearchFieldAnalyzer searchAnalyzerVendor = new SearchFieldAnalyzer();
+        SearchFieldAnalyzer searchAnalyzerProduct = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
+        SearchFieldAnalyzer searchAnalyzerVendor = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
         HashMap<String, Analyzer> map = new HashMap<String, Analyzer>();
         map.put(field1, searchAnalyzerProduct);
         map.put(field2, searchAnalyzerVendor);
-        PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(new StandardAnalyzer(), map);
-        QueryParser parser = new QueryParser(field1, wrapper);
+        PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(new StandardAnalyzer(LuceneUtils.CURRENT_VERSION), map);
+        QueryParser parser = new QueryParser(LuceneUtils.CURRENT_VERSION, field1, wrapper);
 
         Query q = parser.parse(querystr);
         //System.out.println(q.toString());

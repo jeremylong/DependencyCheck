@@ -48,8 +48,8 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.utils.Pair;
 
 /**
- * An in memory lucene index that contains the vendor/product combinations from the CPE (application) identifiers within
- * the NVD CVE data.
+ * An in memory lucene index that contains the vendor/product combinations from the CPE (application) identifiers within the NVD
+ * CVE data.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -125,7 +125,7 @@ public final class CpeMemoryIndex {
                 }
                 indexSearcher = new IndexSearcher(indexReader);
                 searchingAnalyzer = createSearchingAnalyzer();
-                queryParser = new QueryParser(Fields.DOCUMENT_KEY, searchingAnalyzer);
+                queryParser = new QueryParser(LuceneUtils.CURRENT_VERSION, Fields.DOCUMENT_KEY, searchingAnalyzer);
                 openState = true;
             }
         }
@@ -153,7 +153,7 @@ public final class CpeMemoryIndex {
     private Analyzer createIndexingAnalyzer() {
         final Map fieldAnalyzers = new HashMap();
         fieldAnalyzers.put(Fields.DOCUMENT_KEY, new KeywordAnalyzer());
-        return new PerFieldAnalyzerWrapper(new FieldAnalyzer(), fieldAnalyzers);
+        return new PerFieldAnalyzerWrapper(new FieldAnalyzer(LuceneUtils.CURRENT_VERSION), fieldAnalyzers);
     }
 
     /**
@@ -165,12 +165,12 @@ public final class CpeMemoryIndex {
     private Analyzer createSearchingAnalyzer() {
         final Map<String, Analyzer> fieldAnalyzers = new HashMap<String, Analyzer>();
         fieldAnalyzers.put(Fields.DOCUMENT_KEY, new KeywordAnalyzer());
-        productSearchFieldAnalyzer = new SearchFieldAnalyzer();
-        vendorSearchFieldAnalyzer = new SearchFieldAnalyzer();
+        productSearchFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
+        vendorSearchFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
         fieldAnalyzers.put(Fields.PRODUCT, productSearchFieldAnalyzer);
         fieldAnalyzers.put(Fields.VENDOR, vendorSearchFieldAnalyzer);
 
-        return new PerFieldAnalyzerWrapper(new FieldAnalyzer(), fieldAnalyzers);
+        return new PerFieldAnalyzerWrapper(new FieldAnalyzer(LuceneUtils.CURRENT_VERSION), fieldAnalyzers);
     }
 
     /**

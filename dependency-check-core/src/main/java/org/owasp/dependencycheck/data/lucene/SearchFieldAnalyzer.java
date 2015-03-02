@@ -25,6 +25,7 @@ import org.apache.lucene.analysis.core.LowerCaseFilter;
 import org.apache.lucene.analysis.core.StopAnalyzer;
 import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter;
+import org.apache.lucene.util.Version;
 
 /**
  * A Lucene field analyzer used to analyzer queries against the CPE data.
@@ -34,16 +35,22 @@ import org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter;
 public class SearchFieldAnalyzer extends Analyzer {
 
     /**
-     * A local reference to the TokenPairConcatenatingFilter so that we can clear any left over state if this analyzer
-     * is re-used.
+     * The Lucene Version used.
+     */
+    private final Version version;
+    /**
+     * A local reference to the TokenPairConcatenatingFilter so that we can clear any left over state if this analyzer is re-used.
      */
     private TokenPairConcatenatingFilter concatenatingFilter;
 
     /**
      * Constructs a new SearchFieldAnalyzer.
      *
+     * @param version the Lucene version
      */
-    public SearchFieldAnalyzer() {  }
+    public SearchFieldAnalyzer(Version version) {
+        this.version = version;
+    }
 
     /**
      * Creates a the TokenStreamComponents used to analyze the stream.
@@ -54,7 +61,7 @@ public class SearchFieldAnalyzer extends Analyzer {
      */
     @Override
     protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
-        final Tokenizer source = new AlphaNumericTokenizer(reader);
+        final Tokenizer source = new AlphaNumericTokenizer(version, reader);
 
         TokenStream stream = source;
 
@@ -66,19 +73,18 @@ public class SearchFieldAnalyzer extends Analyzer {
                 | WordDelimiterFilter.SPLIT_ON_NUMERICS
                 | WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE, null);
 
-        stream = new LowerCaseFilter(stream);
+        stream = new LowerCaseFilter(version, stream);
         stream = new UrlTokenizingFilter(stream);
         concatenatingFilter = new TokenPairConcatenatingFilter(stream);
         stream = concatenatingFilter;
-        stream = new StopFilter(stream, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+        stream = new StopFilter(version, stream, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
 
         return new TokenStreamComponents(source, stream);
     }
 
     /**
      * <p>
-     * Resets the analyzer and clears any internal state data that may have been left-over from previous uses of the
-     * analyzer.</p>
+     * Resets the analyzer and clears any internal state data that may have been left-over from previous uses of the analyzer.</p>
      * <p>
      * <b>If this analyzer is re-used this method must be called between uses.</b></p>
      */

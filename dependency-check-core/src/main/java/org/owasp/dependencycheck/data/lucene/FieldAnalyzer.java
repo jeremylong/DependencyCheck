@@ -25,21 +25,30 @@ import org.apache.lucene.analysis.core.LowerCaseFilter;
 import org.apache.lucene.analysis.core.StopAnalyzer;
 import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter;
+import org.apache.lucene.util.Version;
 
 /**
  * <p>
- * A Lucene Analyzer that utilizes the WhitespaceTokenizer, WordDelimiterFilter, LowerCaseFilter, and StopFilter. The
- * intended purpose of this Analyzer is to index the CPE fields vendor and product.</p>
+ * A Lucene Analyzer that utilizes the WhitespaceTokenizer, WordDelimiterFilter, LowerCaseFilter, and StopFilter. The intended
+ * purpose of this Analyzer is to index the CPE fields vendor and product.</p>
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public class FieldAnalyzer extends Analyzer {
 
     /**
+     * The Lucene Version used.
+     */
+    private final Version version;
+
+    /**
      * Creates a new FieldAnalyzer.
      *
+     * @param version the Lucene version
      */
-    public FieldAnalyzer() { }
+    public FieldAnalyzer(Version version) {
+        this.version = version;
+    }
 
     /**
      * Creates the TokenStreamComponents
@@ -50,7 +59,7 @@ public class FieldAnalyzer extends Analyzer {
      */
     @Override
     protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
-        final Tokenizer source = new AlphaNumericTokenizer(reader);
+        final Tokenizer source = new AlphaNumericTokenizer(version, reader);
 
         TokenStream stream = source;
 
@@ -63,8 +72,8 @@ public class FieldAnalyzer extends Analyzer {
                 | WordDelimiterFilter.SPLIT_ON_NUMERICS
                 | WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE, null);
 
-        stream = new LowerCaseFilter(stream);
-        stream = new StopFilter(stream, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+        stream = new LowerCaseFilter(version, stream);
+        stream = new StopFilter(version, stream, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
 
         return new TokenStreamComponents(source, stream);
     }

@@ -340,6 +340,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         </plugins>
     </reporting>
     <dependencies>
+        <!-- Note, to stay compatible with Jenkins installations only JARs compiled to 1.6 can be used -->
         <dependency>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-utils</artifactId>
@@ -679,6 +680,8 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         </profile>
     </profiles>
     <properties>
-        <apache.lucene.version>4.10.3</apache.lucene.version>
+        <!-- new versions of lucene are compiled with JDK 1.7 and cannot be used ubiquitously in Jenkins
+        this, we cannot upgrade beyond 4.7.2 -->
+        <apache.lucene.version>4.7.2</apache.lucene.version>
     </properties>
 </project>
