@@ -100,8 +100,8 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
                 Confidence.LOW);
 
         //springsource/vware problem
-        Set<Evidence> product = dependency.getProductEvidence().getEvidence();
-        Set<Evidence> vendor = dependency.getVendorEvidence().getEvidence();
+        final Set<Evidence> product = dependency.getProductEvidence().getEvidence();
+        final Set<Evidence> vendor = dependency.getVendorEvidence().getEvidence();
 
         if (product.contains(springTest1) || product.contains(springTest2) || product.contains(springTest3)
                 || (dependency.getFileName().contains("spring") && (product.contains(springTest5) || vendor.contains(springTest5)))) {
@@ -110,8 +110,7 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
             dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
         }
 
-        product = dependency.getVendorEvidence().getEvidence();
-        if (product.contains(springTest4)) {
+        if (vendor.contains(springTest4)) {
             dependency.getProductEvidence().addEvidence("hint analyzer", "product", "springsource_spring_framework", Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
         }
