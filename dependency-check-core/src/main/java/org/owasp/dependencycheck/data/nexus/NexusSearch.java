@@ -138,7 +138,7 @@ public class NexusSearch {
                 if (link != null && !"".equals(link)) {
                     ma.setArtifactUrl(link);
                 }
-                if (pomLink != null & !"".equals(pomLink)) {
+                if (pomLink != null && !"".equals(pomLink)) {
                     ma.setPomUrl(pomLink);
                 }
                 return ma;
