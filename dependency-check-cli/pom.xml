@@ -20,7 +20,7 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>1.2.9-SNAPSHOT</version>
+        <version>1.2.9</version>
     </parent>
 
     <artifactId>dependency-check-cli</artifactId>
@@ -273,6 +273,7 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
                 <version>2.11</version>
                 <configuration>
                     <enableRulesSummary>false</enableRulesSummary>
+                    <enableFilesSummary>false</enableFilesSummary>
                     <configLocation>${basedir}/../src/main/config/checkstyle-checks.xml</configLocation>
                     <headerLocation>${basedir}/../src/main/config/checkstyle-header.txt</headerLocation>
                     <suppressionsLocation>${basedir}/../src/main/config/checkstyle-suppressions.xml</suppressionsLocation>
