@@ -381,7 +381,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @param sink the sink to write the report to
      * @param locale the locale to use when generating the report
      * @throws MavenReportException if a maven report exception occurs
-     * @deprecated use {@link #generate(org.apache.maven.doxia.sink.Sink, java.util.Locale) instead.
+     * @deprecated use {@link #generate(org.apache.maven.doxia.sink.Sink, java.util.Locale)} instead.
      */
     @Deprecated
     public final void generate(@SuppressWarnings("deprecation") org.codehaus.doxia.sink.Sink sink, Locale locale) throws MavenReportException {
