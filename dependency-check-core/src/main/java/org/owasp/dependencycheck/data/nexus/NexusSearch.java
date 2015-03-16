@@ -40,20 +40,26 @@ import org.w3c.dom.Document;
 public class NexusSearch {
 
     /**
-     * The root URL for the Nexus repository service
+     * The root URL for the Nexus repository service.
      */
     private final URL rootURL;
 
     /**
-     * Whether to use the Proxy when making requests
+     * Whether to use the Proxy when making requests.
      */
     private boolean useProxy;
-
+    /**
+     * The username to use if the Nexus requires authentication.
+     */
+    private String userName = null;
+    /**
+     * The password to use if the Nexus requires authentication.
+     */
+    private char[] password;
     /**
      * Used for logging.
      */
-    private static final Logger LOGGER = Logger.getLogger(NexusSearch.class
-            .getName());
+    private static final Logger LOGGER = Logger.getLogger(NexusSearch.class.getName());
 
     /**
      * Creates a NexusSearch for the given repository URL.
@@ -68,9 +74,23 @@ public class NexusSearch {
                     && Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY)) {
                 useProxy = true;
                 LOGGER.fine("Using proxy");
+                if (Settings.getString(Settings.KEYS.ANALYZER_NEXUS_USER) != null) {
+                    LOGGER.fine("Unable to use nexus authentication while using a proxy. Consider disabling the use of a proxy with Nexus.");
+                }
             } else {
                 useProxy = false;
                 LOGGER.fine("Not using proxy");
+                userName = Settings.getString(Settings.KEYS.ANALYZER_NEXUS_USER);
+                String tmp = Settings.getString(Settings.KEYS.ANALYZER_NEXUS_PASSWORD);
+                if (tmp != null) {
+                    password = tmp.toCharArray();
+                } else {
+                    if (userName != null) {
+                        userName = null;
+                        LOGGER.fine("Nexus password is not set yet user name was configured. Disabling the use of authentication for Nexus.");
+                    }
+                }
+
             }
         } catch (InvalidSettingException ise) {
             useProxy = false;
@@ -98,9 +118,13 @@ public class NexusSearch {
         // Determine if we need to use a proxy. The rules:
         // 1) If the proxy is set, AND the setting is set to true, use the proxy
         // 2) Otherwise, don't use the proxy (either the proxy isn't configured,
-        // or proxy is specifically
-        // set to false
-        final HttpURLConnection conn = URLConnectionFactory.createHttpURLConnection(url, useProxy);
+        // or proxy is specifically set to false
+        HttpURLConnection conn;
+        if (useProxy && userName == null) {
+            conn = URLConnectionFactory.createHttpURLConnection(url, useProxy);
+        } else {
+            conn = URLConnectionFactory.createHttpURLConnection(url, userName, password);
+        }
 
         conn.setDoOutput(true);
 
@@ -163,8 +187,14 @@ public class NexusSearch {
      * @return whether the repository is listening and returns the /status URL correctly
      */
     public boolean preflightRequest() {
+        HttpURLConnection conn;
         try {
-            final HttpURLConnection conn = URLConnectionFactory.createHttpURLConnection(new URL(rootURL, "status"), useProxy);
+            URL url = new URL(rootURL, "status");
+            if (useProxy && userName == null) {
+                conn = URLConnectionFactory.createHttpURLConnection(url, useProxy);
+            } else {
+                conn = URLConnectionFactory.createHttpURLConnection(url, userName, password);
+            }
             conn.addRequestProperty("Accept", "application/xml");
             conn.connect();
             if (conn.getResponseCode() != 200) {

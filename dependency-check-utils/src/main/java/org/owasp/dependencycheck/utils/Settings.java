@@ -103,13 +103,13 @@ public final class Settings {
          */
         public static final String CVE_META_URL = "cve.url.meta";
         /**
-         * The properties key for the URL to retrieve the recently modified and added CVE entries (last 8 days) using
-         * the 2.0 schema.
+         * The properties key for the URL to retrieve the recently modified and added CVE entries (last 8 days) using the 2.0
+         * schema.
          */
         public static final String CVE_MODIFIED_20_URL = "cve.url-2.0.modified";
         /**
-         * The properties key for the URL to retrieve the recently modified and added CVE entries (last 8 days) using
-         * the 1.2 schema.
+         * The properties key for the URL to retrieve the recently modified and added CVE entries (last 8 days) using the 1.2
+         * schema.
          */
         public static final String CVE_MODIFIED_12_URL = "cve.url-1.2.modified";
         /**
@@ -117,8 +117,8 @@ public final class Settings {
          */
         public static final String CVE_MODIFIED_VALID_FOR_DAYS = "cve.url.modified.validfordays";
         /**
-         * The properties key for the telling us how many cve.url.* URLs exists. This is used in combination with
-         * CVE_BASE_URL to be able to retrieve the URLs for all of the files that make up the NVD CVE listing.
+         * The properties key for the telling us how many cve.url.* URLs exists. This is used in combination with CVE_BASE_URL to
+         * be able to retrieve the URLs for all of the files that make up the NVD CVE listing.
          */
         public static final String CVE_START_YEAR = "cve.startyear";
         /**
@@ -200,6 +200,14 @@ public final class Settings {
          * The properties key for using the proxy to reach Nexus.
          */
         public static final String ANALYZER_NEXUS_PROXY = "analyzer.nexus.proxy";
+        /**
+         * The properties key for the Nexus user name.
+         */
+        public static final String ANALYZER_NEXUS_USER = "analyzer.nexus.user";
+        /**
+         * The properties key for the Nexus user's password.
+         */
+        public static final String ANALYZER_NEXUS_PASSWORD = "analyzer.nexus.password";
         /**
          * The properties key for whether the Central analyzer is enabled.
          */
@@ -297,16 +305,16 @@ public final class Settings {
     }
 
     /**
-     * Initializes the thread local settings object. Note, to use the settings object you must call this method.
-     * However, you must also call Settings.cleanup() to properly release resources.
+     * Initializes the thread local settings object. Note, to use the settings object you must call this method. However, you must
+     * also call Settings.cleanup() to properly release resources.
      */
     public static void initialize() {
         localSettings.set(new Settings(PROPERTIES_FILE));
     }
 
     /**
-     * Initializes the thread local settings object. Note, to use the settings object you must call this method.
-     * However, you must also call Settings.cleanup() to properly release resources.
+     * Initializes the thread local settings object. Note, to use the settings object you must call this method. However, you must
+     * also call Settings.cleanup() to properly release resources.
      *
      * @param propertiesFilePath the path to the base properties file to load
      */
@@ -423,8 +431,8 @@ public final class Settings {
     }
 
     /**
-     * Merges a new properties file into the current properties. This method allows for the loading of a user provided
-     * properties file.<br/><br/>
+     * Merges a new properties file into the current properties. This method allows for the loading of a user provided properties
+     * file.<br/><br/>
      * Note: even if using this method - system properties will be loaded before properties loaded from files.
      *
      * @param filePath the path to the properties file to merge.
@@ -448,8 +456,8 @@ public final class Settings {
     }
 
     /**
-     * Merges a new properties file into the current properties. This method allows for the loading of a user provided
-     * properties file.<br/><br/>
+     * Merges a new properties file into the current properties. This method allows for the loading of a user provided properties
+     * file.<br/><br/>
      * Note: even if using this method - system properties will be loaded before properties loaded from files.
      *
      * @param filePath the path to the properties file to merge.
@@ -473,8 +481,8 @@ public final class Settings {
     }
 
     /**
-     * Merges a new properties file into the current properties. This method allows for the loading of a user provided
-     * properties file.<br/><br/>
+     * Merges a new properties file into the current properties. This method allows for the loading of a user provided properties
+     * file.<br/><br/>
      * Note: even if using this method - system properties will be loaded before properties loaded from files.
      *
      * @param stream an Input Stream pointing at a properties file to merge
@@ -486,9 +494,9 @@ public final class Settings {
     }
 
     /**
-     * Returns a value from the properties file as a File object. If the value was specified as a system property or
-     * passed in via the -Dprop=value argument - this method will return the value from the system properties before the
-     * values in the contained configuration file.
+     * Returns a value from the properties file as a File object. If the value was specified as a system property or passed in via
+     * the -Dprop=value argument - this method will return the value from the system properties before the values in the contained
+     * configuration file.
      *
      * @param key the key to lookup within the properties file
      * @return the property from the properties file converted to a File object
@@ -502,13 +510,13 @@ public final class Settings {
     }
 
     /**
-     * Returns a value from the properties file as a File object. If the value was specified as a system property or
-     * passed in via the -Dprop=value argument - this method will return the value from the system properties before the
-     * values in the contained configuration file.
+     * Returns a value from the properties file as a File object. If the value was specified as a system property or passed in via
+     * the -Dprop=value argument - this method will return the value from the system properties before the values in the contained
+     * configuration file.
      *
-     * This method will check the configured base directory and will use this as the base of the file path.
-     * Additionally, if the base directory begins with a leading "[JAR]\" sequence with the path to the folder
-     * containing the JAR file containing this class.
+     * This method will check the configured base directory and will use this as the base of the file path. Additionally, if the
+     * base directory begins with a leading "[JAR]\" sequence with the path to the folder containing the JAR file containing this
+     * class.
      *
      * @param key the key to lookup within the properties file
      * @return the property from the properties file converted to a File object
@@ -553,9 +561,9 @@ public final class Settings {
     }
 
     /**
-     * Returns a value from the properties file. If the value was specified as a system property or passed in via the
-     * -Dprop=value argument - this method will return the value from the system properties before the values in the
-     * contained configuration file.
+     * Returns a value from the properties file. If the value was specified as a system property or passed in via the -Dprop=value
+     * argument - this method will return the value from the system properties before the values in the contained configuration
+     * file.
      *
      * @param key the key to lookup within the properties file
      * @param defaultValue the default value for the requested property
@@ -591,9 +599,9 @@ public final class Settings {
     }
 
     /**
-     * Returns a value from the properties file. If the value was specified as a system property or passed in via the
-     * -Dprop=value argument - this method will return the value from the system properties before the values in the
-     * contained configuration file.
+     * Returns a value from the properties file. If the value was specified as a system property or passed in via the -Dprop=value
+     * argument - this method will return the value from the system properties before the values in the contained configuration
+     * file.
      *
      * @param key the key to lookup within the properties file
      * @return the property from the properties file
@@ -612,9 +620,9 @@ public final class Settings {
     }
 
     /**
-     * Returns an int value from the properties file. If the value was specified as a system property or passed in via
-     * the -Dprop=value argument - this method will return the value from the system properties before the values in the
-     * contained configuration file.
+     * Returns an int value from the properties file. If the value was specified as a system property or passed in via the
+     * -Dprop=value argument - this method will return the value from the system properties before the values in the contained
+     * configuration file.
      *
      * @param key the key to lookup within the properties file
      * @return the property from the properties file
@@ -631,14 +639,14 @@ public final class Settings {
     }
 
     /**
-     * Returns an int value from the properties file. If the value was specified as a system property or passed in via
-     * the -Dprop=value argument - this method will return the value from the system properties before the values in the
-     * contained configuration file.
+     * Returns an int value from the properties file. If the value was specified as a system property or passed in via the
+     * -Dprop=value argument - this method will return the value from the system properties before the values in the contained
+     * configuration file.
      *
      * @param key the key to lookup within the properties file
      * @param defaultValue the default value to return
-     * @return the property from the properties file or the defaultValue if the property does not exist or cannot be
-     * converted to an integer
+     * @return the property from the properties file or the defaultValue if the property does not exist or cannot be converted to
+     * an integer
      */
     public static int getInt(String key, int defaultValue) {
         int value;
@@ -653,9 +661,9 @@ public final class Settings {
     }
 
     /**
-     * Returns a long value from the properties file. If the value was specified as a system property or passed in via
-     * the -Dprop=value argument - this method will return the value from the system properties before the values in the
-     * contained configuration file.
+     * Returns a long value from the properties file. If the value was specified as a system property or passed in via the
+     * -Dprop=value argument - this method will return the value from the system properties before the values in the contained
+     * configuration file.
      *
      * @param key the key to lookup within the properties file
      * @return the property from the properties file
@@ -672,9 +680,9 @@ public final class Settings {
     }
 
     /**
-     * Returns a boolean value from the properties file. If the value was specified as a system property or passed in
-     * via the <code>-Dprop=value</code> argument this method will return the value from the system properties before
-     * the values in the contained configuration file.
+     * Returns a boolean value from the properties file. If the value was specified as a system property or passed in via the
+     * <code>-Dprop=value</code> argument this method will return the value from the system properties before the values in the
+     * contained configuration file.
      *
      * @param key the key to lookup within the properties file
      * @return the property from the properties file
@@ -691,9 +699,9 @@ public final class Settings {
     }
 
     /**
-     * Returns a boolean value from the properties file. If the value was specified as a system property or passed in
-     * via the <code>-Dprop=value</code> argument this method will return the value from the system properties before
-     * the values in the contained configuration file.
+     * Returns a boolean value from the properties file. If the value was specified as a system property or passed in via the
+     * <code>-Dprop=value</code> argument this method will return the value from the system properties before the values in the
+     * contained configuration file.
      *
      * @param key the key to lookup within the properties file
      * @param defaultValue the default value to return if the setting does not exist
@@ -715,9 +723,9 @@ public final class Settings {
     }
 
     /**
-     * Returns a connection string from the configured properties. If the connection string contains a %s, this method
-     * will determine the 'data' directory and replace the %s with the path to the data directory. If the data directory
-     * does not exists it will be created.
+     * Returns a connection string from the configured properties. If the connection string contains a %s, this method will
+     * determine the 'data' directory and replace the %s with the path to the data directory. If the data directory does not
+     * exists it will be created.
      *
      * @param connectionStringKey the property file key for the connection string
      * @param dbFileNameKey the settings key for the db filename
@@ -770,8 +778,8 @@ public final class Settings {
     }
 
     /**
-     * Retrieves the directory that the JAR file exists in so that we can ensure we always use a common data directory
-     * for the embedded H2 database. This is public solely for some unit tests; otherwise this should be private.
+     * Retrieves the directory that the JAR file exists in so that we can ensure we always use a common data directory for the
+     * embedded H2 database. This is public solely for some unit tests; otherwise this should be private.
      *
      * @return the data directory to store data files
      * @throws IOException is thrown if an IOException occurs of course...
