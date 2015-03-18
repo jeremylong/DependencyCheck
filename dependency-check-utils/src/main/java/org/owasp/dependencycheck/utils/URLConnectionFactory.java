@@ -117,33 +117,4 @@ public final class URLConnectionFactory {
         }
         return conn;
     }
-
-    /**
-     * Utility method to create an HttpURLConnection. This version of createHttpURLConnection does not utilize any proxy
-     * configuration; but does provide the ability to authenticate to the site.
-     *
-     * @param url the URL to connect to
-     * @param username the user name for authentication to the given site
-     * @param password the password for authentication to the given site
-     * @return a newly constructed HttpURLConnection
-     * @throws URLConnectionFailureException thrown if there is an exception
-     */
-    public static HttpURLConnection createHttpURLConnection(URL url, final String username, final char[] password)
-            throws URLConnectionFailureException {
-        HttpURLConnection conn = null;
-        try {
-            Authenticator.setDefault(new Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(username, password);
-                }
-            });
-            conn = (HttpURLConnection) url.openConnection();
-            final int timeout = Settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT, 60000);
-            conn.setConnectTimeout(timeout);
-            conn.setInstanceFollowRedirects(true);
-        } catch (IOException ioe) {
-            throw new URLConnectionFailureException("Error getting connection.", ioe);
-        }
-        return conn;
-    }
 }

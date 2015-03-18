@@ -201,14 +201,6 @@ public final class Settings {
          */
         public static final String ANALYZER_NEXUS_PROXY = "analyzer.nexus.proxy";
         /**
-         * The properties key for the Nexus user name.
-         */
-        public static final String ANALYZER_NEXUS_USER = "analyzer.nexus.user";
-        /**
-         * The properties key for the Nexus user's password.
-         */
-        public static final String ANALYZER_NEXUS_PASSWORD = "analyzer.nexus.password";
-        /**
          * The properties key for whether the Central analyzer is enabled.
          */
         public static final String ANALYZER_CENTRAL_ENABLED = "analyzer.central.enabled";
