@@ -42,6 +42,10 @@ public final class Downloader {
      * The logger.
      */
     private static final Logger LOGGER = Logger.getLogger(Downloader.class.getName());
+    /**
+     * The maximum number of redirects that will be followed when attempting to download a file.
+     */
+    private static final int MAX_REDIRECT_ATTEMPTS = 5;
 
     /**
      * Private constructor for utility class.
@@ -91,26 +95,27 @@ public final class Downloader {
         } else {
             HttpURLConnection conn = null;
             try {
+                LOGGER.fine(String.format("Attempting download of %s", url.toString()));
                 conn = URLConnectionFactory.createHttpURLConnection(url, useProxy);
                 conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
                 conn.connect();
                 int status = conn.getResponseCode();
-                if (status != HttpURLConnection.HTTP_OK) {
-                    if (status == HttpURLConnection.HTTP_MOVED_TEMP
-                            || status == HttpURLConnection.HTTP_MOVED_PERM
-                            || status == HttpURLConnection.HTTP_SEE_OTHER) {
-                        final String location = conn.getHeaderField("Location");
-                        try {
-                            conn.disconnect();
-                        } finally {
-                            conn = null;
-                        }
-                        LOGGER.fine(String.format("Download is being redirected from %s to %s", url.toString(), location));
-                        conn = URLConnectionFactory.createHttpURLConnection(new URL(location), useProxy);
-                        conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
-                        conn.connect();
-                        status = conn.getResponseCode();
+                int redirectCount = 0;
+                while ((status == HttpURLConnection.HTTP_MOVED_TEMP
+                        || status == HttpURLConnection.HTTP_MOVED_PERM
+                        || status == HttpURLConnection.HTTP_SEE_OTHER)
+                        && MAX_REDIRECT_ATTEMPTS > redirectCount++) {
+                    final String location = conn.getHeaderField("Location");
+                    try {
+                        conn.disconnect();
+                    } finally {
+                        conn = null;
                     }
+                    LOGGER.fine(String.format("Download is being redirected from %s to %s", url.toString(), location));
+                    conn = URLConnectionFactory.createHttpURLConnection(new URL(location), useProxy);
+                    conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
+                    conn.connect();
+                    status = conn.getResponseCode();
                 }
                 if (status != 200) {
                     try {
@@ -152,6 +157,7 @@ public final class Downloader {
                 while ((bytesRead = reader.read(buffer)) > 0) {
                     writer.write(buffer, 0, bytesRead);
                 }
+                LOGGER.fine(String.format("Download of %s complete", url.toString()));
             } catch (IOException ex) {
                 analyzeException(ex);
                 final String msg = String.format("Error saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
