@@ -40,26 +40,32 @@ import org.w3c.dom.Document;
 public class NexusSearch {
 
     /**
-     * The root URL for the Nexus repository service
+     * The root URL for the Nexus repository service.
      */
     private final URL rootURL;
 
     /**
-     * Whether to use the Proxy when making requests
+     * Whether to use the Proxy when making requests.
      */
     private boolean useProxy;
-
+    /**
+     * The username to use if the Nexus requires authentication.
+     */
+    private String userName = null;
+    /**
+     * The password to use if the Nexus requires authentication.
+     */
+    private char[] password;
     /**
      * Used for logging.
      */
-    private static final Logger LOGGER = Logger.getLogger(NexusSearch.class
-            .getName());
+    private static final Logger LOGGER = Logger.getLogger(NexusSearch.class.getName());
 
     /**
      * Creates a NexusSearch for the given repository URL.
      *
-     * @param rootURL the root URL of the repository on which searches should execute. full URL's are calculated
-     * relative to this URL, so it should end with a /
+     * @param rootURL the root URL of the repository on which searches should execute. full URL's are calculated relative to this
+     * URL, so it should end with a /
      */
     public NexusSearch(URL rootURL) {
         this.rootURL = rootURL;
@@ -78,13 +84,12 @@ public class NexusSearch {
     }
 
     /**
-     * Searches the configured Nexus repository for the given sha1 hash. If the artifact is found, a
-     * <code>MavenArtifact</code> is populated with the coordinate information.
+     * Searches the configured Nexus repository for the given sha1 hash. If the artifact is found, a <code>MavenArtifact</code> is
+     * populated with the coordinate information.
      *
      * @param sha1 The SHA-1 hash string for which to search
      * @return the populated Maven coordinates
-     * @throws IOException if it's unable to connect to the specified repository or if the specified artifact is not
-     * found.
+     * @throws IOException if it's unable to connect to the specified repository or if the specified artifact is not found.
      */
     public MavenArtifact searchSha1(String sha1) throws IOException {
         if (null == sha1 || !sha1.matches("^[0-9A-Fa-f]{40}$")) {
@@ -99,10 +104,9 @@ public class NexusSearch {
         // Determine if we need to use a proxy. The rules:
         // 1) If the proxy is set, AND the setting is set to true, use the proxy
         // 2) Otherwise, don't use the proxy (either the proxy isn't configured,
-        // or proxy is specifically
-        // set to false
-        final HttpURLConnection conn = URLConnectionFactory.createHttpURLConnection(url, useProxy);
-
+        // or proxy is specifically set to false
+        HttpURLConnection conn;
+        conn = URLConnectionFactory.createHttpURLConnection(url, useProxy);
         conn.setDoOutput(true);
 
         // JSON would be more elegant, but there's not currently a dependency
@@ -131,7 +135,18 @@ public class NexusSearch {
                         .evaluate(
                                 "/org.sonatype.nexus.rest.model.NexusArtifact/artifactLink",
                                 doc);
-                return new MavenArtifact(groupId, artifactId, version, link);
+                final String pomLink = xpath
+                        .evaluate(
+                                "/org.sonatype.nexus.rest.model.NexusArtifact/pomLink",
+                                doc);
+                final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
+                if (link != null && !"".equals(link)) {
+                    ma.setArtifactUrl(link);
+                }
+                if (pomLink != null && !"".equals(pomLink)) {
+                    ma.setPomUrl(pomLink);
+                }
+                return ma;
             } catch (Throwable e) {
                 // Anything else is jacked-up XML stuff that we really can't recover
                 // from well
@@ -153,8 +168,10 @@ public class NexusSearch {
      * @return whether the repository is listening and returns the /status URL correctly
      */
     public boolean preflightRequest() {
+        HttpURLConnection conn;
         try {
-            final HttpURLConnection conn = URLConnectionFactory.createHttpURLConnection(new URL(rootURL, "status"), useProxy);
+            URL url = new URL(rootURL, "status");
+            conn = URLConnectionFactory.createHttpURLConnection(url, useProxy);
             conn.addRequestProperty("Accept", "application/xml");
             conn.connect();
             if (conn.getResponseCode() != 200) {

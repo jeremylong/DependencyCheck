@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -24,13 +25,18 @@ import java.net.URL;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nexus.NexusSearch;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Identifier;
+import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.jaxb.pom.PomUtils;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.DownloadFailedException;
+import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -48,6 +54,11 @@ import org.owasp.dependencycheck.utils.Settings;
  * @author colezlaw
  */
 public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
+
+    /**
+     * The default URL - this will be used by the CentralAnalyzer to determine whether to enable this.
+     */
+    public static final String DEFAULT_URL = "https://repository.sonatype.org/service/local/";
 
     /**
      * The logger.
@@ -73,6 +84,51 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
      * The Nexus Search to be set up for this analyzer.
      */
     private NexusSearch searcher;
+
+    /**
+     * Field indicating if the analyzer is enabled.
+     */
+    private final boolean enabled = checkEnabled();
+    /**
+     * Field for doing POM work
+     */
+    private final PomUtils pomUtil = new PomUtils();
+
+    /**
+     * Determines if this analyzer is enabled
+     *
+     * @return <code>true</code> if the analyzer is enabled; otherwise <code>false</code>
+     */
+    private boolean checkEnabled() {
+        /* Enable this analyzer ONLY if the Nexus URL has been set to something
+         other than the default one (if it's the default one, we'll use the
+         central one) and it's enabled by the user.
+         */
+        boolean retval = false;
+        try {
+            if ((!DEFAULT_URL.equals(Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL)))
+                    && Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED)) {
+                LOGGER.info("Enabling Nexus analyzer");
+                retval = true;
+            } else {
+                LOGGER.fine("Nexus analyzer disabled, using Central instead");
+            }
+        } catch (InvalidSettingException ise) {
+            LOGGER.warning("Invalid setting. Disabling Nexus analyzer");
+        }
+
+        return retval;
+    }
+
+    /**
+     * Determine whether to enable this analyzer or not.
+     *
+     * @return whether the analyzer should be enabled
+     */
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
 
     /**
      * Initializes the analyzer once before any analysis is performed.
@@ -150,29 +206,42 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException {
+        if (!isEnabled()) {
+            return;
+        }
         try {
             final MavenArtifact ma = searcher.searchSha1(dependency.getSha1sum());
-            if (ma.getGroupId() != null && !"".equals(ma.getGroupId())) {
-                dependency.getVendorEvidence().addEvidence("nexus", "groupid", ma.getGroupId(), Confidence.HIGH);
-            }
-            if (ma.getArtifactId() != null && !"".equals(ma.getArtifactId())) {
-                dependency.getProductEvidence().addEvidence("nexus", "artifactid", ma.getArtifactId(), Confidence.HIGH);
-            }
-            if (ma.getVersion() != null && !"".equals(ma.getVersion())) {
-                dependency.getVersionEvidence().addEvidence("nexus", "version", ma.getVersion(), Confidence.HIGH);
-            }
-            if (ma.getArtifactUrl() != null && !"".equals(ma.getArtifactUrl())) {
-                boolean found = false;
-                for (Identifier i : dependency.getIdentifiers()) {
-                    if ("maven".equals(i.getType()) && i.getValue().equals(ma.toString())) {
-                        found = true;
-                        i.setConfidence(Confidence.HIGHEST);
-                        i.setUrl(ma.getArtifactUrl());
-                        break;
-                    }
+            dependency.addAsEvidence("nexus", ma, Confidence.HIGH);
+            boolean pomAnalyzed = false;
+            LOGGER.fine("POM URL " + ma.getPomUrl());
+            for (Evidence e : dependency.getVendorEvidence()) {
+                if ("pom".equals(e.getSource())) {
+                    pomAnalyzed = true;
+                    break;
                 }
-                if (!found) {
-                    dependency.addIdentifier("maven", ma.toString(), ma.getArtifactUrl(), Confidence.HIGHEST);
+            }
+            if (!pomAnalyzed && ma.getPomUrl() != null) {
+                File pomFile = null;
+                try {
+                    final File baseDir = Settings.getTempDirectory();
+                    pomFile = File.createTempFile("pom", ".xml", baseDir);
+                    if (!pomFile.delete()) {
+                        final String msg = String.format("Unable to fetch pom.xml for %s from Nexus repository; "
+                                + "this could result in undetected CPE/CVEs.", dependency.getFileName());
+                        LOGGER.warning(msg);
+                        LOGGER.fine("Unable to delete temp file");
+                    }
+                    LOGGER.fine(String.format("Downloading %s", ma.getPomUrl()));
+                    Downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);
+                    pomUtil.analyzePOM(dependency, pomFile);
+                } catch (DownloadFailedException ex) {
+                    final String msg = String.format("Unable to download pom.xml for %s from Nexus repository; "
+                            + "this could result in undetected CPE/CVEs.", dependency.getFileName());
+                    LOGGER.warning(msg);
+                } finally {
+                    if (pomFile != null && !FileUtils.deleteQuietly(pomFile)) {
+                        pomFile.deleteOnExit();
+                    }
                 }
             }
         } catch (IllegalArgumentException iae) {

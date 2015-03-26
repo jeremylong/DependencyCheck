@@ -41,14 +41,16 @@ public class JarAnalyzerTest extends BaseTest {
      */
     @Test
     public void testAnalyze() throws Exception {
-        File file = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
+        //File file = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
+        File file = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
         Dependency result = new Dependency(file);
         JarAnalyzer instance = new JarAnalyzer();
         instance.analyze(result, null);
         assertTrue(result.getVendorEvidence().toString().toLowerCase().contains("apache"));
         assertTrue(result.getVendorEvidence().getWeighting().contains("apache"));
 
-        file = new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath());
+        //file = new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath());
+        file = BaseTest.getResourceAsFile(this, "org.mortbay.jetty.jar");
         result = new Dependency(file);
         instance.analyze(result, null);
         boolean found = false;
@@ -81,7 +83,8 @@ public class JarAnalyzerTest extends BaseTest {
         }
         assertTrue("implementation-version of 4.2.27 not found in org.mortbay.jetty.jar", found);
 
-        file = new File(this.getClass().getClassLoader().getResource("org.mortbay.jmx.jar").getPath());
+        //file = new File(this.getClass().getClassLoader().getResource("org.mortbay.jmx.jar").getPath());
+        file = BaseTest.getResourceAsFile(this, "org.mortbay.jmx.jar");
         result = new Dependency(file);
         instance.analyze(result, null);
         assertEquals("org.mortbar,jmx.jar has version evidence?", result.getVersionEvidence().size(), 0);
@@ -93,7 +96,7 @@ public class JarAnalyzerTest extends BaseTest {
     @Test
     public void testGetSupportedExtensions() {
         JarAnalyzer instance = new JarAnalyzer();
-        Set expResult = new HashSet();
+        Set<String> expResult = new HashSet<String>();
         expResult.add("jar");
         expResult.add("war");
         Set result = instance.getSupportedExtensions();

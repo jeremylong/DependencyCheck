@@ -20,7 +20,7 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>1.2.6-SNAPSHOT</version>
+        <version>1.2.10-SNAPSHOT</version>
     </parent>
 
     <artifactId>dependency-check-cli</artifactId>
@@ -60,27 +60,21 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
                 <configuration>
                     <archive>
                         <manifest>
                             <mainClass>org.owasp.dependencycheck.App</mainClass>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>
-                    <excludes>
-                        <exclude>**/checkstyle*</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.6</version>
                 <configuration>
-                    <instrumentation>
+                    <!--instrumentation>
                         <ignoreTrivial>true</ignoreTrivial>
-                    </instrumentation>
+                    </instrumentation-->
                     <check>
                         <branchRate>85</branchRate>
                         <lineRate>85</lineRate>
@@ -114,7 +108,6 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.16</version>
                 <configuration>
                     <systemProperties>
                         <property>
@@ -133,165 +126,15 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <showDeprecation>false</showDeprecation>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.3</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.maven.doxia</groupId>
-                        <artifactId>doxia-module-markdown</artifactId>
-                        <version>1.5</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <skipDeploy>true</skipDeploy>
-                    <reportPlugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-project-info-reports-plugin</artifactId>
-                            <version>2.7</version>
-                            <reportSets>
-                                <reportSet>
-                                    <reports>
-                                        <report>index</report>
-                                        <report>summary</report>
-                                        <report>license</report>
-                                        <report>help</report>
-                                    </reports>
-                                </reportSet>
-                            </reportSets>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-javadoc-plugin</artifactId>
-                            <version>2.9.1</version>
-                            <configuration>
-                                <bottom>Copyright© 2012-14 Jeremy Long. All Rights Reserved.</bottom>
-                            </configuration>
-                            <reportSets>
-                                <reportSet>
-                                    <id>default</id>
-                                    <reports>
-                                        <report>javadoc</report>
-                                    </reports>
-                                </reportSet>
-                            </reportSets>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>versions-maven-plugin</artifactId>
-                            <version>2.1</version>
-                            <reportSets>
-                                <reportSet>
-                                    <reports>
-                                        <report>dependency-updates-report</report>
-                                        <report>plugin-updates-report</report>
-                                    </reports>
-                                </reportSet>
-                            </reportSets>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-jxr-plugin</artifactId>
-                            <version>2.4</version>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>cobertura-maven-plugin</artifactId>
-                            <version>2.6</version>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-surefire-report-plugin</artifactId>
-                            <version>2.16</version>
-                            <reportSets>
-                                <reportSet>
-                                    <reports>
-                                        <report>report-only</report>
-                                    </reports>
-                                </reportSet>
-                            </reportSets>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>taglist-maven-plugin</artifactId>
-                            <version>2.4</version>
-                            <configuration>
-                                <tagListOptions>
-                                    <tagClasses>
-                                        <tagClass>
-                                            <displayName>Todo Work</displayName>
-                                            <tags>
-                                                <tag>
-                                                    <matchString>todo</matchString>
-                                                    <matchType>ignoreCase</matchType>
-                                                </tag>
-                                                <tag>
-                                                    <matchString>FIXME</matchString>
-                                                    <matchType>exact</matchType>
-                                                </tag>
-                                            </tags>
-                                        </tagClass>
-                                    </tagClasses>
-                                </tagListOptions>
-                            </configuration>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-checkstyle-plugin</artifactId>
-                            <version>2.11</version>
-                            <configuration>
-                                <enableRulesSummary>false</enableRulesSummary>
-                                <configLocation>${basedir}/../src/main/config/checkstyle-checks.xml</configLocation>
-                                <headerLocation>${basedir}/../src/main/config/checkstyle-header.txt</headerLocation>
-                                <suppressionsLocation>${basedir}/../src/main/config/checkstyle-suppressions.xml</suppressionsLocation>
-                                <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
-                            </configuration>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-pmd-plugin</artifactId>
-                            <version>3.1</version>
-                            <configuration>
-                                <targetJdk>1.6</targetJdk>
-                                <linkXref>true</linkXref>
-                                <sourceEncoding>utf-8</sourceEncoding>
-                                <excludes>
-                                    <exclude>**/generated/*.java</exclude>
-                                </excludes>
-                                <rulesets>
-                                    <ruleset>../src/main/config/dcrules.xml</ruleset>
-                                    <ruleset>/rulesets/java/basic.xml</ruleset>
-                                    <ruleset>/rulesets/java/imports.xml</ruleset>
-                                    <ruleset>/rulesets/java/unusedcode.xml</ruleset>
-                                </rulesets>
-                            </configuration>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>findbugs-maven-plugin</artifactId>
-                            <version>2.5.3</version>
-                        </plugin>
-                    </reportPlugins>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>appassembler-maven-plugin</artifactId>
-                <version>1.7</version>
                 <configuration>
                     <programs>
                         <program>
                             <mainClass>org.owasp.dependencycheck.App</mainClass>
-                            <name>dependency-check</name>
+                            <id>dependency-check</id>
                         </program>
                     </programs>
                     <assembleDirectory>${project.build.directory}/release</assembleDirectory>
@@ -332,6 +175,137 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
             </plugin>
         </plugins>
     </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.7</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                            <report>summary</report>
+                            <report>license</report>
+                            <report>help</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <configuration>
+                    <bottom>Copyright© 2012-15 Jeremy Long. All Rights Reserved.</bottom>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <id>default</id>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.1</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>dependency-updates-report</report>
+                            <report>plugin-updates-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>2.4</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.6</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.16</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report-only</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>taglist-maven-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <tagListOptions>
+                        <tagClasses>
+                            <tagClass>
+                                <displayName>Todo Work</displayName>
+                                <tags>
+                                    <tag>
+                                        <matchString>todo</matchString>
+                                        <matchType>ignoreCase</matchType>
+                                    </tag>
+                                    <tag>
+                                        <matchString>FIXME</matchString>
+                                        <matchType>exact</matchType>
+                                    </tag>
+                                </tags>
+                            </tagClass>
+                        </tagClasses>
+                    </tagListOptions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.11</version>
+                <configuration>
+                    <enableRulesSummary>false</enableRulesSummary>
+                    <enableFilesSummary>false</enableFilesSummary>
+                    <configLocation>${basedir}/../src/main/config/checkstyle-checks.xml</configLocation>
+                    <headerLocation>${basedir}/../src/main/config/checkstyle-header.txt</headerLocation>
+                    <suppressionsLocation>${basedir}/../src/main/config/checkstyle-suppressions.xml</suppressionsLocation>
+                    <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <targetJdk>1.6</targetJdk>
+                    <linkXref>true</linkXref>
+                    <sourceEncoding>utf-8</sourceEncoding>
+                    <excludes>
+                        <exclude>**/generated/*.java</exclude>
+                    </excludes>
+                    <rulesets>
+                        <ruleset>../src/main/config/dcrules.xml</ruleset>
+                        <ruleset>/rulesets/java/basic.xml</ruleset>
+                        <ruleset>/rulesets/java/imports.xml</ruleset>
+                        <ruleset>/rulesets/java/unusedcode.xml</ruleset>
+                    </rulesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.5.3</version>
+            </plugin>
+        </plugins>
+    </reporting>
     <dependencies>
         <dependency>
             <groupId>commons-cli</groupId>

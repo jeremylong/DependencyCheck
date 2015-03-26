@@ -21,18 +21,22 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.FileUtils;
 
 /**
- * A program dependency. This object is one of the core components within DependencyCheck. It is used to collect
- * information about the dependency in the form of evidence. The Evidence is then used to determine if there are any
- * known, published, vulnerabilities associated with the program dependency.
+ * A program dependency. This object is one of the core components within DependencyCheck. It is used to collect information about
+ * the dependency in the form of evidence. The Evidence is then used to determine if there are any known, published,
+ * vulnerabilities associated with the program dependency.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -120,8 +124,8 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * Returns the file name of the dependency with the backslash escaped for use in JavaScript. This is a complete hack
-     * as I could not get the replace to work in the template itself.
+     * Returns the file name of the dependency with the backslash escaped for use in JavaScript. This is a complete hack as I
+     * could not get the replace to work in the template itself.
      *
      * @return the file name of the dependency with the backslash escaped for use in JavaScript
      */
@@ -193,8 +197,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * Returns the file name to display in reports; if no display file name has been set it will default to the actual
-     * file name.
+     * Returns the file name to display in reports; if no display file name has been set it will default to the actual file name.
      *
      * @return the file name to display
      */
@@ -209,8 +212,8 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * <p>
      * Gets the file path of the dependency.</p>
      * <p>
-     * <b>NOTE:</b> This may not be the actual path of the file on disk. The actual path of the file on disk can be
-     * obtained via the getActualFilePath().</p>
+     * <b>NOTE:</b> This may not be the actual path of the file on disk. The actual path of the file on disk can be obtained via
+     * the getActualFilePath().</p>
      *
      * @return the file path of the dependency
      */
@@ -317,6 +320,43 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
+     * Adds the maven artifact as evidence.
+     *
+     * @param source The source of the evidence
+     * @param mavenArtifact The maven artifact
+     * @param confidence The confidence level of this evidence
+     */
+    public void addAsEvidence(String source, MavenArtifact mavenArtifact, Confidence confidence) {
+        if (mavenArtifact.getGroupId() != null && !mavenArtifact.getGroupId().isEmpty()) {
+            this.getVendorEvidence().addEvidence(source, "groupid", mavenArtifact.getGroupId(), confidence);
+        }
+        if (mavenArtifact.getArtifactId() != null && !mavenArtifact.getArtifactId().isEmpty()) {
+            this.getProductEvidence().addEvidence(source, "artifactid", mavenArtifact.getArtifactId(), confidence);
+        }
+        if (mavenArtifact.getVersion() != null && !mavenArtifact.getVersion().isEmpty()) {
+            this.getVersionEvidence().addEvidence(source, "version", mavenArtifact.getVersion(), confidence);
+        }
+        if (mavenArtifact.getArtifactUrl() != null && !mavenArtifact.getArtifactUrl().isEmpty()) {
+            boolean found = false;
+            for (Identifier i : this.getIdentifiers()) {
+                if ("maven".equals(i.getType()) && i.getValue().equals(mavenArtifact.toString())) {
+                    found = true;
+                    i.setConfidence(Confidence.HIGHEST);
+                    final String url = "http://search.maven.org/#search|ga|1|1%3A%22" + this.getSha1sum() + "%22";
+                    i.setUrl(url);
+                    //i.setUrl(mavenArtifact.getArtifactUrl());
+                    LOGGER.fine(String.format("Already found identifier %s. Confidence set to highest", i.getValue()));
+                    break;
+                }
+            }
+            if (!found) {
+                LOGGER.fine(String.format("Adding new maven identifier %s", mavenArtifact.toString()));
+                this.addIdentifier("maven", mavenArtifact.toString(), mavenArtifact.getArtifactUrl(), Confidence.HIGHEST);
+            }
+        }
+    }
+
+    /**
      * Adds an entry to the list of detected Identifiers for the dependency file.
      *
      * @param identifier the identifier to add
@@ -324,6 +364,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     public void addIdentifier(Identifier identifier) {
         this.identifiers.add(identifier);
     }
+
     /**
      * A set of identifiers that have been suppressed.
      */
@@ -441,6 +482,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     public EvidenceCollection getVersionEvidence() {
         return this.versionEvidence;
     }
+
     /**
      * The description of the JAR file.
      */
@@ -463,6 +505,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     public void setDescription(String description) {
         this.description = description;
     }
+
     /**
      * The license that this dependency uses.
      */
@@ -485,6 +528,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     public void setLicense(String license) {
         this.license = license;
     }
+
     /**
      * A list of vulnerabilities for this dependency.
      */
@@ -540,6 +584,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     public void addVulnerability(Vulnerability vulnerability) {
         this.vulnerabilities.add(vulnerability);
     }
+
     /**
      * A collection of related dependencies.
      */
@@ -552,6 +597,47 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      */
     public Set<Dependency> getRelatedDependencies() {
         return relatedDependencies;
+    }
+
+    /**
+     * A list of projects that reference this dependency.
+     */
+    private Set<String> projectReferences = new HashSet<String>();
+
+    /**
+     * Get the value of projectReferences.
+     *
+     * @return the value of projectReferences
+     */
+    public Set<String> getProjectReferences() {
+        return projectReferences;
+    }
+
+    /**
+     * Set the value of projectReferences.
+     *
+     * @param projectReferences new value of projectReferences
+     */
+    public void setProjectReferences(Set<String> projectReferences) {
+        this.projectReferences = projectReferences;
+    }
+
+    /**
+     * Adds a project reference.
+     *
+     * @param projectReference a project reference
+     */
+    public void addProjectReference(String projectReference) {
+        this.projectReferences.add(projectReference);
+    }
+
+    /**
+     * Add a collection of project reference.
+     *
+     * @param projectReferences a set of project references
+     */
+    public void addAllProjectReferences(Set<String> projectReferences) {
+        this.projectReferences.addAll(projectReferences);
     }
 
     /**
@@ -569,7 +655,46 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * @param dependency a reference to the related dependency
      */
     public void addRelatedDependency(Dependency dependency) {
-        relatedDependencies.add(dependency);
+        if (this == dependency) {
+            LOGGER.warning("Attempted to add a circular reference - please post the log file to issue #172 here "
+                    + "https://github.com/jeremylong/DependencyCheck/issues/172 ");
+            LOGGER.log(Level.FINE, "this: {0}", this.toString());
+            LOGGER.log(Level.FINE, "dependency: {0}", dependency.toString());
+        } else {
+            relatedDependencies.add(dependency);
+        }
+    }
+
+    /**
+     * A list of available versions.
+     */
+    private List<String> availableVersions = new ArrayList<String>();
+
+    /**
+     * Get the value of availableVersions.
+     *
+     * @return the value of availableVersions
+     */
+    public List<String> getAvailableVersions() {
+        return availableVersions;
+    }
+
+    /**
+     * Set the value of availableVersions.
+     *
+     * @param availableVersions new value of availableVersions
+     */
+    public void setAvailableVersions(List<String> availableVersions) {
+        this.availableVersions = availableVersions;
+    }
+
+    /**
+     * Adds a version to the available version list.
+     *
+     * @param version the version to add to the list
+     */
+    public void addAvailableVersion(String version) {
+        this.availableVersions.add(version);
     }
 
     /**
@@ -579,7 +704,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * @return an integer representing the natural ordering
      */
     public int compareTo(Dependency o) {
-        return this.getFileName().compareToIgnoreCase(o.getFileName());
+        return this.getFilePath().compareToIgnoreCase(o.getFilePath());
     }
 
     /**
@@ -640,6 +765,15 @@ public class Dependency implements Serializable, Comparable<Dependency> {
                 && (this.relatedDependencies == null || !this.relatedDependencies.equals(other.relatedDependencies))) {
             return false;
         }
+        if (this.projectReferences != other.projectReferences
+                && (this.projectReferences == null || !this.projectReferences.equals(other.projectReferences))) {
+            return false;
+        }
+        if (this.availableVersions != other.availableVersions
+                && (this.availableVersions == null || !this.availableVersions.equals(other.availableVersions))) {
+            return false;
+        }
+
         return true;
     }
 
@@ -665,6 +799,8 @@ public class Dependency implements Serializable, Comparable<Dependency> {
         hash = 47 * hash + (this.license != null ? this.license.hashCode() : 0);
         hash = 47 * hash + (this.vulnerabilities != null ? this.vulnerabilities.hashCode() : 0);
         hash = 47 * hash + (this.relatedDependencies != null ? this.relatedDependencies.hashCode() : 0);
+        hash = 47 * hash + (this.projectReferences != null ? this.projectReferences.hashCode() : 0);
+        hash = 47 * hash + (this.availableVersions != null ? this.availableVersions.hashCode() : 0);
         return hash;
     }
 

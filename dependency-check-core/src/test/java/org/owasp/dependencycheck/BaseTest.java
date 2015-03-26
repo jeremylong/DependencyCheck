@@ -15,7 +15,10 @@
  */
 package org.owasp.dependencycheck;
 
+import java.io.File;
+import java.io.InputStream;
 import org.junit.AfterClass;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -33,5 +36,32 @@ public class BaseTest {
     @AfterClass
     public static void tearDownClass() throws Exception {
         Settings.cleanup(true);
+    }
+
+    /**
+     * Returns the given resource as an InputStream using the object's class loader. The org.junit.Assume API is used so that test
+     * cases are skipped if the resource is not available.
+     *
+     * @param o the object used to obtain a reference to the class loader
+     * @param resource the name of the resource to load
+     * @return the resource as an InputStream
+     */
+    public static InputStream getResourceAsStream(Object o, String resource) {
+        getResourceAsFile(o, resource);
+        return o.getClass().getClassLoader().getResourceAsStream(resource);
+    }
+
+    /**
+     * Returns the given resource as a File using the object's class loader. The org.junit.Assume API is used so that test cases
+     * are skipped if the resource is not available.
+     *
+     * @param o the object used to obtain a reference to the class loader
+     * @param resource the name of the resource to load
+     * @return the resource as an File
+     */
+    public static File getResourceAsFile(Object o, String resource) {
+        File f = new File(o.getClass().getClassLoader().getResource(resource).getPath());
+        Assume.assumeTrue(String.format("%n%n[SEVERE] Unable to load resource for test case: %s%n%n", resource), f.exists());
+        return f;
     }
 }

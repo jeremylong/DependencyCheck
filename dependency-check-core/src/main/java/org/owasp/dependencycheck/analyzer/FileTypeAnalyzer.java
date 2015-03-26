@@ -31,4 +31,9 @@ public interface FileTypeAnalyzer extends Analyzer {
      * @return whether or not the specified file extension is supported by this analyzer.
      */
     boolean supportsExtension(String extension);
+
+    /**
+     * Resets the analyzers state.
+     */
+    void reset();
 }

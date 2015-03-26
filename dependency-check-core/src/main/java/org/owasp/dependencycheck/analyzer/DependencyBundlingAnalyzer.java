@@ -36,9 +36,9 @@ import org.owasp.dependencycheck.utils.LogUtils;
 
 /**
  * <p>
- * This analyzer ensures dependencies that should be grouped together, to remove excess noise from the report, are
- * grouped. An example would be Spring, Spring Beans, Spring MVC, etc. If they are all for the same version and have the
- * same relative path then these should be grouped into a single dependency under the core/main library.</p>
+ * This analyzer ensures dependencies that should be grouped together, to remove excess noise from the report, are grouped. An
+ * example would be Spring, Spring Beans, Spring MVC, etc. If they are all for the same version and have the same relative path
+ * then these should be grouped into a single dependency under the core/main library.</p>
  * <p>
  * Note, this grouping only works on dependencies with identified CVE entries</p>
  *
@@ -55,7 +55,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     /**
      * A pattern for obtaining the first part of a filename.
      */
-    private static final Pattern STARTING_TEXT_PATTERN = Pattern.compile("^[a-zA-Z]*");
+    private static final Pattern STARTING_TEXT_PATTERN = Pattern.compile("^[a-zA-Z0-9]*");
     /**
      * a flag indicating if this analyzer has run. This analyzer only runs once.
      */
@@ -91,8 +91,8 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     //</editor-fold>
 
     /**
-     * Analyzes a set of dependencies. If they have been found to have the same base path and the same set of
-     * identifiers they are likely related. The related dependencies are bundled into a single reportable item.
+     * Analyzes a set of dependencies. If they have been found to have the same base path and the same set of identifiers they are
+     * likely related. The related dependencies are bundled into a single reportable item.
      *
      * @param ignore this analyzer ignores the dependency being analyzed
      * @param engine the engine that is scanning the dependencies
@@ -107,30 +107,34 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             //for (Dependency nextDependency : engine.getDependencies()) {
             while (mainIterator.hasNext()) {
                 final Dependency dependency = mainIterator.next();
-                if (mainIterator.hasNext()) {
+                if (mainIterator.hasNext() && !dependenciesToRemove.contains(dependency)) {
                     final ListIterator<Dependency> subIterator = engine.getDependencies().listIterator(mainIterator.nextIndex());
                     while (subIterator.hasNext()) {
                         final Dependency nextDependency = subIterator.next();
                         if (hashesMatch(dependency, nextDependency)) {
-                            if (isCore(dependency, nextDependency)) {
+                            if (firstPathIsShortest(dependency.getFilePath(), nextDependency.getFilePath())) {
                                 mergeDependencies(dependency, nextDependency, dependenciesToRemove);
                             } else {
                                 mergeDependencies(nextDependency, dependency, dependenciesToRemove);
+                                break; //since we merged into the next dependency - skip forward to the next in mainIterator
                             }
                         } else if (isShadedJar(dependency, nextDependency)) {
                             if (dependency.getFileName().toLowerCase().endsWith("pom.xml")) {
-                                dependenciesToRemove.add(dependency);
+                                mergeDependencies(nextDependency, dependency, dependenciesToRemove);
+                                nextDependency.getRelatedDependencies().remove(dependency);
+                                break;
                             } else {
-                                dependenciesToRemove.add(nextDependency);
+                                mergeDependencies(dependency, nextDependency, dependenciesToRemove);
+                                nextDependency.getRelatedDependencies().remove(nextDependency);
                             }
                         } else if (cpeIdentifiersMatch(dependency, nextDependency)
                                 && hasSameBasePath(dependency, nextDependency)
                                 && fileNameMatch(dependency, nextDependency)) {
-
                             if (isCore(dependency, nextDependency)) {
                                 mergeDependencies(dependency, nextDependency, dependenciesToRemove);
                             } else {
                                 mergeDependencies(nextDependency, dependency, dependenciesToRemove);
+                                break; //since we merged into the next dependency - skip forward to the next in mainIterator
                             }
                         }
                     }
@@ -138,9 +142,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             }
             //removing dependencies here as ensuring correctness and avoiding ConcurrentUpdateExceptions
             // was difficult because of the inner iterator.
-            for (Dependency d : dependenciesToRemove) {
-                engine.getDependencies().remove(d);
-            }
+            engine.getDependencies().removeAll(dependenciesToRemove);
         }
     }
 
@@ -148,10 +150,10 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      * Adds the relatedDependency to the dependency's related dependencies.
      *
      * @param dependency the main dependency
-     * @param relatedDependency a collection of dependencies to be removed from the main analysis loop, this is the
-     * source of dependencies to remove
-     * @param dependenciesToRemove a collection of dependencies that will be removed from the main analysis loop, this
-     * function adds to this collection
+     * @param relatedDependency a collection of dependencies to be removed from the main analysis loop, this is the source of
+     * dependencies to remove
+     * @param dependenciesToRemove a collection of dependencies that will be removed from the main analysis loop, this function
+     * adds to this collection
      */
     private void mergeDependencies(final Dependency dependency, final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove) {
         dependency.addRelatedDependency(relatedDependency);
@@ -160,12 +162,14 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             dependency.addRelatedDependency(i.next());
             i.remove();
         }
+        if (dependency.getSha1sum().equals(relatedDependency.getSha1sum())) {
+            dependency.addAllProjectReferences(relatedDependency.getProjectReferences());
+        }
         dependenciesToRemove.add(relatedDependency);
     }
 
     /**
-     * Attempts to trim a maven repo to a common base path. This is typically
-     * [drive]\[repo_location]\repository\[path1]\[path2].
+     * Attempts to trim a maven repo to a common base path. This is typically [drive]\[repo_location]\repository\[path1]\[path2].
      *
      * @param path the path to trim
      * @return a string representing the base path.
@@ -201,25 +205,8 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                 || dependency2 == null || dependency2.getFileName() == null) {
             return false;
         }
-        String fileName1 = dependency1.getFileName();
-        String fileName2 = dependency2.getFileName();
-
-        //update to deal with archive analyzer, the starting name maybe the same
-        // as this is incorrectly looking at the starting path
-        final File one = new File(fileName1);
-        final File two = new File(fileName2);
-        final String oneParent = one.getParent();
-        final String twoParent = two.getParent();
-        if (oneParent != null) {
-            if (oneParent.equals(twoParent)) {
-                fileName1 = one.getName();
-                fileName2 = two.getName();
-            } else {
-                return false;
-            }
-        } else if (twoParent != null) {
-            return false;
-        }
+        final String fileName1 = dependency1.getActualFile().getName();
+        final String fileName2 = dependency2.getActualFile().getName();
 
         //version check
         final DependencyVersion version1 = DependencyVersionUtil.parseVersion(fileName1);
@@ -267,9 +254,11 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
         }
         if (cpeCount1 > 0 && cpeCount1 == cpeCount2) {
             for (Identifier i : dependency1.getIdentifiers()) {
-                matches |= dependency2.getIdentifiers().contains(i);
-                if (!matches) {
-                    break;
+                if ("cpe".equals(i.getType())) {
+                    matches |= dependency2.getIdentifiers().contains(i);
+                    if (!matches) {
+                        break;
+                    }
                 }
             }
         }
@@ -318,8 +307,8 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     }
 
     /**
-     * This is likely a very broken attempt at determining if the 'left' dependency is the 'core' library in comparison
-     * to the 'right' library.
+     * This is likely a very broken attempt at determining if the 'left' dependency is the 'core' library in comparison to the
+     * 'right' library.
      *
      * @param left the dependency to test
      * @param right the dependency to test against
@@ -338,6 +327,10 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                 || !rightName.contains("core") && leftName.contains("core")
                 || !rightName.contains("kernel") && leftName.contains("kernel")) {
             returnVal = true;
+//        } else if (leftName.matches(".*struts2\\-core.*") && rightName.matches(".*xwork\\-core.*")) {
+//            returnVal = true;
+//        } else if (rightName.matches(".*struts2\\-core.*") && leftName.matches(".*xwork\\-core.*")) {
+//            returnVal = false;
         } else {
             /*
              * considered splitting the names up and comparing the components,
@@ -372,13 +365,12 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     }
 
     /**
-     * Determines if the jar is shaded and the created pom.xml identified the same CPE as the jar - if so, the pom.xml
-     * dependency should be removed.
+     * Determines if the jar is shaded and the created pom.xml identified the same CPE as the jar - if so, the pom.xml dependency
+     * should be removed.
      *
      * @param dependency a dependency to check
      * @param nextDependency another dependency to check
-     * @return true if on of the dependencies is a pom.xml and the identifiers between the two collections match;
-     * otherwise false
+     * @return true if on of the dependencies is a pom.xml and the identifiers between the two collections match; otherwise false
      */
     private boolean isShadedJar(Dependency dependency, Dependency nextDependency) {
         final String mainName = dependency.getFileName().toLowerCase();
@@ -389,5 +381,44 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             return nextDependency.getIdentifiers().containsAll(dependency.getIdentifiers());
         }
         return false;
+    }
+
+    /**
+     * Determines which path is shortest; if path lengths are equal then we use compareTo of the string method to determine if the
+     * first path is smaller.
+     *
+     * @param left the first path to compare
+     * @param right the second path to compare
+     * @return <code>true</code> if the leftPath is the shortest; otherwise <code>false</code>
+     */
+    protected boolean firstPathIsShortest(String left, String right) {
+        final String leftPath = left.replace('\\', '/');
+        final String rightPath = right.replace('\\', '/');
+
+        final int leftCount = countChar(leftPath, '/');
+        final int rightCount = countChar(rightPath, '/');
+        if (leftCount == rightCount) {
+            return leftPath.compareTo(rightPath) <= 0;
+        } else {
+            return leftCount < rightCount;
+        }
+    }
+
+    /**
+     * Counts the number of times the character is present in the string.
+     *
+     * @param string the string to count the characters in
+     * @param c the character to count
+     * @return the number of times the character is present in the string
+     */
+    private int countChar(String string, char c) {
+        int count = 0;
+        final int max = string.length();
+        for (int i = 0; i < max; i++) {
+            if (c == string.charAt(i)) {
+                count++;
+            }
+        }
+        return count;
     }
 }

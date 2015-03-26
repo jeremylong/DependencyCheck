@@ -34,7 +34,8 @@ public class NvdCveUpdaterIntegrationTest extends BaseTest {
     public void setUp() throws Exception {
         int year = Calendar.getInstance().get(Calendar.YEAR);
         if (year <= 2014) {
-            File f = new File(NvdCveUpdaterIntegrationTest.class.getClassLoader().getResource("nvdcve-2.0-2014.xml").getPath());
+            //File f = new File(NvdCveUpdaterIntegrationTest.class.getClassLoader().getResource("nvdcve-2.0-2014.xml").getPath());
+            File f = BaseTest.getResourceAsFile(this, "nvdcve-2.0-2014.xml");
             String baseURL = f.toURI().toURL().toString();
             String modified12 = baseURL.replace("nvdcve-2.0-2014.xml", "nvdcve-modified.xml");
             String modified20 = baseURL.replace("nvdcve-2.0-2014.xml", "nvdcve-2.0-modified.xml");

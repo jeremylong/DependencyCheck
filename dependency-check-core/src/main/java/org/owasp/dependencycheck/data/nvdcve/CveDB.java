@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,8 +25,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
@@ -39,6 +42,7 @@ import org.owasp.dependencycheck.utils.DBUtils;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 import org.owasp.dependencycheck.utils.Pair;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * The database holding information about the NVD CVE data.
@@ -57,8 +61,8 @@ public class CveDB {
     private Connection conn;
 
     /**
-     * Creates a new CveDB object and opens the database connection. Note, the connection must be closed by the caller
-     * by calling the close method.
+     * Creates a new CveDB object and opens the database connection. Note, the connection must be closed by the caller by calling
+     * the close method.
      *
      * @throws DatabaseException thrown if there is an exception opening the database.
      */
@@ -87,7 +91,9 @@ public class CveDB {
      * @throws DatabaseException thrown if there is an error opening the database connection
      */
     public final void open() throws DatabaseException {
-        conn = ConnectionFactory.getConnection();
+        if (!isOpen()) {
+            conn = ConnectionFactory.getConnection();
+        }
     }
 
     /**
@@ -170,8 +176,8 @@ public class CveDB {
      */
     private static final String DELETE_VULNERABILITY = "DELETE FROM vulnerability WHERE id = ?";
     /**
-     * SQL Statement to cleanup orphan entries. Yes, the db schema could be a little tighter, but what we have works
-     * well to keep the data file size down a bit.
+     * SQL Statement to cleanup orphan entries. Yes, the db schema could be a little tighter, but what we have works well to keep
+     * the data file size down a bit.
      */
     private static final String CLEANUP_ORPHANS = "DELETE FROM CpeEntry WHERE id not in (SELECT CPEEntryId FROM Software); ";
     /**
@@ -208,7 +214,8 @@ public class CveDB {
     private static final String SELECT_CVE_FROM_SOFTWARE = "SELECT cve, cpe, previousVersion "
             + "FROM software INNER JOIN vulnerability ON vulnerability.id = software.cveId "
             + "INNER JOIN cpeEntry ON cpeEntry.id = software.cpeEntryId "
-            + "WHERE vendor = ? AND product = ?";
+            + "WHERE vendor = ? AND product = ? "
+            + "ORDER BY cve, cpe"; //, previousVersion
     //unfortunately, the version info is too complicated to do in a select. Need to filter this afterwards
     //        + " AND (version = '-' OR previousVersion IS NOT NULL OR version=?)";
     //
@@ -266,8 +273,8 @@ public class CveDB {
 
     //</editor-fold>
     /**
-     * Searches the CPE entries in the database and retrieves all entries for a given vendor and product combination.
-     * The returned list will include all versions of the product that are registered in the NVD CVE data.
+     * Searches the CPE entries in the database and retrieves all entries for a given vendor and product combination. The returned
+     * list will include all versions of the product that are registered in the NVD CVE data.
      *
      * @param vendor the identified vendor name of the dependency being analyzed
      * @param product the identified name of the product of the dependency being analyzed
@@ -306,14 +313,14 @@ public class CveDB {
      * @throws DatabaseException thrown when there is an error retrieving the data from the DB
      */
     public Set<Pair<String, String>> getVendorProductList() throws DatabaseException {
-        final HashSet data = new HashSet<Pair<String, String>>();
+        final Set<Pair<String, String>> data = new HashSet<Pair<String, String>>();
         ResultSet rs = null;
         PreparedStatement ps = null;
         try {
             ps = getConnection().prepareStatement(SELECT_VENDOR_PRODUCT_LIST);
             rs = ps.executeQuery();
             while (rs.next()) {
-                data.add(new Pair(rs.getString(1), rs.getString(2)));
+                data.add(new Pair<String, String>(rs.getString(1), rs.getString(2)));
             }
         } catch (SQLException ex) {
             final String msg = "An unexpected SQL Exception occurred; please see the verbose log for more details.";
@@ -452,30 +459,41 @@ public class CveDB {
         final List<Vulnerability> vulnerabilities = new ArrayList<Vulnerability>();
 
         PreparedStatement ps;
-        final HashSet<String> cveEntries = new HashSet<String>();
         try {
             ps = getConnection().prepareStatement(SELECT_CVE_FROM_SOFTWARE);
             ps.setString(1, cpe.getVendor());
             ps.setString(2, cpe.getProduct());
             rs = ps.executeQuery();
+            String currentCVE = "";
+
+            final Map<String, Boolean> vulnSoftware = new HashMap<String, Boolean>();
             while (rs.next()) {
                 final String cveId = rs.getString(1);
+                if (!currentCVE.equals(cveId)) { //check for match and add
+                    final Entry<String, Boolean> matchedCPE = getMatchingSoftware(vulnSoftware, cpe.getVendor(), cpe.getProduct(), detectedVersion);
+                    if (matchedCPE != null) {
+                        final Vulnerability v = getVulnerability(currentCVE);
+                        v.setMatchedCPE(matchedCPE.getKey(), matchedCPE.getValue() ? "Y" : null);
+                        vulnerabilities.add(v);
+                    }
+                    vulnSoftware.clear();
+                    currentCVE = cveId;
+                }
+
                 final String cpeId = rs.getString(2);
                 final String previous = rs.getString(3);
-                if (!cveEntries.contains(cveId) && isAffected(cpe.getVendor(), cpe.getProduct(), detectedVersion, cpeId, previous)) {
-                    cveEntries.add(cveId);
-                    final Vulnerability v = getVulnerability(cveId);
-                    v.setMatchedCPE(cpeId, previous);
-                    vulnerabilities.add(v);
-                }
+                final Boolean p = previous != null && !previous.isEmpty();
+                vulnSoftware.put(cpeId, p);
+            }
+            //remember to process the last set of CVE/CPE entries
+            final Entry<String, Boolean> matchedCPE = getMatchingSoftware(vulnSoftware, cpe.getVendor(), cpe.getProduct(), detectedVersion);
+            if (matchedCPE != null) {
+                final Vulnerability v = getVulnerability(currentCVE);
+                v.setMatchedCPE(matchedCPE.getKey(), matchedCPE.getValue() ? "Y" : null);
+                vulnerabilities.add(v);
             }
             DBUtils.closeResultSet(rs);
             DBUtils.closeStatement(ps);
-//            for (String cve : cveEntries) {
-//                final Vulnerability v = getVulnerability(cve);
-//                vulnerabilities.add(v);
-//            }
-
         } catch (SQLException ex) {
             throw new DatabaseException("Exception retrieving vulnerability for " + cpeStr, ex);
         } finally {
@@ -701,8 +719,45 @@ public class CveDB {
     }
 
     /**
-     * It is possible that orphaned rows may be generated during database updates. This should be called after all
-     * updates have been completed to ensure orphan entries are removed.
+     * Checks to see if data exists so that analysis can be performed.
+     *
+     * @return <code>true</code> if data exists; otherwise <code>false</code>
+     */
+    public boolean dataExists() {
+        Statement cs = null;
+        ResultSet rs = null;
+        try {
+            cs = conn.createStatement();
+            rs = cs.executeQuery("SELECT COUNT(*) records FROM cpeEntry");
+            if (rs.next()) {
+                if (rs.getInt(1) > 0) {
+                    return true;
+                }
+            }
+        } catch (SQLException ex) {
+            String dd;
+            try {
+                dd = Settings.getDataDirectory().getAbsolutePath();
+            } catch (IOException ex1) {
+                dd = Settings.getString(Settings.KEYS.DATA_DIRECTORY);
+            }
+            final String msg = String.format("Unable to access the local database.%n%nEnsure that '%s' is a writable directory. "
+                    + "If the problem persist try deleting the files in '%s' and running %s again. If the problem continues, please "
+                    + "create a log file (see documentation at http://jeremylong.github.io/DependencyCheck/) and open a ticket at "
+                    + "https://github.com/jeremylong/DependencyCheck/issues and include the log file.%n%n",
+                    dd, dd, Settings.getString(Settings.KEYS.APPLICATION_VAME));
+            LOGGER.log(Level.SEVERE, msg);
+            LOGGER.log(Level.FINE, "", ex);
+        } finally {
+            DBUtils.closeResultSet(rs);
+            DBUtils.closeStatement(cs);
+        }
+        return false;
+    }
+
+    /**
+     * It is possible that orphaned rows may be generated during database updates. This should be called after all updates have
+     * been completed to ensure orphan entries are removed.
      */
     public void cleanupDatabase() {
         PreparedStatement ps = null;
@@ -721,46 +776,80 @@ public class CveDB {
     }
 
     /**
-     * Determines if the given identifiedVersion is affected by the given cpeId and previous version flag. A non-null,
-     * non-empty string passed to the previous version argument indicates that all previous versions are affected.
+     * Determines if the given identifiedVersion is affected by the given cpeId and previous version flag. A non-null, non-empty
+     * string passed to the previous version argument indicates that all previous versions are affected.
      *
      * @param vendor the vendor of the dependency being analyzed
      * @param product the product name of the dependency being analyzed
+     * @param vulnerableSoftware a map of the vulnerable software with a boolean indicating if all previous versions are affected
      * @param identifiedVersion the identified version of the dependency being analyzed
-     * @param cpeId the cpe identifier of software that has a known vulnerability
-     * @param previous a flag indicating if previous versions of the product are vulnerable
      * @return true if the identified version is affected, otherwise false
      */
-    private boolean isAffected(String vendor, String product, DependencyVersion identifiedVersion, String cpeId, String previous) {
-        boolean affected = false;
-        final boolean isStruts = "apache".equals(vendor) && "struts".equals(product);
-        final DependencyVersion v = parseDependencyVersion(cpeId);
-        final boolean prevAffected = previous != null && !previous.isEmpty();
-        if (v == null || "-".equals(v.toString())) { //all versions
-            affected = true;
-        } else if (identifiedVersion == null || "-".equals(identifiedVersion.toString())) {
-            if (prevAffected) {
-                affected = true;
+    Entry<String, Boolean> getMatchingSoftware(Map<String, Boolean> vulnerableSoftware, String vendor, String product,
+            DependencyVersion identifiedVersion) {
+
+        final boolean isVersionTwoADifferentProduct = "apache".equals(vendor) && "struts".equals(product);
+
+        final Set<String> majorVersionsAffectingAllPrevious = new HashSet<String>();
+        final boolean matchesAnyPrevious = identifiedVersion == null || "-".equals(identifiedVersion.toString());
+        String majorVersionMatch = null;
+        for (Entry<String, Boolean> entry : vulnerableSoftware.entrySet()) {
+            final DependencyVersion v = parseDependencyVersion(entry.getKey());
+            if (v == null || "-".equals(v.toString())) { //all versions
+                return entry;
             }
-        } else if (identifiedVersion.equals(v) || (prevAffected && identifiedVersion.compareTo(v) < 0)) {
-            if (isStruts) { //struts 2 vulns don't affect struts 1
-                if (identifiedVersion.getVersionParts().get(0).equals(v.getVersionParts().get(0))) {
-                    affected = true;
+            if (entry.getValue()) {
+                if (matchesAnyPrevious) {
+                    return entry;
                 }
-            } else {
-                affected = true;
+                if (identifiedVersion != null && identifiedVersion.getVersionParts().get(0).equals(v.getVersionParts().get(0))) {
+                    majorVersionMatch = v.getVersionParts().get(0);
+                }
+                majorVersionsAffectingAllPrevious.add(v.getVersionParts().get(0));
             }
         }
-        /*
-         * TODO consider utilizing the matchThreeVersion method to get additional results. However, this
-         *      might also introduce false positives.
-         */
-        return affected;
+        if (matchesAnyPrevious) {
+            return null;
+        }
+
+        final boolean canSkipVersions = majorVersionMatch != null && majorVersionsAffectingAllPrevious.size() > 1;
+        //yes, we are iterating over this twice. The first time we are skipping versions those that affect all versions
+        //then later we process those that affect all versions. This could be done with sorting...
+        for (Entry<String, Boolean> entry : vulnerableSoftware.entrySet()) {
+            if (!entry.getValue()) {
+                final DependencyVersion v = parseDependencyVersion(entry.getKey());
+                //this can't dereference a null 'majorVersionMatch' as canSkipVersions accounts for this.
+                if (canSkipVersions && !majorVersionMatch.equals(v.getVersionParts().get(0))) {
+                    continue;
+                }
+                //this can't dereference a null 'identifiedVersion' because if it was null we would have exited
+                //in the above loop or just after loop (if matchesAnyPrevious return null).
+                if (identifiedVersion.equals(v)) {
+                    return entry;
+                }
+            }
+        }
+        for (Entry<String, Boolean> entry : vulnerableSoftware.entrySet()) {
+            if (entry.getValue()) {
+                final DependencyVersion v = parseDependencyVersion(entry.getKey());
+                //this can't dereference a null 'majorVersionMatch' as canSkipVersions accounts for this.
+                if (canSkipVersions && !majorVersionMatch.equals(v.getVersionParts().get(0))) {
+                    continue;
+                }
+                //this can't dereference a null 'identifiedVersion' because if it was null we would have exited
+                //in the above loop or just after loop (if matchesAnyPrevious return null).
+                if (entry.getValue() && identifiedVersion.compareTo(v) <= 0) {
+                    if (!(isVersionTwoADifferentProduct && !identifiedVersion.getVersionParts().get(0).equals(v.getVersionParts().get(0)))) {
+                        return entry;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
-     * Parses the version (including revision) from a CPE identifier. If no version is identified then a '-' is
-     * returned.
+     * Parses the version (including revision) from a CPE identifier. If no version is identified then a '-' is returned.
      *
      * @param cpeStr a cpe identifier
      * @return a dependency version
@@ -784,9 +873,9 @@ public class CveDB {
      */
     private DependencyVersion parseDependencyVersion(VulnerableSoftware cpe) {
         DependencyVersion cpeVersion;
-        if (cpe.getVersion() != null && cpe.getVersion().length() > 0) {
+        if (cpe.getVersion() != null && !cpe.getVersion().isEmpty()) {
             String versionText;
-            if (cpe.getRevision() != null && cpe.getRevision().length() > 0) {
+            if (cpe.getRevision() != null && !cpe.getRevision().isEmpty()) {
                 versionText = String.format("%s.%s", cpe.getVersion(), cpe.getRevision());
             } else {
                 versionText = cpe.getVersion();

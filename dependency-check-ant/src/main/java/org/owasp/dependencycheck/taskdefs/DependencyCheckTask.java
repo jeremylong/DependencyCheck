@@ -98,8 +98,8 @@ public class DependencyCheckTask extends Task {
     }
 
     /**
-     * Returns the path. If the path has not been initialized yet, this class is synchronized, and will instantiate the
-     * path object.
+     * Returns the path. If the path has not been initialized yet, this class is synchronized, and will instantiate the path
+     * object.
      *
      * @return the path
      */
@@ -215,9 +215,9 @@ public class DependencyCheckTask extends Task {
         this.reportOutputDirectory = reportOutputDirectory;
     }
     /**
-     * Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11
-     * which means since the CVSS scores are 0-10, by default the build will never fail and the CVSS score is set to 11.
-     * The valid range for the fail build on CVSS is 0 to 11, where anything above 10 will not cause the build to fail.
+     * Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11 which
+     * means since the CVSS scores are 0-10, by default the build will never fail and the CVSS score is set to 11. The valid range
+     * for the fail build on CVSS is 0 to 11, where anything above 10 will not cause the build to fail.
      */
     private float failBuildOnCVSS = 11;
 
@@ -239,8 +239,8 @@ public class DependencyCheckTask extends Task {
         this.failBuildOnCVSS = failBuildOnCVSS;
     }
     /**
-     * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to
-     * false. Default is true.
+     * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. Default
+     * is true.
      */
     private boolean autoUpdate = true;
 
@@ -262,8 +262,8 @@ public class DependencyCheckTask extends Task {
         this.autoUpdate = autoUpdate;
     }
     /**
-     * The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this
-     * within the Site plugin unless the externalReport is set to true. Default is HTML.
+     * The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this within the
+     * Site plugin unless the externalReport is set to true. Default is HTML.
      */
     private String reportFormat = "HTML";
 
@@ -322,8 +322,7 @@ public class DependencyCheckTask extends Task {
      * Set the value of proxyServer.
      *
      * @param proxyUrl new value of proxyServer
-     * @deprecated use {@link org.owasp.dependencycheck.taskdefs.DependencyCheckTask#setProxyServer(java.lang.String)}
-     * instead
+     * @deprecated use {@link org.owasp.dependencycheck.taskdefs.DependencyCheckTask#setProxyServer(java.lang.String)} instead
      */
     @Deprecated
     public void setProxyUrl(String proxyUrl) {
@@ -559,6 +558,28 @@ public class DependencyCheckTask extends Task {
     public void setNuspecAnalyzerEnabled(boolean nuspecAnalyzerEnabled) {
         this.nuspecAnalyzerEnabled = nuspecAnalyzerEnabled;
     }
+    /**
+     * Whether or not the central analyzer is enabled.
+     */
+    private boolean centralAnalyzerEnabled = false;
+
+    /**
+     * Get the value of centralAnalyzerEnabled.
+     *
+     * @return the value of centralAnalyzerEnabled
+     */
+    public boolean isCentralAnalyzerEnabled() {
+        return centralAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of centralAnalyzerEnabled.
+     *
+     * @param centralAnalyzerEnabled new value of centralAnalyzerEnabled
+     */
+    public void setCentralAnalyzerEnabled(boolean centralAnalyzerEnabled) {
+        this.centralAnalyzerEnabled = centralAnalyzerEnabled;
+    }
 
     /**
      * Whether or not the nexus analyzer is enabled.
@@ -742,8 +763,8 @@ public class DependencyCheckTask extends Task {
     }
 
     /**
-     * Additional ZIP File extensions to add analyze. This should be a comma-separated list of file extensions to treat
-     * like ZIP files.
+     * Additional ZIP File extensions to add analyze. This should be a comma-separated list of file extensions to treat like ZIP
+     * files.
      */
     private String zipExtensions;
 
@@ -958,8 +979,8 @@ public class DependencyCheckTask extends Task {
     }
 
     /**
-     * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system
-     * properties required to change the proxy server, port, and connection timeout.
+     * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system properties
+     * required to change the proxy server, port, and connection timeout.
      */
     private void populateSettings() {
         Settings.initialize();
@@ -1015,6 +1036,8 @@ public class DependencyCheckTask extends Task {
         Settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
         //NUSPEC ANALYZER
         Settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
+        //CENTRAL ANALYZER
+        Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
         //NEXUS ANALYZER
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
         if (nexusUrl != null && !nexusUrl.isEmpty()) {

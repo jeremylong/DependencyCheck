@@ -72,7 +72,7 @@ public abstract class AbstractTokenizingFilter extends TokenFilter {
      * @return whether or not a new term was added
      */
     protected boolean addTerm() {
-        final boolean termAdded = tokens.size() > 0;
+        final boolean termAdded = !tokens.isEmpty();
         if (termAdded) {
             final String term = tokens.pop();
             clearAttributes();

@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.FileHandler;
@@ -57,6 +58,13 @@ public final class LogUtils {
             if (verboseLogFile != null && !verboseLogFile.isEmpty()) {
                 verboseLoggingEnabled = true;
                 final Logger logger = Logger.getLogger("");
+                final File logFile = new File(verboseLogFile);
+                final File logDir = logFile.getParentFile();
+                if (logDir != null && !logDir.isDirectory() && !logDir.mkdirs()) {
+                    final String msg = String.format("Unable to create directory '%s', verbose logging will be disabled.",
+                            logDir.getAbsolutePath());
+                    throw new IOException(msg);
+                }
                 final FileHandler fileHandler = new FileHandler(verboseLogFile, true);
                 fileHandler.setFormatter(new SimpleFormatter());
                 fileHandler.setLevel(Level.FINE);
@@ -75,7 +83,7 @@ public final class LogUtils {
             if (in != null) {
                 try {
                     in.close();
-                } catch (Throwable ex) {
+                } catch (IOException ex) {
                     LOGGER.log(Level.FINEST, "Error closing resource stream", ex);
                 }
             }

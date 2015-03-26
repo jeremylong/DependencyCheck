@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.lucene;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.lucene.util.Version;
 
 /**
@@ -28,10 +29,10 @@ import org.apache.lucene.util.Version;
 public final class LuceneUtils {
 
     /**
-     * The current version of Lucene being used. Declaring this one place so an upgrade doesn't require hunting through
-     * the code base.
+     * The current version of Lucene being used. Declaring this one place so an upgrade doesn't require hunting through the code
+     * base.
      */
-    public static final Version CURRENT_VERSION = Version.LUCENE_45;
+    public static final Version CURRENT_VERSION = Version.LUCENE_47;
 
     /**
      * Private constructor as this is a utility class.
@@ -46,7 +47,7 @@ public final class LuceneUtils {
      * @param text the data to be escaped
      */
     @SuppressWarnings("fallthrough")
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+    @SuppressFBWarnings(
             value = "SF_SWITCH_NO_DEFAULT",
             justification = "The switch below does have a default.")
     public static void appendEscapedLuceneQuery(StringBuilder buf,

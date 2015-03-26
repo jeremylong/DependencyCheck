@@ -25,6 +25,11 @@ package org.owasp.dependencycheck.data.nexus;
 public class MavenArtifact {
 
     /**
+     * The base URL for download artifacts from Central.
+     */
+    private static final String CENTRAL_CONTENT_URL = "http://search.maven.org/remotecontent?filepath=";
+
+    /**
      * The groupId
      */
     private String groupId;
@@ -43,6 +48,10 @@ public class MavenArtifact {
      * The artifact url. This may change depending on which Nexus server the search took place.
      */
     private String artifactUrl;
+    /**
+     * The url to download the POM from.
+     */
+    private String pomUrl;
 
     /**
      * Creates an empty MavenArtifact.
@@ -58,9 +67,34 @@ public class MavenArtifact {
      * @param version the version
      */
     public MavenArtifact(String groupId, String artifactId, String version) {
-        setGroupId(groupId);
-        setArtifactId(artifactId);
-        setVersion(version);
+        this.groupId = groupId;
+        this.artifactId = artifactId;
+        this.version = version;
+    }
+
+    /**
+     * Creates a MavenArtifact with the given attributes.
+     *
+     * @param groupId the groupId
+     * @param artifactId the artifactId
+     * @param version the version
+     * @param jarAvailable if the jar file is available from central
+     * @param pomAvailable if the pom file is available from central
+     */
+    public MavenArtifact(String groupId, String artifactId, String version, boolean jarAvailable, boolean pomAvailable) {
+        this.groupId = groupId;
+        this.artifactId = artifactId;
+        this.version = version;
+        if (jarAvailable) {
+            //org/springframework/spring-core/3.2.0.RELEASE/spring-core-3.2.0.RELEASE.pom
+            this.artifactUrl = this.CENTRAL_CONTENT_URL + groupId.replace('.', '/') + "/" + artifactId.replace('.', '/') + "/"
+                    + version + "/" + artifactId + "-" + version + ".jar";
+        }
+        if (pomAvailable) {
+            //org/springframework/spring-core/3.2.0.RELEASE/spring-core-3.2.0.RELEASE.pom
+            this.pomUrl = this.CENTRAL_CONTENT_URL + groupId.replace('.', '/') + "/" + artifactId.replace('.', '/') + "/"
+                    + version + "/" + artifactId + "-" + version + ".pom";
+        }
     }
 
     /**
@@ -72,10 +106,10 @@ public class MavenArtifact {
      * @param url the artifactLink url
      */
     public MavenArtifact(String groupId, String artifactId, String version, String url) {
-        setGroupId(groupId);
-        setArtifactId(artifactId);
-        setVersion(version);
-        setArtifactUrl(url);
+        this.groupId = groupId;
+        this.artifactId = artifactId;
+        this.version = version;
+        this.artifactUrl = url;
     }
 
     /**
@@ -159,6 +193,25 @@ public class MavenArtifact {
     public String getArtifactUrl() {
         return artifactUrl;
     }
+
+    /**
+     * Get the value of pomUrl.
+     *
+     * @return the value of pomUrl
+     */
+    public String getPomUrl() {
+        return pomUrl;
+    }
+
+    /**
+     * Set the value of pomUrl.
+     *
+     * @param pomUrl new value of pomUrl
+     */
+    public void setPomUrl(String pomUrl) {
+        this.pomUrl = pomUrl;
+    }
+
 }
 
 // vim: cc=120:sw=4:ts=4:sts=4

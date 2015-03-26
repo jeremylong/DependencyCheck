@@ -39,8 +39,7 @@ public class SearchFieldAnalyzer extends Analyzer {
      */
     private final Version version;
     /**
-     * A local reference to the TokenPairConcatenatingFilter so that we can clear any left over state if this analyzer
-     * is re-used.
+     * A local reference to the TokenPairConcatenatingFilter so that we can clear any left over state if this analyzer is re-used.
      */
     private TokenPairConcatenatingFilter concatenatingFilter;
 
@@ -85,8 +84,7 @@ public class SearchFieldAnalyzer extends Analyzer {
 
     /**
      * <p>
-     * Resets the analyzer and clears any internal state data that may have been left-over from previous uses of the
-     * analyzer.</p>
+     * Resets the analyzer and clears any internal state data that may have been left-over from previous uses of the analyzer.</p>
      * <p>
      * <b>If this analyzer is re-used this method must be called between uses.</b></p>
      */

@@ -51,8 +51,8 @@ import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 
 /**
- * CPEAnalyzer is a utility class that takes a project dependency and attempts to discern if there is an associated CPE.
- * It uses the evidence contained within the dependency to search the Lucene index.
+ * CPEAnalyzer is a utility class that takes a project dependency and attempts to discern if there is an associated CPE. It uses
+ * the evidence contained within the dependency to search the Lucene index.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -130,8 +130,8 @@ public class CPEAnalyzer implements Analyzer {
      * Opens the data source.
      *
      * @throws IOException when the Lucene directory to be queried does not exist or is corrupt.
-     * @throws DatabaseException when the database throws an exception. This usually occurs when the database is in use
-     * by another process.
+     * @throws DatabaseException when the database throws an exception. This usually occurs when the database is in use by another
+     * process.
      */
     public void open() throws IOException, DatabaseException {
         LOGGER.log(Level.FINE, "Opening the CVE Database");
@@ -161,8 +161,8 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * Searches the data store of CPE entries, trying to identify the CPE for the given dependency based on the evidence
-     * contained within. The dependency passed in is updated with any identified CPE values.
+     * Searches the data store of CPE entries, trying to identify the CPE for the given dependency based on the evidence contained
+     * within. The dependency passed in is updated with any identified CPE values.
      *
      * @param dependency the dependency to search for CPE entries on.
      * @throws CorruptIndexException is thrown when the Lucene index is corrupt.
@@ -176,24 +176,25 @@ public class CPEAnalyzer implements Analyzer {
         for (Confidence confidence : Confidence.values()) {
             if (dependency.getVendorEvidence().contains(confidence)) {
                 vendors = addEvidenceWithoutDuplicateTerms(vendors, dependency.getVendorEvidence(), confidence);
+                LOGGER.fine(String.format("vendor search: %s", vendors));
             }
             if (dependency.getProductEvidence().contains(confidence)) {
                 products = addEvidenceWithoutDuplicateTerms(products, dependency.getProductEvidence(), confidence);
+                LOGGER.fine(String.format("product search: %s", products));
             }
-            /* bug fix for #40 - version evidence is not showing up as "used" in the reports if there is no
-             * CPE identified. As such, we are "using" the evidence and ignoring the results. */
-//            if (dependency.getVersionEvidence().contains(confidence)) {
-//                addEvidenceWithoutDuplicateTerms("", dependency.getVersionEvidence(), confidence);
-//            }
             if (!vendors.isEmpty() && !products.isEmpty()) {
                 final List<IndexEntry> entries = searchCPE(vendors, products, dependency.getProductEvidence().getWeighting(),
                         dependency.getVendorEvidence().getWeighting());
-
+                if (entries == null) {
+                    continue;
+                }
                 boolean identifierAdded = false;
                 for (IndexEntry e : entries) {
+                    LOGGER.fine(String.format("Verifying entry: %s", e.toString()));
                     if (verifyEntry(e, dependency)) {
                         final String vendor = e.getVendor();
                         final String product = e.getProduct();
+                        LOGGER.fine(String.format("identified vendor/product: %s/%s", vendor, product));
                         identifierAdded |= determineIdentifiers(dependency, vendor, product, confidence);
                     }
                 }
@@ -205,9 +206,9 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * Returns the text created by concatenating the text and the values from the EvidenceCollection (filtered for a
-     * specific confidence). This attempts to prevent duplicate terms from being added.<br/<br/> Note, if the evidence
-     * is longer then 200 characters it will be truncated.
+     * Returns the text created by concatenating the text and the values from the EvidenceCollection (filtered for a specific
+     * confidence). This attempts to prevent duplicate terms from being added.<br/<br/> Note, if the evidence is longer then 200
+     * characters it will be truncated.
      *
      * @param text the base text.
      * @param ec an EvidenceCollection
@@ -242,49 +243,49 @@ public class CPEAnalyzer implements Analyzer {
      * version.</p>
      *
      * <p>
-     * If either the vendorWeightings or productWeightings lists have been populated this data is used to add weighting
-     * factors to the search.</p>
+     * If either the vendorWeightings or productWeightings lists have been populated this data is used to add weighting factors to
+     * the search.</p>
      *
      * @param vendor the text used to search the vendor field
      * @param product the text used to search the product field
      * @param vendorWeightings a list of strings to use to add weighting factors to the vendor field
      * @param productWeightings Adds a list of strings that will be used to add weighting factors to the product search
      * @return a list of possible CPE values
-     * @throws CorruptIndexException when the Lucene index is corrupt
-     * @throws IOException when the Lucene index is not found
-     * @throws ParseException when the generated query is not valid
      */
     protected List<IndexEntry> searchCPE(String vendor, String product,
-            Set<String> vendorWeightings, Set<String> productWeightings)
-            throws CorruptIndexException, IOException, ParseException {
-        final ArrayList<IndexEntry> ret = new ArrayList<IndexEntry>(MAX_QUERY_RESULTS);
+            Set<String> vendorWeightings, Set<String> productWeightings) {
+
+        final List<IndexEntry> ret = new ArrayList<IndexEntry>(MAX_QUERY_RESULTS);
 
         final String searchString = buildSearch(vendor, product, vendorWeightings, productWeightings);
         if (searchString == null) {
             return ret;
         }
-
-        final TopDocs docs = cpe.search(searchString, MAX_QUERY_RESULTS);
-        for (ScoreDoc d : docs.scoreDocs) {
-            if (d.score >= 0.08) {
-                final Document doc = cpe.getDocument(d.doc);
-                final IndexEntry entry = new IndexEntry();
-                entry.setVendor(doc.get(Fields.VENDOR));
-                entry.setProduct(doc.get(Fields.PRODUCT));
-//                if (d.score < 0.08) {
-//                    System.out.print(entry.getVendor());
-//                    System.out.print(":");
-//                    System.out.print(entry.getProduct());
-//                    System.out.print(":");
-//                    System.out.println(d.score);
-//                }
-                entry.setSearchScore(d.score);
-                if (!ret.contains(entry)) {
-                    ret.add(entry);
+        try {
+            final TopDocs docs = cpe.search(searchString, MAX_QUERY_RESULTS);
+            for (ScoreDoc d : docs.scoreDocs) {
+                if (d.score >= 0.08) {
+                    final Document doc = cpe.getDocument(d.doc);
+                    final IndexEntry entry = new IndexEntry();
+                    entry.setVendor(doc.get(Fields.VENDOR));
+                    entry.setProduct(doc.get(Fields.PRODUCT));
+                    entry.setSearchScore(d.score);
+                    if (!ret.contains(entry)) {
+                        ret.add(entry);
+                    }
                 }
             }
+            return ret;
+        } catch (ParseException ex) {
+            final String msg = String.format("Unable to parse: %s", searchString);
+            LOGGER.log(Level.WARNING, "An error occured querying the CPE data. See the log for more details.");
+            LOGGER.log(Level.INFO, msg, ex);
+        } catch (IOException ex) {
+            final String msg = String.format("IO Error with search string: %s", searchString);
+            LOGGER.log(Level.WARNING, "An error occured reading CPE data. See the log for more details.");
+            LOGGER.log(Level.INFO, msg, ex);
         }
-        return ret;
+        return null;
     }
 
     /**
@@ -292,8 +293,8 @@ public class CPEAnalyzer implements Analyzer {
      * Builds a Lucene search string by properly escaping data and constructing a valid search query.</p>
      *
      * <p>
-     * If either the possibleVendor or possibleProducts lists have been populated this data is used to add weighting
-     * factors to the search string generated.</p>
+     * If either the possibleVendor or possibleProducts lists have been populated this data is used to add weighting factors to
+     * the search string generated.</p>
      *
      * @param vendor text to search the vendor field
      * @param product text to search the product field
@@ -319,9 +320,8 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * This method constructs a Lucene query for a given field. The searchText is split into separate words and if the
-     * word is within the list of weighted words then an additional weighting is applied to the term as it is appended
-     * into the query.
+     * This method constructs a Lucene query for a given field. The searchText is split into separate words and if the word is
+     * within the list of weighted words then an additional weighting is applied to the term as it is appended into the query.
      *
      * @param sb a StringBuilder that the query text will be appended to.
      * @param field the field within the Lucene index that the query is searching.
@@ -392,8 +392,8 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * Ensures that the CPE Identified matches the dependency. This validates that the product, vendor, and version
-     * information for the CPE are contained within the dependencies evidence.
+     * Ensures that the CPE Identified matches the dependency. This validates that the product, vendor, and version information
+     * for the CPE are contained within the dependencies evidence.
      *
      * @param entry a CPE entry.
      * @param dependency the dependency that the CPE entries could be for.
@@ -482,17 +482,19 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * Retrieves a list of CPE values from the CveDB based on the vendor and product passed in. The list is then
-     * validated to find only CPEs that are valid for the given dependency. It is possible that the CPE identified is a
-     * best effort "guess" based on the vendor, product, and version information.
+     * Retrieves a list of CPE values from the CveDB based on the vendor and product passed in. The list is then validated to find
+     * only CPEs that are valid for the given dependency. It is possible that the CPE identified is a best effort "guess" based on
+     * the vendor, product, and version information.
      *
      * @param dependency the Dependency being analyzed
      * @param vendor the vendor for the CPE being analyzed
      * @param product the product for the CPE being analyzed
+     * @param currentConfidence the current confidence being used during analysis
      * @return <code>true</code> if an identifier was added to the dependency; otherwise <code>false</code>
      * @throws UnsupportedEncodingException is thrown if UTF-8 is not supported
      */
-    private boolean determineIdentifiers(Dependency dependency, String vendor, String product, Confidence currentConfidence) throws UnsupportedEncodingException {
+    protected boolean determineIdentifiers(Dependency dependency, String vendor, String product,
+            Confidence currentConfidence) throws UnsupportedEncodingException {
         final Set<VulnerableSoftware> cpes = cve.getCPEs(vendor, product);
         DependencyVersion bestGuess = new DependencyVersion("-");
         Confidence bestGuessConf = null;
@@ -590,8 +592,8 @@ public class CPEAnalyzer implements Analyzer {
          */
         BEST_GUESS,
         /**
-         * The entire vendor/product group must be added (without a guess at version) because there is a CVE with a VS
-         * that only specifies vendor/product.
+         * The entire vendor/product group must be added (without a guess at version) because there is a CVE with a VS that only
+         * specifies vendor/product.
          */
         BROAD_MATCH
     }
@@ -739,8 +741,7 @@ public class CPEAnalyzer implements Analyzer {
         //</editor-fold>
 
         /**
-         * Standard implementation of compareTo that compares identifier confidence, evidence confidence, and then the
-         * identifier.
+         * Standard implementation of compareTo that compares identifier confidence, evidence confidence, and then the identifier.
          *
          * @param o the IdentifierMatch to compare to
          * @return the natural ordering of IdentifierMatch

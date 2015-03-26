@@ -48,12 +48,13 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.utils.Pair;
 
 /**
- * An in memory lucene index that contains the vendor/product combinations from the CPE (application) identifiers within
- * the NVD CVE data.
+ * An in memory lucene index that contains the vendor/product combinations from the CPE (application) identifiers within the NVD
+ * CVE data.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
 public final class CpeMemoryIndex {
+
     /**
      * The logger.
      */
@@ -61,7 +62,7 @@ public final class CpeMemoryIndex {
     /**
      * singleton instance.
      */
-    private static CpeMemoryIndex instance = new CpeMemoryIndex();
+    private static final CpeMemoryIndex INSTANCE = new CpeMemoryIndex();
 
     /**
      * private constructor for singleton.
@@ -75,7 +76,7 @@ public final class CpeMemoryIndex {
      * @return the instance of the CpeMemoryIndex
      */
     public static CpeMemoryIndex getInstance() {
-        return instance;
+        return INSTANCE;
     }
     /**
      * The in memory Lucene index.
@@ -113,18 +114,20 @@ public final class CpeMemoryIndex {
      * @throws IndexException thrown if there is an error creating the index
      */
     public void open(CveDB cve) throws IndexException {
-        if (!openState) {
-            index = new RAMDirectory();
-            buildIndex(cve);
-            try {
-                indexReader = DirectoryReader.open(index);
-            } catch (IOException ex) {
-                throw new IndexException(ex);
+        synchronized (INSTANCE) {
+            if (!openState) {
+                index = new RAMDirectory();
+                buildIndex(cve);
+                try {
+                    indexReader = DirectoryReader.open(index);
+                } catch (IOException ex) {
+                    throw new IndexException(ex);
+                }
+                indexSearcher = new IndexSearcher(indexReader);
+                searchingAnalyzer = createSearchingAnalyzer();
+                queryParser = new QueryParser(LuceneUtils.CURRENT_VERSION, Fields.DOCUMENT_KEY, searchingAnalyzer);
+                openState = true;
             }
-            indexSearcher = new IndexSearcher(indexReader);
-            searchingAnalyzer = createSearchingAnalyzer();
-            queryParser = new QueryParser(LuceneUtils.CURRENT_VERSION, Fields.DOCUMENT_KEY, searchingAnalyzer);
-            openState = true;
         }
     }
     /**
@@ -160,7 +163,7 @@ public final class CpeMemoryIndex {
      */
     @SuppressWarnings("unchecked")
     private Analyzer createSearchingAnalyzer() {
-        final Map fieldAnalyzers = new HashMap();
+        final Map<String, Analyzer> fieldAnalyzers = new HashMap<String, Analyzer>();
         fieldAnalyzers.put(Fields.DOCUMENT_KEY, new KeywordAnalyzer());
         productSearchFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
         vendorSearchFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);

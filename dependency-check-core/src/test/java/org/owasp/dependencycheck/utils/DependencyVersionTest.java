@@ -165,6 +165,14 @@ public class DependencyVersionTest {
         version = new DependencyVersion("1.2.3.1");
         assertEquals(-1, instance.compareTo(version));
 
+        instance = new DependencyVersion("1.0.1n");
+        version = new DependencyVersion("1.0.1m");
+        assertEquals(1, instance.compareTo(version));
+        version = new DependencyVersion("1.0.1n");
+        assertEquals(0, instance.compareTo(version));
+        version = new DependencyVersion("1.0.1o");
+        assertEquals(-1, instance.compareTo(version));
+
         DependencyVersion[] dv = new DependencyVersion[7];
         dv[0] = new DependencyVersion("2.1.3");
         dv[1] = new DependencyVersion("2.1.3.r2");

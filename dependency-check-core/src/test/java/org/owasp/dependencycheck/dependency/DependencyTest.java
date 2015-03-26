@@ -23,10 +23,13 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 
 /**
  *
@@ -150,9 +153,11 @@ public class DependencyTest {
      */
     @Test
     public void testGetMd5sum() {
-        File file = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
+        //File file = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
+        File file = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
+
         Dependency instance = new Dependency(file);
-//        assertEquals("89CE9E36AA9A9E03F1450936D2F4F8DD0F961F8B", result.getSha1sum());
+        //assertEquals("89CE9E36AA9A9E03F1450936D2F4F8DD0F961F8B", result.getSha1sum());
         String expResult = "C30B57142E1CCBC1EFD5CD15F307358F";
         String result = instance.getMd5sum();
         assertEquals(expResult, result);
@@ -174,7 +179,8 @@ public class DependencyTest {
      */
     @Test
     public void testGetSha1sum() {
-        File file = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
+        //File file = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
+        File file = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
         Dependency instance = new Dependency(file);
         String expResult = "89CE9E36AA9A9E03F1450936D2F4F8DD0F961F8B";
         String result = instance.getSha1sum();
@@ -293,5 +299,35 @@ public class DependencyTest {
         EvidenceCollection expResult = null;
         EvidenceCollection result = instance.getVersionEvidence();
         assertTrue(true); //this is just a getter setter pair.
+    }
+
+    /**
+     * Test of addAsEvidence method, of class Dependency.
+     */
+    @Test
+    public void testAddAsEvidence() {
+        Dependency instance = new Dependency();
+        MavenArtifact mavenArtifact = new MavenArtifact("group", "artifact", "version", "url");
+        instance.addAsEvidence("pom", mavenArtifact, Confidence.HIGH);
+        assertTrue(instance.getEvidence().contains(Confidence.HIGH));
+        assertFalse(instance.getEvidence().getEvidence("pom", "groupid").isEmpty());
+        assertFalse(instance.getEvidence().getEvidence("pom", "artifactid").isEmpty());
+        assertFalse(instance.getEvidence().getEvidence("pom", "version").isEmpty());
+        assertFalse(instance.getIdentifiers().isEmpty());
+    }
+
+    /**
+     * Test of addAsEvidence method, of class Dependency.
+     */
+    @Test
+    public void testAddAsEvidenceWithEmptyArtefact() {
+        Dependency instance = new Dependency();
+        MavenArtifact mavenArtifact = new MavenArtifact(null, null, null, null);
+        instance.addAsEvidence("pom", mavenArtifact, Confidence.HIGH);
+        assertFalse(instance.getEvidence().contains(Confidence.HIGH));
+        assertTrue(instance.getEvidence().getEvidence("pom", "groupid").isEmpty());
+        assertTrue(instance.getEvidence().getEvidence("pom", "artifactid").isEmpty());
+        assertTrue(instance.getEvidence().getEvidence("pom", "version").isEmpty());
+        assertTrue(instance.getIdentifiers().isEmpty());
     }
 }

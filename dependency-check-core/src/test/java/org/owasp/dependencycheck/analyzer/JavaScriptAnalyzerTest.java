@@ -38,7 +38,7 @@ public class JavaScriptAnalyzerTest extends BaseTest {
     @Test
     public void testGetSupportedExtensions() {
         JavaScriptAnalyzer instance = new JavaScriptAnalyzer();
-        Set expResult = new HashSet<String>();
+        Set<String> expResult = new HashSet<String>();
         expResult.add("js");
         Set result = instance.getSupportedExtensions();
         assertEquals(expResult, result);
@@ -84,9 +84,12 @@ public class JavaScriptAnalyzerTest extends BaseTest {
      */
     @Test
     public void testAnalyze() throws Exception {
-        File jq6 = new File(this.getClass().getClassLoader().getResource("jquery-1.6.2.min.js").getPath());
-        File jq10 = new File(this.getClass().getClassLoader().getResource("jquery-1.10.2.js").getPath());
-        File jq10min = new File(this.getClass().getClassLoader().getResource("jquery-1.10.2.min.js").getPath());
+        //File jq6 = new File(this.getClass().getClassLoader().getResource("jquery-1.6.2.min.js").getPath());
+        File jq6 = BaseTest.getResourceAsFile(this, "jquery-1.6.2.min.js");
+        //File jq10 = new File(this.getClass().getClassLoader().getResource("jquery-1.10.2.js").getPath());
+        File jq10 = BaseTest.getResourceAsFile(this, "jquery-1.10.2.js");
+        //File jq10min = new File(this.getClass().getClassLoader().getResource("jquery-1.10.2.min.js").getPath());
+        File jq10min = BaseTest.getResourceAsFile(this, "jquery-1.10.2.min.js");
         Dependency depJQ6 = new Dependency(jq6);
         Dependency depJQ10 = new Dependency(jq10);
         Dependency depJQ10min = new Dependency(jq10min);

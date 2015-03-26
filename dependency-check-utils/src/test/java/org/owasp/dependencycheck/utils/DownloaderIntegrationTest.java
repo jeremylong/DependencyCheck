@@ -42,12 +42,12 @@ public class DownloaderIntegrationTest extends BaseTest {
         URL url = new URL(Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL));
         File outputPath = new File("target/downloaded_cve.xml");
         Downloader.fetchFile(url, outputPath);
-
+        assertTrue(outputPath.isFile());
     }
 
     @Test
     public void testGetLastModified() throws Exception {
-        URL url = new URL("http://nvd.nist.gov/download/nvdcve-2012.xml");
+        URL url = new URL(Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL));
         long timestamp = Downloader.getLastModified(url);
         assertTrue("timestamp equal to zero?", timestamp > 0);
     }

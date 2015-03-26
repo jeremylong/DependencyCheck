@@ -20,16 +20,10 @@ package org.owasp.dependencycheck.data.lucene;
 import java.io.IOException;
 import java.io.Reader;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.Analyzer.TokenStreamComponents;
 import org.apache.lucene.analysis.BaseTokenStreamTestCase;
-import static org.apache.lucene.analysis.BaseTokenStreamTestCase.checkOneTerm;
 import org.apache.lucene.analysis.MockTokenizer;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.KeywordTokenizer;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 
 /**
  *
@@ -48,24 +42,6 @@ public class UrlTokenizingFilterTest extends BaseTokenStreamTestCase {
                 return new TokenStreamComponents(source, new UrlTokenizingFilter(source));
             }
         };
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     /**
@@ -102,6 +78,6 @@ public class UrlTokenizingFilterTest extends BaseTokenStreamTestCase {
                 return new TokenStreamComponents(tokenizer, new UrlTokenizingFilter(tokenizer));
             }
         };
-        checkOneTermReuse(a, "", "");
+        checkOneTerm(a, "", "");
     }
 }

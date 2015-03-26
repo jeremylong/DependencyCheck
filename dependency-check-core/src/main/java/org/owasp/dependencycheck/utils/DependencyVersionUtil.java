@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.utils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,7 +33,7 @@ public final class DependencyVersionUtil {
     /**
      * Regular expression to extract version numbers from file names.
      */
-    private static final Pattern RX_VERSION = Pattern.compile("\\d+(\\.\\d{1,6})+(\\.?([_-](release|beta|alpha)|[a-zA-Z_-]{1,3}\\d{1,8}))?");
+    private static final Pattern RX_VERSION = Pattern.compile("\\d+(\\.\\d{1,6})+(\\.?([_-](release|beta|alpha|\\d+)|[a-zA-Z_-]{1,3}\\d{0,8}))?");
     /**
      * Regular expression to extract a single version number without periods. This is a last ditch effort just to check
      * in case we are missing a version number using the previous regex.
@@ -62,7 +63,7 @@ public final class DependencyVersionUtil {
         //'-' is a special case used within the CVE entries, just include it as the version.
         if ("-".equals(text)) {
             final DependencyVersion dv = new DependencyVersion();
-            final ArrayList<String> list = new ArrayList<String>();
+            final List<String> list = new ArrayList<String>();
             list.add(text);
             dv.setVersionParts(list);
             return dv;

@@ -91,7 +91,7 @@ public class DatabaseProperties {
     }
 
     /**
-     * Writes a properties file containing the last updated date to the VULNERABLE_CPE directory.
+     * Saves the last updated information to the properties file.
      *
      * @param updatedValue the updated NVD CVE entry
      * @throws UpdateException is thrown if there is an update exception
@@ -100,8 +100,19 @@ public class DatabaseProperties {
         if (updatedValue == null) {
             return;
         }
-        properties.put(LAST_UPDATED_BASE + updatedValue.getId(), String.valueOf(updatedValue.getTimestamp()));
-        cveDB.saveProperty(LAST_UPDATED_BASE + updatedValue.getId(), String.valueOf(updatedValue.getTimestamp()));
+        save(LAST_UPDATED_BASE + updatedValue.getId(), String.valueOf(updatedValue.getTimestamp()));
+    }
+
+    /**
+     * Saves the key value pair to the properties store.
+     *
+     * @param key the property key
+     * @param value the property value
+     * @throws UpdateException is thrown if there is an update exception
+     */
+    public void save(String key, String value) throws UpdateException {
+        properties.put(key, value);
+        cveDB.saveProperty(key, value);
     }
 
     /**
@@ -142,8 +153,8 @@ public class DatabaseProperties {
      *
      * @return a map of the database meta data
      */
-    public Map getMetaData() {
-        final TreeMap map = new TreeMap();
+    public Map<String, String> getMetaData() {
+        final Map<String, String> map = new TreeMap<String, String>();
         for (Entry<Object, Object> entry : properties.entrySet()) {
             final String key = (String) entry.getKey();
             if (!"version".equals(key)) {
@@ -156,10 +167,10 @@ public class DatabaseProperties {
                         map.put(key, formatted);
                     } catch (Throwable ex) { //deliberately being broad in this catch clause
                         LOGGER.log(Level.FINE, "Unable to parse timestamp from DB", ex);
-                        map.put(key, entry.getValue());
+                        map.put(key, (String) entry.getValue());
                     }
                 } else {
-                    map.put(key, entry.getValue());
+                    map.put(key, (String) entry.getValue());
                 }
             }
         }

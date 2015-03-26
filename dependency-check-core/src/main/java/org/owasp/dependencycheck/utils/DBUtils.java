@@ -54,7 +54,9 @@ public final class DBUtils {
         int id = 0;
         try {
             rs = statement.getGeneratedKeys();
-            rs.next();
+            if (!rs.next()) {
+                throw new DatabaseException("Unable to get primary key for inserted row");
+            }
             id = rs.getInt(1);
         } catch (SQLException ex) {
             throw new DatabaseException("Unable to get primary key for inserted row");

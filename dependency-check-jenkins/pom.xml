@@ -3,9 +3,8 @@
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>1.2.6-SNAPSHOT</version>
+        <version>1.2.10-SNAPSHOT</version>
     </parent>
-    <groupId>org.owasp</groupId>
     <artifactId>dependency-check-jenkins</artifactId>
     <name>Dependency-Check Jenkins Plugin</name>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/OWASP+Dependency-Check+Plugin</url>
@@ -59,7 +58,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.3</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.apache.maven.doxia</groupId>

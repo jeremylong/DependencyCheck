@@ -28,6 +28,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -422,7 +423,8 @@ public class SuppressionRuleTest {
      */
     @Test
     public void testProcess() {
-        File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
+        //File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
+        File struts = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
         Dependency dependency = new Dependency(struts);
         dependency.addIdentifier("cpe", "cpe:/a:microsoft:.net_framework:4.5", "some url not needed for this test");
         String sha1 = dependency.getSha1sum();
@@ -501,7 +503,8 @@ public class SuppressionRuleTest {
      */
     @Test
     public void testProcessGAV() {
-        File spring = new File(this.getClass().getClassLoader().getResource("spring-security-web-3.0.0.RELEASE.jar").getPath());
+        //File spring = new File(this.getClass().getClassLoader().getResource("spring-security-web-3.0.0.RELEASE.jar").getPath());
+        File spring = BaseTest.getResourceAsFile(this, "spring-security-web-3.0.0.RELEASE.jar");
         Dependency dependency = new Dependency(spring);
         dependency.addIdentifier("cpe", "cpe:/a:vmware:springsource_spring_framework:3.0.0", "some url not needed for this test");
         dependency.addIdentifier("cpe", "cpe:/a:springsource:spring_framework:3.0.0", "some url not needed for this test");

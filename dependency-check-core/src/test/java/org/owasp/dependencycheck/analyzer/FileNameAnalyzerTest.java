@@ -21,6 +21,7 @@ import java.io.File;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.dependency.Dependency;
 
 /**
@@ -56,9 +57,11 @@ public class FileNameAnalyzerTest {
      */
     @Test
     public void testAnalyze() throws Exception {
-        File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
+        //File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
+        File struts = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
         Dependency resultStruts = new Dependency(struts);
-        File axis = new File(this.getClass().getClassLoader().getResource("axis2-adb-1.4.1.jar").getPath());
+        //File axis = new File(this.getClass().getClassLoader().getResource("axis2-adb-1.4.1.jar").getPath());
+        File axis = BaseTest.getResourceAsFile(this, "axis2-adb-1.4.1.jar");
         Dependency resultAxis = new Dependency(axis);
         FileNameAnalyzer instance = new FileNameAnalyzer();
         instance.analyze(resultStruts, null);

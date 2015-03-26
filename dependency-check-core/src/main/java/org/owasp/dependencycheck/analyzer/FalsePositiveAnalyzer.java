@@ -93,12 +93,17 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         addFalseNegativeCPEs(dependency);
     }
 
+    /**
+     * Removes inaccurate matches on springframework CPEs.
+     *
+     * @param dependency the dependency to test for and remove known inaccurate CPE matches
+     */
     private void removeBadSpringMatches(Dependency dependency) {
         String mustContain = null;
         for (Identifier i : dependency.getIdentifiers()) {
             if ("maven".contains(i.getType())) {
                 if (i.getValue() != null && i.getValue().startsWith("org.springframework.")) {
-                    int endPoint = i.getValue().indexOf(":", 19);
+                    final int endPoint = i.getValue().indexOf(":", 19);
                     if (endPoint >= 0) {
                         mustContain = i.getValue().substring(19, endPoint).toLowerCase();
                         break;
@@ -107,9 +112,9 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
             }
         }
         if (mustContain != null) {
-            Iterator<Identifier> itr = dependency.getIdentifiers().iterator();
+            final Iterator<Identifier> itr = dependency.getIdentifiers().iterator();
             while (itr.hasNext()) {
-                Identifier i = itr.next();
+                final Identifier i = itr.next();
                 if ("cpe".contains(i.getType())
                         && i.getValue() != null
                         && i.getValue().startsWith("cpe:/a:springsource:")
@@ -117,7 +122,6 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                     itr.remove();
                     //dependency.getIdentifiers().remove(i);
                 }
-
             }
         }
     }

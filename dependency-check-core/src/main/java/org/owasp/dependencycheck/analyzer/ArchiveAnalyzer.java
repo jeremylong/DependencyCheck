@@ -110,7 +110,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     static {
         final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
         if (additionalZipExt != null) {
-            final HashSet ext = new HashSet<String>(Arrays.asList(additionalZipExt));
+            final Set<String> ext = new HashSet<String>(Arrays.asList(additionalZipExt));
             ZIPPABLES.addAll(ext);
         }
         EXTENSIONS.addAll(ZIPPABLES);
@@ -186,7 +186,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         if (tempFileLocation != null && tempFileLocation.exists()) {
             LOGGER.log(Level.FINE, "Attempting to delete temporary files");
             final boolean success = FileUtils.delete(tempFileLocation);
-            if (!success && tempFileLocation != null & tempFileLocation.exists()) {
+            if (!success && tempFileLocation != null && tempFileLocation.exists() && tempFileLocation.list().length > 0) {
                 LOGGER.log(Level.WARNING, "Failed to delete some temporary files, see the log for more details");
             }
         }
@@ -221,9 +221,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 final String displayPath = String.format("%s%s",
                         dependency.getFilePath(),
                         d.getActualFilePath().substring(tmpDir.getAbsolutePath().length()));
-                final String displayName = String.format("%s%s%s",
+                final String displayName = String.format("%s: %s",
                         dependency.getFileName(),
-                        File.separator,
                         d.getFileName());
                 d.setFilePath(displayPath);
                 d.setFileName(displayName);
@@ -339,7 +338,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             try {
                 fis.close();
             } catch (IOException ex) {
-                LOGGER.log(Level.FINEST, null, ex);
+                LOGGER.log(Level.FINE, null, ex);
             }
         }
     }
@@ -368,8 +367,10 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                     final File file = new File(destination, entry.getName());
                     final String ext = FileUtils.getFileExtension(file.getName());
                     if (engine.supportsExtension(ext)) {
+                        final String extracting = String.format("Extracting '%s'", file.getPath());
+                        LOGGER.fine(extracting);
                         BufferedOutputStream bos = null;
-                        FileOutputStream fos;
+                        FileOutputStream fos = null;
                         try {
                             final File parent = file.getParentFile();
                             if (!parent.isDirectory()) {
@@ -381,7 +382,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                             fos = new FileOutputStream(file);
                             bos = new BufferedOutputStream(fos, BUFFER_SIZE);
                             int count;
-                            final byte data[] = new byte[BUFFER_SIZE];
+                            final byte[] data = new byte[BUFFER_SIZE];
                             while ((count = input.read(data, 0, BUFFER_SIZE)) != -1) {
                                 bos.write(data, 0, count);
                             }
@@ -398,6 +399,13 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                             if (bos != null) {
                                 try {
                                     bos.close();
+                                } catch (IOException ex) {
+                                    LOGGER.log(Level.FINEST, null, ex);
+                                }
+                            }
+                            if (fos != null) {
+                                try {
+                                    fos.close();
                                 } catch (IOException ex) {
                                     LOGGER.log(Level.FINEST, null, ex);
                                 }
@@ -429,6 +437,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws ArchiveExtractionException thrown if there is an exception decompressing the file
      */
     private void decompressFile(CompressorInputStream inputStream, File outputFile) throws ArchiveExtractionException {
+        final String msg = String.format("Decompressing '%s'", outputFile.getPath());
+        LOGGER.fine(msg);
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(outputFile);

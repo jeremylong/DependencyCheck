@@ -69,12 +69,15 @@ public class HintAnalyzerTest extends BaseTest {
     public void testAnalyze() throws Exception {
         HintAnalyzer instance = new HintAnalyzer();
 
-        File guice = new File(this.getClass().getClassLoader().getResource("guice-3.0.jar").getPath());
+        //File guice = new File(this.getClass().getClassLoader().getResource("guice-3.0.jar").getPath());
+        File guice = BaseTest.getResourceAsFile(this, "guice-3.0.jar");
         //Dependency guice = new Dependency(fileg);
-        File spring = new File(this.getClass().getClassLoader().getResource("spring-core-3.0.0.RELEASE.jar").getPath());
+        //File spring = new File(this.getClass().getClassLoader().getResource("spring-core-3.0.0.RELEASE.jar").getPath());
+        File spring = BaseTest.getResourceAsFile(this, "spring-core-3.0.0.RELEASE.jar");
         //Dependency spring = new Dependency(files);
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
         Engine engine = new Engine();
 
         engine.scan(guice);

@@ -112,7 +112,7 @@ public class SuppressionRule {
      * @return whether or not this suppression rule as CPE entries
      */
     public boolean hasCpe() {
-        return cpe.size() > 0;
+        return !cpe.isEmpty();
     }
     /**
      * The list of cvssBelow scores.
@@ -152,7 +152,7 @@ public class SuppressionRule {
      * @return whether or not this suppression rule has cvss suppressions
      */
     public boolean hasCvssBelow() {
-        return cvssBelow.size() > 0;
+        return !cvssBelow.isEmpty();
     }
     /**
      * The list of cwe entries to suppress.
@@ -192,7 +192,7 @@ public class SuppressionRule {
      * @return whether this suppression rule has CWE entries
      */
     public boolean hasCwe() {
-        return cwe.size() > 0;
+        return !cwe.isEmpty();
     }
     /**
      * The list of cve entries to suppress.
@@ -232,7 +232,7 @@ public class SuppressionRule {
      * @return whether this suppression rule has CVE entries
      */
     public boolean hasCve() {
-        return cve.size() > 0;
+        return !cve.isEmpty();
     }
     /**
      * A Maven GAV to suppression.
@@ -266,10 +266,14 @@ public class SuppressionRule {
         return gav != null;
     }
 
+    /**
+     * A flag indicating whether or not the suppression rule is a core/base rule that should not be included in the
+     * resulting report in the "suppressed" section.
+     */
     private boolean base;
 
     /**
-     * Get the value of base
+     * Get the value of base.
      *
      * @return the value of base
      */
@@ -278,7 +282,7 @@ public class SuppressionRule {
     }
 
     /**
-     * Set the value of base
+     * Set the value of base.
      *
      * @param base new value of base
      */
@@ -446,28 +450,28 @@ public class SuppressionRule {
         if (gav != null) {
             sb.append("gav=").append(gav).append(",");
         }
-        if (cpe != null && cpe.size() > 0) {
+        if (cpe != null && !cpe.isEmpty()) {
             sb.append("cpe={");
             for (PropertyType pt : cpe) {
                 sb.append(pt).append(",");
             }
             sb.append("}");
         }
-        if (cwe != null && cwe.size() > 0) {
+        if (cwe != null && !cwe.isEmpty()) {
             sb.append("cwe={");
             for (String s : cwe) {
                 sb.append(s).append(",");
             }
             sb.append("}");
         }
-        if (cve != null && cve.size() > 0) {
+        if (cve != null && !cve.isEmpty()) {
             sb.append("cve={");
             for (String s : cve) {
                 sb.append(s).append(",");
             }
             sb.append("}");
         }
-        if (cvssBelow != null && cvssBelow.size() > 0) {
+        if (cvssBelow != null && !cvssBelow.isEmpty()) {
             sb.append("cvssBelow={");
             for (Float s : cvssBelow) {
                 sb.append(s).append(",");

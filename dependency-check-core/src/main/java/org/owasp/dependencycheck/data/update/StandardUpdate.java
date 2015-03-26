@@ -36,6 +36,7 @@ import org.owasp.dependencycheck.data.update.exception.InvalidDataException;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.data.update.task.DownloadTask;
 import org.owasp.dependencycheck.data.update.task.ProcessTask;
+import org.owasp.dependencycheck.utils.DateUtil;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
@@ -220,7 +221,7 @@ public class StandardUpdate {
                 final int days = Settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS, 7);
                 if (lastUpdated == updates.getTimeStamp(MODIFIED)) {
                     updates.clear(); //we don't need to update anything.
-                } else if (withinRange(lastUpdated, now.getTime(), days)) {
+                } else if (DateUtil.withinDateRange(lastUpdated, now.getTime(), days)) {
                     for (NvdCveInfo entry : updates) {
                         if (MODIFIED.equals(entry.getId())) {
                             entry.setNeedsUpdate(true);
@@ -316,20 +317,5 @@ public class StandardUpdate {
             LOGGER.log(Level.FINE, "Database Exception opening databases", ex);
             throw new UpdateException("Error updating the CPE/CVE data, please see the log file for more details.");
         }
-    }
-
-    /**
-     * Determines if the epoch date is within the range specified of the compareTo epoch time. This takes the
-     * (compareTo-date)/1000/60/60/24 to get the number of days. If the calculated days is less then the range the date
-     * is considered valid.
-     *
-     * @param date the date to be checked.
-     * @param compareTo the date to compare to.
-     * @param range the range in days to be considered valid.
-     * @return whether or not the date is within the range.
-     */
-    protected boolean withinRange(long date, long compareTo, int range) {
-        final double differenceInDays = (compareTo - date) / 1000.0 / 60.0 / 60.0 / 24.0;
-        return differenceInDays < range;
     }
 }

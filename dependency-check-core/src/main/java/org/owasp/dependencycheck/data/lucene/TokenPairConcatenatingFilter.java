@@ -92,7 +92,7 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
 
         //if we have a previousTerm - write it out as its own token concatenated
         // with the current word (if one is available).
-        if (previousWord != null && words.size() > 0) {
+        if (previousWord != null && !words.isEmpty()) {
             final String word = words.getFirst();
             clearAttributes();
             termAtt.append(previousWord).append(word);
@@ -100,7 +100,7 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
             return true;
         }
         //if we have words, write it out as a single token
-        if (words.size() > 0) {
+        if (!words.isEmpty()) {
             final String word = words.removeFirst();
             clearAttributes();
             termAtt.append(word);

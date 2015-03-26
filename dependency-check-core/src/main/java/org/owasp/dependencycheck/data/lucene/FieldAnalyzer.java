@@ -29,8 +29,8 @@ import org.apache.lucene.util.Version;
 
 /**
  * <p>
- * A Lucene Analyzer that utilizes the WhitespaceTokenizer, WordDelimiterFilter, LowerCaseFilter, and StopFilter. The
- * intended purpose of this Analyzer is to index the CPE fields vendor and product.</p>
+ * A Lucene Analyzer that utilizes the WhitespaceTokenizer, WordDelimiterFilter, LowerCaseFilter, and StopFilter. The intended
+ * purpose of this Analyzer is to index the CPE fields vendor and product.</p>
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */

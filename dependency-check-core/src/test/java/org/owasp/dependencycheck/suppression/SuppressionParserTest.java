@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 
 /**
  * Test of the suppression parser.
@@ -57,7 +58,8 @@ public class SuppressionParserTest {
      */
     @Test
     public void testParseSuppressionRules() throws Exception {
-        File file = new File(this.getClass().getClassLoader().getResource("suppressions.xml").getPath());
+        //File file = new File(this.getClass().getClassLoader().getResource("suppressions.xml").getPath());
+        File file = BaseTest.getResourceAsFile(this, "suppressions.xml");
         SuppressionParser instance = new SuppressionParser();
         List result = instance.parseSuppressionRules(file);
         assertTrue(result.size() > 3);

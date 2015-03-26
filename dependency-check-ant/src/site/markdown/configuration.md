@@ -46,17 +46,18 @@ Note, that specific analyzers will automatically disable themselves if no file
 types that they support are detected - so specifically disabling them may not
 be needed.
 
-Property                | Description                        | Default Value
-------------------------|------------------------------------|------------------
-archiveAnalyzerEnabled  | Sets whether the Archive Analyzer will be used.                    | true
+Property                | Description                                                               | Default Value
+------------------------|---------------------------------------------------------------------------|------------------
+archiveAnalyzerEnabled  | Sets whether the Archive Analyzer will be used.                           | true
 zipExtensions           | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
-jarAnalyzer             | Sets whether Jar Analyzer will be used.                            | true
-nexusAnalyzerEnabled    | Sets whether Nexus Analyzer will be used.                          | true
-nexusUrl                | Defines the Nexus URL. | https://repository.sonatype.org/service/local/
+jarAnalyzer             | Sets whether the Jar Analyzer will be used.                                   | true
+centralAnalyzerEnabled  | Sets whether the Central Analyzer will be used. **Disabling this analyzer is not recommended as it could lead to false negatives (e.g. libraries that have vulnerabilities may not be reported correctly).** If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer (see below).                                  | true
+nexusAnalyzerEnabled    | Sets whether Nexus Analyzer will be used. This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
+nexusUrl                | Defines the Nexus Pro URL. If not set the Nexus Analyzer will be disabled. | &nbsp;
 nexusUsesProxy          | Whether or not the defined proxy should be used when connecting to Nexus. | true
-nuspecAnalyzerEnabled  | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.   | true
-assemblyAnalyzerEnabled | Sets whether or not the .NET Assembly Analyzer should be used.     | true
-pathToMono              | The path to Mono for .NET assembly analysis on non-windows systems | &nbsp;
+nuspecAnalyzerEnabled   | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.          | true
+assemblyAnalyzerEnabled | Sets whether or not the .NET Assembly Analyzer should be used.            | true
+pathToMono              | The path to Mono for .NET assembly analysis on non-windows systems.       | &nbsp;
 
 Advanced Configuration
 ====================

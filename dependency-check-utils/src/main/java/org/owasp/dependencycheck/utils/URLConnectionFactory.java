@@ -27,8 +27,8 @@ import java.net.SocketAddress;
 import java.net.URL;
 
 /**
- * A URLConnection Factory to create new connections. This encapsulates several configuration checks to ensure that the
- * connection uses the correct proxy settings.
+ * A URLConnection Factory to create new connections. This encapsulates several configuration checks to ensure that the connection
+ * uses the correct proxy settings.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -41,8 +41,8 @@ public final class URLConnectionFactory {
     }
 
     /**
-     * Utility method to create an HttpURLConnection. If the application is configured to use a proxy this method will
-     * retrieve the proxy settings and use them when setting up the connection.
+     * Utility method to create an HttpURLConnection. If the application is configured to use a proxy this method will retrieve
+     * the proxy settings and use them when setting up the connection.
      *
      * @param url the url to connect to
      * @return an HttpURLConnection
@@ -79,6 +79,7 @@ public final class URLConnectionFactory {
             }
             final int timeout = Settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT, 60000);
             conn.setConnectTimeout(timeout);
+            conn.setInstanceFollowRedirects(true);
         } catch (IOException ex) {
             if (conn != null) {
                 try {
@@ -93,8 +94,8 @@ public final class URLConnectionFactory {
     }
 
     /**
-     * Utility method to create an HttpURLConnection. The use of a proxy here is optional as there may be cases where a
-     * proxy is configured but we don't want to use it (for example, if there's an internal repository configured)
+     * Utility method to create an HttpURLConnection. The use of a proxy here is optional as there may be cases where a proxy is
+     * configured but we don't want to use it (for example, if there's an internal repository configured)
      *
      * @param url the URL to connect to
      * @param proxy whether to use the proxy (if configured)
@@ -110,6 +111,7 @@ public final class URLConnectionFactory {
             conn = (HttpURLConnection) url.openConnection();
             final int timeout = Settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT, 60000);
             conn.setConnectTimeout(timeout);
+            conn.setInstanceFollowRedirects(true);
         } catch (IOException ioe) {
             throw new URLConnectionFailureException("Error getting connection.", ioe);
         }
