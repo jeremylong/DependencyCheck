@@ -974,7 +974,7 @@ public class DependencyCheckScanAgent {
             engine = executeDependencyCheck();
             if (this.generateReport) {
                 generateExternalReports(engine, new File(this.reportOutputDirectory));
-
+            }
             if (this.showSummary) {
                 showSummary(engine.getDependencies());
             }
