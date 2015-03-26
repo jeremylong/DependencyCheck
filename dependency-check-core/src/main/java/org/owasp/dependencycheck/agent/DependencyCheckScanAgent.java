@@ -210,6 +210,29 @@ public class DependencyCheckScanAgent {
     }
 
     /**
+     * flag indicating whether or not to generate a report of findings.
+     */
+    private boolean generateReport = true;
+
+    /**
+     * Get the value of generateReport.
+     *
+     * @return the value of generateReport
+     */
+    public boolean isGenerateReport() {
+        return generateReport;
+    }
+
+    /**
+     * Set the value of generateReport.
+     *
+     * @param generateReport new value of generateReport
+     */
+    public void setGenerateReport(boolean generateReport) {
+        this.generateReport = generateReport;
+    }
+
+    /**
      * The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this
      * within the Site plugin unless the externalReport is set to true. Default is HTML.
      */
@@ -945,11 +968,13 @@ public class DependencyCheckScanAgent {
      * @throws org.owasp.dependencycheck.exception.ScanAgentException thrown if there is an exception executing the
      * scan.
      */
-    public void execute() throws ScanAgentException {
+    public Engine execute() throws ScanAgentException {
         Engine engine = null;
         try {
             engine = executeDependencyCheck();
-            generateExternalReports(engine, new File(this.reportOutputDirectory));
+            if (this.generateReport) {
+                generateExternalReports(engine, new File(this.reportOutputDirectory));
+
             if (this.showSummary) {
                 showSummary(engine.getDependencies());
             }
@@ -966,6 +991,7 @@ public class DependencyCheckScanAgent {
                 engine.cleanup();
             }
         }
+        return engine;
     }
 
     /**
