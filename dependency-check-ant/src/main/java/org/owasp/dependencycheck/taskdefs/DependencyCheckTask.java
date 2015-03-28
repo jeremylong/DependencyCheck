@@ -261,6 +261,27 @@ public class DependencyCheckTask extends Task {
     public void setAutoUpdate(boolean autoUpdate) {
         this.autoUpdate = autoUpdate;
     }
+
+    private boolean updateOnly = false;
+
+    /**
+     * Get the value of updateOnly
+     *
+     * @return the value of updateOnly
+     */
+    public boolean isUpdateOnly() {
+        return updateOnly;
+    }
+
+    /**
+     * Set the value of updateOnly
+     *
+     * @param updateOnly new value of updateOnly
+     */
+    public void setUpdateOnly(boolean updateOnly) {
+        this.updateOnly = updateOnly;
+    }
+
     /**
      * The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this within the
      * Site plugin unless the externalReport is set to true. Default is HTML.
@@ -912,46 +933,51 @@ public class DependencyCheckTask extends Task {
         Engine engine = null;
         try {
             engine = new Engine(DependencyCheckTask.class.getClassLoader());
-
-            for (Resource resource : path) {
-                final FileProvider provider = resource.as(FileProvider.class);
-                if (provider != null) {
-                    final File file = provider.getFile();
-                    if (file != null && file.exists()) {
-                        engine.scan(file);
-                    }
-                }
-            }
-            try {
-                engine.analyzeDependencies();
-                DatabaseProperties prop = null;
-                CveDB cve = null;
+            //todo - should this be its own task?
+            if (updateOnly) {
+                engine.doUpdates();
+            } else {
                 try {
-                    cve = new CveDB();
-                    cve.open();
-                    prop = cve.getDatabaseProperties();
-                } catch (DatabaseException ex) {
-                    LOGGER.log(Level.FINE, "Unable to retrieve DB Properties", ex);
-                } finally {
-                    if (cve != null) {
-                        cve.close();
+                    for (Resource resource : path) {
+                        final FileProvider provider = resource.as(FileProvider.class);
+                        if (provider != null) {
+                            final File file = provider.getFile();
+                            if (file != null && file.exists()) {
+                                engine.scan(file);
+                            }
+                        }
                     }
-                }
-                final ReportGenerator reporter = new ReportGenerator(applicationName, engine.getDependencies(), engine.getAnalyzers(), prop);
-                reporter.generateReports(reportOutputDirectory, reportFormat);
 
-                if (this.failBuildOnCVSS <= 10) {
-                    checkForFailure(engine.getDependencies());
+                    engine.analyzeDependencies();
+                    DatabaseProperties prop = null;
+                    CveDB cve = null;
+                    try {
+                        cve = new CveDB();
+                        cve.open();
+                        prop = cve.getDatabaseProperties();
+                    } catch (DatabaseException ex) {
+                        LOGGER.log(Level.FINE, "Unable to retrieve DB Properties", ex);
+                    } finally {
+                        if (cve != null) {
+                            cve.close();
+                        }
+                    }
+                    final ReportGenerator reporter = new ReportGenerator(applicationName, engine.getDependencies(), engine.getAnalyzers(), prop);
+                    reporter.generateReports(reportOutputDirectory, reportFormat);
+
+                    if (this.failBuildOnCVSS <= 10) {
+                        checkForFailure(engine.getDependencies());
+                    }
+                    if (this.showSummary) {
+                        showSummary(engine.getDependencies());
+                    }
+                } catch (IOException ex) {
+                    LOGGER.log(Level.FINE, "Unable to generate dependency-check report", ex);
+                    throw new BuildException("Unable to generate dependency-check report", ex);
+                } catch (Exception ex) {
+                    LOGGER.log(Level.FINE, "An exception occurred; unable to continue task", ex);
+                    throw new BuildException("An exception occurred; unable to continue task", ex);
                 }
-                if (this.showSummary) {
-                    showSummary(engine.getDependencies());
-                }
-            } catch (IOException ex) {
-                LOGGER.log(Level.FINE, "Unable to generate dependency-check report", ex);
-                throw new BuildException("Unable to generate dependency-check report", ex);
-            } catch (Exception ex) {
-                LOGGER.log(Level.FINE, "An exception occurred; unable to continue task", ex);
-                throw new BuildException("An exception occurred; unable to continue task", ex);
             }
         } catch (DatabaseException ex) {
             LOGGER.log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");

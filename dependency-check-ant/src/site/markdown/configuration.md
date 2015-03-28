@@ -26,6 +26,7 @@ The following properties can be set on the dependency-check-maven plugin.
 Property             | Description                        | Default Value
 ---------------------|------------------------------------|------------------
 autoUpdate           | Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. | true
+updateOnly           | If set to true only the update phase of dependency-check will be executed; no scan will be executed and no report will be generated. | false
 externalReport       | When using as a Site plugin this parameter sets whether or not the external report format should be used. | false
 outputDirectory      | The location to write the report(s). Note, this is not used if generating the report as part of a `mvn site` build | 'target'
 failBuildOnCVSS      | Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11 which means since the CVSS scores are 0-10, by default the build will never fail.         | 11
@@ -53,7 +54,7 @@ zipExtensions           | A comma-separated list of additional file extensions t
 jarAnalyzer             | Sets whether the Jar Analyzer will be used.                                   | true
 centralAnalyzerEnabled  | Sets whether the Central Analyzer will be used. **Disabling this analyzer is not recommended as it could lead to false negatives (e.g. libraries that have vulnerabilities may not be reported correctly).** If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer (see below).                                  | true
 nexusAnalyzerEnabled    | Sets whether Nexus Analyzer will be used. This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
-nexusUrl                | Defines the Nexus Pro URL. If not set the Nexus Analyzer will be disabled. | &nbsp;
+nexusUrl                | Defines the Nexus web service endpoint (example http://domain.enterprise/nexus/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
 nexusUsesProxy          | Whether or not the defined proxy should be used when connecting to Nexus. | true
 nuspecAnalyzerEnabled   | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.          | true
 assemblyAnalyzerEnabled | Sets whether or not the .NET Assembly Analyzer should be used.            | true

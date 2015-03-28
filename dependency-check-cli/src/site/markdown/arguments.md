@@ -19,27 +19,28 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp; | Parameter       | Description | Requir
 
 Advanced Options
 ================
-Short  | Argument&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Parameter | Description                                | Default&nbsp;Value
--------|-----------------------|-----------------|-----------------------------------------------------------------------------|---------------
+Short  | Argument&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Parameter | Description                                     | Default&nbsp;Value
+-------|-----------------------|-----------------|----------------------------------------------------------------------------------|-------------------
  \-P   | \-\-propertyfile      | \<file\>        | Specifies a file that contains properties to use instead of applicaion defaults. | &nbsp;
-       | \-\-disableArchive    |                 | Sets whether the Archive Analyzer will be used.                             | false
+       | \-\-updateonly        |                 | If set only the update phase of dependency-check will be executed; no scan will be executed and no report will be generated. | &nbsp;
+       | \-\-disableArchive    |                 | Sets whether the Archive Analyzer will be used.                                  | false
        | \-\-zipExtensions     | \<strings\>     | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
-       | \-\-disableJar        |                 | Sets whether the Jar Analyzer will be used.                                     | false
+       | \-\-disableJar        |                 | Sets whether the Jar Analyzer will be used.                                      | false
        | \-\-disableCentral    |                 | Sets whether the Central Analyzer will be used. **Disabling this analyzer is not recommended as it could lead to false negatives (e.g. libraries that have vulnerabilities may not be reported correctly).** If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer. | false
        | \-\-disableNexus      |                 | Sets whether the Nexus Analyzer will be used. Note, this has been superceded by the Central Analyzer. However, you can configure the Nexus URL to utilize an internally hosted Nexus Pro server. | false
-       | \-\-nexus             | \<url\>         | The url to the Nexus Pro Server. If not set the Nexus Analyzer will be disabled. | &nbsp;
-       | \-\-nexusUsesProxy    | \<true\|false\> | Whether or not the defined proxy should be used when connecting to Nexus.   | true
-       | \-\-disableNuspec     |                 | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.            | false
-       | \-\-disableAssembly   |                 | Sets whether or not the .NET Assembly Analyzer should be used.              | false
-       | \-\-pathToMono        | \<path\>        | The path to Mono for .NET Assembly analysis on non-windows systems.         | &nbsp;
-       | \-\-proxyserver       | \<server\>      | The proxy server to use when downloading resources.                         | &nbsp;
-       | \-\-proxyport         | \<port\>        | The proxy port to use when downloading resources.                           | &nbsp;
-       | \-\-connectiontimeout | \<timeout\>     | The connection timeout (in milliseconds) to use when downloading resources. | &nbsp;
-       | \-\-proxypass         | \<pass\>        | The proxy password to use when downloading resources.                       | &nbsp;
-       | \-\-proxyuser         | \<user\>        | The proxy username to use when downloading resources.                       | &nbsp;
-       | \-\-connectionString  | \<connStr\>     | The connection string to the database.                                      | &nbsp;
-       | \-\-dbDriverName      | \<driver\>      | The database driver name.                                                   | &nbsp;
+       | \-\-nexus             | \<url\>         | The url to the Nexus Server's web service end point (example: http://domain.enterprise/nexus/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
+       | \-\-nexusUsesProxy    | \<true\|false\> | Whether or not the defined proxy should be used when connecting to Nexus.        | true
+       | \-\-disableNuspec     |                 | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.                 | false
+       | \-\-disableAssembly   |                 | Sets whether or not the .NET Assembly Analyzer should be used.                   | false
+       | \-\-pathToMono        | \<path\>        | The path to Mono for .NET Assembly analysis on non-windows systems.              | &nbsp;
+       | \-\-proxyserver       | \<server\>      | The proxy server to use when downloading resources.                              | &nbsp;
+       | \-\-proxyport         | \<port\>        | The proxy port to use when downloading resources.                                | &nbsp;
+       | \-\-connectiontimeout | \<timeout\>     | The connection timeout (in milliseconds) to use when downloading resources.      | &nbsp;
+       | \-\-proxypass         | \<pass\>        | The proxy password to use when downloading resources.                            | &nbsp;
+       | \-\-proxyuser         | \<user\>        | The proxy username to use when downloading resources.                            | &nbsp;
+       | \-\-connectionString  | \<connStr\>     | The connection string to the database.                                           | &nbsp;
+       | \-\-dbDriverName      | \<driver\>      | The database driver name.                                                        | &nbsp;
        | \-\-dbDriverPath      | \<path\>        | The path to the database driver; note, this does not need to be set unless the JAR is outside of the class path. | &nbsp;
-       | \-\-dbPassword        | \<password\>    | The password for connecting to the database.                                | &nbsp;
-       | \-\-dbUser            | \<user\>        | The username used to connect to the database.                               | &nbsp;
+       | \-\-dbPassword        | \<password\>    | The password for connecting to the database.                                     | &nbsp;
+       | \-\-dbUser            | \<user\>        | The username used to connect to the database.                                    | &nbsp;
  \-d   | \-\-data              | \<path\>        | The location of the data directory used to store persistent data. This option should generally not be set. | &nbsp;

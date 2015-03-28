@@ -27,8 +27,8 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * A modified version of the core engine specifically designed to persist some
- * data between multiple executions of a multi-module Maven project.
+ * A modified version of the core engine specifically designed to persist some data between multiple executions of a multi-module
+ * Maven project.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -51,8 +51,7 @@ public class Engine extends org.owasp.dependencycheck.Engine {
      */
     private List<MavenProject> reactorProjects;
     /**
-     * Key used in the MavenProject context values to note whether or not an
-     * update has been executed.
+     * Key used in the MavenProject context values to note whether or not an update has been executed.
      */
     public static final String UPDATE_EXECUTED_FLAG = "dependency-check-update-executed";
 
@@ -60,10 +59,8 @@ public class Engine extends org.owasp.dependencycheck.Engine {
      * Creates a new Engine to perform anyalsis on dependencies.
      *
      * @param project the current Maven project
-     * @param reactorProjects the reactor projects for the current Maven
-     * execution
-     * @throws DatabaseException thrown if there is an issue connecting to the
-     * database
+     * @param reactorProjects the reactor projects for the current Maven execution
+     * @throws DatabaseException thrown if there is an issue connecting to the database
      */
     public Engine(MavenProject project, List<MavenProject> reactorProjects) throws DatabaseException {
         this.currentProject = project;
@@ -92,17 +89,27 @@ public class Engine extends org.owasp.dependencycheck.Engine {
     }
 
     /**
+     * Runs the update steps of dependency-check.
+     */
+    public void update() {
+        final MavenProject root = getExecutionRoot();
+        if (root != null && root.getContextValue(UPDATE_EXECUTED_FLAG) != null) {
+            System.setProperty(Settings.KEYS.AUTO_UPDATE, Boolean.FALSE.toString());
+        }
+        this.doUpdates();
+    }
+
+    /**
      * This constructor should not be called. Use Engine(MavenProject) instead.
      *
-     * @throws DatabaseException thrown if there is an issue connecting to the
-     * database
+     * @throws DatabaseException thrown if there is an issue connecting to the database
      */
     private Engine() throws DatabaseException {
     }
 
     /**
-     * Initializes the given analyzer. This skips the initialization of the
-     * CPEAnalyzer if it has been initialized by a previous execution.
+     * Initializes the given analyzer. This skips the initialization of the CPEAnalyzer if it has been initialized by a previous
+     * execution.
      *
      * @param analyzer the analyzer to initialize
      * @return the initialized analyzer
@@ -121,8 +128,7 @@ public class Engine extends org.owasp.dependencycheck.Engine {
     }
 
     /**
-     * Releases resources used by the analyzers by calling close() on each
-     * analyzer.
+     * Releases resources used by the analyzers by calling close() on each analyzer.
      */
     @Override
     public void cleanup() {
@@ -209,10 +215,8 @@ public class Engine extends org.owasp.dependencycheck.Engine {
     }
 
     /**
-     * Resets the file type analyzers so that they can be re-used to scan
-     * additional directories. Without the reset the analyzer might be disabled
-     * because the first scan/analyze did not identify any files that could be
-     * processed by the analyzer.
+     * Resets the file type analyzers so that they can be re-used to scan additional directories. Without the reset the analyzer
+     * might be disabled because the first scan/analyze did not identify any files that could be processed by the analyzer.
      */
     public void resetFileTypeAnalyzers() {
         for (FileTypeAnalyzer a : getFileTypeAnalyzers()) {

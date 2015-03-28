@@ -176,3 +176,33 @@ Create the DependencyCheck-report.html and use internal mirroring of CVE content
     ...
 </project>
 ```
+
+$H$H$H Example 6:
+Update the local cache of the NVD data from NIST without analyzing the dependencies.
+
+```xml
+<project>
+    ...
+    <build>
+        ...
+        <plugins>
+            ...
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>update-only</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            ...
+        </plugins>
+        ...
+    </build>
+    ...
+</project>
+```

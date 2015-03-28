@@ -44,9 +44,8 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * Scans files, directories, etc. for Dependencies. Analyzers are loaded and used to process the files found by the
- * scan, if a file is encountered and an Analyzer is associated with the file type then the file is turned into a
- * dependency.
+ * Scans files, directories, etc. for Dependencies. Analyzers are loaded and used to process the files found by the scan, if a
+ * file is encountered and an Analyzer is associated with the file type then the file is turned into a dependency.
  *
  * @author Jeremy Long <jeremy.long@owasp.org>
  */
@@ -163,8 +162,8 @@ public class Engine {
     }
 
     /**
-     * Scans an array of files or directories. If a directory is specified, it will be scanned recursively. Any
-     * dependencies identified are added to the dependency collection.
+     * Scans an array of files or directories. If a directory is specified, it will be scanned recursively. Any dependencies
+     * identified are added to the dependency collection.
      *
      * @param paths an array of paths to files or directories to be analyzed
      * @return the list of dependencies scanned
@@ -184,8 +183,8 @@ public class Engine {
     }
 
     /**
-     * Scans a given file or directory. If a directory is specified, it will be scanned recursively. Any dependencies
-     * identified are added to the dependency collection.
+     * Scans a given file or directory. If a directory is specified, it will be scanned recursively. Any dependencies identified
+     * are added to the dependency collection.
      *
      * @param path the path to a file or directory to be analyzed
      * @return the list of dependencies scanned
@@ -196,8 +195,8 @@ public class Engine {
     }
 
     /**
-     * Scans an array of files or directories. If a directory is specified, it will be scanned recursively. Any
-     * dependencies identified are added to the dependency collection.
+     * Scans an array of files or directories. If a directory is specified, it will be scanned recursively. Any dependencies
+     * identified are added to the dependency collection.
      *
      * @param files an array of paths to files or directories to be analyzed.
      * @return the list of dependencies
@@ -216,8 +215,8 @@ public class Engine {
     }
 
     /**
-     * Scans a list of files or directories. If a directory is specified, it will be scanned recursively. Any
-     * dependencies identified are added to the dependency collection.
+     * Scans a list of files or directories. If a directory is specified, it will be scanned recursively. Any dependencies
+     * identified are added to the dependency collection.
      *
      * @param files a set of paths to files or directories to be analyzed
      * @return the list of dependencies scanned
@@ -236,8 +235,8 @@ public class Engine {
     }
 
     /**
-     * Scans a list of files or directories. If a directory is specified, it will be scanned recursively. Any
-     * dependencies identified are added to the dependency collection.
+     * Scans a list of files or directories. If a directory is specified, it will be scanned recursively. Any dependencies
+     * identified are added to the dependency collection.
      *
      * @param files a set of paths to files or directories to be analyzed
      * @return the list of dependencies scanned
@@ -256,8 +255,8 @@ public class Engine {
     }
 
     /**
-     * Scans a given file or directory. If a directory is specified, it will be scanned recursively. Any dependencies
-     * identified are added to the dependency collection.
+     * Scans a given file or directory. If a directory is specified, it will be scanned recursively. Any dependencies identified
+     * are added to the dependency collection.
      *
      * @param file the path to a file or directory to be analyzed
      * @return the list of dependencies scanned
@@ -468,7 +467,7 @@ public class Engine {
     /**
      * Cycles through the cached web data sources and calls update on all of them.
      */
-    private void doUpdates() {
+    public void doUpdates() {
         LOGGER.info("Checking for updates");
         final UpdateService service = new UpdateService(serviceClassLoader);
         final Iterator<CachedWebDataSource> iterator = service.getDataSources();

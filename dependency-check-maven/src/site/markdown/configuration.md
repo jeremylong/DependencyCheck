@@ -1,10 +1,11 @@
 Goals
 ====================
 
-Goal       | Description
------------|-----------------------
-aggregate  | Runs dependency-check against the child projects and aggregates the results into a single report.
-check      | Runs dependency-check against the project and generates a report.
+Goal        | Description
+------------|-----------------------
+aggregate   | Runs dependency-check against the child projects and aggregates the results into a single report.
+check       | Runs dependency-check against the project and generates a report.
+update-only | Updates the local cache of the NVD data from NIST.
 
 Configuration
 ====================
@@ -38,7 +39,7 @@ zipExtensions           | A comma-separated list of additional file extensions t
 jarAnalyzer             | Sets whether Jar Analyzer will be used.                                   | true
 centralAnalyzerEnabled  | Sets whether Central Analyzer will be used. If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer (see below). | true
 nexusAnalyzerEnabled    | Sets whether Nexus Analyzer will be used. This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
-nexusUrl                | Defines the Nexus Pro Server URL. If not set the Nexus Analyzer will be disabled. | &nbsp;
+nexusUrl                | Defines the Nexus Server's web service end point (example http://domain.enterprise/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
 nexusUsesProxy          | Whether or not the defined proxy should be used when connecting to Nexus. | true
 nuspecAnalyzerEnabled   | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.          | true
 assemblyAnalyzerEnabled | Sets whether or not the .NET Assembly Analyzer should be used.            | true

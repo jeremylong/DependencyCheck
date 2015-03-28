@@ -95,6 +95,9 @@ public class App {
 
         if (cli.isGetVersion()) {
             cli.printVersionInfo();
+        } else if (cli.isUpdateOnly()) {
+            populateSettings(cli);
+            runUpdateOnly();
         } else if (cli.isRunScan()) {
             populateSettings(cli);
             try {
@@ -213,10 +216,28 @@ public class App {
     }
 
     /**
+     * Only executes the update phase of dependency-check.
+     */
+    private void runUpdateOnly() {
+        Engine engine = null;
+        try {
+            engine = new Engine();
+            engine.doUpdates();
+        } catch (DatabaseException ex) {
+            LOGGER.log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
+            LOGGER.log(Level.FINE, "", ex);
+        } finally {
+            if (engine != null) {
+                engine.cleanup();
+            }
+        }
+    }
+
+    /**
      * Updates the global Settings.
      *
-     * @param cli a reference to the CLI Parser that contains the command line arguments used to set the corresponding
-     * settings in the core engine.
+     * @param cli a reference to the CLI Parser that contains the command line arguments used to set the corresponding settings in
+     * the core engine.
      */
     private void populateSettings(CliParser cli) {
 

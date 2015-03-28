@@ -266,6 +266,9 @@ public final class CliParser {
     @SuppressWarnings("static-access")
     private void addAdvancedOptions(final Options options) throws IllegalArgumentException {
 
+        final Option updateOnly = OptionBuilder.withLongOpt(ARGUMENT.UPDATE_ONLY)
+                .withDescription("Only update the local NVD data cache; no scan will be executed.").create();
+
         final Option data = OptionBuilder.withArgName("path").hasArg().withLongOpt(ARGUMENT.DATA_DIRECTORY)
                 .withDescription("The location of the H2 Database file. This option should generally not be set.")
                 .create(ARGUMENT.DATA_DIRECTORY_SHORT);
@@ -319,6 +322,7 @@ public final class CliParser {
         final Option disableNuspecAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_NUSPEC)
                 .withDescription("Disable the Nuspec Analyzer.")
                 .create();
+
         final Option disableAssemblyAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_ASSEMBLY)
                 .withDescription("Disable the .NET Assembly Analyzer.")
                 .create();
@@ -350,7 +354,8 @@ public final class CliParser {
                 .withDescription("The path to Mono for .NET Assembly analysis on non-windows systems.")
                 .create();
 
-        options.addOption(proxyPort)
+        options.addOption(updateOnly)
+                .addOption(proxyPort)
                 .addOption(proxyServer)
                 .addOption(proxyUsername)
                 .addOption(proxyPassword)
@@ -689,10 +694,19 @@ public final class CliParser {
     /**
      * Checks if the auto update feature has been disabled. If it has been disabled via the command line this will return false.
      *
-     * @return if auto-update is allowed.
+     * @return <code>true</code> if auto-update is allowed; otherwise <code>false</code>
      */
     public boolean isAutoUpdate() {
         return (line == null) || !line.hasOption(ARGUMENT.DISABLE_AUTO_UPDATE);
+    }
+
+    /**
+     * Checks if the update only flag has been set.
+     *
+     * @return <code>true</code> if the update only flag has been set; otherwise <code>false</code>.
+     */
+    public boolean isUpdateOnly() {
+        return (line == null) || line.hasOption(ARGUMENT.UPDATE_ONLY);
     }
 
     /**
@@ -770,6 +784,10 @@ public final class CliParser {
          * The short CLI argument name specifying that the CPE/CVE/etc. data should not be automatically updated.
          */
         public static final String DISABLE_AUTO_UPDATE_SHORT = "n";
+        /**
+         * The long CLI argument name specifying that only the update phase should be executed; no scan should be run.
+         */
+        public static final String UPDATE_ONLY = "updateonly";
         /**
          * The long CLI argument name specifying the directory to write the reports to.
          */
