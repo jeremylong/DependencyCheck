@@ -60,8 +60,7 @@ public class ChecksumTest {
     }
 
     /**
-     * Test of getChecksum method, of class Checksum. This checks that an exception is thrown when an invalid path is
-     * specified.
+     * Test of getChecksum method, of class Checksum. This checks that an exception is thrown when an invalid path is specified.
      *
      * @throws Exception is thrown when an exception occurs.
      */
@@ -75,8 +74,8 @@ public class ChecksumTest {
     }
 
     /**
-     * Test of getChecksum method, of class Checksum. This checks that an exception is thrown when an invalid algorithm
-     * is specified.
+     * Test of getChecksum method, of class Checksum. This checks that an exception is thrown when an invalid algorithm is
+     * specified.
      *
      * @throws Exception is thrown when an exception occurs.
      */
@@ -97,7 +96,8 @@ public class ChecksumTest {
     @Test
     public void testGetMD5Checksum() throws Exception {
         File file = new File(this.getClass().getClassLoader().getResource("checkSumTest.file").getPath());
-        String expResult = "F0915C5F46B8CFA283E5AD67A09B3793";
+        //String expResult = "F0915C5F46B8CFA283E5AD67A09B3793";
+        String expResult = "f0915c5f46b8cfa283e5ad67a09b3793";
         String result = Checksum.getMD5Checksum(file);
         Assert.assertEquals(expResult, result);
     }
@@ -110,7 +110,8 @@ public class ChecksumTest {
     @Test
     public void testGetSHA1Checksum() throws Exception {
         File file = new File(this.getClass().getClassLoader().getResource("checkSumTest.file").getPath());
-        String expResult = "B8A9FF28B21BCB1D0B50E24A5243D8B51766851A";
+        //String expResult = "B8A9FF28B21BCB1D0B50E24A5243D8B51766851A";
+        String expResult = "b8a9ff28b21bcb1d0b50e24a5243d8b51766851a";
         String result = Checksum.getSHA1Checksum(file);
         Assert.assertEquals(expResult, result);
     }
@@ -121,7 +122,8 @@ public class ChecksumTest {
     @Test
     public void testGetHex() {
         byte[] raw = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-        String expResult = "000102030405060708090A0B0C0D0E0F10";
+        //String expResult = "000102030405060708090A0B0C0D0E0F10";
+        String expResult = "000102030405060708090a0b0c0d0e0f10";
         String result = Checksum.getHex(raw);
         Assert.assertEquals(expResult, result);
     }

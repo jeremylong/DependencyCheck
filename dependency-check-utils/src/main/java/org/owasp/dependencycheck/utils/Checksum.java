@@ -124,7 +124,7 @@ public final class Checksum {
     /**
      * Hex code characters used in getHex.
      */
-    private static final String HEXES = "0123456789ABCDEF";
+    private static final String HEXES = "0123456789abcdef";
 
     /**
      * <p>

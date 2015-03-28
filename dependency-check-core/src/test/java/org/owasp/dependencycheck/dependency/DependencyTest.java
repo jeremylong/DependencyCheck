@@ -158,7 +158,8 @@ public class DependencyTest {
 
         Dependency instance = new Dependency(file);
         //assertEquals("89CE9E36AA9A9E03F1450936D2F4F8DD0F961F8B", result.getSha1sum());
-        String expResult = "C30B57142E1CCBC1EFD5CD15F307358F";
+        //String expResult = "C30B57142E1CCBC1EFD5CD15F307358F";
+        String expResult = "c30b57142e1ccbc1efd5cd15f307358f";
         String result = instance.getMd5sum();
         assertEquals(expResult, result);
     }
@@ -182,7 +183,8 @@ public class DependencyTest {
         //File file = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
         File file = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
         Dependency instance = new Dependency(file);
-        String expResult = "89CE9E36AA9A9E03F1450936D2F4F8DD0F961F8B";
+        //String expResult = "89CE9E36AA9A9E03F1450936D2F4F8DD0F961F8B";
+        String expResult = "89ce9e36aa9a9e03f1450936d2f4f8dd0f961f8b";
         String result = instance.getSha1sum();
         assertEquals(expResult, result);
     }
