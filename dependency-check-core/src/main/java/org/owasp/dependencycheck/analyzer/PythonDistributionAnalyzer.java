@@ -18,13 +18,10 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,30 +31,33 @@ import java.util.regex.Pattern;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 
-import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.ArchiveInputStream;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.input.AutoCloseInputStream;
 import org.apache.commons.lang.StringUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
+import org.owasp.dependencycheck.utils.ExtractionException;
+import org.owasp.dependencycheck.utils.ExtractionUtil;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * Used to load a Wheel distriution file and collect information that can be
- * used to determine the associated CPE.
+ * Used to analyze a Wheel distriution file or *.dist-info folder, and collect
+ * information that can be used to determine the associated CPE.
  *
  * @author Dale Visser <dvisser@ida.org>
  */
 public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 
+	private static final String PKG_INFO = "PKG-INFO";
+
+	/**
+	 * Name of wheel metadata files to analyze.
+	 */
 	private static final String METADATA = "METADATA";
 
 	/**
@@ -67,25 +67,11 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 			.getLogger(PythonDistributionAnalyzer.class.getName());
 
 	/**
-	 * The buffer size to use when extracting files from the archive.
-	 */
-	private static final int BUFFER_SIZE = 4096;
-
-	/**
 	 * The count of directories created during analysis. This is used for
 	 * creating temporary directories.
 	 */
 	private static int dirCount = 0;
 
-	/**
-	 * Constructs a new PythonDistributionAnalyzer.
-	 */
-	public PythonDistributionAnalyzer() {
-		super();
-	}
-
-	// <editor-fold defaultstate="collapsed"
-	// desc="All standard implmentation details of Analyzer">
 	/**
 	 * The name of the analyzer.
 	 */
@@ -98,7 +84,39 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 	/**
 	 * The set of file extensions supported by this analyzer.
 	 */
-	private static final Set<String> EXTENSIONS = newHashSet("whl");
+	private static final Set<String> EXTENSIONS = newHashSet("whl", METADATA,
+			PKG_INFO);
+
+	/**
+	 * Pattern that captures the vendor from a home page URL.
+	 */
+	private static final Pattern HOMEPAGE_VENDOR = Pattern
+			.compile("^[a-zA-Z]+://.*\\.(.+)\\.[a-zA-Z]+/?.*$");
+
+	/**
+	 * The parent directory for the individual directories per archive.
+	 */
+	private File tempFileLocation;
+
+	/**
+	 * Filter that detects *.dist-info files (but doesn't verify they are
+	 * directories.
+	 */
+	private static final FilenameFilter DIST_INFO_FILTER = new SuffixFileFilter(
+			".dist-info");
+
+	/**
+	 * Filter that detects files named "METADATA".
+	 */
+	private static final FilenameFilter METADATA_FILTER = new NameFileFilter(
+			METADATA);
+
+	/**
+	 * Constructs a new PythonDistributionAnalyzer.
+	 */
+	public PythonDistributionAnalyzer() {
+		super();
+	}
 
 	/**
 	 * Returns a list of file EXTENSIONS supported by this analyzer.
@@ -142,42 +160,48 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 		return Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED;
 	}
 
-	/**
-	 * Loads a specified JAR file and collects information from the manifest and
-	 * checksums to identify the correct CPE information.
-	 *
-	 * @param dependency
-	 *            the dependency to analyze.
-	 * @param engine
-	 *            the engine that is scanning the dependencies
-	 * @throws AnalysisException
-	 *             is thrown if there is an error reading the JAR file.
-	 */
 	@Override
-	public void analyzeFileType(Dependency dependency, Engine engine)
+	protected void analyzeFileType(Dependency dependency, Engine engine)
 			throws AnalysisException {
-		final File tmpWheelFolder = getNextTempDirectory();
-		LOGGER.fine(String.format("%s exists? %b", tmpWheelFolder,
-				tmpWheelFolder.exists()));
-		extractFiles(new File(dependency.getActualFilePath()), tmpWheelFolder,
-				METADATA_FILTER);
-		collectWheelMetadata(dependency, tmpWheelFolder);
+		if ("whl".equals(dependency.getFileExtension())) {
+			final File tmpWheelFolder = getNextTempDirectory();
+			LOGGER.fine(String.format("%s exists? %b", tmpWheelFolder,
+					tmpWheelFolder.exists()));
+			try {
+				ExtractionUtil.extractFilesUsingFilter(
+						new File(dependency.getActualFilePath()),
+						tmpWheelFolder, METADATA_FILTER);
+			} catch (ExtractionException ex) {
+				throw new AnalysisException(ex);
+			}
+
+			collectWheelMetadata(
+					dependency,
+					getMatchingFile(
+							getMatchingFile(tmpWheelFolder, DIST_INFO_FILTER),
+							METADATA_FILTER));
+		} else {
+			final File actualFile = dependency.getActualFile();
+			final String name = actualFile.getName();
+			final boolean metadata = METADATA.equals(name);
+			if (metadata || PKG_INFO.equals(name)) {
+				final File parent = actualFile.getParentFile();
+				final String parentName = parent.getName();
+				dependency.setDisplayFileName(parentName + "/" + name);
+				if (parent.isDirectory()
+						&& ((metadata && parentName.endsWith(".dist-info")) || parentName
+								.endsWith(".egg-info"))) {
+					collectWheelMetadata(dependency, actualFile);
+				}
+			}
+		}
 	}
 
 	/**
-	 * The parent directory for the individual directories per archive.
-	 */
-	private File tempFileLocation = null;
-
-	/**
-	 * Initializes the JarAnalyzer.
-	 *
-	 * @throws Exception
-	 *             is thrown if there is an exception creating a temporary
-	 *             directory
+	 * Makes sure a usable temporary directory is available.
 	 */
 	@Override
-	public void initializeFileTypeAnalyzer() throws Exception {
+	protected void initializeFileTypeAnalyzer() throws Exception {
 		final File baseDir = Settings.getTempDirectory();
 		tempFileLocation = File.createTempFile("check", "tmp", baseDir);
 		if (!tempFileLocation.delete()) {
@@ -209,33 +233,30 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 		}
 	}
 
-	private static final Pattern HOMEPAGE_VENDOR = Pattern
-			.compile("^[a-zA-Z]+://.*\\.(.+)\\.[a-zA-Z]+/?.*$");
-
 	/**
 	 * Gathers evidence from the METADATA file.
 	 *
 	 * @param dependency
 	 *            the dependency being analyzed
 	 */
-	private static void collectWheelMetadata(Dependency dependency,
-			File wheelFolder) {
-		InternetHeaders headers = getManifestProperties(wheelFolder);
+	private static void collectWheelMetadata(Dependency dependency, File file) {
+		final InternetHeaders headers = getManifestProperties(file);
 		addPropertyToEvidence(headers, dependency.getVersionEvidence(),
 				"Version", Confidence.HIGHEST);
 		addPropertyToEvidence(headers, dependency.getProductEvidence(), "Name",
 				Confidence.HIGHEST);
-		String url = headers.getHeader("Home-page", null);
-		EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
+		final String url = headers.getHeader("Home-page", null);
+		final EvidenceCollection vendorEvidence = dependency
+				.getVendorEvidence();
 		if (StringUtils.isNotBlank(url)) {
-			Matcher m = HOMEPAGE_VENDOR.matcher(url);
-			if (m.matches()) {
-				vendorEvidence.addEvidence(METADATA, "vendor", m.group(1),
-						Confidence.MEDIUM);
+			final Matcher matcher = HOMEPAGE_VENDOR.matcher(url);
+			if (matcher.matches()) {
+				vendorEvidence.addEvidence(METADATA, "vendor",
+						matcher.group(1), Confidence.MEDIUM);
 			}
 		}
 		addPropertyToEvidence(headers, vendorEvidence, "Author", Confidence.LOW);
-		String summary = headers.getHeader("Summary", null);
+		final String summary = headers.getHeader("Summary", null);
 		if (StringUtils.isNotBlank(summary)) {
 			JarAnalyzer
 					.addDescription(dependency, summary, METADATA, "summary");
@@ -244,52 +265,34 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 
 	private static void addPropertyToEvidence(InternetHeaders headers,
 			EvidenceCollection evidence, String property, Confidence confidence) {
-		String value = headers.getHeader(property, null);
+		final String value = headers.getHeader(property, null);
 		LOGGER.fine(String.format("Property: %s, Value: %s\n", property, value));
 		if (StringUtils.isNotBlank(value)) {
 			evidence.addEvidence(METADATA, property, value, confidence);
 		}
 	}
 
-	private static final FilenameFilter DIST_INFO_FILTER = new SuffixFileFilter(
-			".dist-info");
-
-	private static final FilenameFilter METADATA_FILTER = new NameFileFilter(
-			METADATA);
-
 	private static final File getMatchingFile(File folder, FilenameFilter filter) {
 		File result = null;
-		File[] matches = folder.listFiles(filter);
+		final File[] matches = folder.listFiles(filter);
 		if (null != matches && 1 == matches.length) {
 			result = matches[0];
 		}
 		return result;
 	}
 
-	private static InternetHeaders getManifestProperties(File wheelFolder) {
-		InternetHeaders result = new InternetHeaders();
-		LOGGER.fine(String.format("%s has %d entries.", wheelFolder,
-				wheelFolder.list().length));
-		File dist_info = getMatchingFile(wheelFolder, DIST_INFO_FILTER);
-		if (null != dist_info && dist_info.isDirectory()) {
-			LOGGER.fine(String.format("%s has %d entries.", dist_info,
-					dist_info.list().length));
-			File manifest = getMatchingFile(dist_info, METADATA_FILTER);
-			LOGGER.fine(String.format("METADATA file found? %b",
-					null != manifest));
-			if (null != manifest) {
-				try {
-					result.load(new AutoCloseInputStream(
-							new BufferedInputStream(new FileInputStream(
-									manifest))));
-				} catch (MessagingException e) {
-					LOGGER.log(Level.WARNING, e.getMessage(), e);
-				} catch (FileNotFoundException e) {
-					LOGGER.log(Level.WARNING, e.getMessage(), e);
-				}
-			} else {
-				LOGGER.fine(String.format("%s contents: %s", dist_info,
-						StringUtils.join(dist_info.list(), ";")));
+	private static InternetHeaders getManifestProperties(File manifest) {
+		final InternetHeaders result = new InternetHeaders();
+		if (null == manifest) {
+			LOGGER.fine("Manifest file not found.");
+		} else {
+			try {
+				result.load(new AutoCloseInputStream(new BufferedInputStream(
+						new FileInputStream(manifest))));
+			} catch (MessagingException e) {
+				LOGGER.log(Level.WARNING, e.getMessage(), e);
+			} catch (FileNotFoundException e) {
+				LOGGER.log(Level.WARNING, e.getMessage(), e);
 			}
 		}
 		return result;
@@ -318,147 +321,5 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 					directory.getAbsolutePath()));
 		}
 		return directory;
-	}
-
-	/**
-	 * Extracts the contents of an archive into the specified directory.
-	 *
-	 * @param archive
-	 *            an archive file such as a WAR or EAR
-	 * @param destination
-	 *            a directory to extract the contents to
-	 * @param filter
-	 *            determines which files get extracted
-	 * @throws AnalysisException
-	 *             thrown if the archive is not found
-	 */
-	private static void extractFiles(File archive, File destination,
-			FilenameFilter filter) throws AnalysisException {
-		if (archive == null || destination == null) {
-			return;
-		}
-
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(archive);
-		} catch (FileNotFoundException ex) {
-			LOGGER.log(Level.FINE, null, ex);
-			throw new AnalysisException("Archive file was not found.", ex);
-		}
-		try {
-			extractArchive(new ZipArchiveInputStream(new BufferedInputStream(
-					fis)), destination, filter);
-		} catch (ArchiveExtractionException ex) {
-			final String msg = String.format(
-					"Exception extracting archive '%s'.", archive.getName());
-			LOGGER.log(Level.WARNING, msg);
-			LOGGER.log(Level.FINE, null, ex);
-		} finally {
-			try {
-				fis.close();
-			} catch (IOException ex) {
-				LOGGER.log(Level.FINE, null, ex);
-			}
-		}
-	}
-
-	/**
-	 * Extracts files from an archive.
-	 *
-	 * @param input
-	 *            the archive to extract files from
-	 * @param destination
-	 *            the location to write the files too
-	 * @param filter
-	 *            determines which files get extracted
-	 * @throws ArchiveExtractionException
-	 *             thrown if there is an exception extracting files from the
-	 *             archive
-	 */
-	private static void extractArchive(ArchiveInputStream input, File destination,
-			FilenameFilter filter) throws ArchiveExtractionException {
-		ArchiveEntry entry;
-		try {
-			while ((entry = input.getNextEntry()) != null) {
-				if (entry.isDirectory()) {
-					final File d = new File(destination, entry.getName());
-					if (!d.exists()) {
-						if (!d.mkdirs()) {
-							final String msg = String.format(
-									"Unable to create directory '%s'.",
-									d.getAbsolutePath());
-							throw new AnalysisException(msg);
-						}
-					}
-				} else {
-					final File file = new File(destination, entry.getName());
-					if (filter.accept(file.getParentFile(), file.getName())) {
-						final String extracting = String.format(
-								"Extracting '%s'", file.getPath());
-						LOGGER.fine(extracting);
-						BufferedOutputStream bos = null;
-						FileOutputStream fos = null;
-						try {
-							final File parent = file.getParentFile();
-							if (!parent.isDirectory()) {
-								if (!parent.mkdirs()) {
-									final String msg = String.format(
-											"Unable to build directory '%s'.",
-											parent.getAbsolutePath());
-									throw new AnalysisException(msg);
-								}
-							}
-							fos = new FileOutputStream(file);
-							bos = new BufferedOutputStream(fos, BUFFER_SIZE);
-							int count;
-							final byte[] data = new byte[BUFFER_SIZE];
-							while ((count = input.read(data, 0, BUFFER_SIZE)) != -1) {
-								bos.write(data, 0, count);
-							}
-							bos.flush();
-						} catch (FileNotFoundException ex) {
-							LOGGER.log(Level.FINE, null, ex);
-							final String msg = String
-									.format("Unable to find file '%s'.",
-											file.getName());
-							throw new AnalysisException(msg, ex);
-						} catch (IOException ex) {
-							LOGGER.log(Level.FINE, null, ex);
-							final String msg = String.format(
-									"IO Exception while parsing file '%s'.",
-									file.getName());
-							throw new AnalysisException(msg, ex);
-						} finally {
-							if (bos != null) {
-								try {
-									bos.close();
-								} catch (IOException ex) {
-									LOGGER.log(Level.FINEST, null, ex);
-								}
-							}
-							if (fos != null) {
-								try {
-									fos.close();
-								} catch (IOException ex) {
-									LOGGER.log(Level.FINEST, null, ex);
-								}
-							}
-						}
-					}
-				}
-			}
-		} catch (IOException ex) {
-			throw new ArchiveExtractionException(ex);
-		} catch (Throwable ex) {
-			throw new ArchiveExtractionException(ex);
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException ex) {
-					LOGGER.log(Level.FINEST, null, ex);
-				}
-			}
-		}
 	}
 }

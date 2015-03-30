@@ -17,19 +17,29 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import static org.owasp.dependencycheck.utils.FileUtils.getFileExtension;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.owasp.dependencycheck.Engine;
-import static org.owasp.dependencycheck.utils.FileUtils.getFileExtension;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
 
 /**
  *
@@ -106,12 +116,7 @@ public final class ExtractionUtil {
                         try {
                             fos = new FileOutputStream(file);
                             bos = new BufferedOutputStream(fos, BUFFER_SIZE);
-                            int count;
-                            final byte[] data = new byte[BUFFER_SIZE];
-                            while ((count = zis.read(data, 0, BUFFER_SIZE)) != -1) {
-                                bos.write(data, 0, count);
-                            }
-                            bos.flush();
+                            transferUsingBuffer(zis, bos);
                         } catch (FileNotFoundException ex) {
                             LOGGER.log(Level.FINE, null, ex);
                             final String msg = String.format("Unable to find file '%s'.", file.getName());
@@ -121,13 +126,7 @@ public final class ExtractionUtil {
                             final String msg = String.format("IO Exception while parsing file '%s'.", file.getName());
                             throw new ExtractionException(msg, ex);
                         } finally {
-                            if (bos != null) {
-                                try {
-                                    bos.close();
-                                } catch (IOException ex) {
-                                    LOGGER.log(Level.FINEST, null, ex);
-                                }
-                            }
+                            closeStream(bos);
                         }
                     }
                 }
@@ -137,11 +136,157 @@ public final class ExtractionUtil {
             LOGGER.log(Level.FINE, msg, ex);
             throw new ExtractionException(msg, ex);
         } finally {
-            try {
-                zis.close();
-            } catch (IOException ex) {
-                LOGGER.log(Level.FINEST, null, ex);
-            }
+            closeStream(zis);
         }
     }
+    
+	/**
+	 * Extracts the contents of an archive into the specified directory.
+	 *
+	 * @param archive
+	 *            an archive file such as a WAR or EAR
+	 * @param destination
+	 *            a directory to extract the contents to
+	 * @param filter
+	 *            determines which files get extracted
+	 * @throws ExtractionException
+	 *             thrown if the archive is not found
+	 */
+	public static void extractFilesUsingFilter(File archive, File destination,
+			FilenameFilter filter) throws ExtractionException {
+		if (archive == null || destination == null) {
+			return;
+		}
+
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(archive);
+		} catch (FileNotFoundException ex) {
+			LOGGER.log(Level.FINE, null, ex);
+			throw new ExtractionException("Archive file was not found.", ex);
+		}
+		try {
+			extractArchive(new ZipArchiveInputStream(new BufferedInputStream(
+					fis)), destination, filter);
+		} catch (ArchiveExtractionException ex) {
+			final String msg = String.format(
+					"Exception extracting archive '%s'.", archive.getName());
+			LOGGER.log(Level.WARNING, msg);
+			LOGGER.log(Level.FINE, null, ex);
+		} finally {
+			try {
+				fis.close();
+			} catch (IOException ex) {
+				LOGGER.log(Level.FINE, null, ex);
+			}
+		}
+	}
+
+	/**
+	 * Extracts files from an archive.
+	 *
+	 * @param input
+	 *            the archive to extract files from
+	 * @param destination
+	 *            the location to write the files too
+	 * @param filter
+	 *            determines which files get extracted
+	 * @throws ArchiveExtractionException
+	 *             thrown if there is an exception extracting files from the
+	 *             archive
+	 */
+	private static void extractArchive(ArchiveInputStream input,
+			File destination, FilenameFilter filter)
+			throws ArchiveExtractionException {
+		ArchiveEntry entry;
+		try {
+			while ((entry = input.getNextEntry()) != null) {
+				if (entry.isDirectory()) {
+					final File dir = new File(destination, entry.getName());
+					if (!dir.exists()) {
+						if (!dir.mkdirs()) {
+							final String msg = String.format(
+									"Unable to create directory '%s'.",
+									dir.getAbsolutePath());
+							throw new AnalysisException(msg);
+						}
+					}
+				} else {
+					extractFile(input, destination, filter, entry);
+				}
+			}
+		} catch (IOException ex) {
+			throw new ArchiveExtractionException(ex);
+		} catch (Throwable ex) {
+			throw new ArchiveExtractionException(ex);
+		} finally {
+			closeStream(input);
+		}
+	}
+
+	private static void extractFile(ArchiveInputStream input, File destination,
+			FilenameFilter filter, ArchiveEntry entry) throws ExtractionException {
+		final File file = new File(destination, entry.getName());
+		if (filter.accept(file.getParentFile(), file.getName())) {
+			final String extracting = String.format("Extracting '%s'",
+					file.getPath());
+			LOGGER.fine(extracting);
+			BufferedOutputStream bos = null;
+			FileOutputStream fos = null;
+			try {
+				createParentFile(file);
+				fos = new FileOutputStream(file);
+				bos = new BufferedOutputStream(fos, BUFFER_SIZE);
+				transferUsingBuffer(input, bos);
+			} catch (FileNotFoundException ex) {
+				LOGGER.log(Level.FINE, null, ex);
+				final String msg = String.format("Unable to find file '%s'.",
+						file.getName());
+				throw new ExtractionException(msg, ex);
+			} catch (IOException ex) {
+				LOGGER.log(Level.FINE, null, ex);
+				final String msg = String
+						.format("IO Exception while parsing file '%s'.",
+								file.getName());
+				throw new ExtractionException(msg, ex);
+			} finally {
+				closeStream(bos);
+				closeStream(fos);
+			}
+		}
+	}
+
+	private static void transferUsingBuffer(InputStream input,
+			BufferedOutputStream bos) throws IOException {
+		int count;
+		final byte[] data = new byte[BUFFER_SIZE];
+		while ((count = input.read(data, 0, BUFFER_SIZE)) != -1) {
+			bos.write(data, 0, count);
+		}
+		bos.flush();
+	}
+
+	private static void closeStream(Closeable stream) {
+		if (stream != null) {
+			try {
+				stream.close();
+			} catch (IOException ex) {
+				LOGGER.log(Level.FINEST, null, ex);
+			}
+		}
+	}
+
+	private static void createParentFile(final File file)
+			throws ExtractionException {
+		final File parent = file.getParentFile();
+		if (!parent.isDirectory()) {
+			if (!parent.mkdirs()) {
+				final String msg = String.format(
+						"Unable to build directory '%s'.",
+						parent.getAbsolutePath());
+				throw new ExtractionException(msg);
+			}
+		}
+	}
+
 }

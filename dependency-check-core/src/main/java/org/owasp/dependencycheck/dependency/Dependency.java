@@ -222,7 +222,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * Sets the file name of the dependency.
+     * Sets the file extension of the dependency.
      *
      * @param fileExtension the file name of the dependency
      */

@@ -20,11 +20,12 @@ package org.owasp.dependencycheck.analyzer;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 
@@ -41,9 +42,28 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
 	 *             is thrown when an exception occurs.
 	 */
 	@Test
-	public void testAnalyze() throws Exception {
+	public void testAnalyzeWheel() throws AnalysisException {
+		djangoAssertions(new Dependency(BaseTest.getResourceAsFile(this,
+				"Django-1.7.2-py2.py3-none-any.whl")));
+	}
+
+	/**
+	 * Test of inspect method, of class JarAnalyzer.
+	 *
+	 * @throws Exception
+	 *             is thrown when an exception occurs.
+	 */
+	@Test
+	public void testAnalyzeSitePackage() throws AnalysisException {
 		final Dependency result = new Dependency(BaseTest.getResourceAsFile(
-				this, "Django-1.7.2-py2.py3-none-any.whl"));
+				this, "site-packages/Django-1.7.2.dist-info/METADATA"));
+		djangoAssertions(result);
+		assertEquals("Django-1.7.2.dist-info/METADATA",
+				result.getDisplayFileName());
+	}
+
+	private void djangoAssertions(final Dependency result)
+			throws AnalysisException {
 		new PythonDistributionAnalyzer().analyze(result, null);
 		assertTrue("Expected vendor evidence to contain \"djangoproject\".",
 				result.getVendorEvidence().toString().contains("djangoproject"));
@@ -54,9 +74,24 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
 				break;
 			}
 		}
-		assertTrue(
-				"implementation-version of 1.7.2 not found in Django wheel.",
-				found);
+		assertTrue("Version 1.7.2 not found in Django dependency.", found);
+	}
+
+	@Test
+	public void testAnalyzeEggInfo() throws AnalysisException {
+		final Dependency result = new Dependency(BaseTest.getResourceAsFile(
+				this, "site-packages/eggutils-0.0.2-py2.7.egg-info/PKG-INFO"));
+		new PythonDistributionAnalyzer().analyze(result, null);
+		assertTrue("Expected vendor evidence to contain \"python\".", result
+				.getVendorEvidence().toString().contains("python"));
+		boolean found = false;
+		for (final Evidence e : result.getVersionEvidence()) {
+			if ("Version".equals(e.getName()) && "0.0.2".equals(e.getValue())) {
+				found = true;
+				break;
+			}
+		}
+		assertTrue("Version 0.0.2 not found in eggutils dependency.", found);
 	}
 
 	/**
@@ -64,8 +99,10 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
 	 */
 	@Test
 	public void testGetSupportedExtensions() {
-		assertEquals("Supported extensions should just be \"whl\".",
-				(Set<String>) Collections.singleton("whl"),
+		assertEquals(
+				"Supported extensions should just be \"whl\", \"METADATA\" and \"PKG-INFO\".",
+				new HashSet<String>(Arrays
+						.asList("whl", "METADATA", "PKG-INFO")),
 				new PythonDistributionAnalyzer().getSupportedExtensions());
 	}
 
@@ -83,7 +120,12 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
 	 */
 	@Test
 	public void testSupportsExtension() {
+		final PythonDistributionAnalyzer analyzer = new PythonDistributionAnalyzer();
 		assertTrue("Should support \"whl\" extension.",
-				new PythonDistributionAnalyzer().supportsExtension("whl"));
+				analyzer.supportsExtension("whl"));
+		assertTrue("Should support \"METADATA\" extension.",
+				analyzer.supportsExtension("METADATA"));
+		assertTrue("Should support \"METADATA\" extension.",
+				analyzer.supportsExtension("PKG-INFO"));
 	}
 }
