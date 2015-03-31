@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2012 Dale Visser. All Rights Reserved.
+ * Copyright (c) 2015 Institute for Defense Analyses. All Rights Reserved.
  */
 package org.owasp.dependencycheck.analyzer;
 
@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -30,10 +31,51 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 
 /**
+ * Unit tests for PythonDistributionAnalyzer.
  *
  * @author Dale Visser <dvisser@ida.org>
  */
 public class PythonDistributionAnalyzerTest extends BaseTest {
+
+	/**
+	 * Test of getName method, of class PythonDistributionAnalyzer.
+	 */
+	@Test
+	public void testGetName() {
+		assertEquals("Analyzer name wrong.", "Python Distribution Analyzer",
+				new PythonDistributionAnalyzer().getName());
+	}
+
+	/**
+	 * Test of getSupportedExtensions method, of class JarAnalyzer.
+	 */
+	@Test
+	public void testGetSupportedExtensions() {
+		final String[] expected = { "whl", "egg", "zip", "METADATA", "PKG-INFO" };
+		assertEquals("Supported extensions should just have the following: "
+				+ StringUtils.join(expected, ", "),
+				new HashSet<String>(Arrays.asList(expected)),
+				new PythonDistributionAnalyzer().getSupportedExtensions());
+	}
+	
+	/**
+	 * Test of supportsExtension method, of class PythonDistributionAnalyzer.
+	 */
+	@Test
+	public void testSupportsExtension() {
+		final PythonDistributionAnalyzer analyzer = new PythonDistributionAnalyzer();
+		assertTrue("Should support \"whl\" extension.",
+				analyzer.supportsExtension("whl"));
+		assertTrue("Should support \"egg\" extension.",
+				analyzer.supportsExtension("egg"));
+		assertTrue("Should support \"zip\" extension.",
+				analyzer.supportsExtension("zip"));
+		assertTrue("Should support \"METADATA\" extension.",
+				analyzer.supportsExtension("METADATA"));
+		assertTrue("Should support \"PKG-INFO\" extension.",
+				analyzer.supportsExtension("PKG-INFO"));
+	}
+
 
 	/**
 	 * Test of inspect method, of class JarAnalyzer.
@@ -44,7 +86,7 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
 	@Test
 	public void testAnalyzeWheel() throws AnalysisException {
 		djangoAssertions(new Dependency(BaseTest.getResourceAsFile(this,
-				"Django-1.7.2-py2.py3-none-any.whl")));
+				"python/Django-1.7.2-py2.py3-none-any.whl")));
 	}
 
 	/**
@@ -56,7 +98,7 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
 	@Test
 	public void testAnalyzeSitePackage() throws AnalysisException {
 		final Dependency result = new Dependency(BaseTest.getResourceAsFile(
-				this, "site-packages/Django-1.7.2.dist-info/METADATA"));
+				this, "python/site-packages/Django-1.7.2.dist-info/METADATA"));
 		djangoAssertions(result);
 		assertEquals("Django-1.7.2.dist-info/METADATA",
 				result.getDisplayFileName());
@@ -78,54 +120,39 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
 	}
 
 	@Test
-	public void testAnalyzeEggInfo() throws AnalysisException {
+	public void testAnalyzeEggInfoFolder() throws AnalysisException {
+		eggtestAssertions("python/site-packages/EggTest.egg-info/PKG-INFO");
+	}
+
+	@Test
+	public void testAnalyzeEggArchive() throws AnalysisException {
+		eggtestAssertions("python/dist/EggTest-0.0.1-py2.7.egg");
+	}
+
+	@Test
+	public void testAnalyzeEggArchiveNamedZip() throws AnalysisException {
+		eggtestAssertions("python/dist/EggTest-0.0.1-py2.7.zip");
+	}
+
+	@Test
+	public void testAnalyzeEggFolder() throws AnalysisException {
+		eggtestAssertions("python/site-packages/EggTest-0.0.1-py2.7.egg/EGG-INFO/PKG-INFO");
+	}
+
+	private void eggtestAssertions(final String resource)
+			throws AnalysisException {
 		final Dependency result = new Dependency(BaseTest.getResourceAsFile(
-				this, "site-packages/eggutils-0.0.2-py2.7.egg-info/PKG-INFO"));
+				this, resource));
 		new PythonDistributionAnalyzer().analyze(result, null);
-		assertTrue("Expected vendor evidence to contain \"python\".", result
-				.getVendorEvidence().toString().contains("python"));
+		assertTrue("Expected vendor evidence to contain \"example\".", result
+				.getVendorEvidence().toString().contains("example"));
 		boolean found = false;
 		for (final Evidence e : result.getVersionEvidence()) {
-			if ("Version".equals(e.getName()) && "0.0.2".equals(e.getValue())) {
+			if ("Version".equals(e.getName()) && "0.0.1".equals(e.getValue())) {
 				found = true;
 				break;
 			}
 		}
-		assertTrue("Version 0.0.2 not found in eggutils dependency.", found);
-	}
-
-	/**
-	 * Test of getSupportedExtensions method, of class JarAnalyzer.
-	 */
-	@Test
-	public void testGetSupportedExtensions() {
-		assertEquals(
-				"Supported extensions should just be \"whl\", \"METADATA\" and \"PKG-INFO\".",
-				new HashSet<String>(Arrays
-						.asList("whl", "METADATA", "PKG-INFO")),
-				new PythonDistributionAnalyzer().getSupportedExtensions());
-	}
-
-	/**
-	 * Test of getName method, of class PythonDistributionAnalyzer.
-	 */
-	@Test
-	public void testGetName() {
-		assertEquals("Analyzer name wrong.", "Python Distribution Analyzer",
-				new PythonDistributionAnalyzer().getName());
-	}
-
-	/**
-	 * Test of supportsExtension method, of class PythonDistributionAnalyzer.
-	 */
-	@Test
-	public void testSupportsExtension() {
-		final PythonDistributionAnalyzer analyzer = new PythonDistributionAnalyzer();
-		assertTrue("Should support \"whl\" extension.",
-				analyzer.supportsExtension("whl"));
-		assertTrue("Should support \"METADATA\" extension.",
-				analyzer.supportsExtension("METADATA"));
-		assertTrue("Should support \"METADATA\" extension.",
-				analyzer.supportsExtension("PKG-INFO"));
+		assertTrue("Version 0.0.1 not found in EggTest dependency.", found);
 	}
 }

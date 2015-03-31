@@ -320,13 +320,13 @@ public class Engine {
         final String fileName = file.getName();
         String extension = FileUtils.getFileExtension(fileName);
         if (null == extension) {
-        	extension = fileName;
+            extension = fileName;
         }
         Dependency dependency = null;
         if (supportsExtension(extension)) {
             dependency = new Dependency(file);
             if (extension == fileName){
-            	dependency.setFileExtension(extension);
+                dependency.setFileExtension(extension);
             }
             dependencies.add(dependency);
         }

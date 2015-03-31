@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2015 Institute for Defense Analyses. All Rights Reserved.
  */
 package org.owasp.dependencycheck.analyzer;
 
@@ -53,6 +53,9 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 
+	/**
+	 * Name of egg metatdata files to analyze.
+	 */
 	private static final String PKG_INFO = "PKG-INFO";
 
 	/**
@@ -84,14 +87,24 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 	/**
 	 * The set of file extensions supported by this analyzer.
 	 */
-	private static final Set<String> EXTENSIONS = newHashSet("whl", METADATA,
-			PKG_INFO);
+	private static final Set<String> EXTENSIONS = newHashSet("whl", "egg",
+			"zip", METADATA, PKG_INFO);
 
 	/**
 	 * Pattern that captures the vendor from a home page URL.
 	 */
 	private static final Pattern HOMEPAGE_VENDOR = Pattern
-			.compile("^[a-zA-Z]+://.*\\.(.+)\\.[a-zA-Z]+/?.*$");
+			.compile("^[a-zA-Z]+://(.*)$");
+
+	/**
+	 * Used to split the subdomains of a host name.
+	 */
+	private static final Pattern DOT = Pattern.compile("\\.");
+
+	/**
+	 * Used to match on egg archive candidate extenssions.
+	 */
+	private static final Pattern EGG_OR_ZIP = Pattern.compile("egg|zip");
 
 	/**
 	 * The parent directory for the individual directories per archive.
@@ -108,15 +121,20 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 	/**
 	 * Filter that detects files named "METADATA".
 	 */
+	private static final FilenameFilter EGG_INFO_FILTER = new NameFileFilter(
+			"EGG-INFO");
+
+	/**
+	 * Filter that detects files named "METADATA".
+	 */
 	private static final FilenameFilter METADATA_FILTER = new NameFileFilter(
 			METADATA);
 
 	/**
-	 * Constructs a new PythonDistributionAnalyzer.
+	 * Filter that detects files named "PKG-INFO".
 	 */
-	public PythonDistributionAnalyzer() {
-		super();
-	}
+	private static final FilenameFilter PKG_INFO_FILTER = new NameFileFilter(
+			PKG_INFO);
 
 	/**
 	 * Returns a list of file EXTENSIONS supported by this analyzer.
@@ -147,8 +165,6 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 		return ANALYSIS_PHASE;
 	}
 
-	// </editor-fold>
-
 	/**
 	 * Returns the key used in the properties file to reference the analyzer's
 	 * enabled property.
@@ -164,22 +180,13 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 	protected void analyzeFileType(Dependency dependency, Engine engine)
 			throws AnalysisException {
 		if ("whl".equals(dependency.getFileExtension())) {
-			final File tmpWheelFolder = getNextTempDirectory();
-			LOGGER.fine(String.format("%s exists? %b", tmpWheelFolder,
-					tmpWheelFolder.exists()));
-			try {
-				ExtractionUtil.extractFilesUsingFilter(
-						new File(dependency.getActualFilePath()),
-						tmpWheelFolder, METADATA_FILTER);
-			} catch (ExtractionException ex) {
-				throw new AnalysisException(ex);
-			}
-
-			collectWheelMetadata(
-					dependency,
-					getMatchingFile(
-							getMatchingFile(tmpWheelFolder, DIST_INFO_FILTER),
-							METADATA_FILTER));
+			collectMetadataFromArchiveFormat(dependency, DIST_INFO_FILTER,
+					METADATA_FILTER);
+		} else if (EGG_OR_ZIP.matcher(
+				StringUtils.stripToEmpty(dependency.getFileExtension()))
+				.matches()) {
+			collectMetadataFromArchiveFormat(dependency, EGG_INFO_FILTER,
+					PKG_INFO_FILTER);
 		} else {
 			final File actualFile = dependency.getActualFile();
 			final String name = actualFile.getName();
@@ -189,12 +196,32 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 				final String parentName = parent.getName();
 				dependency.setDisplayFileName(parentName + "/" + name);
 				if (parent.isDirectory()
-						&& ((metadata && parentName.endsWith(".dist-info")) || parentName
-								.endsWith(".egg-info"))) {
+						&& (metadata && parentName.endsWith(".dist-info")
+								|| parentName.endsWith(".egg-info") || "EGG-INFO"
+									.equals(parentName))) {
 					collectWheelMetadata(dependency, actualFile);
 				}
 			}
 		}
+	}
+
+	private void collectMetadataFromArchiveFormat(Dependency dependency,
+			FilenameFilter folderFilter, FilenameFilter metadataFilter)
+			throws AnalysisException {
+		final File temp = getNextTempDirectory();
+		LOGGER.fine(String.format("%s exists? %b", temp, temp.exists()));
+		try {
+			ExtractionUtil.extractFilesUsingFilter(
+					new File(dependency.getActualFilePath()), temp,
+					metadataFilter);
+		} catch (ExtractionException ex) {
+			throw new AnalysisException(ex);
+		}
+
+		collectWheelMetadata(
+				dependency,
+				getMatchingFile(getMatchingFile(temp, folderFilter),
+						metadataFilter));
 	}
 
 	/**
@@ -251,8 +278,10 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 		if (StringUtils.isNotBlank(url)) {
 			final Matcher matcher = HOMEPAGE_VENDOR.matcher(url);
 			if (matcher.matches()) {
+				final String[] subdomains = DOT.split(matcher.group(1));
 				vendorEvidence.addEvidence(METADATA, "vendor",
-						matcher.group(1), Confidence.MEDIUM);
+						subdomains[Math.max(0, subdomains.length - 2)],
+						Confidence.MEDIUM);
 			}
 		}
 		addPropertyToEvidence(headers, vendorEvidence, "Author", Confidence.LOW);
