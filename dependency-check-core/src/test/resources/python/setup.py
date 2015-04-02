@@ -1,9 +1,11 @@
 from setuptools import setup
 
-setup(name = 'EggTest',
+about = {}
+execfile('eggtest/__about__.py', about)
+setup(name = about['__title__'],
       packages = ['eggtest'],
-      version = '0.0.1',
-      description = 'Simple project for producing an .egg.',
-      url = 'http://example.org/eggtest',
-      author = 'Dale Visser',
-      author_email = 'dvisser@ida.org')
+      version = about['__version__'],
+      description = about['__summary__'],
+      url = about['__uri__'],
+      author = about['__author__'],
+      author_email = about['__email__'])

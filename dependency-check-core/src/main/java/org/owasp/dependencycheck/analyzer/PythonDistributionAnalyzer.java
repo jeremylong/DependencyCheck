@@ -22,15 +22,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.net.MalformedURLException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 
+import org.apache.commons.collections.iterators.ReverseListIterator;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.input.AutoCloseInputStream;
@@ -44,10 +47,12 @@ import org.owasp.dependencycheck.utils.ExtractionException;
 import org.owasp.dependencycheck.utils.ExtractionUtil;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.UrlStringUtils;
 
 /**
- * Used to analyze a Wheel distriution file or *.dist-info folder, and collect
- * information that can be used to determine the associated CPE.
+ * Used to analyze a Wheel or egg distriution files, or their contents in
+ * unzipped form, and collect information that can be used to determine the
+ * associated CPE.
  *
  * @author Dale Visser <dvisser@ida.org>
  */
@@ -89,17 +94,6 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 	 */
 	private static final Set<String> EXTENSIONS = newHashSet("whl", "egg",
 			"zip", METADATA, PKG_INFO);
-
-	/**
-	 * Pattern that captures the vendor from a home page URL.
-	 */
-	private static final Pattern HOMEPAGE_VENDOR = Pattern
-			.compile("^[a-zA-Z]+://(.*)$");
-
-	/**
-	 * Used to split the subdomains of a host name.
-	 */
-	private static final Pattern DOT = Pattern.compile("\\.");
 
 	/**
 	 * Used to match on egg archive candidate extenssions.
@@ -265,8 +259,10 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 	 *
 	 * @param dependency
 	 *            the dependency being analyzed
+	 * @throws MalformedURLException
 	 */
-	private static void collectWheelMetadata(Dependency dependency, File file) {
+	private static void collectWheelMetadata(Dependency dependency, File file)
+			throws AnalysisException {
 		final InternetHeaders headers = getManifestProperties(file);
 		addPropertyToEvidence(headers, dependency.getVersionEvidence(),
 				"Version", Confidence.HIGHEST);
@@ -276,12 +272,17 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 		final EvidenceCollection vendorEvidence = dependency
 				.getVendorEvidence();
 		if (StringUtils.isNotBlank(url)) {
-			final Matcher matcher = HOMEPAGE_VENDOR.matcher(url);
-			if (matcher.matches()) {
-				final String[] subdomains = DOT.split(matcher.group(1));
-				vendorEvidence.addEvidence(METADATA, "vendor",
-						subdomains[Math.max(0, subdomains.length - 2)],
-						Confidence.MEDIUM);
+			if (UrlStringUtils.isUrl(url)) {
+				try {
+					vendorEvidence.addEvidence(METADATA, "vendor",
+							(String) (new ReverseListIterator(
+									Arrays.asList(UrlStringUtils
+											.extractImportantUrlData(url).get(0)
+											.split(Pattern.quote("."))))).next(),
+							Confidence.MEDIUM);
+				} catch (MalformedURLException mue) {
+					LOGGER.fine("URL didn't parse: " + mue.getMessage());
+				}
 			}
 		}
 		addPropertyToEvidence(headers, vendorEvidence, "Author", Confidence.LOW);

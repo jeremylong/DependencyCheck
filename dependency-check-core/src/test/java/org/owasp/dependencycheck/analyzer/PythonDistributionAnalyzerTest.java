@@ -47,7 +47,8 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
 	}
 
 	/**
-	 * Test of getSupportedExtensions method, of class JarAnalyzer.
+	 * Test of getSupportedExtensions method, of class
+	 * PythonDistributionAnalyzer.
 	 */
 	@Test
 	public void testGetSupportedExtensions() {
@@ -57,7 +58,7 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
 				new HashSet<String>(Arrays.asList(expected)),
 				new PythonDistributionAnalyzer().getSupportedExtensions());
 	}
-	
+
 	/**
 	 * Test of supportsExtension method, of class PythonDistributionAnalyzer.
 	 */
@@ -76,9 +77,8 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
 				analyzer.supportsExtension("PKG-INFO"));
 	}
 
-
 	/**
-	 * Test of inspect method, of class JarAnalyzer.
+	 * Test of inspect method, of class PythonDistributionAnalyzer.
 	 *
 	 * @throws Exception
 	 *             is thrown when an exception occurs.
@@ -90,7 +90,7 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
 	}
 
 	/**
-	 * Test of inspect method, of class JarAnalyzer.
+	 * Test of inspect method, of class PythonDistributionAnalyzer.
 	 *
 	 * @throws Exception
 	 *             is thrown when an exception occurs.
@@ -121,34 +121,41 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
 
 	@Test
 	public void testAnalyzeEggInfoFolder() throws AnalysisException {
-		eggtestAssertions("python/site-packages/EggTest.egg-info/PKG-INFO");
+		eggtestAssertions(this,
+				"python/site-packages/EggTest.egg-info/PKG-INFO",
+				new PythonDistributionAnalyzer());
 	}
 
 	@Test
 	public void testAnalyzeEggArchive() throws AnalysisException {
-		eggtestAssertions("python/dist/EggTest-0.0.1-py2.7.egg");
+		eggtestAssertions(this, "python/dist/EggTest-0.0.1-py2.7.egg",
+				new PythonDistributionAnalyzer());
 	}
 
 	@Test
 	public void testAnalyzeEggArchiveNamedZip() throws AnalysisException {
-		eggtestAssertions("python/dist/EggTest-0.0.1-py2.7.zip");
+		eggtestAssertions(this, "python/dist/EggTest-0.0.1-py2.7.zip",
+				new PythonDistributionAnalyzer());
 	}
 
 	@Test
 	public void testAnalyzeEggFolder() throws AnalysisException {
-		eggtestAssertions("python/site-packages/EggTest-0.0.1-py2.7.egg/EGG-INFO/PKG-INFO");
+		eggtestAssertions(
+				this,
+				"python/site-packages/EggTest-0.0.1-py2.7.egg/EGG-INFO/PKG-INFO",
+				new PythonDistributionAnalyzer());
 	}
 
-	private void eggtestAssertions(final String resource)
-			throws AnalysisException {
+	public static void eggtestAssertions(Object context, final String resource,
+			Analyzer analyzer) throws AnalysisException {
 		final Dependency result = new Dependency(BaseTest.getResourceAsFile(
-				this, resource));
-		new PythonDistributionAnalyzer().analyze(result, null);
+				context, resource));
+		analyzer.analyze(result, null);
 		assertTrue("Expected vendor evidence to contain \"example\".", result
 				.getVendorEvidence().toString().contains("example"));
 		boolean found = false;
 		for (final Evidence e : result.getVersionEvidence()) {
-			if ("Version".equals(e.getName()) && "0.0.1".equals(e.getValue())) {
+			if ("0.0.1".equals(e.getValue())) {
 				found = true;
 				break;
 			}
