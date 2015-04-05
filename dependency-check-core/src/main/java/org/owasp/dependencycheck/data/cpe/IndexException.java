@@ -20,7 +20,7 @@ package org.owasp.dependencycheck.data.cpe;
 /**
  * An exception thrown when the there is an issue using the in-memory CPE Index.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class IndexException extends Exception {
 
