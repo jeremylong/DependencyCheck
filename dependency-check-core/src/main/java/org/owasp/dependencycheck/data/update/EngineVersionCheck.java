@@ -37,7 +37,7 @@ import org.owasp.dependencycheck.utils.URLConnectionFailureException;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class EngineVersionCheck implements CachedWebDataSource {
 
