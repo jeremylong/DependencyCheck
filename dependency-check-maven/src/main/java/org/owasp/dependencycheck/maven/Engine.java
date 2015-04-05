@@ -30,7 +30,7 @@ import org.owasp.dependencycheck.utils.Settings;
  * A modified version of the core engine specifically designed to persist some data between multiple executions of a multi-module
  * Maven project.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class Engine extends org.owasp.dependencycheck.Engine {
 
