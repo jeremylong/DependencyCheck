@@ -24,7 +24,7 @@ import java.util.ServiceLoader;
  * The CachedWebDataSource Service Loader. This class loads all services that implement
  * org.owasp.dependencycheck.data.update.CachedWebDataSource.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class UpdateService {
 
