@@ -26,7 +26,7 @@ import org.owasp.dependencycheck.suppression.SuppressionRule;
  * The suppression analyzer processes an externally defined XML document that complies with the suppressions.xsd schema.
  * Any identified CPE entries within the dependencies that match will be removed.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class CpeSuppressionAnalyzer extends AbstractSuppressionAnalyzer {
 
