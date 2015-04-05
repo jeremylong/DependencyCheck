@@ -26,7 +26,7 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * A handler to load suppression rules.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class SuppressionHandler extends DefaultHandler {
 
