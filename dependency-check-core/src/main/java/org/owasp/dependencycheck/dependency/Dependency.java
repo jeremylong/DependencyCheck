@@ -38,7 +38,7 @@ import org.owasp.dependencycheck.utils.FileUtils;
  * the dependency in the form of evidence. The Evidence is then used to determine if there are any known, published,
  * vulnerabilities associated with the program dependency.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class Dependency implements Serializable, Comparable<Dependency> {
 
