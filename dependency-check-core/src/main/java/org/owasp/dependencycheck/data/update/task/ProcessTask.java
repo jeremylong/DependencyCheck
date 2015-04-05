@@ -42,7 +42,7 @@ import org.xml.sax.SAXException;
 /**
  * A callable task that will process a given set of NVD CVE xml files and update the Cve Database accordingly.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class ProcessTask implements Callable<ProcessTask> {
 
