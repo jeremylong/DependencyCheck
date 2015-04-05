@@ -23,7 +23,7 @@ package org.owasp.dependencycheck.utils;
  * @param <L> the type for the left element in the pair
  * @param <R> the type for the right element in the pair
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class Pair<L, R> {
 
