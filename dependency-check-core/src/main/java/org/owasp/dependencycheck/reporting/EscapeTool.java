@@ -27,7 +27,7 @@ import org.apache.commons.lang.StringEscapeUtils;
  * An extremely simple wrapper around various escape utils to perform URL and HTML encoding within the reports. This
  * class was created to simplify the velocity configuration and avoid using the "built-in" escape tool.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class EscapeTool {
 
