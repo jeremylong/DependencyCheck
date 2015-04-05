@@ -21,7 +21,7 @@ import org.apache.lucene.search.similarities.DefaultSimilarity;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class DependencySimilarity extends DefaultSimilarity {
 
