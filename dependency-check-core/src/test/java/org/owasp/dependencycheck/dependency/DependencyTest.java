@@ -33,7 +33,7 @@ import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class DependencyTest {
 
