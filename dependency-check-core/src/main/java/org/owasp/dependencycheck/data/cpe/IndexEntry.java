@@ -24,7 +24,7 @@ import java.net.URLDecoder;
 /**
  * A CPE entry containing the name, vendor, product, and version.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class IndexEntry implements Serializable {
 
