@@ -25,7 +25,7 @@ import org.owasp.dependencycheck.data.update.NvdCveInfo;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class DatabasePropertiesIntegrationTest extends BaseDBTestCase {
 
