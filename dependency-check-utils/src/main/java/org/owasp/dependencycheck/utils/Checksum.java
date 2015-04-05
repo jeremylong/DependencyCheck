@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 /**
  * Includes methods to generate the MD5 and SHA1 checksum.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  *
  */
 public final class Checksum {
