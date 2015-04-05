@@ -36,7 +36,7 @@ import org.owasp.dependencycheck.dependency.Vulnerability;
 /**
  * Test of the suppression rule.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class SuppressionRuleTest {
 
