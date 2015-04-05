@@ -20,7 +20,7 @@ package org.owasp.dependencycheck.analyzer.exception;
 /**
  * An exception thrown when files in an archive cannot be extracted.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class ArchiveExtractionException extends Exception {
 
