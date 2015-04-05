@@ -29,7 +29,7 @@ import org.owasp.dependencycheck.dependency.Evidence;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
 
