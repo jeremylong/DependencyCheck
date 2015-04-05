@@ -32,7 +32,7 @@ import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public abstract class BaseDBTestCase extends BaseTest {
 
