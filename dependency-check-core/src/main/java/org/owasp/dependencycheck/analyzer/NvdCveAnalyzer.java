@@ -32,7 +32,7 @@ import org.owasp.dependencycheck.dependency.Vulnerability;
  * NvdCveAnalyzer is a utility class that takes a project dependency and attempts to discern if there is an associated
  * CVEs. It uses the the identifiers found by other analyzers to lookup the CVE data.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class NvdCveAnalyzer implements Analyzer {
 
