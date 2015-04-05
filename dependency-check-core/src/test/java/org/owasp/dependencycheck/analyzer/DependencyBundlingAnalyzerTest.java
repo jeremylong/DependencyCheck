@@ -24,7 +24,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class DependencyBundlingAnalyzerTest extends BaseTest {
 
