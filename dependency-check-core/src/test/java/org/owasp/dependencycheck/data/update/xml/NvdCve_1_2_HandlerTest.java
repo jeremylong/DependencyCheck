@@ -33,7 +33,7 @@ import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class NvdCve_1_2_HandlerTest {
 
