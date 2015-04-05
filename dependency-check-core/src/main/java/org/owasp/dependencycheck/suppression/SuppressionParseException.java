@@ -22,7 +22,7 @@ import java.io.IOException;
 /**
  * An exception used when parsing a suppression rule file fails.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class SuppressionParseException extends IOException {
 
