@@ -22,7 +22,7 @@ import java.io.IOException;
 /**
  * An exception used when the creation of an URLConnection fails.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class URLConnectionFailureException extends IOException {
 
