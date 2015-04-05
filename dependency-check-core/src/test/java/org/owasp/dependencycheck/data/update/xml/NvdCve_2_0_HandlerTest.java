@@ -30,7 +30,7 @@ import org.owasp.dependencycheck.BaseTest;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class NvdCve_2_0_HandlerTest {
 
