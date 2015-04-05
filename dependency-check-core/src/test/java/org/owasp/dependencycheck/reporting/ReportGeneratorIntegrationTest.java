@@ -34,7 +34,7 @@ import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class ReportGeneratorIntegrationTest extends BaseTest {
 
