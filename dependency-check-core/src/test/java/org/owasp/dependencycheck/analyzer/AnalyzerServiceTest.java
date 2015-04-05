@@ -24,7 +24,7 @@ import org.owasp.dependencycheck.BaseTest;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class AnalyzerServiceTest extends BaseTest {
 
