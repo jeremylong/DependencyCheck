@@ -26,7 +26,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
  * xmlns="http://maven.apache.org/POM/4.0.0". This filter ensures that the correct namespace is added so that both types
  * of POMs can be read.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class MavenNamespaceFilter extends XMLFilterImpl {
 
