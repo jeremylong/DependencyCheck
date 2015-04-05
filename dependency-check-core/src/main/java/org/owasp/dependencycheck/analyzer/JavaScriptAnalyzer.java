@@ -35,7 +35,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * Used to analyze a JavaScript file to gather information to aid in identification of a CPE identifier.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class JavaScriptAnalyzer extends AbstractFileTypeAnalyzer {
 
