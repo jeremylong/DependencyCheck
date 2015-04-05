@@ -32,7 +32,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * CPEs that have previous versions specified. The previous version information is not in the 2.0 version of the schema
  * and is useful to ensure accurate identification (or at least complete).
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class NvdCve12Handler extends DefaultHandler {
 
