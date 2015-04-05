@@ -27,7 +27,7 @@ import org.apache.lucene.analysis.core.KeywordTokenizer;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class UrlTokenizingFilterTest extends BaseTokenStreamTestCase {
 
