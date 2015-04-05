@@ -22,7 +22,7 @@ import java.io.IOException;
 /**
  * An exception used when a file is unable to be un-zipped.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class ExtractionException extends IOException {
 
