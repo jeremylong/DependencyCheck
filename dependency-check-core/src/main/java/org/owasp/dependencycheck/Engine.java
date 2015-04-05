@@ -47,7 +47,7 @@ import org.owasp.dependencycheck.utils.Settings;
  * Scans files, directories, etc. for Dependencies. Analyzers are loaded and used to process the files found by the scan, if a
  * file is encountered and an Analyzer is associated with the file type then the file is turned into a dependency.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class Engine {
 
