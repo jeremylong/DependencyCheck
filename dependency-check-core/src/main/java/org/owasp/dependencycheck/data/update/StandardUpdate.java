@@ -44,7 +44,7 @@ import org.owasp.dependencycheck.utils.Settings;
 /**
  * Class responsible for updating the NVDCVE data store.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class StandardUpdate {
 
