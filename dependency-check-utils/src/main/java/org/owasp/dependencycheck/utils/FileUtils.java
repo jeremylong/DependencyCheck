@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 /**
  * A collection of utilities for processing information about files.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public final class FileUtils {
 
