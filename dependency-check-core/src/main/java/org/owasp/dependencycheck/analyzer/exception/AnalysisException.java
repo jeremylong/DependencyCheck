@@ -20,7 +20,7 @@ package org.owasp.dependencycheck.analyzer.exception;
 /**
  * An exception thrown when the analysis of a dependency fails.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class AnalysisException extends Exception {
 
