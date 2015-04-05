@@ -24,7 +24,7 @@ import org.owasp.dependencycheck.BaseTest;
 /**
  * Rigorous test of setters/getters.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class NvdCveInfoTest extends BaseTest {
 
