@@ -20,7 +20,7 @@ import org.junit.BeforeClass;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class BaseTest {
 
