@@ -25,7 +25,7 @@ import org.owasp.dependencycheck.data.nvdcve.BaseDBTestCase;
  * An abstract database test case that is used to ensure the H2 DB exists prior to performing tests that utilize the
  * data contained within.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public abstract class AbstractDatabaseTestCase extends BaseTest {
 
