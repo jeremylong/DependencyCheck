@@ -30,7 +30,7 @@ import org.owasp.dependencycheck.utils.DependencyVersion;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class EngineVersionCheckTest extends BaseTest {
 
