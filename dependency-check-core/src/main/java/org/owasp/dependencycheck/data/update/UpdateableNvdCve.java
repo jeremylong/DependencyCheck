@@ -30,7 +30,7 @@ import org.owasp.dependencycheck.utils.Downloader;
  * Contains a collection of updateable NvdCveInfo objects. This is used to determine which files need to be downloaded
  * and processed.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class UpdateableNvdCve implements java.lang.Iterable<NvdCveInfo>, Iterator<NvdCveInfo> {
 
