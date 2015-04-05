@@ -32,7 +32,7 @@ import org.owasp.dependencycheck.data.update.exception.UpdateException;
 /**
  * This is a wrapper around a set of properties that are stored in the database.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class DatabaseProperties {
 
