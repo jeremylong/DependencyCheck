@@ -45,7 +45,7 @@ import org.owasp.dependencycheck.utils.Settings;
  * The ReportGenerator is used to, as the name implies, generate reports. Internally the generator uses the Velocity
  * Templating Engine. The ReportGenerator exposes a list of Dependencies to the template when generating the report.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class ReportGenerator {
 
