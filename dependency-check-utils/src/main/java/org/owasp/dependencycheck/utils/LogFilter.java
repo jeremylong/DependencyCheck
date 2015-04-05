@@ -24,7 +24,7 @@ import java.util.logging.LogRecord;
  * A simple log filter to limit the entries written to the verbose log file. The verbose log file uses the root logger
  * as I couldn't get anything else to work; as such, this filter limits the log entries to specific classes.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class LogFilter implements Filter {
 
