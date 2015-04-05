@@ -27,7 +27,7 @@ import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class DependencyCheckTaskTest extends BuildFileTest {
     //TODO: The use of deprecated class BuildFileTestcan possibly
