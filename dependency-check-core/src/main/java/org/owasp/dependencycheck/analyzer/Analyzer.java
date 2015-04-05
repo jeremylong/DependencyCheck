@@ -25,7 +25,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
  * An interface that defines an Analyzer that is used to identify Dependencies. An analyzer will collect information
  * about the dependency in the form of Evidence.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public interface Analyzer {
 
