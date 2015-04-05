@@ -35,7 +35,7 @@ import org.owasp.dependencycheck.utils.UrlStringUtils;
 /**
  * Used to maintain a collection of Evidence.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class EvidenceCollection implements Serializable, Iterable<Evidence> {
 
