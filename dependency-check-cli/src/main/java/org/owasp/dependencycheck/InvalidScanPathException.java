@@ -20,7 +20,7 @@ package org.owasp.dependencycheck;
 /**
  * Thrown if an invalid path is encountered.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 class InvalidScanPathException extends Exception {
 
