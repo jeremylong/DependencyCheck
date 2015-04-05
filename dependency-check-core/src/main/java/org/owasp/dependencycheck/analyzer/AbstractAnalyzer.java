@@ -19,7 +19,7 @@ package org.owasp.dependencycheck.analyzer;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public abstract class AbstractAnalyzer implements Analyzer {
 
