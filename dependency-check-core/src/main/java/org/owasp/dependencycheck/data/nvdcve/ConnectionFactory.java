@@ -39,7 +39,7 @@ import org.owasp.dependencycheck.utils.Settings;
  * obtaining a connection will ensure the database file exists and that the appropriate table structure has been
  * created.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public final class ConnectionFactory {
 
