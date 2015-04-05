@@ -33,7 +33,7 @@ import static org.owasp.dependencycheck.utils.FileUtils.getFileExtension;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public final class ExtractionUtil {
 
