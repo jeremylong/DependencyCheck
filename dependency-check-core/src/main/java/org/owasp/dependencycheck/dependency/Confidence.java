@@ -20,7 +20,7 @@ package org.owasp.dependencycheck.dependency;
 /**
  * A confidence enumeration.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public enum Confidence {
 
