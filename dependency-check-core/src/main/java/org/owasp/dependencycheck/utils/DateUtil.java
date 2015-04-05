@@ -19,7 +19,7 @@ package org.owasp.dependencycheck.utils;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public final class DateUtil {
 
