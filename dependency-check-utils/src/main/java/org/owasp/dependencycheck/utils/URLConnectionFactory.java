@@ -30,7 +30,7 @@ import java.net.URL;
  * A URLConnection Factory to create new connections. This encapsulates several configuration checks to ensure that the connection
  * uses the correct proxy settings.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public final class URLConnectionFactory {
 
