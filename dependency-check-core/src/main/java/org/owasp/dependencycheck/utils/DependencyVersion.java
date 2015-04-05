@@ -35,7 +35,7 @@ import org.apache.commons.lang.StringUtils;
  * Note, the parser contained in this class expects the version numbers to be separated by periods. If a different
  * separator is used the parser will likely fail.</p>
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class DependencyVersion implements Iterable, Comparable<DependencyVersion> {
 
