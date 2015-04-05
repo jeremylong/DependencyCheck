@@ -22,7 +22,7 @@ import java.io.Serializable;
 /**
  * Evidence is a piece of information about a Dependency.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class Evidence implements Serializable, Comparable<Evidence> {
 
