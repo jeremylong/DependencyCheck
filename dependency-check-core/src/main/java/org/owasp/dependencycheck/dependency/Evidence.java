@@ -257,7 +257,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
         } else if (me == null || other == null) {
             return false;
         }
-        return me.equals(other);
+        return me.equalsIgnoreCase(other);
     }
 
     /**
@@ -296,8 +296,8 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     }
 
     /**
-     * Wrapper around {@link java.lang.Enum#compareTo(java.lang.Enum) Enum.compareTo} with an exhaustive, possibly
-     * duplicative, check against nulls.
+     * Wrapper around {@link java.lang.Enum#compareTo(java.lang.Enum) Enum.compareTo} with an exhaustive, possibly duplicative,
+     * check against nulls.
      *
      * @param me the value to be compared
      * @param other the other value to be compared
@@ -312,5 +312,15 @@ public class Evidence implements Serializable, Comparable<Evidence> {
             return 1; //me is greater then the other string
         }
         return me.compareTo(other);
+    }
+
+    /**
+     * Standard toString() implementation.
+     *
+     * @return the string representation of the object
+     */
+    @Override
+    public String toString() {
+        return "Evidence{" + "name=" + name + ", source=" + source + ", value=" + value + ", confidence=" + confidence + '}';
     }
 }
