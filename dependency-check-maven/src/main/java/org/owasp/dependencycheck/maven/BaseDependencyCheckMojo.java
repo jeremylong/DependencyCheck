@@ -61,7 +61,7 @@ import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public abstract class BaseDependencyCheckMojo extends AbstractMojo implements MavenReport {
 
