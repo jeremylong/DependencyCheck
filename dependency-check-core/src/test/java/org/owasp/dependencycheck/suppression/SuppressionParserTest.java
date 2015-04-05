@@ -30,7 +30,7 @@ import org.owasp.dependencycheck.BaseTest;
 /**
  * Test of the suppression parser.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class SuppressionParserTest {
 
