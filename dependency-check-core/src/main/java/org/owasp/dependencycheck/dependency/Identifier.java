@@ -21,7 +21,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class Identifier implements Serializable, Comparable<Identifier> {
 
