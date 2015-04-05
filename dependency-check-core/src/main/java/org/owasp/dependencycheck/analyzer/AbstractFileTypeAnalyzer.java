@@ -31,7 +31,7 @@ import org.owasp.dependencycheck.utils.Settings;
 /**
  * The base FileTypeAnalyzer that all analyzers that have specific file types they analyze should extend.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implements FileTypeAnalyzer {
 
