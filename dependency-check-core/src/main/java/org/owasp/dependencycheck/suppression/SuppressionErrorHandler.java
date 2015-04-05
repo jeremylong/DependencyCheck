@@ -26,7 +26,7 @@ import org.xml.sax.SAXParseException;
 /**
  * An XML parsing error handler.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class SuppressionErrorHandler implements ErrorHandler {
 
