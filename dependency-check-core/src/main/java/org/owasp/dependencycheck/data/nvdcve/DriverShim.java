@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  * copy (with more comments and a few more methods implemented) of the DriverShim from:</p>
  * <blockquote>http://www.kfu.com/~nsayer/Java/dyn-jdbc.html</blockquote>
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  * @see java.sql.Driver
  */
 class DriverShim implements Driver {
