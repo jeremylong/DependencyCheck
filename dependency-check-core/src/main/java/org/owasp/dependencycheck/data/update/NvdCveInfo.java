@@ -20,7 +20,7 @@ package org.owasp.dependencycheck.data.update;
 /**
  * A pojo that contains the Url and timestamp of the current NvdCve XML files.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class NvdCveInfo {
 
