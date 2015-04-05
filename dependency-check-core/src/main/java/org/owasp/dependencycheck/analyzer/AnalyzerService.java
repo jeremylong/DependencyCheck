@@ -24,7 +24,7 @@ import java.util.ServiceLoader;
  * The Analyzer Service Loader. This class loads all services that implement
  * org.owasp.dependencycheck.analyzer.Analyzer.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class AnalyzerService {
 
