@@ -18,7 +18,9 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
 -->
 <project name="dependency-check-cli">
     <bannerLeft>
-        <name>dependency-check-cli</name>
+        <name>OWASP dependency-check-cli</name>
+        <alt>OWASP dependency-check-cli</alt>
+        <src>./images/dc-cli.svg</src>
     </bannerLeft>
     <body>
         <breadcrumbs>

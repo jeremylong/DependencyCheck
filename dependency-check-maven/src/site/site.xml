@@ -19,7 +19,9 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
 
 <project name="dependency-check-maven" xmlns="http://maven.apache.org/DECORATION/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
     <bannerLeft>
-        <name>dependency-check-maven</name>
+        <name>OWASP dependency-check-maven</name>
+        <alt>OWASP dependency-check-maven</alt>
+        <src>./images/dc-maven.svg</src>
     </bannerLeft>
     <body>
         <breadcrumbs>

@@ -18,7 +18,9 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 -->
 <project name="dependency-check-core">
     <bannerLeft>
-        <name>dependency-check-core</name>
+        <name>OWASP dependency-check-core</name>
+        <alt>OWASP dependency-check-maven</alt>
+        <src>./images/dc-core.svg</src>
     </bannerLeft>
     <body>
         <breadcrumbs>

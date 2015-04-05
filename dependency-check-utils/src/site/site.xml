@@ -17,8 +17,10 @@ limitations under the License.
 Copyright (c) 2014 Jeremy Long. All Rights Reserved.
 -->
 <project name="dependency-check-ant">
-    <bannerLeft>
-        <name>dependency-check-utils</name>
+	<bannerLeft>
+        <name>OWASP dependency-check-utils</name>
+        <alt>OWASP dependency-check-utils</alt>
+        <src>./images/dc-utils.svg</src>
     </bannerLeft>
     <body>
         <breadcrumbs>

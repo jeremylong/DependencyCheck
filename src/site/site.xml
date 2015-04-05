@@ -41,8 +41,11 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
         </fluidoSkin>
     </custom>
     <bannerLeft>
-        <name>dependency-check</name>
+        <name>OWASP dependency-check</name>
+        <alt>OWASP dependency-check</alt>
+        <src>./images/dc.svg</src>
     </bannerLeft>
+
     <publishDate position="right" />
     <version position="right" />
     <poweredBy>
@@ -63,7 +66,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
     <body>
         <head>
             <style type="text/css">
-                #bannerLeft { margin-top:50px !important }
+                #bannerLeft { margin-top:-20px;margin-bottom:5px !important }
             </style>
         </head>
         <breadcrumbs>
