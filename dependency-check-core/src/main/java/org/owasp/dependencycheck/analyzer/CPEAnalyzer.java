@@ -54,7 +54,7 @@ import org.owasp.dependencycheck.utils.DependencyVersionUtil;
  * CPEAnalyzer is a utility class that takes a project dependency and attempts to discern if there is an associated CPE. It uses
  * the evidence contained within the dependency to search the Lucene index.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class CPEAnalyzer implements Analyzer {
 
