@@ -30,7 +30,7 @@ import org.apache.lucene.util.Version;
 /**
  * A Lucene field analyzer used to analyzer queries against the CPE data.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public class SearchFieldAnalyzer extends Analyzer {
 
