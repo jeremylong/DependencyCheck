@@ -33,7 +33,7 @@ import org.owasp.dependencycheck.utils.UrlStringUtils;
  * <p>
  * <b>Example:</b> "3.0.0.RELEASE" -> "3 3.0 3.0.0 RELEASE 3.0.0.RELEASE".</p>
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public final class UrlTokenizingFilter extends AbstractTokenizingFilter {
     /**
