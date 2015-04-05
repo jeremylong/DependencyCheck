@@ -20,7 +20,7 @@ package org.owasp.dependencycheck.analyzer;
 /**
  * An Analyzer that scans specific file types.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 public interface FileTypeAnalyzer extends Analyzer {
 
