@@ -43,7 +43,7 @@ import org.owasp.dependencycheck.utils.Settings;
  * Maven Plugin that checks project dependencies and the dependencies of all child modules to see if they have any known published
  * vulnerabilities.
  *
- * @author Jeremy Long <jeremy.long@owasp.org>
+ * @author Jeremy Long
  */
 @Mojo(
         name = "aggregate",
