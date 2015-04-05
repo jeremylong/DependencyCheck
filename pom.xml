@@ -46,21 +46,17 @@ Copyright (c) 2012 - Jeremy Long
             <name>Jeremy Long</name>
             <email>jeremy.long@owasp.org</email>
             <organization>OWASP</organization>
-            <organizationUrl>https://www.owasp.org/index.php/OWASP_Dependency_Check</organizationUrl>
+            <organizationUrl>https://www.owasp.org/</organizationUrl>
             <roles>
                 <role>architect</role>
                 <role>developer</role>
             </roles>
-            <properties>
-                <picUrl>https://plus.google.com/s2/photos/profile/108968019311857145023</picUrl>
-                <twitter>@ctxt</twitter>
-            </properties>
         </developer>
         <developer>
             <name>Steve Springett</name>
             <email>Steve.Springett@owasp.org</email>
             <organization>OWASP</organization>
-            <organizationUrl>https://www.owasp.org/index.php/OWASP_Dependency_Check</organizationUrl>
+            <organizationUrl>https://www.owasp.org/</organizationUrl>
             <roles>
                 <role>developer</role>
             </roles>
@@ -69,13 +65,10 @@ Copyright (c) 2012 - Jeremy Long
             <name>Will Stranathan</name>
             <email>Will.Stranathan@owasp.org</email>
             <organization>OWASP</organization>
-            <organizationUrl>https://www.owasp.org/index.php/OWASP_Dependency_Check</organizationUrl>
+            <organizationUrl>https://www.owasp.org/</organizationUrl>
             <roles>
                 <role>developer</role>
             </roles>
-            <properties>
-                <twitter>@willathome</twitter>
-            </properties>
         </developer>
     </developers>
     <contributors>
@@ -387,7 +380,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>org.jmockit</groupId>
                 <artifactId>jmockit</artifactId>
-                <version>1.15</version>
+                <version>1.16</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

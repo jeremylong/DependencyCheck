@@ -140,6 +140,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.9.1</version>
                 <configuration>
+                    <failOnError>false</failOnError>
                     <bottom>Copyright© 2012-15 Jeremy Long. All Rights Reserved.</bottom>
                 </configuration>
                 <reportSets>
