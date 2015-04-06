@@ -73,6 +73,12 @@ Copyright (c) 2012 - Jeremy Long
     </developers>
     <contributors>
         <contributor>
+            <name>Hugo Costa</name>
+            <organization>OWASP</organization>
+            <organizationUrl>https://www.owasp.org/</organizationUrl>
+            <roles>
+                <role>logo design</role>
+            </roles>
         </contributor>
     </contributors>
     <scm>
