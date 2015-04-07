@@ -83,8 +83,8 @@ public class PomParser {
         try {
             final PomHandler handler = new PomHandler();
             final SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            factory.setValidating(true);
+//            factory.setNamespaceAware(true);
+//            factory.setValidating(true);
             final SAXParser saxParser = factory.newSAXParser();
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setContentHandler(handler);

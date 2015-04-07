@@ -58,24 +58,10 @@ public class PomUtilsTest {
      */
     @Test
     public void testReadPom_File() throws Exception {
-        File file = BaseTest.getResourceAsFile(this, "dwr-xml.pom");
-
+        File file = BaseTest.getResourceAsFile(this, "dwr-pom.xml");
         String expResult = "Direct Web Remoting";
         Model result = PomUtils.readPom(file);
         assertEquals(expResult, result.getName());
     }
 
-//    /**
-//     * Test of analyzePOM method, of class PomUtils.
-//     */
-//    @Test
-//    public void testAnalyzePOM() throws Exception {
-//        System.out.println("analyzePOM");
-//        Dependency dependency = null;
-//        File pomFile = null;
-//        PomUtils instance = new PomUtils();
-//        instance.analyzePOM(dependency, pomFile);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
 }
