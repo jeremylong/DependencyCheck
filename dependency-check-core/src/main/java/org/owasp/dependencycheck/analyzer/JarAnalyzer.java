@@ -53,13 +53,13 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
-import org.owasp.dependencycheck.jaxb.pom.PomUtils;
-import org.owasp.dependencycheck.jaxb.pom.generated.License;
-import org.owasp.dependencycheck.jaxb.pom.generated.Model;
-import org.owasp.dependencycheck.jaxb.pom.generated.Organization;
+import org.owasp.dependencycheck.xml.pom.License;
+import org.owasp.dependencycheck.xml.pom.PomUtils;
+import org.owasp.dependencycheck.xml.pom.Model;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.NonClosingStream;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.xml.pom.PomParser;
 import org.xml.sax.InputSource;
 
 /**
@@ -149,17 +149,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final Pattern HTML_DETECTION_PATTERN = Pattern.compile("\\<[a-z]+.*/?\\>", Pattern.CASE_INSENSITIVE);
 
-    /**
-     * The POM Utility for parsing POM files.
-     */
-    private PomUtils pomUtils = null;
     //</editor-fold>
-
     /**
      * Constructs a new JarAnalyzer.
      */
     public JarAnalyzer() {
-        pomUtils = new PomUtils();
     }
 
     //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
@@ -289,6 +283,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             }
         }
         for (String path : pomEntries) {
+            LOGGER.fine(String.format("Reading pom entry: %s", path));
             Properties pomProperties = null;
             try {
                 if (externalPom == null) {
@@ -320,9 +315,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     Collections.sort(engine.getDependencies());
                 } else {
                     if (externalPom == null) {
-                        pom = retrievePom(path, jar);
+                        pom = PomUtils.readPom(path, jar);
                     } else {
-                        pom = pomUtils.readPom(externalPom);
+                        pom = PomUtils.readPom(externalPom);
                     }
                     foundSomething |= setPomEvidence(dependency, pom, pomProperties, classes);
                 }
@@ -353,6 +348,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 reader = new InputStreamReader(jar.getInputStream(propEntry), "UTF-8");
                 pomProperties = new Properties();
                 pomProperties.load(reader);
+                LOGGER.fine(String.format("Read pom.properties: %s", propPath));
             } finally {
                 if (reader != null) {
                     try {
@@ -380,6 +376,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             final JarEntry entry = entries.nextElement();
             final String entryName = (new File(entry.getName())).getName().toLowerCase();
             if (!entry.isDirectory() && "pom.xml".equals(entryName)) {
+                LOGGER.fine(String.format("POM Entry found: %s", entry.getName()));
                 pomEntries.add(entry.getName());
             }
         }
@@ -423,32 +420,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             closeStream(fos);
             closeStream(input);
         }
-        Model model = null;
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(file);
-            final InputStreamReader reader = new InputStreamReader(fis, "UTF-8");
-            final InputSource xml = new InputSource(reader);
-            final SAXSource source = new SAXSource(xml);
-            model = pomUtils.readPom(source);
-        } catch (FileNotFoundException ex) {
-            final String msg = String.format("Unable to parse pom '%s' in jar '%s' (File Not Found)", path, jar.getName());
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, "", ex);
-            throw new AnalysisException(ex);
-        } catch (UnsupportedEncodingException ex) {
-            final String msg = String.format("Unable to parse pom '%s' in jar '%s' (IO Exception)", path, jar.getName());
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, "", ex);
-            throw new AnalysisException(ex);
-        } catch (AnalysisException ex) {
-            final String msg = String.format("Unable to parse pom '%s' in jar '%s'", path, jar.getName());
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, "", ex);
-            throw ex;
-        } finally {
-            closeStream(fis);
-        }
+        Model model = PomUtils.readPom(file);
         return model;
     }
 
@@ -483,45 +455,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Retrieves the specified POM from a jar file and converts it to a Model.
-     *
-     * @param path the path to the pom.xml file within the jar file
-     * @param jar the jar file to extract the pom from
-     * @return returns a
-     * @throws AnalysisException is thrown if there is an exception extracting or parsing the POM
-     * {@link org.owasp.dependencycheck.jaxb.pom.generated.Model} object
-     */
-    private Model retrievePom(String path, JarFile jar) throws AnalysisException {
-        final ZipEntry entry = jar.getEntry(path);
-        Model model = null;
-        if (entry != null) { //should never be null
-            try {
-                final NonClosingStream stream = new NonClosingStream(jar.getInputStream(entry));
-                final InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
-                final InputSource xml = new InputSource(reader);
-                final SAXSource source = new SAXSource(xml);
-                model = pomUtils.readPom(source);
-            } catch (SecurityException ex) {
-                final String msg = String.format("Unable to parse pom '%s' in jar '%s'; invalid signature", path, jar.getName());
-                LOGGER.log(Level.WARNING, msg);
-                LOGGER.log(Level.FINE, null, ex);
-                throw new AnalysisException(ex);
-            } catch (IOException ex) {
-                final String msg = String.format("Unable to parse pom '%s' in jar '%s' (IO Exception)", path, jar.getName());
-                LOGGER.log(Level.WARNING, msg);
-                LOGGER.log(Level.FINE, "", ex);
-                throw new AnalysisException(ex);
-            } catch (Throwable ex) {
-                final String msg = String.format("Unexpected error during parsing of the pom '%s' in jar '%s'", path, jar.getName());
-                LOGGER.log(Level.WARNING, msg);
-                LOGGER.log(Level.FINE, "", ex);
-                throw new AnalysisException(ex);
-            }
-        }
-        return model;
-    }
-
-    /**
      * Sets evidence from the pom on the supplied dependency.
      *
      * @param dependency the dependency to set data on
@@ -540,8 +473,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         String groupid = interpolateString(pom.getGroupId(), pomProperties);
         String parentGroupId = null;
 
-        if (pom.getParent() != null) {
-            parentGroupId = interpolateString(pom.getParent().getGroupId(), pomProperties);
+        if (pom.getParentGroupId() != null) {
+            parentGroupId = interpolateString(pom.getParentGroupId(), pomProperties);
             if ((groupid == null || groupid.isEmpty()) && parentGroupId != null && !parentGroupId.isEmpty()) {
                 groupid = parentGroupId;
             }
@@ -567,8 +500,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         String artifactid = interpolateString(pom.getArtifactId(), pomProperties);
         String parentArtifactId = null;
 
-        if (pom.getParent() != null) {
-            parentArtifactId = interpolateString(pom.getParent().getArtifactId(), pomProperties);
+        if (pom.getParentArtifactId() != null) {
+            parentArtifactId = interpolateString(pom.getParentArtifactId(), pomProperties);
             if ((artifactid == null || artifactid.isEmpty()) && parentArtifactId != null && !parentArtifactId.isEmpty()) {
                 artifactid = parentArtifactId;
             }
@@ -596,8 +529,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         String version = interpolateString(pom.getVersion(), pomProperties);
         String parentVersion = null;
 
-        if (pom.getParent() != null) {
-            parentVersion = interpolateString(pom.getParent().getVersion(), pomProperties);
+        if (pom.getParentVersion() != null) {
+            parentVersion = interpolateString(pom.getParentVersion(), pomProperties);
             if ((version == null || version.isEmpty()) && parentVersion != null && !parentVersion.isEmpty()) {
                 version = parentVersion;
             }
@@ -618,10 +551,10 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         // org name
-        final Organization org = pom.getOrganization();
-        if (org != null && org.getName() != null) {
+        final String org = pom.getOrganization();
+        if (org != null) {
             foundSomething = true;
-            final String orgName = interpolateString(org.getName(), pomProperties);
+            final String orgName = interpolateString(org, pomProperties);
             if (orgName != null && !orgName.isEmpty()) {
                 dependency.getVendorEvidence().addEvidence("pom", "organization name", orgName, Confidence.HIGH);
                 addMatchingValues(classes, orgName, dependency.getVendorEvidence());
@@ -1176,7 +1109,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         //license
         if (pom.getLicenses() != null) {
             String license = null;
-            for (License lic : pom.getLicenses().getLicense()) {
+            for (License lic : pom.getLicenses()) {
                 String tmp = null;
                 if (lic.getName() != null) {
                     tmp = interpolateString(lic.getName(), pomProperties);
