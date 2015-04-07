@@ -33,7 +33,7 @@ import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
-import org.owasp.dependencycheck.jaxb.pom.PomUtils;
+import org.owasp.dependencycheck.xml.pom.PomUtils;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
@@ -76,10 +76,6 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      * The searcher itself.
      */
     private CentralSearch searcher;
-    /**
-     * Utility to read POM files.
-     */
-    private PomUtils pomUtil = new PomUtils();
     /**
      * Field indicating if the analyzer is enabled.
      */
@@ -216,7 +212,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                         }
                         LOGGER.fine(String.format("Downloading %s", ma.getPomUrl()));
                         Downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);
-                        pomUtil.analyzePOM(dependency, pomFile);
+                        PomUtils.analyzePOM(dependency, pomFile);
 
                     } catch (DownloadFailedException ex) {
                         final String msg = String.format("Unable to download pom.xml for %s from Central; "

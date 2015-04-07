@@ -33,7 +33,7 @@ import org.owasp.dependencycheck.data.nexus.NexusSearch;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
-import org.owasp.dependencycheck.jaxb.pom.PomUtils;
+import org.owasp.dependencycheck.xml.pom.PomUtils;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
@@ -45,10 +45,10 @@ import org.owasp.dependencycheck.utils.Settings;
  * There are two settings which govern this behavior:
  *
  * <ul>
- * <li>{@link org.owasp.dependencycheck.utils.Settings.KEYS#ANALYZER_NEXUS_ENABLED} determines whether this analyzer is
- * even enabled. This can be overridden by setting the system property.</li>
- * <li>{@link org.owasp.dependencycheck.utils.Settings.KEYS#ANALYZER_NEXUS_URL} the URL to a Nexus service to search by
- * SHA-1. There is an expected <code>%s</code> in this where the SHA-1 will get entered.</li>
+ * <li>{@link org.owasp.dependencycheck.utils.Settings.KEYS#ANALYZER_NEXUS_ENABLED} determines whether this analyzer is even
+ * enabled. This can be overridden by setting the system property.</li>
+ * <li>{@link org.owasp.dependencycheck.utils.Settings.KEYS#ANALYZER_NEXUS_URL} the URL to a Nexus service to search by SHA-1.
+ * There is an expected <code>%s</code> in this where the SHA-1 will get entered.</li>
  * </ul>
  *
  * @author colezlaw
@@ -89,10 +89,6 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
      * Field indicating if the analyzer is enabled.
      */
     private final boolean enabled = checkEnabled();
-    /**
-     * Field for doing POM work
-     */
-    private final PomUtils pomUtil = new PomUtils();
 
     /**
      * Determines if this analyzer is enabled
@@ -233,7 +229,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
                     }
                     LOGGER.fine(String.format("Downloading %s", ma.getPomUrl()));
                     Downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);
-                    pomUtil.analyzePOM(dependency, pomFile);
+                    PomUtils.analyzePOM(dependency, pomFile);
                 } catch (DownloadFailedException ex) {
                     final String msg = String.format("Unable to download pom.xml for %s from Nexus repository; "
                             + "this could result in undetected CPE/CVEs.", dependency.getFileName());
