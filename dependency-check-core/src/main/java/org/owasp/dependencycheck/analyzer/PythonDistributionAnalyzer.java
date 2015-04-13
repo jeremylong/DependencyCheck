@@ -23,8 +23,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.net.MalformedURLException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,7 +31,6 @@ import java.util.regex.Pattern;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 
-import org.apache.commons.collections.iterators.ReverseListIterator;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.input.AutoCloseInputStream;
@@ -273,16 +270,8 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 				.getVendorEvidence();
 		if (StringUtils.isNotBlank(url)) {
 			if (UrlStringUtils.isUrl(url)) {
-				try {
-					vendorEvidence.addEvidence(METADATA, "vendor",
-							(String) (new ReverseListIterator(
-									Arrays.asList(UrlStringUtils
-											.extractImportantUrlData(url).get(0)
-											.split(Pattern.quote("."))))).next(),
-							Confidence.MEDIUM);
-				} catch (MalformedURLException mue) {
-					LOGGER.fine("URL didn't parse: " + mue.getMessage());
-				}
+				vendorEvidence.addEvidence(METADATA, "vendor", url,
+						Confidence.MEDIUM);
 			}
 		}
 		addPropertyToEvidence(headers, vendorEvidence, "Author", Confidence.LOW);

@@ -83,5 +83,11 @@
         <gav regex="true">org\.opensaml:xmltooling:.*</gav>
         <cpe>cpe:/a:internet2:opensaml</cpe>
     </suppress>
-
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives for python:python.
+        ]]></notes>
+        <filePath regex="true">.*\b(site|dist)-packages\b.*</filePath>
+        <cpe>cpe:/a:python:python</cpe>
+    </suppress>
 </suppressions>

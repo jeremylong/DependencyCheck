@@ -20,6 +20,7 @@ package org.owasp.dependencycheck;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.logging.Logger;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -327,6 +328,12 @@ public final class CliParser {
                 .withDescription("Disable the .NET Assembly Analyzer.")
                 .create();
 
+        final Option disablePythonDistributionAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_PY_DIST)
+                .withDescription("Disable the Python Distribution Analyzer.").create();
+
+        final Option disablePythonPackageAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_PY_PKG)
+                .withDescription("Disable the Python Package Analyzer.").create();
+
         final Option disableCentralAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_CENTRAL)
                 .withDescription("Disable the Central Analyzer. If this analyzer is disabled it is likely you also want to disable "
                         + "the Nexus Analyzer.")
@@ -369,6 +376,8 @@ public final class CliParser {
                 .addOption(disableJarAnalyzer)
                 .addOption(disableArchiveAnalyzer)
                 .addOption(disableAssemblyAnalyzer)
+                .addOption(disablePythonDistributionAnalyzer)
+                .addOption(disablePythonPackageAnalyzer)
                 .addOption(disableNuspecAnalyzer)
                 .addOption(disableCentralAnalyzer)
                 .addOption(disableNexusAnalyzer)
@@ -456,6 +465,24 @@ public final class CliParser {
      */
     public boolean isAssemblyDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_ASSEMBLY);
+    }
+
+    /**
+     * Returns true if the disablePyDist command line argument was specified.
+     *
+     * @return true if the disablePyDist command line argument was specified; otherwise false
+     */
+    public boolean isPythonDistributionDisabled() {
+        return (line != null) && line.hasOption(ARGUMENT.DISABLE_PY_DIST);
+    }
+
+    /**
+     * Returns true if the disablePyPkg command line argument was specified.
+     *
+     * @return true if the disablePyPkg command line argument was specified; otherwise false
+     */
+    public boolean isPythonPackageDisabled() {
+        return (line != null) && line.hasOption(ARGUMENT.DISABLE_PY_PKG);
     }
 
     /**
@@ -899,6 +926,14 @@ public final class CliParser {
          * Disables the Archive Analyzer.
          */
         public static final String DISABLE_ARCHIVE = "disableArchive";
+        /**
+         * Disables the Python Distribution Analyzer.
+         */
+        public static final String DISABLE_PY_DIST = "disablePyDist";
+        /**
+         * Disables the Python Package Analyzer.
+         */
+        public static final String DISABLE_PY_PKG = "disablePyPkg";
         /**
          * Disables the Assembly Analyzer.
          */

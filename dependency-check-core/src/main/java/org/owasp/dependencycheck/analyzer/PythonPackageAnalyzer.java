@@ -179,7 +179,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
 	 * This should gather information from leading docstrings, file comments,
 	 * and assignments to __version__, __title__, __summary__, __uri__, __url__,
 	 * __home*page__, __author__, and their all caps equivalents.
-	 * 
+	 *
 	 * @return whether evidence was found
 	 */
 	private boolean analyzeFileContents(Dependency dependency, File file)
@@ -239,14 +239,10 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
 		final Matcher matcher = pattern.matcher(contents);
 		boolean found = false;
 		if (matcher.find()) {
-			final String value = matcher.group(4);
-			if (UrlStringUtils.isUrl(value)) {
+			final String url = matcher.group(4);
+			if (UrlStringUtils.isUrl(url)) {
 				found = true;
-				final List<String> urlData = UrlStringUtils
-						.extractImportantUrlData(value);
-				for (final String part : urlData) {
-					evidence.addEvidence(source, name, part, Confidence.MEDIUM);
-				}
+				evidence.addEvidence(source, name, url, Confidence.MEDIUM);
 			}
 		}
 		return found;
