@@ -118,7 +118,7 @@ public class Engine extends org.owasp.dependencycheck.Engine {
     protected Analyzer initializeAnalyzer(Analyzer analyzer) {
         if ((analyzer instanceof CPEAnalyzer)) {
             CPEAnalyzer cpe = getPreviouslyLoadedCPEAnalyzer();
-            if (cpe != null) {
+            if (cpe != null && cpe.isOpen()) {
                 return cpe;
             }
             cpe = (CPEAnalyzer) super.initializeAnalyzer(analyzer);

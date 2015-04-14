@@ -160,6 +160,10 @@ public class CPEAnalyzer implements Analyzer {
         }
     }
 
+    public boolean isOpen() {
+        return cpe != null && cpe.isOpen();
+    }
+
     /**
      * Searches the data store of CPE entries, trying to identify the CPE for the given dependency based on the evidence contained
      * within. The dependency passed in is updated with any identified CPE values.
