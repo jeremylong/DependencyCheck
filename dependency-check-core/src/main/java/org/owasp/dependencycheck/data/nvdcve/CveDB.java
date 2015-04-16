@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,6 +60,7 @@ public class CveDB {
      * Database connection
      */
     private Connection conn;
+    private ResourceBundle statementBundle = null;
 
     /**
      * Creates a new CveDB object and opens the database connection. Note, the connection must be closed by the caller by calling
@@ -68,6 +70,7 @@ public class CveDB {
      */
     public CveDB() throws DatabaseException {
         super();
+        statementBundle = java.util.ResourceBundle.getBundle("data/dbStatements");
         try {
             open();
             databaseProperties = new DatabaseProperties(this);
@@ -162,116 +165,7 @@ public class CveDB {
     public DatabaseProperties getDatabaseProperties() {
         return databaseProperties;
     }
-    //<editor-fold defaultstate="collapsed" desc="Constants to create, maintain, and retrieve data from the CVE Database">
-    /**
-     * SQL Statement to delete references by vulnerability ID.
-     */
-    private static final String DELETE_REFERENCE = "DELETE FROM reference WHERE cveid = ?";
-    /**
-     * SQL Statement to delete software by vulnerability ID.
-     */
-    private static final String DELETE_SOFTWARE = "DELETE FROM software WHERE cveid = ?";
-    /**
-     * SQL Statement to delete a vulnerability by CVE.
-     */
-    private static final String DELETE_VULNERABILITY = "DELETE FROM vulnerability WHERE id = ?";
-    /**
-     * SQL Statement to cleanup orphan entries. Yes, the db schema could be a little tighter, but what we have works well to keep
-     * the data file size down a bit.
-     */
-    private static final String CLEANUP_ORPHANS = "DELETE FROM CpeEntry WHERE id not in (SELECT CPEEntryId FROM Software); ";
-    /**
-     * SQL Statement to insert a new reference.
-     */
-    private static final String INSERT_REFERENCE = "INSERT INTO reference (cveid, name, url, source) VALUES (?, ?, ?, ?)";
-    /**
-     * SQL Statement to insert a new software.
-     */
-    private static final String INSERT_SOFTWARE = "INSERT INTO software (cveid, cpeEntryId, previousVersion) VALUES (?, ?, ?)";
-    /**
-     * SQL Statement to insert a new cpe.
-     */
-    private static final String INSERT_CPE = "INSERT INTO cpeEntry (cpe, vendor, product) VALUES (?, ?, ?)";
-    /**
-     * SQL Statement to get a CPEProductID.
-     */
-    private static final String SELECT_CPE_ID = "SELECT id FROM cpeEntry WHERE cpe = ?";
-    /**
-     * SQL Statement to insert a new vulnerability.
-     */
-    private static final String INSERT_VULNERABILITY = "INSERT INTO vulnerability (cve, description, cwe, cvssScore, cvssAccessVector, "
-            + "cvssAccessComplexity, cvssAuthentication, cvssConfidentialityImpact, cvssIntegrityImpact, cvssAvailabilityImpact) "
-            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    /**
-     * SQL Statement to update a vulnerability.
-     */
-    private static final String UPDATE_VULNERABILITY = "UPDATE vulnerability SET description=?, cwe=?, cvssScore=?, cvssAccessVector=?, "
-            + "cvssAccessComplexity=?, cvssAuthentication=?, cvssConfidentialityImpact=?, cvssIntegrityImpact=?, cvssAvailabilityImpact=? "
-            + "WHERE id=?";
-    /**
-     * SQL Statement to find CVE entries based on CPE data.
-     */
-    private static final String SELECT_CVE_FROM_SOFTWARE = "SELECT cve, cpe, previousVersion "
-            + "FROM software INNER JOIN vulnerability ON vulnerability.id = software.cveId "
-            + "INNER JOIN cpeEntry ON cpeEntry.id = software.cpeEntryId "
-            + "WHERE vendor = ? AND product = ? "
-            + "ORDER BY cve, cpe"; //, previousVersion
-    //unfortunately, the version info is too complicated to do in a select. Need to filter this afterwards
-    //        + " AND (version = '-' OR previousVersion IS NOT NULL OR version=?)";
-    //
-    /**
-     * SQL Statement to find the CPE entry based on the vendor and product.
-     */
-    private static final String SELECT_CPE_ENTRIES = "SELECT cpe FROM cpeEntry WHERE vendor = ? AND product = ?";
-    /**
-     * SQL Statement to select references by CVEID.
-     */
-    private static final String SELECT_REFERENCE = "SELECT source, name, url FROM reference WHERE cveid = ?";
-    /**
-     * SQL Statement to select vendor and product for lucene index.
-     */
-    private static final String SELECT_VENDOR_PRODUCT_LIST = "SELECT vendor, product FROM cpeEntry GROUP BY vendor, product";
-    /**
-     * SQL Statement to select software by CVEID.
-     */
-    private static final String SELECT_SOFTWARE = "SELECT cpe, previousVersion "
-            + "FROM software INNER JOIN cpeEntry ON software.cpeEntryId = cpeEntry.id WHERE cveid = ?";
-//    public static final String SELECT_SOFTWARE = "SELECT part, vendor, product, version, revision, previousVersion "
-//            + "FROM software INNER JOIN cpeProduct ON cpeProduct.id = software.cpeProductId LEFT JOIN cpeVersion ON "
-//            + "software.cpeVersionId = cpeVersion.id LEFT JOIN Version ON cpeVersion.versionId = version.id WHERE cveid = ?";
-    /**
-     * SQL Statement to select a vulnerability by CVEID.
-     */
-    private static final String SELECT_VULNERABILITY = "SELECT id, description, cwe, cvssScore, cvssAccessVector, cvssAccessComplexity, "
-            + "cvssAuthentication, cvssConfidentialityImpact, cvssIntegrityImpact, cvssAvailabilityImpact FROM vulnerability WHERE cve = ?";
-    /**
-     * SQL Statement to select a vulnerability's primary key.
-     */
-    private static final String SELECT_VULNERABILITY_ID = "SELECT id FROM vulnerability WHERE cve = ?";
-    /**
-     * SQL Statement to retrieve the properties from the database.
-     */
-    private static final String SELECT_PROPERTIES = "SELECT id, value FROM properties";
-    /**
-     * SQL Statement to retrieve a property from the database.
-     */
-    @SuppressWarnings("unused")
-    private static final String SELECT_PROPERTY = "SELECT id, value FROM properties WHERE id = ?";
-    /**
-     * SQL Statement to insert a new property.
-     */
-    private static final String INSERT_PROPERTY = "INSERT INTO properties (id, value) VALUES (?, ?)";
-    /**
-     * SQL Statement to update a property.
-     */
-    private static final String UPDATE_PROPERTY = "UPDATE properties SET value = ? WHERE id = ?";
-    /**
-     * SQL Statement to delete a property.
-     */
-    @SuppressWarnings("unused")
-    private static final String DELETE_PROPERTY = "DELETE FROM properties WHERE id = ?";
 
-    //</editor-fold>
     /**
      * Searches the CPE entries in the database and retrieves all entries for a given vendor and product combination. The returned
      * list will include all versions of the product that are registered in the NVD CVE data.
@@ -285,7 +179,7 @@ public class CveDB {
         ResultSet rs = null;
         PreparedStatement ps = null;
         try {
-            ps = getConnection().prepareStatement(SELECT_CPE_ENTRIES);
+            ps = getConnection().prepareStatement(statementBundle.getString("SELECT_CPE_ENTRIES"));
             ps.setString(1, vendor);
             ps.setString(2, product);
             rs = ps.executeQuery();
@@ -317,7 +211,7 @@ public class CveDB {
         ResultSet rs = null;
         PreparedStatement ps = null;
         try {
-            ps = getConnection().prepareStatement(SELECT_VENDOR_PRODUCT_LIST);
+            ps = getConnection().prepareStatement(statementBundle.getString("SELECT_VENDOR_PRODUCT_LIST"));
             rs = ps.executeQuery();
             while (rs.next()) {
                 data.add(new Pair<String, String>(rs.getString(1), rs.getString(2)));
@@ -342,7 +236,7 @@ public class CveDB {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = getConnection().prepareStatement(SELECT_PROPERTIES);
+            ps = getConnection().prepareStatement(statementBundle.getString("SELECT_PROPERTIES"));
             rs = ps.executeQuery();
             while (rs.next()) {
                 prop.setProperty(rs.getString(1), rs.getString(2));
@@ -368,8 +262,8 @@ public class CveDB {
         PreparedStatement insertProperty = null;
         try {
             try {
-                updateProperty = getConnection().prepareStatement(UPDATE_PROPERTY);
-                insertProperty = getConnection().prepareStatement(INSERT_PROPERTY);
+                updateProperty = getConnection().prepareStatement(statementBundle.getString("UPDATE_PROPERTY"));
+                insertProperty = getConnection().prepareStatement(statementBundle.getString("INSERT_PROPERTY"));
             } catch (SQLException ex) {
                 LOGGER.log(Level.WARNING, "Unable to save properties to the database");
                 LOGGER.log(Level.FINE, "Unable to save properties to the database", ex);
@@ -408,7 +302,7 @@ public class CveDB {
         PreparedStatement insertProperty = null;
         try {
             try {
-                updateProperty = getConnection().prepareStatement(UPDATE_PROPERTY);
+                updateProperty = getConnection().prepareStatement(statementBundle.getString("UPDATE_PROPERTY"));
             } catch (SQLException ex) {
                 LOGGER.log(Level.WARNING, "Unable to save properties to the database");
                 LOGGER.log(Level.FINE, "Unable to save properties to the database", ex);
@@ -419,7 +313,7 @@ public class CveDB {
                 updateProperty.setString(2, key);
                 if (updateProperty.executeUpdate() == 0) {
                     try {
-                        insertProperty = getConnection().prepareStatement(INSERT_PROPERTY);
+                        insertProperty = getConnection().prepareStatement(statementBundle.getString("INSERT_PROPERTY"));
                     } catch (SQLException ex) {
                         LOGGER.log(Level.WARNING, "Unable to save properties to the database");
                         LOGGER.log(Level.FINE, "Unable to save properties to the database", ex);
@@ -460,7 +354,7 @@ public class CveDB {
 
         PreparedStatement ps;
         try {
-            ps = getConnection().prepareStatement(SELECT_CVE_FROM_SOFTWARE);
+            ps = getConnection().prepareStatement(statementBundle.getString("SELECT_CVE_FROM_SOFTWARE"));
             ps.setString(1, cpe.getVendor());
             ps.setString(2, cpe.getProduct());
             rs = ps.executeQuery();
@@ -518,7 +412,7 @@ public class CveDB {
         ResultSet rsS = null;
         Vulnerability vuln = null;
         try {
-            psV = getConnection().prepareStatement(SELECT_VULNERABILITY);
+            psV = getConnection().prepareStatement(statementBundle.getString("SELECT_VULNERABILITY"));
             psV.setString(1, cve);
             rsV = psV.executeQuery();
             if (rsV.next()) {
@@ -542,13 +436,13 @@ public class CveDB {
                 vuln.setCvssIntegrityImpact(rsV.getString(9));
                 vuln.setCvssAvailabilityImpact(rsV.getString(10));
 
-                psR = getConnection().prepareStatement(SELECT_REFERENCE);
+                psR = getConnection().prepareStatement(statementBundle.getString("SELECT_REFERENCES"));
                 psR.setInt(1, cveId);
                 rsR = psR.executeQuery();
                 while (rsR.next()) {
                     vuln.addReference(rsR.getString(1), rsR.getString(2), rsR.getString(3));
                 }
-                psS = getConnection().prepareStatement(SELECT_SOFTWARE);
+                psS = getConnection().prepareStatement(statementBundle.getString("SELECT_SOFTWARE"));
                 psS.setInt(1, cveId);
                 rsS = psS.executeQuery();
                 while (rsS.next()) {
@@ -593,16 +487,16 @@ public class CveDB {
         PreparedStatement insertSoftware = null;
 
         try {
-            selectVulnerabilityId = getConnection().prepareStatement(SELECT_VULNERABILITY_ID);
-            deleteVulnerability = getConnection().prepareStatement(DELETE_VULNERABILITY);
-            deleteReferences = getConnection().prepareStatement(DELETE_REFERENCE);
-            deleteSoftware = getConnection().prepareStatement(DELETE_SOFTWARE);
-            updateVulnerability = getConnection().prepareStatement(UPDATE_VULNERABILITY);
-            insertVulnerability = getConnection().prepareStatement(INSERT_VULNERABILITY, Statement.RETURN_GENERATED_KEYS);
-            insertReference = getConnection().prepareStatement(INSERT_REFERENCE);
-            selectCpeId = getConnection().prepareStatement(SELECT_CPE_ID);
-            insertCpe = getConnection().prepareStatement(INSERT_CPE, Statement.RETURN_GENERATED_KEYS);
-            insertSoftware = getConnection().prepareStatement(INSERT_SOFTWARE);
+            selectVulnerabilityId = getConnection().prepareStatement(statementBundle.getString("SELECT_VULNERABILITY_ID"));
+            deleteVulnerability = getConnection().prepareStatement(statementBundle.getString("DELETE_VULNERABILITY"));
+            deleteReferences = getConnection().prepareStatement(statementBundle.getString("DELETE_REFERENCE"));
+            deleteSoftware = getConnection().prepareStatement(statementBundle.getString("DELETE_SOFTWARE"));
+            updateVulnerability = getConnection().prepareStatement(statementBundle.getString("UPDATE_VULNERABILITY"));
+            insertVulnerability = getConnection().prepareStatement(statementBundle.getString("INSERT_VULNERABILITY"), Statement.RETURN_GENERATED_KEYS);
+            insertReference = getConnection().prepareStatement(statementBundle.getString("INSERT_REFERENCE"));
+            selectCpeId = getConnection().prepareStatement(statementBundle.getString("SELECT_CPE_ID"));
+            insertCpe = getConnection().prepareStatement(statementBundle.getString("INSERT_CPE"), Statement.RETURN_GENERATED_KEYS);
+            insertSoftware = getConnection().prepareStatement(statementBundle.getString("INSERT_SOFTWARE"));
             int vulnerabilityId = 0;
             selectVulnerabilityId.setString(1, vuln.getName());
             ResultSet rs = selectVulnerabilityId.executeQuery();
@@ -762,7 +656,7 @@ public class CveDB {
     public void cleanupDatabase() {
         PreparedStatement ps = null;
         try {
-            ps = getConnection().prepareStatement(CLEANUP_ORPHANS);
+            ps = getConnection().prepareStatement(statementBundle.getString("CLEANUP_ORPHANS"));
             if (ps != null) {
                 ps.executeUpdate();
             }
