@@ -354,8 +354,8 @@ Copyright (c) 2012 - Jeremy Long
                             <report>dependency-info</report>
                             <report>dependency-management</report>
                             <report>distribution-management</report>
-                            -->
                             <report>index</report>
+                            -->
                             <report>summary</report>
                             <report>mailing-list</report>
                             <report>issue-tracking</report>

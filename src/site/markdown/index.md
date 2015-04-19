@@ -1,6 +1,6 @@
 About
 ====================
-Dependency-check is an open source solution the OWASP Top 10 2013 entry: [A9 -
+OWASP dependency-check is an open source solution the OWASP Top 10 2013 entry: [A9 -
 Using Components with Known Vulnerabilities](https://www.owasp.org/index.php/Top_10_2013-A9-Using_Components_with_Known_Vulnerabilities).
 Dependency-check can currently be used to scan Java applications (and their
 dependent libraries) to identify known vulnerable components.
@@ -16,13 +16,9 @@ More information about dependency-check can be found here:
 
 * [How does dependency-check work](./internals.html)
 * [How to read the report](./thereport.html)
+* [The OWASP dependency-check mailing list](./mail-lists.html)
 
-**IMPORTANT NOTE**: Dependency-check automatically updates itself using the NVD Data Feeds hosted by
-NIST. **The initial download of the data may take fifteen minutes
-or more**, if you run the tool at least once every seven days only a small XML file
-needs to be downloaded to keep the local copy of the data current.
-
-Dependency-check's core analysis library is exposed in various forms:
+OWASP dependency-check's core analysis engine can be used as:
 
 -  [Command Line Tool](dependency-check-cli/index.html)
 -  [Maven Plugin](dependency-check-maven/usage.html)
