@@ -89,5 +89,6 @@
         ]]></notes>
         <filePath regex="true">.*\b(site|dist)-packages\b.*</filePath>
         <cpe>cpe:/a:python:python</cpe>
+        <cpe>cpe:/a:python_software_foundation:python</cpe>
     </suppress>
 </suppressions>
