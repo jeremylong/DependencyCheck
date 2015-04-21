@@ -90,10 +90,14 @@
         <filePath regex="true">.*(\.(whl|egg)|\b(site|dist)-packages\b.*)</filePath>
         <cpe>cpe:/a:python:python</cpe>
         <cpe>cpe:/a:python_software_foundation:python</cpe>
+        <cpe>cpe:/a:class:class</cpe>
         <cpe>cpe:/a:file:file</cpe>
         <cpe>cpe:/a:gnupg:gnupg</cpe>
         <cpe>cpe:/a:mongodb:mongodb</cpe>
+        <cpe>cpe:/a:mozilla:mozilla</cpe>
         <cpe>cpe:/a:openssl:openssl</cpe>
+        <cpe>cpe:/a:sendfile:sendfile</cpe>
         <cpe>cpe:/a:sendmail:sendmail</cpe>
+        <cpe>cpe:/a:yacc:yacc</cpe>
     </suppress>
 </suppressions>
