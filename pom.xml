@@ -115,15 +115,13 @@ Copyright (c) 2012 - Jeremy Long
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <github.global.server>github</github.global.server>
     </properties>
-    <!-- begin copy from http://minds.coremedia.com/2012/09/11/problem-solved-deploy-multi-module-maven-project-site-as-github-pages/ -->
     <distributionManagement>
         <site>
-            <id>github-pages-site</id>
-            <name>Deployment through GitHub's site deployment plugin</name>
+            <id>gh-pages</id>
+            <name>gh-pages</name>
             <url>${project.build.directory}/site/${project.version}</url>
         </site>
     </distributionManagement>
-    <!-- end copy -->
     <prerequisites>
         <maven>3.0</maven>
     </prerequisites>
@@ -219,11 +217,6 @@ Copyright (c) 2012 - Jeremy Long
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.18.1</version>
                 </plugin>
-                <plugin>
-                    <groupId>com.github.github</groupId>
-                    <artifactId>site-maven-plugin</artifactId>
-                    <version>0.10</version>
-                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -301,7 +294,6 @@ Copyright (c) 2012 - Jeremy Long
                     </execution>
                 </executions>
             </plugin>
-            <!-- begin copy from http://minds.coremedia.com/2012/09/11/problem-solved-deploy-multi-module-maven-project-site-as-github-pages/ -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
@@ -316,26 +308,6 @@ Copyright (c) 2012 - Jeremy Long
                     <skipDeploy>true</skipDeploy>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <configuration>
-                    <message>Creating site for ${project.artifactId}, ${project.version}</message>
-                    <!-- this does the trick to place every module in the correct subfolder -->
-                    <path>${project.distributionManagement.site.url}</path>
-                    <merge>true</merge>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>github-site</id>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                        <phase>site-deploy</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- end copy -->
         </plugins>
     </build>
     <reporting>
