@@ -184,7 +184,6 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
                 <reportSets>
                     <reportSet>
                         <reports>
-                            <report>index</report>
                             <report>summary</report>
                             <report>license</report>
                             <report>help</report>

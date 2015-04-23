@@ -1,3 +1,10 @@
+About
+====================
+OWASP dependency-check-cli is an command line tool that uses dependency-check-core to detect
+publicly disclosed vulnerabilities associated with the scanned project dependencies. The tool
+will generate a report listing the dependency, any identified Common Platform Enumeration (CPE)
+identifiers, and the associated Common Vulnerability and Exposure (CVE) entries.
+
 Installation & Usage
 ====================
 Download the dependency-check command line tool [here](http://dl.bintray.com/jeremy-long/owasp/dependency-check-${project.version}-release.zip).

@@ -28,10 +28,9 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             <item name="dependency-check" href="../index.html"/>
         </breadcrumbs>
         <menu name="Getting Started">
-            <item name="Usage" href="usage.html"/>
+            <item name="Usage" href="index.html"/>
             <item name="Configuration" href="configuration.html"/>
         </menu>
-        <menu ref="Project Documentation" />
         <menu ref="reports"/>
     </body>
 </project>

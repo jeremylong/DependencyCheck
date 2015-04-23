@@ -21,6 +21,6 @@ More information about dependency-check can be found here:
 OWASP dependency-check's core analysis engine can be used as:
 
 -  [Command Line Tool](dependency-check-cli/index.html)
--  [Maven Plugin](dependency-check-maven/usage.html)
--  [Ant Task](dependency-check-ant/installation.html)
+-  [Maven Plugin](dependency-check-maven/index.html)
+-  [Ant Task](dependency-check-ant/index.html)
 -  [Jenkins Plugin](dependency-check-jenkins/index.html)

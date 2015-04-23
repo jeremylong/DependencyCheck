@@ -10,7 +10,7 @@ for details.
 
 The engine is currently exposed via:
 
-- [Command Line Tool](../dependency-check-cli/installation.html)
-- [Maven Plugin](../dependency-check-maven/usage.html)
-- [Ant Task](../dependency-check-ant/installation.html)
+- [Command Line Tool](../dependency-check-cli/index.html)
+- [Maven Plugin](../dependency-check-maven/index.html)
+- [Ant Task](../dependency-check-ant/index.html)
 - [Jenkins Plugin](../dependency-check-jenkins/index.html)

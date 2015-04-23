@@ -1,3 +1,10 @@
+About
+====================
+OWASP dependency-check-ant is an Ant Task that uses dependency-check-core to detect publicly
+disclosed vulnerabilities associated with the project's dependencies. The task will
+generate a report listing the dependency, any identified Common Platform Enumeration (CPE)
+identifiers, and the associated Common Vulnerability and Exposure (CVE) entries.
+
 Installation
 ====================
 Download dependency-check-ant from [bintray here](http://dl.bintray.com/jeremy-long/owasp/dependency-check-ant-${project.version}.jar).
@@ -19,7 +26,7 @@ must add the classpath to the taskdef:
 ```
 
 It is important to understand that the first time this task is executed it may
-take 20 minutes or more as it downloads and processes the data from the National
+take 10 minutes or more as it downloads and processes the data from the National
 Vulnerability Database (NVD) hosted by NIST: https://nvd.nist.gov
 
 After the first batch download, as long as the task is executed at least once every
