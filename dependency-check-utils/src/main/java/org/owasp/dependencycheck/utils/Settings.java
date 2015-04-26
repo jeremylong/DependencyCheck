@@ -177,6 +177,14 @@ public final class Settings {
          */
         public static final String ANALYZER_ARCHIVE_ENABLED = "analyzer.archive.enabled";
         /**
+         * The properties key for whether the Python Distribution analyzer is enabled.
+         */
+        public static final String ANALYZER_PYTHON_DISTRIBUTION_ENABLED = "analyzer.python.distribution.enabled";
+        /**
+         * The properties key for whether the Python Package analyzer is enabled.
+         */
+		public static final String ANALYZER_PYTHON_PACKAGE_ENABLED = "analyzer.python.package.enabled";
+        /**
          * The properties key for whether the .NET Assembly analyzer is enabled.
          */
         public static final String ANALYZER_ASSEMBLY_ENABLED = "analyzer.assembly.enabled";
@@ -264,7 +272,7 @@ public final class Settings {
     /**
      * Thread local settings.
      */
-    private static ThreadLocal<Settings> localSettings = new ThreadLocal();
+    private static ThreadLocal<Settings> localSettings = new ThreadLocal<Settings>();
     /**
      * The properties.
      */
@@ -369,7 +377,7 @@ public final class Settings {
             try {
                 pw = new PrintWriter(sw);
                 pw.format("%s:%n%n", header);
-                final Enumeration e = properties.propertyNames();
+                final Enumeration<?> e = properties.propertyNames();
                 while (e.hasMoreElements()) {
                     final String key = (String) e.nextElement();
                     if (key.contains("password")) {

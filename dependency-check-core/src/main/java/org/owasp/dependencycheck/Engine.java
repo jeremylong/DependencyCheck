@@ -318,16 +318,17 @@ public class Engine {
             return null;
         }
         final String fileName = file.getName();
-        final String extension = FileUtils.getFileExtension(fileName);
+        String extension = FileUtils.getFileExtension(fileName);
+        if (null == extension) {
+            extension = fileName;
+        }
         Dependency dependency = null;
-        if (extension != null) {
-            if (supportsExtension(extension)) {
-                dependency = new Dependency(file);
-                dependencies.add(dependency);
+        if (supportsExtension(extension)) {
+            dependency = new Dependency(file);
+            if (extension == fileName){
+                dependency.setFileExtension(extension);
             }
-        } else {
-            final String msg = String.format("No file extension found on file '%s'. The file was not analyzed.", file.toString());
-            LOGGER.log(Level.FINE, msg);
+            dependencies.add(dependency);
         }
         return dependency;
     }

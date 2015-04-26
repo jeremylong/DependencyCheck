@@ -13,6 +13,6 @@
 ^ \* See the License for the specific language governing permissions and\s*$
 ^ \* limitations under the License\.\s*$
 ^ \*\s*$
-^ \* Copyright \(c\) 201[0-9] (Jeremy Long|Steve Springett)\. All Rights Reserved\.\s*$
+^ \* Copyright \(c\) 201[0-9] (Jeremy Long|Steve Springett|Institute for Defense Analyses)\. All Rights Reserved\.\s*$
 ^ \*/\s*$
 ^package

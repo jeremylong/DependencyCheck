@@ -23,6 +23,8 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Paramete
 -------|-----------------------|-----------------|----------------------------------------------------------------------------------|-------------------
  \-P   | \-\-propertyfile      | \<file\>        | Specifies a file that contains properties to use instead of applicaion defaults. | &nbsp;
        | \-\-updateonly        |                 | If set only the update phase of dependency-check will be executed; no scan will be executed and no report will be generated. | &nbsp;
+       | \-\-disablePyDist     |                 | Sets whether the Python Distribution Analyzer will be used.                      | false
+       | \-\-disablePyPkg      |                 | Sets whether the Python Package Analyzer will be used.                           | false
        | \-\-disableArchive    |                 | Sets whether the Archive Analyzer will be used.                                  | false
        | \-\-zipExtensions     | \<strings\>     | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
        | \-\-disableJar        |                 | Sets whether the Jar Analyzer will be used.                                      | false
