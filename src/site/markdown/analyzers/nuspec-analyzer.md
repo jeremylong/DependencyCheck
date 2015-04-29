@@ -1,7 +1,7 @@
 Nuspec Analyzer
 ==============
 
-Dependency-check includes an analyzer that will scan NuGet's Nuspec file to
+OWASP dependency-check includes an analyzer that will scan NuGet's Nuspec file to
 collect information about the component being used. The evidence collected
 is used by other analyzers to determine if there are any known vulnerabilities
 associated with the component.

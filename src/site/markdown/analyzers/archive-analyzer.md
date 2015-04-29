@@ -1,7 +1,7 @@
 Archive Analyzer
 ==============
 
-Dependency-check includes an analyzer an archive analyzer that will attempt
+OWASP dependency-check includes an analyzer an archive analyzer that will attempt
 to extract files from the archive that are supported by the other file type
 analyzers.
 
