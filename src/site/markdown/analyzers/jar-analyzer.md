@@ -1,7 +1,7 @@
 Jar Analyzer
 ==============
 
-Dependency-check includes an analyzer that scans JAR files and collect as
+OWASP dependency-check includes an analyzer that scans JAR files and collect as
 much information it can about the file as it can. The information collected
 is internally referred to as evidence and is grouped into vendor, product, and version
 buckets. Other analyzers later use this evidence to identify any Common Platform
