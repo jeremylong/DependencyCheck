@@ -24,6 +24,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -37,129 +39,135 @@ import org.owasp.dependencycheck.dependency.Evidence;
  */
 public class PythonDistributionAnalyzerTest extends BaseTest {
 
-	/**
-	 * Test of getName method, of class PythonDistributionAnalyzer.
-	 */
-	@Test
-	public void testGetName() {
-		assertEquals("Analyzer name wrong.", "Python Distribution Analyzer",
-				new PythonDistributionAnalyzer().getName());
-	}
+    PythonDistributionAnalyzer analyzer;
 
-	/**
-	 * Test of getSupportedExtensions method, of class
-	 * PythonDistributionAnalyzer.
-	 */
-	@Test
-	public void testGetSupportedExtensions() {
-		final String[] expected = { "whl", "egg", "zip", "METADATA", "PKG-INFO" };
-		assertEquals("Supported extensions should just have the following: "
-				+ StringUtils.join(expected, ", "),
-				new HashSet<String>(Arrays.asList(expected)),
-				new PythonDistributionAnalyzer().getSupportedExtensions());
-	}
+    @Before
+    public void setUp() throws Exception {
+        analyzer = new PythonDistributionAnalyzer();
+        analyzer.setFilesMatched(true);
+        analyzer.initialize();
+    }
 
-	/**
-	 * Test of supportsExtension method, of class PythonDistributionAnalyzer.
-	 */
-	@Test
-	public void testSupportsExtension() {
-		final PythonDistributionAnalyzer analyzer = new PythonDistributionAnalyzer();
-		assertTrue("Should support \"whl\" extension.",
-				analyzer.supportsExtension("whl"));
-		assertTrue("Should support \"egg\" extension.",
-				analyzer.supportsExtension("egg"));
-		assertTrue("Should support \"zip\" extension.",
-				analyzer.supportsExtension("zip"));
-		assertTrue("Should support \"METADATA\" extension.",
-				analyzer.supportsExtension("METADATA"));
-		assertTrue("Should support \"PKG-INFO\" extension.",
-				analyzer.supportsExtension("PKG-INFO"));
-	}
+    @After
+    public void tearDown() throws Exception {
+        analyzer.close();
+        analyzer = null;
+    }
 
-	/**
-	 * Test of inspect method, of class PythonDistributionAnalyzer.
-	 *
-	 * @throws Exception
-	 *             is thrown when an exception occurs.
-	 */
-	@Test
-	public void testAnalyzeWheel() throws AnalysisException {
-		djangoAssertions(new Dependency(BaseTest.getResourceAsFile(this,
-				"python/Django-1.7.2-py2.py3-none-any.whl")));
-	}
+    /**
+     * Test of getName method, of class PythonDistributionAnalyzer.
+     */
+    @Test
+    public void testGetName() {
+        assertEquals("Analyzer name wrong.", "Python Distribution Analyzer",
+                analyzer.getName());
+    }
 
-	/**
-	 * Test of inspect method, of class PythonDistributionAnalyzer.
-	 *
-	 * @throws Exception
-	 *             is thrown when an exception occurs.
-	 */
-	@Test
-	public void testAnalyzeSitePackage() throws AnalysisException {
-		final Dependency result = new Dependency(BaseTest.getResourceAsFile(
-				this, "python/site-packages/Django-1.7.2.dist-info/METADATA"));
-		djangoAssertions(result);
-		assertEquals("Django-1.7.2.dist-info/METADATA",
-				result.getDisplayFileName());
-	}
+    /**
+     * Test of getSupportedExtensions method, of class PythonDistributionAnalyzer.
+     */
+    @Test
+    public void testGetSupportedExtensions() {
+        final String[] expected = {"whl", "egg", "zip", "METADATA", "PKG-INFO"};
+        assertEquals("Supported extensions should just have the following: "
+                + StringUtils.join(expected, ", "),
+                new HashSet<String>(Arrays.asList(expected)),
+                analyzer.getSupportedExtensions());
+    }
 
-	private void djangoAssertions(final Dependency result)
-			throws AnalysisException {
-		new PythonDistributionAnalyzer().analyze(result, null);
-		assertTrue("Expected vendor evidence to contain \"djangoproject\".",
-				result.getVendorEvidence().toString().contains("djangoproject"));
-		boolean found = false;
-		for (final Evidence e : result.getVersionEvidence()) {
-			if ("Version".equals(e.getName()) && "1.7.2".equals(e.getValue())) {
-				found = true;
-				break;
-			}
-		}
-		assertTrue("Version 1.7.2 not found in Django dependency.", found);
-	}
+    /**
+     * Test of supportsExtension method, of class PythonDistributionAnalyzer.
+     */
+    @Test
+    public void testSupportsExtension() {
+        assertTrue("Should support \"whl\" extension.",
+                analyzer.supportsExtension("whl"));
+        assertTrue("Should support \"egg\" extension.",
+                analyzer.supportsExtension("egg"));
+        assertTrue("Should support \"zip\" extension.",
+                analyzer.supportsExtension("zip"));
+        assertTrue("Should support \"METADATA\" extension.",
+                analyzer.supportsExtension("METADATA"));
+        assertTrue("Should support \"PKG-INFO\" extension.",
+                analyzer.supportsExtension("PKG-INFO"));
+    }
 
-	@Test
-	public void testAnalyzeEggInfoFolder() throws AnalysisException {
-		eggtestAssertions(this,
-				"python/site-packages/EggTest.egg-info/PKG-INFO",
-				new PythonDistributionAnalyzer());
-	}
+    /**
+     * Test of inspect method, of class PythonDistributionAnalyzer.
+     *
+     * @throws Exception is thrown when an exception occurs.
+     */
+    @Test
+    public void testAnalyzeWheel() throws AnalysisException {
+        djangoAssertions(new Dependency(BaseTest.getResourceAsFile(this,
+                "python/Django-1.7.2-py2.py3-none-any.whl")));
+    }
 
-	@Test
-	public void testAnalyzeEggArchive() throws AnalysisException {
-		eggtestAssertions(this, "python/dist/EggTest-0.0.1-py2.7.egg",
-				new PythonDistributionAnalyzer());
-	}
+    /**
+     * Test of inspect method, of class PythonDistributionAnalyzer.
+     *
+     * @throws Exception is thrown when an exception occurs.
+     */
+    @Test
+    public void testAnalyzeSitePackage() throws AnalysisException {
+        final Dependency result = new Dependency(BaseTest.getResourceAsFile(
+                this, "python/site-packages/Django-1.7.2.dist-info/METADATA"));
+        djangoAssertions(result);
+        assertEquals("Django-1.7.2.dist-info/METADATA",
+                result.getDisplayFileName());
+    }
 
-	@Test
-	public void testAnalyzeEggArchiveNamedZip() throws AnalysisException {
-		eggtestAssertions(this, "python/dist/EggTest-0.0.1-py2.7.zip",
-				new PythonDistributionAnalyzer());
-	}
+    private void djangoAssertions(final Dependency result)
+            throws AnalysisException {
+        boolean found = false;
+        analyzer.analyze(result, null);
+        assertTrue("Expected vendor evidence to contain \"djangoproject\".",
+                result.getVendorEvidence().toString().contains("djangoproject"));
+        for (final Evidence e : result.getVersionEvidence()) {
+            if ("Version".equals(e.getName()) && "1.7.2".equals(e.getValue())) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("Version 1.7.2 not found in Django dependency.", found);
+    }
 
-	@Test
-	public void testAnalyzeEggFolder() throws AnalysisException {
-		eggtestAssertions(
-				this,
-				"python/site-packages/EggTest-0.0.1-py2.7.egg/EGG-INFO/PKG-INFO",
-				new PythonDistributionAnalyzer());
-	}
+    @Test
+    public void testAnalyzeEggInfoFolder() throws AnalysisException {
+        eggtestAssertions(this,
+                "python/site-packages/EggTest.egg-info/PKG-INFO");
+    }
 
-	public static void eggtestAssertions(Object context, final String resource,
-			Analyzer analyzer) throws AnalysisException {
-		final Dependency result = new Dependency(BaseTest.getResourceAsFile(
-				context, resource));
-		analyzer.analyze(result, null);
-		assertTrue("Expected vendor evidence to contain \"example\".", result
-				.getVendorEvidence().toString().contains("example"));
-		boolean found = false;
-		for (final Evidence e : result.getVersionEvidence()) {
-			if ("0.0.1".equals(e.getValue())) {
-				found = true;
-				break;
-			}
-		}
-		assertTrue("Version 0.0.1 not found in EggTest dependency.", found);
-	}
+    @Test
+    public void testAnalyzeEggArchive() throws AnalysisException {
+        eggtestAssertions(this, "python/dist/EggTest-0.0.1-py2.7.egg");
+    }
+
+    @Test
+    public void testAnalyzeEggArchiveNamedZip() throws AnalysisException {
+        eggtestAssertions(this, "python/dist/EggTest-0.0.1-py2.7.zip");
+    }
+
+    @Test
+    public void testAnalyzeEggFolder() throws AnalysisException {
+        eggtestAssertions(
+                this,
+                "python/site-packages/EggTest-0.0.1-py2.7.egg/EGG-INFO/PKG-INFO");
+    }
+
+    public void eggtestAssertions(Object context, final String resource) throws AnalysisException {
+        boolean found = false;
+        final Dependency result = new Dependency(BaseTest.getResourceAsFile(
+                context, resource));
+        analyzer.analyze(result, null);
+        assertTrue("Expected vendor evidence to contain \"example\".", result
+                .getVendorEvidence().toString().contains("example"));
+        for (final Evidence e : result.getVersionEvidence()) {
+            if ("0.0.1".equals(e.getValue())) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("Version 0.0.1 not found in EggTest dependency.", found);
+    }
 }
