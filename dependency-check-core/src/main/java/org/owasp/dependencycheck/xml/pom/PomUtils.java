@@ -25,7 +25,6 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import org.owasp.dependencycheck.analyzer.JarAnalyzer;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 
 /**
@@ -90,10 +89,6 @@ public final class PomUtils {
         Model model = null;
         if (entry != null) { //should never be null
             try {
-//                final NonClosingStream stream = new NonClosingStream(jar.getInputStream(entry));
-//                final InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
-//                final InputSource xml = new InputSource(reader);
-//                final SAXSource source = new SAXSource(xml);
                 final PomParser parser = new PomParser();
                 model = parser.parse(jar.getInputStream(entry));
                 LOGGER.fine(String.format("Read POM %s", path));
@@ -126,75 +121,6 @@ public final class PomUtils {
      */
     public static void analyzePOM(Dependency dependency, File pomFile) throws AnalysisException {
         final Model pom = PomUtils.readPom(pomFile);
-
-        String groupid = pom.getGroupId();
-        String parentGroupId = null;
-
-        if (pom.getParentGroupId() != null) {
-            parentGroupId = pom.getParentGroupId();
-            if ((groupid == null || groupid.isEmpty()) && parentGroupId != null && !parentGroupId.isEmpty()) {
-                groupid = parentGroupId;
-            }
-        }
-        if (groupid != null && !groupid.isEmpty()) {
-            dependency.getVendorEvidence().addEvidence("pom", "groupid", groupid, Confidence.HIGHEST);
-            dependency.getProductEvidence().addEvidence("pom", "groupid", groupid, Confidence.LOW);
-            if (parentGroupId != null && !parentGroupId.isEmpty() && !parentGroupId.equals(groupid)) {
-                dependency.getVendorEvidence().addEvidence("pom", "parent-groupid", parentGroupId, Confidence.MEDIUM);
-                dependency.getProductEvidence().addEvidence("pom", "parent-groupid", parentGroupId, Confidence.LOW);
-            }
-        }
-        String artifactid = pom.getArtifactId();
-        String parentArtifactId = null;
-        if (pom.getParentArtifactId() != null) {
-            parentArtifactId = pom.getParentArtifactId();
-            if ((artifactid == null || artifactid.isEmpty()) && parentArtifactId != null && !parentArtifactId.isEmpty()) {
-                artifactid = parentArtifactId;
-            }
-        }
-        if (artifactid != null && !artifactid.isEmpty()) {
-            if (artifactid.startsWith("org.") || artifactid.startsWith("com.")) {
-                artifactid = artifactid.substring(4);
-            }
-            dependency.getProductEvidence().addEvidence("pom", "artifactid", artifactid, Confidence.HIGHEST);
-            dependency.getVendorEvidence().addEvidence("pom", "artifactid", artifactid, Confidence.LOW);
-            if (parentArtifactId != null && !parentArtifactId.isEmpty() && !parentArtifactId.equals(artifactid)) {
-                dependency.getProductEvidence().addEvidence("pom", "parent-artifactid", parentArtifactId, Confidence.MEDIUM);
-                dependency.getVendorEvidence().addEvidence("pom", "parent-artifactid", parentArtifactId, Confidence.LOW);
-            }
-        }
-        //version
-        String version = pom.getVersion();
-        String parentVersion = null;
-        if (pom.getParentVersion() != null) {
-            parentVersion = pom.getParentVersion();
-            if ((version == null || version.isEmpty()) && parentVersion != null && !parentVersion.isEmpty()) {
-                version = parentVersion;
-            }
-        }
-        if (version != null && !version.isEmpty()) {
-            dependency.getVersionEvidence().addEvidence("pom", "version", version, Confidence.HIGHEST);
-            if (parentVersion != null && !parentVersion.isEmpty() && !parentVersion.equals(version)) {
-                dependency.getVersionEvidence().addEvidence("pom", "parent-version", version, Confidence.LOW);
-            }
-        }
-
-        final String orgName = pom.getOrganization();
-        if (orgName != null && !orgName.isEmpty()) {
-            dependency.getVendorEvidence().addEvidence("pom", "organization name", orgName, Confidence.HIGH);
-        }
-        final String pomName = pom.getName();
-        if (pomName != null && !pomName.isEmpty()) {
-            dependency.getProductEvidence().addEvidence("pom", "name", pomName, Confidence.HIGH);
-            dependency.getVendorEvidence().addEvidence("pom", "name", pomName, Confidence.HIGH);
-        }
-
-        if (pom.getDescription() != null) {
-            final String description = pom.getDescription();
-            if (description != null && !description.isEmpty()) {
-                JarAnalyzer.addDescription(dependency, description, "pom", "description");
-            }
-        }
-        JarAnalyzer.extractLicense(pom, null, dependency);
+        JarAnalyzer.setPomEvidence(dependency, pom, null);
     }
 }
