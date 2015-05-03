@@ -126,15 +126,4 @@ public class JarAnalyzerTest extends BaseTest {
         assertEquals(expResult, result);
     }
 
-    @Test
-    public void testInterpolateString() {
-        Properties prop = new Properties();
-        prop.setProperty("key", "value");
-        prop.setProperty("nested", "nested ${key}");
-        String text = "This is a test of '${key}' '${nested}'";
-        String expResults = "This is a test of 'value' 'nested value'";
-        JarAnalyzer instance = new JarAnalyzer();
-        String results = instance.interpolateString(text, prop);
-        assertEquals(expResults, results);
-    }
 }
