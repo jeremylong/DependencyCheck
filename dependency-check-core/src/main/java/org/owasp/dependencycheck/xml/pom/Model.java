@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.xml.pom;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * A simple pojo to hold data related to a Maven POM file.
@@ -255,6 +256,84 @@ public class Model {
      */
     public void addLicense(License license) {
         licenses.add(license);
+    }
+
+    /**
+     * Process the Maven properties file and interpolate all properties.
+     *
+     * @param properties new value of properties
+     */
+    public void processProperties(Properties properties) {
+        this.groupId = interpolateString(this.groupId, properties);
+        this.artifactId = interpolateString(this.artifactId, properties);
+        this.version = interpolateString(this.version, properties);
+        this.description = interpolateString(this.description, properties);
+        for (License l : this.getLicenses()) {
+            l.setName(interpolateString(l.getName(), properties));
+            l.setUrl(interpolateString(l.getUrl(), properties));
+        }
+        this.name = interpolateString(this.name, properties);
+        this.organization = interpolateString(this.organization, properties);
+        this.parentGroupId = interpolateString(this.parentGroupId, properties);
+        this.parentArtifactId = interpolateString(this.parentArtifactId, properties);
+        this.parentVersion = interpolateString(this.parentVersion, properties);
+
+    }
+
+    /**
+     * <p>
+     * A utility function that will interpolate strings based on values given in the properties file. It will also interpolate the
+     * strings contained within the properties file so that properties can reference other properties.</p>
+     * <p>
+     * <b>Note:</b> if there is no property found the reference will be removed. In other words, if the interpolated string will
+     * be replaced with an empty string.
+     * </p>
+     * <p>
+     * Example:</p>
+     * <code>
+     * Properties p = new Properties();
+     * p.setProperty("key", "value");
+     * String s = interpolateString("'${key}' and '${nothing}'", p);
+     * System.out.println(s);
+     * </code>
+     * <p>
+     * Will result in:</p>
+     * <code>
+     * 'value' and ''
+     * </code>
+     *
+     * @param text the string that contains references to properties.
+     * @param properties a collection of properties that may be referenced within the text.
+     * @return the interpolated text.
+     */
+    public static String interpolateString(String text, Properties properties) {
+        final Properties props = properties;
+        if (text == null) {
+            return text;
+        }
+        if (props == null) {
+            return text;
+        }
+
+        final int pos = text.indexOf("${");
+        if (pos < 0) {
+            return text;
+        }
+        final int end = text.indexOf("}");
+        if (end < pos) {
+            return text;
+        }
+
+        final String propName = text.substring(pos + 2, end);
+        String propValue = interpolateString(props.getProperty(propName), props);
+        if (propValue == null) {
+            propValue = "";
+        }
+        final StringBuilder sb = new StringBuilder(propValue.length() + text.length());
+        sb.append(text.subSequence(0, pos));
+        sb.append(propValue);
+        sb.append(text.substring(end + 1));
+        return interpolateString(sb.toString(), props); //yes yes, this should be a loop...
     }
 
 }
