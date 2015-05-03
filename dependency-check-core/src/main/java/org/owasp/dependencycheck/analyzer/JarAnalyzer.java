@@ -310,7 +310,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
                     newDependency.setFileName(displayName);
                     newDependency.setFilePath(displayPath);
-                    setPomEvidence(newDependency, pom, pomProperties, null);
+                    pom.processProperties(pomProperties);
+                    setPomEvidence(newDependency, pom, null);
                     engine.getDependencies().add(newDependency);
                     Collections.sort(engine.getDependencies());
                 } else {
@@ -319,7 +320,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     } else {
                         pom = PomUtils.readPom(externalPom);
                     }
-                    foundSomething |= setPomEvidence(dependency, pom, pomProperties, classes);
+                    pom.processProperties(pomProperties);
+                    foundSomething |= setPomEvidence(dependency, pom, classes);
                 }
             } catch (AnalysisException ex) {
                 final String msg = String.format("An error occured while analyzing '%s'.", dependency.getActualFilePath());
@@ -459,22 +461,21 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @param dependency the dependency to set data on
      * @param pom the information from the pom
-     * @param pomProperties the pom properties file (null if none exists)
      * @param classes a collection of ClassNameInformation - containing data about the fully qualified class names within the JAR
      * file being analyzed
      * @return true if there was evidence within the pom that we could use; otherwise false
      */
-    private boolean setPomEvidence(Dependency dependency, Model pom, Properties pomProperties, List<ClassNameInformation> classes) {
+    public static boolean setPomEvidence(Dependency dependency, Model pom, List<ClassNameInformation> classes) {
         boolean foundSomething = false;
         boolean addAsIdentifier = true;
         if (pom == null) {
             return foundSomething;
         }
-        String groupid = interpolateString(pom.getGroupId(), pomProperties);
+        String groupid = pom.getGroupId();
         String parentGroupId = null;
 
         if (pom.getParentGroupId() != null) {
-            parentGroupId = interpolateString(pom.getParentGroupId(), pomProperties);
+            parentGroupId = pom.getParentGroupId();
             if ((groupid == null || groupid.isEmpty()) && parentGroupId != null && !parentGroupId.isEmpty()) {
                 groupid = parentGroupId;
             }
@@ -497,11 +498,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             addAsIdentifier = false;
         }
 
-        String artifactid = interpolateString(pom.getArtifactId(), pomProperties);
+        String artifactid = pom.getArtifactId();
         String parentArtifactId = null;
 
         if (pom.getParentArtifactId() != null) {
-            parentArtifactId = interpolateString(pom.getParentArtifactId(), pomProperties);
+            parentArtifactId = pom.getParentArtifactId();
             if ((artifactid == null || artifactid.isEmpty()) && parentArtifactId != null && !parentArtifactId.isEmpty()) {
                 artifactid = parentArtifactId;
             }
@@ -526,11 +527,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             addAsIdentifier = false;
         }
         //version
-        String version = interpolateString(pom.getVersion(), pomProperties);
+        String version = pom.getVersion();
         String parentVersion = null;
 
         if (pom.getParentVersion() != null) {
-            parentVersion = interpolateString(pom.getParentVersion(), pomProperties);
+            parentVersion = pom.getParentVersion();
             if ((version == null || version.isEmpty()) && parentVersion != null && !parentVersion.isEmpty()) {
                 version = parentVersion;
             }
@@ -552,16 +553,12 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
         // org name
         final String org = pom.getOrganization();
-        if (org != null) {
-            foundSomething = true;
-            final String orgName = interpolateString(org, pomProperties);
-            if (orgName != null && !orgName.isEmpty()) {
-                dependency.getVendorEvidence().addEvidence("pom", "organization name", orgName, Confidence.HIGH);
-                addMatchingValues(classes, orgName, dependency.getVendorEvidence());
-            }
+        if (org != null && !org.isEmpty()) {
+            dependency.getVendorEvidence().addEvidence("pom", "organization name", org, Confidence.HIGH);
+            addMatchingValues(classes, org, dependency.getVendorEvidence());
         }
         //pom name
-        final String pomName = interpolateString(pom.getName(), pomProperties);
+        final String pomName = pom.getName();
         if (pomName != null && !pomName.isEmpty()) {
             foundSomething = true;
             dependency.getProductEvidence().addEvidence("pom", "name", pomName, Confidence.HIGH);
@@ -571,16 +568,14 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         //Description
-        if (pom.getDescription() != null) {
+        final String description = pom.getDescription();
+        if (description != null && !description.isEmpty()) {
             foundSomething = true;
-            final String description = interpolateString(pom.getDescription(), pomProperties);
-            if (description != null && !description.isEmpty()) {
-                final String trimmedDescription = addDescription(dependency, description, "pom", "description");
-                addMatchingValues(classes, trimmedDescription, dependency.getVendorEvidence());
-                addMatchingValues(classes, trimmedDescription, dependency.getProductEvidence());
-            }
+            final String trimmedDescription = addDescription(dependency, description, "pom", "description");
+            addMatchingValues(classes, trimmedDescription, dependency.getVendorEvidence());
+            addMatchingValues(classes, trimmedDescription, dependency.getProductEvidence());
         }
-        extractLicense(pom, pomProperties, dependency);
+        extractLicense(pom, dependency);
         return foundSomething;
     }
 
@@ -908,62 +903,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * <p>
-     * A utility function that will interpolate strings based on values given in the properties file. It will also interpolate the
-     * strings contained within the properties file so that properties can reference other properties.</p>
-     * <p>
-     * <b>Note:</b> if there is no property found the reference will be removed. In other words, if the interpolated string will
-     * be replaced with an empty string.
-     * </p>
-     * <p>
-     * Example:</p>
-     * <code>
-     * Properties p = new Properties();
-     * p.setProperty("key", "value");
-     * String s = interpolateString("'${key}' and '${nothing}'", p);
-     * System.out.println(s);
-     * </code>
-     * <p>
-     * Will result in:</p>
-     * <code>
-     * 'value' and ''
-     * </code>
-     *
-     * @param text the string that contains references to properties.
-     * @param properties a collection of properties that may be referenced within the text.
-     * @return the interpolated text.
-     */
-    public static String interpolateString(String text, Properties properties) {
-        final Properties props = properties;
-        if (text == null) {
-            return text;
-        }
-        if (props == null) {
-            return text;
-        }
-
-        final int pos = text.indexOf("${");
-        if (pos < 0) {
-            return text;
-        }
-        final int end = text.indexOf("}");
-        if (end < pos) {
-            return text;
-        }
-
-        final String propName = text.substring(pos + 2, end);
-        String propValue = interpolateString(props.getProperty(propName), props);
-        if (propValue == null) {
-            propValue = "";
-        }
-        final StringBuilder sb = new StringBuilder(propValue.length() + text.length());
-        sb.append(text.subSequence(0, pos));
-        sb.append(propValue);
-        sb.append(text.substring(end + 1));
-        return interpolateString(sb.toString(), props); //yes yes, this should be a loop...
-    }
-
-    /**
      * Determines if the key value pair from the manifest is for an "import" type entry for package names.
      *
      * @param key the key from the manifest
@@ -1070,7 +1009,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @param value the value to check to see if it contains a package name
      * @param evidence the evidence collection to add new entries too
      */
-    private void addMatchingValues(List<ClassNameInformation> classes, String value, EvidenceCollection evidence) {
+    private static void addMatchingValues(List<ClassNameInformation> classes, String value, EvidenceCollection evidence) {
         if (value == null || value.isEmpty() || classes == null || classes.isEmpty()) {
             return;
         }
@@ -1102,23 +1041,22 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * Extracts the license information from the pom and adds it to the dependency.
      *
      * @param pom the pom object
-     * @param pomProperties the properties, used for string interpolation
      * @param dependency the dependency to add license information too
      */
-    public static void extractLicense(Model pom, Properties pomProperties, Dependency dependency) {
+    public static void extractLicense(Model pom, Dependency dependency) {
         //license
         if (pom.getLicenses() != null) {
             String license = null;
             for (License lic : pom.getLicenses()) {
                 String tmp = null;
                 if (lic.getName() != null) {
-                    tmp = interpolateString(lic.getName(), pomProperties);
+                    tmp = lic.getName();
                 }
                 if (lic.getUrl() != null) {
                     if (tmp == null) {
-                        tmp = interpolateString(lic.getUrl(), pomProperties);
+                        tmp = lic.getUrl();
                     } else {
-                        tmp += ": " + interpolateString(lic.getUrl(), pomProperties);
+                        tmp += ": " + lic.getUrl();
                     }
                 }
                 if (tmp == null) {
