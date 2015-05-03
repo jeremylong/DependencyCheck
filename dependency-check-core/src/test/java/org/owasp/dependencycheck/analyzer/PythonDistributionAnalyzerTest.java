@@ -39,8 +39,16 @@ import org.owasp.dependencycheck.dependency.Evidence;
  */
 public class PythonDistributionAnalyzerTest extends BaseTest {
 
+    /**
+     * The analyzer to test.
+     */
     PythonDistributionAnalyzer analyzer;
 
+    /**
+     * Correctly setup the analyzer for testing.
+     *
+     * @throws Exception thrown if there is a problem
+     */
     @Before
     public void setUp() throws Exception {
         analyzer = new PythonDistributionAnalyzer();
@@ -48,6 +56,11 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
         analyzer.initialize();
     }
 
+    /**
+     * Cleanup the analyzer's temp files, etc.
+     *
+     * @throws Exception thrown if there is a problem
+     */
     @After
     public void tearDown() throws Exception {
         analyzer.close();
@@ -95,7 +108,7 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
     /**
      * Test of inspect method, of class PythonDistributionAnalyzer.
      *
-     * @throws Exception is thrown when an exception occurs.
+     * @throws AnalysisException is thrown when an exception occurs.
      */
     @Test
     public void testAnalyzeWheel() throws AnalysisException {
@@ -113,8 +126,7 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(
                 this, "python/site-packages/Django-1.7.2.dist-info/METADATA"));
         djangoAssertions(result);
-        assertEquals("Django-1.7.2.dist-info/METADATA",
-                result.getDisplayFileName());
+        assertEquals("Django-1.7.2.dist-info/METADATA", result.getDisplayFileName());
     }
 
     private void djangoAssertions(final Dependency result)
@@ -134,8 +146,7 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
 
     @Test
     public void testAnalyzeEggInfoFolder() throws AnalysisException {
-        eggtestAssertions(this,
-                "python/site-packages/EggTest.egg-info/PKG-INFO");
+        eggtestAssertions(this, "python/site-packages/EggTest.egg-info/PKG-INFO");
     }
 
     @Test
@@ -150,9 +161,7 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
 
     @Test
     public void testAnalyzeEggFolder() throws AnalysisException {
-        eggtestAssertions(
-                this,
-                "python/site-packages/EggTest-0.0.1-py2.7.egg/EGG-INFO/PKG-INFO");
+        eggtestAssertions(this, "python/site-packages/EggTest-0.0.1-py2.7.egg/EGG-INFO/PKG-INFO");
     }
 
     public void eggtestAssertions(Object context, final String resource) throws AnalysisException {
