@@ -593,8 +593,10 @@ arising out of or in connection with the use of this tool, the analysis performe
                                 #end
                                 #if ($cpeIdConf == "")
                                     #set($cpeIdConf=$id.confidence)
+                                    #set($cpeSort=$id.confidence.ordinal())
                                 #elseif ($cpeIdConf.compareTo($id.confidence)>0)
                                     #set($cpeIdConf=$id.confidence)
+                                    #set($cpeSort=$id.confidence.ordinal())
                                 #end
                                 #set($cpeIdCount=$cpeIdCount+1)
                             #end
@@ -625,7 +627,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                         #end
                         </td>
                         <td>$dependency.getVulnerabilities().size()</td>
-                        <td>$cpeIdConf</td>
+                        <td data-sort-value="$cpeSort">$cpeIdConf</td>
                         <td>$dependency.getEvidenceForDisplay().size()</td>
                     </tr>
                     #end
