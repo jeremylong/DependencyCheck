@@ -472,15 +472,39 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             return foundSomething;
         }
         String groupid = pom.getGroupId();
-        String parentGroupId = null;
+        String parentGroupId = pom.getParentGroupId();
+        String artifactid = pom.getArtifactId();
+        String parentArtifactId = pom.getParentArtifactId();
+        String version = pom.getVersion();
+        String parentVersion = pom.getParentVersion();
 
-        if (pom.getParentGroupId() != null) {
-            parentGroupId = pom.getParentGroupId();
-            if ((groupid == null || groupid.isEmpty()) && parentGroupId != null && !parentGroupId.isEmpty()) {
-                groupid = parentGroupId;
-            }
+        if ("org.sonatype.oss".equals(parentGroupId) && "oss-parent".equals(artifactid)) {
+            parentGroupId = null;
+            parentArtifactId = null;
+            parentVersion = null;
         }
+
+        if ((groupid == null || groupid.isEmpty()) && parentGroupId != null && !parentGroupId.isEmpty()) {
+            groupid = parentGroupId;
+        }
+
         final String originalGroupID = groupid;
+        if (groupid.startsWith("org.") || groupid.startsWith("com.")) {
+            groupid = groupid.substring(4);
+        }
+
+        if ((artifactid == null || artifactid.isEmpty()) && parentArtifactId != null && !parentArtifactId.isEmpty()) {
+            artifactid = parentArtifactId;
+        }
+
+        final String originalArtifactID = artifactid;
+        if (artifactid.startsWith("org.") || artifactid.startsWith("com.")) {
+            artifactid = artifactid.substring(4);
+        }
+
+        if ((version == null || version.isEmpty()) && parentVersion != null && !parentVersion.isEmpty()) {
+            version = parentVersion;
+        }
 
         if (groupid != null && !groupid.isEmpty()) {
             foundSomething = true;
@@ -498,20 +522,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             addAsIdentifier = false;
         }
 
-        String artifactid = pom.getArtifactId();
-        String parentArtifactId = null;
-
-        if (pom.getParentArtifactId() != null) {
-            parentArtifactId = pom.getParentArtifactId();
-            if ((artifactid == null || artifactid.isEmpty()) && parentArtifactId != null && !parentArtifactId.isEmpty()) {
-                artifactid = parentArtifactId;
-            }
-        }
-        final String originalArtifactID = artifactid;
         if (artifactid != null && !artifactid.isEmpty()) {
-            if (artifactid.startsWith("org.") || artifactid.startsWith("com.")) {
-                artifactid = artifactid.substring(4);
-            }
             foundSomething = true;
             dependency.getProductEvidence().addEvidence("pom", "artifactid", artifactid, Confidence.HIGHEST);
             dependency.getVendorEvidence().addEvidence("pom", "artifactid", artifactid, Confidence.LOW);
@@ -525,16 +536,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             }
         } else {
             addAsIdentifier = false;
-        }
-        //version
-        String version = pom.getVersion();
-        String parentVersion = null;
-
-        if (pom.getParentVersion() != null) {
-            parentVersion = pom.getParentVersion();
-            if ((version == null || version.isEmpty()) && parentVersion != null && !parentVersion.isEmpty()) {
-                version = parentVersion;
-            }
         }
 
         if (version != null && !version.isEmpty()) {
@@ -555,11 +556,14 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         final String org = pom.getOrganization();
         if (org != null && !org.isEmpty()) {
             dependency.getVendorEvidence().addEvidence("pom", "organization name", org, Confidence.HIGH);
+            dependency.getProductEvidence().addEvidence("pom", "organization name", org, Confidence.LOW);
             addMatchingValues(classes, org, dependency.getVendorEvidence());
+            addMatchingValues(classes, org, dependency.getProductEvidence());
         }
         //pom name
         final String pomName = pom.getName();
-        if (pomName != null && !pomName.isEmpty()) {
+        if (pomName
+                != null && !pomName.isEmpty()) {
             foundSomething = true;
             dependency.getProductEvidence().addEvidence("pom", "name", pomName, Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("pom", "name", pomName, Confidence.HIGH);
@@ -575,6 +579,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             addMatchingValues(classes, trimmedDescription, dependency.getVendorEvidence());
             addMatchingValues(classes, trimmedDescription, dependency.getProductEvidence());
         }
+
         extractLicense(pom, dependency);
         return foundSomething;
     }
@@ -1073,6 +1078,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             }
             if (license != null) {
                 dependency.setLicense(license);
+
             }
         }
     }
