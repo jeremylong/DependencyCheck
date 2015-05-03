@@ -82,4 +82,51 @@ public class License {
         this.name = name;
     }
 
+    /**
+     * Generated hashCode implementation.
+     *
+     * @return the hash code
+     */
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + (this.url != null ? this.url.hashCode() : 0);
+        hash = 89 * hash + (this.name != null ? this.name.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     * Generated equals method to perform equality check.
+     *
+     * @param obj the object to check
+     * @return true if the objects are equal; otherwise false
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final License other = (License) obj;
+        if ((this.url == null) ? (other.url != null) : !this.url.equals(other.url)) {
+            return false;
+        }
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Generated toString.
+     *
+     * @return the string representation of the license
+     */
+    @Override
+    public String toString() {
+        return "License{" + "url=" + url + ", name=" + name + '}';
+    }
+
 }
