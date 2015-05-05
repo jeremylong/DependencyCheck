@@ -17,18 +17,20 @@ see the note about Central [here](./index.html).
 
 To setup a centralized database the following generalized steps can be used:
 
-1. Create the database and tables using either [initialize.sql](https://github.com/jeremylong/DependencyCheck/blob/master/dependency-check-core/src/main/resources/data/initialize.sql)
-or [initialize_mysql.sql](https://github.com/jeremylong/DependencyCheck/blob/master/dependency-check-core/src/main/resources/data/initialize_mysql.sql).
-2. The account that the clients will connect using must have select granted on the tables.
- * Note, if the clients performing the scans should run with the noupdate setting. A single
-   instance of the dependency-check client should be setup with update enabled and the account
-   used during the update process will need to be granted update rights on the tables.
-3. Dependency-check clients running scans will need to be configured to use the central database:
- * The database driver will need to be specified using the dbDriver and if the driver is not
-   already in the classpath the dbDriverPath options will need to be set (see the specific configuration
-   options for Maven, Ant, CLI, and Jenkins).
- * The connection string, database user name, and the database user's password will also need to be configured.
-
+<ol><li>Create the database and tables using either <a href="https://github.com/jeremylong/DependencyCheck/blob/master/dependency-check-core/src/main/resources/data/initialize.sql">initialize.sql</a>
+   or <a href="https://github.com/jeremylong/DependencyCheck/blob/master/dependency-check-core/src/main/resources/data/initialize_mysql.sql">initialize_mysql.sql</a>.</li>
+<li>The account that the clients will connect using must have select granted on the tables.
+     <ul><li>Note, if the clients performing the scans should run with the noupdate setting. A single
+       instance of the dependency-check client should be setup with update enabled and the account
+       used during the update process will need to be granted update rights on the tables.
+     </li></ul>
+</li><li>Dependency-check clients running scans will need to be configured to use the central database:
+   <ul><li>The database driver will need to be specified using the dbDriver and if the driver is not
+         already in the classpath the dbDriverPath options will need to be set (see the specific configuration
+         options for Maven, Ant, CLI, and Jenkins).</li>
+       <li>The connection string, database user name, and the database user's password will also need to be configured.</li>
+   </ul>
+</li></ol>
 Depending on the database being used, you may need to customize the [dbStatements.properties](https://github.com/jeremylong/DependencyCheck/blob/master/dependency-check-core/src/main/resources/data/dbStatements.properties).
 
 As always, feel free to open an [issue](https://github.com/jeremylong/DependencyCheck/issues)
