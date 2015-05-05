@@ -16,9 +16,9 @@ days only two small XML files containing the recent modifications will need to b
 If your build servers are using dependency-check and are unable to access the Internet you
 have a few options:
 
-1) Configure the [proxy settings](proxy.md) so that the build server can access the Internet
-2) [Mirror the NVD](./mirrornvd.md) locally within your organization
-3) Use a more robust [centralized database](./database.md) with a single update node
+1. Configure the [proxy settings](proxy.md) so that the build server can access the Internet
+2. [Mirror the NVD](./mirrornvd.md) locally within your organization
+3. Use a more robust [centralized database](./database.md) with a single update node
 
 
 Downloading Additional Information
