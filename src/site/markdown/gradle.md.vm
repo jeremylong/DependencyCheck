@@ -1,0 +1,28 @@
+Gradle Integration
+==================
+While a full Gradle Plugin is planned, the following gradle task can be used to
+run dependency-check:
+
+```
+configurations {
+    depCheck
+}
+
+dependencies {
+    depCheck "org.owasp:dependency-check-ant:${project.version}"
+}
+
+task checkDeps << {
+    ant.taskdef(name: 'checkDepsTask',
+                classname: 'org.owasp.dependencycheck.taskdefs.DependencyCheckTask',
+                classpath: configurations.depCheck.asPath)
+
+    ant.checkDepsTask() {
+               path {
+                     pathelement(path: sourceSets.main.runtimeClasspath.asPath)
+               }
+    }
+}
+```
+
+The above task definition was provided by [Nikita Koksharov](https://github.com/mrniko).
