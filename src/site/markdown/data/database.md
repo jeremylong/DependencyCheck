@@ -1,5 +1,7 @@
 Using a Database Server
 =======================
+<font color="red">**WARNING: This discusses an advanced setup and you may run into issues.**</font>
+
 Out of the box dependency-check uses a local H2 database. The location of the database
 file is configured using the data directory configuration option (see
 [CLI](https://jeremylong.github.io/DependencyCheck/dependency-check-cli/arguments.html)).
