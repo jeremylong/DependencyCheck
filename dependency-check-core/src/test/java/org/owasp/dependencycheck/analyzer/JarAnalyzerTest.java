@@ -87,7 +87,7 @@ public class JarAnalyzerTest extends BaseTest {
         file = BaseTest.getResourceAsFile(this, "org.mortbay.jmx.jar");
         result = new Dependency(file);
         instance.analyze(result, null);
-        assertEquals("org.mortbar,jmx.jar has version evidence?", result.getVersionEvidence().size(), 0);
+        assertEquals("org.mortbar.jmx.jar has version evidence?", result.getVersionEvidence().size(), 0);
     }
 
     /**
