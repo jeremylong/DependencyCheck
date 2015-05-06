@@ -549,7 +549,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         if (addAsIdentifier) {
-            dependency.addIdentifier("maven", String.format("%s:%s:%s", originalGroupID, originalArtifactID, version), null, Confidence.LOW);
+            dependency.addIdentifier("maven", String.format("%s:%s:%s", originalGroupID, originalArtifactID, version), null, Confidence.HIGH);
         }
 
         // org name
