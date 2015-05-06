@@ -704,6 +704,65 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <scope>provided</scope>
                     <optional>true</optional>
                 </dependency>
+                <dependency>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                    <version>2.3.1</version>
+                    <scope>provided</scope>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>com.google.gerrit</groupId>
+                    <artifactId>gerrit-extension-api</artifactId>
+                    <version>2.11</version>
+                    <scope>provided</scope>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>com.google.apis</groupId>
+                    <artifactId>google-api-services-sqladmin</artifactId>
+                    <version>v1beta4-rev5-1.20.0</version>
+                    <scope>provided</scope>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>com.google.gwt.google-apis</groupId>
+                    <artifactId>gwt-gears</artifactId>
+                    <version>1.2.1</version>
+                    <scope>provided</scope>
+                    <optional>true</optional>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.mozilla</groupId>
+                    <artifactId>rhino</artifactId>
+                    <version>1.7.6</version>
+                    <scope>provided</scope>
+                    <optional>true</optional>
+                </dependency>
+
+
+                <dependency>
+                    <groupId>com.microsoft.windowsazure</groupId>
+                    <artifactId>microsoft-azure-api-media</artifactId>
+                    <version>0.5.0</version>
+                    <scope>provided</scope>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>com.microsoft.windowsazure</groupId>
+                    <artifactId>microsoft-azure-api-management-sql</artifactId>
+                    <version>0.5.0</version>
+                    <scope>provided</scope>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>com.microsoft.bingads</groupId>
+                    <artifactId>microsoft.bingads</artifactId>
+                    <version>9.3.4</version>
+                    <scope>provided</scope>
+                    <optional>true</optional>
+                </dependency>
             </dependencies>
         </profile>
     </profiles>
