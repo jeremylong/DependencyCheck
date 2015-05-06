@@ -478,7 +478,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         String version = pom.getVersion();
         String parentVersion = pom.getParentVersion();
 
-        if ("org.sonatype.oss".equals(parentGroupId) && "oss-parent".equals(artifactid)) {
+        if ("org.sonatype.oss".equals(parentGroupId) && "oss-parent".equals(parentArtifactId)) {
             parentGroupId = null;
             parentArtifactId = null;
             parentVersion = null;
