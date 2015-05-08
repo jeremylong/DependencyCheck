@@ -238,7 +238,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private boolean nexusAnalyzerEnabled = true;
 
     /**
-     * The URL of a Nexus Pro server.
+     * The URL of a Nexus server's REST API end point (http://domain/nexus/service/local).
      */
     @Parameter(property = "nexusUrl", defaultValue = "", required = false)
     private String nexusUrl;

@@ -626,7 +626,7 @@ public class DependencyCheckTask extends Task {
     }
 
     /**
-     * The URL of the Nexus server.
+     * The URL of a Nexus server's REST API end point (http://domain/nexus/service/local).
      */
     private String nexusUrl;
 
