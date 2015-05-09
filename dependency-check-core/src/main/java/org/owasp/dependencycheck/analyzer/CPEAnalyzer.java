@@ -422,17 +422,6 @@ public class CPEAnalyzer implements Analyzer {
      * @return whether or not the EvidenceCollection contains the string
      */
     private boolean collectionContainsString(EvidenceCollection ec, String text) {
-
-        //<editor-fold defaultstate="collapsed" desc="This code fold contains an old version of the code, delete once more testing is done">
-        //        String[] splitText = text.split("[\\s_-]");
-        //
-        //        for (String search : splitText) {
-        //            //final String search = text.replaceAll("[\\s_-]", "").toLowerCase();
-        //            if (ec.containsUsedString(search)) {
-        //                return true;
-        //            }
-        //        }
-        //</editor-fold>
         //TODO - likely need to change the split... not sure if this will work for CPE with special chars
         if (text == null) {
             return false;
@@ -454,9 +443,16 @@ public class CPEAnalyzer implements Analyzer {
                 list.add(word);
             }
         }
-        if (tempWord != null && !list.isEmpty()) {
-            final String tmp = list.get(list.size() - 1) + tempWord;
-            list.add(tmp);
+        if (tempWord != null) {
+            if (!list.isEmpty()) {
+                final String tmp = list.get(list.size() - 1) + tempWord;
+                list.add(tmp);
+            } else {
+                list.add(tempWord);
+            }
+        }
+        if (list.isEmpty()) {
+            return false;
         }
         boolean contains = true;
         for (String word : list) {
