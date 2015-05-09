@@ -123,7 +123,7 @@ public class CentralSearch {
                         final String a = xpath.evaluate("./str[@name='a']", docs.item(i));
                         LOGGER.finest(String.format("ArtifactId: %s", a));
                         final String v = xpath.evaluate("./str[@name='v']", docs.item(i));
-                        final NodeList atts = (NodeList) xpath.evaluate("./arr[@name='ec']/str", docs.item(i), XPathConstants.NODESET);
+                        NodeList atts = (NodeList) xpath.evaluate("./arr[@name='ec']/str", docs.item(i), XPathConstants.NODESET);
                         boolean pomAvailable = false;
                         boolean jarAvailable = false;
                         for (int x = 0; x < atts.getLength(); x++) {
@@ -134,8 +134,18 @@ public class CentralSearch {
                                 jarAvailable = true;
                             }
                         }
+
+                        atts = (NodeList) xpath.evaluate("./arr[@name='tags']/str", docs.item(i), XPathConstants.NODESET);
+                        boolean useHTTPS = false;
+                        for (int x = 0; x < atts.getLength(); x++) {
+                            final String tmp = xpath.evaluate(".", atts.item(x));
+                            if ("https".equals(tmp)) {
+                                useHTTPS = true;
+                            }
+                        }
+
                         LOGGER.finest(String.format("Version: %s", v));
-                        result.add(new MavenArtifact(g, a, v, jarAvailable, pomAvailable));
+                        result.add(new MavenArtifact(g, a, v, jarAvailable, pomAvailable, useHTTPS));
                     }
 
                     return result;
