@@ -42,6 +42,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        Suppress false positives around dash.
+        ]]></notes>
+        <filePath regex="true">.*\.(jar|ear|war|pom)</filePath>
+        <cpe>cpe:/a:dash:dash</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Suppresses false positives on Jersey core client.
         ]]></notes>
         <gav regex="true">(com\.sun\.jersey|org\.glassfish\.jersey\.core):jersey-(client|common):.*</gav>
@@ -99,5 +106,36 @@
         <cpe>cpe:/a:sendfile:sendfile</cpe>
         <cpe>cpe:/a:sendmail:sendmail</cpe>
         <cpe>cpe:/a:yacc:yacc</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives for com.google:.*
+        ]]></notes>
+        <gav regex="true">com\.google(\.[a-zA-Z0-9_-]+)?:.*:.*</gav>
+        <cpe>cpe:/a:google:desktop</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives for non-android JARs from google.
+        ]]></notes>
+        <gav regex="true">com\.google\.((?!android).)*:.*</gav>
+        <cpe>cpe:/a:google:android</cpe>
+        <cpe>cpe:/a:google:android_api</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses false positives for android JARs in g:com.google.android
+        ]]></notes>
+        <gav regex="true">com\.google\.android\..*:.*</gav>
+        <cpe>cpe:/a:google:android</cpe>
+        <cpe>cpe:/a:google:android_api</cpe>
+        <cpe>cpe:/a:google:google</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Suppresses incorrect identification for bing ads.
+        ]]></notes>
+        <gav regex="true">com.microsoft.bingads:microsoft.bingads:.*</gav>
+        <cpe>cpe:/a:microsoft:bing</cpe>
     </suppress>
 </suppressions>
