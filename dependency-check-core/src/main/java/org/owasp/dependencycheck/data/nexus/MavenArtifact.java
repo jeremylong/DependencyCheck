@@ -27,7 +27,7 @@ public class MavenArtifact {
     /**
      * The base URL for download artifacts from Central.
      */
-    private static final String CENTRAL_CONTENT_URL = "http://search.maven.org/remotecontent?filepath=";
+    private static final String CENTRAL_CONTENT_URL = "//search.maven.org/remotecontent?filepath=";
 
     /**
      * The groupId
@@ -80,19 +80,26 @@ public class MavenArtifact {
      * @param version the version
      * @param jarAvailable if the jar file is available from central
      * @param pomAvailable if the pom file is available from central
+     * @param secureDownload if the jar and pom files should be downloaded using HTTPS.
      */
-    public MavenArtifact(String groupId, String artifactId, String version, boolean jarAvailable, boolean pomAvailable) {
+    public MavenArtifact(String groupId, String artifactId, String version, boolean jarAvailable, boolean pomAvailable, boolean secureDownload) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
+        String base;
+        if (secureDownload) {
+            base = "https:" + CENTRAL_CONTENT_URL;
+        } else {
+            base = "http:" + CENTRAL_CONTENT_URL;
+        }
         if (jarAvailable) {
             //org/springframework/spring-core/3.2.0.RELEASE/spring-core-3.2.0.RELEASE.pom
-            this.artifactUrl = this.CENTRAL_CONTENT_URL + groupId.replace('.', '/') + "/" + artifactId.replace('.', '/') + "/"
+            this.artifactUrl = base + groupId.replace('.', '/') + "/" + artifactId + "/"
                     + version + "/" + artifactId + "-" + version + ".jar";
         }
         if (pomAvailable) {
             //org/springframework/spring-core/3.2.0.RELEASE/spring-core-3.2.0.RELEASE.pom
-            this.pomUrl = this.CENTRAL_CONTENT_URL + groupId.replace('.', '/') + "/" + artifactId.replace('.', '/') + "/"
+            this.pomUrl = base + groupId.replace('.', '/') + "/" + artifactId + "/"
                     + version + "/" + artifactId + "-" + version + ".pom";
         }
     }
