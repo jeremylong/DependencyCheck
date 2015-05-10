@@ -54,7 +54,7 @@ public final class PomUtils {
     public static Model readPom(File file) throws AnalysisException {
         Model model = null;
         try {
-            PomParser parser = new PomParser();
+            final PomParser parser = new PomParser();
             model = parser.parse(file);
         } catch (PomParseException ex) {
             final String msg = String.format("Unable to parse pom '%s'", file.getPath());
