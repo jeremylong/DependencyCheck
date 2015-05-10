@@ -155,18 +155,20 @@ public class PomHandler extends DefaultHandler {
                 model.setParentVersion(currentText.toString());
             }
         } else if (LICENSE.equals(parentNode)) {
-            if (license == null) {
+            if (license != null) {
+                if (NAME.equals(qName)) {
+                    license.setName(currentText.toString());
+                } else if (URL.equals(qName)) {
+                    license.setUrl(currentText.toString());
+                }
+                //} else {
                 //TODO add error logging
-            } else if (NAME.equals(qName)) {
-                license.setName(currentText.toString());
-            } else if (URL.equals(qName)) {
-                license.setUrl(currentText.toString());
             }
         } else if (LICENSES.equals(parentNode)) {
             if (LICENSE.equals(qName)) {
                 if (license != null) {
                     model.addLicense(license);
-                } else {
+                    //} else {
                     //TODO add error logging
                 }
             }
