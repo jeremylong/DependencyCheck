@@ -34,10 +34,10 @@ import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * This class provides a way to easily conduct a scan solely based on existing evidence metadata rather than collecting
- * evidence from the files themselves. This class is based on the Ant task and Maven plugin with the exception that it
- * takes a list of dependencies that can be programmatically added from data in a spreadsheet, database or some other
- * datasource and conduct a scan based on this pre-defined evidence.
+ * This class provides a way to easily conduct a scan solely based on existing evidence metadata rather than collecting evidence
+ * from the files themselves. This class is based on the Ant task and Maven plugin with the exception that it takes a list of
+ * dependencies that can be programmatically added from data in a spreadsheet, database or some other datasource and conduct a
+ * scan based on this pre-defined evidence.
  *
  * <h2>Example:</h2>
  * <pre>
@@ -161,9 +161,9 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11
-     * which means since the CVSS scores are 0-10, by default the build will never fail and the CVSS score is set to 11.
-     * The valid range for the fail build on CVSS is 0 to 11, where anything above 10 will not cause the build to fail.
+     * Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11 which
+     * means since the CVSS scores are 0-10, by default the build will never fail and the CVSS score is set to 11. The valid range
+     * for the fail build on CVSS is 0 to 11, where anything above 10 will not cause the build to fail.
      */
     private float failBuildOnCVSS = 11;
 
@@ -186,8 +186,8 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to
-     * false. Default is true.
+     * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. Default
+     * is true.
      */
     private boolean autoUpdate = true;
 
@@ -233,8 +233,8 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this
-     * within the Site plugin unless the externalReport is set to true. Default is HTML.
+     * The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this within the
+     * Site plugin unless the externalReport is set to true. Default is HTML.
      */
     private ReportGenerator.Format reportFormat = ReportGenerator.Format.HTML;
 
@@ -694,8 +694,8 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * Additional ZIP File extensions to add analyze. This should be a comma-separated list of file extensions to treat
-     * like ZIP files.
+     * Additional ZIP File extensions to add analyze. This should be a comma-separated list of file extensions to treat like ZIP
+     * files.
      */
     private String zipExtensions;
 
@@ -836,8 +836,7 @@ public class DependencyCheckScanAgent {
      * Executes the Dependency-Check on the dependent libraries.
      *
      * @return the Engine used to scan the dependencies.
-     * @throws org.owasp.dependencycheck.data.nvdcve.DatabaseException thrown if there is an exception connecting to the
-     * database
+     * @throws org.owasp.dependencycheck.data.nvdcve.DatabaseException thrown if there is an exception connecting to the database
      */
     private Engine executeDependencyCheck() throws DatabaseException {
         populateSettings();
@@ -883,8 +882,8 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system
-     * properties required to change the proxy server, port, and connection timeout.
+     * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system properties
+     * required to change the proxy server, port, and connection timeout.
      */
     private void populateSettings() {
         Settings.initialize();
@@ -965,8 +964,8 @@ public class DependencyCheckScanAgent {
     /**
      * Executes the dependency-check and generates the report.
      *
-     * @throws org.owasp.dependencycheck.exception.ScanAgentException thrown if there is an exception executing the
-     * scan.
+     * @return a reference to the engine used to perform the scan.
+     * @throws org.owasp.dependencycheck.exception.ScanAgentException thrown if there is an exception executing the scan.
      */
     public Engine execute() throws ScanAgentException {
         Engine engine = null;
@@ -999,8 +998,7 @@ public class DependencyCheckScanAgent {
      * configuration.
      *
      * @param dependencies the list of dependency objects
-     * @throws org.owasp.dependencycheck.exception.ScanAgentException thrown if there is an exception executing the
-     * scan.
+     * @throws org.owasp.dependencycheck.exception.ScanAgentException thrown if there is an exception executing the scan.
      */
     private void checkForFailure(List<Dependency> dependencies) throws ScanAgentException {
         final StringBuilder ids = new StringBuilder();
