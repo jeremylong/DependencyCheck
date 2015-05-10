@@ -170,7 +170,7 @@ public class NexusSearch {
     public boolean preflightRequest() {
         HttpURLConnection conn;
         try {
-            URL url = new URL(rootURL, "status");
+            final URL url = new URL(rootURL, "status");
             conn = URLConnectionFactory.createHttpURLConnection(url, useProxy);
             conn.addRequestProperty("Accept", "application/xml");
             conn.connect();
