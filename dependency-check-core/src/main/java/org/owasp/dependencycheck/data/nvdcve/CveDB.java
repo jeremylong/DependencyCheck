@@ -60,6 +60,9 @@ public class CveDB {
      * Database connection
      */
     private Connection conn;
+    /**
+     * The bundle of statements used when accessing the database.
+     */
     private ResourceBundle statementBundle = null;
 
     /**
@@ -492,10 +495,12 @@ public class CveDB {
             deleteReferences = getConnection().prepareStatement(statementBundle.getString("DELETE_REFERENCE"));
             deleteSoftware = getConnection().prepareStatement(statementBundle.getString("DELETE_SOFTWARE"));
             updateVulnerability = getConnection().prepareStatement(statementBundle.getString("UPDATE_VULNERABILITY"));
-            insertVulnerability = getConnection().prepareStatement(statementBundle.getString("INSERT_VULNERABILITY"), Statement.RETURN_GENERATED_KEYS);
+            insertVulnerability = getConnection().prepareStatement(statementBundle.getString("INSERT_VULNERABILITY"),
+                    Statement.RETURN_GENERATED_KEYS);
             insertReference = getConnection().prepareStatement(statementBundle.getString("INSERT_REFERENCE"));
             selectCpeId = getConnection().prepareStatement(statementBundle.getString("SELECT_CPE_ID"));
-            insertCpe = getConnection().prepareStatement(statementBundle.getString("INSERT_CPE"), Statement.RETURN_GENERATED_KEYS);
+            insertCpe = getConnection().prepareStatement(statementBundle.getString("INSERT_CPE"),
+                    Statement.RETURN_GENERATED_KEYS);
             insertSoftware = getConnection().prepareStatement(statementBundle.getString("INSERT_SOFTWARE"));
             int vulnerabilityId = 0;
             selectVulnerabilityId.setString(1, vuln.getName());
