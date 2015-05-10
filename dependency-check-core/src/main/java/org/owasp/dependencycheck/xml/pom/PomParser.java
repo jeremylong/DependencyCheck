@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
@@ -73,11 +72,11 @@ public class PomParser {
     }
 
     /**
-     * Parses the given xml file and returns a Model object containing only the fields dependency-check requires.
+     * Parses the given XML file and returns a Model object containing only the fields dependency-check requires.
      *
      * @param inputStream an InputStream containing suppression rues
      * @return a list of suppression rules
-     * @throws SuppressionParseException if the xml cannot be parsed
+     * @throws PomParseException if the XML cannot be parsed
      */
     public Model parse(InputStream inputStream) throws PomParseException {
         try {
