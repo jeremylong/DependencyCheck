@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.xml.pom;
 
-import org.owasp.dependencycheck.suppression.*;
 import java.io.IOException;
 
 /**
