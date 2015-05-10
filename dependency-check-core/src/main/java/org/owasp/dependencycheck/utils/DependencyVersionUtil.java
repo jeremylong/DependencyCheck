@@ -35,8 +35,8 @@ public final class DependencyVersionUtil {
      */
     private static final Pattern RX_VERSION = Pattern.compile("\\d+(\\.\\d{1,6})+(\\.?([_-](release|beta|alpha|\\d+)|[a-zA-Z_-]{1,3}\\d{0,8}))?");
     /**
-     * Regular expression to extract a single version number without periods. This is a last ditch effort just to check
-     * in case we are missing a version number using the previous regex.
+     * Regular expression to extract a single version number without periods. This is a last ditch effort just to check in case we
+     * are missing a version number using the previous regex.
      */
     private static final Pattern RX_SINGLE_VERSION = Pattern.compile("\\d+(\\.?([_-](release|beta|alpha)|[a-zA-Z_-]{1,3}\\d{1,8}))?");
 
@@ -88,6 +88,9 @@ public final class DependencyVersionUtil {
             if (matcher.find()) {
                 return null;
             }
+        }
+        if (version != null && version.endsWith("-py2") && version.length() > 4) {
+            version = version.substring(0, version.length() - 4);
         }
         return new DependencyVersion(version);
     }
