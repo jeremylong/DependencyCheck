@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
-import java.net.MalformedURLException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,7 +46,7 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.UrlStringUtils;
 
 /**
- * Used to analyze a Wheel or egg distriution files, or their contents in unzipped form, and collect information that can be used
+ * Used to analyze a Wheel or egg distribution files, or their contents in unzipped form, and collect information that can be used
  * to determine the associated CPE.
  *
  * @author Dale Visser <dvisser@ida.org>
@@ -192,6 +191,14 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
+    /**
+     * Collects the meta data from an archive.
+     *
+     * @param dependency the archive being scanned
+     * @param folderFilter the filter to apply to the folder
+     * @param metadataFilter the filter to apply to the meta data
+     * @throws AnalysisException thrown when there is a problem analyzing the dependency
+     */
     private void collectMetadataFromArchiveFormat(Dependency dependency,
             FilenameFilter folderFilter, FilenameFilter metadataFilter)
             throws AnalysisException {
@@ -213,6 +220,8 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
      * Makes sure a usable temporary directory is available.
+     *
+     * @throws Exception an AnalyzeException is thrown when the temp directory cannot be created
      */
     @Override
     protected void initializeFileTypeAnalyzer() throws Exception {
@@ -251,7 +260,8 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
      * Gathers evidence from the METADATA file.
      *
      * @param dependency the dependency being analyzed
-     * @throws MalformedURLException
+     * @param file a reference to the manifest/properties file
+     * @throws AnalysisException thrown when there is an error
      */
     private static void collectWheelMetadata(Dependency dependency, File file)
             throws AnalysisException {
@@ -277,6 +287,14 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
+    /**
+     * Adds a value to the evidence collection.
+     *
+     * @param headers the properties collection
+     * @param evidence the evidence collection to add the value
+     * @param property the property name
+     * @param confidence the confidence of the evidence
+     */
     private static void addPropertyToEvidence(InternetHeaders headers,
             EvidenceCollection evidence, String property, Confidence confidence) {
         final String value = headers.getHeader(property, null);
@@ -286,7 +304,14 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
-    private static final File getMatchingFile(File folder, FilenameFilter filter) {
+    /**
+     * Returns a list of files that match the given filter, this does not recursively scan the directory.
+     *
+     * @param folder the folder to filter
+     * @param filter the filter to apply to the files in the directory
+     * @return the list of Files in the directory that match the provided filter
+     */
+    private static File getMatchingFile(File folder, FilenameFilter filter) {
         File result = null;
         final File[] matches = folder.listFiles(filter);
         if (null != matches && 1 == matches.length) {
@@ -295,6 +320,12 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
         return result;
     }
 
+    /**
+     * Reads the manifest entries from the provided file.
+     *
+     * @param manifest the manifest
+     * @return the manifest entries
+     */
     private static InternetHeaders getManifestProperties(File manifest) {
         final InternetHeaders result = new InternetHeaders();
         if (null == manifest) {
@@ -321,7 +352,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     private File getNextTempDirectory() throws AnalysisException {
         File directory;
 
-		// getting an exception for some directories not being able to be
+        // getting an exception for some directories not being able to be
         // created; might be because the directory already exists?
         do {
             dirCount += 1;
