@@ -261,11 +261,13 @@ public class DependencyCheckTask extends Task {
     public void setAutoUpdate(boolean autoUpdate) {
         this.autoUpdate = autoUpdate;
     }
-
+    /**
+     * Whether only the update phase should be executed.
+     */
     private boolean updateOnly = false;
 
     /**
-     * Get the value of updateOnly
+     * Get the value of updateOnly.
      *
      * @return the value of updateOnly
      */
@@ -274,7 +276,7 @@ public class DependencyCheckTask extends Task {
     }
 
     /**
-     * Set the value of updateOnly
+     * Set the value of updateOnly.
      *
      * @param updateOnly new value of updateOnly
      */
