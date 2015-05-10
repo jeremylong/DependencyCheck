@@ -183,7 +183,7 @@ public final class Settings {
         /**
          * The properties key for whether the Python Package analyzer is enabled.
          */
-		public static final String ANALYZER_PYTHON_PACKAGE_ENABLED = "analyzer.python.package.enabled";
+        public static final String ANALYZER_PYTHON_PACKAGE_ENABLED = "analyzer.python.package.enabled";
         /**
          * The properties key for whether the .NET Assembly analyzer is enabled.
          */
