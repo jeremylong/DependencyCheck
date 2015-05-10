@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import org.junit.After;
@@ -193,5 +194,28 @@ public class DependencyVersionTest {
         java.util.Arrays.sort(dv);
 
         assertArrayEquals(expected, dv);
+    }
+
+    /**
+     * Test of getVersionParts method, of class DependencyVersion.
+     */
+    @Test
+    public void testGetVersionParts() {
+        DependencyVersion instance = new DependencyVersion();
+        List<String> versionParts = Arrays.asList("1", "1", "1");
+        instance.setVersionParts(versionParts);
+        List<String> expResult = Arrays.asList("1", "1", "1");;
+        List<String> result = instance.getVersionParts();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of setVersionParts method, of class DependencyVersion.
+     */
+    @Test
+    public void testSetVersionParts() {
+        List<String> versionParts = Arrays.asList("1", "1", "1");
+        DependencyVersion instance = new DependencyVersion();
+        instance.setVersionParts(versionParts);
     }
 }
