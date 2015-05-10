@@ -277,7 +277,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
      * @param name the name of the evidence
      * @param contents the home page URL
      * @return true if evidence was collected; otherwise false
-     * @throws MalformedURLException
+     * @throws MalformedURLException thrown if the URL is malformed
      */
     private boolean gatherHomePageEvidence(Pattern pattern,
             EvidenceCollection evidence, String source, String name,
