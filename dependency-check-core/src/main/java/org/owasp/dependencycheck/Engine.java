@@ -325,7 +325,7 @@ public class Engine {
         Dependency dependency = null;
         if (supportsExtension(extension)) {
             dependency = new Dependency(file);
-            if (extension == fileName){
+            if (extension == null ? fileName == null : extension.equals(fileName)) {
                 dependency.setFileExtension(extension);
             }
             dependencies.add(dependency);
