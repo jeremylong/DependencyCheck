@@ -103,7 +103,7 @@ public class App {
             try {
                 runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles(), cli.getExcludeList());
             } catch (InvalidScanPathException ex) {
-                Logger.getLogger(App.class.getName()).log(Level.SEVERE, "An invalid scan path was detected; unable to scan '//*' paths");
+                LOGGER.log(Level.SEVERE, "An invalid scan path was detected; unable to scan '//*' paths");
             }
         } else {
             cli.printHelp();
