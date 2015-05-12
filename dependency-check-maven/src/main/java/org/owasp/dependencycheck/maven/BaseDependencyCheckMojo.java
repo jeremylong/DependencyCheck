@@ -429,10 +429,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     protected File getCorrectOutputDirectory(MavenProject current) {
         final Object obj = current.getContextValue(getOutputDirectoryContextKey());
-        if (obj != null) {
-            if (obj instanceof File) {
-                return (File) obj;
-            }
+        if (obj != null && obj instanceof File) {
+            return (File) obj;
         }
         File target = new File(current.getBuild().getDirectory());
         if (target.getParentFile() != null && "target".equals(target.getParentFile().getName())) {
