@@ -298,7 +298,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     private static void addPropertyToEvidence(InternetHeaders headers,
             EvidenceCollection evidence, String property, Confidence confidence) {
         final String value = headers.getHeader(property, null);
-        LOGGER.fine(String.format("Property: %s, Value: %s\n", property, value));
+        LOGGER.fine(String.format("Property: %s, Value: %s", property, value));
         if (StringUtils.isNotBlank(value)) {
             evidence.addEvidence(METADATA, property, value, confidence);
         }
