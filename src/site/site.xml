@@ -109,6 +109,9 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 <item name="Jar Analyzer" href="./analyzers/jar-analyzer.html">
                     <description>Jar Analyzer</description>
                 </item>
+                <item name="Python Analyzer" href="./analyzers/python-analyzer.html">
+                    <description>Python Analyzer</description>
+                </item>
                 <item name="Central Analyzer" href="./analyzers/central-analyzer.html">
                     <description>Central Analyzer</description>
                 </item>
