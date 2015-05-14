@@ -70,6 +70,15 @@ Copyright (c) 2012 - Jeremy Long
                 <role>developer</role>
             </roles>
         </developer>
+        <developer>
+            <name>Dale Visser</name>
+            <email>dvisser@ida.org</email>
+            <organization>Institute for Defense Analyses</organization>
+            <organizationUrl>https://www.ida.org/</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
     </developers>
     <contributors>
         <contributor>
