@@ -28,7 +28,9 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.UrlStringUtils;
 
 /**
  * Used to analyze a Wheel or egg distribution files, or their contents in
@@ -46,12 +48,25 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 			| Pattern.CASE_INSENSITIVE;
 
 	/**
-	 * Matches assignments to version variables in Python source code.
+	 * Matches AC_INIT statement in configure.ac file.
 	 */
-	private static final Pattern AC_INIT_PATTERN = Pattern
-			.compile(
-					"AC_INIT\\(\\[{1,2}(.+?)\\]{1,2} *, *\\[{1,2}(.+?)\\]{1,2}( *, *\\[{1,2}(.+?)\\]{1,2})?",
-					REGEX_OPTIONS);
+	private static final Pattern AC_INIT_PATTERN;
+	static {
+		// each instance of param or sep_param has a capture group
+		final String param = "\\[{1,2}(.+?)\\]{1,2}";
+		final String sep_param = "\\s*,\\s*" + param;
+		// Group 1: Package
+		// Group 2: Version
+		// Group 3: optional
+		// Group 4: Bug report address (if it exists)
+		// Group 5: optional
+		// Group 6: Tarname (if it exists)
+		// Group 7: optional
+		// Group 8: URL (if it exists)
+		AC_INIT_PATTERN = Pattern.compile(String.format(
+				"AC_INIT\\(%s%s(%s)?(%s)?(%s)?", param, sep_param, sep_param,
+				sep_param, sep_param), REGEX_OPTIONS);
+	}
 
 	/**
 	 * The name of the analyzer.
@@ -126,14 +141,30 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 			if (!contents.isEmpty()) {
 				final Matcher matcher = AC_INIT_PATTERN.matcher(contents);
 				if (matcher.find()) {
-					dependency.getProductEvidence().addEvidence(name,
-							"Package", matcher.group(1), Confidence.HIGHEST);
+					final EvidenceCollection productEvidence = dependency
+							.getProductEvidence();
+					productEvidence.addEvidence(name, "Package",
+							matcher.group(1), Confidence.HIGHEST);
 					dependency.getVersionEvidence().addEvidence(name,
 							"Package Version", matcher.group(2),
 							Confidence.HIGHEST);
-					dependency.getVendorEvidence().addEvidence(name,
-							"Bug report address", matcher.group(4),
-							Confidence.HIGH);
+					final EvidenceCollection vendorEvidence = dependency
+							.getVendorEvidence();
+					if (null != matcher.group(3)) {
+						vendorEvidence.addEvidence(name, "Bug report address",
+								matcher.group(4), Confidence.HIGH);
+					}
+					if (null != matcher.group(5)) {
+						productEvidence.addEvidence(name, "Tarname",
+								matcher.group(6), Confidence.HIGH);
+					}
+					if (null != matcher.group(7)) {
+						String url = matcher.group(8);
+						if (UrlStringUtils.isUrl(url)) {
+							vendorEvidence.addEvidence(name, "URL", url,
+									Confidence.HIGH);
+						}
+					}
 				}
 			}
 		}

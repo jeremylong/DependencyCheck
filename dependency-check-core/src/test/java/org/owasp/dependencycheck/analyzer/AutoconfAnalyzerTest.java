@@ -43,6 +43,16 @@ public class AutoconfAnalyzerTest extends BaseTest {
 	 */
 	AutoconfAnalyzer analyzer;
 
+	private void assertCommonEvidence(Dependency result, String product, String version,
+			String vendor) {
+		assertTrue("Expected product evidence to contain \"" + product + "\".",
+				result.getProductEvidence().toString().contains(product));
+		assertTrue("Expected version evidence to contain \"" + version + "\".", result
+				.getVersionEvidence().toString().contains(version));
+		assertTrue("Expected vendor evidence to contain \"" + vendor + "\".", result
+				.getVendorEvidence().toString().contains(vendor));
+	}
+
 	/**
 	 * Correctly setup the analyzer for testing.
 	 *
@@ -66,6 +76,37 @@ public class AutoconfAnalyzerTest extends BaseTest {
 	public void tearDown() throws Exception {
 		analyzer.close();
 		analyzer = null;
+	}
+
+	/**
+	 * Test of inspect method, of class PythonDistributionAnalyzer.
+	 *
+	 * @throws AnalysisException
+	 *             is thrown when an exception occurs.
+	 */
+	@Test
+	public void testAnalyzeConfigureAC1() throws AnalysisException {
+		final Dependency result = new Dependency(BaseTest.getResourceAsFile(
+				this, "autoconf/ghostscript/configure.ac"));
+		analyzer.analyze(result, null);
+		assertCommonEvidence(result, "ghostscript", "8.62.0", "gnu");
+	}
+
+	/**
+	 * Test of inspect method, of class PythonDistributionAnalyzer.
+	 *
+	 * @throws AnalysisException
+	 *             is thrown when an exception occurs.
+	 */
+	@Test
+	public void testAnalyzeConfigureAC2() throws AnalysisException {
+		final Dependency result = new Dependency(BaseTest.getResourceAsFile(
+				this, "autoconf/readable-code/configure.ac"));
+		analyzer.analyze(result, null);
+		assertCommonEvidence(result, "readable", "1.0.7", "dwheeler");
+		final String url = "http://readable.sourceforge.net/";
+		assertTrue("Expected product evidence to contain \"" + url + "\".",
+				result.getVendorEvidence().toString().contains(url));
 	}
 
 	/**
@@ -99,22 +140,4 @@ public class AutoconfAnalyzerTest extends BaseTest {
 				analyzer.supportsExtension("ac"));
 	}
 
-	/**
-	 * Test of inspect method, of class PythonDistributionAnalyzer.
-	 *
-	 * @throws AnalysisException
-	 *             is thrown when an exception occurs.
-	 */
-	@Test
-	public void testAnalyzeConfigureAC() throws AnalysisException {
-		final Dependency result = new Dependency(BaseTest.getResourceAsFile(
-				this, "autoconf/configure.ac"));
-		analyzer.analyze(result, null);
-		assertTrue("Expected product evidence to contain \"ghostscript\".",
-				result.getProductEvidence().toString().contains("ghostscript"));
-		assertTrue("Expected version evidence to contain \"8.62.0\".",
-				result.getVersionEvidence().toString().contains("8.62.0"));
-		assertTrue("Expected vendor evidence to contain \"gnu\".",
-				result.getVendorEvidence().toString().contains("gnu"));
-	}
 }
