@@ -42,10 +42,19 @@ import org.owasp.dependencycheck.utils.UrlStringUtils;
 public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 
 	/**
-	 * Used when compiling file scanning regex patterns.
+	 * The name of the analyzer.
 	 */
-	private static final int REGEX_OPTIONS = Pattern.DOTALL
-			| Pattern.CASE_INSENSITIVE;
+	private static final String ANALYZER_NAME = "Autoconf Analyzer";
+
+	/**
+	 * The phase that this analyzer is intended to run in.
+	 */
+	private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
+
+	/**
+	 * The set of file extensions supported by this analyzer.
+	 */
+	private static final Set<String> EXTENSIONS = newHashSet("ac");
 
 	/**
 	 * Matches AC_INIT statement in configure.ac file.
@@ -65,22 +74,9 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 		// Group 8: URL (if it exists)
 		AC_INIT_PATTERN = Pattern.compile(String.format(
 				"AC_INIT\\(%s%s(%s)?(%s)?(%s)?", param, sep_param, sep_param,
-				sep_param, sep_param), REGEX_OPTIONS);
+				sep_param, sep_param), Pattern.DOTALL
+				| Pattern.CASE_INSENSITIVE);
 	}
-
-	/**
-	 * The name of the analyzer.
-	 */
-	private static final String ANALYZER_NAME = "Autoconf Analyzer";
-	/**
-	 * The phase that this analyzer is intended to run in.
-	 */
-	private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
-
-	/**
-	 * The set of file extensions supported by this analyzer.
-	 */
-	private static final Set<String> EXTENSIONS = newHashSet("ac");
 
 	/**
 	 * Returns a list of file EXTENSIONS supported by this analyzer.
@@ -159,7 +155,7 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 								matcher.group(6), Confidence.HIGH);
 					}
 					if (null != matcher.group(7)) {
-						String url = matcher.group(8);
+						final String url = matcher.group(8);
 						if (UrlStringUtils.isUrl(url)) {
 							vendorEvidence.addEvidence(name, "URL", url,
 									Confidence.HIGH);
@@ -170,16 +166,14 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 		}
 	}
 
-	@Override
-	protected void initializeFileTypeAnalyzer() throws Exception {
-		// TODO add useful initialization here
-	}
-
 	/**
-	 * Deletes any files extracted from the Wheel during analysis.
+	 * Initializes the file type analyzer.
+	 *
+	 * @throws Exception
+	 *             thrown if there is an exception during initialization
 	 */
 	@Override
-	public void close() {
-		// TODO useful close operations here
+	protected void initializeFileTypeAnalyzer() throws Exception {
+		// No initialization needed.
 	}
 }
