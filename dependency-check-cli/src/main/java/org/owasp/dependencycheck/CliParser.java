@@ -333,6 +333,10 @@ public final class CliParser {
 
         final Option disablePythonPackageAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_PY_PKG)
                 .withDescription("Disable the Python Package Analyzer.").create();
+        
+		final Option disableAutoconfAnalyzer = OptionBuilder
+				.withLongOpt(ARGUMENT.DISABLE_AUTOCONF)
+				.withDescription("Disable the Autoconf Analyzer.").create();
 
         final Option disableCentralAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_CENTRAL)
                 .withDescription("Disable the Central Analyzer. If this analyzer is disabled it is likely you also want to disable "
@@ -379,6 +383,7 @@ public final class CliParser {
                 .addOption(disableAssemblyAnalyzer)
                 .addOption(disablePythonDistributionAnalyzer)
                 .addOption(disablePythonPackageAnalyzer)
+                .addOption(disableAutoconfAnalyzer)
                 .addOption(disableNuspecAnalyzer)
                 .addOption(disableCentralAnalyzer)
                 .addOption(disableNexusAnalyzer)
@@ -486,6 +491,15 @@ public final class CliParser {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_PY_PKG);
     }
 
+    /**
+     * Returns true if the disableAutoconf command line argument was specified.
+     * 
+     * @return true if the disableAutoconf command line argument was specified; otherwise false
+     */
+	public boolean isAutoconfDisabled() {
+        return (line != null) && line.hasOption(ARGUMENT.DISABLE_AUTOCONF);
+	}
+    
     /**
      * Returns true if the disableNexus command line argument was specified.
      *
@@ -796,7 +810,7 @@ public final class CliParser {
      */
     public static class ARGUMENT {
 
-        /**
+		/**
          * The long CLI argument name specifying the directory/file to scan.
          */
         public static final String SCAN = "scan";
@@ -935,6 +949,10 @@ public final class CliParser {
          * Disables the Python Package Analyzer.
          */
         public static final String DISABLE_PY_PKG = "disablePyPkg";
+        /**
+         * Disables the Autoconf Analyzer.
+         */
+        public static final String DISABLE_AUTOCONF = "disableAutoconf";
         /**
          * Disables the Assembly Analyzer.
          */
