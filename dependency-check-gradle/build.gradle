@@ -1,0 +1,87 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath "com.gradle.publish:plugin-publish-plugin:0.9.0"
+    }
+}
+
+plugins {
+    id 'nu.studer.plugindev' version '1.0.3'
+}
+
+apply plugin: 'idea'
+apply plugin: 'groovy'
+apply plugin: 'maven'
+apply plugin: "com.gradle.plugin-publish"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile(
+            localGroovy(),
+            gradleApi(),
+            'org.owasp:dependency-check-core:1.2.11',
+            'org.owasp:dependency-check-utils:1.2.10'
+    )
+}
+
+group = 'com.tools.security'
+version = '0.0.3'
+
+//-------------------------------
+// Local debug use only
+//
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri('../../../repo'))
+        }
+    }
+}
+//-------------------------------
+
+// publish to Bintray
+plugindev {
+    pluginId = 'dependency.check'
+    pluginName = 'dependency-check'
+    pluginImplementationClass 'com.tools.security.plugin.DependencyCheckGradlePlugin'
+    pluginDescription 'This is dependency check gradle plugin.'
+    pluginLicenses 'Apache-2.0'
+    pluginTags 'dependency check', 'security'
+    authorId 'wmaintw'
+    authorName 'Wei Ma'
+    authorEmail 'wma@thoughtworks.com'
+    projectUrl 'https://github.com/wmaintw/DependencyCheck'
+    projectIssuesUrl 'https://github.com/wmaintw/DependencyCheck/issues'
+    projectVcsUrl 'git@github.com:wmaintw/DependencyCheck.git'
+    projectInceptionYear '2015'
+    done()
+}
+
+bintray {
+    user = bintrayUser
+    key = bintrayUserKey
+    pkg.repo = bintrayRepo
+}
+
+// publish to gradle plugin portal
+pluginBundle {
+    website = 'https://github.com/wmaintw/DependencyCheck'
+    vcsUrl = 'git@github.com:wmaintw/DependencyCheck.git'
+    description = 'This is dependency check gradle plugin.'
+    tags = ['dependency check', 'security']
+
+    plugins {
+        dependencyCheckPlugin {
+            id = 'dependency.check'
+            displayName = 'dependency-check'
+        }
+    }
+}
