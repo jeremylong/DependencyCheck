@@ -34,7 +34,7 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Paramete
        | \-\-nexusUsesProxy    | \<true\|false\> | Whether or not the defined proxy should be used when connecting to Nexus.        | true
        | \-\-disableNuspec     |                 | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.                 | false
        | \-\-disableAssembly   |                 | Sets whether or not the .NET Assembly Analyzer should be used.                   | false
-       | \-\-pathToMono        | \<path\>        | The path to Mono for .NET Assembly analysis on non-windows systems.              | &nbsp;
+       | \-\-mono              | \<path\>        | The path to Mono for .NET Assembly analysis on non-windows systems.              | &nbsp;
        | \-\-proxyserver       | \<server\>      | The proxy server to use when downloading resources.                              | &nbsp;
        | \-\-proxyport         | \<port\>        | The proxy port to use when downloading resources.                                | &nbsp;
        | \-\-connectiontimeout | \<timeout\>     | The connection timeout (in milliseconds) to use when downloading resources.      | &nbsp;
