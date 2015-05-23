@@ -28,6 +28,7 @@ Copyright (c) 2012 - Jeremy Long
         <module>dependency-check-cli</module>
         <module>dependency-check-ant</module>
         <module>dependency-check-maven</module>
+        <module>dependency-check-gradle</module>
         <module>dependency-check-jenkins</module>
         <module>dependency-check-utils</module>
     </modules>
