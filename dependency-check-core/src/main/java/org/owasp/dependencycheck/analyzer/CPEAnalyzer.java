@@ -406,6 +406,8 @@ public class CPEAnalyzer implements Analyzer {
     private boolean verifyEntry(final IndexEntry entry, final Dependency dependency) {
         boolean isValid = false;
 
+        //TODO - does this nullify some of the fuzzy matching that happens in the lucene search?
+        // for instance CPE some-component and in the evidence we have SomeComponent.
         if (collectionContainsString(dependency.getProductEvidence(), entry.getProduct())
                 && collectionContainsString(dependency.getVendorEvidence(), entry.getVendor())) {
             //&& collectionContainsVersion(dependency.getVersionEvidence(), entry.getVersion())
