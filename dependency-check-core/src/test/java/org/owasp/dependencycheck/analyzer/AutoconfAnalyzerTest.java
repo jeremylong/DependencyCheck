@@ -124,7 +124,7 @@ public class AutoconfAnalyzerTest extends BaseTest {
 	 */
 	@Test
 	public void testGetSupportedExtensions() {
-		final String[] expected = { "ac" };
+		final String[] expected = { "ac", "in" };
 		assertEquals("Supported extensions should just have the following: "
 				+ StringUtils.join(expected, ", "),
 				new HashSet<String>(Arrays.asList(expected)),
@@ -138,6 +138,8 @@ public class AutoconfAnalyzerTest extends BaseTest {
 	public void testSupportsExtension() {
 		assertTrue("Should support \"ac\" extension.",
 				analyzer.supportsExtension("ac"));
+		assertTrue("Should support \"in\" extension.",
+				analyzer.supportsExtension("in"));
 	}
 
 }

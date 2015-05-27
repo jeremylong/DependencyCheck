@@ -19,6 +19,8 @@ package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,7 +56,7 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 	/**
 	 * The set of file extensions supported by this analyzer.
 	 */
-	private static final Set<String> EXTENSIONS = newHashSet("ac");
+	private static final Set<String> EXTENSIONS = newHashSet("ac", "in");
 
 	/**
 	 * Matches AC_INIT statement in configure.ac file.
@@ -62,7 +64,7 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 	private static final Pattern AC_INIT_PATTERN;
 	static {
 		// each instance of param or sep_param has a capture group
-		final String param = "\\[{1,2}(.+?)\\]{1,2}";
+		final String param = "\\[{0,2}(.+?)\\]{0,2}";
 		final String sep_param = "\\s*,\\s*" + param;
 		// Group 1: Package
 		// Group 2: Version
@@ -73,7 +75,7 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 		// Group 7: optional
 		// Group 8: URL (if it exists)
 		AC_INIT_PATTERN = Pattern.compile(String.format(
-				"AC_INIT\\(%s%s(%s)?(%s)?(%s)?", param, sep_param, sep_param,
+				"AC_INIT\\(%s%s(%s)?(%s)?(%s)?\\s*\\)", param, sep_param, sep_param,
 				sep_param, sep_param), Pattern.DOTALL
 				| Pattern.CASE_INSENSITIVE);
 	}
@@ -123,7 +125,7 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 			throws AnalysisException {
 		final File actualFile = dependency.getActualFile();
 		final String name = actualFile.getName();
-		if ("configure.ac".equals(name)) {
+		if ("configure.ac".equals(name) || "configure.in".equals(name)) {
 			final File parent = actualFile.getParentFile();
 			final String parentName = parent.getName();
 			dependency.setDisplayFileName(parentName + "/" + name);
@@ -135,32 +137,43 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 						"Problem occured while reading dependency file.", e);
 			}
 			if (!contents.isEmpty()) {
-				final Matcher matcher = AC_INIT_PATTERN.matcher(contents);
-				if (matcher.find()) {
-					final EvidenceCollection productEvidence = dependency
-							.getProductEvidence();
-					productEvidence.addEvidence(name, "Package",
-							matcher.group(1), Confidence.HIGHEST);
-					dependency.getVersionEvidence().addEvidence(name,
-							"Package Version", matcher.group(2),
-							Confidence.HIGHEST);
-					final EvidenceCollection vendorEvidence = dependency
-							.getVendorEvidence();
-					if (null != matcher.group(3)) {
-						vendorEvidence.addEvidence(name, "Bug report address",
-								matcher.group(4), Confidence.HIGH);
-					}
-					if (null != matcher.group(5)) {
-						productEvidence.addEvidence(name, "Tarname",
-								matcher.group(6), Confidence.HIGH);
-					}
-					if (null != matcher.group(7)) {
-						final String url = matcher.group(8);
-						if (UrlStringUtils.isUrl(url)) {
-							vendorEvidence.addEvidence(name, "URL", url,
-									Confidence.HIGH);
-						}
-					}
+				gatherEvidence(dependency, name, contents);
+			}
+		} else {
+			// copy, alter and set in case some other thread is iterating over
+            final List<Dependency> deps = new ArrayList<Dependency>(
+                    engine.getDependencies());
+            deps.remove(dependency);
+            engine.setDependencies(deps);
+		}
+	}
+
+	private void gatherEvidence(Dependency dependency, final String name,
+			String contents) {
+		final Matcher matcher = AC_INIT_PATTERN.matcher(contents);
+		if (matcher.find()) {
+			final EvidenceCollection productEvidence = dependency
+					.getProductEvidence();
+			productEvidence.addEvidence(name, "Package",
+					matcher.group(1), Confidence.HIGHEST);
+			dependency.getVersionEvidence().addEvidence(name,
+					"Package Version", matcher.group(2),
+					Confidence.HIGHEST);
+			final EvidenceCollection vendorEvidence = dependency
+					.getVendorEvidence();
+			if (null != matcher.group(3)) {
+				vendorEvidence.addEvidence(name, "Bug report address",
+						matcher.group(4), Confidence.HIGH);
+			}
+			if (null != matcher.group(5)) {
+				productEvidence.addEvidence(name, "Tarname",
+						matcher.group(6), Confidence.HIGH);
+			}
+			if (null != matcher.group(7)) {
+				final String url = matcher.group(8);
+				if (UrlStringUtils.isUrl(url)) {
+					vendorEvidence.addEvidence(name, "URL", url,
+							Confidence.HIGH);
 				}
 			}
 		}
