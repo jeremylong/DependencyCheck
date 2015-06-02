@@ -35,13 +35,19 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.UrlStringUtils;
 
 /**
- * Used to analyze a Wheel or egg distribution files, or their contents in
- * unzipped form, and collect information that can be used to determine the
- * associated CPE.
+ * Used to analyze Autoconf input files named configure.ac or configure.in.
+ * Files simply named "configure" are also analyzed, assuming they are generated
+ * by Autoconf, and contain certain special package descriptor variables.
  *
  * @author Dale Visser <dvisser@ida.org>
+ * @see <a href="https://www.gnu.org/software/autoconf/">Autoconf - GNU Project - Free Software Foundation (FSF)</a>
  */
 public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
+
+	/**
+	 * Autoconf output filename.
+	 */
+	private static final String CONFIGURE = "configure";
 
 	/**
 	 * Autoconf input filename.
@@ -67,7 +73,7 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 	 * The set of file extensions supported by this analyzer.
 	 */
 	private static final Set<String> EXTENSIONS = newHashSet("ac", "in",
-			"configure");
+			CONFIGURE);
 
 	/**
 	 * Matches AC_INIT variables in the output configure script.
@@ -142,21 +148,22 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 			throws AnalysisException {
 		final File actualFile = dependency.getActualFile();
 		final String name = actualFile.getName();
-		if (CONFIGURE_AC.equals(name) || CONFIGURE_IN.equals(name)) {
+		if (name.startsWith(CONFIGURE)) {
 			final File parent = actualFile.getParentFile();
 			final String parentName = parent.getName();
 			dependency.setDisplayFileName(parentName + "/" + name);
-			final String contents = getFileContents(actualFile);
-			if (!contents.isEmpty()) {
-				gatherEvidence(dependency, name, contents);
-			}
-		} else if ("configure".equals(name)) {
-			final File parent = actualFile.getParentFile();
-			final String parentName = parent.getName();
-			dependency.setDisplayFileName(parentName + "/" + name);
-			final String contents = getFileContents(actualFile);
-			if (!contents.isEmpty()) {
-				extractConfigureScriptEvidence(dependency, name, contents);
+			final boolean isOutputScript = CONFIGURE.equals(name);
+			if (isOutputScript || CONFIGURE_AC.equals(name)
+					|| CONFIGURE_IN.equals(name)) {
+				final String contents = getFileContents(actualFile);
+				if (!contents.isEmpty()) {
+					if (isOutputScript) {
+						extractConfigureScriptEvidence(dependency, name,
+								contents);
+					} else {
+						gatherEvidence(dependency, name, contents);
+					}
+				}
 			}
 		} else {
 			// copy, alter and set in case some other thread is iterating over

@@ -32,9 +32,15 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 
 /**
- * Unit tests for PythonDistributionAnalyzer.
+ * Unit tests for AutoconfAnalyzer. The test resources under autoconf/ were
+ * obtained from outside open source software projects. Links to those projects
+ * are given below.
  *
  * @author Dale Visser <dvisser@ida.org>
+ * @see <a href="http://readable.sourceforge.net/">Readable Lisp S-expressions
+ *      Project</a>
+ * @see <a href="https://gnu.org/software/binutils/">GNU Binutils</a>
+ * @see <a href="https://gnu.org/software/ghostscript/">GNU Ghostscript</a>
  */
 public class AutoconfAnalyzerTest extends BaseTest {
 
@@ -43,19 +49,19 @@ public class AutoconfAnalyzerTest extends BaseTest {
 	 */
 	AutoconfAnalyzer analyzer;
 
-	private void assertCommonEvidence(Dependency result, String product, String version,
-			String vendor) {
+	private void assertCommonEvidence(Dependency result, String product,
+			String version, String vendor) {
 		assertProductAndVersion(result, product, version);
-		assertTrue("Expected vendor evidence to contain \"" + vendor + "\".", result
-				.getVendorEvidence().toString().contains(vendor));
+		assertTrue("Expected vendor evidence to contain \"" + vendor + "\".",
+				result.getVendorEvidence().toString().contains(vendor));
 	}
 
 	private void assertProductAndVersion(Dependency result, String product,
 			String version) {
 		assertTrue("Expected product evidence to contain \"" + product + "\".",
 				result.getProductEvidence().toString().contains(product));
-		assertTrue("Expected version evidence to contain \"" + version + "\".", result
-				.getVersionEvidence().toString().contains(version));
+		assertTrue("Expected version evidence to contain \"" + version + "\".",
+				result.getVersionEvidence().toString().contains(version));
 	}
 
 	/**
@@ -84,7 +90,8 @@ public class AutoconfAnalyzerTest extends BaseTest {
 	}
 
 	/**
-	 * Test of inspect method, of class PythonDistributionAnalyzer.
+	 * Test whether expected evidence is gathered from Ghostscript's
+	 * configure.ac.
 	 *
 	 * @throws AnalysisException
 	 *             is thrown when an exception occurs.
@@ -98,7 +105,7 @@ public class AutoconfAnalyzerTest extends BaseTest {
 	}
 
 	/**
-	 * Test of inspect method, of class PythonDistributionAnalyzer.
+	 * Test whether expected evidence is gathered from Readable's configure.ac.
 	 *
 	 * @throws AnalysisException
 	 *             is thrown when an exception occurs.
@@ -119,8 +126,8 @@ public class AutoconfAnalyzerTest extends BaseTest {
 	}
 
 	/**
-	 * Test of inspect method, of class PythonDistributionAnalyzer.
-	 *
+	 * Test whether expected evidence is gathered from GNU Binutil's configure.
+	 * 
 	 * @throws AnalysisException
 	 *             is thrown when an exception occurs.
 	 */
@@ -133,7 +140,8 @@ public class AutoconfAnalyzerTest extends BaseTest {
 	}
 
 	/**
-	 * Test of inspect method, of class PythonDistributionAnalyzer.
+	 * Test whether expected evidence is gathered from GNU Ghostscript's
+	 * configure.
 	 *
 	 * @throws AnalysisException
 	 *             is thrown when an exception occurs.
@@ -147,7 +155,7 @@ public class AutoconfAnalyzerTest extends BaseTest {
 	}
 
 	/**
-	 * Test of getName method, of class PythonDistributionAnalyzer.
+	 * Test of getName method, of {@link AutoconfAnalyzer}.
 	 */
 	@Test
 	public void testGetName() {
@@ -156,8 +164,7 @@ public class AutoconfAnalyzerTest extends BaseTest {
 	}
 
 	/**
-	 * Test of getSupportedExtensions method, of class
-	 * PythonDistributionAnalyzer.
+	 * Test of {@link AutoconfAnalyzer#getSupportedExtensions}.
 	 */
 	@Test
 	public void testGetSupportedExtensions() {
@@ -169,7 +176,7 @@ public class AutoconfAnalyzerTest extends BaseTest {
 	}
 
 	/**
-	 * Test of supportsExtension method, of class PythonDistributionAnalyzer.
+	 * Test of {@link AutoconfAnalyzer#supportsExtension}.
 	 */
 	@Test
 	public void testSupportsExtension() {
@@ -180,5 +187,4 @@ public class AutoconfAnalyzerTest extends BaseTest {
 		assertTrue("Should support \"configure\" extension.",
 				analyzer.supportsExtension("configure"));
 	}
-
 }
