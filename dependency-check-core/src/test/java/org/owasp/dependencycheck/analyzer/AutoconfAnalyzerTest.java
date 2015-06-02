@@ -45,12 +45,17 @@ public class AutoconfAnalyzerTest extends BaseTest {
 
 	private void assertCommonEvidence(Dependency result, String product, String version,
 			String vendor) {
+		assertProductAndVersion(result, product, version);
+		assertTrue("Expected vendor evidence to contain \"" + vendor + "\".", result
+				.getVendorEvidence().toString().contains(vendor));
+	}
+
+	private void assertProductAndVersion(Dependency result, String product,
+			String version) {
 		assertTrue("Expected product evidence to contain \"" + product + "\".",
 				result.getProductEvidence().toString().contains(product));
 		assertTrue("Expected version evidence to contain \"" + version + "\".", result
 				.getVersionEvidence().toString().contains(version));
-		assertTrue("Expected vendor evidence to contain \"" + vendor + "\".", result
-				.getVendorEvidence().toString().contains(vendor));
 	}
 
 	/**
@@ -103,10 +108,42 @@ public class AutoconfAnalyzerTest extends BaseTest {
 		final Dependency result = new Dependency(BaseTest.getResourceAsFile(
 				this, "autoconf/readable-code/configure.ac"));
 		analyzer.analyze(result, null);
+		assertReadableCodeEvidence(result);
+	}
+
+	private void assertReadableCodeEvidence(final Dependency result) {
 		assertCommonEvidence(result, "readable", "1.0.7", "dwheeler");
 		final String url = "http://readable.sourceforge.net/";
 		assertTrue("Expected product evidence to contain \"" + url + "\".",
 				result.getVendorEvidence().toString().contains(url));
+	}
+
+	/**
+	 * Test of inspect method, of class PythonDistributionAnalyzer.
+	 *
+	 * @throws AnalysisException
+	 *             is thrown when an exception occurs.
+	 */
+	@Test
+	public void testAnalyzeConfigureScript() throws AnalysisException {
+		final Dependency result = new Dependency(BaseTest.getResourceAsFile(
+				this, "autoconf/binutils/configure"));
+		analyzer.analyze(result, null);
+		assertProductAndVersion(result, "binutils", "2.25.51");
+	}
+
+	/**
+	 * Test of inspect method, of class PythonDistributionAnalyzer.
+	 *
+	 * @throws AnalysisException
+	 *             is thrown when an exception occurs.
+	 */
+	@Test
+	public void testAnalyzeReadableConfigureScript() throws AnalysisException {
+		final Dependency result = new Dependency(BaseTest.getResourceAsFile(
+				this, "autoconf/readable-code/configure"));
+		analyzer.analyze(result, null);
+		assertReadableCodeEvidence(result);
 	}
 
 	/**
@@ -124,7 +161,7 @@ public class AutoconfAnalyzerTest extends BaseTest {
 	 */
 	@Test
 	public void testGetSupportedExtensions() {
-		final String[] expected = { "ac", "in" };
+		final String[] expected = { "ac", "in", "configure" };
 		assertEquals("Supported extensions should just have the following: "
 				+ StringUtils.join(expected, ", "),
 				new HashSet<String>(Arrays.asList(expected)),
@@ -140,6 +177,8 @@ public class AutoconfAnalyzerTest extends BaseTest {
 				analyzer.supportsExtension("ac"));
 		assertTrue("Should support \"in\" extension.",
 				analyzer.supportsExtension("in"));
+		assertTrue("Should support \"configure\" extension.",
+				analyzer.supportsExtension("configure"));
 	}
 
 }

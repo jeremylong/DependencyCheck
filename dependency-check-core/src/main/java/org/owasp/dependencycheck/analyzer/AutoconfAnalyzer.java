@@ -44,6 +44,16 @@ import org.owasp.dependencycheck.utils.UrlStringUtils;
 public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 
 	/**
+	 * Autoconf input filename.
+	 */
+	private static final String CONFIGURE_IN = "configure.in";
+
+	/**
+	 * Autoconf input filename.
+	 */
+	private static final String CONFIGURE_AC = "configure.ac";
+
+	/**
 	 * The name of the analyzer.
 	 */
 	private static final String ANALYZER_NAME = "Autoconf Analyzer";
@@ -56,7 +66,14 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 	/**
 	 * The set of file extensions supported by this analyzer.
 	 */
-	private static final Set<String> EXTENSIONS = newHashSet("ac", "in");
+	private static final Set<String> EXTENSIONS = newHashSet("ac", "in",
+			"configure");
+
+	/**
+	 * Matches AC_INIT variables in the output configure script.
+	 */
+	private static final Pattern PACKAGE_VAR = Pattern.compile(
+			"PACKAGE_(.+?)='(.*?)'", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Matches AC_INIT statement in configure.ac file.
@@ -75,8 +92,8 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 		// Group 7: optional
 		// Group 8: URL (if it exists)
 		AC_INIT_PATTERN = Pattern.compile(String.format(
-				"AC_INIT\\(%s%s(%s)?(%s)?(%s)?\\s*\\)", param, sep_param, sep_param,
-				sep_param, sep_param), Pattern.DOTALL
+				"AC_INIT\\(%s%s(%s)?(%s)?(%s)?\\s*\\)", param, sep_param,
+				sep_param, sep_param, sep_param), Pattern.DOTALL
 				| Pattern.CASE_INSENSITIVE);
 	}
 
@@ -125,27 +142,65 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 			throws AnalysisException {
 		final File actualFile = dependency.getActualFile();
 		final String name = actualFile.getName();
-		if ("configure.ac".equals(name) || "configure.in".equals(name)) {
+		if (CONFIGURE_AC.equals(name) || CONFIGURE_IN.equals(name)) {
 			final File parent = actualFile.getParentFile();
 			final String parentName = parent.getName();
 			dependency.setDisplayFileName(parentName + "/" + name);
-			String contents = "";
-			try {
-				contents = FileUtils.readFileToString(actualFile).trim();
-			} catch (IOException e) {
-				throw new AnalysisException(
-						"Problem occured while reading dependency file.", e);
-			}
+			final String contents = getFileContents(actualFile);
 			if (!contents.isEmpty()) {
 				gatherEvidence(dependency, name, contents);
 			}
+		} else if ("configure".equals(name)) {
+			final File parent = actualFile.getParentFile();
+			final String parentName = parent.getName();
+			dependency.setDisplayFileName(parentName + "/" + name);
+			final String contents = getFileContents(actualFile);
+			if (!contents.isEmpty()) {
+				extractConfigureScriptEvidence(dependency, name, contents);
+			}
 		} else {
 			// copy, alter and set in case some other thread is iterating over
-            final List<Dependency> deps = new ArrayList<Dependency>(
-                    engine.getDependencies());
-            deps.remove(dependency);
-            engine.setDependencies(deps);
+			final List<Dependency> deps = new ArrayList<Dependency>(
+					engine.getDependencies());
+			deps.remove(dependency);
+			engine.setDependencies(deps);
 		}
+	}
+
+	private void extractConfigureScriptEvidence(Dependency dependency,
+			final String name, final String contents) {
+		final Matcher matcher = PACKAGE_VAR.matcher(contents);
+		while (matcher.find()) {
+			final String variable = matcher.group(1);
+			final String value = matcher.group(2);
+			if (!value.isEmpty()) {
+				if (variable.endsWith("NAME")) {
+					dependency.getProductEvidence().addEvidence(name, variable,
+							value, Confidence.HIGHEST);
+				} else if ("VERSION".equals(variable)) {
+					dependency.getVersionEvidence().addEvidence(name, variable,
+							value, Confidence.HIGHEST);
+				} else if ("BUGREPORT".equals(variable)) {
+					dependency.getVendorEvidence().addEvidence(name, variable,
+							value, Confidence.HIGH);
+				} else if ("URL".equals(variable)) {
+					dependency.getVendorEvidence().addEvidence(name, variable,
+							value, Confidence.HIGH);
+				}
+			}
+		}
+	}
+
+	private String getFileContents(final File actualFile)
+			throws AnalysisException {
+		String contents = "";
+		try {
+			contents = FileUtils.readFileToString(actualFile).trim();
+		} catch (IOException e) {
+			throw new AnalysisException(
+					"Problem occured while reading dependency file.", e);
+		}
+		return contents;
 	}
 
 	private void gatherEvidence(Dependency dependency, final String name,
@@ -154,11 +209,10 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 		if (matcher.find()) {
 			final EvidenceCollection productEvidence = dependency
 					.getProductEvidence();
-			productEvidence.addEvidence(name, "Package",
-					matcher.group(1), Confidence.HIGHEST);
-			dependency.getVersionEvidence().addEvidence(name,
-					"Package Version", matcher.group(2),
+			productEvidence.addEvidence(name, "Package", matcher.group(1),
 					Confidence.HIGHEST);
+			dependency.getVersionEvidence().addEvidence(name,
+					"Package Version", matcher.group(2), Confidence.HIGHEST);
 			final EvidenceCollection vendorEvidence = dependency
 					.getVendorEvidence();
 			if (null != matcher.group(3)) {
@@ -166,8 +220,8 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 						matcher.group(4), Confidence.HIGH);
 			}
 			if (null != matcher.group(5)) {
-				productEvidence.addEvidence(name, "Tarname",
-						matcher.group(6), Confidence.HIGH);
+				productEvidence.addEvidence(name, "Tarname", matcher.group(6),
+						Confidence.HIGH);
 			}
 			if (null != matcher.group(7)) {
 				final String url = matcher.group(8);
