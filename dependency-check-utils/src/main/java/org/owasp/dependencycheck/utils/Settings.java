@@ -187,7 +187,7 @@ public final class Settings {
         /**
          * The properties key for whether the Autoconf analyzer is enabled.
          */
-		public static final String ANALYZER_AUTOCONF_ENABLED = "analyzer.autoconf.enabled";
+        public static final String ANALYZER_AUTOCONF_ENABLED = "analyzer.autoconf.enabled";
         /**
          * The properties key for whether the .NET Assembly analyzer is enabled.
          */

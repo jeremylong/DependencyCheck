@@ -127,7 +127,7 @@ public class AutoconfAnalyzerTest extends BaseTest {
 
 	/**
 	 * Test whether expected evidence is gathered from GNU Binutil's configure.
-	 * 
+	 *
 	 * @throws AnalysisException
 	 *             is thrown when an exception occurs.
 	 */

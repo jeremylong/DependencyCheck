@@ -333,10 +333,10 @@ public final class CliParser {
 
         final Option disablePythonPackageAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_PY_PKG)
                 .withDescription("Disable the Python Package Analyzer.").create();
-        
-		final Option disableAutoconfAnalyzer = OptionBuilder
-				.withLongOpt(ARGUMENT.DISABLE_AUTOCONF)
-				.withDescription("Disable the Autoconf Analyzer.").create();
+
+        final Option disableAutoconfAnalyzer = OptionBuilder
+                .withLongOpt(ARGUMENT.DISABLE_AUTOCONF)
+                .withDescription("Disable the Autoconf Analyzer.").create();
 
         final Option disableCentralAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_CENTRAL)
                 .withDescription("Disable the Central Analyzer. If this analyzer is disabled it is likely you also want to disable "
@@ -493,13 +493,13 @@ public final class CliParser {
 
     /**
      * Returns true if the disableAutoconf command line argument was specified.
-     * 
+     *
      * @return true if the disableAutoconf command line argument was specified; otherwise false
      */
 	public boolean isAutoconfDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_AUTOCONF);
 	}
-    
+
     /**
      * Returns true if the disableNexus command line argument was specified.
      *
@@ -810,7 +810,7 @@ public final class CliParser {
      */
     public static class ARGUMENT {
 
-		/**
+        /**
          * The long CLI argument name specifying the directory/file to scan.
          */
         public static final String SCAN = "scan";
