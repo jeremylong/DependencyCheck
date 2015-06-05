@@ -18,34 +18,41 @@
 package org.owasp.dependencycheck.taskdefs;
 
 import java.io.File;
-import org.apache.tools.ant.BuildFileTest;
+
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.BuildFileRule;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.owasp.dependencycheck.data.nvdcve.BaseDBTestCase;
 import org.owasp.dependencycheck.utils.Settings;
+
+import static org.junit.Assert.assertTrue;
+
 
 /**
  *
  * @author Jeremy Long
  */
-public class DependencyCheckTaskTest extends BuildFileTest {
-    //TODO: The use of deprecated class BuildFileTestcan possibly
-    //be replaced with BuildFileRule. However, it currently isn't included in the ant-testutil jar.
-    //This should be fixed in ant-testutil 1.9.5, so we can check back once that has been released.
-    //Reference: http://mail-archives.apache.org/mod_mbox/ant-user/201406.mbox/%3C000001cf87ba$8949b690$9bdd23b0$@de%3E
+public class DependencyCheckTaskTest {
+
+    @Rule
+    public BuildFileRule buildFile = new BuildFileRule();
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
-    @Override
     public void setUp() throws Exception {
         Settings.initialize();
         BaseDBTestCase.ensureDBExists();
         final String buildFile = this.getClass().getClassLoader().getResource("build.xml").getPath();
-        configureProject(buildFile);
+        this.buildFile.configureProject(buildFile);
     }
 
     @After
-    @Override
     public void tearDown() {
         //no cleanup...
         //executeTarget("cleanup");
@@ -63,7 +70,7 @@ public class DependencyCheckTaskTest extends BuildFileTest {
                 throw new Exception("Unable to delete 'target/DependencyCheck-Report.html' prior to test.");
             }
         }
-        executeTarget("test.fileset");
+        buildFile.executeTarget("test.fileset");
 
         assertTrue("DependencyCheck report was not generated", report.exists());
 
@@ -82,7 +89,7 @@ public class DependencyCheckTaskTest extends BuildFileTest {
                 throw new Exception("Unable to delete 'target/DependencyCheck-Report.xml' prior to test.");
             }
         }
-        executeTarget("test.filelist");
+        buildFile.executeTarget("test.filelist");
 
         assertTrue("DependencyCheck report was not generated", report.exists());
     }
@@ -100,7 +107,7 @@ public class DependencyCheckTaskTest extends BuildFileTest {
                 throw new Exception("Unable to delete 'target/DependencyCheck-Vulnerability.html' prior to test.");
             }
         }
-        executeTarget("test.dirset");
+        buildFile.executeTarget("test.dirset");
         assertTrue("DependencyCheck report was not generated", report.exists());
     }
 
@@ -109,7 +116,7 @@ public class DependencyCheckTaskTest extends BuildFileTest {
      */
     @Test
     public void testGetFailBuildOnCVSS() {
-        expectBuildException("failCVSS", "asdfasdfscore");
-        System.out.println(this.getOutput());
+        expectedException.expect(BuildException.class);
+        buildFile.executeTarget("failCVSS");
     }
 }
