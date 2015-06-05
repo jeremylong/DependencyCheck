@@ -39,7 +39,7 @@ import static org.junit.Assert.assertTrue;
 public class DependencyCheckTaskTest {
 
     @Rule
-    public BuildFileRule buildFile = new BuildFileRule();
+    public BuildFileRule buildFileRule = new BuildFileRule();
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -49,7 +49,7 @@ public class DependencyCheckTaskTest {
         Settings.initialize();
         BaseDBTestCase.ensureDBExists();
         final String buildFile = this.getClass().getClassLoader().getResource("build.xml").getPath();
-        this.buildFile.configureProject(buildFile);
+        buildFileRule.configureProject(buildFile);
     }
 
     @After
@@ -70,7 +70,7 @@ public class DependencyCheckTaskTest {
                 throw new Exception("Unable to delete 'target/DependencyCheck-Report.html' prior to test.");
             }
         }
-        buildFile.executeTarget("test.fileset");
+        buildFileRule.executeTarget("test.fileset");
 
         assertTrue("DependencyCheck report was not generated", report.exists());
 
@@ -89,7 +89,7 @@ public class DependencyCheckTaskTest {
                 throw new Exception("Unable to delete 'target/DependencyCheck-Report.xml' prior to test.");
             }
         }
-        buildFile.executeTarget("test.filelist");
+        buildFileRule.executeTarget("test.filelist");
 
         assertTrue("DependencyCheck report was not generated", report.exists());
     }
@@ -107,7 +107,7 @@ public class DependencyCheckTaskTest {
                 throw new Exception("Unable to delete 'target/DependencyCheck-Vulnerability.html' prior to test.");
             }
         }
-        buildFile.executeTarget("test.dirset");
+        buildFileRule.executeTarget("test.dirset");
         assertTrue("DependencyCheck report was not generated", report.exists());
     }
 
@@ -117,6 +117,6 @@ public class DependencyCheckTaskTest {
     @Test
     public void testGetFailBuildOnCVSS() {
         expectedException.expect(BuildException.class);
-        buildFile.executeTarget("failCVSS");
+        buildFileRule.executeTarget("failCVSS");
     }
 }
