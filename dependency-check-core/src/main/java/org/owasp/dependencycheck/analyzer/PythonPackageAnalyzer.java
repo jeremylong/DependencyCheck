@@ -57,7 +57,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
      * The logger.
      */
     private static final Logger LOGGER = Logger
-            .getLogger(PythonDistributionAnalyzer.class.getName());
+            .getLogger(PythonPackageAnalyzer.class.getName());
 
     /**
      * Filename extensions for files to be analyzed.
