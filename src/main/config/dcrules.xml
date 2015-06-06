@@ -37,19 +37,21 @@ the work on the Logger.
         <properties>
             <property name="xpath">
                 <value><![CDATA[
-//ClassOrInterfaceDeclaration[.//PrimaryExpression[PrimaryPrefix/Name[@Image = 'Logger.getLogger']]
-and not(@Image = .//PrimaryExpression[PrimaryPrefix/Name[@Image = 'Logger.getLogger']]
-  /PrimarySuffix
-  /Arguments
-  /ArgumentList
-  /Expression
-  /PrimaryExpression
-  /PrimaryPrefix
-  /ResultType
-  /Type
-  /ReferenceType
-  /ClassOrInterfaceType/@Image
-)]        ]]></value>
+//PrimaryExpression[
+  PrimaryPrefix/Name/@Image = 'Logger.getLogger'
+  and
+  not(PrimarySuffix/
+    Arguments/
+    ArgumentList/
+    Expression/
+    PrimaryExpression/
+    PrimaryPrefix/
+    ResultType/
+    Type/
+    ReferenceType/
+    ClassOrInterfaceType/
+    @Image = ancestor::ClassOrInterfaceDeclaration/@Image)
+]               ]]></value>
             </property>
         </properties>
         <example><![CDATA[
