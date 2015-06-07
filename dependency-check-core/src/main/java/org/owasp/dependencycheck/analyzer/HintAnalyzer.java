@@ -108,11 +108,13 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
             dependency.getProductEvidence().addEvidence("hint analyzer", "product", "springsource spring framework", Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "SpringSource", Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
+            dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "pivotal", Confidence.HIGH);
         }
 
         if (vendor.contains(springTest4)) {
             dependency.getProductEvidence().addEvidence("hint analyzer", "product", "springsource_spring_framework", Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
+            dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "pivotal", Confidence.HIGH);
         }
 
         //sun/oracle problem
