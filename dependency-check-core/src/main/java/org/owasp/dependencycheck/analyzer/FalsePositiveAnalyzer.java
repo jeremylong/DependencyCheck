@@ -255,8 +255,8 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Removes bad CPE matches for a dependency. Unfortunately, right now these are hard-coded patches for specific
-     * problems identified when testing this on a LARGE volume of jar files.
+     * Removes bad CPE matches for a dependency. Unfortunately, right now these are hard-coded patches for specific problems
+     * identified when testing this on a LARGE volume of jar files.
      *
      * @param dependency the dependency to analyze
      */
@@ -273,7 +273,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         //Set<Evidence> artifactId = dependency.getVendorEvidence().getEvidence("pom", "artifactid");
         while (itr.hasNext()) {
             final Identifier i = itr.next();
-            //TODO move this startsWith expression to a configuration file?
+            //TODO move this startsWith expression to the base suppression file
             if ("cpe".equals(i.getType())) {
                 if ((i.getValue().matches(".*c\\+\\+.*")
                         || i.getValue().startsWith("cpe:/a:file:file")
@@ -288,7 +288,14 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         || dependency.getFileName().toLowerCase().endsWith(".dll")
                         || dependency.getFileName().toLowerCase().endsWith(".exe")
                         || dependency.getFileName().toLowerCase().endsWith(".nuspec")
-                        || dependency.getFileName().toLowerCase().endsWith(".nupkg"))) {
+                        || dependency.getFileName().toLowerCase().endsWith(".zip")
+                        || dependency.getFileName().toLowerCase().endsWith(".sar")
+                        || dependency.getFileName().toLowerCase().endsWith(".apk")
+                        || dependency.getFileName().toLowerCase().endsWith(".tar")
+                        || dependency.getFileName().toLowerCase().endsWith(".gz")
+                        || dependency.getFileName().toLowerCase().endsWith(".tgz")
+                        || dependency.getFileName().toLowerCase().endsWith(".ear")
+                        || dependency.getFileName().toLowerCase().endsWith(".war"))) {
                     itr.remove();
                 } else if ((i.getValue().startsWith("cpe:/a:jquery:jquery")
                         || i.getValue().startsWith("cpe:/a:prototypejs:prototype")
@@ -302,8 +309,11 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         || i.getValue().startsWith("cpe:/a:microsoft:word")
                         || i.getValue().startsWith("cpe:/a:microsoft:visio")
                         || i.getValue().startsWith("cpe:/a:microsoft:powerpoint")
-                        || i.getValue().startsWith("cpe:/a:microsoft:office"))
+                        || i.getValue().startsWith("cpe:/a:microsoft:office")
+                        || i.getValue().startsWith("cpe:/a:core_ftp:core_ftp"))
                         && (dependency.getFileName().toLowerCase().endsWith(".jar")
+                        || dependency.getFileName().toLowerCase().endsWith(".ear")
+                        || dependency.getFileName().toLowerCase().endsWith(".war")
                         || dependency.getFileName().toLowerCase().endsWith("pom.xml"))) {
                     itr.remove();
                 } else if (i.getValue().startsWith("cpe:/a:apache:maven")
@@ -354,9 +364,8 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * There are some known CPE entries, specifically regarding sun and oracle products due to the acquisition and
-     * changes in product names, that based on given evidence we can add the related CPE entries to ensure a complete
-     * list of CVE entries.
+     * There are some known CPE entries, specifically regarding sun and oracle products due to the acquisition and changes in
+     * product names, that based on given evidence we can add the related CPE entries to ensure a complete list of CVE entries.
      *
      * @param dependency the dependency being analyzed
      */
@@ -395,8 +404,8 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Removes duplicate entries identified that are contained within JAR files. These occasionally crop up due to POM
-     * entries or other types of files (such as DLLs and EXEs) being contained within the JAR.
+     * Removes duplicate entries identified that are contained within JAR files. These occasionally crop up due to POM entries or
+     * other types of files (such as DLLs and EXEs) being contained within the JAR.
      *
      * @param dependency the dependency that might be a duplicate
      * @param engine the engine used to scan all dependencies
