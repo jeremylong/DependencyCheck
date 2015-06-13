@@ -337,7 +337,7 @@ public final class Settings {
      */
     public static void cleanup(boolean deleteTemporary) {
         if (deleteTemporary && tempDirectory != null && tempDirectory.exists()) {
-            //FileUtils.delete(tempDirectory);
+            FileUtils.delete(tempDirectory);
         }
         try {
             localSettings.remove();
