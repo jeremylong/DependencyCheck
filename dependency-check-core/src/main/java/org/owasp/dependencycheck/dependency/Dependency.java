@@ -107,7 +107,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      */
     public Dependency(File file) {
         this();
-        this.actualFilePath = file.getPath();
+        this.actualFilePath = file.getAbsolutePath();
         this.filePath = this.actualFilePath;
         this.fileName = file.getName();
         this.fileExtension = FileUtils.getFileExtension(fileName);
