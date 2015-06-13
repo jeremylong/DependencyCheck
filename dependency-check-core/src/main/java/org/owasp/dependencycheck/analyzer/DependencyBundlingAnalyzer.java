@@ -111,7 +111,8 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                     final ListIterator<Dependency> subIterator = engine.getDependencies().listIterator(mainIterator.nextIndex());
                     while (subIterator.hasNext()) {
                         final Dependency nextDependency = subIterator.next();
-                        if (hashesMatch(dependency, nextDependency)) {
+                        if (hashesMatch(dependency, nextDependency) && !containedInWar(dependency.getFilePath())
+                                && !containedInWar(nextDependency.getFilePath())) {
                             if (firstPathIsShortest(dependency.getFilePath(), nextDependency.getFilePath())) {
                                 mergeDependencies(dependency, nextDependency, dependenciesToRemove);
                             } else {
@@ -125,7 +126,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                                 break;
                             } else {
                                 mergeDependencies(dependency, nextDependency, dependenciesToRemove);
-                                nextDependency.getRelatedDependencies().remove(nextDependency);
+                                dependency.getRelatedDependencies().remove(nextDependency);
                             }
                         } else if (cpeIdentifiersMatch(dependency, nextDependency)
                                 && hasSameBasePath(dependency, nextDependency)
@@ -420,5 +421,15 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             }
         }
         return count;
+    }
+
+    /**
+     * Checks if the given file path is contained within a war or ear file.
+     *
+     * @param filePath the file path to check
+     * @return true if the path contains '.war\' or '.ear\'.
+     */
+    private boolean containedInWar(String filePath) {
+        return filePath == null ? false : filePath.matches(".*\\.(ear|war)[\\\\/].*");
     }
 }
