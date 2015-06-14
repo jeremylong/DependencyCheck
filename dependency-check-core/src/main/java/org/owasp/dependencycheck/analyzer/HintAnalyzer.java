@@ -89,22 +89,27 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
                 "spring-core",
                 Confidence.HIGH);
 
-        final Evidence springTest4 = new Evidence("Manifest",
-                "Bundle-Vendor",
-                "SpringSource",
-                Confidence.HIGH);
-
-        final Evidence springTest5 = new Evidence("jar",
+        final Evidence springTest4 = new Evidence("jar",
                 "package name",
                 "springframework",
                 Confidence.LOW);
+
+        final Evidence springSecurityTest1 = new Evidence("Manifest",
+                "Bundle-Name",
+                "Spring Security Core",
+                Confidence.MEDIUM);
+
+        final Evidence springSecurityTest2 = new Evidence("pom",
+                "artifactid",
+                "spring-security-core",
+                Confidence.HIGH);
 
         //springsource/vware problem
         final Set<Evidence> product = dependency.getProductEvidence().getEvidence();
         final Set<Evidence> vendor = dependency.getVendorEvidence().getEvidence();
 
         if (product.contains(springTest1) || product.contains(springTest2) || product.contains(springTest3)
-                || (dependency.getFileName().contains("spring") && (product.contains(springTest5) || vendor.contains(springTest5)))) {
+                || (dependency.getFileName().contains("spring") && product.contains(springTest4))) {
             dependency.getProductEvidence().addEvidence("hint analyzer", "product", "springsource spring framework", Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "SpringSource", Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
@@ -115,6 +120,12 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
             dependency.getProductEvidence().addEvidence("hint analyzer", "product", "springsource_spring_framework", Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "pivotal", Confidence.HIGH);
+        }
+
+        if (product.contains(springSecurityTest1) || product.contains(springSecurityTest2)) {
+            dependency.getProductEvidence().addEvidence("hint analyzer", "product", "springsource_spring_security", Confidence.HIGH);
+            dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "SpringSource", Confidence.HIGH);
+            dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
         }
 
         //sun/oracle problem
