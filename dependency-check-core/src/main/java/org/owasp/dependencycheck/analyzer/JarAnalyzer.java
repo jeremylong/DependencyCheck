@@ -116,6 +116,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             "tool",
             "bundle-manifestversion",
             "bundlemanifestversion",
+            "bundle-vendor",
             "include-resource",
             "embed-dependency",
             "ipojo-components",
@@ -689,10 +690,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     foundSomething = true;
                     productEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
                     addMatchingValues(classInformation, value, productEvidence);
-                } else if (key.equalsIgnoreCase(BUNDLE_VENDOR)) {
-                    foundSomething = true;
-                    vendorEvidence.addEvidence(source, key, value, Confidence.HIGH);
-                    addMatchingValues(classInformation, value, vendorEvidence);
+//                //the following caused false positives.
+//                } else if (key.equalsIgnoreCase(BUNDLE_VENDOR)) {
+//                    foundSomething = true;
+//                    vendorEvidence.addEvidence(source, key, value, Confidence.HIGH);
+//                    addMatchingValues(classInformation, value, vendorEvidence);
                 } else if (key.equalsIgnoreCase(BUNDLE_VERSION)) {
                     foundSomething = true;
                     versionEvidence.addEvidence(source, key, value, Confidence.HIGH);
