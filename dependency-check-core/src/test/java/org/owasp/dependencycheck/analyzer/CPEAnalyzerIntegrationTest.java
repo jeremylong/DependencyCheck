@@ -147,23 +147,29 @@ public class CPEAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
         FileNameAnalyzer fnAnalyzer = new FileNameAnalyzer();
         fnAnalyzer.analyze(struts, null);
 
+        HintAnalyzer hintAnalyzer = new HintAnalyzer();
         JarAnalyzer jarAnalyzer = new JarAnalyzer();
-        jarAnalyzer.analyze(struts, null);
+        jarAnalyzer.supportsExtension("jar");
 
+        jarAnalyzer.analyze(struts, null);
+        hintAnalyzer.analyze(struts, null);
         //File fileCommonValidator = new File(this.getClass().getClassLoader().getResource("commons-validator-1.4.0.jar").getPath());
         File fileCommonValidator = BaseTest.getResourceAsFile(this, "commons-validator-1.4.0.jar");
         Dependency commonValidator = new Dependency(fileCommonValidator);
         jarAnalyzer.analyze(commonValidator, null);
+        hintAnalyzer.analyze(commonValidator, null);
 
         //File fileSpring = new File(this.getClass().getClassLoader().getResource("spring-core-2.5.5.jar").getPath());
         File fileSpring = BaseTest.getResourceAsFile(this, "spring-core-2.5.5.jar");
         Dependency spring = new Dependency(fileSpring);
         jarAnalyzer.analyze(spring, null);
+        hintAnalyzer.analyze(spring, null);
 
         //File fileSpring3 = new File(this.getClass().getClassLoader().getResource("spring-core-3.0.0.RELEASE.jar").getPath());
         File fileSpring3 = BaseTest.getResourceAsFile(this, "spring-core-3.0.0.RELEASE.jar");
         Dependency spring3 = new Dependency(fileSpring3);
         jarAnalyzer.analyze(spring3, null);
+        hintAnalyzer.analyze(spring3, null);
 
         CPEAnalyzer instance = new CPEAnalyzer();
         instance.open();
@@ -189,6 +195,7 @@ public class CPEAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
         //the following two only work if the HintAnalyzer is used.
         //Assert.assertTrue("Incorrect match size - spring", spring.getIdentifiers().size() == 1);
         //Assert.assertTrue("Incorrect match - spring", spring.getIdentifiers().get(0).getValue().equals(expResultSpring));
+        jarAnalyzer.close();
     }
 
     /**
