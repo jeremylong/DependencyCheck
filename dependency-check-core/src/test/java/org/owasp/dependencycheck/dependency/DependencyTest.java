@@ -86,6 +86,7 @@ public class DependencyTest {
     public void testSetActualFilePath() {
         String actualFilePath = "file.tar";
         Dependency instance = new Dependency();
+        instance.setSha1sum("non-null value");
         instance.setActualFilePath(actualFilePath);
         assertEquals(actualFilePath, instance.getActualFilePath());
     }
@@ -97,6 +98,7 @@ public class DependencyTest {
     public void testGetActualFilePath() {
         Dependency instance = new Dependency();
         String expResult = "file.tar";
+        instance.setSha1sum("non-null value");
         instance.setActualFilePath(expResult);
         String result = instance.getActualFilePath();
         assertEquals(expResult, result);
