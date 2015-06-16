@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -25,8 +28,6 @@ import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * <p>
@@ -42,7 +43,7 @@ class DriverShim implements Driver {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(DriverShim.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DriverShim.class);
     /**
      * The database driver being wrapped.
      */
@@ -115,7 +116,7 @@ class DriverShim implements Driver {
      * @see java.sql.Driver#getParentLogger()
      */
     //@Override
-    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+    public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
         //return driver.getParentLogger();
         Method m = null;
         try {
@@ -125,13 +126,13 @@ class DriverShim implements Driver {
         }
         if (m != null) {
             try {
-                return (Logger) m.invoke(m);
+                return (java.util.logging.Logger) m.invoke(m);
             } catch (IllegalAccessException ex) {
-                LOGGER.log(Level.FINER, null, ex);
+                LOGGER.trace("", ex);
             } catch (IllegalArgumentException ex) {
-                LOGGER.log(Level.FINER, null, ex);
+                LOGGER.trace("", ex);
             } catch (InvocationTargetException ex) {
-                LOGGER.log(Level.FINER, null, ex);
+                LOGGER.trace("", ex);
             }
         }
         throw new SQLFeatureNotSupportedException();

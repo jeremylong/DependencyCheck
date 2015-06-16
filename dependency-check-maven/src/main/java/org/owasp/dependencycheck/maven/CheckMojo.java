@@ -18,8 +18,6 @@
 package org.owasp.dependencycheck.maven;
 
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -42,11 +40,6 @@ import org.owasp.dependencycheck.utils.Settings;
         requiresOnline = true
 )
 public class CheckMojo extends BaseDependencyCheckMojo {
-
-    /**
-     * Logger field reference.
-     */
-    private static final Logger LOGGER = Logger.getLogger(CheckMojo.class.getName());
 
     /**
      * Returns whether or not a the report can be generated.
@@ -77,12 +70,14 @@ public class CheckMojo extends BaseDependencyCheckMojo {
         try {
             engine = initializeEngine();
         } catch (DatabaseException ex) {
-            LOGGER.log(Level.FINE, "Database connection error", ex);
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Database connection error", ex);
+            }
             throw new MojoExecutionException("An exception occured connecting to the local database. Please see the log file for more details.", ex);
         }
         scanArtifacts(getProject(), engine);
         if (engine.getDependencies().isEmpty()) {
-            LOGGER.info("No dependencies were identified that could be analyzed by dependency-check");
+            getLog().info("No dependencies were identified that could be analyzed by dependency-check");
         } else {
             engine.analyzeDependencies();
             writeReports(engine, getProject(), getCorrectOutputDirectory());

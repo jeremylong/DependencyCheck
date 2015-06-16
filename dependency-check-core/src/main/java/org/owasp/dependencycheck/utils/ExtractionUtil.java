@@ -29,8 +29,6 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -40,6 +38,8 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Set of utilities to extract files from archives.
@@ -51,7 +51,7 @@ public final class ExtractionUtil {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(ExtractionUtil.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExtractionUtil.class);
     /**
      * The buffer size to use when extracting files from the archive.
      */
@@ -94,7 +94,7 @@ public final class ExtractionUtil {
         try {
             fis = new FileInputStream(archive);
         } catch (FileNotFoundException ex) {
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
             throw new ExtractionException("Archive file was not found.", ex);
         }
         zis = new ZipInputStream(new BufferedInputStream(fis));
@@ -118,11 +118,11 @@ public final class ExtractionUtil {
                             bos = new BufferedOutputStream(fos, BUFFER_SIZE);
                             transferUsingBuffer(zis, bos);
                         } catch (FileNotFoundException ex) {
-                            LOGGER.log(Level.FINE, null, ex);
+                            LOGGER.debug("", ex);
                             final String msg = String.format("Unable to find file '%s'.", file.getName());
                             throw new ExtractionException(msg, ex);
                         } catch (IOException ex) {
-                            LOGGER.log(Level.FINE, null, ex);
+                            LOGGER.debug("", ex);
                             final String msg = String.format("IO Exception while parsing file '%s'.", file.getName());
                             throw new ExtractionException(msg, ex);
                         } finally {
@@ -133,7 +133,7 @@ public final class ExtractionUtil {
             }
         } catch (IOException ex) {
             final String msg = String.format("Exception reading archive '%s'.", archive.getName());
-            LOGGER.log(Level.FINE, msg, ex);
+            LOGGER.debug("", ex);
             throw new ExtractionException(msg, ex);
         } finally {
             closeStream(zis);
@@ -158,22 +158,20 @@ public final class ExtractionUtil {
         try {
             fis = new FileInputStream(archive);
         } catch (FileNotFoundException ex) {
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
             throw new ExtractionException("Archive file was not found.", ex);
         }
         try {
             extractArchive(new ZipArchiveInputStream(new BufferedInputStream(
                     fis)), destination, filter);
         } catch (ArchiveExtractionException ex) {
-            final String msg = String.format(
-                    "Exception extracting archive '%s'.", archive.getName());
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.warn("Exception extracting archive '{}'.", archive.getName());
+            LOGGER.debug("", ex);
         } finally {
             try {
                 fis.close();
             } catch (IOException ex) {
-                LOGGER.log(Level.FINE, null, ex);
+                LOGGER.debug("", ex);
             }
         }
     }
@@ -228,9 +226,8 @@ public final class ExtractionUtil {
             FilenameFilter filter, ArchiveEntry entry) throws ExtractionException {
         final File file = new File(destination, entry.getName());
         if (filter.accept(file.getParentFile(), file.getName())) {
-            final String extracting = String.format("Extracting '%s'",
-                    file.getPath());
-            LOGGER.fine(extracting);
+            LOGGER.debug("Extracting '{}'",
+                file.getPath());
             BufferedOutputStream bos = null;
             FileOutputStream fos = null;
             try {
@@ -239,12 +236,12 @@ public final class ExtractionUtil {
                 bos = new BufferedOutputStream(fos, BUFFER_SIZE);
                 transferUsingBuffer(input, bos);
             } catch (FileNotFoundException ex) {
-                LOGGER.log(Level.FINE, null, ex);
+                LOGGER.debug("", ex);
                 final String msg = String.format("Unable to find file '%s'.",
                         file.getName());
                 throw new ExtractionException(msg, ex);
             } catch (IOException ex) {
-                LOGGER.log(Level.FINE, null, ex);
+                LOGGER.debug("", ex);
                 final String msg = String
                         .format("IO Exception while parsing file '%s'.",
                                 file.getName());
@@ -283,7 +280,7 @@ public final class ExtractionUtil {
             try {
                 stream.close();
             } catch (IOException ex) {
-                LOGGER.log(Level.FINEST, null, ex);
+                LOGGER.trace("", ex);
             }
         }
     }

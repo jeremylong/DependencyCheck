@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,8 +27,6 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Includes methods to generate the MD5 and SHA1 checksum.
@@ -38,7 +39,7 @@ public final class Checksum {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(Checksum.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(Checksum.class);
 
     /**
      * Private constructor for a utility class.
@@ -89,7 +90,7 @@ public final class Checksum {
                 try {
                     fis.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINEST, "Error closing file '" + file.getName() + "'.", ex);
+                    LOGGER.trace("Error closing file '{}'.", file.getName(), ex);
                 }
             }
         }

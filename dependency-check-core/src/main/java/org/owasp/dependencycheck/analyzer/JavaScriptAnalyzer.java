@@ -23,13 +23,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -42,7 +42,7 @@ public class JavaScriptAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(JavaScriptAnalyzer.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(JavaScriptAnalyzer.class);
 
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
@@ -122,13 +122,13 @@ public class JavaScriptAnalyzer extends AbstractFileTypeAnalyzer {
             final String msg = String.format("Dependency file not found: '%s'", dependency.getActualFilePath());
             throw new AnalysisException(msg, ex);
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.error("", ex);
         } finally {
             if (fin != null) {
                 try {
                     fin.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINEST, null, ex);
+                    LOGGER.trace("", ex);
                 }
             }
         }

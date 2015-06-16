@@ -20,12 +20,12 @@ package org.owasp.dependencycheck.xml.pom;
 import java.io.File;
 import java.io.IOException;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import org.owasp.dependencycheck.analyzer.JarAnalyzer;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -41,7 +41,7 @@ public final class PomUtils {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(PomUtils.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(PomUtils.class);
 
     /**
      * Reads in the specified POM and converts it to a Model.
@@ -57,19 +57,16 @@ public final class PomUtils {
             final PomParser parser = new PomParser();
             model = parser.parse(file);
         } catch (PomParseException ex) {
-            final String msg = String.format("Unable to parse pom '%s'", file.getPath());
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, "", ex);
+            LOGGER.warn("Unable to parse pom '{}'", file.getPath());
+            LOGGER.debug("", ex);
             throw new AnalysisException(ex);
         } catch (IOException ex) {
-            final String msg = String.format("Unable to parse pom '%s'(IO Exception)", file.getPath());
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, "", ex);
+            LOGGER.warn("Unable to parse pom '{}'(IO Exception)", file.getPath());
+            LOGGER.debug("", ex);
             throw new AnalysisException(ex);
         } catch (Throwable ex) {
-            final String msg = String.format("Unexpected error during parsing of the pom '%s'", file.getPath());
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, "", ex);
+            LOGGER.warn("Unexpected error during parsing of the pom '{}'", file.getPath());
+            LOGGER.debug("", ex);
             throw new AnalysisException(ex);
         }
         return model;
@@ -91,21 +88,18 @@ public final class PomUtils {
             try {
                 final PomParser parser = new PomParser();
                 model = parser.parse(jar.getInputStream(entry));
-                LOGGER.fine(String.format("Read POM %s", path));
+                LOGGER.debug("Read POM {}", path);
             } catch (SecurityException ex) {
-                final String msg = String.format("Unable to parse pom '%s' in jar '%s'; invalid signature", path, jar.getName());
-                LOGGER.log(Level.WARNING, msg);
-                LOGGER.log(Level.FINE, null, ex);
+                LOGGER.warn("Unable to parse pom '{}' in jar '{}'; invalid signature", path, jar.getName());
+                LOGGER.debug("", ex);
                 throw new AnalysisException(ex);
             } catch (IOException ex) {
-                final String msg = String.format("Unable to parse pom '%s' in jar '%s' (IO Exception)", path, jar.getName());
-                LOGGER.log(Level.WARNING, msg);
-                LOGGER.log(Level.FINE, "", ex);
+                LOGGER.warn("Unable to parse pom '{}' in jar '{}' (IO Exception)", path, jar.getName());
+                LOGGER.debug("", ex);
                 throw new AnalysisException(ex);
             } catch (Throwable ex) {
-                final String msg = String.format("Unexpected error during parsing of the pom '%s' in jar '%s'", path, jar.getName());
-                LOGGER.log(Level.WARNING, msg);
-                LOGGER.log(Level.FINE, "", ex);
+                LOGGER.warn("Unexpected error during parsing of the pom '{}' in jar '{}'", path, jar.getName());
+                LOGGER.debug("", ex);
                 throw new AnalysisException(ex);
             }
         }

@@ -17,12 +17,13 @@
  */
 package org.owasp.dependencycheck.data.cwe;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -33,7 +34,7 @@ public final class CweDB {
     /**
      * The Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(CweDB.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(CweDB.class);
 
     /**
      * Empty private constructor as this is a utility class.
@@ -61,17 +62,17 @@ public final class CweDB {
             final HashMap<String, String> ret = (HashMap<String, String>) oin.readObject();
             return ret;
         } catch (ClassNotFoundException ex) {
-            LOGGER.log(Level.WARNING, "Unable to load CWE data. This should not be an issue.");
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.warn("Unable to load CWE data. This should not be an issue.");
+            LOGGER.debug("", ex);
         } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, "Unable to load CWE data due to an IO Error. This should not be an issue.");
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.warn("Unable to load CWE data due to an IO Error. This should not be an issue.");
+            LOGGER.debug("", ex);
         } finally {
             if (oin != null) {
                 try {
                     oin.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINEST, null, ex);
+                    LOGGER.trace("", ex);
                 }
             }
         }

@@ -24,8 +24,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.suppression.SuppressionParseException;
 import org.owasp.dependencycheck.suppression.SuppressionParser;
@@ -34,6 +32,8 @@ import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base suppression analyzer that contains methods for parsing the suppression xml file.
@@ -45,7 +45,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     /**
      * The Logger for use throughout the class
      */
-    private static final Logger LOGGER = Logger.getLogger(AbstractSuppressionAnalyzer.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSuppressionAnalyzer.class);
 
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
@@ -103,7 +103,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         try {
             rules = parser.parseSuppressionRules(this.getClass().getClassLoader().getResourceAsStream("dependencycheck-base-suppression.xml"));
         } catch (SuppressionParseException ex) {
-            LOGGER.log(Level.FINE, "Unable to parse the base suppression data file", ex);
+            LOGGER.debug("Unable to parse the base suppression data file", ex);
         }
         final String suppressionFilePath = Settings.getString(Settings.KEYS.SUPPRESSION_FILE);
         if (suppressionFilePath == null) {
@@ -141,12 +141,11 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                 try {
                     //rules = parser.parseSuppressionRules(file);
                     rules.addAll(parser.parseSuppressionRules(file));
-                    LOGGER.log(Level.FINE, rules.size() + " suppression rules were loaded.");
+                    LOGGER.debug("{} suppression rules were loaded.", rules.size());
                 } catch (SuppressionParseException ex) {
-                    final String msg = String.format("Unable to parse suppression xml file '%s'", file.getPath());
-                    LOGGER.log(Level.WARNING, msg);
-                    LOGGER.log(Level.WARNING, ex.getMessage());
-                    LOGGER.log(Level.FINE, "", ex);
+                    LOGGER.warn("Unable to parse suppression xml file '{}'", file.getPath());
+                    LOGGER.warn(ex.getMessage());
+                    LOGGER.debug("", ex);
                     throw ex;
                 }
             }
@@ -171,8 +170,8 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      * @throws SuppressionParseException throws the generated SuppressionParseException
      */
     private void throwSuppressionParseException(String message, Exception exception) throws SuppressionParseException {
-        LOGGER.log(Level.WARNING, message);
-        LOGGER.log(Level.FINE, "", exception);
+        LOGGER.warn(message);
+        LOGGER.debug("", exception);
         throw new SuppressionParseException(message, exception);
     }
 }

@@ -24,13 +24,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 import org.owasp.dependencycheck.utils.Filter;
 import org.owasp.dependencycheck.utils.UrlStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Used to maintain a collection of Evidence.
@@ -42,7 +42,7 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(EvidenceCollection.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(EvidenceCollection.class);
     /**
      * Used to iterate over highest confidence evidence contained in the collection.
      */
@@ -385,7 +385,7 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
                     final List<String> data = UrlStringUtils.extractImportantUrlData(part);
                     sb.append(' ').append(StringUtils.join(data, ' '));
                 } catch (MalformedURLException ex) {
-                    LOGGER.log(Level.FINE, "error parsing " + part, ex);
+                    LOGGER.debug("error parsing {}", part, ex);
                     sb.append(' ').append(part);
                 }
             } else {

@@ -30,8 +30,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
@@ -40,6 +38,8 @@ import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The ReportGenerator is used to, as the name implies, generate reports. Internally the generator uses the Velocity
@@ -52,7 +52,7 @@ public class ReportGenerator {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(ReportGenerator.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReportGenerator.class);
 
     /**
      * An enumeration of the report formats.
@@ -235,9 +235,8 @@ public class ReportGenerator {
                 templatePath = templateName;
                 input = new FileInputStream(f);
             } catch (FileNotFoundException ex) {
-                final String msg = "Unable to generate the report, the report template file could not be found.";
-                LOGGER.log(Level.SEVERE, msg);
-                LOGGER.log(Level.FINE, null, ex);
+                LOGGER.error("Unable to generate the report, the report template file could not be found.");
+                LOGGER.debug("", ex);
             }
         } else {
             templatePath = "templates/" + templateName + ".vsl";
@@ -262,20 +261,20 @@ public class ReportGenerator {
                 try {
                     writer.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINEST, null, ex);
+                    LOGGER.trace("", ex);
                 }
             }
             if (outputStream != null) {
                 try {
                     outputStream.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINEST, null, ex);
+                    LOGGER.trace("", ex);
                 }
             }
             try {
                 reader.close();
             } catch (IOException ex) {
-                LOGGER.log(Level.FINEST, null, ex);
+                LOGGER.trace("", ex);
             }
         }
     }
@@ -311,7 +310,7 @@ public class ReportGenerator {
                 try {
                     outputSteam.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINEST, "ignore", ex);
+                    LOGGER.trace("ignore", ex);
                 }
             }
         }

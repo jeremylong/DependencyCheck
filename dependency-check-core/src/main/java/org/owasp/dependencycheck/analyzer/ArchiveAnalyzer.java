@@ -31,8 +31,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -48,6 +46,8 @@ import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -61,7 +61,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(ArchiveAnalyzer.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ArchiveAnalyzer.class);
     /**
      * The buffer size to use when extracting files from the archive.
      */
@@ -184,10 +184,10 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void close() throws Exception {
         if (tempFileLocation != null && tempFileLocation.exists()) {
-            LOGGER.log(Level.FINE, "Attempting to delete temporary files");
+            LOGGER.debug("Attempting to delete temporary files");
             final boolean success = FileUtils.delete(tempFileLocation);
             if (!success && tempFileLocation != null && tempFileLocation.exists() && tempFileLocation.list().length > 0) {
-                LOGGER.log(Level.WARNING, "Failed to delete some temporary files, see the log for more details");
+                LOGGER.warn("Failed to delete some temporary files, see the log for more details");
             }
         }
     }
@@ -264,8 +264,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                         }
                     }
                 } catch (IOException ex) {
-                    final String msg = String.format("Unable to perform deep copy on '%s'", dependency.getActualFile().getPath());
-                    LOGGER.log(Level.FINE, msg, ex);
+                    LOGGER.debug("Unable to perform deep copy on '{}'", dependency.getActualFile().getPath(), ex);
                 }
             }
             engine.getDependencies().remove(dependency);
@@ -310,7 +309,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         try {
             fis = new FileInputStream(archive);
         } catch (FileNotFoundException ex) {
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
             throw new AnalysisException("Archive file was not found.", ex);
         }
         final String archiveExt = FileUtils.getFileExtension(archive.getName()).toLowerCase();
@@ -327,18 +326,16 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         } catch (ArchiveExtractionException ex) {
-            final String msg = String.format("Exception extracting archive '%s'.", archive.getName());
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.warn("Exception extracting archive '{}'.", archive.getName());
+            LOGGER.debug("", ex);
         } catch (IOException ex) {
-            final String msg = String.format("Exception reading archive '%s'.", archive.getName());
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.warn("Exception reading archive '{}'.", archive.getName());
+            LOGGER.debug("", ex);
         } finally {
             try {
                 fis.close();
             } catch (IOException ex) {
-                LOGGER.log(Level.FINE, null, ex);
+                LOGGER.debug("", ex);
             }
         }
     }
@@ -367,8 +364,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                     final File file = new File(destination, entry.getName());
                     final String ext = FileUtils.getFileExtension(file.getName());
                     if (engine.supportsExtension(ext)) {
-                        final String extracting = String.format("Extracting '%s'", file.getPath());
-                        LOGGER.fine(extracting);
+                        LOGGER.debug("Extracting '{}'", file.getPath());
                         BufferedOutputStream bos = null;
                         FileOutputStream fos = null;
                         try {
@@ -388,11 +384,11 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                             }
                             bos.flush();
                         } catch (FileNotFoundException ex) {
-                            LOGGER.log(Level.FINE, null, ex);
+                            LOGGER.debug("", ex);
                             final String msg = String.format("Unable to find file '%s'.", file.getName());
                             throw new AnalysisException(msg, ex);
                         } catch (IOException ex) {
-                            LOGGER.log(Level.FINE, null, ex);
+                            LOGGER.debug("", ex);
                             final String msg = String.format("IO Exception while parsing file '%s'.", file.getName());
                             throw new AnalysisException(msg, ex);
                         } finally {
@@ -400,14 +396,14 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                                 try {
                                     bos.close();
                                 } catch (IOException ex) {
-                                    LOGGER.log(Level.FINEST, null, ex);
+                                    LOGGER.trace("", ex);
                                 }
                             }
                             if (fos != null) {
                                 try {
                                     fos.close();
                                 } catch (IOException ex) {
-                                    LOGGER.log(Level.FINEST, null, ex);
+                                    LOGGER.trace("", ex);
                                 }
                             }
                         }
@@ -423,7 +419,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 try {
                     input.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINEST, null, ex);
+                    LOGGER.trace("", ex);
                 }
             }
         }
@@ -437,8 +433,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws ArchiveExtractionException thrown if there is an exception decompressing the file
      */
     private void decompressFile(CompressorInputStream inputStream, File outputFile) throws ArchiveExtractionException {
-        final String msg = String.format("Decompressing '%s'", outputFile.getPath());
-        LOGGER.fine(msg);
+        LOGGER.debug("Decompressing '{}'", outputFile.getPath());
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(outputFile);
@@ -448,17 +443,17 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 out.write(buffer, 0, n);
             }
         } catch (FileNotFoundException ex) {
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
             throw new ArchiveExtractionException(ex);
         } catch (IOException ex) {
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
             throw new ArchiveExtractionException(ex);
         } finally {
             if (out != null) {
                 try {
                     out.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINEST, null, ex);
+                    LOGGER.trace("", ex);
                 }
             }
         }
@@ -490,7 +485,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         } catch (IOException ex) {
-            LOGGER.log(Level.FINE, String.format("Unable to unzip zip file '%s'", dependency.getFilePath()), ex);
+            LOGGER.debug("Unable to unzip zip file '{}'", dependency.getFilePath(), ex);
         } finally {
             ZipFile.closeQuietly(zip);
         }

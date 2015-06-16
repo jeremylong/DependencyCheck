@@ -17,14 +17,14 @@
  */
 package org.owasp.dependencycheck.reporting;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.log.LogChute;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
- * DependencyCheck uses {@link java.util.logging.Logger} as a logging framework, and Apache Velocity uses a custom
+ * DependencyCheck uses {@link org.slf4j.Logger} as a logging framework, and Apache Velocity uses a custom
  * logging implementation that outputs to a file named velocity.log by default. This class is an implementation of a
  * custom Velocity logger that redirects all velocity logging to the Java Logger class.
  * </p><p>
@@ -39,7 +39,7 @@ public class VelocityLoggerRedirect implements LogChute {
     /**
      * The Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(VelocityLoggerRedirect.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(VelocityLoggerRedirect.class);
 
     /**
      * This will be invoked once by the LogManager.
@@ -58,7 +58,25 @@ public class VelocityLoggerRedirect implements LogChute {
      * @param message the message to be logged
      */
     public void log(int level, String message) {
-        LOGGER.log(getLevel(level), message);
+        switch (level) {
+            case TRACE_ID:
+                LOGGER.trace(message);
+                break;
+            case DEBUG_ID:
+                LOGGER.debug(message);
+                break;
+            case INFO_ID:
+                LOGGER.info(message);
+                break;
+            case WARN_ID:
+                LOGGER.warn(message);
+                break;
+            case ERROR_ID:
+                LOGGER.error(message);
+                break;
+            default:
+                LOGGER.info(message);
+        }
     }
 
     /**
@@ -70,7 +88,25 @@ public class VelocityLoggerRedirect implements LogChute {
      * @param t a throwable to log
      */
     public void log(int level, String message, Throwable t) {
-        LOGGER.log(getLevel(level), message, t);
+        switch (level) {
+            case TRACE_ID:
+                LOGGER.trace(message, t);
+                break;
+            case DEBUG_ID:
+                LOGGER.debug(message, t);
+                break;
+            case INFO_ID:
+                LOGGER.info(message, t);
+                break;
+            case WARN_ID:
+                LOGGER.warn(message, t);
+                break;
+            case ERROR_ID:
+                LOGGER.error(message, t);
+                break;
+            default:
+                LOGGER.info(message, t);
+        }
     }
 
     /**
@@ -81,28 +117,5 @@ public class VelocityLoggerRedirect implements LogChute {
      */
     public boolean isLevelEnabled(int level) {
         return true;
-    }
-
-    /**
-     * Maps Velocity log levels to {@link Logger} values.
-     *
-     * @param velocityLevel the logging level
-     * @return the logging level
-     */
-    private Level getLevel(int velocityLevel) {
-        switch (velocityLevel) {
-            case TRACE_ID:
-                return Level.ALL;
-            case DEBUG_ID:
-                return Level.FINE;
-            case INFO_ID:
-                return Level.INFO;
-            case WARN_ID:
-                return Level.WARNING;
-            case ERROR_ID:
-                return Level.SEVERE;
-            default:
-                return Level.INFO;
-        }
     }
 }

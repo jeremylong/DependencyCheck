@@ -33,8 +33,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.owasp.dependencycheck.data.cwe.CweDB;
 import org.owasp.dependencycheck.dependency.Reference;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -44,6 +42,8 @@ import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 import org.owasp.dependencycheck.utils.Pair;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The database holding information about the NVD CVE data.
@@ -55,7 +55,7 @@ public class CveDB {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(CveDB.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(CveDB.class);
     /**
      * Database connection
      */
@@ -110,13 +110,11 @@ public class CveDB {
             try {
                 conn.close();
             } catch (SQLException ex) {
-                final String msg = "There was an error attempting to close the CveDB, see the log for more details.";
-                LOGGER.log(Level.SEVERE, msg);
-                LOGGER.log(Level.FINE, null, ex);
+                LOGGER.error("There was an error attempting to close the CveDB, see the log for more details.");
+                LOGGER.debug("", ex);
             } catch (Throwable ex) {
-                final String msg = "There was an exception attempting to close the CveDB, see the log for more details.";
-                LOGGER.log(Level.SEVERE, msg);
-                LOGGER.log(Level.FINE, null, ex);
+                LOGGER.error("There was an exception attempting to close the CveDB, see the log for more details.");
+                LOGGER.debug("", ex);
             }
             conn = null;
         }
@@ -151,7 +149,7 @@ public class CveDB {
     @Override
     @SuppressWarnings("FinalizeDeclaration")
     protected void finalize() throws Throwable {
-        LOGGER.log(Level.FINE, "Entering finalize");
+        LOGGER.debug("Entering finalize");
         close();
         super.finalize();
     }
@@ -193,9 +191,8 @@ public class CveDB {
                 cpe.add(vs);
             }
         } catch (SQLException ex) {
-            final String msg = "An unexpected SQL Exception occurred; please see the verbose log for more details.";
-            LOGGER.log(Level.SEVERE, msg);
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.error("An unexpected SQL Exception occurred; please see the verbose log for more details.");
+            LOGGER.debug("", ex);
         } finally {
             DBUtils.closeResultSet(rs);
             DBUtils.closeStatement(ps);
@@ -245,9 +242,8 @@ public class CveDB {
                 prop.setProperty(rs.getString(1), rs.getString(2));
             }
         } catch (SQLException ex) {
-            final String msg = "An unexpected SQL Exception occurred; please see the verbose log for more details.";
-            LOGGER.log(Level.SEVERE, msg);
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.error("An unexpected SQL Exception occurred; please see the verbose log for more details.");
+            LOGGER.debug("", ex);
         } finally {
             DBUtils.closeStatement(ps);
             DBUtils.closeResultSet(rs);
@@ -268,8 +264,8 @@ public class CveDB {
                 updateProperty = getConnection().prepareStatement(statementBundle.getString("UPDATE_PROPERTY"));
                 insertProperty = getConnection().prepareStatement(statementBundle.getString("INSERT_PROPERTY"));
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Unable to save properties to the database");
-                LOGGER.log(Level.FINE, "Unable to save properties to the database", ex);
+                LOGGER.warn("Unable to save properties to the database");
+                LOGGER.debug("Unable to save properties to the database", ex);
                 return;
             }
             for (Entry<Object, Object> entry : props.entrySet()) {
@@ -283,9 +279,8 @@ public class CveDB {
                         insertProperty.setString(2, value);
                     }
                 } catch (SQLException ex) {
-                    final String msg = String.format("Unable to save property '%s' with a value of '%s' to the database", key, value);
-                    LOGGER.log(Level.WARNING, msg);
-                    LOGGER.log(Level.FINE, null, ex);
+                    LOGGER.warn("Unable to save property '{}' with a value of '{}' to the database", key, value);
+                    LOGGER.debug("", ex);
                 }
             }
         } finally {
@@ -307,8 +302,8 @@ public class CveDB {
             try {
                 updateProperty = getConnection().prepareStatement(statementBundle.getString("UPDATE_PROPERTY"));
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Unable to save properties to the database");
-                LOGGER.log(Level.FINE, "Unable to save properties to the database", ex);
+                LOGGER.warn("Unable to save properties to the database");
+                LOGGER.debug("Unable to save properties to the database", ex);
                 return;
             }
             try {
@@ -318,8 +313,8 @@ public class CveDB {
                     try {
                         insertProperty = getConnection().prepareStatement(statementBundle.getString("INSERT_PROPERTY"));
                     } catch (SQLException ex) {
-                        LOGGER.log(Level.WARNING, "Unable to save properties to the database");
-                        LOGGER.log(Level.FINE, "Unable to save properties to the database", ex);
+                        LOGGER.warn("Unable to save properties to the database");
+                        LOGGER.debug("Unable to save properties to the database", ex);
                         return;
                     }
                     insertProperty.setString(1, key);
@@ -327,9 +322,8 @@ public class CveDB {
                     insertProperty.execute();
                 }
             } catch (SQLException ex) {
-                final String msg = String.format("Unable to save property '%s' with a value of '%s' to the database", key, value);
-                LOGGER.log(Level.WARNING, msg);
-                LOGGER.log(Level.FINE, null, ex);
+                LOGGER.warn("Unable to save property '{}' with a value of '{}' to the database", key, value);
+                LOGGER.debug("", ex);
             }
         } finally {
             DBUtils.closeStatement(updateProperty);
@@ -350,7 +344,7 @@ public class CveDB {
         try {
             cpe.parseName(cpeStr);
         } catch (UnsupportedEncodingException ex) {
-            LOGGER.log(Level.FINEST, null, ex);
+            LOGGER.trace("", ex);
         }
         final DependencyVersion detectedVersion = parseDependencyVersion(cpe);
         final List<Vulnerability> vulnerabilities = new ArrayList<Vulnerability>();
@@ -601,7 +595,7 @@ public class CveDB {
 
         } catch (SQLException ex) {
             final String msg = String.format("Error updating '%s'", vuln.getName());
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
             throw new DatabaseException(msg, ex);
         } finally {
             DBUtils.closeStatement(selectVulnerabilityId);
@@ -640,13 +634,12 @@ public class CveDB {
             } catch (IOException ex1) {
                 dd = Settings.getString(Settings.KEYS.DATA_DIRECTORY);
             }
-            final String msg = String.format("Unable to access the local database.%n%nEnsure that '%s' is a writable directory. "
-                    + "If the problem persist try deleting the files in '%s' and running %s again. If the problem continues, please "
+            LOGGER.error("Unable to access the local database.\n\nEnsure that '{}' is a writable directory. "
+                    + "If the problem persist try deleting the files in '{}' and running {} again. If the problem continues, please "
                     + "create a log file (see documentation at http://jeremylong.github.io/DependencyCheck/) and open a ticket at "
-                    + "https://github.com/jeremylong/DependencyCheck/issues and include the log file.%n%n",
-                    dd, dd, Settings.getString(Settings.KEYS.APPLICATION_VAME));
-            LOGGER.log(Level.SEVERE, msg);
-            LOGGER.log(Level.FINE, "", ex);
+                    + "https://github.com/jeremylong/DependencyCheck/issues and include the log file.\n\n",
+                dd, dd, Settings.getString(Settings.KEYS.APPLICATION_VAME));
+            LOGGER.debug("", ex);
         } finally {
             DBUtils.closeResultSet(rs);
             DBUtils.closeStatement(cs);
@@ -666,9 +659,8 @@ public class CveDB {
                 ps.executeUpdate();
             }
         } catch (SQLException ex) {
-            final String msg = "An unexpected SQL Exception occurred; please see the verbose log for more details.";
-            LOGGER.log(Level.SEVERE, msg);
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.error("An unexpected SQL Exception occurred; please see the verbose log for more details.");
+            LOGGER.debug("", ex);
         } finally {
             DBUtils.closeStatement(ps);
         }
@@ -759,7 +751,7 @@ public class CveDB {
             cpe.parseName(cpeStr);
         } catch (UnsupportedEncodingException ex) {
             //never going to happen.
-            LOGGER.log(Level.FINEST, null, ex);
+            LOGGER.trace("", ex);
         }
         return parseDependencyVersion(cpe);
     }

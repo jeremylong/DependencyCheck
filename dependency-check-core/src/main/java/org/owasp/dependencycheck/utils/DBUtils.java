@@ -21,9 +21,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -34,7 +34,7 @@ public final class DBUtils {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(DBUtils.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DBUtils.class);
 
     /**
      * Private constructor for a utility class.
@@ -76,7 +76,7 @@ public final class DBUtils {
             try {
                 statement.close();
             } catch (SQLException ex) {
-                LOGGER.log(Level.FINEST, statement.toString(), ex);
+                LOGGER.trace(statement.toString(), ex);
             }
         }
     }
@@ -91,7 +91,7 @@ public final class DBUtils {
             try {
                 rs.close();
             } catch (SQLException ex) {
-                LOGGER.log(Level.FINEST, rs.toString(), ex);
+                LOGGER.trace(rs.toString(), ex);
             }
         }
     }

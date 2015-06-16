@@ -19,7 +19,6 @@ package org.owasp.dependencycheck;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.logging.Logger;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -33,6 +32,8 @@ import org.apache.commons.cli.PosixParser;
 import org.owasp.dependencycheck.reporting.ReportGenerator.Format;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A utility to parse command line arguments for the DependencyCheck.
@@ -44,7 +45,7 @@ public final class CliParser {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(CliParser.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(CliParser.class);
     /**
      * The command line.
      */
@@ -633,7 +634,7 @@ public final class CliParser {
         if (server == null) {
             server = line.getOptionValue(ARGUMENT.PROXY_URL);
             if (server != null) {
-                LOGGER.warning("An old command line argument 'proxyurl' was detected; use proxyserver instead");
+                LOGGER.warn("An old command line argument 'proxyurl' was detected; use proxyserver instead");
             }
         }
         return server;
