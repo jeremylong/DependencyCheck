@@ -357,9 +357,22 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
             try {
                 result = URLDecoder.decode(text, "ASCII");
             } catch (UnsupportedEncodingException ex1) {
-                result = URLDecoder.decode(text);
+                result = defaultUrlDecode(text);
             }
         }
         return result;
+    }
+
+    /**
+     * Call {@link java.net.URLDecoder#decode(String)} to URL decode using the
+     * default encoding.
+     *
+     * @param text
+     *            www-form-encoded URL to decode
+     * @return the newly decoded String
+     */
+    @SuppressWarnings("deprecation")
+    private String defaultUrlDecode(final String text) {
+        return URLDecoder.decode(text);
     }
 }
