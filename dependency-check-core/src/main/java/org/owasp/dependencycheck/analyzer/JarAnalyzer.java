@@ -123,6 +123,13 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             "ipojo-extension",
             "eclipse-sourcereferences");
     /**
+     * Deprecated Jar manifest attribute, that is, nonetheless, useful for
+     * analysis.
+     */
+    @SuppressWarnings("deprecation")
+    private static final String IMPLEMENTATION_VENDOR_ID = Attributes.Name.IMPLEMENTATION_VENDOR_ID
+            .toString();
+    /**
      * item in some manifest, should be considered medium confidence.
      */
     private static final String BUNDLE_VERSION = "Bundle-Version"; //: 2.1.2
@@ -670,7 +677,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     foundSomething = true;
                     vendorEvidence.addEvidence(source, key, value, Confidence.HIGH);
                     addMatchingValues(classInformation, value, vendorEvidence);
-                } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VENDOR_ID.toString())) {
+                } else if (key.equalsIgnoreCase(IMPLEMENTATION_VENDOR_ID)) {
                     foundSomething = true;
                     vendorEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
                     addMatchingValues(classInformation, value, vendorEvidence);
@@ -918,9 +925,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         JarFile jar = null;
         try {
             jar = new JarFile(dependency.getActualFilePath());
-            final Enumeration entries = jar.entries();
+            final Enumeration<JarEntry> entries = jar.entries();
             while (entries.hasMoreElements()) {
-                final JarEntry entry = (JarEntry) entries.nextElement();
+                final JarEntry entry = entries.nextElement();
                 final String name = entry.getName().toLowerCase();
                 //no longer stripping "|com\\.sun" - there are some com.sun jar files with CVEs.
                 if (name.endsWith(".class") && !name.matches("^javax?\\..*$")) {
