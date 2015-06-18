@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2015 The OWASP Foundation. All Rights Reserved.
  */
 package org.owasp.dependencycheck.ant.logging;
 
@@ -22,12 +22,12 @@ import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 
 /**
- * An implementation of {@link org.slf4j.ILoggerFactory} which always returns
- * {@link AntLoggerAdapter} instances.
+ * An implementation of {@link org.slf4j.ILoggerFactory} which always returns {@link AntLoggerAdapter} instances.
  *
  * @author colezlaw
  */
 public class AntLoggerFactory implements ILoggerFactory {
+
     private AntLoggerAdapter antLoggerAdapter;
 
     public AntLoggerFactory(Task task) {

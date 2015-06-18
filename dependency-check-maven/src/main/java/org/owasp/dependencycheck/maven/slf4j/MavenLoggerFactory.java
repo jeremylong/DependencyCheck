@@ -15,30 +15,25 @@
  *
  * Copyright (c) 2015 The OWASP Foundation. All Rights Reserved.
  */
-package org.owasp.dependencycheck.utils;
+package org.owasp.dependencycheck.maven.slf4j;
 
-import ch.qos.cal10n.BaseName;
-import ch.qos.cal10n.Locale;
-import ch.qos.cal10n.LocaleData;
+import org.apache.maven.plugin.logging.Log;
+import org.slf4j.ILoggerFactory;
+import org.slf4j.Logger;
 
 /**
- * Created by colezlaw on 6/13/15.
+ * Created by colezlaw on 6/14/15.
  */
-@BaseName("dependencycheck-resources")
-@LocaleData(defaultCharset = "UTF-8",
-        value = {
-            @Locale("en")
-        }
-)
-public enum DCResources {
+public class MavenLoggerFactory implements ILoggerFactory {
 
-    NOTDEPLOYED,
-    GROKERROR,
-    NOTASSEMBLY,
-    GROKRC,
-    GROKDEPLOYED,
-    GROKNOTDEPLOYED,
-    GROKINITFAIL,
-    GROKINITMSG,
-    GROKNOTDELETED
+    private MavenLoggerAdapter mavenLoggerAdapter;
+
+    public MavenLoggerFactory(Log log) {
+        super();
+        this.mavenLoggerAdapter = new MavenLoggerAdapter(log);
+    }
+
+    public Logger getLogger(String name) {
+        return mavenLoggerAdapter;
+    }
 }
