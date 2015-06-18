@@ -21,8 +21,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nuget.NugetPackage;
@@ -32,6 +30,8 @@ import org.owasp.dependencycheck.data.nuget.XPathNuspecParser;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Analyzer which will parse a Nuspec file to gather module information.
@@ -43,7 +43,7 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(NuspecAnalyzer.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(NuspecAnalyzer.class);
 
     /**
      * The name of the analyzer.
@@ -118,7 +118,7 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException {
-        LOGGER.log(Level.FINE, "Checking Nuspec file {0}", dependency.toString());
+        LOGGER.debug("Checking Nuspec file {}", dependency.toString());
         try {
             final NuspecParser parser = new XPathNuspecParser();
             NugetPackage np = null;
@@ -135,7 +135,7 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
                     try {
                         fis.close();
                     } catch (IOException e) {
-                        LOGGER.fine("Error closing input stream");
+                        LOGGER.debug("Error closing input stream");
                     }
                 }
             }

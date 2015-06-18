@@ -20,8 +20,6 @@ package org.owasp.dependencycheck.agent;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -32,6 +30,8 @@ import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.exception.ScanAgentException;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class provides a way to easily conduct a scan solely based on existing evidence metadata rather than collecting evidence
@@ -67,7 +67,7 @@ public class DependencyCheckScanAgent {
     /**
      * Logger for use throughout the class.
      */
-    private static final Logger LOGGER = Logger.getLogger(DependencyCheckScanAgent.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DependencyCheckScanAgent.class);
     /**
      * The application name for the report.
      */
@@ -861,7 +861,7 @@ public class DependencyCheckScanAgent {
             cve.open();
             prop = cve.getDatabaseProperties();
         } catch (DatabaseException ex) {
-            LOGGER.log(Level.FINE, "Unable to retrieve DB Properties", ex);
+            LOGGER.debug("Unable to retrieve DB Properties", ex);
         } finally {
             if (cve != null) {
                 cve.close();
@@ -871,13 +871,13 @@ public class DependencyCheckScanAgent {
         try {
             r.generateReports(outDirectory.getCanonicalPath(), this.reportFormat.name());
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE,
-                    "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.error(
+                "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
+            LOGGER.debug("", ex);
         } catch (Throwable ex) {
-            LOGGER.log(Level.SEVERE,
+            LOGGER.error(
                     "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
         }
     }
 
@@ -981,9 +981,9 @@ public class DependencyCheckScanAgent {
                 checkForFailure(engine.getDependencies());
             }
         } catch (DatabaseException ex) {
-            LOGGER.log(Level.SEVERE,
+            LOGGER.error(
                     "Unable to connect to the dependency-check database; analysis has stopped");
-            LOGGER.log(Level.FINE, "", ex);
+            LOGGER.debug("", ex);
         } finally {
             Settings.cleanup(true);
             if (engine != null) {
@@ -1058,10 +1058,8 @@ public class DependencyCheckScanAgent {
             }
         }
         if (summary.length() > 0) {
-            final String msg = String.format("%n%n"
-                    + "One or more dependencies were identified with known vulnerabilities:%n%n%s"
-                    + "%n%nSee the dependency-check report for more details.%n%n", summary.toString());
-            LOGGER.log(Level.WARNING, msg);
+            LOGGER.warn("\n\nOne or more dependencies were identified with known vulnerabilities:\n\n{}\n\nSee the dependency-check report for more details.\n\n",
+                summary.toString());
         }
     }
 

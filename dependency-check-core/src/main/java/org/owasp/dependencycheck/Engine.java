@@ -24,8 +24,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.owasp.dependencycheck.analyzer.AnalysisPhase;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.AnalyzerService;
@@ -42,6 +40,8 @@ import org.owasp.dependencycheck.exception.NoDataException;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Scans files, directories, etc. for Dependencies. Analyzers are loaded and used to process the files found by the scan, if a
@@ -72,7 +72,7 @@ public class Engine {
     /**
      * The Logger for use throughout the class.
      */
-    private static final Logger LOGGER = Logger.getLogger(Engine.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(Engine.class);
 
     /**
      * Creates a new Engine.
@@ -313,8 +313,7 @@ public class Engine {
      */
     protected Dependency scanFile(File file) {
         if (!file.isFile()) {
-            final String msg = String.format("Path passed to scanFile(File) is not a file: %s. Skipping the file.", file.toString());
-            LOGGER.log(Level.FINE, msg);
+            LOGGER.debug("Path passed to scanFile(File) is not a file: {}. Skipping the file.", file);
             return null;
         }
         final String fileName = file.getName();
@@ -341,7 +340,7 @@ public class Engine {
         try {
             autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
         } catch (InvalidSettingException ex) {
-            LOGGER.log(Level.FINE, "Invalid setting for auto-update; using true.");
+            LOGGER.debug("Invalid setting for auto-update; using true.");
         }
         if (autoUpdate) {
             doUpdates();
@@ -351,24 +350,18 @@ public class Engine {
         try {
             ensureDataExists();
         } catch (NoDataException ex) {
-            final String msg = String.format("%s%n%nUnable to continue dependency-check analysis.", ex.getMessage());
-            LOGGER.log(Level.SEVERE, msg);
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.error("{}\n\nUnable to continue dependency-check analysis.", ex.getMessage());
+            LOGGER.debug("", ex);
             return;
         } catch (DatabaseException ex) {
-            final String msg = String.format("%s%n%nUnable to continue dependency-check analysis.", ex.getMessage());
-            LOGGER.log(Level.SEVERE, msg);
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.error("{}\n\nUnable to continue dependency-check analysis.", ex.getMessage());
+            LOGGER.debug("", ex);
             return;
 
         }
 
-        final String logHeader = String.format("%n"
-                + "----------------------------------------------------%n"
-                + "BEGIN ANALYSIS%n"
-                + "----------------------------------------------------");
-        LOGGER.log(Level.FINE, logHeader);
-        LOGGER.log(Level.INFO, "Analysis Starting");
+        LOGGER.debug("\n----------------------------------------------------\nBEGIN ANALYSIS\n----------------------------------------------------");
+        LOGGER.info("Analysis Starting");
 
         // analysis phases
         for (AnalysisPhase phase : AnalysisPhase.values()) {
@@ -381,8 +374,7 @@ public class Engine {
                  * analyzers may modify it. This prevents ConcurrentModificationExceptions.
                  * This is okay for adds/deletes because it happens per analyzer.
                  */
-                final String msg = String.format("Begin Analyzer '%s'", a.getName());
-                LOGGER.log(Level.FINE, msg);
+                LOGGER.debug("Begin Analyzer '{}'", a.getName());
                 final Set<Dependency> dependencySet = new HashSet<Dependency>();
                 dependencySet.addAll(dependencies);
                 for (Dependency d : dependencySet) {
@@ -392,19 +384,16 @@ public class Engine {
                         shouldAnalyze = fAnalyzer.supportsExtension(d.getFileExtension());
                     }
                     if (shouldAnalyze) {
-                        final String msgFile = String.format("Begin Analysis of '%s'", d.getActualFilePath());
-                        LOGGER.log(Level.FINE, msgFile);
+                        LOGGER.debug("Begin Analysis of '{}'", d.getActualFilePath());
                         try {
                             a.analyze(d, this);
                         } catch (AnalysisException ex) {
-                            final String exMsg = String.format("An error occurred while analyzing '%s'.", d.getActualFilePath());
-                            LOGGER.log(Level.WARNING, exMsg);
-                            LOGGER.log(Level.FINE, "", ex);
+                            LOGGER.warn("An error occurred while analyzing '{}'.", d.getActualFilePath());
+                            LOGGER.debug("", ex);
                         } catch (Throwable ex) {
-                            final String axMsg = String.format("An unexpected error occurred during analysis of '%s'", d.getActualFilePath());
                             //final AnalysisException ax = new AnalysisException(axMsg, ex);
-                            LOGGER.log(Level.WARNING, axMsg);
-                            LOGGER.log(Level.FINE, "", ex);
+                            LOGGER.warn("An unexpected error occurred during analysis of '{}'", d.getActualFilePath());
+                            LOGGER.debug("", ex);
                         }
                     }
                 }
@@ -418,12 +407,8 @@ public class Engine {
             }
         }
 
-        final String logFooter = String.format("%n"
-                + "----------------------------------------------------%n"
-                + "END ANALYSIS%n"
-                + "----------------------------------------------------");
-        LOGGER.log(Level.FINE, logFooter);
-        LOGGER.log(Level.INFO, "Analysis Complete");
+        LOGGER.debug("\n----------------------------------------------------\nEND ANALYSIS\n----------------------------------------------------");
+        LOGGER.info("Analysis Complete");
     }
 
     /**
@@ -434,17 +419,15 @@ public class Engine {
      */
     protected Analyzer initializeAnalyzer(Analyzer analyzer) {
         try {
-            final String msg = String.format("Initializing %s", analyzer.getName());
-            LOGGER.log(Level.FINE, msg);
+            LOGGER.debug("Initializing {}", analyzer.getName());
             analyzer.initialize();
         } catch (Throwable ex) {
-            final String msg = String.format("Exception occurred initializing %s.", analyzer.getName());
-            LOGGER.log(Level.SEVERE, msg);
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.error("Exception occurred initializing {}.", analyzer.getName());
+            LOGGER.debug("", ex);
             try {
                 analyzer.close();
             } catch (Throwable ex1) {
-                LOGGER.log(Level.FINEST, null, ex1);
+                LOGGER.trace("", ex1);
             }
         }
         return analyzer;
@@ -456,12 +439,11 @@ public class Engine {
      * @param analyzer the analyzer to close
      */
     protected void closeAnalyzer(Analyzer analyzer) {
-        final String msg = String.format("Closing Analyzer '%s'", analyzer.getName());
-        LOGGER.log(Level.FINE, msg);
+        LOGGER.debug("Closing Analyzer '{}'", analyzer.getName());
         try {
             analyzer.close();
         } catch (Throwable ex) {
-            LOGGER.log(Level.FINEST, null, ex);
+            LOGGER.trace("", ex);
         }
     }
 
@@ -477,9 +459,9 @@ public class Engine {
             try {
                 source.update();
             } catch (UpdateException ex) {
-                LOGGER.log(Level.WARNING,
+                LOGGER.warn(
                         "Unable to update Cached Web DataSource, using local data instead. Results may not include recent vulnerabilities.");
-                LOGGER.log(Level.FINE, String.format("Unable to update details for %s", source.getClass().getName()), ex);
+                LOGGER.debug("Unable to update details for {}", source.getClass().getName(), ex);
             }
         }
         LOGGER.info("Check for updates complete");

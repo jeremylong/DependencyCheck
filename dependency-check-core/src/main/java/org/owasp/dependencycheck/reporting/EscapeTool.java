@@ -19,9 +19,9 @@ package org.owasp.dependencycheck.reporting;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An extremely simple wrapper around various escape utils to perform URL and HTML encoding within the reports. This
@@ -34,7 +34,7 @@ public class EscapeTool {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(EscapeTool.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(EscapeTool.class);
 
     /**
      * URL Encodes the provided text.
@@ -46,8 +46,8 @@ public class EscapeTool {
         try {
             return URLEncoder.encode(text, "UTF-8");
         } catch (UnsupportedEncodingException ex) {
-            LOGGER.log(Level.WARNING, "UTF-8 is not supported?");
-            LOGGER.log(Level.INFO, null, ex);
+            LOGGER.warn("UTF-8 is not supported?");
+            LOGGER.info("", ex);
         }
         return "";
     }

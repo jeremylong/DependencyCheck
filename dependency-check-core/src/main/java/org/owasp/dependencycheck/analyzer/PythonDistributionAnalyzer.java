@@ -23,8 +23,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import javax.mail.MessagingException;
@@ -44,6 +42,8 @@ import org.owasp.dependencycheck.utils.ExtractionUtil;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.UrlStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Used to analyze a Wheel or egg distribution files, or their contents in unzipped form, and collect information that can be used
@@ -66,8 +66,8 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger
-            .getLogger(PythonDistributionAnalyzer.class.getName());
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(PythonDistributionAnalyzer.class);
 
     /**
      * The count of directories created during analysis. This is used for creating temporary directories.
@@ -203,7 +203,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
             FilenameFilter folderFilter, FilenameFilter metadataFilter)
             throws AnalysisException {
         final File temp = getNextTempDirectory();
-        LOGGER.fine(String.format("%s exists? %b", temp, temp.exists()));
+        LOGGER.debug("{} exists? {}", temp, temp.exists());
         try {
             ExtractionUtil.extractFilesUsingFilter(
                     new File(dependency.getActualFilePath()), temp,
@@ -247,10 +247,10 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void close() {
         if (tempFileLocation != null && tempFileLocation.exists()) {
-            LOGGER.log(Level.FINE, "Attempting to delete temporary files");
+            LOGGER.debug("Attempting to delete temporary files");
             final boolean success = FileUtils.delete(tempFileLocation);
             if (!success) {
-                LOGGER.log(Level.WARNING,
+                LOGGER.warn(
                         "Failed to delete some temporary files, see the log for more details");
             }
         }
@@ -298,7 +298,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     private static void addPropertyToEvidence(InternetHeaders headers,
             EvidenceCollection evidence, String property, Confidence confidence) {
         final String value = headers.getHeader(property, null);
-        LOGGER.fine(String.format("Property: %s, Value: %s", property, value));
+        LOGGER.debug("Property: {}, Value: {}", property, value);
         if (StringUtils.isNotBlank(value)) {
             evidence.addEvidence(METADATA, property, value, confidence);
         }
@@ -329,15 +329,15 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     private static InternetHeaders getManifestProperties(File manifest) {
         final InternetHeaders result = new InternetHeaders();
         if (null == manifest) {
-            LOGGER.fine("Manifest file not found.");
+            LOGGER.debug("Manifest file not found.");
         } else {
             try {
                 result.load(new AutoCloseInputStream(new BufferedInputStream(
                         new FileInputStream(manifest))));
             } catch (MessagingException e) {
-                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             } catch (FileNotFoundException e) {
-                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
         }
         return result;

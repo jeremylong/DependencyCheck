@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,8 +31,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A simple settings container that wraps the dependencycheck.properties file.
@@ -264,7 +265,7 @@ public final class Settings {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(Settings.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(Settings.class);
     /**
      * The properties file location.
      */
@@ -290,14 +291,14 @@ public final class Settings {
             in = this.getClass().getClassLoader().getResourceAsStream(propertiesFilePath);
             props.load(in);
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, "Unable to load default settings.");
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.error("Unable to load default settings.");
+            LOGGER.debug("", ex);
         } finally {
             if (in != null) {
                 try {
                     in.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINEST, null, ex);
+                    LOGGER.trace("", ex);
                 }
             }
         }
@@ -342,7 +343,7 @@ public final class Settings {
         try {
             localSettings.remove();
         } catch (Throwable ex) {
-            LOGGER.log(Level.FINE, "Error cleaning up Settings", ex);
+            LOGGER.debug("Error cleaning up Settings", ex);
         }
     }
 
@@ -371,7 +372,7 @@ public final class Settings {
      * @param properties the properties to log
      */
     private static void logProperties(String header, Properties properties) {
-        if (LOGGER.isLoggable(Level.FINE)) {
+        if (LOGGER.isDebugEnabled()) {
             final StringWriter sw = new StringWriter();
             PrintWriter pw = null;
             try {
@@ -390,7 +391,7 @@ public final class Settings {
                     }
                 }
                 pw.flush();
-                LOGGER.fine(sw.toString());
+                LOGGER.debug(sw.toString());
             } finally {
                 if (pw != null) {
                     pw.close();
@@ -408,9 +409,7 @@ public final class Settings {
      */
     public static void setString(String key, String value) {
         localSettings.get().props.setProperty(key, value);
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine(String.format("Setting: %s='%s'", key, value));
-        }
+        LOGGER.debug("Setting: {}='{}'", key, value);
     }
 
     /**
@@ -425,9 +424,7 @@ public final class Settings {
         } else {
             localSettings.get().props.setProperty(key, Boolean.FALSE.toString());
         }
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine(String.format("Setting: %s='%b'", key, value));
-        }
+        LOGGER.debug("Setting: {}='{}'", key, value);
     }
 
     /**
@@ -449,7 +446,7 @@ public final class Settings {
                 try {
                     fis.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINEST, "close error", ex);
+                    LOGGER.trace("close error", ex);
                 }
             }
         }
@@ -474,7 +471,7 @@ public final class Settings {
                 try {
                     fis.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINEST, "close error", ex);
+                    LOGGER.trace("close error", ex);
                 }
             }
         }
@@ -523,16 +520,16 @@ public final class Settings {
      */
     protected static File getDataFile(String key) {
         final String file = getString(key);
-        LOGGER.log(Level.FINE, String.format("Settings.getDataFile() - file: '%s'", file));
+        LOGGER.debug("Settings.getDataFile() - file: '{}'", file);
         if (file == null) {
             return null;
         }
         if (file.startsWith("[JAR]")) {
-            LOGGER.log(Level.FINE, "Settings.getDataFile() - transforming filename");
+            LOGGER.debug("Settings.getDataFile() - transforming filename");
             final File jarPath = getJarPath();
-            LOGGER.log(Level.FINE, String.format("Settings.getDataFile() - jar file: '%s'", jarPath.toString()));
+            LOGGER.debug("Settings.getDataFile() - jar file: '{}'", jarPath.toString());
             final File retVal = new File(jarPath, file.substring(6));
-            LOGGER.log(Level.FINE, String.format("Settings.getDataFile() - returning: '%s'", retVal.toString()));
+            LOGGER.debug("Settings.getDataFile() - returning: '{}'", retVal.toString());
             return retVal;
         }
         return new File(file);
@@ -549,7 +546,7 @@ public final class Settings {
         try {
             decodedPath = URLDecoder.decode(jarPath, "UTF-8");
         } catch (UnsupportedEncodingException ex) {
-            LOGGER.log(Level.FINEST, null, ex);
+            LOGGER.trace("", ex);
         }
 
         final File path = new File(decodedPath);
@@ -652,8 +649,7 @@ public final class Settings {
         try {
             value = Integer.parseInt(Settings.getString(key));
         } catch (NumberFormatException ex) {
-            final String msg = String.format("Could not convert property '%s' to an int.", key);
-            LOGGER.log(Level.FINEST, msg, ex);
+            LOGGER.trace("Could not convert property '{}' to an int.", key, ex);
             value = defaultValue;
         }
         return value;
@@ -770,7 +766,7 @@ public final class Settings {
             // yes, for H2 this path won't actually exists - but this is sufficient to get the value needed
             final File dbFile = new File(directory, fileName);
             final String cString = String.format(connStr, dbFile.getCanonicalPath());
-            LOGGER.log(Level.FINE, String.format("Connection String: '%s'", cString));
+            LOGGER.debug("Connection String: '{}'", cString);
             return cString;
         }
         return connStr;

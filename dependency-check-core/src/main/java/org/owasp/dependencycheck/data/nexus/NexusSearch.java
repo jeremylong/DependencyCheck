@@ -21,8 +21,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -30,6 +28,8 @@ import javax.xml.xpath.XPathFactory;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.URLConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 /**
@@ -59,7 +59,7 @@ public class NexusSearch {
     /**
      * Used for logging.
      */
-    private static final Logger LOGGER = Logger.getLogger(NexusSearch.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(NexusSearch.class);
 
     /**
      * Creates a NexusSearch for the given repository URL.
@@ -73,10 +73,10 @@ public class NexusSearch {
             if (null != Settings.getString(Settings.KEYS.PROXY_SERVER)
                     && Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY)) {
                 useProxy = true;
-                LOGGER.fine("Using proxy");
+                LOGGER.debug("Using proxy");
             } else {
                 useProxy = false;
-                LOGGER.fine("Not using proxy");
+                LOGGER.debug("Not using proxy");
             }
         } catch (InvalidSettingException ise) {
             useProxy = false;
@@ -99,7 +99,7 @@ public class NexusSearch {
         final URL url = new URL(rootURL, String.format("identify/sha1/%s",
                 sha1.toLowerCase()));
 
-        LOGGER.fine(String.format("Searching Nexus url %s", url.toString()));
+        LOGGER.debug("Searching Nexus url {}", url);
 
         // Determine if we need to use a proxy. The rules:
         // 1) If the proxy is set, AND the setting is set to true, use the proxy
@@ -155,10 +155,9 @@ public class NexusSearch {
         } else if (conn.getResponseCode() == 404) {
             throw new FileNotFoundException("Artifact not found in Nexus");
         } else {
-            final String msg = String.format("Could not connect to Nexus received response code: %d %s",
-                    conn.getResponseCode(), conn.getResponseMessage());
-            LOGGER.fine(msg);
-            throw new IOException(msg);
+            LOGGER.debug("Could not connect to Nexus received response code: {} {}",
+                conn.getResponseCode(), conn.getResponseMessage());
+            throw new IOException("Could not connect to Nexus");
         }
     }
 
@@ -175,13 +174,13 @@ public class NexusSearch {
             conn.addRequestProperty("Accept", "application/xml");
             conn.connect();
             if (conn.getResponseCode() != 200) {
-                LOGGER.log(Level.WARNING, "Expected 200 result from Nexus, got {0}", conn.getResponseCode());
+                LOGGER.warn("Expected 200 result from Nexus, got {}", conn.getResponseCode());
                 return false;
             }
             final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             final Document doc = builder.parse(conn.getInputStream());
             if (!"status".equals(doc.getDocumentElement().getNodeName())) {
-                LOGGER.log(Level.WARNING, "Expected root node name of status, got {0}", doc.getDocumentElement().getNodeName());
+                LOGGER.warn("Expected root node name of status, got {}", doc.getDocumentElement().getNodeName());
                 return false;
             }
         } catch (Throwable e) {

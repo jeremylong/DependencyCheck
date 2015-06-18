@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
@@ -46,6 +44,8 @@ import org.owasp.dependencycheck.data.lucene.SearchFieldAnalyzer;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.utils.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An in memory lucene index that contains the vendor/product combinations from the CPE (application) identifiers within the NVD
@@ -58,7 +58,7 @@ public final class CpeMemoryIndex {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(CpeMemoryIndex.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(CpeMemoryIndex.class);
     /**
      * singleton instance.
      */
@@ -203,7 +203,7 @@ public final class CpeMemoryIndex {
             try {
                 indexReader.close();
             } catch (IOException ex) {
-                LOGGER.log(Level.FINEST, null, ex);
+                LOGGER.trace("", ex);
             }
             indexReader = null;
         }
@@ -235,7 +235,7 @@ public final class CpeMemoryIndex {
                     saveEntry(pair.getLeft(), pair.getRight(), indexWriter);
                 }
             } catch (DatabaseException ex) {
-                LOGGER.log(Level.FINE, null, ex);
+                LOGGER.debug("", ex);
                 throw new IndexException("Error reading CPE data", ex);
             }
         } catch (CorruptIndexException ex) {

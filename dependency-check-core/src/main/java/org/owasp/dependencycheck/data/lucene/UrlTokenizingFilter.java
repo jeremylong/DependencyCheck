@@ -21,11 +21,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.owasp.dependencycheck.utils.UrlStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -39,7 +39,7 @@ public final class UrlTokenizingFilter extends AbstractTokenizingFilter {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(UrlTokenizingFilter.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(UrlTokenizingFilter.class);
     /**
      * Constructs a new VersionTokenizingFilter.
      *
@@ -70,7 +70,7 @@ public final class UrlTokenizingFilter extends AbstractTokenizingFilter {
                             final List<String> data = UrlStringUtils.extractImportantUrlData(part);
                             tokens.addAll(data);
                         } catch (MalformedURLException ex) {
-                            LOGGER.log(Level.FINE, "error parsing " + part, ex);
+                            LOGGER.debug("error parsing {}", part, ex);
                             tokens.add(part);
                         }
                     } else {

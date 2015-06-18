@@ -21,9 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.EnumeratedAttribute;
 import org.apache.tools.ant.types.Reference;
@@ -40,8 +39,8 @@ import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.reporting.ReportGenerator.Format;
-import org.owasp.dependencycheck.utils.LogUtils;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.impl.StaticLoggerBinder;
 
 /**
  * An Ant task definition to execute dependency-check during an Ant build.
@@ -49,7 +48,6 @@ import org.owasp.dependencycheck.utils.Settings;
  * @author Jeremy Long
  */
 public class DependencyCheckTask extends Task {
-
     /**
      * The properties file location.
      */
@@ -62,16 +60,15 @@ public class DependencyCheckTask extends Task {
      * System specific new line character.
      */
     private static final String NEW_LINE = System.getProperty("line.separator", "\n").intern();
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = Logger.getLogger(DependencyCheckTask.class.getName());
 
     /**
      * Construct a new DependencyCheckTask.
      */
     public DependencyCheckTask() {
         super();
+        // Call this before Dependency Check Core starts logging anything - this way, all SLF4J messages from
+        // core end up coming through this tasks logger
+        StaticLoggerBinder.getSingleton().setTask(this);
     }
     //The following code was copied Apache Ant PathConvert
     //BEGIN COPY from org.apache.tools.ant.taskdefs.PathConvert
@@ -349,7 +346,7 @@ public class DependencyCheckTask extends Task {
      */
     @Deprecated
     public void setProxyUrl(String proxyUrl) {
-        LOGGER.warning("A deprecated configuration option 'proxyUrl' was detected; use 'proxyServer' instead.");
+        log("A deprecated configuration option 'proxyUrl' was detected; use 'proxyServer' instead.", Project.MSG_WARN);
         this.proxyServer = proxyUrl;
     }
     /**
@@ -925,9 +922,6 @@ public class DependencyCheckTask extends Task {
 
     @Override
     public void execute() throws BuildException {
-        final InputStream in = DependencyCheckTask.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
-        LogUtils.prepareLogger(in, logFile);
-
         dealWithReferences();
         validateConfiguration();
         populateSettings();
@@ -958,7 +952,7 @@ public class DependencyCheckTask extends Task {
                         cve.open();
                         prop = cve.getDatabaseProperties();
                     } catch (DatabaseException ex) {
-                        LOGGER.log(Level.FINE, "Unable to retrieve DB Properties", ex);
+                        log("Unable to retrieve DB Properties", ex, Project.MSG_DEBUG);
                     } finally {
                         if (cve != null) {
                             cve.close();
@@ -974,16 +968,15 @@ public class DependencyCheckTask extends Task {
                         showSummary(engine.getDependencies());
                     }
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINE, "Unable to generate dependency-check report", ex);
+                    log("Unable to generate dependency-check report", ex, Project.MSG_DEBUG);
                     throw new BuildException("Unable to generate dependency-check report", ex);
                 } catch (Exception ex) {
-                    LOGGER.log(Level.FINE, "An exception occurred; unable to continue task", ex);
+                    log("An exception occurred; unable to continue task", ex, Project.MSG_DEBUG);
                     throw new BuildException("An exception occurred; unable to continue task", ex);
                 }
             }
         } catch (DatabaseException ex) {
-            LOGGER.log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
-            LOGGER.log(Level.FINE, "", ex);
+            log("Unable to connect to the dependency-check database; analysis has stopped", ex, Project.MSG_ERR);
         } finally {
             Settings.cleanup(true);
             if (engine != null) {
@@ -1017,14 +1010,13 @@ public class DependencyCheckTask extends Task {
             taskProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);
             Settings.mergeProperties(taskProperties);
         } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, "Unable to load the dependency-check ant task.properties file.");
-            LOGGER.log(Level.FINE, null, ex);
+            log("Unable to load the dependency-check ant task.properties file.", ex, Project.MSG_WARN);
         } finally {
             if (taskProperties != null) {
                 try {
                     taskProperties.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINEST, null, ex);
+                    log("", ex, Project.MSG_DEBUG);
                 }
             }
         }
@@ -1176,7 +1168,7 @@ public class DependencyCheckTask extends Task {
             final String msg = String.format("%n%n"
                     + "One or more dependencies were identified with known vulnerabilities:%n%n%s"
                     + "%n%nSee the dependency-check report for more details.%n%n", summary.toString());
-            LOGGER.log(Level.WARNING, msg);
+            log(msg, Project.MSG_WARN);
         }
     }
 

@@ -20,14 +20,14 @@ package org.owasp.dependencycheck.data.update.xml;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.lucene.index.CorruptIndexException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Reference;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotSupportedException;
@@ -43,7 +43,7 @@ public class NvdCve20Handler extends DefaultHandler {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(NvdCve20Handler.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(NvdCve20Handler.class);
     /**
      * the current supported schema version.
      */
@@ -172,8 +172,8 @@ public class NvdCve20Handler extends DefaultHandler {
                 final float score = Float.parseFloat(nodeText.toString());
                 vulnerability.setCvssScore(score);
             } catch (NumberFormatException ex) {
-                LOGGER.log(Level.SEVERE, "Error parsing CVSS Score.");
-                LOGGER.log(Level.FINE, null, ex);
+                LOGGER.error("Error parsing CVSS Score.");
+                LOGGER.debug("", ex);
             }
             nodeText = null;
         } else if (current.isCVSSAccessVectorNode()) {

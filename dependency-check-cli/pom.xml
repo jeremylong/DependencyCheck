@@ -321,5 +321,12 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
             <artifactId>dependency-check-utils</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <!-- Logging implementation. We may change this in the future -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>

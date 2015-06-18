@@ -25,20 +25,26 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
+import ch.qos.cal10n.IMessageConveyor;
+import ch.qos.cal10n.MessageConveyor;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.utils.DCResources;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.cal10n.LocLogger;
+import org.slf4j.cal10n.LocLoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -71,9 +77,17 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private DocumentBuilder builder;
     /**
+     * Message Conveyer
+     */
+    private IMessageConveyor messageConveyer = new MessageConveyor(Locale.getDefault());
+    /**
+     * LocLoggerFactory for localized logger
+     */
+    private LocLoggerFactory llFactory = new LocLoggerFactory(messageConveyer);
+    /**
      * Logger
      */
-    private static final Logger LOGGER = Logger.getLogger(AssemblyAnalyzer.class.getName(), "dependencycheck-resources");
+    private LocLogger LOGGER = llFactory.getLocLogger(AssemblyAnalyzer.class);
 
     /**
      * Builds the beginnings of a List for ProcessBuilder
@@ -106,7 +120,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     public void analyzeFileType(Dependency dependency, Engine engine)
             throws AnalysisException {
         if (grokAssemblyExe == null) {
-            LOGGER.warning("analyzer.AssemblyAnalyzer.notdeployed");
+            LOGGER.warn(DCResources.NOTDEPLOYED);
             return;
         }
 
@@ -122,7 +136,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             String line = null;
             // CHECKSTYLE:OFF
             while (rdr.ready() && (line = rdr.readLine()) != null) {
-                LOGGER.log(Level.WARNING, "analyzer.AssemblyAnalyzer.grokassembly.stderr", line);
+                LOGGER.warn(DCResources.GROKERROR, line);
             }
             // CHECKSTYLE:ON
             int rc = 0;
@@ -134,10 +148,10 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 return;
             }
             if (rc == 3) {
-                LOGGER.log(Level.FINE, "analyzer.AssemblyAnalyzer.notassembly", dependency.getActualFilePath());
+                LOGGER.debug(DCResources.NOTASSEMBLY, dependency.getActualFilePath());
                 return;
             } else if (rc != 0) {
-                LOGGER.log(Level.WARNING, "analyzer.AssemblyAnalyzer.grokassembly.rc", rc);
+                LOGGER.warn(DCResources.GROKRC, rc);
             }
 
             final XPath xpath = XPathFactory.newInstance().newXPath();
@@ -178,7 +192,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 try {
                     rdr.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINEST, "ignore", ex);
+                    LOGGER.debug("ignore", ex);
                 }
             }
         }
@@ -205,24 +219,24 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             grokAssemblyExe = tempFile;
             // Set the temp file to get deleted when we're done
             grokAssemblyExe.deleteOnExit();
-            LOGGER.log(Level.FINE, "analyzer.AssemblyAnalyzer.grokassembly.deployed", grokAssemblyExe.getPath());
+            LOGGER.debug(DCResources.GROKDEPLOYED, grokAssemblyExe.getPath());
         } catch (IOException ioe) {
             this.setEnabled(false);
-            LOGGER.log(Level.WARNING, "analyzer.AssemblyAnalyzer.grokassembly.notdeployed", ioe.getMessage());
+            LOGGER.warn(DCResources.GROKNOTDEPLOYED, ioe.getMessage());
             throw new AnalysisException("Could not extract GrokAssembly.exe", ioe);
         } finally {
             if (fos != null) {
                 try {
                     fos.close();
                 } catch (Throwable e) {
-                    LOGGER.fine("Error closing output stream");
+                    LOGGER.debug("Error closing output stream");
                 }
             }
             if (is != null) {
                 try {
                     is.close();
                 } catch (Throwable e) {
-                    LOGGER.fine("Error closing input stream");
+                    LOGGER.debug("Error closing input stream");
                 }
             }
         }
@@ -244,8 +258,8 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             final XPath xpath = XPathFactory.newInstance().newXPath();
             final String error = xpath.evaluate("/assembly/error", doc);
             if (p.waitFor() != 1 || error == null || "".equals(error)) {
-                LOGGER.warning("An error occurred with the .NET AssemblyAnalyzer, please see the log for more details.");
-                LOGGER.fine("GrokAssembly.exe is not working properly");
+                LOGGER.warn("An error occurred with the .NET AssemblyAnalyzer, please see the log for more details.");
+                LOGGER.debug("GrokAssembly.exe is not working properly");
                 grokAssemblyExe = null;
                 this.setEnabled(false);
                 throw new AnalysisException("Could not execute .NET AssemblyAnalyzer");
@@ -254,8 +268,8 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             if (e instanceof AnalysisException) {
                 throw (AnalysisException) e;
             } else {
-                LOGGER.warning("analyzer.AssemblyAnalyzer.grokassembly.initialization.failed");
-                LOGGER.log(Level.FINE, "analyzer.AssemblyAnalyzer.grokassembly.initialization.message", e.getMessage());
+                LOGGER.warn(DCResources.GROKINITFAIL);
+                LOGGER.debug(DCResources.GROKINITMSG, e.getMessage());
                 this.setEnabled(false);
                 throw new AnalysisException("An error occured with the .NET AssemblyAnalyzer", e);
             }
@@ -264,7 +278,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 try {
                     rdr.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINEST, "ignore", ex);
+                    LOGGER.trace("ignore", ex);
                 }
             }
         }
@@ -279,7 +293,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 grokAssemblyExe.deleteOnExit();
             }
         } catch (SecurityException se) {
-            LOGGER.fine("analyzer.AssemblyAnalyzer.grokassembly.notdeleted");
+            LOGGER.debug(DCResources.GROKNOTDELETED);
         }
     }
 

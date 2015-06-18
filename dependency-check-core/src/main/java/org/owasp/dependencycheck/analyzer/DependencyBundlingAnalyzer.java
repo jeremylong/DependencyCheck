@@ -22,8 +22,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.Engine;
@@ -33,6 +31,8 @@ import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 import org.owasp.dependencycheck.utils.LogUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -49,7 +49,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     /**
      * The Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(DependencyBundlingAnalyzer.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DependencyBundlingAnalyzer.class);
 
     //<editor-fold defaultstate="collapsed" desc="Constants and Member Variables">
     /**
@@ -264,8 +264,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             }
         }
         if (LogUtils.isVerboseLoggingEnabled()) {
-            final String msg = String.format("IdentifiersMatch=%s (%s, %s)", matches, dependency1.getFileName(), dependency2.getFileName());
-            LOGGER.log(Level.FINE, msg);
+            LOGGER.debug("IdentifiersMatch={} ({}, {})", matches, dependency1.getFileName(), dependency2.getFileName());
         }
         return matches;
     }
@@ -345,8 +344,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
             returnVal = leftName.length() <= rightName.length();
         }
         if (LogUtils.isVerboseLoggingEnabled()) {
-            final String msg = String.format("IsCore=%s (%s, %s)", returnVal, left.getFileName(), right.getFileName());
-            LOGGER.log(Level.FINE, msg);
+            LOGGER.debug("IsCore={} ({}, {})", returnVal, left.getFileName(), right.getFileName());
         }
         return returnVal;
     }

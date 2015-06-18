@@ -29,10 +29,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.owasp.dependencycheck.utils.DBUtils;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Loads the configured database driver and returns the database connection. If the embedded H2 database is used
@@ -46,7 +46,7 @@ public final class ConnectionFactory {
     /**
      * The Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(ConnectionFactory.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionFactory.class);
     /**
      * The version of the current DB Schema.
      */
@@ -94,17 +94,17 @@ public final class ConnectionFactory {
             //load the driver if necessary
             final String driverName = Settings.getString(Settings.KEYS.DB_DRIVER_NAME, "");
             if (!driverName.isEmpty()) { //likely need to load the correct driver
-                LOGGER.log(Level.FINE, "Loading driver: {0}", driverName);
+                LOGGER.debug("Loading driver: {}", driverName);
                 final String driverPath = Settings.getString(Settings.KEYS.DB_DRIVER_PATH, "");
                 try {
                     if (!driverPath.isEmpty()) {
-                        LOGGER.log(Level.FINE, "Loading driver from: {0}", driverPath);
+                        LOGGER.debug("Loading driver from: {}", driverPath);
                         driver = DriverLoader.load(driverName, driverPath);
                     } else {
                         driver = DriverLoader.load(driverName);
                     }
                 } catch (DriverLoadException ex) {
-                    LOGGER.log(Level.FINE, "Unable to load database driver", ex);
+                    LOGGER.debug("Unable to load database driver", ex);
                     throw new DatabaseException("Unable to load database driver");
                 }
             }
@@ -117,7 +117,7 @@ public final class ConnectionFactory {
                         Settings.KEYS.DB_FILE_NAME,
                         Settings.KEYS.DB_VERSION);
             } catch (IOException ex) {
-                LOGGER.log(Level.FINE,
+                LOGGER.debug(
                         "Unable to retrieve the database connection string", ex);
                 throw new DatabaseException("Unable to retrieve the database connection string");
             }
@@ -125,15 +125,15 @@ public final class ConnectionFactory {
             try {
                 if (connectionString.startsWith("jdbc:h2:file:")) { //H2
                     shouldCreateSchema = !h2DataFileExists();
-                    LOGGER.log(Level.FINE, "Need to create DB Structure: {0}", shouldCreateSchema);
+                    LOGGER.debug("Need to create DB Structure: {}", shouldCreateSchema);
                 }
             } catch (IOException ioex) {
-                LOGGER.log(Level.FINE, "Unable to verify database exists", ioex);
+                LOGGER.debug("Unable to verify database exists", ioex);
                 throw new DatabaseException("Unable to verify database exists");
             }
-            LOGGER.log(Level.FINE, "Loading database connection");
-            LOGGER.log(Level.FINE, "Connection String: {0}", connectionString);
-            LOGGER.log(Level.FINE, "Database User: {0}", userName);
+            LOGGER.debug("Loading database connection");
+            LOGGER.debug("Connection String: {}", connectionString);
+            LOGGER.debug("Database User: {}", userName);
 
             try {
                 conn = DriverManager.getConnection(connectionString, userName, password);
@@ -143,14 +143,14 @@ public final class ConnectionFactory {
                     try {
                         conn = DriverManager.getConnection(connectionString, userName, password);
                         Settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
-                        LOGGER.log(Level.FINE,
+                        LOGGER.debug(
                                 "Unable to start the database in server mode; reverting to single user mode");
                     } catch (SQLException sqlex) {
-                        LOGGER.log(Level.FINE, "Unable to connect to the database", ex);
+                        LOGGER.debug("Unable to connect to the database", ex);
                         throw new DatabaseException("Unable to connect to the database");
                     }
                 } else {
-                    LOGGER.log(Level.FINE, "Unable to connect to the database", ex);
+                    LOGGER.debug("Unable to connect to the database", ex);
                     throw new DatabaseException("Unable to connect to the database");
                 }
             }
@@ -159,14 +159,14 @@ public final class ConnectionFactory {
                 try {
                     createTables(conn);
                 } catch (DatabaseException dex) {
-                    LOGGER.log(Level.FINE, null, dex);
+                    LOGGER.debug("", dex);
                     throw new DatabaseException("Unable to create the database structure");
                 }
             } else {
                 try {
                     ensureSchemaVersion(conn);
                 } catch (DatabaseException dex) {
-                    LOGGER.log(Level.FINE, null, dex);
+                    LOGGER.debug("", dex);
                     throw new DatabaseException("Database schema does not match this version of dependency-check");
                 }
             }
@@ -175,7 +175,7 @@ public final class ConnectionFactory {
                 try {
                     conn.close();
                 } catch (SQLException ex) {
-                    LOGGER.log(Level.FINE, "An error occurred closing the connection", ex);
+                    LOGGER.debug("An error occurred closing the connection", ex);
                 }
             }
         }
@@ -191,9 +191,9 @@ public final class ConnectionFactory {
             try {
                 DriverManager.deregisterDriver(driver);
             } catch (SQLException ex) {
-                LOGGER.log(Level.FINE, "An error occurred unloading the database driver", ex);
+                LOGGER.debug("An error occurred unloading the database driver", ex);
             } catch (Throwable unexpected) {
-                LOGGER.log(Level.FINE,
+                LOGGER.debug(
                         "An unexpected throwable occurred unloading the database driver", unexpected);
             }
             driver = null;
@@ -215,7 +215,7 @@ public final class ConnectionFactory {
         try {
             conn = DriverManager.getConnection(connectionString, userName, password);
         } catch (SQLException ex) {
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
             throw new DatabaseException("Unable to connect to the database");
         }
         return conn;
@@ -242,7 +242,7 @@ public final class ConnectionFactory {
      * @throws DatabaseException thrown if there is a Database Exception
      */
     private static void createTables(Connection conn) throws DatabaseException {
-        LOGGER.log(Level.FINE, "Creating database structure");
+        LOGGER.debug("Creating database structure");
         InputStream is;
         InputStreamReader reader;
         BufferedReader in = null;
@@ -260,7 +260,7 @@ public final class ConnectionFactory {
                 statement = conn.createStatement();
                 statement.execute(sb.toString());
             } catch (SQLException ex) {
-                LOGGER.log(Level.FINE, null, ex);
+                LOGGER.debug("", ex);
                 throw new DatabaseException("Unable to create database statement", ex);
             } finally {
                 DBUtils.closeStatement(statement);
@@ -272,7 +272,7 @@ public final class ConnectionFactory {
                 try {
                     in.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINEST, null, ex);
+                    LOGGER.trace("", ex);
                 }
             }
         }
@@ -299,7 +299,7 @@ public final class ConnectionFactory {
                 throw new DatabaseException("Database schema is missing");
             }
         } catch (SQLException ex) {
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
             throw new DatabaseException("Unable to check the database schema version");
         } finally {
             DBUtils.closeResultSet(rs);

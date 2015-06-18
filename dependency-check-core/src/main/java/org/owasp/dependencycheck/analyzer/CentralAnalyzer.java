@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -38,6 +36,8 @@ import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Analyzer which will attempt to locate a dependency, and the GAV information, by querying Central for the dependency's SHA-1
@@ -50,7 +50,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(CentralAnalyzer.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(CentralAnalyzer.class);
 
     /**
      * The name of the analyzer.
@@ -103,7 +103,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
             if (Settings.getBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED)) {
                 if (!Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED)
                         || NexusAnalyzer.DEFAULT_URL.equals(Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL))) {
-                    LOGGER.fine("Enabling the Central analyzer");
+                    LOGGER.debug("Enabling the Central analyzer");
                     retval = true;
                 } else {
                     LOGGER.info("Nexus analyzer is enabled, disabling the Central Analyzer");
@@ -112,7 +112,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.info("Central analyzer disabled");
             }
         } catch (InvalidSettingException ise) {
-            LOGGER.warning("Invalid setting. Disabling the Central analyzer");
+            LOGGER.warn("Invalid setting. Disabling the Central analyzer");
         }
         return retval;
     }
@@ -124,11 +124,11 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void initializeFileTypeAnalyzer() throws Exception {
-        LOGGER.fine("Initializing Central analyzer");
-        LOGGER.fine(String.format("Central analyzer enabled: %s", isEnabled()));
+        LOGGER.debug("Initializing Central analyzer");
+        LOGGER.debug("Central analyzer enabled: {}", isEnabled());
         if (isEnabled()) {
             final String searchUrl = Settings.getString(Settings.KEYS.ANALYZER_CENTRAL_URL);
-            LOGGER.fine(String.format("Central Analyzer URL: %s", searchUrl));
+            LOGGER.debug("Central Analyzer URL: {}", searchUrl);
             searcher = new CentralSearch(new URL(searchUrl));
         }
     }
@@ -190,7 +190,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
             final List<MavenArtifact> mas = searcher.searchSha1(dependency.getSha1sum());
             final Confidence confidence = mas.size() > 1 ? Confidence.HIGH : Confidence.HIGHEST;
             for (MavenArtifact ma : mas) {
-                LOGGER.fine(String.format("Central analyzer found artifact (%s) for dependency (%s)", ma.toString(), dependency.getFileName()));
+                LOGGER.debug("Central analyzer found artifact ({}) for dependency ({})", ma.toString(), dependency.getFileName());
                 dependency.addAsEvidence("central", ma, confidence);
                 boolean pomAnalyzed = false;
                 for (Evidence e : dependency.getVendorEvidence()) {
@@ -205,19 +205,17 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                         final File baseDir = Settings.getTempDirectory();
                         pomFile = File.createTempFile("pom", ".xml", baseDir);
                         if (!pomFile.delete()) {
-                            final String msg = String.format("Unable to fetch pom.xml for %s from Central; "
-                                    + "this could result in undetected CPE/CVEs.", dependency.getFileName());
-                            LOGGER.warning(msg);
-                            LOGGER.fine("Unable to delete temp file");
+                            LOGGER.warn("Unable to fetch pom.xml for {} from Central; "
+                                + "this could result in undetected CPE/CVEs.", dependency.getFileName());
+                            LOGGER.debug("Unable to delete temp file");
                         }
-                        LOGGER.fine(String.format("Downloading %s", ma.getPomUrl()));
+                        LOGGER.debug("Downloading {}", ma.getPomUrl());
                         Downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);
                         PomUtils.analyzePOM(dependency, pomFile);
 
                     } catch (DownloadFailedException ex) {
-                        final String msg = String.format("Unable to download pom.xml for %s from Central; "
-                                + "this could result in undetected CPE/CVEs.", dependency.getFileName());
-                        LOGGER.warning(msg);
+                        LOGGER.warn("Unable to download pom.xml for {} from Central; "
+                            + "this could result in undetected CPE/CVEs.", dependency.getFileName());
                     } finally {
                         if (pomFile != null && !FileUtils.deleteQuietly(pomFile)) {
                             pomFile.deleteOnExit();
@@ -227,11 +225,11 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
 
             }
         } catch (IllegalArgumentException iae) {
-            LOGGER.info(String.format("invalid sha1-hash on %s", dependency.getFileName()));
+            LOGGER.info("invalid sha1-hash on {}", dependency.getFileName());
         } catch (FileNotFoundException fnfe) {
-            LOGGER.fine(String.format("Artifact not found in repository: '%s", dependency.getFileName()));
+            LOGGER.debug("Artifact not found in repository: '{}", dependency.getFileName());
         } catch (IOException ioe) {
-            LOGGER.log(Level.FINE, "Could not connect to Central search", ioe);
+            LOGGER.debug("Could not connect to Central search", ioe);
             errorFlag = true;
         }
     }

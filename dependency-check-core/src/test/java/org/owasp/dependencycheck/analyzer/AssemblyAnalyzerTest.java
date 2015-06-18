@@ -18,8 +18,6 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -34,6 +32,10 @@ import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.impl.SimpleLogger;
+import org.slf4j.impl.SimpleLoggerFactory;
 
 /**
  * Tests for the AssemblyAnalyzer.
@@ -43,7 +45,9 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 public class AssemblyAnalyzerTest extends BaseTest {
 
-    private static final Logger LOGGER = Logger.getLogger(AssemblyAnalyzerTest.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AssemblyAnalyzerTest.class);
+
+    private static final String LOG_KEY = "org.slf4j.simpleLogger.org.owasp.dependencycheck.analyzer.AssemblyAnalyzer";
 
     AssemblyAnalyzer analyzer;
 
@@ -60,9 +64,9 @@ public class AssemblyAnalyzerTest extends BaseTest {
             analyzer.initialize();
         } catch (Exception e) {
             if (e.getMessage().contains("Could not execute .NET AssemblyAnalyzer")) {
-                LOGGER.log(Level.WARNING, "Exception setting up AssemblyAnalyzer. Tests will be incomplete");
+                LOGGER.warn("Exception setting up AssemblyAnalyzer. Tests will be incomplete");
             } else {
-                LOGGER.log(Level.WARNING, "Exception setting up AssemblyAnalyzer. Tests will be incomplete", e);
+                LOGGER.warn("Exception setting up AssemblyAnalyzer. Tests will be incomplete", e);
             }
             Assume.assumeNoException("Is mono installed? TESTS WILL BE INCOMPLETE", e);
         }
@@ -113,11 +117,8 @@ public class AssemblyAnalyzerTest extends BaseTest {
 
     @Test
     public void testNonexistent() {
-        Level oldLevel = Logger.getLogger(AssemblyAnalyzer.class.getName()).getLevel();
-        Level oldDependency = Logger.getLogger(Dependency.class.getName()).getLevel();
         // Tweak the log level so the warning doesn't show in the console
-        Logger.getLogger(AssemblyAnalyzer.class.getName()).setLevel(Level.OFF);
-        Logger.getLogger(Dependency.class.getName()).setLevel(Level.OFF);
+        String oldProp = System.getProperty(LOG_KEY, "info");
         //File f = new File(AssemblyAnalyzerTest.class.getClassLoader().getResource("log4net.dll").getPath());
         File f = BaseTest.getResourceAsFile(this, "log4net.dll");
         File test = new File(f.getParent(), "nonexistent.dll");
@@ -129,8 +130,7 @@ public class AssemblyAnalyzerTest extends BaseTest {
         } catch (AnalysisException ae) {
             assertEquals("File does not exist", ae.getMessage());
         } finally {
-            Logger.getLogger(AssemblyAnalyzer.class.getName()).setLevel(oldLevel);
-            Logger.getLogger(Dependency.class.getName()).setLevel(oldDependency);
+            System.setProperty(LOG_KEY, oldProp);
         }
     }
 
@@ -151,10 +151,10 @@ public class AssemblyAnalyzerTest extends BaseTest {
             Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, "/yooser/bine/mono");
         }
 
-        Level oldLevel = Logger.getLogger(AssemblyAnalyzer.class.getName()).getLevel();
+        String oldProp = System.getProperty(LOG_KEY, "info");
         try {
             // Tweak the logging to swallow the warning when testing
-            Logger.getLogger(AssemblyAnalyzer.class.getName()).setLevel(Level.OFF);
+            System.setProperty(LOG_KEY, "error");
             // Have to make a NEW analyzer because during setUp, it would have gotten the correct one
             AssemblyAnalyzer aanalyzer = new AssemblyAnalyzer();
             aanalyzer.supportsExtension("dll");
@@ -163,8 +163,8 @@ public class AssemblyAnalyzerTest extends BaseTest {
         } catch (AnalysisException ae) {
             assertEquals("An error occured with the .NET AssemblyAnalyzer", ae.getMessage());
         } finally {
+            System.setProperty(LOG_KEY, oldProp);
             // Recover the logger
-            Logger.getLogger(AssemblyAnalyzer.class.getName()).setLevel(oldLevel);
             // Now recover the way we came in. If we had to set a System property, delete it. Otherwise,
             // reset the old value
             if (oldValue == null) {

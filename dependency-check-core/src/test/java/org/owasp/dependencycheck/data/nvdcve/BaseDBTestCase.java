@@ -22,13 +22,12 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.junit.Before;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -76,7 +75,7 @@ public abstract class BaseDBTestCase extends BaseTest {
                             dest.write(data, 0, count);
                         }
                     } catch (Throwable ex) {
-                        Logger.getLogger(BaseDBTestCase.class.getName()).log(Level.SEVERE, null, ex);
+                        LoggerFactory.getLogger(BaseDBTestCase.class).error("", ex);
                     } finally {
                         try {
                             if (dest != null) {
@@ -84,14 +83,14 @@ public abstract class BaseDBTestCase extends BaseTest {
                                 dest.close();
                             }
                         } catch (Throwable ex) {
-                            Logger.getLogger(BaseDBTestCase.class.getName()).log(Level.FINEST, null, ex);
+                            LoggerFactory.getLogger(BaseDBTestCase.class).trace("", ex);
                         }
                         try {
                             if (fos != null) {
                                 fos.close();
                             }
                         } catch (Throwable ex) {
-                            Logger.getLogger(BaseDBTestCase.class.getName()).log(Level.FINEST, null, ex);
+                            LoggerFactory.getLogger(BaseDBTestCase.class).trace("", ex);
                         }
                     }
                 }
@@ -101,14 +100,14 @@ public abstract class BaseDBTestCase extends BaseTest {
                         zin.close();
                     }
                 } catch (Throwable ex) {
-                    Logger.getLogger(BaseDBTestCase.class.getName()).log(Level.FINEST, null, ex);
+                    LoggerFactory.getLogger(BaseDBTestCase.class).trace("", ex);
                 }
                 try {
                     if (fis != null) {
                         fis.close();
                     }
                 } catch (Throwable ex) {
-                    Logger.getLogger(BaseDBTestCase.class.getName()).log(Level.FINEST, null, ex);
+                    LoggerFactory.getLogger(BaseDBTestCase.class).trace("", ex);
                 }
             }
         }

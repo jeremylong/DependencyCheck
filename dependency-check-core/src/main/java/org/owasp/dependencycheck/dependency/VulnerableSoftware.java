@@ -20,9 +20,9 @@ package org.owasp.dependencycheck.dependency;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.owasp.dependencycheck.data.cpe.IndexEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A record containing information about vulnerable software. This is referenced from a vulnerability.
@@ -34,7 +34,7 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(VulnerableSoftware.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(VulnerableSoftware.class);
     /**
      * The serial version UID.
      */
@@ -49,9 +49,8 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
         try {
             parseName(cpe);
         } catch (UnsupportedEncodingException ex) {
-            final String msg = String.format("Character encoding is unsupported for CPE '%s'.", cpe);
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.warn("Character encoding is unsupported for CPE '{}'.", cpe);
+            LOGGER.debug("", ex);
             setName(cpe);
         }
     }
