@@ -715,10 +715,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
         final Dependency other = (Dependency) obj;
@@ -748,22 +745,12 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 47 * hash + (this.actualFilePath != null ? this.actualFilePath.hashCode() : 0);
-        hash = 47 * hash + (this.filePath != null ? this.filePath.hashCode() : 0);
-        hash = 47 * hash + (this.fileName != null ? this.fileName.hashCode() : 0);
-        hash = 47 * hash + (this.fileExtension != null ? this.fileExtension.hashCode() : 0);
-        hash = 47 * hash + (this.md5sum != null ? this.md5sum.hashCode() : 0);
-        hash = 47 * hash + (this.sha1sum != null ? this.sha1sum.hashCode() : 0);
-        hash = 47 * hash + (this.identifiers != null ? this.identifiers.hashCode() : 0);
-        hash = 47 * hash + (this.vendorEvidence != null ? this.vendorEvidence.hashCode() : 0);
-        hash = 47 * hash + (this.productEvidence != null ? this.productEvidence.hashCode() : 0);
-        hash = 47 * hash + (this.versionEvidence != null ? this.versionEvidence.hashCode() : 0);
-        hash = 47 * hash + (this.description != null ? this.description.hashCode() : 0);
-        hash = 47 * hash + (this.license != null ? this.license.hashCode() : 0);
-        hash = 47 * hash + (this.vulnerabilities != null ? this.vulnerabilities.hashCode() : 0);
-        hash = 47 * hash + (this.relatedDependencies != null ? this.relatedDependencies.hashCode() : 0);
-        hash = 47 * hash + (this.projectReferences != null ? this.projectReferences.hashCode() : 0);
-        hash = 47 * hash + (this.availableVersions != null ? this.availableVersions.hashCode() : 0);
+        for (Object field : new Object[]{this.actualFilePath, this.filePath, this.fileName, this.fileExtension, this.md5sum,
+                this.sha1sum, this.identifiers, this.vendorEvidence, this.productEvidence, this.versionEvidence,
+                this.description, this.license, this.vulnerabilities, this.relatedDependencies, this.projectReferences,
+                this.availableVersions}) {
+            hash = 47 * hash + ObjectUtils.hashCode(field);
+        }
         return hash;
     }
 
