@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -38,6 +36,8 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Analyzer which will attempt to locate a dependency on a Nexus service by SHA-1 digest of the dependency.
@@ -63,7 +63,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(NexusAnalyzer.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(NexusAnalyzer.class);
 
     /**
      * The name of the analyzer.
@@ -107,10 +107,10 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.info("Enabling Nexus analyzer");
                 retval = true;
             } else {
-                LOGGER.fine("Nexus analyzer disabled, using Central instead");
+                LOGGER.debug("Nexus analyzer disabled, using Central instead");
             }
         } catch (InvalidSettingException ise) {
-            LOGGER.warning("Invalid setting. Disabling Nexus analyzer");
+            LOGGER.warn("Invalid setting. Disabling Nexus analyzer");
         }
 
         return retval;
@@ -133,21 +133,21 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void initializeFileTypeAnalyzer() throws Exception {
-        LOGGER.fine("Initializing Nexus Analyzer");
-        LOGGER.fine(String.format("Nexus Analyzer enabled: %s", isEnabled()));
+        LOGGER.debug("Initializing Nexus Analyzer");
+        LOGGER.debug("Nexus Analyzer enabled: {}", isEnabled());
         if (isEnabled()) {
             final String searchUrl = Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL);
-            LOGGER.fine(String.format("Nexus Analyzer URL: %s", searchUrl));
+            LOGGER.debug("Nexus Analyzer URL: {}", searchUrl);
             try {
                 searcher = new NexusSearch(new URL(searchUrl));
                 if (!searcher.preflightRequest()) {
-                    LOGGER.warning("There was an issue getting Nexus status. Disabling analyzer.");
+                    LOGGER.warn("There was an issue getting Nexus status. Disabling analyzer.");
                     setEnabled(false);
                 }
             } catch (MalformedURLException mue) {
                 // I know that initialize can throw an exception, but we'll
                 // just disable the analyzer if the URL isn't valid
-                LOGGER.warning(String.format("Property %s not a valid URL. Nexus Analyzer disabled", searchUrl));
+                LOGGER.warn("Property {} not a valid URL. Nexus Analyzer disabled", searchUrl);
                 setEnabled(false);
             }
         }
@@ -209,7 +209,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
             final MavenArtifact ma = searcher.searchSha1(dependency.getSha1sum());
             dependency.addAsEvidence("nexus", ma, Confidence.HIGH);
             boolean pomAnalyzed = false;
-            LOGGER.fine("POM URL " + ma.getPomUrl());
+            LOGGER.debug("POM URL {}", ma.getPomUrl());
             for (Evidence e : dependency.getVendorEvidence()) {
                 if ("pom".equals(e.getSource())) {
                     pomAnalyzed = true;
@@ -222,18 +222,16 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
                     final File baseDir = Settings.getTempDirectory();
                     pomFile = File.createTempFile("pom", ".xml", baseDir);
                     if (!pomFile.delete()) {
-                        final String msg = String.format("Unable to fetch pom.xml for %s from Nexus repository; "
-                                + "this could result in undetected CPE/CVEs.", dependency.getFileName());
-                        LOGGER.warning(msg);
-                        LOGGER.fine("Unable to delete temp file");
+                        LOGGER.warn("Unable to fetch pom.xml for {} from Nexus repository; "
+                            + "this could result in undetected CPE/CVEs.", dependency.getFileName());
+                        LOGGER.debug("Unable to delete temp file");
                     }
-                    LOGGER.fine(String.format("Downloading %s", ma.getPomUrl()));
+                    LOGGER.debug("Downloading {}", ma.getPomUrl());
                     Downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);
                     PomUtils.analyzePOM(dependency, pomFile);
                 } catch (DownloadFailedException ex) {
-                    final String msg = String.format("Unable to download pom.xml for %s from Nexus repository; "
-                            + "this could result in undetected CPE/CVEs.", dependency.getFileName());
-                    LOGGER.warning(msg);
+                    LOGGER.warn("Unable to download pom.xml for {} from Nexus repository; "
+                        + "this could result in undetected CPE/CVEs.", dependency.getFileName());
                 } finally {
                     if (pomFile != null && !FileUtils.deleteQuietly(pomFile)) {
                         pomFile.deleteOnExit();
@@ -245,11 +243,11 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.info(String.format("invalid sha-1 hash on %s", dependency.getFileName()));
         } catch (FileNotFoundException fnfe) {
             //dependency.addAnalysisException(new AnalysisException("Artifact not found on repository"));
-            LOGGER.fine(String.format("Artifact not found in repository '%s'", dependency.getFileName()));
-            LOGGER.log(Level.FINE, fnfe.getMessage(), fnfe);
+            LOGGER.debug("Artifact not found in repository '{}'", dependency.getFileName());
+            LOGGER.debug(fnfe.getMessage(), fnfe);
         } catch (IOException ioe) {
             //dependency.addAnalysisException(new AnalysisException("Could not connect to repository", ioe));
-            LOGGER.log(Level.FINE, "Could not connect to nexus repository", ioe);
+            LOGGER.debug("Could not connect to nexus repository", ioe);
         }
     }
 }

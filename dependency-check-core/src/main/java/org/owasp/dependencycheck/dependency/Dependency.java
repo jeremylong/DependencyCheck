@@ -27,11 +27,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A program dependency. This object is one of the core components within DependencyCheck. It is used to collect information about
@@ -45,7 +45,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(Dependency.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(Dependency.class);
     /**
      * The actual file path of the dependency on disk.
      */
@@ -345,12 +345,12 @@ public class Dependency implements Serializable, Comparable<Dependency> {
                     final String url = "http://search.maven.org/#search|ga|1|1%3A%22" + this.getSha1sum() + "%22";
                     i.setUrl(url);
                     //i.setUrl(mavenArtifact.getArtifactUrl());
-                    LOGGER.fine(String.format("Already found identifier %s. Confidence set to highest", i.getValue()));
+                    LOGGER.debug("Already found identifier {}. Confidence set to highest", i.getValue());
                     break;
                 }
             }
             if (!found) {
-                LOGGER.fine(String.format("Adding new maven identifier %s", mavenArtifact.toString()));
+                LOGGER.debug("Adding new maven identifier {}", mavenArtifact.toString());
                 this.addIdentifier("maven", mavenArtifact.toString(), mavenArtifact.getArtifactUrl(), Confidence.HIGHEST);
             }
         }
@@ -564,13 +564,11 @@ public class Dependency implements Serializable, Comparable<Dependency> {
             md5 = Checksum.getMD5Checksum(file);
             sha1 = Checksum.getSHA1Checksum(file);
         } catch (IOException ex) {
-            final String msg = String.format("Unable to read '%s' to determine hashes.", file.getName());
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.warn("Unable to read '{}' to determine hashes.", file.getName());
+            LOGGER.debug("", ex);
         } catch (NoSuchAlgorithmException ex) {
-            final String msg = "Unable to use MD5 of SHA1 checksums.";
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.warn("Unable to use MD5 of SHA1 checksums.");
+            LOGGER.debug("", ex);
         }
         this.setMd5sum(md5);
         this.setSha1sum(sha1);
@@ -656,10 +654,10 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      */
     public void addRelatedDependency(Dependency dependency) {
         if (this == dependency) {
-            LOGGER.warning("Attempted to add a circular reference - please post the log file to issue #172 here "
+            LOGGER.warn("Attempted to add a circular reference - please post the log file to issue #172 here "
                     + "https://github.com/jeremylong/DependencyCheck/issues/172 ");
-            LOGGER.log(Level.FINE, "this: {0}", this.toString());
-            LOGGER.log(Level.FINE, "dependency: {0}", dependency.toString());
+            LOGGER.debug("this: {}", this);
+            LOGGER.debug("dependency: {}", dependency);
         } else {
             relatedDependencies.add(dependency);
         }

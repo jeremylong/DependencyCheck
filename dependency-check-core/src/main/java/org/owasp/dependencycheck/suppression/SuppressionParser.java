@@ -25,11 +25,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -44,7 +45,7 @@ public class SuppressionParser {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(SuppressionParser.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(SuppressionParser.class);
     /**
      * JAXP Schema Language. Source: http://docs.oracle.com/javase/tutorial/jaxp/sax/validation.html
      */
@@ -71,14 +72,14 @@ public class SuppressionParser {
             fis = new FileInputStream(file);
             return parseSuppressionRules(fis);
         } catch (IOException ex) {
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
             throw new SuppressionParseException(ex);
         } finally {
             if (fis != null) {
                 try {
                     fis.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINE, "Unable to close stream", ex);
+                    LOGGER.debug("Unable to close stream", ex);
                 }
             }
         }
@@ -113,16 +114,16 @@ public class SuppressionParser {
 
             return handler.getSuppressionRules();
         } catch (ParserConfigurationException ex) {
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
             throw new SuppressionParseException(ex);
         } catch (SAXException ex) {
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
             throw new SuppressionParseException(ex);
         } catch (FileNotFoundException ex) {
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
             throw new SuppressionParseException(ex);
         } catch (IOException ex) {
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
             throw new SuppressionParseException(ex);
         }
     }

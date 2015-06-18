@@ -18,11 +18,11 @@
 package org.owasp.dependencycheck.data.update;
 
 import java.net.MalformedURLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class responsible for updating the NVD CVE and CPE data stores.
@@ -34,7 +34,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
     /**
      * The logger
      */
-    private static final Logger LOGGER = Logger.getLogger(NvdCveUpdater.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(NvdCveUpdater.class);
 
     /**
      * <p>
@@ -50,17 +50,17 @@ public class NvdCveUpdater implements CachedWebDataSource {
                 task.update();
             }
         } catch (MalformedURLException ex) {
-            LOGGER.log(Level.WARNING,
+            LOGGER.warn(
                     "NVD CVE properties files contain an invalid URL, unable to update the data to use the most current data.");
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
         } catch (DownloadFailedException ex) {
-            LOGGER.log(Level.WARNING,
+            LOGGER.warn(
                     "Unable to download the NVD CVE data; the results may not include the most recent CPE/CVEs from the NVD.");
             if (Settings.getString(Settings.KEYS.PROXY_SERVER) == null) {
-                LOGGER.log(Level.INFO,
+                LOGGER.info(
                         "If you are behind a proxy you may need to configure dependency-check to use the proxy.");
             }
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
         }
     }
 }

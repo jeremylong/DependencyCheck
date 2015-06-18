@@ -24,11 +24,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -43,7 +44,7 @@ public class PomParser {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(PomParser.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(PomParser.class);
 
     /**
      * Parses the given xml file and returns a Model object containing only the fields dependency-check requires.
@@ -58,14 +59,14 @@ public class PomParser {
             fis = new FileInputStream(file);
             return parse(fis);
         } catch (IOException ex) {
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
             throw new PomParseException(ex);
         } finally {
             if (fis != null) {
                 try {
                     fis.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINE, "Unable to close stream", ex);
+                    LOGGER.debug("Unable to close stream", ex);
                 }
             }
         }
@@ -96,16 +97,16 @@ public class PomParser {
 
             return handler.getModel();
         } catch (ParserConfigurationException ex) {
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
             throw new PomParseException(ex);
         } catch (SAXException ex) {
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
             throw new PomParseException(ex);
         } catch (FileNotFoundException ex) {
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
             throw new PomParseException(ex);
         } catch (IOException ex) {
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.debug("", ex);
             throw new PomParseException(ex);
         }
     }

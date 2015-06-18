@@ -18,13 +18,14 @@
 package org.owasp.dependencycheck.maven;
 
 import java.util.List;
-import java.util.logging.Logger;
 import org.apache.maven.project.MavenProject;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.CPEAnalyzer;
 import org.owasp.dependencycheck.analyzer.FileTypeAnalyzer;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A modified version of the core engine specifically designed to persist some data between multiple executions of a multi-module
@@ -37,7 +38,7 @@ public class Engine extends org.owasp.dependencycheck.Engine {
     /**
      * The logger.
      */
-    private static final transient Logger LOGGER = Logger.getLogger(Engine.class.getName());
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(Engine.class);
     /**
      * A key used to persist an object in the MavenProject.
      */
@@ -75,9 +76,9 @@ public class Engine extends org.owasp.dependencycheck.Engine {
     public void analyzeDependencies() {
         final MavenProject root = getExecutionRoot();
         if (root != null) {
-            LOGGER.fine(String.format("Checking root project, %s, if updates have already been completed", root.getArtifactId()));
+            LOGGER.debug("Checking root project, {}, if updates have already been completed", root.getArtifactId());
         } else {
-            LOGGER.fine("Checking root project, null, if updates have already been completed");
+            LOGGER.debug("Checking root project, null, if updates have already been completed");
         }
         if (root != null && root.getContextValue(UPDATE_EXECUTED_FLAG) != null) {
             System.setProperty(Settings.KEYS.AUTO_UPDATE, Boolean.FALSE.toString());

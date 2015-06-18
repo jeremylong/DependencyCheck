@@ -25,8 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -54,12 +52,6 @@ import org.owasp.dependencycheck.utils.Settings;
         requiresOnline = true
 )
 public class AggregateMojo extends BaseDependencyCheckMojo {
-
-    /**
-     * Logger field reference.
-     */
-    private static final Logger LOGGER = Logger.getLogger(AggregateMojo.class.getName());
-
     /**
      * Executes the aggregate dependency-check goal. This runs dependency-check and generates the subsequent reports.
      *
@@ -76,7 +68,9 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
             for (MavenProject current : getReactorProjects()) {
                 final File dataFile = getDataFile(current);
                 if (dataFile == null) { //dc was never run on this project. write the ser to the target.
-                    LOGGER.fine(String.format("Executing dependency-check on %s", current.getName()));
+                    if (getLog().isDebugEnabled()) {
+                        getLog().debug(String.format("Executing dependency-check on %s", current.getName()));
+                    }
                     generateDataFile(engine, current);
                 }
             }
@@ -90,22 +84,32 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                 for (MavenProject reportOn : childProjects) {
                     final List<Dependency> childDeps = readDataFile(reportOn);
                     if (childDeps != null && !childDeps.isEmpty()) {
-                        LOGGER.fine(String.format("Adding %d dependencies from %s", childDeps.size(), reportOn.getName()));
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug(String.format("Adding %d dependencies from %s", childDeps.size(), reportOn.getName()));
+                        }
                         dependencies.addAll(childDeps);
                     } else {
-                        LOGGER.fine(String.format("No dependencies read for %s", reportOn.getName()));
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug(String.format("No dependencies read for %s", reportOn.getName()));
+                        }
                     }
                 }
                 engine.getDependencies().clear();
                 engine.getDependencies().addAll(dependencies);
                 final DependencyBundlingAnalyzer bundler = new DependencyBundlingAnalyzer();
                 try {
-                    LOGGER.fine(String.format("Dependency count pre-bundler: %s", engine.getDependencies().size()));
+                    if (getLog().isDebugEnabled()) {
+                        getLog().debug(String.format("Dependency count pre-bundler: %s", engine.getDependencies().size()));
+                    }
                     bundler.analyze(null, engine);
-                    LOGGER.fine(String.format("Dependency count post-bundler: %s", engine.getDependencies().size()));
+                    if (getLog().isDebugEnabled()) {
+                        getLog().debug(String.format("Dependency count post-bundler: %s", engine.getDependencies().size()));
+                    }
                 } catch (AnalysisException ex) {
-                    LOGGER.log(Level.WARNING, "An error occured grouping the dependencies; duplicate entries may exist in the report", ex);
-                    LOGGER.log(Level.FINE, "Bundling Exception", ex);
+                    getLog().warn("An error occured grouping the dependencies; duplicate entries may exist in the report", ex);
+                    if (getLog().isDebugEnabled()) {
+                        getLog().debug("Bundling Exception", ex);
+                    }
                 }
 
                 File outputDir = getCorrectOutputDirectory(current);
@@ -133,17 +137,23 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         }
         final Set<MavenProject> descendants = new HashSet<MavenProject>();
         int size = 0;
-        LOGGER.fine(String.format("Collecting descendants of %s", project.getName()));
+        if (getLog().isDebugEnabled()) {
+            getLog().debug(String.format("Collecting descendants of %s", project.getName()));
+        }
         for (String m : project.getModules()) {
             for (MavenProject mod : getReactorProjects()) {
                 try {
                     File mpp = new File(project.getBasedir(), m);
                     mpp = mpp.getCanonicalFile();
                     if (mpp.compareTo(mod.getBasedir()) == 0 && descendants.add(mod)) {
-                        LOGGER.fine(String.format("Decendent module %s added", mod.getName()));
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug(String.format("Decendent module %s added", mod.getName()));
+                        };
                     }
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINE, "Unable to determine module path", ex);
+                    if (getLog().isDebugEnabled()) {
+                        getLog().debug("Unable to determine module path", ex);
+                    }
                 }
             }
         }
@@ -152,12 +162,16 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
             for (MavenProject p : getReactorProjects()) {
                 if (project.equals(p.getParent()) || descendants.contains(p.getParent())) {
                     if (descendants.add(p)) {
-                        LOGGER.fine(String.format("Decendent %s added", p.getName()));
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug(String.format("Decendent %s added", p.getName()));
+                        }
                     }
                     for (MavenProject modTest : getReactorProjects()) {
                         if (p.getModules() != null && p.getModules().contains(modTest.getName())
                                 && descendants.add(modTest)) {
-                            LOGGER.fine(String.format("Decendent %s added", modTest.getName()));
+                            if (getLog().isDebugEnabled()) {
+                                getLog().debug(String.format("Decendent %s added", modTest.getName()));
+                            }
                         }
                     }
                 }
@@ -167,16 +181,22 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                             File mpp = new File(dec.getBasedir(), mod);
                             mpp = mpp.getCanonicalFile();
                             if (mpp.compareTo(p.getBasedir()) == 0 && descendants.add(p)) {
-                                LOGGER.fine(String.format("Decendent module %s added", p.getName()));
+                                if (getLog().isDebugEnabled()) {
+                                    getLog().debug(String.format("Decendent module %s added", p.getName()));
+                                }
                             }
                         } catch (IOException ex) {
-                            LOGGER.log(Level.FINE, "Unable to determine module path", ex);
+                            if (getLog().isDebugEnabled()) {
+                                getLog().debug("Unable to determine module path", ex);
+                            }
                         }
                     }
                 }
             }
         } while (size != 0 && size != descendants.size());
-        LOGGER.fine(String.format("%s has %d children", project, descendants.size()));
+        if (getLog().isDebugEnabled()) {
+            getLog().debug(String.format("%s has %d children", project, descendants.size()));
+        }
         return descendants;
     }
 
@@ -202,7 +222,9 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         try {
             engine = initializeEngine();
         } catch (DatabaseException ex) {
-            LOGGER.log(Level.FINE, "Database connection error", ex);
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Database connection error", ex);
+            }
             throw new MojoExecutionException("An exception occured connecting to the local database. Please see the log file for more details.", ex);
         }
         return generateDataFile(engine, getProject());
@@ -218,7 +240,9 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
      * @throws MojoFailureException thrown if dependency-check is configured to fail the build if severe CVEs are identified.
      */
     protected Engine generateDataFile(Engine engine, MavenProject project) throws MojoExecutionException, MojoFailureException {
-        LOGGER.fine(String.format("Begin Scanning: %s", project.getName()));
+        if (getLog().isDebugEnabled()) {
+            getLog().debug(String.format("Begin Scanning: %s", project.getName()));
+        }
         engine.getDependencies().clear();
         engine.resetFileTypeAnalyzers();
         scanArtifacts(project, engine);

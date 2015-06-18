@@ -25,8 +25,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -49,6 +47,8 @@ import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CPEAnalyzer is a utility class that takes a project dependency and attempts to discern if there is an associated CPE. It uses
@@ -61,7 +61,7 @@ public class CPEAnalyzer implements Analyzer {
     /**
      * The Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(CPEAnalyzer.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(CPEAnalyzer.class);
     /**
      * The maximum number of query results to return.
      */
@@ -134,15 +134,15 @@ public class CPEAnalyzer implements Analyzer {
      * process.
      */
     public void open() throws IOException, DatabaseException {
-        LOGGER.log(Level.FINE, "Opening the CVE Database");
+        LOGGER.debug("Opening the CVE Database");
         cve = new CveDB();
         cve.open();
-        LOGGER.log(Level.FINE, "Creating the Lucene CPE Index");
+        LOGGER.debug("Creating the Lucene CPE Index");
         cpe = CpeMemoryIndex.getInstance();
         try {
             cpe.open(cve);
         } catch (IndexException ex) {
-            LOGGER.log(Level.FINE, "IndexException", ex);
+            LOGGER.debug("IndexException", ex);
             throw new DatabaseException(ex);
         }
     }
@@ -180,11 +180,11 @@ public class CPEAnalyzer implements Analyzer {
         for (Confidence confidence : Confidence.values()) {
             if (dependency.getVendorEvidence().contains(confidence)) {
                 vendors = addEvidenceWithoutDuplicateTerms(vendors, dependency.getVendorEvidence(), confidence);
-                LOGGER.fine(String.format("vendor search: %s", vendors));
+                LOGGER.debug("vendor search: {}", vendors);
             }
             if (dependency.getProductEvidence().contains(confidence)) {
                 products = addEvidenceWithoutDuplicateTerms(products, dependency.getProductEvidence(), confidence);
-                LOGGER.fine(String.format("product search: %s", products));
+                LOGGER.debug("product search: {}", products);
             }
             if (!vendors.isEmpty() && !products.isEmpty()) {
                 final List<IndexEntry> entries = searchCPE(vendors, products, dependency.getProductEvidence().getWeighting(),
@@ -194,11 +194,11 @@ public class CPEAnalyzer implements Analyzer {
                 }
                 boolean identifierAdded = false;
                 for (IndexEntry e : entries) {
-                    LOGGER.fine(String.format("Verifying entry: %s", e.toString()));
+                    LOGGER.debug("Verifying entry: {}", e);
                     if (verifyEntry(e, dependency)) {
                         final String vendor = e.getVendor();
                         final String product = e.getProduct();
-                        LOGGER.fine(String.format("identified vendor/product: %s/%s", vendor, product));
+                        LOGGER.debug("identified vendor/product: {}/{}", vendor, product);
                         identifierAdded |= determineIdentifiers(dependency, vendor, product, confidence);
                     }
                 }
@@ -281,13 +281,11 @@ public class CPEAnalyzer implements Analyzer {
             }
             return ret;
         } catch (ParseException ex) {
-            final String msg = String.format("Unable to parse: %s", searchString);
-            LOGGER.log(Level.WARNING, "An error occured querying the CPE data. See the log for more details.");
-            LOGGER.log(Level.INFO, msg, ex);
+            LOGGER.warn("An error occured querying the CPE data. See the log for more details.");
+            LOGGER.info("Unable to parse: {}", searchString, ex);
         } catch (IOException ex) {
-            final String msg = String.format("IO Error with search string: %s", searchString);
-            LOGGER.log(Level.WARNING, "An error occured reading CPE data. See the log for more details.");
-            LOGGER.log(Level.INFO, msg, ex);
+            LOGGER.warn("An error occured reading CPE data. See the log for more details.");
+            LOGGER.info("IO Error with search string: {}", searchString, ex);
         }
         return null;
     }

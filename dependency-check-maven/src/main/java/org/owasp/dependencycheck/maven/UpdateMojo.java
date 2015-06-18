@@ -18,8 +18,6 @@
 package org.owasp.dependencycheck.maven;
 
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -41,11 +39,6 @@ import org.owasp.dependencycheck.utils.Settings;
         requiresOnline = true
 )
 public class UpdateMojo extends BaseDependencyCheckMojo {
-
-    /**
-     * Logger field reference.
-     */
-    private static final Logger LOGGER = Logger.getLogger(UpdateMojo.class.getName());
 
     /**
      * Returns false; this mojo cannot generate a report.
@@ -70,7 +63,9 @@ public class UpdateMojo extends BaseDependencyCheckMojo {
             engine = initializeEngine();
             engine.update();
         } catch (DatabaseException ex) {
-            LOGGER.log(Level.FINE, "Database connection error", ex);
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Database connection error", ex);
+            }
             throw new MojoExecutionException("An exception occured connecting to the local database. Please see the log file for more details.", ex);
         }
         engine.cleanup();

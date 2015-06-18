@@ -5,11 +5,12 @@ import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.List;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 
@@ -17,13 +18,13 @@ import static org.junit.Assert.*;
  * Created by colezlaw on 10/13/14.
  */
 public class CentralSearchTest extends BaseTest {
-    private static final Logger LOGGER = Logger.getLogger(CentralSearchTest.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(CentralSearchTest.class);
     private CentralSearch searcher;
 
     @Before
     public void setUp() throws Exception {
         String centralUrl = Settings.getString(Settings.KEYS.ANALYZER_CENTRAL_URL);
-        LOGGER.fine(centralUrl);
+        LOGGER.debug(centralUrl);
         searcher = new CentralSearch(new URL(centralUrl));
     }
 

@@ -19,7 +19,6 @@ package org.owasp.dependencycheck.data.nexus;
 
 import java.io.FileNotFoundException;
 import java.net.URL;
-import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Assume;
@@ -28,16 +27,18 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NexusSearchTest extends BaseTest {
 
-    private static final Logger LOGGER = Logger.getLogger(NexusSearchTest.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(NexusSearchTest.class);
     private NexusSearch searcher;
 
     @Before
     public void setUp() throws Exception {
         String nexusUrl = Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL);
-        LOGGER.fine(nexusUrl);
+        LOGGER.debug(nexusUrl);
         searcher = new NexusSearch(new URL(nexusUrl));
         Assume.assumeTrue(searcher.preflightRequest());
     }

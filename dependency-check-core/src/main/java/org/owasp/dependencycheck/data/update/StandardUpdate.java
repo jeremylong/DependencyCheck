@@ -26,8 +26,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
@@ -40,6 +38,8 @@ import org.owasp.dependencycheck.utils.DateUtil;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class responsible for updating the NVDCVE data store.
@@ -51,7 +51,7 @@ public class StandardUpdate {
     /**
      * Static logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(StandardUpdate.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(StandardUpdate.class);
     /**
      * The max thread pool size to use when downloading files.
      */
@@ -109,7 +109,7 @@ public class StandardUpdate {
                 return;
             }
             if (maxUpdates > 3) {
-                LOGGER.log(Level.INFO,
+                LOGGER.info(
                         "NVD CVE requires several updates; this could take a couple of minutes.");
             }
             if (maxUpdates > 0) {
@@ -139,19 +139,19 @@ public class StandardUpdate {
                     downloadExecutors.shutdownNow();
                     processExecutor.shutdownNow();
 
-                    LOGGER.log(Level.FINE, "Thread was interrupted during download", ex);
+                    LOGGER.debug("Thread was interrupted during download", ex);
                     throw new UpdateException("The download was interrupted", ex);
                 } catch (ExecutionException ex) {
                     downloadExecutors.shutdownNow();
                     processExecutor.shutdownNow();
 
-                    LOGGER.log(Level.FINE, "Thread was interrupted during download execution", ex);
+                    LOGGER.debug("Thread was interrupted during download execution", ex);
                     throw new UpdateException("The execution of the download was interrupted", ex);
                 }
                 if (task == null) {
                     downloadExecutors.shutdownNow();
                     processExecutor.shutdownNow();
-                    LOGGER.log(Level.FINE, "Thread was interrupted during download");
+                    LOGGER.debug("Thread was interrupted during download");
                     throw new UpdateException("The download was interrupted; unable to complete the update");
                 } else {
                     processFutures.add(task);
@@ -166,11 +166,11 @@ public class StandardUpdate {
                     }
                 } catch (InterruptedException ex) {
                     processExecutor.shutdownNow();
-                    LOGGER.log(Level.FINE, "Thread was interrupted during processing", ex);
+                    LOGGER.debug("Thread was interrupted during processing", ex);
                     throw new UpdateException(ex);
                 } catch (ExecutionException ex) {
                     processExecutor.shutdownNow();
-                    LOGGER.log(Level.FINE, "Execution Exception during process", ex);
+                    LOGGER.debug("Execution Exception during process", ex);
                     throw new UpdateException(ex);
                 } finally {
                     processExecutor.shutdown();
@@ -179,9 +179,9 @@ public class StandardUpdate {
 
             if (maxUpdates >= 1) { //ensure the modified file date gets written (we may not have actually updated it)
                 properties.save(updateable.get(MODIFIED));
-                LOGGER.log(Level.INFO, "Begin database maintenance.");
+                LOGGER.info("Begin database maintenance.");
                 cveDB.cleanupDatabase();
-                LOGGER.log(Level.INFO, "End database maintenance.");
+                LOGGER.info("End database maintenance.");
             }
         } finally {
             closeDataStores();
@@ -204,10 +204,10 @@ public class StandardUpdate {
             updates = retrieveCurrentTimestampsFromWeb();
         } catch (InvalidDataException ex) {
             final String msg = "Unable to retrieve valid timestamp from nvd cve downloads page";
-            LOGGER.log(Level.FINE, msg, ex);
+            LOGGER.debug(msg, ex);
             throw new DownloadFailedException(msg, ex);
         } catch (InvalidSettingException ex) {
-            LOGGER.log(Level.FINE, "Invalid setting found when retrieving timestamps", ex);
+            LOGGER.debug("Invalid setting found when retrieving timestamps", ex);
             throw new DownloadFailedException("Invalid settings", ex);
         }
 
@@ -238,9 +238,8 @@ public class StandardUpdate {
                             try {
                                 currentTimestamp = Long.parseLong(properties.getProperty(DatabaseProperties.LAST_UPDATED_BASE + entry.getId(), "0"));
                             } catch (NumberFormatException ex) {
-                                final String msg = String.format("Error parsing '%s' '%s' from nvdcve.lastupdated",
-                                        DatabaseProperties.LAST_UPDATED_BASE, entry.getId());
-                                LOGGER.log(Level.FINE, msg, ex);
+                                LOGGER.debug("Error parsing '{}' '{}' from nvdcve.lastupdated",
+                                    DatabaseProperties.LAST_UPDATED_BASE, entry.getId(), ex);
                             }
                             if (currentTimestamp == entry.getTimestamp()) {
                                 entry.setNeedsUpdate(false);
@@ -249,9 +248,8 @@ public class StandardUpdate {
                     }
                 }
             } catch (NumberFormatException ex) {
-                final String msg = "An invalid schema version or timestamp exists in the data.properties file.";
-                LOGGER.log(Level.WARNING, msg);
-                LOGGER.log(Level.FINE, "", ex);
+                LOGGER.warn("An invalid schema version or timestamp exists in the data.properties file.");
+                LOGGER.debug( "", ex);
             }
         }
         return updates;
@@ -295,7 +293,7 @@ public class StandardUpdate {
             try {
                 cveDB.close();
             } catch (Throwable ignore) {
-                LOGGER.log(Level.FINEST, "Error closing the cveDB", ignore);
+                LOGGER.trace("Error closing the cveDB", ignore);
             }
         }
     }
@@ -314,7 +312,7 @@ public class StandardUpdate {
             cveDB.open();
         } catch (DatabaseException ex) {
             closeDataStores();
-            LOGGER.log(Level.FINE, "Database Exception opening databases", ex);
+            LOGGER.debug("Database Exception opening databases", ex);
             throw new UpdateException("Error updating the CPE/CVE data, please see the log file for more details.");
         }
     }

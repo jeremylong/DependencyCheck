@@ -24,8 +24,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -37,6 +35,8 @@ import org.owasp.dependencycheck.data.update.xml.NvdCve12Handler;
 import org.owasp.dependencycheck.data.update.xml.NvdCve20Handler;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 /**
@@ -49,7 +49,7 @@ public class ProcessTask implements Callable<ProcessTask> {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(ProcessTask.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProcessTask.class);
     /**
      * A field to store any update exceptions that occur during the "call".
      */
@@ -158,8 +158,7 @@ public class ProcessTask implements Callable<ProcessTask> {
      * @throws UpdateException thrown if there is an error loading the data into the database
      */
     private void processFiles() throws UpdateException {
-        String msg = String.format("Processing Started for NVD CVE - %s", filePair.getNvdCveInfo().getId());
-        LOGGER.log(Level.INFO, msg);
+        LOGGER.info("Processing Started for NVD CVE - {}", filePair.getNvdCveInfo().getId());
         try {
             importXML(filePair.getFirst(), filePair.getSecond());
             cveDB.commit();
@@ -181,7 +180,6 @@ public class ProcessTask implements Callable<ProcessTask> {
         } finally {
             filePair.cleanup();
         }
-        msg = String.format("Processing Complete for NVD CVE - %s", filePair.getNvdCveInfo().getId());
-        LOGGER.log(Level.INFO, msg);
+        LOGGER.info("Processing Complete for NVD CVE - {}", filePair.getNvdCveInfo().getId());
     }
 }

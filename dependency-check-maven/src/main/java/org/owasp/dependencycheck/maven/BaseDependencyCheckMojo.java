@@ -29,8 +29,6 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -66,10 +64,6 @@ import org.owasp.dependencycheck.utils.Settings;
 public abstract class BaseDependencyCheckMojo extends AbstractMojo implements MavenReport {
 
     //<editor-fold defaultstate="collapsed" desc="Private fields">
-    /**
-     * Logger field reference.
-     */
-    private static final Logger LOGGER = Logger.getLogger(BaseDependencyCheckMojo.class.getName());
     /**
      * The properties file location.
      */
@@ -407,7 +401,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         } catch (MojoExecutionException ex) {
             throw new MavenReportException(ex.getMessage(), ex);
         } catch (MojoFailureException ex) {
-            LOGGER.warning("Vulnerabilities were identifies that exceed the CVSS threshold for failing the build");
+            getLog().warn("Vulnerabilities were identifies that exceed the CVSS threshold for failing the build");
         }
     }
 
@@ -446,14 +440,18 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @return the directory to write the report(s)
      */
     protected File getDataFile(MavenProject current) {
-        LOGGER.fine(String.format("Getting data filefor %s using key '%s'", current.getName(), getDataFileContextKey()));
+        if (getLog().isDebugEnabled()) {
+            getLog().debug(String.format("Getting data filefor %s using key '%s'", current.getName(), getDataFileContextKey()));
+        }
         final Object obj = current.getContextValue(getDataFileContextKey());
         if (obj != null) {
             if (obj instanceof File) {
                 return (File) obj;
             }
         } else {
-            LOGGER.fine("Context value not found");
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Context value not found");
+            }
         }
         return null;
     }
@@ -477,8 +475,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         final MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
                         d.addAsEvidence("pom", ma, Confidence.HIGHEST);
                         d.addProjectReference(project.getName());
-                        LOGGER.fine(String.format("Adding project reference %s on dependency %s", project.getName(),
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug(String.format("Adding project reference %s on dependency %s", project.getName(),
                                 d.getDisplayFileName()));
+                        }
                         if (metadataSource != null) {
                             try {
                                 final DependencyVersion currentVersion = new DependencyVersion(a.getVersion());
@@ -491,20 +491,26 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                                     }
                                 }
                             } catch (ArtifactMetadataRetrievalException ex) {
-                                LOGGER.log(Level.WARNING,
+                                getLog().warn(
                                         "Unable to check for new versions of dependencies; see the log for more details.");
-                                LOGGER.log(Level.FINE, null, ex);
+                                if (getLog().isDebugEnabled()) {
+                                    getLog().debug("", ex);
+                                }
                             } catch (Throwable t) {
-                                LOGGER.log(Level.WARNING,
+                                getLog().warn(
                                         "Unexpected error occured checking for new versions; see the log for more details.");
-                                LOGGER.log(Level.FINE, "", t);
+                                if (getLog().isDebugEnabled()) {
+                                    getLog().debug("", t);
+                                }
                             }
                         }
                     }
                 } else {
-                    final String msg = String.format("More then 1 dependency was identified in first pass scan of '%s:%s:%s'",
+                    if (getLog().isDebugEnabled()) {
+                        final String msg = String.format("More then 1 dependency was identified in first pass scan of '%s:%s:%s'",
                             a.getGroupId(), a.getArtifactId(), a.getVersion());
-                    LOGGER.fine(msg);
+                        getLog().debug(msg);
+                    }
                 }
             }
         }
@@ -570,7 +576,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         } else if ("VULN".equalsIgnoreCase(this.format)) {
             return "dependency-check-vulnerability";
         } else {
-            LOGGER.log(Level.WARNING, "Unknown report format used during site generation.");
+            getLog().warn("Unknown report format used during site generation.");
             return "dependency-check-report";
         }
     }
@@ -613,26 +619,30 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             mojoProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);
             Settings.mergeProperties(mojoProperties);
         } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, "Unable to load the dependency-check ant task.properties file.");
-            LOGGER.log(Level.FINE, null, ex);
+            getLog().warn("Unable to load the dependency-check ant task.properties file.");
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("", ex);
+            }
         } finally {
             if (mojoProperties != null) {
                 try {
                     mojoProperties.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINEST, null, ex);
+                    if (getLog().isDebugEnabled()) {
+                        getLog().debug("", ex);
+                    }
                 }
             }
         }
 
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
         if (externalReport != null) {
-            LOGGER.warning("The 'externalReport' option was set; this configuration option has been removed. "
-                    + "Please update the dependency-check-maven plugin's configuration");
+            getLog().warn("The 'externalReport' option was set; this configuration option has been removed. "
+                + "Please update the dependency-check-maven plugin's configuration");
         }
 
         if (proxyUrl != null && !proxyUrl.isEmpty()) {
-            LOGGER.warning("Deprecated configuration detected, proxyUrl will be ignored; use the maven settings " + "to configure the proxy instead");
+            getLog().warn("Deprecated configuration detected, proxyUrl will be ignored; use the maven settings " + "to configure the proxy instead");
         }
         final Proxy proxy = getMavenProxy();
         if (proxy != null) {
@@ -739,8 +749,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 } else if (proxies.size() == 1) {
                     return proxies.get(0);
                 } else {
-                    LOGGER.warning("Multiple proxy definitions exist in the Maven settings. In the dependency-check "
-                            + "configuration set the mavenSettingsProxyId so that the correct proxy will be used.");
+                    getLog().warn("Multiple proxy definitions exist in the Maven settings. In the dependency-check "
+                        + "configuration set the mavenSettingsProxyId so that the correct proxy will be used.");
                     throw new IllegalStateException("Ambiguous proxy definition");
                 }
             }
@@ -812,7 +822,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             cve.open();
             prop = cve.getDatabaseProperties();
         } catch (DatabaseException ex) {
-            LOGGER.log(Level.FINE, "Unable to retrieve DB Properties", ex);
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Unable to retrieve DB Properties", ex);
+            }
         } finally {
             if (cve != null) {
                 cve.close();
@@ -822,13 +834,17 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         try {
             r.generateReports(outputDir.getAbsolutePath(), format);
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE,
+            getLog().error(
                     "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
-            LOGGER.log(Level.FINE, null, ex);
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("", ex);
+            }
         } catch (Throwable ex) {
-            LOGGER.log(Level.SEVERE,
-                    "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
-            LOGGER.log(Level.FINE, null, ex);
+            getLog().error(
+                "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("", ex);
+            }
         }
     }
 
@@ -903,7 +919,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             if (summary.length() > 0) {
                 final String msg = String.format("%n%n" + "One or more dependencies were identified with known vulnerabilities in %s:%n%n%s"
                         + "%n%nSee the dependency-check report for more details.%n%n", mp.getName(), summary.toString());
-                LOGGER.log(Level.WARNING, msg);
+                getLog().warn(msg);
             }
         }
     }
@@ -962,33 +978,43 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     //https://www.securecoding.cert.org/confluence/display/java/SER10-J.+Avoid+memory+and+resource+leaks+during+serialization
                     out.reset();
                 }
-                LOGGER.fine(String.format("Serialized data file written to '%s' for %s, referenced by key %s",
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug(String.format("Serialized data file written to '%s' for %s, referenced by key %s",
                         file.getAbsolutePath(), mp.getName(), this.getDataFileContextKey()));
+                }
                 mp.setContextValue(this.getDataFileContextKey(), file.getAbsolutePath());
             } catch (IOException ex) {
-                LOGGER.log(Level.WARNING, "Unable to create data file used for report aggregation; "
+                getLog().warn("Unable to create data file used for report aggregation; "
                         + "if report aggregation is being used the results may be incomplete.");
-                LOGGER.log(Level.FINE, ex.getMessage(), ex);
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug(ex.getMessage(), ex);
+                }
             } finally {
                 if (out != null) {
                     try {
                         out.close();
                     } catch (IOException ex) {
-                        LOGGER.log(Level.FINEST, "ignore", ex);
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug("ignore", ex);
+                        }
                     }
                 }
                 if (bos != null) {
                     try {
                         bos.close();
                     } catch (IOException ex) {
-                        LOGGER.log(Level.FINEST, "ignore", ex);
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug("ignore", ex);
+                        }
                     }
                 }
                 if (os != null) {
                     try {
                         os.close();
                     } catch (IOException ex) {
-                        LOGGER.log(Level.FINEST, "ignore", ex);
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug("ignore", ex);
+                        }
                     }
                 }
             }
@@ -1016,17 +1042,17 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             ret = (List<Dependency>) ois.readObject();
         } catch (FileNotFoundException ex) {
             //TODO fix logging
-            LOGGER.log(Level.SEVERE, null, ex);
+            getLog().error("", ex);
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            getLog().error("", ex);
         } catch (ClassNotFoundException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            getLog().error("", ex);
         } finally {
             if (ois != null) {
                 try {
                     ois.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.SEVERE, null, ex);
+                    getLog().error("", ex);
                 }
             }
         }

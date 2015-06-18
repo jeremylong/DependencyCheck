@@ -17,13 +17,14 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A collection of utilities for processing information about files.
@@ -35,7 +36,7 @@ public final class FileUtils {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(FileUtils.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);
     /**
      * Bit bucket for non-Windows systems
      */
@@ -77,8 +78,7 @@ public final class FileUtils {
         boolean success = true;
         if (!org.apache.commons.io.FileUtils.deleteQuietly(file)) {
             success = false;
-            final String msg = String.format("Failed to delete file: %s; attempting to delete on exit.", file.getPath());
-            LOGGER.log(Level.INFO, msg);
+            LOGGER.info("Failed to delete file: {}; attempting to delete on exit.", file.getPath());
             file.deleteOnExit();
         }
         return success;

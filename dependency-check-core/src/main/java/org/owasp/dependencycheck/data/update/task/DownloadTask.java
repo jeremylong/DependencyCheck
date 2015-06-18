@@ -26,8 +26,6 @@ import java.net.URL;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
@@ -36,6 +34,8 @@ import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A callable object to download two files.
@@ -47,7 +47,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
     /**
      * The Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(DownloadTask.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DownloadTask.class);
 
     /**
      * Simple constructor for the callable download task.
@@ -185,19 +185,17 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
             Settings.setInstance(settings);
             final URL url1 = new URL(nvdCveInfo.getUrl());
             final URL url2 = new URL(nvdCveInfo.getOldSchemaVersionUrl());
-            String msg = String.format("Download Started for NVD CVE - %s", nvdCveInfo.getId());
-            LOGGER.log(Level.INFO, msg);
+            LOGGER.info("Download Started for NVD CVE - {}", nvdCveInfo.getId());
             try {
                 Downloader.fetchFile(url1, first);
                 Downloader.fetchFile(url2, second);
             } catch (DownloadFailedException ex) {
-                msg = String.format("Download Failed for NVD CVE - %s%nSome CVEs may not be reported.", nvdCveInfo.getId());
-                LOGGER.log(Level.WARNING, msg);
+                LOGGER.warn("Download Failed for NVD CVE - {}\nSome CVEs may not be reported.", nvdCveInfo.getId());
                 if (Settings.getString(Settings.KEYS.PROXY_SERVER) == null) {
-                    LOGGER.log(Level.INFO,
+                    LOGGER.info(
                             "If you are behind a proxy you may need to configure dependency-check to use the proxy.");
                 }
-                LOGGER.log(Level.FINE, null, ex);
+                LOGGER.debug("", ex);
                 return null;
             }
             if (url1.toExternalForm().endsWith(".xml.gz")) {
@@ -207,8 +205,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
                 extractGzip(second);
             }
 
-            msg = String.format("Download Complete for NVD CVE - %s", nvdCveInfo.getId());
-            LOGGER.log(Level.INFO, msg);
+            LOGGER.info("Download Complete for NVD CVE - {}", nvdCveInfo.getId());
             if (this.processorService == null) {
                 return null;
             }
@@ -216,9 +213,8 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
             return this.processorService.submit(task);
 
         } catch (Throwable ex) {
-            final String msg = String.format("An exception occurred downloading NVD CVE - %s%nSome CVEs may not be reported.", nvdCveInfo.getId());
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, "Download Task Failed", ex);
+            LOGGER.warn("An exception occurred downloading NVD CVE - {}\nSome CVEs may not be reported.", nvdCveInfo.getId());
+            LOGGER.debug("Download Task Failed", ex);
         } finally {
             Settings.cleanup(false);
         }
@@ -287,14 +283,14 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
                 try {
                     cin.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINEST, "ignore", ex);
+                    LOGGER.trace("ignore", ex);
                 }
             }
             if (out != null) {
                 try {
                     out.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINEST, "ignore", ex);
+                    LOGGER.trace("ignore", ex);
                 }
             }
             if (gzip.isFile()) {

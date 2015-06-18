@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,8 +31,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * DriverLoader is a utility class that is used to load database drivers.
@@ -41,7 +42,7 @@ public final class DriverLoader {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(DriverLoader.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DriverLoader.class);
 
     /**
      * Private constructor for a utility class.
@@ -87,20 +88,18 @@ public final class DriverLoader {
                     try {
                         urls.add(f.toURI().toURL());
                     } catch (MalformedURLException ex) {
-                        final String msg = String.format("Unable to load database driver '%s'; invalid path provided '%s'",
-                                className, f.getAbsoluteFile());
-                        LOGGER.log(Level.FINE, msg, ex);
-                        throw new DriverLoadException(msg, ex);
+                        LOGGER.debug("Unable to load database driver '{}'; invalid path provided '{}'",
+                            className, f.getAbsoluteFile(), ex);
+                        throw new DriverLoadException("Unable to load database driver. Invalid path provided", ex);
                     }
                 }
             } else if (file.exists()) {
                 try {
                     urls.add(file.toURI().toURL());
                 } catch (MalformedURLException ex) {
-                    final String msg = String.format("Unable to load database driver '%s'; invalid path provided '%s'",
-                            className, file.getAbsoluteFile());
-                    LOGGER.log(Level.FINE, msg, ex);
-                    throw new DriverLoadException(msg, ex);
+                    LOGGER.debug("Unable to load database driver '{}'; invalid path provided '{}'",
+                        className, file.getAbsoluteFile(), ex);
+                    throw new DriverLoadException("Unable to load database driver. Invalid path provided", ex);
                 }
             }
         }
@@ -133,19 +132,19 @@ public final class DriverLoader {
             return shim;
         } catch (ClassNotFoundException ex) {
             final String msg = String.format("Unable to load database driver '%s'", className);
-            LOGGER.log(Level.FINE, msg, ex);
+            LOGGER.debug(msg, ex);
             throw new DriverLoadException(msg, ex);
         } catch (InstantiationException ex) {
             final String msg = String.format("Unable to load database driver '%s'", className);
-            LOGGER.log(Level.FINE, msg, ex);
+            LOGGER.debug(msg, ex);
             throw new DriverLoadException(msg, ex);
         } catch (IllegalAccessException ex) {
             final String msg = String.format("Unable to load database driver '%s'", className);
-            LOGGER.log(Level.FINE, msg, ex);
+            LOGGER.debug(msg, ex);
             throw new DriverLoadException(msg, ex);
         } catch (SQLException ex) {
             final String msg = String.format("Unable to load database driver '%s'", className);
-            LOGGER.log(Level.FINE, msg, ex);
+            LOGGER.debug(msg, ex);
             throw new DriverLoadException(msg, ex);
         }
     }

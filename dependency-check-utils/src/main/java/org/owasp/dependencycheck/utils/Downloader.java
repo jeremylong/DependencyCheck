@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,8 +29,6 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.InvalidAlgorithmParameterException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -41,7 +42,7 @@ public final class Downloader {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(Downloader.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(Downloader.class);
     /**
      * The maximum number of redirects that will be followed when attempting to download a file.
      */
@@ -95,7 +96,7 @@ public final class Downloader {
         } else {
             HttpURLConnection conn = null;
             try {
-                LOGGER.fine(String.format("Attempting download of %s", url.toString()));
+                LOGGER.debug("Attempting download of {}", url.toString());
                 conn = URLConnectionFactory.createHttpURLConnection(url, useProxy);
                 conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
                 conn.connect();
@@ -111,7 +112,7 @@ public final class Downloader {
                     } finally {
                         conn = null;
                     }
-                    LOGGER.fine(String.format("Download is being redirected from %s to %s", url.toString(), location));
+                    LOGGER.debug("Download is being redirected from {} to {}", url.toString(), location);
                     conn = URLConnectionFactory.createHttpURLConnection(new URL(location), useProxy);
                     conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
                     conn.connect();
@@ -157,7 +158,7 @@ public final class Downloader {
                 while ((bytesRead = reader.read(buffer)) > 0) {
                     writer.write(buffer, 0, bytesRead);
                 }
-                LOGGER.fine(String.format("Download of %s complete", url.toString()));
+                LOGGER.debug("Download of {} complete", url.toString());
             } catch (IOException ex) {
                 analyzeException(ex);
                 final String msg = String.format("Error saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
@@ -172,14 +173,14 @@ public final class Downloader {
                     try {
                         writer.close();
                     } catch (IOException ex) {
-                        LOGGER.log(Level.FINEST, "Error closing the writer in Downloader.", ex);
+                        LOGGER.trace("Error closing the writer in Downloader.", ex);
                     }
                 }
                 if (reader != null) {
                     try {
                         reader.close();
                     } catch (IOException ex) {
-                        LOGGER.log(Level.FINEST, "Error closing the reader in Downloader.", ex);
+                        LOGGER.trace("Error closing the reader in Downloader.", ex);
                     }
                 }
                 try {
@@ -258,8 +259,8 @@ public final class Downloader {
                 LOGGER.info("Error making HTTPS request - InvalidAlgorithmParameterException");
                 LOGGER.info("There appears to be an issue with the installation of Java and the cacerts."
                         + "See closed issue #177 here: https://github.com/jeremylong/DependencyCheck/issues/177");
-                LOGGER.info(String.format("Java Info:%njavax.net.ssl.keyStore='%s'%njava.version='%s'%njava.vendor='%s'",
-                        keystore, version, vendor));
+                LOGGER.info("Java Info:\njavax.net.ssl.keyStore='{}'\njava.version='{}'\njava.vendor='{}'",
+                        keystore, version, vendor);
                 throw new DownloadFailedException("Error making HTTPS request. Please see the log for more details.");
             }
             cause = cause.getCause();

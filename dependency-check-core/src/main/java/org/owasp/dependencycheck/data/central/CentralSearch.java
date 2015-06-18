@@ -23,7 +23,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -32,6 +31,8 @@ import javax.xml.xpath.XPathFactory;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.URLConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -55,7 +56,7 @@ public class CentralSearch {
     /**
      * Used for logging.
      */
-    private static final Logger LOGGER = Logger.getLogger(CentralSearch.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(CentralSearch.class);
 
     /**
      * Creates a NexusSearch for the given repository URL.
@@ -67,10 +68,10 @@ public class CentralSearch {
         this.rootURL = rootURL;
         if (null != Settings.getString(Settings.KEYS.PROXY_SERVER)) {
             useProxy = true;
-            LOGGER.fine("Using proxy");
+            LOGGER.debug("Using proxy");
         } else {
             useProxy = false;
-            LOGGER.fine("Not using proxy");
+            LOGGER.debug("Not using proxy");
         }
     }
 
@@ -89,7 +90,7 @@ public class CentralSearch {
 
         final URL url = new URL(rootURL + String.format("?q=1:\"%s\"&wt=xml", sha1));
 
-        LOGGER.fine(String.format("Searching Central url %s", url.toString()));
+        LOGGER.debug("Searching Central url {}", url.toString());
 
         // Determine if we need to use a proxy. The rules:
         // 1) If the proxy is set, AND the setting is set to true, use the proxy
@@ -119,9 +120,9 @@ public class CentralSearch {
                     final NodeList docs = (NodeList) xpath.evaluate("/response/result/doc", doc, XPathConstants.NODESET);
                     for (int i = 0; i < docs.getLength(); i++) {
                         final String g = xpath.evaluate("./str[@name='g']", docs.item(i));
-                        LOGGER.finest(String.format("GroupId: %s", g));
+                        LOGGER.trace("GroupId: {}", g);
                         final String a = xpath.evaluate("./str[@name='a']", docs.item(i));
-                        LOGGER.finest(String.format("ArtifactId: %s", a));
+                        LOGGER.trace("ArtifactId: {}", a);
                         final String v = xpath.evaluate("./str[@name='v']", docs.item(i));
                         NodeList atts = (NodeList) xpath.evaluate("./arr[@name='ec']/str", docs.item(i), XPathConstants.NODESET);
                         boolean pomAvailable = false;
@@ -144,7 +145,7 @@ public class CentralSearch {
                             }
                         }
 
-                        LOGGER.finest(String.format("Version: %s", v));
+                        LOGGER.trace("Version: {}", v);
                         result.add(new MavenArtifact(g, a, v, jarAvailable, pomAvailable, useHTTPS));
                     }
 
@@ -160,10 +161,9 @@ public class CentralSearch {
                 throw new FileNotFoundException("Artifact not found in Central");
             }
         } else {
-            final String msg = String.format("Could not connect to Central received response code: %d %s",
-                    conn.getResponseCode(), conn.getResponseMessage());
-            LOGGER.fine(msg);
-            throw new IOException(msg);
+            LOGGER.debug("Could not connect to Central received response code: {} {}",
+                conn.getResponseCode(), conn.getResponseMessage());
+            throw new IOException("Could not connect to Central");
         }
 
         return null;

@@ -20,13 +20,13 @@ package org.owasp.dependencycheck.analyzer;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The base FileTypeAnalyzer that all analyzers that have specific file types they analyze should extend.
@@ -49,7 +49,7 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(AbstractFileTypeAnalyzer.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFileTypeAnalyzer.class);
     /**
      * Whether the file type analyzer detected any files it needs to analyze.
      */
@@ -164,11 +164,9 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
         try {
             enabled = Settings.getBoolean(key, true);
         } catch (InvalidSettingException ex) {
-            String msg = String.format("Invalid setting for property '%s'", key);
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, "", ex);
-            msg = String.format("%s has been disabled", getName());
-            LOGGER.log(Level.WARNING, msg);
+            LOGGER.warn("Invalid setting for property '{}'", key);
+            LOGGER.debug("", ex);
+            LOGGER.warn("{} has been disabled", getName());
         }
     }
 
@@ -200,9 +198,8 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
         }
         final Set<String> ext = getSupportedExtensions();
         if (ext == null) {
-            final String msg = String.format("The '%s' analyzer is misconfigured and does not have any file extensions;"
-                    + " it will be disabled", getName());
-            LOGGER.log(Level.SEVERE, msg);
+            LOGGER.error("The '{}' analyzer is misconfigured and does not have any file extensions;"
+                + " it will be disabled", getName());
             return false;
         } else {
             final boolean match = ext.contains(extension);

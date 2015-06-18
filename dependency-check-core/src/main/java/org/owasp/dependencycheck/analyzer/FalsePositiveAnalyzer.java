@@ -25,8 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.Engine;
@@ -34,6 +32,8 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This analyzer attempts to remove some well known false positives - specifically regarding the java runtime.
@@ -45,7 +45,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     /**
      * The Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(FalsePositiveAnalyzer.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(FalsePositiveAnalyzer.class);
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
      * The name of the analyzer.
@@ -171,7 +171,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         final String nextVersion = nextCpe.getVersion();
                         if (currentVersion == null && nextVersion == null) {
                             //how did we get here?
-                            LOGGER.log(Level.FINE, "currentVersion and nextVersion are both null?");
+                            LOGGER.debug("currentVersion and nextVersion are both null?");
                         } else if (currentVersion == null && nextVersion != null) {
                             dependency.getIdentifiers().remove(currentId);
                         } else if (nextVersion == null && currentVersion != null) {
@@ -248,7 +248,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         try {
             cpe.parseName(value);
         } catch (UnsupportedEncodingException ex) {
-            LOGGER.log(Level.FINEST, null, ex);
+            LOGGER.trace("", ex);
             return null;
         }
         return cpe;
@@ -397,7 +397,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                             newCpe4,
                             String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe4, "UTF-8")));
                 } catch (UnsupportedEncodingException ex) {
-                    LOGGER.log(Level.FINE, null, ex);
+                    LOGGER.debug("", ex);
                 }
             }
         }

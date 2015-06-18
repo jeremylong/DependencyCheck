@@ -362,6 +362,23 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     <dependencies>
         <!-- Note, to stay compatible with Jenkins installations only JARs compiled to 1.6 can be used -->
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <!-- Set this to test so that each project that uses this has to have its own implementation of SLF4J -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- For the CAL10N support -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-ext</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-utils</artifactId>
             <version>${project.parent.version}</version>

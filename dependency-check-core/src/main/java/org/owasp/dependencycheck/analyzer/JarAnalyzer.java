@@ -39,8 +39,6 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import org.jsoup.Jsoup;
@@ -54,6 +52,8 @@ import org.owasp.dependencycheck.xml.pom.PomUtils;
 import org.owasp.dependencycheck.xml.pom.Model;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Used to load a JAR file and collect information that can be used to determine the associated CPE.
@@ -66,7 +66,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(JarAnalyzer.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(JarAnalyzer.class);
     /**
      * The buffer size to use when extracting files from the archive.
      */
@@ -249,20 +249,16 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         try {
             jar = new JarFile(dependency.getActualFilePath());
         } catch (IOException ex) {
-            final String msg = String.format("Unable to read JarFile '%s'.", dependency.getActualFilePath());
-            //final AnalysisException ax = new AnalysisException(msg, ex);
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, "", ex);
+            LOGGER.warn("Unable to read JarFile '{}'.", dependency.getActualFilePath());
+            LOGGER.trace("", ex);
             return false;
         }
         List<String> pomEntries;
         try {
             pomEntries = retrievePomListing(jar);
         } catch (IOException ex) {
-            final String msg = String.format("Unable to read Jar file entries in '%s'.", dependency.getActualFilePath());
-            //final AnalysisException ax = new AnalysisException(msg, ex);
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, msg, ex);
+            LOGGER.warn("Unable to read Jar file entries in '{}'.", dependency.getActualFilePath());
+            LOGGER.trace("", ex);
             return false;
         }
         File externalPom = null;
@@ -277,14 +273,14 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             }
         }
         for (String path : pomEntries) {
-            LOGGER.fine(String.format("Reading pom entry: %s", path));
+            LOGGER.debug("Reading pom entry: {}", path);
             Properties pomProperties = null;
             try {
                 if (externalPom == null) {
                     pomProperties = retrievePomProperties(path, jar);
                 }
             } catch (IOException ex) {
-                LOGGER.log(Level.FINEST, "ignore this, failed reading a non-existent pom.properties", ex);
+                LOGGER.trace("ignore this, failed reading a non-existent pom.properties", ex);
             }
             Model pom = null;
             try {
@@ -318,9 +314,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     foundSomething |= setPomEvidence(dependency, pom, classes);
                 }
             } catch (AnalysisException ex) {
-                final String msg = String.format("An error occured while analyzing '%s'.", dependency.getActualFilePath());
-                LOGGER.log(Level.WARNING, msg);
-                LOGGER.log(Level.FINE, "", ex);
+                LOGGER.warn("An error occured while analyzing '{}'.", dependency.getActualFilePath());
+                LOGGER.trace("", ex);
             }
         }
         return foundSomething;
@@ -344,13 +339,13 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 reader = new InputStreamReader(jar.getInputStream(propEntry), "UTF-8");
                 pomProperties = new Properties();
                 pomProperties.load(reader);
-                LOGGER.fine(String.format("Read pom.properties: %s", propPath));
+                LOGGER.debug("Read pom.properties: {}", propPath);
             } finally {
                 if (reader != null) {
                     try {
                         reader.close();
                     } catch (IOException ex) {
-                        LOGGER.log(Level.FINEST, "close error", ex);
+                        LOGGER.trace("close error", ex);
                     }
                 }
             }
@@ -372,7 +367,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             final JarEntry entry = entries.nextElement();
             final String entryName = (new File(entry.getName())).getName().toLowerCase();
             if (!entry.isDirectory() && "pom.xml".equals(entryName)) {
-                LOGGER.fine(String.format("POM Entry found: %s", entry.getName()));
+                LOGGER.trace("POM Entry found: {}", entry.getName());
                 pomEntries.add(entry.getName());
             }
         }
@@ -408,9 +403,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             bos.flush();
             dependency.setActualFilePath(file.getAbsolutePath());
         } catch (IOException ex) {
-            final String msg = String.format("An error occurred reading '%s' from '%s'.", path, dependency.getFilePath());
-            LOGGER.warning(msg);
-            LOGGER.log(Level.SEVERE, "", ex);
+            LOGGER.warn("An error occurred reading '{}' from '{}'.", path, dependency.getFilePath());
+            LOGGER.error("", ex);
         } finally {
             closeStream(bos);
             closeStream(fos);
@@ -429,7 +423,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             try {
                 stream.close();
             } catch (IOException ex) {
-                LOGGER.log(Level.FINEST, null, ex);
+                LOGGER.trace("", ex);
             }
         }
     }
@@ -444,7 +438,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             try {
                 stream.close();
             } catch (IOException ex) {
-                LOGGER.log(Level.FINEST, null, ex);
+                LOGGER.trace("", ex);
             }
         }
     }
@@ -644,9 +638,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                         && !dependency.getFileName().toLowerCase().endsWith("-javadoc.jar")
                         && !dependency.getFileName().toLowerCase().endsWith("-src.jar")
                         && !dependency.getFileName().toLowerCase().endsWith("-doc.jar")) {
-                    LOGGER.log(Level.FINE,
-                            String.format("Jar file '%s' does not contain a manifest.",
-                                    dependency.getFileName()));
+                    LOGGER.debug("Jar file '{}' does not contain a manifest.",
+                            dependency.getFileName());
                 }
                 return false;
             }
@@ -892,11 +885,10 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void close() {
         if (tempFileLocation != null && tempFileLocation.exists()) {
-            LOGGER.log(Level.FINE, "Attempting to delete temporary files");
+            LOGGER.debug("Attempting to delete temporary files");
             final boolean success = FileUtils.delete(tempFileLocation);
             if (!success) {
-                LOGGER.log(Level.WARNING,
-                        "Failed to delete some temporary files, see the log for more details");
+                LOGGER.warn("Failed to delete some temporary files, see the log for more details");
             }
         }
     }
@@ -937,15 +929,14 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         } catch (IOException ex) {
-            final String msg = String.format("Unable to open jar file '%s'.", dependency.getFileName());
-            LOGGER.log(Level.WARNING, msg);
-            LOGGER.log(Level.FINE, null, ex);
+            LOGGER.warn("Unable to open jar file '{}'.", dependency.getFileName());
+            LOGGER.debug("", ex);
         } finally {
             if (jar != null) {
                 try {
                     jar.close();
                 } catch (IOException ex) {
-                    LOGGER.log(Level.FINEST, null, ex);
+                    LOGGER.trace("", ex);
                 }
             }
         }

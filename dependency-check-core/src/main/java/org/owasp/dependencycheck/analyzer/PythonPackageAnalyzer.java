@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,6 +38,8 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.UrlStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Used to analyze a Python package, and collect information that can be used to determine the associated CPE.
@@ -56,8 +57,8 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger
-            .getLogger(PythonPackageAnalyzer.class.getName());
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(PythonPackageAnalyzer.class);
 
     /**
      * Filename extensions for files to be analyzed.
@@ -240,7 +241,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
                 found |= gatherHomePageEvidence(HOMEPAGE_PATTERN,
                         vendorEvidence, source, "HomePage", contents);
             } catch (MalformedURLException e) {
-                LOGGER.warning(e.getMessage());
+                LOGGER.warn(e.getMessage());
             }
         }
         return found;

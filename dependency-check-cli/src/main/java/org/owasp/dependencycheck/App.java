@@ -26,8 +26,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.cli.ParseException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -37,6 +35,8 @@ import org.owasp.dependencycheck.org.apache.tools.ant.DirectoryScanner;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.LogUtils;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The command line interface for the DependencyCheck application.
@@ -53,7 +53,7 @@ public class App {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(App.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
     /**
      * The main method for the application.
@@ -103,7 +103,7 @@ public class App {
             try {
                 runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles(), cli.getExcludeList());
             } catch (InvalidScanPathException ex) {
-                LOGGER.log(Level.SEVERE, "An invalid scan path was detected; unable to scan '//*' paths");
+                LOGGER.error("An invalid scan path was detected; unable to scan '//*' paths");
             }
         } else {
             cli.printHelp();
@@ -189,7 +189,7 @@ public class App {
                 cve.open();
                 prop = cve.getDatabaseProperties();
             } catch (DatabaseException ex) {
-                LOGGER.log(Level.FINE, "Unable to retrieve DB Properties", ex);
+                LOGGER.debug("Unable to retrieve DB Properties", ex);
             } finally {
                 if (cve != null) {
                     cve.close();
@@ -199,15 +199,15 @@ public class App {
             try {
                 report.generateReports(reportDirectory, outputFormat);
             } catch (IOException ex) {
-                LOGGER.log(Level.SEVERE, "There was an IO error while attempting to generate the report.");
-                LOGGER.log(Level.FINE, null, ex);
+                LOGGER.error("There was an IO error while attempting to generate the report.");
+                LOGGER.debug("", ex);
             } catch (Throwable ex) {
-                LOGGER.log(Level.SEVERE, "There was an error while attempting to generate the report.");
-                LOGGER.log(Level.FINE, null, ex);
+                LOGGER.error("There was an error while attempting to generate the report.");
+                LOGGER.debug("", ex);
             }
         } catch (DatabaseException ex) {
-            LOGGER.log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
-            LOGGER.log(Level.FINE, "", ex);
+            LOGGER.error("Unable to connect to the dependency-check database; analysis has stopped");
+            LOGGER.debug("", ex);
         } finally {
             if (engine != null) {
                 engine.cleanup();
@@ -224,8 +224,8 @@ public class App {
             engine = new Engine();
             engine.doUpdates();
         } catch (DatabaseException ex) {
-            LOGGER.log(Level.SEVERE, "Unable to connect to the dependency-check database; analysis has stopped");
-            LOGGER.log(Level.FINE, "", ex);
+            LOGGER.error("Unable to connect to the dependency-check database; analysis has stopped");
+            LOGGER.debug("", ex);
         } finally {
             if (engine != null) {
                 engine.cleanup();
@@ -271,13 +271,11 @@ public class App {
             try {
                 Settings.mergeProperties(propertiesFile);
             } catch (FileNotFoundException ex) {
-                final String msg = String.format("Unable to load properties file '%s'", propertiesFile.getPath());
-                LOGGER.log(Level.SEVERE, msg);
-                LOGGER.log(Level.FINE, null, ex);
+                LOGGER.error("Unable to load properties file '{}'", propertiesFile.getPath());
+                LOGGER.debug("", ex);
             } catch (IOException ex) {
-                final String msg = String.format("Unable to find properties file '%s'", propertiesFile.getPath());
-                LOGGER.log(Level.SEVERE, msg);
-                LOGGER.log(Level.FINE, null, ex);
+                LOGGER.error("Unable to find properties file '{}'", propertiesFile.getPath());
+                LOGGER.debug("", ex);
             }
         }
         // We have to wait until we've merged the properties before attempting to set whether we use

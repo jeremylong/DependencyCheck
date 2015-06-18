@@ -26,13 +26,12 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.suppression.SuppressionParseException;
 import org.owasp.dependencycheck.suppression.SuppressionRule;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -93,9 +92,9 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
             final String uri = this.getClass().getClassLoader().getResource("suppressions.xml").toURI().toURL().toString();
             Settings.setString(Settings.KEYS.SUPPRESSION_FILE, uri);
         } catch (URISyntaxException ex) {
-            Logger.getLogger(AbstractSuppressionAnalyzerTest.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(AbstractSuppressionAnalyzerTest.class).error("", ex);
         } catch (MalformedURLException ex) {
-            Logger.getLogger(AbstractSuppressionAnalyzerTest.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(AbstractSuppressionAnalyzerTest.class).error("", ex);
         }
     }
 

@@ -24,10 +24,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.owasp.dependencycheck.data.update.NvdCveInfo;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is a wrapper around a set of properties that are stored in the database.
@@ -39,7 +39,7 @@ public class DatabaseProperties {
     /**
      * The Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(DatabaseProperties.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseProperties.class);
     /**
      * Modified key word, used as a key to store information about the modified file (i.e. the containing the last 8
      * days of updates)..
@@ -166,7 +166,7 @@ public class DatabaseProperties {
                         final String formatted = format.format(date);
                         map.put(key, formatted);
                     } catch (Throwable ex) { //deliberately being broad in this catch clause
-                        LOGGER.log(Level.FINE, "Unable to parse timestamp from DB", ex);
+                        LOGGER.debug("Unable to parse timestamp from DB", ex);
                         map.put(key, (String) entry.getValue());
                     }
                 } else {

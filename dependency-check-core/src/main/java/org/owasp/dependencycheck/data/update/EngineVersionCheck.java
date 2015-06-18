@@ -22,8 +22,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -34,6 +32,8 @@ import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.URLConnectionFactory;
 import org.owasp.dependencycheck.utils.URLConnectionFailureException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -44,7 +44,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
     /**
      * Static logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(EngineVersionCheck.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(EngineVersionCheck.class);
     /**
      * The property key indicating when the last version check occurred.
      */
@@ -85,23 +85,22 @@ public class EngineVersionCheck implements CachedWebDataSource {
     public void update() throws UpdateException {
         try {
             openDatabase();
-            LOGGER.fine("Begin Engine Version Check");
+            LOGGER.debug("Begin Engine Version Check");
             final DatabaseProperties properties = cveDB.getDatabaseProperties();
             final long lastChecked = Long.parseLong(properties.getProperty(ENGINE_VERSION_CHECKED_ON, "0"));
             final long now = (new Date()).getTime();
             updateToVersion = properties.getProperty(CURRENT_ENGINE_RELEASE, "");
             final String currentVersion = Settings.getString(Settings.KEYS.APPLICATION_VERSION, "0.0.0");
-            LOGGER.fine("Last checked: " + lastChecked);
-            LOGGER.fine("Now: " + now);
-            LOGGER.fine("Current version: " + currentVersion);
+            LOGGER.debug("Last checked: {}", lastChecked);
+            LOGGER.debug("Now: {}", now);
+            LOGGER.debug("Current version: {}", currentVersion);
             final boolean updateNeeded = shouldUpdate(lastChecked, now, properties, currentVersion);
             if (updateNeeded) {
-                final String msg = String.format("A new version of dependency-check is available. Consider updating to version %s.",
-                        updateToVersion);
-                LOGGER.warning(msg);
+                LOGGER.warn("A new version of dependency-check is available. Consider updating to version {}.",
+                    updateToVersion);
             }
         } catch (DatabaseException ex) {
-            LOGGER.log(Level.FINE, "Database Exception opening databases to retrieve properties", ex);
+            LOGGER.debug("Database Exception opening databases to retrieve properties", ex);
             throw new UpdateException("Error occured updating database properties.");
         } finally {
             closeDatabase();
@@ -127,7 +126,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
             checkRange = 7;
         }
         if (!DateUtil.withinDateRange(lastChecked, now, checkRange)) {
-            LOGGER.fine("Checking web for new version.");
+            LOGGER.debug("Checking web for new version.");
             final String currentRelease = getCurrentReleaseVersion();
             if (currentRelease != null) {
                 final DependencyVersion v = new DependencyVersion(currentRelease);
@@ -141,15 +140,15 @@ public class EngineVersionCheck implements CachedWebDataSource {
                     properties.save(ENGINE_VERSION_CHECKED_ON, Long.toString(now));
                 }
             }
-            LOGGER.log(Level.FINE, "Current Release: {0}", updateToVersion);
+            LOGGER.debug("Current Release: {}", updateToVersion);
         }
         final DependencyVersion running = new DependencyVersion(currentVersion);
         final DependencyVersion released = new DependencyVersion(updateToVersion);
         if (running.compareTo(released) < 0) {
-            LOGGER.fine("Upgrade recommended");
+            LOGGER.debug("Upgrade recommended");
             return true;
         }
-        LOGGER.fine("Upgrade not needed");
+        LOGGER.debug("Upgrade not needed");
         return false;
     }
 
@@ -174,7 +173,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
             try {
                 cveDB.close();
             } catch (Throwable ignore) {
-                LOGGER.log(Level.FINEST, "Error closing the cveDB", ignore);
+                LOGGER.trace("Error closing the cveDB", ignore);
             }
         }
     }
@@ -199,11 +198,11 @@ public class EngineVersionCheck implements CachedWebDataSource {
                 return releaseVersion.trim();
             }
         } catch (MalformedURLException ex) {
-            LOGGER.log(Level.FINE, "unable to retrieve current release version of dependency-check", ex);
+            LOGGER.debug("unable to retrieve current release version of dependency-check", ex);
         } catch (URLConnectionFailureException ex) {
-            LOGGER.log(Level.FINE, "unable to retrieve current release version of dependency-check", ex);
+            LOGGER.debug("unable to retrieve current release version of dependency-check", ex);
         } catch (IOException ex) {
-            LOGGER.log(Level.FINE, "unable to retrieve current release version of dependency-check", ex);
+            LOGGER.debug("unable to retrieve current release version of dependency-check", ex);
         } finally {
             if (conn != null) {
                 conn.disconnect();
