@@ -49,6 +49,14 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Dependency.class);
     /**
+     * Used as starting point for generating the value in {@link #hashCode()}.
+     */
+    private static final int MAGIC_HASH_INIT_VALUE = 3;
+    /**
+     * Used as a multiplier for generating the value in {@link #hashCode()}.
+     */
+    private static final int MAGIC_HASH_MULTIPLIER = 47;
+    /**
      * The actual file path of the dependency on disk.
      */
     private String actualFilePath;
@@ -752,12 +760,12 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      */
     @Override
     public int hashCode() {
-        int hash = 3;
+        int hash = MAGIC_HASH_INIT_VALUE;
         for (Object field : new Object[]{this.actualFilePath, this.filePath, this.fileName, this.fileExtension, this.md5sum,
                 this.sha1sum, this.identifiers, this.vendorEvidence, this.productEvidence, this.versionEvidence,
                 this.description, this.license, this.vulnerabilities, this.relatedDependencies, this.projectReferences,
                 this.availableVersions}) {
-            hash = 47 * hash + ObjectUtils.hashCode(field);
+            hash = MAGIC_HASH_MULTIPLIER * hash + ObjectUtils.hashCode(field);
         }
         return hash;
     }
