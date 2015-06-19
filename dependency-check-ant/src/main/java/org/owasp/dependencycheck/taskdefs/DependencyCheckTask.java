@@ -48,14 +48,11 @@ import org.slf4j.impl.StaticLoggerBinder;
  * @author Jeremy Long
  */
 public class DependencyCheckTask extends Task {
+
     /**
      * The properties file location.
      */
     private static final String PROPERTIES_FILE = "task.properties";
-    /**
-     * Name of the logging properties file.
-     */
-    private static final String LOG_PROPERTIES_FILE = "log.properties";
     /**
      * System specific new line character.
      */
@@ -436,28 +433,6 @@ public class DependencyCheckTask extends Task {
      */
     public void setConnectionTimeout(String connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
-    }
-    /**
-     * The file path used for verbose logging.
-     */
-    private String logFile = null;
-
-    /**
-     * Get the value of logFile.
-     *
-     * @return the value of logFile
-     */
-    public String getLogFile() {
-        return logFile;
-    }
-
-    /**
-     * Set the value of logFile.
-     *
-     * @param logFile new value of logFile
-     */
-    public void setLogFile(String logFile) {
-        this.logFile = logFile;
     }
     /**
      * The path to the suppression file.
