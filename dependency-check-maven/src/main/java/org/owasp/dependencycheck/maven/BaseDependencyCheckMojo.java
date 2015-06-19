@@ -109,14 +109,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @Parameter(readonly = true, required = true, property = "reactorProjects")
     private List<MavenProject> reactorProjects;
-    /**
-     * The path to the verbose log.
-     */
-    @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "logFile", defaultValue = "")
-    private String logFile = null;
 
-    //"project.reporting.outputDirectory"
     /**
      * The output directory. This generally maps to "target".
      */
@@ -125,7 +118,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Specifies the destination directory for the generated Dependency-Check report. This generally maps to "target/site".
      */
-    //Parameter(property = "reportOutputDirectory", defaultValue = "${project.reporting.outputDirectory}", required = true)
     @Parameter(property = "project.reporting.outputDirectory", required = true)
     private File reportOutputDirectory;
     /**
@@ -598,12 +590,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @throws DatabaseException thrown if there is a database exception
      */
     protected Engine initializeEngine() throws DatabaseException {
-        final InputStream in = BaseDependencyCheckMojo.class
-                .getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
-        LogUtils.prepareLogger(in, logFile);
-
         populateSettings();
-
         return new Engine(this.project,
                 this.reactorProjects);
     }
