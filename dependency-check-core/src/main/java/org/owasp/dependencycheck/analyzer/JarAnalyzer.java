@@ -123,8 +123,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             "ipojo-extension",
             "eclipse-sourcereferences");
     /**
-     * Deprecated Jar manifest attribute, that is, nonetheless, useful for
-     * analysis.
+     * Deprecated Jar manifest attribute, that is, nonetheless, useful for analysis.
      */
     @SuppressWarnings("deprecation")
     private static final String IMPLEMENTATION_VENDOR_ID = Attributes.Name.IMPLEMENTATION_VENDOR_ID
@@ -567,7 +566,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
         //Description
         final String description = pom.getDescription();
-        if (description != null && !description.isEmpty()) {
+        if (description != null && !description.isEmpty() && !description.startsWith("POM was created by")) {
             foundSomething = true;
             final String trimmedDescription = addDescription(dependency, description, "pom", "description");
             addMatchingValues(classes, trimmedDescription, dependency.getVendorEvidence());
