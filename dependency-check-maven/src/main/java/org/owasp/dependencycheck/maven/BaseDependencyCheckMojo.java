@@ -477,7 +477,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         d.addProjectReference(project.getName());
                         if (getLog().isDebugEnabled()) {
                             getLog().debug(String.format("Adding project reference %s on dependency %s", project.getName(),
-                                d.getDisplayFileName()));
+                                    d.getDisplayFileName()));
                         }
                         if (metadataSource != null) {
                             try {
@@ -508,7 +508,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 } else {
                     if (getLog().isDebugEnabled()) {
                         final String msg = String.format("More then 1 dependency was identified in first pass scan of '%s:%s:%s'",
-                            a.getGroupId(), a.getArtifactId(), a.getVersion());
+                                a.getGroupId(), a.getArtifactId(), a.getVersion());
                         getLog().debug(msg);
                     }
                 }
@@ -638,7 +638,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
         if (externalReport != null) {
             getLog().warn("The 'externalReport' option was set; this configuration option has been removed. "
-                + "Please update the dependency-check-maven plugin's configuration");
+                    + "Please update the dependency-check-maven plugin's configuration");
         }
 
         if (proxyUrl != null && !proxyUrl.isEmpty()) {
@@ -750,7 +750,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     return proxies.get(0);
                 } else {
                     getLog().warn("Multiple proxy definitions exist in the Maven settings. In the dependency-check "
-                        + "configuration set the mavenSettingsProxyId so that the correct proxy will be used.");
+                            + "configuration set the mavenSettingsProxyId so that the correct proxy will be used.");
                     throw new IllegalStateException("Ambiguous proxy definition");
                 }
             }
@@ -841,7 +841,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
         } catch (Throwable ex) {
             getLog().error(
-                "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
+                    "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
             if (getLog().isDebugEnabled()) {
                 getLog().debug("", ex);
             }
@@ -963,6 +963,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             } else {
                 file = new File(writeTo, dataFileName);
             }
+            File parent = file.getParentFile();
+            if (!parent.isDirectory()) {
+                if (parent.mkdirs()) {
+                    getLog().error(String.format("Directory '%s' does not exist and cannot be created; unable to write data file.", parent.getAbsolutePath()));
+                }
+            }
+
             OutputStream os = null;
             OutputStream bos = null;
             ObjectOutputStream out = null;
@@ -980,7 +987,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 }
                 if (getLog().isDebugEnabled()) {
                     getLog().debug(String.format("Serialized data file written to '%s' for %s, referenced by key %s",
-                        file.getAbsolutePath(), mp.getName(), this.getDataFileContextKey()));
+                            file.getAbsolutePath(), mp.getName(), this.getDataFileContextKey()));
                 }
                 mp.setContextValue(this.getDataFileContextKey(), file.getAbsolutePath());
             } catch (IOException ex) {
