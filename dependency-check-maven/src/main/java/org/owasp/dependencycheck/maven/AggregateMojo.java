@@ -45,13 +45,14 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 @Mojo(
         name = "aggregate",
-        defaultPhase = LifecyclePhase.SITE,
+        defaultPhase = LifecyclePhase.COMPILE,
         aggregator = true,
         threadSafe = true,
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
         requiresOnline = true
 )
 public class AggregateMojo extends BaseDependencyCheckMojo {
+
     /**
      * Executes the aggregate dependency-check goal. This runs dependency-check and generates the subsequent reports.
      *
