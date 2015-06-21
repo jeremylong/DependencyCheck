@@ -17,10 +17,11 @@
  */
 package org.owasp.dependencycheck;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -33,10 +34,11 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.org.apache.tools.ant.DirectoryScanner;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
-import org.owasp.dependencycheck.utils.LogUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ch.qos.logback.core.FileAppender;
+import org.slf4j.impl.StaticLoggerBinder;
 
 /**
  * The command line interface for the DependencyCheck application.
@@ -44,11 +46,6 @@ import org.slf4j.LoggerFactory;
  * @author Jeremy Long
  */
 public class App {
-
-    /**
-     * The location of the log properties configuration file.
-     */
-    private static final String LOG_PROPERTIES_FILE = "log.properties";
 
     /**
      * The logger.
@@ -90,8 +87,9 @@ public class App {
             return;
         }
 
-        final InputStream in = App.class.getClassLoader().getResourceAsStream(LOG_PROPERTIES_FILE);
-        LogUtils.prepareLogger(in, cli.getVerboseLog());
+        if (cli.getVerboseLog() != null) {
+            prepareLogger(cli.getVerboseLog());
+        }
 
         if (cli.isGetVersion()) {
             cli.printVersionInfo();
@@ -349,5 +347,30 @@ public class App {
         if (pathToMono != null && !pathToMono.isEmpty()) {
             Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
         }
+    }
+
+    private void prepareLogger(String verboseLog) {
+        StaticLoggerBinder loggerBinder = StaticLoggerBinder.getSingleton();
+        LoggerContext context = (LoggerContext) loggerBinder.getLoggerFactory();
+
+        final PatternLayoutEncoder encoder = new PatternLayoutEncoder();
+        encoder.setPattern("%d %C:%L%n%-5level - %msg%n");
+        encoder.setContext(context);
+        encoder.start();
+        FileAppender fa = new FileAppender();
+        fa.setAppend(true);
+        fa.setEncoder(encoder);
+        fa.setContext(context);
+        fa.setFile(verboseLog);
+        final File f = new File(verboseLog);
+        String name = f.getName();
+        int i = name.lastIndexOf('.');
+        if (i > 1) {
+            name = name.substring(0, i);
+        }
+        fa.setName(name);
+        fa.start();
+        final ch.qos.logback.classic.Logger rootLogger = context.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+        rootLogger.addAppender(fa);
     }
 }
