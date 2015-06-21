@@ -39,15 +39,6 @@ Copyright (c) 2014 - Jeremy Long. All Rights Reserved.
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <reporting.findbugs-plugin.version>2.5.3</reporting.findbugs-plugin.version>
-        <reporting.checkstyle-plugin.version>2.11</reporting.checkstyle-plugin.version>
-        <reporting.cobertura-plugin.version>2.6</reporting.cobertura-plugin.version>
-        <reporting.javadoc-plugin.version>2.9.1</reporting.javadoc-plugin.version>
-        <reporting.jxr-plugin.version>2.4</reporting.jxr-plugin.version>
-        <reporting.pmd-plugin.version>3.0.1</reporting.pmd-plugin.version>
-        <reporting.surefire-report-plugin.version>2.16</reporting.surefire-report-plugin.version>
-        <reporting.taglist-plugin.version>2.4</reporting.taglist-plugin.version>
-        <reporting.versions-plugin.version>2.1</reporting.versions-plugin.version>
     </properties>
     <build>
         <plugins>
