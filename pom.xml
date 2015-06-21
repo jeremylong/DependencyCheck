@@ -135,6 +135,8 @@ Copyright (c) 2012 - Jeremy Long
         <reporting.javadoc-plugin.version>2.9.1</reporting.javadoc-plugin.version>
         <reporting.jxr-plugin.version>2.4</reporting.jxr-plugin.version>
         <reporting.pmd-plugin.version>3.0.1</reporting.pmd-plugin.version>
+        <!-- TODO(code review) project-info-reports-plugin was used in core, but not utils. Expected/intended? -->
+        <reporting.project-info-reports-plugin.version>2.7</reporting.project-info-reports-plugin.version>
         <reporting.surefire-report-plugin.version>2.16</reporting.surefire-report-plugin.version>
         <reporting.taglist-plugin.version>2.4</reporting.taglist-plugin.version>
         <reporting.versions-plugin.version>2.1</reporting.versions-plugin.version>
