@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import org.apache.commons.lang.ObjectUtils;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.FileUtils;
@@ -46,6 +48,14 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Dependency.class);
+    /**
+     * Used as starting point for generating the value in {@link #hashCode()}.
+     */
+    private static final int MAGIC_HASH_INIT_VALUE = 3;
+    /**
+     * Used as a multiplier for generating the value in {@link #hashCode()}.
+     */
+    private static final int MAGIC_HASH_MULTIPLIER = 47;
     /**
      * The actual file path of the dependency on disk.
      */
@@ -296,9 +306,9 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     /**
      * Adds an entry to the list of detected Identifiers for the dependency file.
      *
-     * @param type the type of identifier (such as CPE)
+     * @param type  the type of identifier (such as CPE)
      * @param value the value of the identifier
-     * @param url the URL of the identifier
+     * @param url   the URL of the identifier
      */
     public void addIdentifier(String type, String value, String url) {
         final Identifier i = new Identifier(type, value, url);
@@ -308,9 +318,9 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     /**
      * Adds an entry to the list of detected Identifiers for the dependency file.
      *
-     * @param type the type of identifier (such as CPE)
-     * @param value the value of the identifier
-     * @param url the URL of the identifier
+     * @param type       the type of identifier (such as CPE)
+     * @param value      the value of the identifier
+     * @param url        the URL of the identifier
      * @param confidence the confidence in the Identifier being accurate
      */
     public void addIdentifier(String type, String value, String url, Confidence confidence) {
@@ -322,9 +332,9 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     /**
      * Adds the maven artifact as evidence.
      *
-     * @param source The source of the evidence
+     * @param source        The source of the evidence
      * @param mavenArtifact The maven artifact
-     * @param confidence The confidence level of this evidence
+     * @param confidence    The confidence level of this evidence
      */
     public void addAsEvidence(String source, MavenArtifact mavenArtifact, Confidence confidence) {
         if (mavenArtifact.getGroupId() != null && !mavenArtifact.getGroupId().isEmpty()) {
@@ -589,7 +599,8 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     private Set<Dependency> relatedDependencies = new TreeSet<Dependency>();
 
     /**
-     * Get the value of relatedDependencies.
+     * Get the value of {@link #relatedDependencies}. This field is used to collect other dependencies which really
+     * represent the same dependency, and may be presented as one item in reports.
      *
      * @return the value of relatedDependencies
      */
@@ -648,18 +659,25 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * Adds a related dependency.
+     * Adds a related dependency. The internal collection is normally a {@link java.util.TreeSet}, which relies on
+     * {@link #compareTo(Dependency)}. A consequence of this is that if you attempt to add a dependency with the
+     * same file path (modulo character case) as one that is already in the collection, it won't get added.
      *
      * @param dependency a reference to the related dependency
      */
     public void addRelatedDependency(Dependency dependency) {
+        boolean debug = false;
         if (this == dependency) {
             LOGGER.warn("Attempted to add a circular reference - please post the log file to issue #172 here "
-                    + "https://github.com/jeremylong/DependencyCheck/issues/172 ");
+                    + "https://github.com/jeremylong/DependencyCheck/issues/172");
+            debug = true;
+        } else if (!relatedDependencies.add(dependency)) {
+            LOGGER.warn("Failed to add dependency, likely due to referencing the same file as another dependency in the set.");
+            debug = true;
+        }
+        if (debug) {
             LOGGER.debug("this: {}", this);
             LOGGER.debug("dependency: {}", dependency);
-        } else {
-            relatedDependencies.add(dependency);
         }
     }
 
@@ -696,7 +714,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * Implementation of the Comparable<Dependency> interface. The comparison is solely based on the file name.
+     * Implementation of the Comparable<Dependency> interface. The comparison is solely based on the file path.
      *
      * @param o a dependency to compare
      * @return an integer representing the natural ordering
@@ -713,66 +731,26 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
         final Dependency other = (Dependency) obj;
-        if ((this.actualFilePath == null) ? (other.actualFilePath != null) : !this.actualFilePath.equals(other.actualFilePath)) {
-            return false;
-        }
-        if ((this.filePath == null) ? (other.filePath != null) : !this.filePath.equals(other.filePath)) {
-            return false;
-        }
-        if ((this.fileName == null) ? (other.fileName != null) : !this.fileName.equals(other.fileName)) {
-            return false;
-        }
-        if ((this.fileExtension == null) ? (other.fileExtension != null) : !this.fileExtension.equals(other.fileExtension)) {
-            return false;
-        }
-        if ((this.md5sum == null) ? (other.md5sum != null) : !this.md5sum.equals(other.md5sum)) {
-            return false;
-        }
-        if ((this.sha1sum == null) ? (other.sha1sum != null) : !this.sha1sum.equals(other.sha1sum)) {
-            return false;
-        }
-        if (this.identifiers != other.identifiers && (this.identifiers == null || !this.identifiers.equals(other.identifiers))) {
-            return false;
-        }
-        if (this.vendorEvidence != other.vendorEvidence && (this.vendorEvidence == null || !this.vendorEvidence.equals(other.vendorEvidence))) {
-            return false;
-        }
-        if (this.productEvidence != other.productEvidence && (this.productEvidence == null || !this.productEvidence.equals(other.productEvidence))) {
-            return false;
-        }
-        if (this.versionEvidence != other.versionEvidence && (this.versionEvidence == null || !this.versionEvidence.equals(other.versionEvidence))) {
-            return false;
-        }
-        if ((this.description == null) ? (other.description != null) : !this.description.equals(other.description)) {
-            return false;
-        }
-        if ((this.license == null) ? (other.license != null) : !this.license.equals(other.license)) {
-            return false;
-        }
-        if (this.vulnerabilities != other.vulnerabilities && (this.vulnerabilities == null || !this.vulnerabilities.equals(other.vulnerabilities))) {
-            return false;
-        }
-        if (this.relatedDependencies != other.relatedDependencies
-                && (this.relatedDependencies == null || !this.relatedDependencies.equals(other.relatedDependencies))) {
-            return false;
-        }
-        if (this.projectReferences != other.projectReferences
-                && (this.projectReferences == null || !this.projectReferences.equals(other.projectReferences))) {
-            return false;
-        }
-        if (this.availableVersions != other.availableVersions
-                && (this.availableVersions == null || !this.availableVersions.equals(other.availableVersions))) {
-            return false;
-        }
-
-        return true;
+        return ObjectUtils.equals(this.actualFilePath, other.actualFilePath) &&
+                ObjectUtils.equals(this.filePath, other.filePath) &&
+                ObjectUtils.equals(this.fileName, other.fileName) &&
+                ObjectUtils.equals(this.fileExtension, other.fileExtension) &&
+                ObjectUtils.equals(this.md5sum, other.md5sum) &&
+                ObjectUtils.equals(this.sha1sum, other.sha1sum) &&
+                ObjectUtils.equals(this.identifiers, other.identifiers) &&
+                ObjectUtils.equals(this.vendorEvidence, other.vendorEvidence) &&
+                ObjectUtils.equals(this.productEvidence, other.productEvidence) &&
+                ObjectUtils.equals(this.versionEvidence, other.versionEvidence) &&
+                ObjectUtils.equals(this.description, other.description) &&
+                ObjectUtils.equals(this.license, other.license) &&
+                ObjectUtils.equals(this.vulnerabilities, other.vulnerabilities) &&
+                ObjectUtils.equals(this.relatedDependencies, other.relatedDependencies) &&
+                ObjectUtils.equals(this.projectReferences, other.projectReferences) &&
+                ObjectUtils.equals(this.availableVersions, other.availableVersions);
     }
 
     /**
@@ -782,23 +760,13 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      */
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 47 * hash + (this.actualFilePath != null ? this.actualFilePath.hashCode() : 0);
-        hash = 47 * hash + (this.filePath != null ? this.filePath.hashCode() : 0);
-        hash = 47 * hash + (this.fileName != null ? this.fileName.hashCode() : 0);
-        hash = 47 * hash + (this.fileExtension != null ? this.fileExtension.hashCode() : 0);
-        hash = 47 * hash + (this.md5sum != null ? this.md5sum.hashCode() : 0);
-        hash = 47 * hash + (this.sha1sum != null ? this.sha1sum.hashCode() : 0);
-        hash = 47 * hash + (this.identifiers != null ? this.identifiers.hashCode() : 0);
-        hash = 47 * hash + (this.vendorEvidence != null ? this.vendorEvidence.hashCode() : 0);
-        hash = 47 * hash + (this.productEvidence != null ? this.productEvidence.hashCode() : 0);
-        hash = 47 * hash + (this.versionEvidence != null ? this.versionEvidence.hashCode() : 0);
-        hash = 47 * hash + (this.description != null ? this.description.hashCode() : 0);
-        hash = 47 * hash + (this.license != null ? this.license.hashCode() : 0);
-        hash = 47 * hash + (this.vulnerabilities != null ? this.vulnerabilities.hashCode() : 0);
-        hash = 47 * hash + (this.relatedDependencies != null ? this.relatedDependencies.hashCode() : 0);
-        hash = 47 * hash + (this.projectReferences != null ? this.projectReferences.hashCode() : 0);
-        hash = 47 * hash + (this.availableVersions != null ? this.availableVersions.hashCode() : 0);
+        int hash = MAGIC_HASH_INIT_VALUE;
+        for (Object field : new Object[]{this.actualFilePath, this.filePath, this.fileName, this.fileExtension, this.md5sum,
+                this.sha1sum, this.identifiers, this.vendorEvidence, this.productEvidence, this.versionEvidence,
+                this.description, this.license, this.vulnerabilities, this.relatedDependencies, this.projectReferences,
+                this.availableVersions}) {
+            hash = MAGIC_HASH_MULTIPLIER * hash + ObjectUtils.hashCode(field);
+        }
         return hash;
     }
 
