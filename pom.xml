@@ -124,6 +124,9 @@ Copyright (c) 2012 - Jeremy Long
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <github.global.server>github</github.global.server>
+        <!-- new versions of lucene are compiled with JDK 1.7 and cannot be used ubiquitously in Jenkins
+        thus, we cannot upgrade beyond 4.7.2 -->
+        <apache.lucene.version>4.7.2</apache.lucene.version>
         <slf4j.version>1.7.12</slf4j.version>
         <logback.version>1.1.3</logback.version>
     </properties>
@@ -356,6 +359,16 @@ Copyright (c) 2012 - Jeremy Long
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>annotations</artifactId>
+                <version>3.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>1.3.176</version>
+            </dependency>
+            <dependency>
                 <groupId>commons-cli</groupId>
                 <artifactId>commons-cli</artifactId>
                 <!-- Before upgrading to 1.3, note that this introduces several
@@ -369,14 +382,14 @@ Copyright (c) 2012 - Jeremy Long
                 <version>2.4</version>
             </dependency>
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.6</version>
             </dependency>
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${slf4j.version}</version>
+                <groupId>com.sun.mail</groupId>
+                <artifactId>mailapi</artifactId>
+                <version>1.5.2</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -400,6 +413,11 @@ Copyright (c) 2012 - Jeremy Long
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>1.9</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.ant</groupId>
                 <artifactId>ant</artifactId>
                 <version>1.9.5</version>
@@ -408,6 +426,26 @@ Copyright (c) 2012 - Jeremy Long
                 <groupId>org.apache.ant</groupId>
                 <artifactId>ant-testutil</artifactId>
                 <version>1.9.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-analyzers-common</artifactId>
+                <version>${apache.lucene.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-core</artifactId>
+                <version>${apache.lucene.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-queryparser</artifactId>
+                <version>${apache.lucene.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-test-framework</artifactId>
+                <version>${apache.lucene.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
@@ -445,6 +483,11 @@ Copyright (c) 2012 - Jeremy Long
                 <version>3.0</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity</artifactId>
+                <version>1.7</version>
+            </dependency>
+            <dependency>
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-core</artifactId>
                 <version>1.3</version>
@@ -457,6 +500,31 @@ Copyright (c) 2012 - Jeremy Long
                 with OpenJDK. -->
                 <version>1.16</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>1.7.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-ext</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-jdk14</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
