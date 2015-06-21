@@ -186,6 +186,10 @@ public final class Settings {
          */
         public static final String ANALYZER_PYTHON_PACKAGE_ENABLED = "analyzer.python.package.enabled";
         /**
+         * The properties key for whether the Autoconf analyzer is enabled.
+         */
+        public static final String ANALYZER_AUTOCONF_ENABLED = "analyzer.autoconf.enabled";
+        /**
          * The properties key for whether the .NET Assembly analyzer is enabled.
          */
         public static final String ANALYZER_ASSEMBLY_ENABLED = "analyzer.assembly.enabled";

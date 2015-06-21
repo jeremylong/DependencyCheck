@@ -1,0 +1,253 @@
+/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2015 Institute for Defense Analyses. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.io.FileUtils;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.EvidenceCollection;
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.UrlStringUtils;
+
+/**
+ * Used to analyze Autoconf input files named configure.ac or configure.in.
+ * Files simply named "configure" are also analyzed, assuming they are generated
+ * by Autoconf, and contain certain special package descriptor variables.
+ *
+ * @author Dale Visser <dvisser@ida.org>
+ * @see <a href="https://www.gnu.org/software/autoconf/">Autoconf - GNU Project - Free Software Foundation (FSF)</a>
+ */
+public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
+
+	/**
+	 * Autoconf output filename.
+	 */
+	private static final String CONFIGURE = "configure";
+
+	/**
+	 * Autoconf input filename.
+	 */
+	private static final String CONFIGURE_IN = "configure.in";
+
+	/**
+	 * Autoconf input filename.
+	 */
+	private static final String CONFIGURE_AC = "configure.ac";
+
+	/**
+	 * The name of the analyzer.
+	 */
+	private static final String ANALYZER_NAME = "Autoconf Analyzer";
+
+	/**
+	 * The phase that this analyzer is intended to run in.
+	 */
+	private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
+
+	/**
+	 * The set of file extensions supported by this analyzer.
+	 */
+	private static final Set<String> EXTENSIONS = newHashSet("ac", "in",
+			CONFIGURE);
+
+	/**
+	 * Matches AC_INIT variables in the output configure script.
+	 */
+	private static final Pattern PACKAGE_VAR = Pattern.compile(
+			"PACKAGE_(.+?)='(.*?)'", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+
+	/**
+	 * Matches AC_INIT statement in configure.ac file.
+	 */
+	private static final Pattern AC_INIT_PATTERN;
+	static {
+		// each instance of param or sep_param has a capture group
+		final String param = "\\[{0,2}(.+?)\\]{0,2}";
+		final String sep_param = "\\s*,\\s*" + param;
+		// Group 1: Package
+		// Group 2: Version
+		// Group 3: optional
+		// Group 4: Bug report address (if it exists)
+		// Group 5: optional
+		// Group 6: Tarname (if it exists)
+		// Group 7: optional
+		// Group 8: URL (if it exists)
+		AC_INIT_PATTERN = Pattern.compile(String.format(
+				"AC_INIT\\(%s%s(%s)?(%s)?(%s)?\\s*\\)", param, sep_param,
+				sep_param, sep_param, sep_param), Pattern.DOTALL
+				| Pattern.CASE_INSENSITIVE);
+	}
+
+	/**
+	 * Returns a list of file EXTENSIONS supported by this analyzer.
+	 *
+	 * @return a list of file EXTENSIONS supported by this analyzer.
+	 */
+	@Override
+	public Set<String> getSupportedExtensions() {
+		return EXTENSIONS;
+	}
+
+	/**
+	 * Returns the name of the analyzer.
+	 *
+	 * @return the name of the analyzer.
+	 */
+	@Override
+	public String getName() {
+		return ANALYZER_NAME;
+	}
+
+	/**
+	 * Returns the phase that the analyzer is intended to run in.
+	 *
+	 * @return the phase that the analyzer is intended to run in.
+	 */
+	public AnalysisPhase getAnalysisPhase() {
+		return ANALYSIS_PHASE;
+	}
+
+	/**
+	 * Returns the key used in the properties file to reference the analyzer's
+	 * enabled property.
+	 *
+	 * @return the analyzer's enabled property setting key
+	 */
+	@Override
+	protected String getAnalyzerEnabledSettingKey() {
+		return Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED;
+	}
+
+	@Override
+	protected void analyzeFileType(Dependency dependency, Engine engine)
+			throws AnalysisException {
+		final File actualFile = dependency.getActualFile();
+		final String name = actualFile.getName();
+		if (name.startsWith(CONFIGURE)) {
+			final File parent = actualFile.getParentFile();
+			final String parentName = parent.getName();
+			dependency.setDisplayFileName(parentName + "/" + name);
+			final boolean isOutputScript = CONFIGURE.equals(name);
+			if (isOutputScript || CONFIGURE_AC.equals(name)
+					|| CONFIGURE_IN.equals(name)) {
+				final String contents = getFileContents(actualFile);
+				if (!contents.isEmpty()) {
+					if (isOutputScript) {
+						extractConfigureScriptEvidence(dependency, name,
+								contents);
+					} else {
+						gatherEvidence(dependency, name, contents);
+					}
+				}
+			}
+		} else {
+			// copy, alter and set in case some other thread is iterating over
+			final List<Dependency> deps = new ArrayList<Dependency>(
+					engine.getDependencies());
+			deps.remove(dependency);
+			engine.setDependencies(deps);
+		}
+	}
+
+	private void extractConfigureScriptEvidence(Dependency dependency,
+			final String name, final String contents) {
+		final Matcher matcher = PACKAGE_VAR.matcher(contents);
+		while (matcher.find()) {
+			final String variable = matcher.group(1);
+			final String value = matcher.group(2);
+			if (!value.isEmpty()) {
+				if (variable.endsWith("NAME")) {
+					dependency.getProductEvidence().addEvidence(name, variable,
+							value, Confidence.HIGHEST);
+				} else if ("VERSION".equals(variable)) {
+					dependency.getVersionEvidence().addEvidence(name, variable,
+							value, Confidence.HIGHEST);
+				} else if ("BUGREPORT".equals(variable)) {
+					dependency.getVendorEvidence().addEvidence(name, variable,
+							value, Confidence.HIGH);
+				} else if ("URL".equals(variable)) {
+					dependency.getVendorEvidence().addEvidence(name, variable,
+							value, Confidence.HIGH);
+				}
+			}
+		}
+	}
+
+	private String getFileContents(final File actualFile)
+			throws AnalysisException {
+		String contents = "";
+		try {
+			contents = FileUtils.readFileToString(actualFile).trim();
+		} catch (IOException e) {
+			throw new AnalysisException(
+					"Problem occured while reading dependency file.", e);
+		}
+		return contents;
+	}
+
+	private void gatherEvidence(Dependency dependency, final String name,
+			String contents) {
+		final Matcher matcher = AC_INIT_PATTERN.matcher(contents);
+		if (matcher.find()) {
+			final EvidenceCollection productEvidence = dependency
+					.getProductEvidence();
+			productEvidence.addEvidence(name, "Package", matcher.group(1),
+					Confidence.HIGHEST);
+			dependency.getVersionEvidence().addEvidence(name,
+					"Package Version", matcher.group(2), Confidence.HIGHEST);
+			final EvidenceCollection vendorEvidence = dependency
+					.getVendorEvidence();
+			if (null != matcher.group(3)) {
+				vendorEvidence.addEvidence(name, "Bug report address",
+						matcher.group(4), Confidence.HIGH);
+			}
+			if (null != matcher.group(5)) {
+				productEvidence.addEvidence(name, "Tarname", matcher.group(6),
+						Confidence.HIGH);
+			}
+			if (null != matcher.group(7)) {
+				final String url = matcher.group(8);
+				if (UrlStringUtils.isUrl(url)) {
+					vendorEvidence.addEvidence(name, "URL", url,
+							Confidence.HIGH);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Initializes the file type analyzer.
+	 *
+	 * @throws Exception
+	 *             thrown if there is an exception during initialization
+	 */
+	@Override
+	protected void initializeFileTypeAnalyzer() throws Exception {
+		// No initialization needed.
+	}
+}
