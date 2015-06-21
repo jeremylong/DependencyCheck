@@ -263,9 +263,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                 }
             }
         }
-        if (LogUtils.isVerboseLoggingEnabled()) {
-            LOGGER.debug("IdentifiersMatch={} ({}, {})", matches, dependency1.getFileName(), dependency2.getFileName());
-        }
+        LOGGER.debug("IdentifiersMatch={} ({}, {})", matches, dependency1.getFileName(), dependency2.getFileName());
         return matches;
     }
 
@@ -343,9 +341,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
              */
             returnVal = leftName.length() <= rightName.length();
         }
-        if (LogUtils.isVerboseLoggingEnabled()) {
-            LOGGER.debug("IsCore={} ({}, {})", returnVal, left.getFileName(), right.getFileName());
-        }
+        LOGGER.debug("IsCore={} ({}, {})", returnVal, left.getFileName(), right.getFileName());
         return returnVal;
     }
 
