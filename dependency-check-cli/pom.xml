@@ -44,6 +44,7 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>**/*.properties</include>
+                    <include>logback.xml</include>
                 </includes>
                 <filtering>true</filtering>
             </resource>
@@ -321,12 +322,20 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
             <artifactId>dependency-check-utils</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <!-- Logging implementation. We may change this in the future -->
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
+            <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
-            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
         </dependency>
     </dependencies>
 </project>
