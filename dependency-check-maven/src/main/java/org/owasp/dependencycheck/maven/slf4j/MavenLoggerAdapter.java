@@ -18,22 +18,32 @@
 package org.owasp.dependencycheck.maven.slf4j;
 
 import org.apache.maven.plugin.logging.Log;
-import org.slf4j.helpers.FormattingTuple;
 import org.slf4j.helpers.MarkerIgnoringBase;
 import org.slf4j.helpers.MessageFormatter;
 
 /**
- * Created by colezlaw on 6/14/15.
+ * Created on 6/14/15.
+ *
+ * @author colezlaw
  */
 public class MavenLoggerAdapter extends MarkerIgnoringBase {
 
     private Log log;
 
+    /**
+     * Creates a new Maven Logger Adapter.
+     *
+     * @param log the maven log
+     */
     public MavenLoggerAdapter(Log log) {
         super();
         this.log = log;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isTraceEnabled() {
         if (log != null) {

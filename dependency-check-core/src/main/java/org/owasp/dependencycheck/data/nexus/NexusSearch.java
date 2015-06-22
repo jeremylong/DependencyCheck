@@ -49,14 +49,6 @@ public class NexusSearch {
      */
     private boolean useProxy;
     /**
-     * The username to use if the Nexus requires authentication.
-     */
-    private String userName = null;
-    /**
-     * The password to use if the Nexus requires authentication.
-     */
-    private char[] password;
-    /**
      * Used for logging.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(NexusSearch.class);
@@ -156,7 +148,7 @@ public class NexusSearch {
             throw new FileNotFoundException("Artifact not found in Nexus");
         } else {
             LOGGER.debug("Could not connect to Nexus received response code: {} {}",
-                conn.getResponseCode(), conn.getResponseMessage());
+                    conn.getResponseCode(), conn.getResponseMessage());
             throw new IOException("Could not connect to Nexus");
         }
     }

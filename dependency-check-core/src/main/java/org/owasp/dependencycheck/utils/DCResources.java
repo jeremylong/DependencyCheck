@@ -32,13 +32,40 @@ import ch.qos.cal10n.LocaleData;
 )
 public enum DCResources {
 
+    /**
+     * Not deployed.
+     */
     NOTDEPLOYED,
+    /**
+     * grok error.
+     */
     GROKERROR,
+    /**
+     * The dependency is not an assembly.
+     */
     NOTASSEMBLY,
+    /**
+     * GROK Return Code.
+     */
     GROKRC,
+    /**
+     * Grok assembly was extracted.
+     */
     GROKDEPLOYED,
+    /**
+     * Grok assembly was not extracted.
+     */
     GROKNOTDEPLOYED,
+    /**
+     * Grok failed to initialize.
+     */
     GROKINITFAIL,
+    /**
+     * Grok initialized.
+     */
     GROKINITMSG,
+    /**
+     * Grok assembly was not deleted.
+     */
     GROKNOTDELETED
 }

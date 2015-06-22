@@ -149,7 +149,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                     if (mpp.compareTo(mod.getBasedir()) == 0 && descendants.add(mod)) {
                         if (getLog().isDebugEnabled()) {
                             getLog().debug(String.format("Decendent module %s added", mod.getName()));
-                        };
+                        }
                     }
                 } catch (IOException ex) {
                     if (getLog().isDebugEnabled()) {

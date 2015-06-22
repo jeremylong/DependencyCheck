@@ -189,9 +189,8 @@ public class StandardUpdate {
     }
 
     /**
-     * Determines if the index needs to be updated. This is done by fetching the NVD CVE meta data and checking the last
-     * update date. If the data needs to be refreshed this method will return the NvdCveUrl for the files that need to
-     * be updated.
+     * Determines if the index needs to be updated. This is done by fetching the NVD CVE meta data and checking the last update
+     * date. If the data needs to be refreshed this method will return the NvdCveUrl for the files that need to be updated.
      *
      * @return the collection of files that need to be updated
      * @throws MalformedURLException is thrown if the URL for the NVD CVE Meta data is incorrect
@@ -239,7 +238,7 @@ public class StandardUpdate {
                                 currentTimestamp = Long.parseLong(properties.getProperty(DatabaseProperties.LAST_UPDATED_BASE + entry.getId(), "0"));
                             } catch (NumberFormatException ex) {
                                 LOGGER.debug("Error parsing '{}' '{}' from nvdcve.lastupdated",
-                                    DatabaseProperties.LAST_UPDATED_BASE, entry.getId(), ex);
+                                        DatabaseProperties.LAST_UPDATED_BASE, entry.getId(), ex);
                             }
                             if (currentTimestamp == entry.getTimestamp()) {
                                 entry.setNeedsUpdate(false);
@@ -249,7 +248,7 @@ public class StandardUpdate {
                 }
             } catch (NumberFormatException ex) {
                 LOGGER.warn("An invalid schema version or timestamp exists in the data.properties file.");
-                LOGGER.debug( "", ex);
+                LOGGER.debug("", ex);
             }
         }
         return updates;

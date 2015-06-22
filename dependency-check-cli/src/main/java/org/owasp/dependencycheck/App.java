@@ -351,22 +351,27 @@ public class App {
         }
     }
 
+    /**
+     * Creates a file appender and adds it to logback.
+     *
+     * @param verboseLog the path to the verbose log file
+     */
     private void prepareLogger(String verboseLog) {
-        StaticLoggerBinder loggerBinder = StaticLoggerBinder.getSingleton();
-        LoggerContext context = (LoggerContext) loggerBinder.getLoggerFactory();
+        final StaticLoggerBinder loggerBinder = StaticLoggerBinder.getSingleton();
+        final LoggerContext context = (LoggerContext) loggerBinder.getLoggerFactory();
 
         final PatternLayoutEncoder encoder = new PatternLayoutEncoder();
         encoder.setPattern("%d %C:%L%n%-5level - %msg%n");
         encoder.setContext(context);
         encoder.start();
-        FileAppender fa = new FileAppender();
+        final FileAppender fa = new FileAppender();
         fa.setAppend(true);
         fa.setEncoder(encoder);
         fa.setContext(context);
         fa.setFile(verboseLog);
         final File f = new File(verboseLog);
         String name = f.getName();
-        int i = name.lastIndexOf('.');
+        final int i = name.lastIndexOf('.');
         if (i > 1) {
             name = name.substring(0, i);
         }

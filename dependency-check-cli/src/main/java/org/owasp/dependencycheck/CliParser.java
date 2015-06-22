@@ -497,9 +497,9 @@ public final class CliParser {
      *
      * @return true if the disableAutoconf command line argument was specified; otherwise false
      */
-	public boolean isAutoconfDisabled() {
+    public boolean isAutoconfDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_AUTOCONF);
-	}
+    }
 
     /**
      * Returns true if the disableNexus command line argument was specified.

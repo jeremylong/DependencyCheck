@@ -42,7 +42,6 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.utils.DCResources;
 import org.owasp.dependencycheck.utils.Settings;
-import org.slf4j.Logger;
 import org.slf4j.cal10n.LocLogger;
 import org.slf4j.cal10n.LocLoggerFactory;
 import org.w3c.dom.Document;
@@ -79,15 +78,15 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Message Conveyer
      */
-    private IMessageConveyor messageConveyer = new MessageConveyor(Locale.getDefault());
+    private final IMessageConveyor MESSAGE_CONVERYOR = new MessageConveyor(Locale.getDefault());
     /**
      * LocLoggerFactory for localized logger
      */
-    private LocLoggerFactory llFactory = new LocLoggerFactory(messageConveyer);
+    private final LocLoggerFactory LLFACTORY = new LocLoggerFactory(MESSAGE_CONVERYOR);
     /**
      * Logger
      */
-    private LocLogger LOGGER = llFactory.getLocLogger(AssemblyAnalyzer.class);
+    private final LocLogger LOGGER = LLFACTORY.getLocLogger(AssemblyAnalyzer.class);
 
     /**
      * Builds the beginnings of a List for ProcessBuilder
