@@ -1,4 +1,6 @@
 */target/**
+# IntelliJ test run side-effects
+dependency-check-core/data/
 # Intellij project files
 *.iml
 *.ipr

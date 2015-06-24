@@ -26,6 +26,9 @@ import java.io.Serializable;
  */
 public class Evidence implements Serializable, Comparable<Evidence> {
 
+    public static final int MAGIC_HASH_INIT_VALUE = 3;
+    public static final int MAGIC_HASH_MULTIPLIER = 67;
+
     /**
      * Creates a new Evidence object.
      */
@@ -176,11 +179,11 @@ public class Evidence implements Serializable, Comparable<Evidence> {
      */
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 67 * hash + (this.name != null ? this.name.hashCode() : 0);
-        hash = 67 * hash + (this.source != null ? this.source.hashCode() : 0);
-        hash = 67 * hash + (this.value != null ? this.value.hashCode() : 0);
-        hash = 67 * hash + (this.confidence != null ? this.confidence.hashCode() : 0);
+        int hash = MAGIC_HASH_INIT_VALUE;
+        hash = MAGIC_HASH_MULTIPLIER * hash + (this.name != null ? this.name.toLowerCase().hashCode() : 0);
+        hash = MAGIC_HASH_MULTIPLIER * hash + (this.source != null ? this.source.toLowerCase().hashCode() : 0);
+        hash = MAGIC_HASH_MULTIPLIER * hash + (this.value != null ? this.value.toLowerCase().hashCode() : 0);
+        hash = MAGIC_HASH_MULTIPLIER * hash + (this.confidence != null ? this.confidence.hashCode() : 0);
         return hash;
     }
 
