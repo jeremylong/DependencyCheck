@@ -48,9 +48,9 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     /**
      * Creates a new Evidence objects.
      *
-     * @param source the source of the evidence.
-     * @param name the name of the evidence.
-     * @param value the value of the evidence.
+     * @param source     the source of the evidence.
+     * @param name       the name of the evidence.
+     * @param value      the value of the evidence.
      * @param confidence the confidence of the evidence.
      */
     public Evidence(String source, String name, String value, Confidence confidence) {
@@ -59,6 +59,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
         this.value = value;
         this.confidence = confidence;
     }
+
     /**
      * The name of the evidence.
      */
@@ -81,6 +82,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     public void setName(String name) {
         this.name = name;
     }
+
     /**
      * The source of the evidence.
      */
@@ -103,6 +105,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     public void setSource(String source) {
         this.source = source;
     }
+
     /**
      * The value of the evidence.
      */
@@ -137,6 +140,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     public void setValue(String value) {
         this.value = value;
     }
+
     /**
      * A value indicating if the Evidence has been "used" (aka read).
      */
@@ -159,6 +163,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     public void setUsed(boolean used) {
         this.used = used;
     }
+
     /**
      * The confidence level for the evidence.
      */
@@ -213,8 +218,10 @@ public class Evidence implements Serializable, Comparable<Evidence> {
         }
         final Evidence e = (Evidence) that;
 
-        return StringUtils.equalsIgnoreCase(name, e.name) && StringUtils.equalsIgnoreCase(source, e.source) && StringUtils.equalsIgnoreCase(value, e.value)
-                && (confidence == null ? e.confidence == null : confidence == e.confidence);
+        return StringUtils.equalsIgnoreCase(name, e.name)
+                && StringUtils.equalsIgnoreCase(source, e.source)
+                && StringUtils.equalsIgnoreCase(value, e.value)
+                && ObjectUtils.equals(confidence, e.confidence);
     }
 
     /**
@@ -250,7 +257,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
      * Wrapper around {@link java.lang.String#compareToIgnoreCase(java.lang.String) String.compareToIgnoreCase} with an
      * exhaustive, possibly duplicative, check against nulls.
      *
-     * @param me the value to be compared
+     * @param me    the value to be compared
      * @param other the other value to be compared
      * @return true if the values are equal; otherwise false
      */
