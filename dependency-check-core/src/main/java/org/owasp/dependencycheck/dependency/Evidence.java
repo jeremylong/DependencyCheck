@@ -29,8 +29,15 @@ import java.io.Serializable;
  */
 public class Evidence implements Serializable, Comparable<Evidence> {
 
-    public static final int MAGIC_HASH_INIT_VALUE = 3;
-    public static final int MAGIC_HASH_MULTIPLIER = 67;
+    /**
+     * Used as starting point for generating the value in {@link #hashCode()}.
+     */
+    private static final int MAGIC_HASH_INIT_VALUE = 3;
+
+    /**
+     * Used as a multiplier for generating the value in {@link #hashCode()}.
+     */
+    private static final int MAGIC_HASH_MULTIPLIER = 67;
 
     /**
      * Creates a new Evidence object.
