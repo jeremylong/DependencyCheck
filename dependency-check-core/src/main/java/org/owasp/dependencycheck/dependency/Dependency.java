@@ -666,16 +666,13 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * @param dependency a reference to the related dependency
      */
     public void addRelatedDependency(Dependency dependency) {
-        boolean debug = false;
         if (this == dependency) {
             LOGGER.warn("Attempted to add a circular reference - please post the log file to issue #172 here "
                     + "https://github.com/jeremylong/DependencyCheck/issues/172");
-            debug = true;
+            LOGGER.debug("this: {}", this);
+            LOGGER.debug("dependency: {}", dependency);
         } else if (!relatedDependencies.add(dependency)) {
-            LOGGER.warn("Failed to add dependency, likely due to referencing the same file as another dependency in the set.");
-            debug = true;
-        }
-        if (debug) {
+            LOGGER.debug("Failed to add dependency, likely due to referencing the same file as another dependency in the set.");
             LOGGER.debug("this: {}", this);
             LOGGER.debug("dependency: {}", dependency);
         }
