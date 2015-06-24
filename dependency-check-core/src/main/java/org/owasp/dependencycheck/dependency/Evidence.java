@@ -206,19 +206,8 @@ public class Evidence implements Serializable, Comparable<Evidence> {
         }
         final Evidence e = (Evidence) that;
 
-        return testEquality(name, e.name) && testEquality(source, e.source) && testEquality(value, e.value)
+        return StringUtils.equalsIgnoreCase(name, e.name) && StringUtils.equalsIgnoreCase(source, e.source) && StringUtils.equalsIgnoreCase(value, e.value)
                 && (confidence == null ? e.confidence == null : confidence == e.confidence);
-    }
-
-    /**
-     * Simple equality test for use within the equals method. This does a case insensitive compare.
-     *
-     * @param l a string to compare.
-     * @param r another string to compare.
-     * @return whether the two strings are the same.
-     */
-    private boolean testEquality(String l, String r) {
-        return l == null ? r == null : l.equalsIgnoreCase(r);
     }
 
     /**
