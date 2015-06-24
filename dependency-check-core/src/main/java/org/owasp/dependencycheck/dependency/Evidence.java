@@ -234,7 +234,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
         if (equalsWithNullCheck(source, o.source)) {
             if (equalsWithNullCheck(name, o.name)) {
                 if (equalsWithNullCheck(value, o.value)) {
-                    if (equalsWithNullCheck(confidence, o.confidence)) {
+                    if (ObjectUtils.equals(confidence, o.confidence)) {
                         return 0; //they are equal
                     } else {
                         return compareToWithNullCheck(confidence, o.confidence);
@@ -264,22 +264,6 @@ public class Evidence implements Serializable, Comparable<Evidence> {
             return false;
         }
         return me.equalsIgnoreCase(other);
-    }
-
-    /**
-     * Equality check with an exhaustive, possibly duplicative, check against nulls.
-     *
-     * @param me the value to be compared
-     * @param other the other value to be compared
-     * @return true if the values are equal; otherwise false
-     */
-    private boolean equalsWithNullCheck(Confidence me, Confidence other) {
-        if (me == null && other == null) {
-            return true;
-        } else if (me == null || other == null) {
-            return false;
-        }
-        return me.equals(other);
     }
 
     /**
