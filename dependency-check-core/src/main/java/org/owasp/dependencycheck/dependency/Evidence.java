@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.dependency;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+
 import java.io.Serializable;
 
 /**
@@ -180,10 +183,10 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     @Override
     public int hashCode() {
         int hash = MAGIC_HASH_INIT_VALUE;
-        hash = MAGIC_HASH_MULTIPLIER * hash + (this.name != null ? this.name.toLowerCase().hashCode() : 0);
-        hash = MAGIC_HASH_MULTIPLIER * hash + (this.source != null ? this.source.toLowerCase().hashCode() : 0);
-        hash = MAGIC_HASH_MULTIPLIER * hash + (this.value != null ? this.value.toLowerCase().hashCode() : 0);
-        hash = MAGIC_HASH_MULTIPLIER * hash + (this.confidence != null ? this.confidence.hashCode() : 0);
+        hash = MAGIC_HASH_MULTIPLIER * hash + ObjectUtils.hashCode(StringUtils.lowerCase(this.name));
+        hash = MAGIC_HASH_MULTIPLIER * hash + ObjectUtils.hashCode(StringUtils.lowerCase(this.source));
+        hash = MAGIC_HASH_MULTIPLIER * hash + ObjectUtils.hashCode(StringUtils.lowerCase(this.value));
+        hash = MAGIC_HASH_MULTIPLIER * hash + ObjectUtils.hashCode(this.confidence);
         return hash;
     }
 
