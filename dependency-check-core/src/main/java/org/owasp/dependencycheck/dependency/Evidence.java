@@ -226,7 +226,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
                     if (ObjectUtils.equals(confidence, o.confidence)) {
                         return 0; //they are equal
                     } else {
-                        return compareToWithNullCheck(confidence, o.confidence);
+                        return ObjectUtils.compare(confidence, o.confidence);
                     }
                 } else {
                     return compareToIgnoreCaseWithNullCheck(value, o.value);
@@ -256,25 +256,6 @@ public class Evidence implements Serializable, Comparable<Evidence> {
             return 1; //me is greater then the other string
         }
         return me.compareToIgnoreCase(other);
-    }
-
-    /**
-     * Wrapper around {@link java.lang.Enum#compareTo(java.lang.Enum) Enum.compareTo} with an exhaustive, possibly duplicative,
-     * check against nulls.
-     *
-     * @param me the value to be compared
-     * @param other the other value to be compared
-     * @return true if the values are equal; otherwise false
-     */
-    private int compareToWithNullCheck(Confidence me, Confidence other) {
-        if (me == null && other == null) {
-            return 0;
-        } else if (me == null) {
-            return -1; //the other string is greater then me
-        } else if (other == null) {
-            return 1; //me is greater then the other string
-        }
-        return me.compareTo(other);
     }
 
     /**
