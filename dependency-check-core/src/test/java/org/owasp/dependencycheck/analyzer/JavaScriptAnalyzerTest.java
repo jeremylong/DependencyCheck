@@ -17,14 +17,15 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
+
+import java.io.File;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -36,12 +37,12 @@ public class JavaScriptAnalyzerTest extends BaseTest {
      * Test of getSupportedExtensions method, of class JavaScriptAnalyzer.
      */
     @Test
-    public void testGetSupportedExtensions() {
+    public void testAcceptSupportedExtensions() throws Exception {
         JavaScriptAnalyzer instance = new JavaScriptAnalyzer();
-        Set<String> expResult = new HashSet<String>();
-        expResult.add("js");
-        Set result = instance.getSupportedExtensions();
-        assertEquals(expResult, result);
+        instance.initialize();
+        instance.setEnabled(true);
+        String name = "test.js";
+        assertTrue(name, instance.accept(new File(name)));
     }
 
     /**
@@ -53,18 +54,6 @@ public class JavaScriptAnalyzerTest extends BaseTest {
         JavaScriptAnalyzer instance = new JavaScriptAnalyzer();
         String expResult = "JavaScript Analyzer";
         String result = instance.getName();
-        assertEquals(expResult, result);
-    }
-
-    /**
-     * Test of supportsExtension method, of class JavaScriptAnalyzer.
-     */
-    @Test
-    public void testSupportsExtension() {
-        String extension = "js";
-        JavaScriptAnalyzer instance = new JavaScriptAnalyzer();
-        boolean expResult = true;
-        boolean result = instance.supportsExtension(extension);
         assertEquals(expResult, result);
     }
 

@@ -17,17 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetHeaders;
-
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.input.AutoCloseInputStream;
@@ -37,13 +26,14 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
-import org.owasp.dependencycheck.utils.ExtractionException;
-import org.owasp.dependencycheck.utils.ExtractionUtil;
-import org.owasp.dependencycheck.utils.FileUtils;
-import org.owasp.dependencycheck.utils.Settings;
-import org.owasp.dependencycheck.utils.UrlStringUtils;
+import org.owasp.dependencycheck.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetHeaders;
+import java.io.*;
+import java.util.regex.Pattern;
 
 /**
  * Used to analyze a Wheel or egg distribution files, or their contents in unzipped form, and collect information that can be used
@@ -86,11 +76,10 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The set of file extensions supported by this analyzer.
      */
-    private static final Set<String> EXTENSIONS = newHashSet("whl", "egg",
-            "zip", METADATA, PKG_INFO);
+    private static final String[] EXTENSIONS = {"whl", "egg", "zip"};
 
     /**
-     * Used to match on egg archive candidate extenssions.
+     * Used to match on egg archive candidate extensions.
      */
     private static final Pattern EGG_OR_ZIP = Pattern.compile("egg|zip");
 
@@ -114,23 +103,21 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Filter that detects files named "METADATA".
      */
-    private static final FilenameFilter METADATA_FILTER = new NameFileFilter(
+    private static final NameFileFilter METADATA_FILTER = new NameFileFilter(
             METADATA);
 
     /**
      * Filter that detects files named "PKG-INFO".
      */
-    private static final FilenameFilter PKG_INFO_FILTER = new NameFileFilter(
+    private static final NameFileFilter PKG_INFO_FILTER = new NameFileFilter(
             PKG_INFO);
 
-    /**
-     * Returns a list of file EXTENSIONS supported by this analyzer.
-     *
-     * @return a list of file EXTENSIONS supported by this analyzer.
-     */
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFileFilters(
+            METADATA_FILTER, PKG_INFO_FILTER).addExtensions(EXTENSIONS).build();
+
     @Override
-    public Set<String> getSupportedExtensions() {
-        return EXTENSIONS;
+    protected FileFilter getFileFilter() {
+        return FILTER;
     }
 
     /**
@@ -194,13 +181,13 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Collects the meta data from an archive.
      *
-     * @param dependency the archive being scanned
-     * @param folderFilter the filter to apply to the folder
+     * @param dependency     the archive being scanned
+     * @param folderFilter   the filter to apply to the folder
      * @param metadataFilter the filter to apply to the meta data
      * @throws AnalysisException thrown when there is a problem analyzing the dependency
      */
     private void collectMetadataFromArchiveFormat(Dependency dependency,
-            FilenameFilter folderFilter, FilenameFilter metadataFilter)
+                                                  FilenameFilter folderFilter, FilenameFilter metadataFilter)
             throws AnalysisException {
         final File temp = getNextTempDirectory();
         LOGGER.debug("{} exists? {}", temp, temp.exists());
@@ -260,7 +247,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
      * Gathers evidence from the METADATA file.
      *
      * @param dependency the dependency being analyzed
-     * @param file a reference to the manifest/properties file
+     * @param file       a reference to the manifest/properties file
      * @throws AnalysisException thrown when there is an error
      */
     private static void collectWheelMetadata(Dependency dependency, File file)
@@ -290,13 +277,13 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Adds a value to the evidence collection.
      *
-     * @param headers the properties collection
-     * @param evidence the evidence collection to add the value
-     * @param property the property name
+     * @param headers    the properties collection
+     * @param evidence   the evidence collection to add the value
+     * @param property   the property name
      * @param confidence the confidence of the evidence
      */
     private static void addPropertyToEvidence(InternetHeaders headers,
-            EvidenceCollection evidence, String property, Confidence confidence) {
+                                              EvidenceCollection evidence, String property, Confidence confidence) {
         final String value = headers.getHeader(property, null);
         LOGGER.debug("Property: {}, Value: {}", property, value);
         if (StringUtils.isNotBlank(value)) {

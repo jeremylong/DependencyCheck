@@ -24,6 +24,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 
+import java.io.File;
+
 public class NuspecAnalyzerTest extends BaseTest {
 
     private NuspecAnalyzer instance;
@@ -31,6 +33,7 @@ public class NuspecAnalyzerTest extends BaseTest {
     @Before
     public void setUp() throws Exception {
         instance = new NuspecAnalyzer();
+        instance.initialize();
         instance.setEnabled(true);
     }
 
@@ -40,15 +43,9 @@ public class NuspecAnalyzerTest extends BaseTest {
     }
 
     @Test
-    public void testGetSupportedExtensions() {
-        assertTrue(instance.getSupportedExtensions().contains("nuspec"));
-        assertFalse(instance.getSupportedExtensions().contains("nupkg"));
-    }
-
-    @Test
-    public void testSupportsExtension() {
-        assertTrue(instance.supportsExtension("nuspec"));
-        assertFalse(instance.supportsExtension("nupkg"));
+    public void testSupportsFileExtensions() {
+        assertTrue(instance.accept(new File("test.nuspec")));
+        assertFalse(instance.accept(new File("test.nupkg")));
     }
 
     @Test

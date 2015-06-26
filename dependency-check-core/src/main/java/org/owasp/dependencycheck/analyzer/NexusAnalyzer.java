@@ -17,12 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -31,13 +25,17 @@ import org.owasp.dependencycheck.data.nexus.NexusSearch;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.utils.*;
 import org.owasp.dependencycheck.xml.pom.PomUtils;
-import org.owasp.dependencycheck.utils.InvalidSettingException;
-import org.owasp.dependencycheck.utils.DownloadFailedException;
-import org.owasp.dependencycheck.utils.Downloader;
-import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Analyzer which will attempt to locate a dependency on a Nexus service by SHA-1 digest of the dependency.
@@ -78,7 +76,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The types of files on which this will work.
      */
-    private static final Set<String> SUPPORTED_EXTENSIONS = newHashSet("jar");
+    private static final String SUPPORTED_EXTENSIONS = "jar";
 
     /**
      * The Nexus Search to be set up for this analyzer.
@@ -183,14 +181,11 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
         return ANALYSIS_PHASE;
     }
 
-    /**
-     * Returns the extensions for which this Analyzer runs.
-     *
-     * @return the extensions for which this Analyzer runs
-     */
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(SUPPORTED_EXTENSIONS).build();
+
     @Override
-    public Set<String> getSupportedExtensions() {
-        return SUPPORTED_EXTENSIONS;
+    protected FileFilter getFileFilter() {
+        return FILTER;
     }
 
     /**

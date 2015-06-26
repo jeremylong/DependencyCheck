@@ -17,19 +17,16 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Set;
-import java.util.regex.Pattern;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -56,16 +53,13 @@ public class JavaScriptAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The set of file extensions supported by this analyzer.
      */
-    private static final Set<String> EXTENSIONS = newHashSet("js");
+    private static final String EXTENSIONS = "js";
 
-    /**
-     * Returns a list of file EXTENSIONS supported by this analyzer.
-     *
-     * @return a list of file EXTENSIONS supported by this analyzer.
-     */
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
+
     @Override
-    public Set<String> getSupportedExtensions() {
-        return EXTENSIONS;
+    protected FileFilter getFileFilter() {
+        return FILTER;
     }
 
     /**

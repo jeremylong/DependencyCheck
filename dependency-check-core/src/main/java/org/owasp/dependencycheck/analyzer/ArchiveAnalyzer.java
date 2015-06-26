@@ -17,13 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,6 +25,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -44,6 +39,7 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -116,14 +112,11 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         EXTENSIONS.addAll(ZIPPABLES);
     }
 
-    /**
-     * Returns a list of file EXTENSIONS supported by this analyzer.
-     *
-     * @return a list of file EXTENSIONS supported by this analyzer.
-     */
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
+
     @Override
-    public Set<String> getSupportedExtensions() {
-        return EXTENSIONS;
+    protected FileFilter getFileFilter() {
+        return FILTER;
     }
 
     /**
@@ -197,7 +190,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * scanned, and added to the list of dependencies within the engine.
      *
      * @param dependency the dependency to analyze
-     * @param engine the engine scanning
+     * @param engine     the engine scanning
      * @throws AnalysisException thrown if there is an analysis exception
      */
     @Override
@@ -229,14 +222,14 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
 
                 //TODO - can we get more evidence from the parent? EAR contains module name, etc.
                 //analyze the dependency (i.e. extract files) if it is a supported type.
-                if (this.supportsExtension(d.getFileExtension()) && scanDepth < MAX_SCAN_DEPTH) {
+                if (this.accept(d.getActualFile()) && scanDepth < MAX_SCAN_DEPTH) {
                     scanDepth += 1;
                     analyze(d, engine);
                     scanDepth -= 1;
                 }
             }
         }
-        if (this.REMOVE_FROM_ANALYSIS.contains(dependency.getFileExtension())) {
+        if (REMOVE_FROM_ANALYSIS.contains(dependency.getFileExtension())) {
             if ("zip".equals(dependency.getFileExtension()) && isZipFileActuallyJarFile(dependency)) {
                 final File tdir = getNextTempDirectory();
                 final String fileName = dependency.getFileName();
@@ -295,9 +288,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Extracts the contents of an archive into the specified directory.
      *
-     * @param archive an archive file such as a WAR or EAR
+     * @param archive     an archive file such as a WAR or EAR
      * @param destination a directory to extract the contents to
-     * @param engine the scanning engine
+     * @param engine      the scanning engine
      * @throws AnalysisException thrown if the archive is not found
      */
     private void extractFiles(File archive, File destination, Engine engine) throws AnalysisException {
@@ -320,9 +313,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 extractArchive(new TarArchiveInputStream(new BufferedInputStream(fis)), destination, engine);
             } else if ("gz".equals(archiveExt) || "tgz".equals(archiveExt)) {
                 final String uncompressedName = GzipUtils.getUncompressedFilename(archive.getName());
-                final String uncompressedExt = FileUtils.getFileExtension(uncompressedName).toLowerCase();
-                if (engine.supportsExtension(uncompressedExt)) {
-                    decompressFile(new GzipCompressorInputStream(new BufferedInputStream(fis)), new File(destination, uncompressedName));
+                File f = new File(destination, uncompressedName);
+                if (engine.accept(f)) {
+                    decompressFile(new GzipCompressorInputStream(new BufferedInputStream(fis)), f);
                 }
             }
         } catch (ArchiveExtractionException ex) {
@@ -343,9 +336,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Extracts files from an archive.
      *
-     * @param input the archive to extract files from
+     * @param input       the archive to extract files from
      * @param destination the location to write the files too
-     * @param engine the dependency-check engine
+     * @param engine      the dependency-check engine
      * @throws ArchiveExtractionException thrown if there is an exception extracting files from the archive
      */
     private void extractArchive(ArchiveInputStream input, File destination, Engine engine) throws ArchiveExtractionException {
@@ -362,8 +355,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                     }
                 } else {
                     final File file = new File(destination, entry.getName());
-                    final String ext = FileUtils.getFileExtension(file.getName());
-                    if (engine.supportsExtension(ext)) {
+                    if (engine.accept(file)) {
                         LOGGER.debug("Extracting '{}'", file.getPath());
                         BufferedOutputStream bos = null;
                         FileOutputStream fos = null;
@@ -429,7 +421,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * Decompresses a file.
      *
      * @param inputStream the compressed file
-     * @param outputFile the location to write the decompressed file
+     * @param outputFile  the location to write the decompressed file
      * @throws ArchiveExtractionException thrown if there is an exception decompressing the file
      */
     private void decompressFile(CompressorInputStream inputStream, File outputFile) throws ArchiveExtractionException {

@@ -17,17 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
@@ -36,10 +25,20 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.UrlStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Used to analyze a Python package, and collect information that can be used to determine the associated CPE.
@@ -63,8 +62,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Filename extensions for files to be analyzed.
      */
-    private static final Set<String> EXTENSIONS = Collections
-            .unmodifiableSet(Collections.singleton("py"));
+    private static final String EXTENSIONS = "py";
 
     /**
      * Pattern for matching the module docstring in a source file.
@@ -134,14 +132,11 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
         return AnalysisPhase.INFORMATION_COLLECTION;
     }
 
-    /**
-     * Returns the set of supported file extensions.
-     *
-     * @return the set of supported file extensions
-     */
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
+
     @Override
-    protected Set<String> getSupportedExtensions() {
-        return EXTENSIONS;
+    protected FileFilter getFileFilter() {
+        return FILTER;
     }
 
     /**
@@ -209,12 +204,12 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private boolean analyzeFileContents(Dependency dependency, File file)
             throws AnalysisException {
-        String contents = "";
+        String contents;
         try {
             contents = FileUtils.readFileToString(file).trim();
         } catch (IOException e) {
             throw new AnalysisException(
-                    "Problem occured while reading dependency file.", e);
+                    "Problem occurred while reading dependency file.", e);
         }
         boolean found = false;
         if (!contents.isEmpty()) {

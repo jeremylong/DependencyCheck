@@ -17,14 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -47,6 +40,7 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.xml.pom.License;
 import org.owasp.dependencycheck.xml.pom.PomUtils;
 import org.owasp.dependencycheck.xml.pom.Model;
@@ -168,16 +162,13 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The set of file extensions supported by this analyzer.
      */
-    private static final Set<String> EXTENSIONS = newHashSet("jar", "war");
+    private static final String[] EXTENSIONS = {"jar", "war"};
 
-    /**
-     * Returns a list of file EXTENSIONS supported by this analyzer.
-     *
-     * @return a list of file EXTENSIONS supported by this analyzer.
-     */
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
+
     @Override
-    public Set<String> getSupportedExtensions() {
-        return EXTENSIONS;
+    protected FileFilter getFileFilter() {
+        return FILTER;
     }
 
     /**
@@ -388,7 +379,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @param dependency the dependency being analyzed
      * @return returns the POM object
      * @throws AnalysisException is thrown if there is an exception extracting or parsing the POM
-     * {@link org.owasp.dependencycheck.jaxb.pom.generated.Model} object
+     * {@link org.owasp.dependencycheck.xml.pom.Model} object
      */
     private Model extractPom(String path, JarFile jar, Dependency dependency) throws AnalysisException {
         InputStream input = null;

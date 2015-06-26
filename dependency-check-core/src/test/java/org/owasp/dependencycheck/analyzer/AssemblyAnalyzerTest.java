@@ -58,7 +58,7 @@ public class AssemblyAnalyzerTest extends BaseTest {
     public void setUp() throws Exception {
         try {
             analyzer = new AssemblyAnalyzer();
-            analyzer.supportsExtension("dll");
+            analyzer.accept(new File("test.dll")); // trick into "thinking it is active"
             analyzer.initialize();
         } catch (Exception e) {
             if (e.getMessage().contains("Could not execute .NET AssemblyAnalyzer")) {
@@ -155,7 +155,7 @@ public class AssemblyAnalyzerTest extends BaseTest {
             System.setProperty(LOG_KEY, "error");
             // Have to make a NEW analyzer because during setUp, it would have gotten the correct one
             AssemblyAnalyzer aanalyzer = new AssemblyAnalyzer();
-            aanalyzer.supportsExtension("dll");
+            aanalyzer.accept(new File("test.dll")); // trick into "thinking it is active"
             aanalyzer.initialize();
             fail("Expected an AnalysisException");
         } catch (AnalysisException ae) {
