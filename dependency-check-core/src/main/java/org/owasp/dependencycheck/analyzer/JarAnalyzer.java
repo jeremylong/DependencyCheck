@@ -657,6 +657,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
             final String source = "Manifest";
 
+            String specificationVersion = null;
+            boolean hasImplementationVersion = false;
+
             for (Entry<Object, Object> entry : atts.entrySet()) {
                 String key = entry.getKey().toString();
                 String value = atts.getValue(key);
@@ -670,8 +673,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     productEvidence.addEvidence(source, key, value, Confidence.HIGH);
                     addMatchingValues(classInformation, value, productEvidence);
                 } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VERSION.toString())) {
+                    hasImplementationVersion = true;
                     foundSomething = true;
                     versionEvidence.addEvidence(source, key, value, Confidence.HIGH);
+                } else if ("specification-version".equalsIgnoreCase(key)) {
+                    specificationVersion = key;
                 } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VENDOR.toString())) {
                     foundSomething = true;
                     vendorEvidence.addEvidence(source, key, value, Confidence.HIGH);
@@ -724,9 +730,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
                         foundSomething = true;
                         if (key.contains("version")) {
-                            if (key.contains("specification")) {
-                                versionEvidence.addEvidence(source, key, value, Confidence.LOW);
-                            } else {
+                            if (!key.contains("specification")) {
+                                //versionEvidence.addEvidence(source, key, value, Confidence.LOW);
+                                //} else {
                                 versionEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
                             }
                         } else if ("build-id".equals(key)) {
@@ -777,6 +783,10 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                         }
                     }
                 }
+            }
+            if (specificationVersion != null && !hasImplementationVersion) {
+                foundSomething = true;
+                versionEvidence.addEvidence(source, "specificationn-version", specificationVersion, Confidence.HIGH);
             }
         } finally {
             if (jar != null) {
