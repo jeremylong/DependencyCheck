@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.dependency;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 
 /**
  *
@@ -51,6 +52,14 @@ public class EvidenceTest {
         assertFalse(instance.equals(that6));
         assertFalse(instance.equals(that7));
         assertTrue(instance.equals(that8));
+    }
+
+    @Test
+    public void testHashcodeContract() throws Exception {
+        final Evidence titleCase = new Evidence("Manifest", "Implementation-Title", "Spring Framework", Confidence.HIGH);
+        final Evidence lowerCase = new Evidence("manifest", "implementation-title", "spring framework", Confidence.HIGH);
+        assertThat(titleCase, is(equalTo(lowerCase)));
+        assertThat(titleCase.hashCode(), is(equalTo(lowerCase.hashCode())));
     }
 
     /**

@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.dependency;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+
 import java.io.Serializable;
 
 /**
@@ -27,6 +30,16 @@ import java.io.Serializable;
 public class Evidence implements Serializable, Comparable<Evidence> {
 
     /**
+     * Used as starting point for generating the value in {@link #hashCode()}.
+     */
+    private static final int MAGIC_HASH_INIT_VALUE = 3;
+
+    /**
+     * Used as a multiplier for generating the value in {@link #hashCode()}.
+     */
+    private static final int MAGIC_HASH_MULTIPLIER = 67;
+
+    /**
      * Creates a new Evidence object.
      */
     public Evidence() {
@@ -35,9 +48,9 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     /**
      * Creates a new Evidence objects.
      *
-     * @param source the source of the evidence.
-     * @param name the name of the evidence.
-     * @param value the value of the evidence.
+     * @param source     the source of the evidence.
+     * @param name       the name of the evidence.
+     * @param value      the value of the evidence.
      * @param confidence the confidence of the evidence.
      */
     public Evidence(String source, String name, String value, Confidence confidence) {
@@ -46,6 +59,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
         this.value = value;
         this.confidence = confidence;
     }
+
     /**
      * The name of the evidence.
      */
@@ -68,6 +82,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     public void setName(String name) {
         this.name = name;
     }
+
     /**
      * The source of the evidence.
      */
@@ -90,6 +105,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     public void setSource(String source) {
         this.source = source;
     }
+
     /**
      * The value of the evidence.
      */
@@ -124,6 +140,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     public void setValue(String value) {
         this.value = value;
     }
+
     /**
      * A value indicating if the Evidence has been "used" (aka read).
      */
@@ -146,6 +163,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     public void setUsed(boolean used) {
         this.used = used;
     }
+
     /**
      * The confidence level for the evidence.
      */
@@ -176,11 +194,11 @@ public class Evidence implements Serializable, Comparable<Evidence> {
      */
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 67 * hash + (this.name != null ? this.name.hashCode() : 0);
-        hash = 67 * hash + (this.source != null ? this.source.hashCode() : 0);
-        hash = 67 * hash + (this.value != null ? this.value.hashCode() : 0);
-        hash = 67 * hash + (this.confidence != null ? this.confidence.hashCode() : 0);
+        int hash = MAGIC_HASH_INIT_VALUE;
+        hash = MAGIC_HASH_MULTIPLIER * hash + ObjectUtils.hashCode(StringUtils.lowerCase(this.name));
+        hash = MAGIC_HASH_MULTIPLIER * hash + ObjectUtils.hashCode(StringUtils.lowerCase(this.source));
+        hash = MAGIC_HASH_MULTIPLIER * hash + ObjectUtils.hashCode(StringUtils.lowerCase(this.value));
+        hash = MAGIC_HASH_MULTIPLIER * hash + ObjectUtils.hashCode(this.confidence);
         return hash;
     }
 
@@ -200,19 +218,10 @@ public class Evidence implements Serializable, Comparable<Evidence> {
         }
         final Evidence e = (Evidence) that;
 
-        return testEquality(name, e.name) && testEquality(source, e.source) && testEquality(value, e.value)
-                && (confidence == null ? e.confidence == null : confidence == e.confidence);
-    }
-
-    /**
-     * Simple equality test for use within the equals method. This does a case insensitive compare.
-     *
-     * @param l a string to compare.
-     * @param r another string to compare.
-     * @return whether the two strings are the same.
-     */
-    private boolean testEquality(String l, String r) {
-        return l == null ? r == null : l.equalsIgnoreCase(r);
+        return StringUtils.equalsIgnoreCase(name, e.name)
+                && StringUtils.equalsIgnoreCase(source, e.source)
+                && StringUtils.equalsIgnoreCase(value, e.value)
+                && ObjectUtils.equals(confidence, e.confidence);
     }
 
     /**
@@ -225,13 +234,13 @@ public class Evidence implements Serializable, Comparable<Evidence> {
         if (o == null) {
             return 1;
         }
-        if (equalsWithNullCheck(source, o.source)) {
-            if (equalsWithNullCheck(name, o.name)) {
-                if (equalsWithNullCheck(value, o.value)) {
-                    if (equalsWithNullCheck(confidence, o.confidence)) {
+        if (StringUtils.equalsIgnoreCase(source, o.source)) {
+            if (StringUtils.equalsIgnoreCase(name, o.name)) {
+                if (StringUtils.equalsIgnoreCase(value, o.value)) {
+                    if (ObjectUtils.equals(confidence, o.confidence)) {
                         return 0; //they are equal
                     } else {
-                        return compareToWithNullCheck(confidence, o.confidence);
+                        return ObjectUtils.compare(confidence, o.confidence);
                     }
                 } else {
                     return compareToIgnoreCaseWithNullCheck(value, o.value);
@@ -245,42 +254,10 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     }
 
     /**
-     * Equality check with an exhaustive, possibly duplicative, check against nulls.
-     *
-     * @param me the value to be compared
-     * @param other the other value to be compared
-     * @return true if the values are equal; otherwise false
-     */
-    private boolean equalsWithNullCheck(String me, String other) {
-        if (me == null && other == null) {
-            return true;
-        } else if (me == null || other == null) {
-            return false;
-        }
-        return me.equalsIgnoreCase(other);
-    }
-
-    /**
-     * Equality check with an exhaustive, possibly duplicative, check against nulls.
-     *
-     * @param me the value to be compared
-     * @param other the other value to be compared
-     * @return true if the values are equal; otherwise false
-     */
-    private boolean equalsWithNullCheck(Confidence me, Confidence other) {
-        if (me == null && other == null) {
-            return true;
-        } else if (me == null || other == null) {
-            return false;
-        }
-        return me.equals(other);
-    }
-
-    /**
      * Wrapper around {@link java.lang.String#compareToIgnoreCase(java.lang.String) String.compareToIgnoreCase} with an
      * exhaustive, possibly duplicative, check against nulls.
      *
-     * @param me the value to be compared
+     * @param me    the value to be compared
      * @param other the other value to be compared
      * @return true if the values are equal; otherwise false
      */
@@ -293,25 +270,6 @@ public class Evidence implements Serializable, Comparable<Evidence> {
             return 1; //me is greater then the other string
         }
         return me.compareToIgnoreCase(other);
-    }
-
-    /**
-     * Wrapper around {@link java.lang.Enum#compareTo(java.lang.Enum) Enum.compareTo} with an exhaustive, possibly duplicative,
-     * check against nulls.
-     *
-     * @param me the value to be compared
-     * @param other the other value to be compared
-     * @return true if the values are equal; otherwise false
-     */
-    private int compareToWithNullCheck(Confidence me, Confidence other) {
-        if (me == null && other == null) {
-            return 0;
-        } else if (me == null) {
-            return -1; //the other string is greater then me
-        } else if (other == null) {
-            return 1; //me is greater then the other string
-        }
-        return me.compareTo(other);
     }
 
     /**
