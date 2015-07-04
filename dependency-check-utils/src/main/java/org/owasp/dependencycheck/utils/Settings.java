@@ -131,6 +131,14 @@ public final class Settings {
          */
         public static final String CVE_SCHEMA_2_0 = "cve.url-2.0.base";
         /**
+         * The properties key that indicates how often the CPE data needs to be updated.
+         */
+        public static final String CPE_MODIFIED_VALID_FOR_DAYS = "cpe.validfordays";
+        /**
+         * The properties key for the URL to retrieve the CPE.
+         */
+        public static final String CPE_URL = "cpe.url";
+        /**
          * The properties key for the proxy server.
          *
          * @deprecated use {@link org.owasp.dependencycheck.utils.Settings.KEYS#PROXY_SERVER} instead.
