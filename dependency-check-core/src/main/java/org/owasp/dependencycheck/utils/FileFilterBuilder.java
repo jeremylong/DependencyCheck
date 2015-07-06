@@ -24,41 +24,53 @@ import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 
-import java.io.File;
 import java.io.FileFilter;
 import java.util.*;
 
 /**
- * Utility class for building useful {@link FileFilter} instances for
+ * <p>Utility class for building useful {@link FileFilter} instances for
  * {@link org.owasp.dependencycheck.analyzer.AbstractFileTypeAnalyzer} implementations. The built filter uses
- * {@link OrFileFilter} to logically OR the given filter conditions.
+ * {@link OrFileFilter} to logically OR the given filter conditions. Example usage:</p>
+ *
+ * <pre>
+ *     FileFilter filter = FileFilterBuilder.newInstance().addExtensions("jar", "war").build();
+ * </pre>
  *
  * @author Dale Visser <dvisser@ida.org>
+ * @see <a href="https://en.wikipedia.org/wiki/Builder_pattern">Builder pattern</a>
  */
 public class FileFilterBuilder {
 
-    public static FileFilterBuilder newInstance(){
+    private Set<String> filenames = new HashSet<String>();
+    private Set<String> extensions = new HashSet<String>();
+    private List<IOFileFilter> fileFilters = new ArrayList<IOFileFilter>();
+
+    /**
+     * Create a new instance and return it. This method is for convenience in using the builder pattern within a single
+     * statement.
+     *
+     * @return a new builder instance
+     */
+    public static FileFilterBuilder newInstance() {
         return new FileFilterBuilder();
     }
-
-    private Set<String> filenames = new HashSet<String>();
 
     /**
      * Add to the set of filenames to accept for analysis. Case-sensitivity is assumed.
      *
      * @param names one or more filenames to accept for analysis
+     * @return this builder
      */
     public FileFilterBuilder addFilenames(String... names) {
         filenames.addAll(Arrays.asList(names));
         return this;
     }
 
-    private Set<String> extensions = new HashSet<String>();
-
     /**
      * Add to the set of file extensions to accept for analysis. Case-insensitivity is assumed.
      *
      * @param extensions one or more file extensions to accept for analysis
+     * @return this builder
      */
     public FileFilterBuilder addExtensions(String... extensions) {
         return this.addExtensions(Arrays.asList(extensions));
@@ -68,8 +80,9 @@ public class FileFilterBuilder {
      * Add to the set of file extensions to accept for analysis. Case-insensitivity is assumed.
      *
      * @param extensions one or more file extensions to accept for analysis
+     * @return this builder
      */
-    public FileFilterBuilder addExtensions(Iterable<String> extensions){
+    public FileFilterBuilder addExtensions(Iterable<String> extensions) {
         for (String extension : extensions) {
             // Ultimately, SuffixFileFilter will be used, and the "." needs to be explicit.
             this.extensions.add(extension.startsWith(".") ? extension : "." + extension);
@@ -77,12 +90,11 @@ public class FileFilterBuilder {
         return this;
     }
 
-    private List<IOFileFilter> fileFilters = new ArrayList<IOFileFilter>();
-
     /**
      * Add to a list of {@link IOFileFilter} instances to consult for whether to accept a file for analysis.
      *
      * @param filters one or more file filters to consult for whether to accept for analysis
+     * @return this builder
      */
     public FileFilterBuilder addFileFilters(IOFileFilter... filters) {
         fileFilters.addAll(Arrays.asList(filters));
