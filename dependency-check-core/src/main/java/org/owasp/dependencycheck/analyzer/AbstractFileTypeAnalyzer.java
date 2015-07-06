@@ -17,15 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.util.*;
-
-import org.apache.commons.io.IOCase;
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.filefilter.NameFileFilter;
-import org.apache.commons.io.filefilter.OrFileFilter;
-import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -33,6 +24,12 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The base FileTypeAnalyzer that all analyzers that have specific file types they analyze should extend.
