@@ -18,6 +18,7 @@
 
 package org.owasp.dependencycheck.utils;
 
+import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
@@ -43,7 +44,7 @@ public class FileFilterBuilder {
     private Set<String> filenames = new HashSet<String>();
 
     /**
-     * Add to the set of filenames to accept for analysis. Case sensitivity is assumed.
+     * Add to the set of filenames to accept for analysis. Case-sensitivity is assumed.
      *
      * @param names one or more filenames to accept for analysis
      */
@@ -55,7 +56,7 @@ public class FileFilterBuilder {
     private Set<String> extensions = new HashSet<String>();
 
     /**
-     * Add to the set of file extensions to accept for analysis. Case sensitivity is assumed.
+     * Add to the set of file extensions to accept for analysis. Case-insensitivity is assumed.
      *
      * @param extensions one or more file extensions to accept for analysis
      */
@@ -64,7 +65,7 @@ public class FileFilterBuilder {
     }
 
     /**
-     * Add to the set of file extensions to accept for analysis. Case sensitivity is assumed.
+     * Add to the set of file extensions to accept for analysis. Case-insensitivity is assumed.
      *
      * @param extensions one or more file extensions to accept for analysis
      */
@@ -103,7 +104,7 @@ public class FileFilterBuilder {
             filter.addFileFilter(new NameFileFilter(new ArrayList<String>(filenames)));
         }
         if (!extensions.isEmpty()) {
-            filter.addFileFilter(new SuffixFileFilter(new ArrayList<String>(extensions)));
+            filter.addFileFilter(new SuffixFileFilter(new ArrayList<String>(extensions), IOCase.INSENSITIVE));
         }
         for (IOFileFilter iof : fileFilters) {
             filter.addFileFilter(iof);
