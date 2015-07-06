@@ -198,7 +198,7 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
                 <version>${reporting.javadoc-plugin.version}</version>
                 <configuration>
                     <failOnError>false</failOnError>
-                    <bottom>Copyright© 2012-15 Jeremy Long. All Rights Reserved.</bottom>
+                    <bottom>Copyright� 2012-15 Jeremy Long. All Rights Reserved.</bottom>
                 </configuration>
                 <reportSets>
                     <reportSet>
@@ -333,7 +333,6 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
         </dependency>
     </dependencies>
 </project>

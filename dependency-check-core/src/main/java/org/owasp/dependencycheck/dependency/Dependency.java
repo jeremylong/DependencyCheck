@@ -306,9 +306,9 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     /**
      * Adds an entry to the list of detected Identifiers for the dependency file.
      *
-     * @param type  the type of identifier (such as CPE)
+     * @param type the type of identifier (such as CPE)
      * @param value the value of the identifier
-     * @param url   the URL of the identifier
+     * @param url the URL of the identifier
      */
     public void addIdentifier(String type, String value, String url) {
         final Identifier i = new Identifier(type, value, url);
@@ -318,9 +318,9 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     /**
      * Adds an entry to the list of detected Identifiers for the dependency file.
      *
-     * @param type       the type of identifier (such as CPE)
-     * @param value      the value of the identifier
-     * @param url        the URL of the identifier
+     * @param type the type of identifier (such as CPE)
+     * @param value the value of the identifier
+     * @param url the URL of the identifier
      * @param confidence the confidence in the Identifier being accurate
      */
     public void addIdentifier(String type, String value, String url, Confidence confidence) {
@@ -332,9 +332,9 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     /**
      * Adds the maven artifact as evidence.
      *
-     * @param source        The source of the evidence
+     * @param source The source of the evidence
      * @param mavenArtifact The maven artifact
-     * @param confidence    The confidence level of this evidence
+     * @param confidence The confidence level of this evidence
      */
     public void addAsEvidence(String source, MavenArtifact mavenArtifact, Confidence confidence) {
         if (mavenArtifact.getGroupId() != null && !mavenArtifact.getGroupId().isEmpty()) {
@@ -599,8 +599,8 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     private Set<Dependency> relatedDependencies = new TreeSet<Dependency>();
 
     /**
-     * Get the value of {@link #relatedDependencies}. This field is used to collect other dependencies which really
-     * represent the same dependency, and may be presented as one item in reports.
+     * Get the value of {@link #relatedDependencies}. This field is used to collect other dependencies which really represent the
+     * same dependency, and may be presented as one item in reports.
      *
      * @return the value of relatedDependencies
      */
@@ -660,22 +660,19 @@ public class Dependency implements Serializable, Comparable<Dependency> {
 
     /**
      * Adds a related dependency. The internal collection is normally a {@link java.util.TreeSet}, which relies on
-     * {@link #compareTo(Dependency)}. A consequence of this is that if you attempt to add a dependency with the
-     * same file path (modulo character case) as one that is already in the collection, it won't get added.
+     * {@link #compareTo(Dependency)}. A consequence of this is that if you attempt to add a dependency with the same file path
+     * (modulo character case) as one that is already in the collection, it won't get added.
      *
      * @param dependency a reference to the related dependency
      */
     public void addRelatedDependency(Dependency dependency) {
-        boolean debug = false;
         if (this == dependency) {
             LOGGER.warn("Attempted to add a circular reference - please post the log file to issue #172 here "
                     + "https://github.com/jeremylong/DependencyCheck/issues/172");
-            debug = true;
+            LOGGER.debug("this: {}", this);
+            LOGGER.debug("dependency: {}", dependency);
         } else if (!relatedDependencies.add(dependency)) {
-            LOGGER.warn("Failed to add dependency, likely due to referencing the same file as another dependency in the set.");
-            debug = true;
-        }
-        if (debug) {
+            LOGGER.debug("Failed to add dependency, likely due to referencing the same file as another dependency in the set.");
             LOGGER.debug("this: {}", this);
             LOGGER.debug("dependency: {}", dependency);
         }
@@ -735,22 +732,22 @@ public class Dependency implements Serializable, Comparable<Dependency> {
             return false;
         }
         final Dependency other = (Dependency) obj;
-        return ObjectUtils.equals(this.actualFilePath, other.actualFilePath) &&
-                ObjectUtils.equals(this.filePath, other.filePath) &&
-                ObjectUtils.equals(this.fileName, other.fileName) &&
-                ObjectUtils.equals(this.fileExtension, other.fileExtension) &&
-                ObjectUtils.equals(this.md5sum, other.md5sum) &&
-                ObjectUtils.equals(this.sha1sum, other.sha1sum) &&
-                ObjectUtils.equals(this.identifiers, other.identifiers) &&
-                ObjectUtils.equals(this.vendorEvidence, other.vendorEvidence) &&
-                ObjectUtils.equals(this.productEvidence, other.productEvidence) &&
-                ObjectUtils.equals(this.versionEvidence, other.versionEvidence) &&
-                ObjectUtils.equals(this.description, other.description) &&
-                ObjectUtils.equals(this.license, other.license) &&
-                ObjectUtils.equals(this.vulnerabilities, other.vulnerabilities) &&
-                ObjectUtils.equals(this.relatedDependencies, other.relatedDependencies) &&
-                ObjectUtils.equals(this.projectReferences, other.projectReferences) &&
-                ObjectUtils.equals(this.availableVersions, other.availableVersions);
+        return ObjectUtils.equals(this.actualFilePath, other.actualFilePath)
+                && ObjectUtils.equals(this.filePath, other.filePath)
+                && ObjectUtils.equals(this.fileName, other.fileName)
+                && ObjectUtils.equals(this.fileExtension, other.fileExtension)
+                && ObjectUtils.equals(this.md5sum, other.md5sum)
+                && ObjectUtils.equals(this.sha1sum, other.sha1sum)
+                && ObjectUtils.equals(this.identifiers, other.identifiers)
+                && ObjectUtils.equals(this.vendorEvidence, other.vendorEvidence)
+                && ObjectUtils.equals(this.productEvidence, other.productEvidence)
+                && ObjectUtils.equals(this.versionEvidence, other.versionEvidence)
+                && ObjectUtils.equals(this.description, other.description)
+                && ObjectUtils.equals(this.license, other.license)
+                && ObjectUtils.equals(this.vulnerabilities, other.vulnerabilities)
+                && ObjectUtils.equals(this.relatedDependencies, other.relatedDependencies)
+                && ObjectUtils.equals(this.projectReferences, other.projectReferences)
+                && ObjectUtils.equals(this.availableVersions, other.availableVersions);
     }
 
     /**
@@ -762,9 +759,9 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     public int hashCode() {
         int hash = MAGIC_HASH_INIT_VALUE;
         for (Object field : new Object[]{this.actualFilePath, this.filePath, this.fileName, this.fileExtension, this.md5sum,
-                this.sha1sum, this.identifiers, this.vendorEvidence, this.productEvidence, this.versionEvidence,
-                this.description, this.license, this.vulnerabilities, this.relatedDependencies, this.projectReferences,
-                this.availableVersions}) {
+            this.sha1sum, this.identifiers, this.vendorEvidence, this.productEvidence, this.versionEvidence,
+            this.description, this.license, this.vulnerabilities, this.relatedDependencies, this.projectReferences,
+            this.availableVersions}) {
             hash = MAGIC_HASH_MULTIPLIER * hash + ObjectUtils.hashCode(field);
         }
         return hash;

@@ -17,13 +17,6 @@
  */
 package org.owasp.dependencycheck;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 import org.owasp.dependencycheck.analyzer.AnalysisPhase;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.AnalyzerService;
@@ -42,6 +35,14 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Scans files, directories, etc. for Dependencies. Analyzers are loaded and used to process the files found by the scan, if a
@@ -167,7 +168,6 @@ public class Engine {
      *
      * @param paths an array of paths to files or directories to be analyzed
      * @return the list of dependencies scanned
-     *
      * @since v0.3.2.5
      */
     public List<Dependency> scan(String[] paths) {
@@ -200,7 +200,6 @@ public class Engine {
      *
      * @param files an array of paths to files or directories to be analyzed.
      * @return the list of dependencies
-     *
      * @since v0.3.2.5
      */
     public List<Dependency> scan(File[] files) {
@@ -220,7 +219,6 @@ public class Engine {
      *
      * @param files a set of paths to files or directories to be analyzed
      * @return the list of dependencies scanned
-     *
      * @since v0.3.2.5
      */
     public List<Dependency> scan(Set<File> files) {
@@ -240,7 +238,6 @@ public class Engine {
      *
      * @param files a set of paths to files or directories to be analyzed
      * @return the list of dependencies scanned
-     *
      * @since v0.3.2.5
      */
     public List<Dependency> scan(List<File> files) {
@@ -260,9 +257,7 @@ public class Engine {
      *
      * @param file the path to a file or directory to be analyzed
      * @return the list of dependencies scanned
-     *
      * @since v0.3.2.4
-     *
      */
     public List<Dependency> scan(File file) {
         if (file.exists()) {
@@ -324,7 +319,7 @@ public class Engine {
         Dependency dependency = null;
         if (supportsExtension(extension)) {
             dependency = new Dependency(file);
-            if (extension == null ? fileName == null : extension.equals(fileName)) {
+            if (extension.equals(fileName)) {
                 dependency.setFileExtension(extension);
             }
             dependencies.add(dependency);
@@ -333,7 +328,10 @@ public class Engine {
     }
 
     /**
-     * Runs the analyzers against all of the dependencies.
+     * Runs the analyzers against all of the dependencies. Since the mutable dependencies list is exposed via
+     * {@link #getDependencies()}, this method iterates over a copy of the dependencies list. Thus, the potential for
+     * {@link java.util.ConcurrentModificationException}s is avoided, and analyzers may safely add or remove entries
+     * from the dependencies list.
      */
     public void analyzeDependencies() {
         boolean autoUpdate = true;
@@ -512,7 +510,7 @@ public class Engine {
     /**
      * Checks the CPE Index to ensure documents exists. If none exist a NoDataException is thrown.
      *
-     * @throws NoDataException thrown if no data exists in the CPE Index
+     * @throws NoDataException   thrown if no data exists in the CPE Index
      * @throws DatabaseException thrown if there is an exception opening the database
      */
     private void ensureDataExists() throws NoDataException, DatabaseException {

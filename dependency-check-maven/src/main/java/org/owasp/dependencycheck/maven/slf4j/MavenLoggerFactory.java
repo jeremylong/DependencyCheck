@@ -22,7 +22,9 @@ import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 
 /**
- * Created by colezlaw on 6/14/15.
+ * Created on 6/14/15.
+ *
+ * @author colezlaw
  */
 public class MavenLoggerFactory implements ILoggerFactory {
 

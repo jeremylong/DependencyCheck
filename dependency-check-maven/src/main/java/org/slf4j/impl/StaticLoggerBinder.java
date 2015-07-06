@@ -48,7 +48,7 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
     /**
      * Maven mojos have their own logger, so we'll use one of those
      */
-    private Log log;
+    private Log log = null;
 
     /**
      * Set the Task which will this is to log through.
@@ -70,7 +70,7 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
     private static final String loggerFactoryClassStr = MavenLoggerFactory.class.getName();
 
     /**
-     * The ILoggerFactory instance returned by the {@link #getLoggerFactory} method should always be the smae object
+     * The ILoggerFactory instance returned by the {@link #getLoggerFactory} method should always be the same object
      */
     private ILoggerFactory loggerFactory;
 
@@ -83,6 +83,7 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
      *
      * @return the logger factory
      */
+    @Override
     public ILoggerFactory getLoggerFactory() {
         return loggerFactory;
     }
@@ -92,6 +93,7 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
      *
      * @return the logger factory class string
      */
+    @Override
     public String getLoggerFactoryClassStr() {
         return loggerFactoryClassStr;
     }

@@ -68,10 +68,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     private static final String PROPERTIES_FILE = "mojo.properties";
     /**
-     * Name of the logging properties file.
-     */
-    private static final String LOG_PROPERTIES_FILE = "log.properties";
-    /**
      * System specific new line character.
      */
     private static final String NEW_LINE = System.getProperty("line.separator", "\n").intern();
@@ -949,10 +945,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             } else {
                 file = new File(writeTo, dataFileName);
             }
-            File parent = file.getParentFile();
+            final File parent = file.getParentFile();
             if (!parent.isDirectory()) {
                 if (parent.mkdirs()) {
-                    getLog().error(String.format("Directory '%s' does not exist and cannot be created; unable to write data file.", parent.getAbsolutePath()));
+                    getLog().error(String.format("Directory '%s' does not exist and cannot be created; unable to write data file.",
+                            parent.getAbsolutePath()));
                 }
             }
 

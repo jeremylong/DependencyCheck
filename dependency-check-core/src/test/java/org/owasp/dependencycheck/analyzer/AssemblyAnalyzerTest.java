@@ -34,8 +34,6 @@ import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.impl.SimpleLogger;
-import org.slf4j.impl.SimpleLoggerFactory;
 
 /**
  * Tests for the AssemblyAnalyzer.
