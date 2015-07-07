@@ -17,28 +17,20 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.NameFileFilter;
-import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.EvidenceCollection;
-import org.owasp.dependencycheck.utils.Settings;
-import org.owasp.dependencycheck.utils.UrlStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -70,6 +62,29 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
      * Filter that detects files named "__init__.py".
      */
     private static final FileFilter OPENSSLV_FILTER = new NameFileFilter("opensslv.h");
+
+    private static final int MAJOR_OFFSET = 28;
+    private static final long MINOR_MASK = 0x0ff00000L;
+    private static final int MINOR_OFFSET = 20;
+    private static final long FIX_MASK = 0x000ff000L;
+    private static final int FIX_OFFSET = 12;
+    private static final long PATCH_MASK = 0x00000ff0L;
+    private static final int PATCH_OFFSET = 4;
+    private static final int NUM_LETTERS = 26;
+    private static final int STATUS_MASK = 0x0000000f;
+
+    static String getOpenSSLVersion(long openSSLVersionConstant) {
+        long major = openSSLVersionConstant >>> MAJOR_OFFSET;
+        long minor = (openSSLVersionConstant & MINOR_MASK) >>> MINOR_OFFSET;
+        long fix = (openSSLVersionConstant & FIX_MASK) >>> FIX_OFFSET;
+        long patchLevel = (openSSLVersionConstant & PATCH_MASK) >>> PATCH_OFFSET;
+        String patch = 0 == patchLevel || patchLevel > NUM_LETTERS ? "" :
+                String.valueOf((char) (patchLevel + 'a' - 1));
+        int statusCode = (int) (openSSLVersionConstant & STATUS_MASK);
+        String status = 0xf == statusCode ? "" :
+                (0 == statusCode ? "-dev" : "-beta" + statusCode);
+        return String.format("%d.%d.%d%s%s", major, minor, fix, patch, status);
+    }
 
     /**
      * Returns the name of the Python Package Analyzer.

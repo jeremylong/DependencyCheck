@@ -93,4 +93,28 @@ public class OpenSSLAnalyzerTest extends BaseTest {
         assertTrue("Should support \"h\" extension.",
                 analyzer.supportsExtension("h"));
     }
+
+    @Test
+    public void testVersionConstantExamples() {
+        final long[] constants = {0x1000203fL
+                , 0x00903000
+                , 0x00903001
+                , 0x00903002l
+                , 0x0090300f
+                , 0x0090301f
+                , 0x0090400f
+                , 0x102031af};
+        final String[] versions = {"1.0.2c",
+                "0.9.3-dev",
+                "0.9.3-beta1",
+                "0.9.3-beta2",
+                "0.9.3",
+                "0.9.3a",
+                "0.9.4",
+                "1.2.3z"};
+        assertEquals(constants.length, versions.length);
+        for (int i = 0; i < constants.length; i++) {
+            assertEquals(versions[i], OpenSSLAnalyzer.getOpenSSLVersion(constants[i]));
+        }
+    }
 }
