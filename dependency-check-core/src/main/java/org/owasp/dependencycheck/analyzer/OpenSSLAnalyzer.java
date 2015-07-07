@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -27,10 +28,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -40,29 +43,32 @@ import java.util.regex.Pattern;
  */
 public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
 
+    private static final int HEXADECIMAL = 16;
+    /**
+     * Filename to analyze. All other .h files get removed from consideration.
+     */
+    private static final String OPENSSLV_H = "opensslv.h";
     /**
      * Used when compiling file scanning regex patterns.
      */
     private static final int REGEX_OPTIONS = Pattern.DOTALL
             | Pattern.CASE_INSENSITIVE;
-
     /**
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory
             .getLogger(OpenSSLAnalyzer.class);
-
     /**
      * Filename extensions for files to be analyzed.
      */
     private static final Set<String> EXTENSIONS = Collections
             .unmodifiableSet(Collections.singleton("h"));
-
     /**
      * Filter that detects files named "__init__.py".
      */
-    private static final FileFilter OPENSSLV_FILTER = new NameFileFilter("opensslv.h");
-
+    private static final FileFilter OPENSSLV_FILTER = new NameFileFilter(OPENSSLV_H);
+    private static final Pattern VERSION_PATTERN = Pattern.compile(
+            "define\\s+OPENSSL_VERSION_NUMBER\\s+0x([0-9a-zA-Z]{8})L", REGEX_OPTIONS);
     private static final int MAJOR_OFFSET = 28;
     private static final long MINOR_MASK = 0x0ff00000L;
     private static final int MINOR_OFFSET = 20;
@@ -140,23 +146,45 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
         final File parent = file.getParentFile();
         final String parentName = parent.getName();
         boolean found = false;
-//        if (INIT_PY_FILTER.accept(file)) {
-//            for (final File sourcefile : parent.listFiles(PY_FILTER)) {
-//                found |= analyzeFileContents(dependency, sourcefile);
-//            }
-//        }
+        if (OPENSSLV_FILTER.accept(file)) {
+            final String contents = getFileContents(file);
+            if (!contents.isEmpty()) {
+                final Matcher matcher = VERSION_PATTERN.matcher(contents);
+                while (matcher.find()) {
+                    dependency.getVersionEvidence().addEvidence(OPENSSLV_H, "Version Constant",
+                            getOpenSSLVersion(Long.parseLong(matcher.group(1), HEXADECIMAL)), Confidence.HIGH);
+                    found = true;
+                }
+            }
+        }
         if (found) {
-            dependency.setDisplayFileName(parentName + "/__init__.py");
-            dependency.getProductEvidence().addEvidence(file.getName(),
-                    "PackageName", parentName, Confidence.MEDIUM);
+            dependency.setDisplayFileName(parentName + File.separatorChar + OPENSSLV_H);
+            dependency.getVendorEvidence().addEvidence(OPENSSLV_H, "Vendor", "OpenSSL", Confidence.HIGHEST);
+            dependency.getProductEvidence().addEvidence(OPENSSLV_H, "Product", "OpenSSL", Confidence.HIGHEST);
         } else {
-            // copy, alter and set in case some other thread is iterating over
-            final List<Dependency> deps = new ArrayList<Dependency>(
-                    engine.getDependencies());
-            deps.remove(dependency);
-            engine.setDependencies(deps);
+            engine.getDependencies().remove(dependency);
         }
     }
+
+    /**
+     * Retrieves the contents of a given file.
+     *
+     * @param actualFile the file to read
+     * @return the contents of the file
+     * @throws AnalysisException thrown if there is an IO Exception
+     */
+    private String getFileContents(final File actualFile)
+            throws AnalysisException {
+        String contents = "";
+        try {
+            contents = FileUtils.readFileToString(actualFile).trim();
+        } catch (IOException e) {
+            throw new AnalysisException(
+                    "Problem occured while reading dependency file.", e);
+        }
+        return contents;
+    }
+
 
     @Override
     protected String getAnalyzerEnabledSettingKey() {

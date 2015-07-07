@@ -22,12 +22,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.dependency.Dependency;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 
 /**
  * Unit tests for OpenSSLAnalyzerAnalyzer.
@@ -116,5 +118,16 @@ public class OpenSSLAnalyzerTest extends BaseTest {
         for (int i = 0; i < constants.length; i++) {
             assertEquals(versions[i], OpenSSLAnalyzer.getOpenSSLVersion(constants[i]));
         }
+    }
+
+    @Test
+    public void testOpenSSLVersionHeaderFile() throws AnalysisException {
+        final Dependency result = new Dependency(BaseTest.getResourceAsFile(
+                this,
+                "openssl/opensslv.h"));
+        analyzer.analyze(result, null);
+        assertThat(result.getProductEvidence().toString(), containsString("OpenSSL"));
+        assertThat(result.getVendorEvidence().toString(), containsString("OpenSSL"));
+        assertThat(result.getVersionEvidence().toString(), containsString("1.0.2c"));
     }
 }
