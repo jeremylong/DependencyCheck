@@ -22,9 +22,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Evidence;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -33,16 +30,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Unit tests for PythonPackageAnalyzer.
+ * Unit tests for OpenSSLAnalyzerAnalyzer.
  *
  * @author Dale Visser <dvisser@ida.org>
  */
-public class PythonPackageAnalyzerTest extends BaseTest {
+public class OpenSSLAnalyzerTest extends BaseTest {
 
     /**
      * The package analyzer to test.
      */
-    PythonPackageAnalyzer analyzer;
+    OpenSSLAnalyzer analyzer;
 
     /**
      * Setup the PtyhonPackageAnalyzer.
@@ -51,7 +48,7 @@ public class PythonPackageAnalyzerTest extends BaseTest {
      */
     @Before
     public void setUp() throws Exception {
-        analyzer = new PythonPackageAnalyzer();
+        analyzer = new OpenSSLAnalyzer();
         analyzer.setFilesMatched(true);
         analyzer.initialize();
     }
@@ -68,22 +65,22 @@ public class PythonPackageAnalyzerTest extends BaseTest {
     }
 
     /**
-     * Test of getName method, of class PythonPackageAnalyzer.
+     * Test of getName method, of class OpenSSLAnalyzer.
      */
     @Test
     public void testGetName() {
-        assertEquals("Analyzer name wrong.", "Python Package Analyzer",
+        assertEquals("Analyzer name wrong.", "OpenSSL Source Analyzer",
                 analyzer.getName());
     }
 
     /**
-     * Test of getSupportedExtensions method, of class PythonPackageAnalyzer.
+     * Test of getSupportedExtensions method, of class OpenSSLAnalyzer.
      */
     @Test
     public void testGetSupportedExtensions() {
-        final String[] expected = {"py"};
+        final String[] expected = {"h"};
         assertEquals("Supported extensions should just have the following: "
-                + StringUtils.join(expected, ", "),
+                        + StringUtils.join(expected, ", "),
                 new HashSet<String>(Arrays.asList(expected)),
                 analyzer.getSupportedExtensions());
     }
@@ -93,29 +90,7 @@ public class PythonPackageAnalyzerTest extends BaseTest {
      */
     @Test
     public void testSupportsExtension() {
-        assertTrue("Should support \"py\" extension.",
-                analyzer.supportsExtension("py"));
-    }
-
-    @Test
-    public void testAnalyzeSourceMetadata() throws AnalysisException {
-        eggtestAssertions(this,
-                "python/eggtest/__init__.py");
-    }
-
-    public void eggtestAssertions(Object context, final String resource) throws AnalysisException {
-        boolean found = false;
-        final Dependency result = new Dependency(BaseTest.getResourceAsFile(
-                context, resource));
-        analyzer.analyze(result, null);
-        assertTrue("Expected vendor evidence to contain \"example\".", result
-                .getVendorEvidence().toString().contains("example"));
-        for (final Evidence e : result.getVersionEvidence()) {
-            if ("0.0.1".equals(e.getValue())) {
-                found = true;
-                break;
-            }
-        }
-        assertTrue("Version 0.0.1 not found in EggTest dependency.", found);
+        assertTrue("Should support \"h\" extension.",
+                analyzer.supportsExtension("h"));
     }
 }
