@@ -23,15 +23,11 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,16 +44,7 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
      * Filename to analyze. All other .h files get removed from consideration.
      */
     private static final String OPENSSLV_H = "opensslv.h";
-    /**
-     * Used when compiling file scanning regex patterns.
-     */
-    private static final int REGEX_OPTIONS = Pattern.DOTALL
-            | Pattern.CASE_INSENSITIVE;
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(OpenSSLAnalyzer.class);
+
     /**
      * Filename extensions for files to be analyzed.
      */
@@ -68,7 +55,8 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final FileFilter OPENSSLV_FILTER = new NameFileFilter(OPENSSLV_H);
     private static final Pattern VERSION_PATTERN = Pattern.compile(
-            "define\\s+OPENSSL_VERSION_NUMBER\\s+0x([0-9a-zA-Z]{8})L", REGEX_OPTIONS);
+            "define\\s+OPENSSL_VERSION_NUMBER\\s+0x([0-9a-zA-Z]{8})L", Pattern.DOTALL
+                    | Pattern.CASE_INSENSITIVE);
     private static final int MAJOR_OFFSET = 28;
     private static final long MINOR_MASK = 0x0ff00000L;
     private static final int MINOR_OFFSET = 20;
@@ -180,7 +168,7 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
             contents = FileUtils.readFileToString(actualFile).trim();
         } catch (IOException e) {
             throw new AnalysisException(
-                    "Problem occured while reading dependency file.", e);
+                    "Problem occurred while reading dependency file.", e);
         }
         return contents;
     }
