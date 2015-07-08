@@ -23,6 +23,7 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.Settings;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -176,6 +177,6 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
 
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-        return "fixme";
+        return Settings.KEYS.ANALYZER_OPENSSL_ENABLED;
     }
 }

@@ -218,6 +218,10 @@ public final class Settings {
          */
         public static final String ANALYZER_CENTRAL_ENABLED = "analyzer.central.enabled";
         /**
+         * The properties key for whether the OpenSSL analyzer is enabled.
+         */
+        public static final String ANALYZER_OPENSSL_ENABLED = "analyzer.openssl.enabled";
+        /**
          * The properties key for the Central search URL.
          */
         public static final String ANALYZER_CENTRAL_URL = "analyzer.central.url";
