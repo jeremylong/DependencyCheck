@@ -736,16 +736,15 @@ public final class Settings {
      *
      * @param connectionStringKey the property file key for the connection string
      * @param dbFileNameKey the settings key for the db filename
-     * @param dbVersionKey the settings key for the dbVersion
      * @return the connection string
      * @throws IOException thrown the data directory cannot be created
      * @throws InvalidSettingException thrown if there is an invalid setting
      */
-    public static String getConnectionString(String connectionStringKey, String dbFileNameKey, String dbVersionKey)
+    public static String getConnectionString(String connectionStringKey, String dbFileNameKey)
             throws IOException, InvalidSettingException {
         final String connStr = Settings.getString(connectionStringKey);
         if (connStr == null) {
-            final String msg = String.format("Invalid properties file to get the connection string; '%s' must be defined.",
+            final String msg = String.format("Invalid properties file; data.connection_string is missing.",
                     connectionStringKey);
             throw new InvalidSettingException(msg);
         }
@@ -759,18 +758,6 @@ public final class Settings {
                 final String msg = String.format("Invalid properties file to get a file based connection string; '%s' must be defined.",
                         dbFileNameKey);
                 throw new InvalidSettingException(msg);
-            }
-            if (fileName.contains("%s")) {
-                String version = null;
-                if (dbVersionKey != null) {
-                    version = Settings.getString(dbVersionKey);
-                }
-                if (version == null) {
-                    final String msg = String.format("Invalid properties file to get a file based connection string; '%s' must be defined.",
-                            dbFileNameKey);
-                    throw new InvalidSettingException(msg);
-                }
-                fileName = String.format(fileName, version);
             }
             if (connStr.startsWith("jdbc:h2:file:") && fileName.endsWith(".h2.db")) {
                 fileName = fileName.substring(0, fileName.length() - 6);

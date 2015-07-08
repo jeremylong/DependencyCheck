@@ -15,7 +15,7 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.update;
+package org.owasp.dependencycheck.data.update.nvd;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,8 +27,8 @@ import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 
 /**
- * Contains a collection of updateable NvdCveInfo objects. This is used to determine which files need to be downloaded
- * and processed.
+ * Contains a collection of updateable NvdCveInfo objects. This is used to determine which files need to be downloaded and
+ * processed.
  *
  * @author Jeremy Long
  */
@@ -67,8 +67,7 @@ public class UpdateableNvdCve implements java.lang.Iterable<NvdCveInfo>, Iterato
      *
      * @param id the key for the item to be added
      * @param url the URL to download the item
-     * @param oldUrl the URL for the old version of the item (the NVD CVE old schema still contains useful data we
-     * need).
+     * @param oldUrl the URL for the old version of the item (the NVD CVE old schema still contains useful data we need).
      * @throws MalformedURLException thrown if the URL provided is invalid
      * @throws DownloadFailedException thrown if the download fails.
      */
@@ -81,8 +80,7 @@ public class UpdateableNvdCve implements java.lang.Iterable<NvdCveInfo>, Iterato
      *
      * @param id the key for the item to be added
      * @param url the URL to download the item
-     * @param oldUrl the URL for the old version of the item (the NVD CVE old schema still contains useful data we
-     * need).
+     * @param oldUrl the URL for the old version of the item (the NVD CVE old schema still contains useful data we need).
      * @param needsUpdate whether or not the data needs to be updated
      * @throws MalformedURLException thrown if the URL provided is invalid
      * @throws DownloadFailedException thrown if the download fails.
@@ -175,7 +173,7 @@ public class UpdateableNvdCve implements java.lang.Iterable<NvdCveInfo>, Iterato
      * @param key the key to lookup the return value
      * @return the NvdCveInfo object stored using the specified key
      */
-    NvdCveInfo get(String key) {
+    public NvdCveInfo get(String key) {
         return collection.get(key);
     }
 

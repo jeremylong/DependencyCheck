@@ -15,7 +15,7 @@
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.update.task;
+package org.owasp.dependencycheck.data.update.nvd;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,8 +31,8 @@ import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
-import org.owasp.dependencycheck.data.update.xml.NvdCve12Handler;
-import org.owasp.dependencycheck.data.update.xml.NvdCve20Handler;
+import org.owasp.dependencycheck.data.update.nvd.NvdCve12Handler;
+import org.owasp.dependencycheck.data.update.nvd.NvdCve20Handler;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;

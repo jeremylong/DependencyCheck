@@ -35,9 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Loads the configured database driver and returns the database connection. If the embedded H2 database is used
- * obtaining a connection will ensure the database file exists and that the appropriate table structure has been
- * created.
+ * Loads the configured database driver and returns the database connection. If the embedded H2 database is used obtaining a
+ * connection will ensure the database file exists and that the appropriate table structure has been created.
  *
  * @author Jeremy Long
  */
@@ -55,6 +54,10 @@ public final class ConnectionFactory {
      * Resource location for SQL file used to create the database schema.
      */
     public static final String DB_STRUCTURE_RESOURCE = "data/initialize.sql";
+    /**
+     * Resource location for SQL file used to create the database schema.
+     */
+    public static final String DB_STRUCTURE_UPDATE_RESOURCE = "data/upgrade_%s.sql";
     /**
      * The database driver used to connect to the database.
      */
@@ -79,8 +82,8 @@ public final class ConnectionFactory {
     }
 
     /**
-     * Initializes the connection factory. Ensuring that the appropriate drivers are loaded and that a connection can be
-     * made successfully.
+     * Initializes the connection factory. Ensuring that the appropriate drivers are loaded and that a connection can be made
+     * successfully.
      *
      * @throws DatabaseException thrown if we are unable to connect to the database
      */
@@ -114,8 +117,7 @@ public final class ConnectionFactory {
             try {
                 connectionString = Settings.getConnectionString(
                         Settings.KEYS.DB_CONNECTION_STRING,
-                        Settings.KEYS.DB_FILE_NAME,
-                        Settings.KEYS.DB_VERSION);
+                        Settings.KEYS.DB_FILE_NAME);
             } catch (IOException ex) {
                 LOGGER.debug(
                         "Unable to retrieve the database connection string", ex);
@@ -162,13 +164,12 @@ public final class ConnectionFactory {
                     LOGGER.debug("", dex);
                     throw new DatabaseException("Unable to create the database structure");
                 }
-            } else {
-                try {
-                    ensureSchemaVersion(conn);
-                } catch (DatabaseException dex) {
-                    LOGGER.debug("", dex);
-                    throw new DatabaseException("Database schema does not match this version of dependency-check");
-                }
+            }
+            try {
+                ensureSchemaVersion(conn);
+            } catch (DatabaseException dex) {
+                LOGGER.debug("", dex);
+                throw new DatabaseException("Database schema does not match this version of dependency-check", dex);
             }
         } finally {
             if (conn != null) {
@@ -183,8 +184,8 @@ public final class ConnectionFactory {
 
     /**
      * Cleans up resources and unloads any registered database drivers. This needs to be called to ensure the driver is
-     * unregistered prior to the finalize method being called as during shutdown the class loader used to load the
-     * driver may be unloaded prior to the driver being de-registered.
+     * unregistered prior to the finalize method being called as during shutdown the class loader used to load the driver may be
+     * unloaded prior to the driver being de-registered.
      */
     public static synchronized void cleanup() {
         if (driver != null) {
@@ -229,8 +230,7 @@ public final class ConnectionFactory {
      */
     private static boolean h2DataFileExists() throws IOException {
         final File dir = Settings.getDataDirectory();
-        final String name = Settings.getString(Settings.KEYS.DB_FILE_NAME);
-        final String fileName = String.format(name, DB_SCHEMA_VERSION);
+        final String fileName = Settings.getString(Settings.KEYS.DB_FILE_NAME);
         final File file = new File(dir, fileName);
         return file.exists();
     }
@@ -278,6 +278,46 @@ public final class ConnectionFactory {
         }
     }
 
+    private static void updateSchema(Connection conn, String schema) throws DatabaseException {
+        LOGGER.debug("Updating database structure");
+        InputStream is;
+        InputStreamReader reader;
+        BufferedReader in = null;
+        String updateFile = null;
+        try {
+            updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, schema);
+            is = ConnectionFactory.class.getClassLoader().getResourceAsStream(updateFile);
+            reader = new InputStreamReader(is, "UTF-8");
+            in = new BufferedReader(reader);
+            final StringBuilder sb = new StringBuilder(2110);
+            String tmp;
+            while ((tmp = in.readLine()) != null) {
+                sb.append(tmp);
+            }
+            Statement statement = null;
+            try {
+                statement = conn.createStatement();
+                statement.execute(sb.toString());
+            } catch (SQLException ex) {
+                LOGGER.debug("", ex);
+                throw new DatabaseException("Unable to update database schema", ex);
+            } finally {
+                DBUtils.closeStatement(statement);
+            }
+        } catch (IOException ex) {
+            final String msg = String.format("Upgrade SQL file does not exist: %s", updateFile);
+            throw new DatabaseException(msg, ex);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ex) {
+                    LOGGER.trace("", ex);
+                }
+            }
+        }
+    }
+
     /**
      * Uses the provided connection to check the specified schema version within the database.
      *
@@ -288,12 +328,13 @@ public final class ConnectionFactory {
         ResultSet rs = null;
         CallableStatement cs = null;
         try {
+            //TODO convert this to use DatabaseProperties
             cs = conn.prepareCall("SELECT value FROM properties WHERE id = 'version'");
             rs = cs.executeQuery();
             if (rs.next()) {
-                final boolean isWrongSchema = !DB_SCHEMA_VERSION.equals(rs.getString(1));
-                if (isWrongSchema) {
-                    throw new DatabaseException("Incorrect database schema; unable to continue");
+                if (!DB_SCHEMA_VERSION.equals(rs.getString(1))) {
+                    LOGGER.debug("Updating from version: " + rs.getString(1));
+                    updateSchema(conn, rs.getString(1));
                 }
             } else {
                 throw new DatabaseException("Database schema is missing");

@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
-import org.owasp.dependencycheck.data.update.NvdCveInfo;
+import org.owasp.dependencycheck.data.update.nvd.NvdCveInfo;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,20 +41,28 @@ public class DatabaseProperties {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseProperties.class);
     /**
-     * Modified key word, used as a key to store information about the modified file (i.e. the containing the last 8
-     * days of updates)..
+     * Modified key word, used as a key to store information about the modified file (i.e. the containing the last 8 days of
+     * updates)..
      */
     public static final String MODIFIED = "Modified";
     /**
-     * The properties file key for the last updated field - used to store the last updated time of the Modified NVD CVE
-     * xml file.
+     * The properties file key for the last updated field - used to store the last updated time of the Modified NVD CVE xml file.
      */
     public static final String LAST_UPDATED = "NVD CVE Modified";
     /**
-     * Stores the last updated time for each of the NVD CVE files. These timestamps should be updated if we process the
-     * modified file within 7 days of the last update.
+     * Stores the last updated time for each of the NVD CVE files. These timestamps should be updated if we process the modified
+     * file within 7 days of the last update.
      */
     public static final String LAST_UPDATED_BASE = "NVD CVE ";
+    /**
+     * The key for the last time the CPE data was updated.
+     */
+    public static final String LAST_CPE_UPDATE = "LAST_CPE_UPDATE";
+    /**
+     * The key for the database schema version.
+     */
+    public static final String VERSION = "version";
+
     /**
      * A collection of properties about the data.
      */
@@ -116,8 +124,7 @@ public class DatabaseProperties {
     }
 
     /**
-     * Returns the property value for the given key. If the key is not contained in the underlying properties null is
-     * returned.
+     * Returns the property value for the given key. If the key is not contained in the underlying properties null is returned.
      *
      * @param key the property key
      * @return the value of the property
@@ -127,8 +134,8 @@ public class DatabaseProperties {
     }
 
     /**
-     * Returns the property value for the given key. If the key is not contained in the underlying properties the
-     * default value is returned.
+     * Returns the property value for the given key. If the key is not contained in the underlying properties the default value is
+     * returned.
      *
      * @param key the property key
      * @param defaultValue the default value
@@ -148,8 +155,8 @@ public class DatabaseProperties {
     }
 
     /**
-     * Returns a map of the meta data from the database properties. This primarily contains timestamps of when the NVD
-     * CVE information was last updated.
+     * Returns a map of the meta data from the database properties. This primarily contains timestamps of when the NVD CVE
+     * information was last updated.
      *
      * @return a map of the database meta data
      */

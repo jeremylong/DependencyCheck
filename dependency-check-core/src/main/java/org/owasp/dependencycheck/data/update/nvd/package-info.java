@@ -5,4 +5,4 @@
  * extends Index). The Indexer creates a partial-unmarshalling SAX parser (implemented in the NvdCveXmlFilter) that extracts
  * VulnerabilityTypes (aka Entry) from the NVD CVE data file and stores these into a Lucene Index.
  */
-package org.owasp.dependencycheck.data.update.xml;
+package org.owasp.dependencycheck.data.update.nvd;
