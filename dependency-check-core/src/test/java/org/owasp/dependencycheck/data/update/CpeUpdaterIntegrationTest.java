@@ -34,8 +34,10 @@ public class CpeUpdaterIntegrationTest extends BaseTest {
      */
     @Test
     public void testUpdate() throws Exception {
-        CpeUpdater instance = new CpeUpdater();
-        instance.update();
+        //commented out as the current code base does not utilize the CpeU[pdater.
+
+//        CpeUpdater instance = new CpeUpdater();
+//        instance.update();
     }
 
 }
