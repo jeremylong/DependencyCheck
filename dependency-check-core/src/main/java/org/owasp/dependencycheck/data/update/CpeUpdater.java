@@ -26,7 +26,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -45,6 +44,9 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 /**
+ * The CpeUpdater is designed to download the CPE data file from NIST and import the data into the database. However, as this
+ * currently adds no beneficial data, compared to what is in the CPE data contained in the CVE data files, this class is not
+ * currently used. The code is being kept as a future update may utilize more data from the CPE xml files.
  *
  * @author Jeremy Long
  */
