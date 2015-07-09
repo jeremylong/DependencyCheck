@@ -17,19 +17,17 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.HashSet;
-
-import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
+
+import java.io.File;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit tests for AutoconfAnalyzer. The test resources under autoconf/ were
@@ -164,27 +162,15 @@ public class AutoconfAnalyzerTest extends BaseTest {
 	}
 
 	/**
-	 * Test of {@link AutoconfAnalyzer#getSupportedExtensions}.
+	 * Test of {@link AutoconfAnalyzer#accept(File)}.
 	 */
 	@Test
-	public void testGetSupportedExtensions() {
-		final String[] expected = { "ac", "in", "configure" };
-		assertEquals("Supported extensions should just have the following: "
-				+ StringUtils.join(expected, ", "),
-				new HashSet<String>(Arrays.asList(expected)),
-				analyzer.getSupportedExtensions());
-	}
-
-	/**
-	 * Test of {@link AutoconfAnalyzer#supportsExtension}.
-	 */
-	@Test
-	public void testSupportsExtension() {
+	public void testSupportsFileExtension() {
 		assertTrue("Should support \"ac\" extension.",
-				analyzer.supportsExtension("ac"));
+				analyzer.accept(new File("configure.ac")));
 		assertTrue("Should support \"in\" extension.",
-				analyzer.supportsExtension("in"));
+				analyzer.accept(new File("configure.in")));
 		assertTrue("Should support \"configure\" extension.",
-				analyzer.supportsExtension("configure"));
+				analyzer.accept(new File("configure")));
 	}
 }

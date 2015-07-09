@@ -20,8 +20,7 @@ package org.owasp.dependencycheck.analyzer;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
@@ -39,7 +38,7 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
      * Test of getSupportedExtensions method, of class ArchiveAnalyzer.
      */
     @Test
-    public void testGetSupportedExtensions() {
+    public void testSupportsExtensions() {
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
         Set<String> expResult = new HashSet<String>();
         expResult.add("zip");
@@ -52,8 +51,9 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
         expResult.add("tar");
         expResult.add("gz");
         expResult.add("tgz");
-        Set result = instance.getSupportedExtensions();
-        assertEquals(expResult, result);
+        for (String ext : expResult) {
+            assertTrue(ext, instance.accept(new File("test." + ext)));
+        }
     }
 
     /**
@@ -72,28 +72,9 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
      */
     @Test
     public void testSupportsExtension() {
-        String extension = "7z"; //not supported
+        String extension = "test.7z"; //not supported
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
-        boolean expResult = false;
-        boolean result = instance.supportsExtension(extension);
-        assertEquals(expResult, result);
-
-        extension = "war"; //supported
-        expResult = true;
-        result = instance.supportsExtension(extension);
-        assertEquals(expResult, result);
-
-        extension = "ear"; //supported
-        result = instance.supportsExtension(extension);
-        assertEquals(expResult, result);
-
-        extension = "zip"; //supported
-        result = instance.supportsExtension(extension);
-        assertEquals(expResult, result);
-
-        extension = "nupkg"; //supported
-        result = instance.supportsExtension(extension);
-        assertEquals(expResult, result);
+        assertFalse(extension, instance.accept(new File(extension)));
     }
 
     /**
@@ -129,7 +110,7 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
     public void testAnalyze() throws Exception {
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
         //trick the analyzer into thinking it is active.
-        instance.supportsExtension("ear");
+        instance.accept(new File("test.ear"));
         try {
             instance.initialize();
             File file = BaseTest.getResourceAsFile(this, "daytrader-ear-2.1.7.ear");
@@ -160,7 +141,7 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
     public void testAnalyzeTar() throws Exception {
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
         //trick the analyzer into thinking it is active so that it will initialize
-        instance.supportsExtension("tar");
+        instance.accept(new File("test.tar"));
         try {
             instance.initialize();
 
@@ -191,7 +172,7 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
     @Test
     public void testAnalyzeTarGz() throws Exception {
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
-        instance.supportsExtension("zip"); //ensure analyzer is "enabled"
+        instance.accept(new File("zip")); //ensure analyzer is "enabled"
         try {
             instance.initialize();
 
@@ -244,7 +225,7 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
     @Test
     public void testAnalyzeTgz() throws Exception {
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
-        instance.supportsExtension("zip"); //ensure analyzer is "enabled"
+        instance.accept(new File("zip")); //ensure analyzer is "enabled"
         try {
             instance.initialize();
 

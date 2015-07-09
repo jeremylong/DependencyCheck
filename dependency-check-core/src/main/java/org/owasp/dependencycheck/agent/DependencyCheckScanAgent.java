@@ -872,7 +872,7 @@ public class DependencyCheckScanAgent {
             r.generateReports(outDirectory.getCanonicalPath(), this.reportFormat.name());
         } catch (IOException ex) {
             LOGGER.error(
-                "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
+                    "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
             LOGGER.debug("", ex);
         } catch (Throwable ex) {
             LOGGER.error(
@@ -1058,8 +1058,9 @@ public class DependencyCheckScanAgent {
             }
         }
         if (summary.length() > 0) {
-            LOGGER.warn("\n\nOne or more dependencies were identified with known vulnerabilities:\n\n{}\n\nSee the dependency-check report for more details.\n\n",
-                summary.toString());
+            LOGGER.warn("\n\nOne or more dependencies were identified with known vulnerabilities:\n\n{}\n\n"
+                    + "See the dependency-check report for more details.\n\n",
+                    summary.toString());
         }
     }
 

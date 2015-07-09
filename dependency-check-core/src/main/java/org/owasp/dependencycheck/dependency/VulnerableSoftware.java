@@ -57,8 +57,7 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
 
     /**
      * <p>
-     * Parses a name attribute value, from the cpe.xml, into its corresponding parts: vendor, product, version,
-     * revision.</p>
+     * Parses a name attribute value, from the cpe.xml, into its corresponding parts: vendor, product, version, update.</p>
      * <p>
      * Example:</p>
      * <code>&nbsp;&nbsp;&nbsp;cpe:/a:apache:struts:1.1:rc2</code>
@@ -85,7 +84,7 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
                 version = urlDecode(data[2]);
             }
             if (data.length >= 4) {
-                revision = urlDecode(data[3]);
+                update = urlDecode(data[3]);
             }
             if (data.length >= 5) {
                 edition = urlDecode(data[4]);
@@ -297,26 +296,26 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
         this.version = version;
     }
     /**
-     * The product revision version.
+     * The product update version.
      */
-    private String revision;
+    private String update;
 
     /**
-     * Get the value of revision.
+     * Get the value of update.
      *
-     * @return the value of revision
+     * @return the value of update
      */
-    public String getRevision() {
-        return revision;
+    public String getUpdate() {
+        return update;
     }
 
     /**
-     * Set the value of revision.
+     * Set the value of update.
      *
-     * @param revision new value of revision
+     * @param update new value of update
      */
-    public void setRevision(String revision) {
-        this.revision = revision;
+    public void setUpdate(String update) {
+        this.update = update;
     }
     /**
      * The product edition.
@@ -363,11 +362,9 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     }
 
     /**
-     * Call {@link java.net.URLDecoder#decode(String)} to URL decode using the
-     * default encoding.
+     * Call {@link java.net.URLDecoder#decode(String)} to URL decode using the default encoding.
      *
-     * @param text
-     *            www-form-encoded URL to decode
+     * @param text www-form-encoded URL to decode
      * @return the newly decoded String
      */
     @SuppressWarnings("deprecation")

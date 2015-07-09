@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -50,7 +51,7 @@ import java.util.Set;
  *
  * @author Jeremy Long
  */
-public class Engine {
+public class Engine implements FileFilter {
 
     /**
      * The list of dependencies.
@@ -317,7 +318,7 @@ public class Engine {
             extension = fileName;
         }
         Dependency dependency = null;
-        if (supportsExtension(extension)) {
+        if (accept(file)) {
             dependency = new Dependency(file);
             if (extension.equals(fileName)) {
                 dependency.setFileExtension(extension);
@@ -330,8 +331,8 @@ public class Engine {
     /**
      * Runs the analyzers against all of the dependencies. Since the mutable dependencies list is exposed via
      * {@link #getDependencies()}, this method iterates over a copy of the dependencies list. Thus, the potential for
-     * {@link java.util.ConcurrentModificationException}s is avoided, and analyzers may safely add or remove entries
-     * from the dependencies list.
+     * {@link java.util.ConcurrentModificationException}s is avoided, and analyzers may safely add or remove entries from the
+     * dependencies list.
      */
     public void analyzeDependencies() {
         boolean autoUpdate = true;
@@ -379,7 +380,7 @@ public class Engine {
                     boolean shouldAnalyze = true;
                     if (a instanceof FileTypeAnalyzer) {
                         final FileTypeAnalyzer fAnalyzer = (FileTypeAnalyzer) a;
-                        shouldAnalyze = fAnalyzer.supportsExtension(d.getFileExtension());
+                        shouldAnalyze = fAnalyzer.accept(d.getActualFile());
                     }
                     if (shouldAnalyze) {
                         LOGGER.debug("Begin Analysis of '{}'", d.getActualFilePath());
@@ -482,18 +483,18 @@ public class Engine {
     /**
      * Checks all analyzers to see if an extension is supported.
      *
-     * @param ext a file extension
+     * @param file a file extension
      * @return true or false depending on whether or not the file extension is supported
      */
-    public boolean supportsExtension(String ext) {
-        if (ext == null) {
+    public boolean accept(File file) {
+        if (file == null) {
             return false;
         }
         boolean scan = false;
         for (FileTypeAnalyzer a : this.fileTypeAnalyzers) {
             /* note, we can't break early on this loop as the analyzers need to know if
              they have files to work on prior to initialization */
-            scan |= a.supportsExtension(ext);
+            scan |= a.accept(file);
         }
         return scan;
     }
@@ -510,7 +511,7 @@ public class Engine {
     /**
      * Checks the CPE Index to ensure documents exists. If none exist a NoDataException is thrown.
      *
-     * @throws NoDataException   thrown if no data exists in the CPE Index
+     * @throws NoDataException thrown if no data exists in the CPE Index
      * @throws DatabaseException thrown if there is an exception opening the database
      */
     private void ensureDataExists() throws NoDataException, DatabaseException {

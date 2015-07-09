@@ -17,17 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetHeaders;
-
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.input.AutoCloseInputStream;
@@ -37,13 +26,19 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetHeaders;
+import java.io.*;
+import java.util.regex.Pattern;
 import org.owasp.dependencycheck.utils.ExtractionException;
 import org.owasp.dependencycheck.utils.ExtractionUtil;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.UrlStringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Used to analyze a Wheel or egg distribution files, or their contents in unzipped form, and collect information that can be used
@@ -86,11 +81,10 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The set of file extensions supported by this analyzer.
      */
-    private static final Set<String> EXTENSIONS = newHashSet("whl", "egg",
-            "zip", METADATA, PKG_INFO);
+    private static final String[] EXTENSIONS = {"whl", "egg", "zip"};
 
     /**
-     * Used to match on egg archive candidate extenssions.
+     * Used to match on egg archive candidate extensions.
      */
     private static final Pattern EGG_OR_ZIP = Pattern.compile("egg|zip");
 
@@ -114,23 +108,29 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Filter that detects files named "METADATA".
      */
-    private static final FilenameFilter METADATA_FILTER = new NameFileFilter(
+    private static final NameFileFilter METADATA_FILTER = new NameFileFilter(
             METADATA);
 
     /**
      * Filter that detects files named "PKG-INFO".
      */
-    private static final FilenameFilter PKG_INFO_FILTER = new NameFileFilter(
+    private static final NameFileFilter PKG_INFO_FILTER = new NameFileFilter(
             PKG_INFO);
 
     /**
-     * Returns a list of file EXTENSIONS supported by this analyzer.
+     * The file filter used to determine which files this analyzer supports.
+     */
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFileFilters(
+            METADATA_FILTER, PKG_INFO_FILTER).addExtensions(EXTENSIONS).build();
+
+    /**
+     * Returns the FileFilter
      *
-     * @return a list of file EXTENSIONS supported by this analyzer.
+     * @return the FileFilter
      */
     @Override
-    public Set<String> getSupportedExtensions() {
-        return EXTENSIONS;
+    protected FileFilter getFileFilter() {
+        return FILTER;
     }
 
     /**

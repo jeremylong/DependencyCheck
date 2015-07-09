@@ -15,7 +15,7 @@
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.update.task;
+package org.owasp.dependencycheck.data.update.nvd;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,7 +29,6 @@ import java.util.concurrent.Future;
 import java.util.zip.GZIPInputStream;
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
-import org.owasp.dependencycheck.data.update.NvdCveInfo;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
@@ -55,8 +54,8 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
      * @param nvdCveInfo the NVD CVE info
      * @param processor the processor service to submit the downloaded files to
      * @param cveDB the CVE DB to use to store the vulnerability data
-     * @param settings a reference to the global settings object; this is necessary so that when the thread is started
-     * the dependencies have a correct reference to the global settings.
+     * @param settings a reference to the global settings object; this is necessary so that when the thread is started the
+     * dependencies have a correct reference to the global settings.
      * @throws UpdateException thrown if temporary files could not be created
      */
     public DownloadTask(NvdCveInfo nvdCveInfo, ExecutorService processor, CveDB cveDB, Settings settings) throws UpdateException {
@@ -248,8 +247,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
     }
 
     /**
-     * Extracts the file contained in a gzip archive. The extracted file is placed in the exact same path as the file
-     * specified.
+     * Extracts the file contained in a gzip archive. The extracted file is placed in the exact same path as the file specified.
      *
      * @param file the archive file
      * @throws FileNotFoundException thrown if the file does not exist

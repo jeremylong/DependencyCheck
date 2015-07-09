@@ -45,7 +45,7 @@ public abstract class BaseDBTestCase extends BaseTest {
     public static void ensureDBExists() throws Exception {
 
         java.io.File dataPath = Settings.getDataDirectory();
-        String fileName = String.format(Settings.getString(Settings.KEYS.DB_FILE_NAME), Settings.getString(Settings.KEYS.DB_VERSION));
+        String fileName = Settings.getString(Settings.KEYS.DB_FILE_NAME);
         java.io.File dataFile = new File(dataPath, fileName);
         if (!dataPath.exists() || !dataFile.exists()) {
             dataPath.mkdirs();

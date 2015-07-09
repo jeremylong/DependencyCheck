@@ -15,7 +15,7 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.update.xml;
+package org.owasp.dependencycheck.data.update.nvd;
 
 import java.io.IOException;
 import java.util.List;

@@ -511,8 +511,8 @@ public class CPEAnalyzer implements Analyzer {
                 }
                 for (VulnerableSoftware vs : cpes) {
                     DependencyVersion dbVer;
-                    if (vs.getRevision() != null && !vs.getRevision().isEmpty()) {
-                        dbVer = DependencyVersionUtil.parseVersion(vs.getVersion() + "." + vs.getRevision());
+                    if (vs.getUpdate() != null && !vs.getUpdate().isEmpty()) {
+                        dbVer = DependencyVersionUtil.parseVersion(vs.getVersion() + "." + vs.getUpdate());
                     } else {
                         dbVer = DependencyVersionUtil.parseVersion(vs.getVersion());
                     }

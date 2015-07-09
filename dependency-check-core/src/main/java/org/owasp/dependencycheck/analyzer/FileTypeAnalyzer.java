@@ -17,20 +17,14 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.io.FileFilter;
+
 /**
  * An Analyzer that scans specific file types.
  *
  * @author Jeremy Long
  */
-public interface FileTypeAnalyzer extends Analyzer {
-
-    /**
-     * Returns whether or not this analyzer can process the given extension.
-     *
-     * @param extension the file extension to test for support.
-     * @return whether or not the specified file extension is supported by this analyzer.
-     */
-    boolean supportsExtension(String extension);
+public interface FileTypeAnalyzer extends Analyzer, FileFilter {
 
     /**
      * Resets the analyzers state.

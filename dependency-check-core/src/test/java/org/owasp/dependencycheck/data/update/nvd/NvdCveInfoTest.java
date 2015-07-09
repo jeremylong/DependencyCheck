@@ -15,8 +15,9 @@
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.update;
+package org.owasp.dependencycheck.data.update.nvd;
 
+import org.owasp.dependencycheck.data.update.nvd.NvdCveInfo;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;

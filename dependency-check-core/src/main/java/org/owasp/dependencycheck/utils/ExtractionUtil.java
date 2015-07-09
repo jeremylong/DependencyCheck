@@ -17,8 +17,6 @@
  */
 package org.owasp.dependencycheck.utils;
 
-import static org.owasp.dependencycheck.utils.FileUtils.getFileExtension;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.Closeable;
@@ -109,8 +107,7 @@ public final class ExtractionUtil {
                     }
                 } else {
                     final File file = new File(extractTo, entry.getName());
-                    final String ext = getFileExtension(file.getName());
-                    if (engine == null || engine.supportsExtension(ext)) {
+                    if (engine == null || engine.accept(file)) {
                         BufferedOutputStream bos = null;
                         FileOutputStream fos;
                         try {
@@ -227,7 +224,7 @@ public final class ExtractionUtil {
         final File file = new File(destination, entry.getName());
         if (filter.accept(file.getParentFile(), file.getName())) {
             LOGGER.debug("Extracting '{}'",
-                file.getPath());
+                    file.getPath());
             BufferedOutputStream bos = null;
             FileOutputStream fos = null;
             try {
@@ -303,5 +300,4 @@ public final class ExtractionUtil {
             }
         }
     }
-
 }

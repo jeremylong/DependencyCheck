@@ -15,8 +15,10 @@
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.update;
+package org.owasp.dependencycheck.data.update.nvd;
 
+import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
+import org.owasp.dependencycheck.data.update.nvd.NvdCveInfo;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;

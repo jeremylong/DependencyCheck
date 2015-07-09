@@ -15,8 +15,10 @@
  *
  * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.update.task;
+package org.owasp.dependencycheck.data.update.nvd;
 
+import org.owasp.dependencycheck.data.update.nvd.ProcessTask;
+import org.owasp.dependencycheck.data.update.nvd.DownloadTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import org.junit.After;
@@ -26,7 +28,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
-import org.owasp.dependencycheck.data.update.NvdCveInfo;
+import org.owasp.dependencycheck.data.update.nvd.NvdCveInfo;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**

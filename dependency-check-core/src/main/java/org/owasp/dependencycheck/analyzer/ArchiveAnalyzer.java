@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.analyzer;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -31,6 +32,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -44,6 +46,7 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -51,8 +54,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p>
- * An analyzer that extracts files from archives and ensures any supported files contained within the archive are added
- * to the dependency list.</p>
+ * An analyzer that extracts files from archives and ensures any supported files contained within the archive are added to the
+ * dependency list.</p>
  *
  * @author Jeremy Long
  */
@@ -97,8 +100,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final Set<String> ZIPPABLES = newHashSet("zip", "ear", "war", "jar", "sar", "apk", "nupkg");
     /**
-     * The set of file extensions supported by this analyzer. Note for developers, any additions to this list will need
-     * to be explicitly handled in extractFiles().
+     * The set of file extensions supported by this analyzer. Note for developers, any additions to this list will need to be
+     * explicitly handled in extractFiles().
      */
     private static final Set<String> EXTENSIONS = newHashSet("tar", "gz", "tgz");
 
@@ -116,14 +119,11 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         EXTENSIONS.addAll(ZIPPABLES);
     }
 
-    /**
-     * Returns a list of file EXTENSIONS supported by this analyzer.
-     *
-     * @return a list of file EXTENSIONS supported by this analyzer.
-     */
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
+
     @Override
-    public Set<String> getSupportedExtensions() {
-        return EXTENSIONS;
+    protected FileFilter getFileFilter() {
+        return FILTER;
     }
 
     /**
@@ -193,8 +193,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Analyzes a given dependency. If the dependency is an archive, such as a WAR or EAR, the contents are extracted,
-     * scanned, and added to the list of dependencies within the engine.
+     * Analyzes a given dependency. If the dependency is an archive, such as a WAR or EAR, the contents are extracted, scanned,
+     * and added to the list of dependencies within the engine.
      *
      * @param dependency the dependency to analyze
      * @param engine the engine scanning
@@ -229,14 +229,14 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
 
                 //TODO - can we get more evidence from the parent? EAR contains module name, etc.
                 //analyze the dependency (i.e. extract files) if it is a supported type.
-                if (this.supportsExtension(d.getFileExtension()) && scanDepth < MAX_SCAN_DEPTH) {
+                if (this.accept(d.getActualFile()) && scanDepth < MAX_SCAN_DEPTH) {
                     scanDepth += 1;
                     analyze(d, engine);
                     scanDepth -= 1;
                 }
             }
         }
-        if (this.REMOVE_FROM_ANALYSIS.contains(dependency.getFileExtension())) {
+        if (REMOVE_FROM_ANALYSIS.contains(dependency.getFileExtension())) {
             if ("zip".equals(dependency.getFileExtension()) && isZipFileActuallyJarFile(dependency)) {
                 final File tdir = getNextTempDirectory();
                 final String fileName = dependency.getFileName();
@@ -320,9 +320,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 extractArchive(new TarArchiveInputStream(new BufferedInputStream(fis)), destination, engine);
             } else if ("gz".equals(archiveExt) || "tgz".equals(archiveExt)) {
                 final String uncompressedName = GzipUtils.getUncompressedFilename(archive.getName());
-                final String uncompressedExt = FileUtils.getFileExtension(uncompressedName).toLowerCase();
-                if (engine.supportsExtension(uncompressedExt)) {
-                    decompressFile(new GzipCompressorInputStream(new BufferedInputStream(fis)), new File(destination, uncompressedName));
+                File f = new File(destination, uncompressedName);
+                if (engine.accept(f)) {
+                    decompressFile(new GzipCompressorInputStream(new BufferedInputStream(fis)), f);
                 }
             }
         } catch (ArchiveExtractionException ex) {
@@ -362,8 +362,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                     }
                 } else {
                     final File file = new File(destination, entry.getName());
-                    final String ext = FileUtils.getFileExtension(file.getName());
-                    if (engine.supportsExtension(ext)) {
+                    if (engine.accept(file)) {
                         LOGGER.debug("Extracting '{}'", file.getPath());
                         BufferedOutputStream bos = null;
                         FileOutputStream fos = null;

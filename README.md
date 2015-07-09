@@ -26,6 +26,12 @@ On Windows
 > bin/dependency-check.bat -h
 > bin/dependency-check.bat --app Testing --out . --scan [path to jar files to be scanned]
 ```
+On Mac with [Homebrew](http://brew.sh)
+```
+$ brew update && brew install dependency-check
+$ dependency-check -h
+$ dependency-check --app Testing --out . --scan [path to jar files to be scanned]
+```
 
 ### Maven Plugin
 

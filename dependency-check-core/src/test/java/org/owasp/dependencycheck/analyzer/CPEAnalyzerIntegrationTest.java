@@ -149,7 +149,7 @@ public class CPEAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
 
         HintAnalyzer hintAnalyzer = new HintAnalyzer();
         JarAnalyzer jarAnalyzer = new JarAnalyzer();
-        jarAnalyzer.supportsExtension("jar");
+        jarAnalyzer.accept(new File("test.jar"));//trick analyzer into "thinking it is active"
 
         jarAnalyzer.analyze(struts, null);
         hintAnalyzer.analyze(struts, null);

@@ -17,22 +17,23 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.UrlStringUtils;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Used to analyze Autoconf input files named configure.ac or configure.in. Files simply named "configure" are also analyzed,
@@ -71,8 +72,7 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The set of file extensions supported by this analyzer.
      */
-    private static final Set<String> EXTENSIONS = newHashSet("ac", "in",
-            CONFIGURE);
+    private static final String[] EXTENSIONS = {"ac", "in"};
 
     /**
      * Matches AC_INIT variables in the output configure script.
@@ -104,13 +104,19 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Returns a list of file EXTENSIONS supported by this analyzer.
+     * The file filter used to determine which files this analyzer supports.
+     */
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFilenames(CONFIGURE).addExtensions(
+            EXTENSIONS).build();
+
+    /**
+     * Returns the FileFilter
      *
-     * @return a list of file EXTENSIONS supported by this analyzer.
+     * @return the FileFilter
      */
     @Override
-    public Set<String> getSupportedExtensions() {
-        return EXTENSIONS;
+    protected FileFilter getFileFilter() {
+        return FILTER;
     }
 
     /**
@@ -128,6 +134,7 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @return the phase that the analyzer is intended to run in.
      */
+    @Override
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
