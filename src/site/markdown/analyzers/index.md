@@ -5,8 +5,10 @@ to extract identification information from the files analyzed.
 
 - [Archive Analyzer](./archive-analyzer.html)
 - [Assembly Analyzer](./assembly-analyzer.html)
+- [Autoconf Analyzer](./autoconf-analyzer.html)
 - [Central Analyzer](./central-analyzer.html)
 - [Jar Analyzer](./jar-analyzer.html)
 - [Nexus Analyzer](./nexus-analyzer.html)
 - [Nuspec Analyzer](./nuspec-analyzer.html)
+- [OpenSSL Analyzer](./openssl-analyzer.html)
 - [Python Analyzer](./python-analyzer.html)
