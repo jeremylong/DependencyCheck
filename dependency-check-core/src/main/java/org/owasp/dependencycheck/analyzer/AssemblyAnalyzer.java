@@ -17,22 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
 import ch.qos.cal10n.IMessageConveyor;
 import ch.qos.cal10n.MessageConveyor;
 import org.owasp.dependencycheck.Engine;
@@ -41,11 +25,22 @@ import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.utils.DCResources;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.cal10n.LocLogger;
 import org.slf4j.cal10n.LocLoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Analyzer for getting company, product, and version information from a .NET assembly.
@@ -66,7 +61,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The list of supported extensions
      */
-    private static final Set<String> SUPPORTED_EXTENSIONS = newHashSet("dll", "exe");
+    private static final String[] SUPPORTED_EXTENSIONS = {"dll", "exe"};
     /**
      * The temp value for GrokAssembly.exe
      */
@@ -296,14 +291,12 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
-    /**
-     * Gets the set of extensions supported by this analyzer.
-     *
-     * @return the list of supported extensions
-     */
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(
+            SUPPORTED_EXTENSIONS).build();
+
     @Override
-    public Set<String> getSupportedExtensions() {
-        return SUPPORTED_EXTENSIONS;
+    protected FileFilter getFileFilter() {
+        return FILTER;
     }
 
     /**

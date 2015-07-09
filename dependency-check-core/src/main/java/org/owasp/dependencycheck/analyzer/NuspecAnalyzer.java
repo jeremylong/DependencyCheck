@@ -17,10 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Set;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nuget.NugetPackage;
@@ -29,9 +25,15 @@ import org.owasp.dependencycheck.data.nuget.NuspecParser;
 import org.owasp.dependencycheck.data.nuget.XPathNuspecParser;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Analyzer which will parse a Nuspec file to gather module information.
@@ -58,7 +60,7 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The types of files on which this will work.
      */
-    private static final Set<String> SUPPORTED_EXTENSIONS = newHashSet("nuspec");
+    private static final String SUPPORTED_EXTENSIONS = "nuspec";
 
     /**
      * Initializes the analyzer once before any analysis is performed.
@@ -99,14 +101,12 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
         return ANALYSIS_PHASE;
     }
 
-    /**
-     * Returns the extensions for which this Analyzer runs.
-     *
-     * @return the extensions for which this Analyzer runs
-     */
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(
+            SUPPORTED_EXTENSIONS).build();
+
     @Override
-    public Set<String> getSupportedExtensions() {
-        return SUPPORTED_EXTENSIONS;
+    protected FileFilter getFileFilter() {
+        return FILTER;
     }
 
     /**

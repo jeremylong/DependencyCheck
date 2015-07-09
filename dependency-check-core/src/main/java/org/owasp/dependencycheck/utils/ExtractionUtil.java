@@ -109,8 +109,7 @@ public final class ExtractionUtil {
                     }
                 } else {
                     final File file = new File(extractTo, entry.getName());
-                    final String ext = getFileExtension(file.getName());
-                    if (engine == null || engine.supportsExtension(ext)) {
+                    if (engine == null || engine.accept(file)) {
                         BufferedOutputStream bos = null;
                         FileOutputStream fos;
                         try {

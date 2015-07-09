@@ -17,13 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.HashSet;
-
-import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +24,11 @@ import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
+
+import java.io.File;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit tests for PythonDistributionAnalyzer.
@@ -77,32 +75,20 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
     }
 
     /**
-     * Test of getSupportedExtensions method, of class PythonDistributionAnalyzer.
-     */
-    @Test
-    public void testGetSupportedExtensions() {
-        final String[] expected = {"whl", "egg", "zip", "METADATA", "PKG-INFO"};
-        assertEquals("Supported extensions should just have the following: "
-                + StringUtils.join(expected, ", "),
-                new HashSet<String>(Arrays.asList(expected)),
-                analyzer.getSupportedExtensions());
-    }
-
-    /**
      * Test of supportsExtension method, of class PythonDistributionAnalyzer.
      */
     @Test
-    public void testSupportsExtension() {
+    public void testSupportsFiles() {
         assertTrue("Should support \"whl\" extension.",
-                analyzer.supportsExtension("whl"));
+                analyzer.accept(new File("test.whl")));
         assertTrue("Should support \"egg\" extension.",
-                analyzer.supportsExtension("egg"));
+                analyzer.accept(new File("test.egg")));
         assertTrue("Should support \"zip\" extension.",
-                analyzer.supportsExtension("zip"));
+                analyzer.accept(new File("test.zip")));
         assertTrue("Should support \"METADATA\" extension.",
-                analyzer.supportsExtension("METADATA"));
+                analyzer.accept(new File("METADATA")));
         assertTrue("Should support \"PKG-INFO\" extension.",
-                analyzer.supportsExtension("PKG-INFO"));
+                analyzer.accept(new File("PKG-INFO")));
     }
 
     /**
@@ -119,7 +105,7 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
     /**
      * Test of inspect method, of class PythonDistributionAnalyzer.
      *
-     * @throws Exception is thrown when an exception occurs.
+     * @throws AnalysisException is thrown when an exception occurs.
      */
     @Test
     public void testAnalyzeSitePackage() throws AnalysisException {

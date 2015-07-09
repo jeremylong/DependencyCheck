@@ -48,8 +48,7 @@ public final class PomUtils {
      *
      * @param file the pom.xml file
      * @return returns a
-     * @throws AnalysisException is thrown if there is an exception extracting or parsing the POM
-     * {@link org.owasp.dependencycheck.jaxb.pom.generated.Model} object
+     * @throws AnalysisException is thrown if there is an exception extracting or parsing the POM {@link Model} object
      */
     public static Model readPom(File file) throws AnalysisException {
         Model model = null;
@@ -78,8 +77,7 @@ public final class PomUtils {
      * @param path the path to the pom.xml file within the jar file
      * @param jar the jar file to extract the pom from
      * @return returns a
-     * @throws AnalysisException is thrown if there is an exception extracting or parsing the POM
-     * {@link org.owasp.dependencycheck.jaxb.pom.generated.Model} object
+     * @throws AnalysisException is thrown if there is an exception extracting or parsing the POM {@link Model} object
      */
     public static Model readPom(String path, JarFile jar) throws AnalysisException {
         final ZipEntry entry = jar.getEntry(path);

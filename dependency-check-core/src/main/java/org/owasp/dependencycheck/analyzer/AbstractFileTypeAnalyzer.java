@@ -17,9 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -27,6 +24,12 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The base FileTypeAnalyzer that all analyzers that have specific file types they analyze should extend.
@@ -36,6 +39,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implements FileTypeAnalyzer {
 
     //<editor-fold defaultstate="collapsed" desc="Constructor">
+
     /**
      * Base constructor that all children must call. This checks the configuration to determine if the analyzer is
      * enabled.
@@ -98,21 +102,20 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
 //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Abstract methods children must implement">
+
     /**
      * <p>
-     * Returns a list of supported file extensions. An example would be an analyzer that inspected java jar files. The
-     * getSupportedExtensions function would return a set with a single element "jar".</p>
+     * Returns the {@link java.io.FileFilter} used to determine which files are to be analyzed.
+     * An example would be an analyzer that inspected Java jar files. Implementors may use
+     * {@link org.owasp.dependencycheck.utils.FileFilterBuilder}.</p>
      *
+     * @return the file filter used to determine which files are to be analyzed
+     * <p/>
      * <p>
-     * <b>Note:</b> when implementing this the extensions returned MUST be lowercase.</p>
-     *
-     * @return The file extensions supported by this analyzer.
-     *
-     * <p>
-     * If the analyzer returns null it will not cause additional files to be analyzed but will be executed against every
-     * file loaded</p>
+     * If the analyzer returns null it will not cause additional files to be analyzed, but will be executed against
+     * every file loaded.</p>
      */
-    protected abstract Set<String> getSupportedExtensions();
+    protected abstract FileFilter getFileFilter();
 
     /**
      * Initializes the file type analyzer.
@@ -126,7 +129,7 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
      * scanned, and added to the list of dependencies within the engine.
      *
      * @param dependency the dependency to analyze
-     * @param engine the engine scanning
+     * @param engine     the engine scanning
      * @throws AnalysisException thrown if there is an analysis exception
      */
     protected abstract void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException;
@@ -141,6 +144,7 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
 
 //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Final implementations for the Analyzer interface">
+
     /**
      * Initializes the analyzer.
      *
@@ -175,7 +179,7 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
      * scanned, and added to the list of dependencies within the engine.
      *
      * @param dependency the dependency to analyze
-     * @param engine the engine scanning
+     * @param engine     the engine scanning
      * @throws AnalysisException thrown if there is an analysis exception
      */
     @Override
@@ -185,38 +189,30 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
         }
     }
 
-    /**
-     * Returns whether or not this analyzer can process the given extension.
-     *
-     * @param extension the file extension to test for support.
-     * @return whether or not the specified file extension is supported by this analyzer.
-     */
     @Override
-    public final boolean supportsExtension(String extension) {
-        if (!enabled) {
-            return false;
-        }
-        final Set<String> ext = getSupportedExtensions();
-        if (ext == null) {
-            LOGGER.error("The '{}' analyzer is misconfigured and does not have any file extensions;"
-                + " it will be disabled", getName());
-            return false;
-        } else {
-            final boolean match = ext.contains(extension);
-            if (match) {
-                filesMatched = match;
+    public boolean accept(File pathname) {
+        FileFilter filter = getFileFilter();
+        boolean accepted = false;
+        if (null == filter) {
+            LOGGER.error("The '{}' analyzer is misconfigured and does not have a file filter; it will be disabled", getName());
+        } else if (enabled) {
+            accepted = filter.accept(pathname);
+            if (accepted) {
+                filesMatched = true;
             }
-            return match;
         }
+        return accepted;
     }
-//</editor-fold>
+
+    //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Static utility methods">
+
     /**
      * <p>
      * Utility method to help in the creation of the extensions set. This constructs a new Set that can be used in a
      * final static declaration.</p>
-     *
+     * <p/>
      * <p>
      * This implementation was copied from
      * http://stackoverflow.com/questions/2041778/initialize-java-hashset-values-by-construction</p>
@@ -226,9 +222,10 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
      */
     protected static Set<String> newHashSet(String... strings) {
         final Set<String> set = new HashSet<String>();
-
         Collections.addAll(set, strings);
         return set;
     }
+
+
 //</editor-fold>
 }
