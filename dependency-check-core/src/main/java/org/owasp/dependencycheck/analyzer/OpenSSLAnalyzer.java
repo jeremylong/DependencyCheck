@@ -18,18 +18,16 @@
 package org.owasp.dependencycheck.analyzer;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.NameFileFilter;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,14 +45,9 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
     private static final String OPENSSLV_H = "opensslv.h";
 
     /**
-     * Filename extensions for files to be analyzed.
-     */
-    private static final Set<String> EXTENSIONS = Collections
-            .unmodifiableSet(Collections.singleton("h"));
-    /**
      * Filter that detects files named "__init__.py".
      */
-    private static final FileFilter OPENSSLV_FILTER = new NameFileFilter(OPENSSLV_H);
+    private static final FileFilter OPENSSLV_FILTER = FileFilterBuilder.newInstance().addFilenames(OPENSSLV_H).build();
     private static final Pattern VERSION_PATTERN = Pattern.compile(
             "define\\s+OPENSSL_VERSION_NUMBER\\s+0x([0-9a-zA-Z]{8})L", Pattern.DOTALL
                     | Pattern.CASE_INSENSITIVE);
@@ -107,8 +100,8 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
      * @return the set of supported file extensions
      */
     @Override
-    protected Set<String> getSupportedExtensions() {
-        return EXTENSIONS;
+    protected FileFilter getFileFilter() {
+        return OPENSSLV_FILTER;
     }
 
     /**
@@ -132,18 +125,15 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
     protected void analyzeFileType(Dependency dependency, Engine engine)
             throws AnalysisException {
         final File file = dependency.getActualFile();
-        final File parent = file.getParentFile();
-        final String parentName = parent.getName();
+        final String parentName = file.getParentFile().getName();
         boolean found = false;
-        if (OPENSSLV_FILTER.accept(file)) {
-            final String contents = getFileContents(file);
-            if (!contents.isEmpty()) {
-                final Matcher matcher = VERSION_PATTERN.matcher(contents);
-                while (matcher.find()) {
-                    dependency.getVersionEvidence().addEvidence(OPENSSLV_H, "Version Constant",
-                            getOpenSSLVersion(Long.parseLong(matcher.group(1), HEXADECIMAL)), Confidence.HIGH);
-                    found = true;
-                }
+        final String contents = getFileContents(file);
+        if (!contents.isEmpty()) {
+            final Matcher matcher = VERSION_PATTERN.matcher(contents);
+            if (matcher.find()) {
+                dependency.getVersionEvidence().addEvidence(OPENSSLV_H, "Version Constant",
+                        getOpenSSLVersion(Long.parseLong(matcher.group(1), HEXADECIMAL)), Confidence.HIGH);
+                found = true;
             }
         }
         if (found) {
@@ -164,7 +154,7 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private String getFileContents(final File actualFile)
             throws AnalysisException {
-        String contents = "";
+        String contents;
         try {
             contents = FileUtils.readFileToString(actualFile).trim();
         } catch (IOException e) {

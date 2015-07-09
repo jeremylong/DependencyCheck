@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,11 +24,10 @@ import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 
-import java.util.Arrays;
-import java.util.HashSet;
+import java.io.File;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
 
 /**
  * Unit tests for OpenSSLAnalyzerAnalyzer.
@@ -76,24 +74,12 @@ public class OpenSSLAnalyzerTest extends BaseTest {
     }
 
     /**
-     * Test of getSupportedExtensions method, of class OpenSSLAnalyzer.
-     */
-    @Test
-    public void testGetSupportedExtensions() {
-        final String[] expected = {"h"};
-        assertEquals("Supported extensions should just have the following: "
-                        + StringUtils.join(expected, ", "),
-                new HashSet<String>(Arrays.asList(expected)),
-                analyzer.getSupportedExtensions());
-    }
-
-    /**
      * Test of supportsExtension method, of class PythonPackageAnalyzer.
      */
     @Test
-    public void testSupportsExtension() {
-        assertTrue("Should support \"h\" extension.",
-                analyzer.supportsExtension("h"));
+    public void testAccept() {
+        assertTrue("Should support files named \"opensslv.h\".",
+                analyzer.accept(new File("opensslv.h")));
     }
 
     @Test
