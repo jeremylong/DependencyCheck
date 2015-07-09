@@ -51,7 +51,7 @@ import java.util.Set;
  *
  * @author Jeremy Long
  */
-public class Engine implements FileFilter{
+public class Engine implements FileFilter {
 
     /**
      * The list of dependencies.
@@ -331,8 +331,8 @@ public class Engine implements FileFilter{
     /**
      * Runs the analyzers against all of the dependencies. Since the mutable dependencies list is exposed via
      * {@link #getDependencies()}, this method iterates over a copy of the dependencies list. Thus, the potential for
-     * {@link java.util.ConcurrentModificationException}s is avoided, and analyzers may safely add or remove entries
-     * from the dependencies list.
+     * {@link java.util.ConcurrentModificationException}s is avoided, and analyzers may safely add or remove entries from the
+     * dependencies list.
      */
     public void analyzeDependencies() {
         boolean autoUpdate = true;
@@ -511,7 +511,7 @@ public class Engine implements FileFilter{
     /**
      * Checks the CPE Index to ensure documents exists. If none exist a NoDataException is thrown.
      *
-     * @throws NoDataException   thrown if no data exists in the CPE Index
+     * @throws NoDataException thrown if no data exists in the CPE Index
      * @throws DatabaseException thrown if there is an exception opening the database
      */
     private void ensureDataExists() throws NoDataException, DatabaseException {

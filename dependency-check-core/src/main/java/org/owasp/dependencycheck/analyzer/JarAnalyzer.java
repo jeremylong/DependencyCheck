@@ -164,8 +164,16 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final String[] EXTENSIONS = {"jar", "war"};
 
+    /**
+     * The file filter used to determine which files this analyzer supports.
+     */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
 
+    /**
+     * Returns the FileFilter.
+     *
+     * @return the FileFilter
+     */
     @Override
     protected FileFilter getFileFilter() {
         return FILTER;

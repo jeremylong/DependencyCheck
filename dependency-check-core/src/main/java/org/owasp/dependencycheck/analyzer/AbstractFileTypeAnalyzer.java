@@ -39,10 +39,8 @@ import java.util.Set;
 public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implements FileTypeAnalyzer {
 
     //<editor-fold defaultstate="collapsed" desc="Constructor">
-
     /**
-     * Base constructor that all children must call. This checks the configuration to determine if the analyzer is
-     * enabled.
+     * Base constructor that all children must call. This checks the configuration to determine if the analyzer is enabled.
      */
     public AbstractFileTypeAnalyzer() {
         reset();
@@ -102,18 +100,16 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
 //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Abstract methods children must implement">
-
     /**
      * <p>
-     * Returns the {@link java.io.FileFilter} used to determine which files are to be analyzed.
-     * An example would be an analyzer that inspected Java jar files. Implementors may use
-     * {@link org.owasp.dependencycheck.utils.FileFilterBuilder}.</p>
+     * Returns the {@link java.io.FileFilter} used to determine which files are to be analyzed. An example would be an analyzer
+     * that inspected Java jar files. Implementors may use {@link org.owasp.dependencycheck.utils.FileFilterBuilder}.</p>
      *
      * @return the file filter used to determine which files are to be analyzed
      * <p/>
      * <p>
-     * If the analyzer returns null it will not cause additional files to be analyzed, but will be executed against
-     * every file loaded.</p>
+     * If the analyzer returns null it will not cause additional files to be analyzed, but will be executed against every file
+     * loaded.</p>
      */
     protected abstract FileFilter getFileFilter();
 
@@ -125,11 +121,11 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     protected abstract void initializeFileTypeAnalyzer() throws Exception;
 
     /**
-     * Analyzes a given dependency. If the dependency is an archive, such as a WAR or EAR, the contents are extracted,
-     * scanned, and added to the list of dependencies within the engine.
+     * Analyzes a given dependency. If the dependency is an archive, such as a WAR or EAR, the contents are extracted, scanned,
+     * and added to the list of dependencies within the engine.
      *
      * @param dependency the dependency to analyze
-     * @param engine     the engine scanning
+     * @param engine the engine scanning
      * @throws AnalysisException thrown if there is an analysis exception
      */
     protected abstract void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException;
@@ -144,7 +140,6 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
 
 //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Final implementations for the Analyzer interface">
-
     /**
      * Initializes the analyzer.
      *
@@ -175,11 +170,11 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     }
 
     /**
-     * Analyzes a given dependency. If the dependency is an archive, such as a WAR or EAR, the contents are extracted,
-     * scanned, and added to the list of dependencies within the engine.
+     * Analyzes a given dependency. If the dependency is an archive, such as a WAR or EAR, the contents are extracted, scanned,
+     * and added to the list of dependencies within the engine.
      *
      * @param dependency the dependency to analyze
-     * @param engine     the engine scanning
+     * @param engine the engine scanning
      * @throws AnalysisException thrown if there is an analysis exception
      */
     @Override
@@ -191,7 +186,7 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
 
     @Override
     public boolean accept(File pathname) {
-        FileFilter filter = getFileFilter();
+        final FileFilter filter = getFileFilter();
         boolean accepted = false;
         if (null == filter) {
             LOGGER.error("The '{}' analyzer is misconfigured and does not have a file filter; it will be disabled", getName());
@@ -205,13 +200,11 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     }
 
     //</editor-fold>
-
     //<editor-fold defaultstate="collapsed" desc="Static utility methods">
-
     /**
      * <p>
-     * Utility method to help in the creation of the extensions set. This constructs a new Set that can be used in a
-     * final static declaration.</p>
+     * Utility method to help in the creation of the extensions set. This constructs a new Set that can be used in a final static
+     * declaration.</p>
      * <p/>
      * <p>
      * This implementation was copied from
@@ -225,7 +218,6 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
         Collections.addAll(set, strings);
         return set;
     }
-
 
 //</editor-fold>
 }

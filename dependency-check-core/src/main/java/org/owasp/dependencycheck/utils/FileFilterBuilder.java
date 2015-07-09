@@ -15,7 +15,6 @@
  *
  * Copyright (c) 2015 Institute for Defense Analyses. All Rights Reserved.
  */
-
 package org.owasp.dependencycheck.utils;
 
 import org.apache.commons.io.IOCase;
@@ -25,12 +24,17 @@ import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 
 import java.io.FileFilter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
- * <p>Utility class for building useful {@link FileFilter} instances for
- * {@link org.owasp.dependencycheck.analyzer.AbstractFileTypeAnalyzer} implementations. The built filter uses
- * {@link OrFileFilter} to logically OR the given filter conditions. Example usage:</p>
+ * <p>
+ * Utility class for building useful {@link FileFilter} instances for
+ * {@link org.owasp.dependencycheck.analyzer.AbstractFileTypeAnalyzer} implementations. The built filter uses {@link OrFileFilter}
+ * to logically OR the given filter conditions. Example usage:</p>
  *
  * <pre>
  *     FileFilter filter = FileFilterBuilder.newInstance().addExtensions("jar", "war").build();
@@ -41,13 +45,21 @@ import java.util.*;
  */
 public class FileFilterBuilder {
 
-    private Set<String> filenames = new HashSet<String>();
-    private Set<String> extensions = new HashSet<String>();
-    private List<IOFileFilter> fileFilters = new ArrayList<IOFileFilter>();
+    /**
+     * A set of filenames to filter.
+     */
+    private final Set<String> filenames = new HashSet<String>();
+    /**
+     * A set of extensions to filter.
+     */
+    private final Set<String> extensions = new HashSet<String>();
+    /**
+     * An array list of file filters.
+     */
+    private final List<IOFileFilter> fileFilters = new ArrayList<IOFileFilter>();
 
     /**
-     * Create a new instance and return it. This method is for convenience in using the builder pattern within a single
-     * statement.
+     * Create a new instance and return it. This method is for convenience in using the builder pattern within a single statement.
      *
      * @return a new builder instance
      */
@@ -111,7 +123,7 @@ public class FileFilterBuilder {
         if (filenames.isEmpty() && extensions.isEmpty() && fileFilters.isEmpty()) {
             throw new IllegalStateException("May only be invoked after at least one add... method has been invoked.");
         }
-        OrFileFilter filter = new OrFileFilter();
+        final OrFileFilter filter = new OrFileFilter();
         if (!filenames.isEmpty()) {
             filter.addFileFilter(new NameFileFilter(new ArrayList<String>(filenames)));
         }

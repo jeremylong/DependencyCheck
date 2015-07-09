@@ -19,6 +19,13 @@ package org.owasp.dependencycheck.analyzer;
 
 import ch.qos.cal10n.IMessageConveyor;
 import ch.qos.cal10n.MessageConveyor;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
@@ -37,7 +44,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -73,15 +79,15 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Message Conveyer
      */
-    private final IMessageConveyor MESSAGE_CONVERYOR = new MessageConveyor(Locale.getDefault());
+    private static final IMessageConveyor MESSAGE_CONVERYOR = new MessageConveyor(Locale.getDefault());
     /**
      * LocLoggerFactory for localized logger
      */
-    private final LocLoggerFactory LLFACTORY = new LocLoggerFactory(MESSAGE_CONVERYOR);
+    private static final LocLoggerFactory LLFACTORY = new LocLoggerFactory(MESSAGE_CONVERYOR);
     /**
      * Logger
      */
-    private final LocLogger LOGGER = LLFACTORY.getLocLogger(AssemblyAnalyzer.class);
+    private static final LocLogger LOGGER = LLFACTORY.getLocLogger(AssemblyAnalyzer.class);
 
     /**
      * Builds the beginnings of a List for ProcessBuilder
@@ -279,6 +285,11 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
     }
 
+    /**
+     * Removes resources used from the local file system.
+     *
+     * @throws Exception thrown if there is a problem closing the analyzer
+     */
     @Override
     public void close() throws Exception {
         super.close();

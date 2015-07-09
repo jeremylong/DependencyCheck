@@ -17,7 +17,14 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,8 +54,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p>
- * An analyzer that extracts files from archives and ensures any supported files contained within the archive are added
- * to the dependency list.</p>
+ * An analyzer that extracts files from archives and ensures any supported files contained within the archive are added to the
+ * dependency list.</p>
  *
  * @author Jeremy Long
  */
@@ -93,8 +100,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final Set<String> ZIPPABLES = newHashSet("zip", "ear", "war", "jar", "sar", "apk", "nupkg");
     /**
-     * The set of file extensions supported by this analyzer. Note for developers, any additions to this list will need
-     * to be explicitly handled in extractFiles().
+     * The set of file extensions supported by this analyzer. Note for developers, any additions to this list will need to be
+     * explicitly handled in extractFiles().
      */
     private static final Set<String> EXTENSIONS = newHashSet("tar", "gz", "tgz");
 
@@ -186,11 +193,11 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Analyzes a given dependency. If the dependency is an archive, such as a WAR or EAR, the contents are extracted,
-     * scanned, and added to the list of dependencies within the engine.
+     * Analyzes a given dependency. If the dependency is an archive, such as a WAR or EAR, the contents are extracted, scanned,
+     * and added to the list of dependencies within the engine.
      *
      * @param dependency the dependency to analyze
-     * @param engine     the engine scanning
+     * @param engine the engine scanning
      * @throws AnalysisException thrown if there is an analysis exception
      */
     @Override
@@ -288,9 +295,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Extracts the contents of an archive into the specified directory.
      *
-     * @param archive     an archive file such as a WAR or EAR
+     * @param archive an archive file such as a WAR or EAR
      * @param destination a directory to extract the contents to
-     * @param engine      the scanning engine
+     * @param engine the scanning engine
      * @throws AnalysisException thrown if the archive is not found
      */
     private void extractFiles(File archive, File destination, Engine engine) throws AnalysisException {
@@ -336,9 +343,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Extracts files from an archive.
      *
-     * @param input       the archive to extract files from
+     * @param input the archive to extract files from
      * @param destination the location to write the files too
-     * @param engine      the dependency-check engine
+     * @param engine the dependency-check engine
      * @throws ArchiveExtractionException thrown if there is an exception extracting files from the archive
      */
     private void extractArchive(ArchiveInputStream input, File destination, Engine engine) throws ArchiveExtractionException {
@@ -421,7 +428,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * Decompresses a file.
      *
      * @param inputStream the compressed file
-     * @param outputFile  the location to write the decompressed file
+     * @param outputFile the location to write the decompressed file
      * @throws ArchiveExtractionException thrown if there is an exception decompressing the file
      */
     private void decompressFile(CompressorInputStream inputStream, File outputFile) throws ArchiveExtractionException {

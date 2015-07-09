@@ -64,7 +64,7 @@ public class CpeUpdater extends BaseUpdater implements CachedWebDataSource {
             if (updateNeeded()) {
                 LOGGER.info("Updating the Common Platform Enumeration (CPE)");
                 final File xml = downloadCpe();
-                List<Cpe> cpes = processXML(xml);
+                final List<Cpe> cpes = processXML(xml);
                 getCveDB().deleteUnusedCpe();
                 for (Cpe cpe : cpes) {
                     getCveDB().addCpe(cpe.getValue(), cpe.getVendor(), cpe.getProduct());
@@ -116,7 +116,7 @@ public class CpeUpdater extends BaseUpdater implements CachedWebDataSource {
         try {
             final SAXParserFactory factory = SAXParserFactory.newInstance();
             final SAXParser saxParser = factory.newSAXParser();
-            CPEHandler handler = new CPEHandler();
+            final CPEHandler handler = new CPEHandler();
             saxParser.parse(xml, handler);
             return handler.getData();
         } catch (ParserConfigurationException ex) {
@@ -137,7 +137,7 @@ public class CpeUpdater extends BaseUpdater implements CachedWebDataSource {
         final Date now = new Date();
         final int days = Settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS, 30);
         long timestamp = 0;
-        String ts = getProperties().getProperty(LAST_CPE_UPDATE);
+        final String ts = getProperties().getProperty(LAST_CPE_UPDATE);
         if (ts != null && ts.matches("^[0-9]+$")) {
             timestamp = Long.parseLong(ts);
         }

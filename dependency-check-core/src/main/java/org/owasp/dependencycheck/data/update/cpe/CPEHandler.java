@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.data.update.cpe;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import org.owasp.dependencycheck.data.update.NvdCveUpdater;
@@ -43,11 +42,11 @@ public class CPEHandler extends DefaultHandler {
     /**
      * The text content of the node being processed. This can be used during the end element event.
      */
-    StringBuilder nodeText = null;
+    private StringBuilder nodeText = null;
     /**
      * A reference to the current element.
      */
-    Element current = new Element();
+    private Element current = new Element();
     /**
      * The logger.
      */
@@ -55,7 +54,7 @@ public class CPEHandler extends DefaultHandler {
     /**
      * The list of CPE values.
      */
-    List<Cpe> data = new ArrayList<Cpe>();
+    private List<Cpe> data = new ArrayList<Cpe>();
 
     /**
      * Returns the list of CPE values.
@@ -67,7 +66,7 @@ public class CPEHandler extends DefaultHandler {
     }
 
     /**
-     * Handles the start element event
+     * Handles the start element event.
      *
      * @param uri the elements uri
      * @param localName the local name
@@ -80,12 +79,12 @@ public class CPEHandler extends DefaultHandler {
         nodeText = null;
         current.setNode(qName);
         if (current.isCpeItemNode()) {
-            String temp = attributes.getValue("deprecated");
-            String value = attributes.getValue("name");
-            boolean delete = (temp != null && temp.equalsIgnoreCase("true"));
+            final String temp = attributes.getValue("deprecated");
+            final String value = attributes.getValue("name");
+            final boolean delete = "true".equalsIgnoreCase(temp);
             if (!delete && value.startsWith("cpe:/a:") && value.length() > 7) {
                 try {
-                    Cpe cpe = new Cpe(value);
+                    final Cpe cpe = new Cpe(value);
                     data.add(cpe);
                 } catch (UnsupportedEncodingException ex) {
                     LOGGER.debug("Unable to parse the CPE", ex);
@@ -230,6 +229,9 @@ public class CPEHandler extends DefaultHandler {
          * A node type in the CPE Schema 2.2
          */
         public static final String TIMESTAMP = "timestamp";
+        /**
+         * A reference to the current node.
+         */
         private String node = null;
 
         /**

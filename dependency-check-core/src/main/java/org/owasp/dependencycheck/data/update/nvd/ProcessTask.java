@@ -31,8 +31,6 @@ import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
-import org.owasp.dependencycheck.data.update.nvd.NvdCve12Handler;
-import org.owasp.dependencycheck.data.update.nvd.NvdCve20Handler;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -94,8 +92,8 @@ public class ProcessTask implements Callable<ProcessTask> {
      *
      * @param cveDB the data store object
      * @param filePair the download task that contains the URL references to download
-     * @param settings a reference to the global settings object; this is necessary so that when the thread is started
-     * the dependencies have a correct reference to the global settings.
+     * @param settings a reference to the global settings object; this is necessary so that when the thread is started the
+     * dependencies have a correct reference to the global settings.
      */
     public ProcessTask(final CveDB cveDB, final DownloadTask filePair, Settings settings) {
         this.cveDB = cveDB;
@@ -108,8 +106,8 @@ public class ProcessTask implements Callable<ProcessTask> {
      * Implements the callable interface.
      *
      * @return this object
-     * @throws Exception thrown if there is an exception; note that any UpdateExceptions are simply added to the tasks
-     * exception collection
+     * @throws Exception thrown if there is an exception; note that any UpdateExceptions are simply added to the tasks exception
+     * collection
      */
     @Override
     public ProcessTask call() throws Exception {

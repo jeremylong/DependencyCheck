@@ -103,9 +103,17 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
                 | Pattern.CASE_INSENSITIVE);
     }
 
+    /**
+     * The file filter used to determine which files this analyzer supports.
+     */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFilenames(CONFIGURE).addExtensions(
             EXTENSIONS).build();
 
+    /**
+     * Returns the FileFilter
+     *
+     * @return the FileFilter
+     */
     @Override
     protected FileFilter getFileFilter() {
         return FILTER;
@@ -126,6 +134,7 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @return the phase that the analyzer is intended to run in.
      */
+    @Override
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }

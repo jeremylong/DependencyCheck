@@ -278,6 +278,15 @@ public final class ConnectionFactory {
         }
     }
 
+    /**
+     * Updates the database schema by loading the upgrade script for the version specified. The intended use is that if the
+     * current schema version is 2.9 then we would call updateSchema(conn, "2.9"). This would load the upgrade_2.9.sql file and
+     * execute it against the database. The upgrade script must update the 'version' in the properties table.
+     *
+     * @param conn the database connection object
+     * @param schema the current schema version that is being upgraded
+     * @throws DatabaseException thrown if there is an exception upgrading the database schema
+     */
     private static void updateSchema(Connection conn, String schema) throws DatabaseException {
         LOGGER.debug("Updating database structure");
         InputStream is;

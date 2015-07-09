@@ -22,7 +22,7 @@ import ch.qos.cal10n.Locale;
 import ch.qos.cal10n.LocaleData;
 
 /**
- * Created by colezlaw on 6/13/15.
+ * @author colezlaw
  */
 @BaseName("dependencycheck-resources")
 @LocaleData(defaultCharset = "UTF-8",

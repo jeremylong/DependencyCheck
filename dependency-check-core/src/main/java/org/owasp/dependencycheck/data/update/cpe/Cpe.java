@@ -27,6 +27,13 @@ import org.owasp.dependencycheck.data.update.exception.InvalidDataException;
  */
 public class Cpe {
 
+    /**
+     * Constructs a new Cpe Object by parsing the vendor and product from the CPE identifier value.
+     *
+     * @param value the cpe identifier (cpe:/a:vendor:product:version:....)
+     * @throws UnsupportedEncodingException thrown if UTF-8 is not supported
+     * @throws InvalidDataException thrown if the CPE provided is not the correct format
+     */
     public Cpe(String value) throws UnsupportedEncodingException, InvalidDataException {
         this.value = value;
         final String[] data = value.substring(7).split(":");
@@ -66,7 +73,7 @@ public class Cpe {
     private String vendor;
 
     /**
-     * Get the value of vendor
+     * Get the value of vendor.
      *
      * @return the value of vendor
      */
@@ -75,7 +82,7 @@ public class Cpe {
     }
 
     /**
-     * Set the value of vendor
+     * Set the value of vendor.
      *
      * @param vendor new value of vendor
      */
@@ -89,7 +96,7 @@ public class Cpe {
     private String product;
 
     /**
-     * Get the value of product
+     * Get the value of product.
      *
      * @return the value of product
      */
@@ -98,7 +105,7 @@ public class Cpe {
     }
 
     /**
-     * Set the value of product
+     * Set the value of product.
      *
      * @param product new value of product
      */
@@ -106,9 +113,13 @@ public class Cpe {
         this.product = product;
     }
 
+    /**
+     * Returns the full CPE identifier.
+     *
+     * @return the full CPE identifier
+     */
     @Override
     public String toString() {
         return value;
     }
-
 }

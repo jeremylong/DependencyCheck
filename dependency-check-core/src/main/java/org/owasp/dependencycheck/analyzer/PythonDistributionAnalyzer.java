@@ -26,7 +26,6 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
-import org.owasp.dependencycheck.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +33,12 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import java.io.*;
 import java.util.regex.Pattern;
+import org.owasp.dependencycheck.utils.ExtractionException;
+import org.owasp.dependencycheck.utils.ExtractionUtil;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.FileUtils;
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.UrlStringUtils;
 
 /**
  * Used to analyze a Wheel or egg distribution files, or their contents in unzipped form, and collect information that can be used
@@ -112,9 +117,17 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     private static final NameFileFilter PKG_INFO_FILTER = new NameFileFilter(
             PKG_INFO);
 
+    /**
+     * The file filter used to determine which files this analyzer supports.
+     */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFileFilters(
             METADATA_FILTER, PKG_INFO_FILTER).addExtensions(EXTENSIONS).build();
 
+    /**
+     * Returns the FileFilter
+     *
+     * @return the FileFilter
+     */
     @Override
     protected FileFilter getFileFilter() {
         return FILTER;
@@ -181,13 +194,13 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Collects the meta data from an archive.
      *
-     * @param dependency     the archive being scanned
-     * @param folderFilter   the filter to apply to the folder
+     * @param dependency the archive being scanned
+     * @param folderFilter the filter to apply to the folder
      * @param metadataFilter the filter to apply to the meta data
      * @throws AnalysisException thrown when there is a problem analyzing the dependency
      */
     private void collectMetadataFromArchiveFormat(Dependency dependency,
-                                                  FilenameFilter folderFilter, FilenameFilter metadataFilter)
+            FilenameFilter folderFilter, FilenameFilter metadataFilter)
             throws AnalysisException {
         final File temp = getNextTempDirectory();
         LOGGER.debug("{} exists? {}", temp, temp.exists());
@@ -247,7 +260,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
      * Gathers evidence from the METADATA file.
      *
      * @param dependency the dependency being analyzed
-     * @param file       a reference to the manifest/properties file
+     * @param file a reference to the manifest/properties file
      * @throws AnalysisException thrown when there is an error
      */
     private static void collectWheelMetadata(Dependency dependency, File file)
@@ -277,13 +290,13 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Adds a value to the evidence collection.
      *
-     * @param headers    the properties collection
-     * @param evidence   the evidence collection to add the value
-     * @param property   the property name
+     * @param headers the properties collection
+     * @param evidence the evidence collection to add the value
+     * @param property the property name
      * @param confidence the confidence of the evidence
      */
     private static void addPropertyToEvidence(InternetHeaders headers,
-                                              EvidenceCollection evidence, String property, Confidence confidence) {
+            EvidenceCollection evidence, String property, Confidence confidence) {
         final String value = headers.getHeader(property, null);
         LOGGER.debug("Property: {}, Value: {}", property, value);
         if (StringUtils.isNotBlank(value)) {

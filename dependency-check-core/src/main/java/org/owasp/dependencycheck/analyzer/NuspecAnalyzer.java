@@ -101,9 +101,17 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
         return ANALYSIS_PHASE;
     }
 
+    /**
+     * The file filter used to determine which files this analyzer supports.
+     */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(
             SUPPORTED_EXTENSIONS).build();
 
+    /**
+     * Returns the FileFilter
+     *
+     * @return the FileFilter
+     */
     @Override
     protected FileFilter getFileFilter() {
         return FILTER;

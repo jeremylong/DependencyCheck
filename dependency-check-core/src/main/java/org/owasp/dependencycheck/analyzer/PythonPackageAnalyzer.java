@@ -132,8 +132,16 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
         return AnalysisPhase.INFORMATION_COLLECTION;
     }
 
+    /**
+     * The file filter used to determine which files this analyzer supports.
+     */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
 
+    /**
+     * Returns the FileFilter
+     *
+     * @return the FileFilter
+     */
     @Override
     protected FileFilter getFileFilter() {
         return FILTER;

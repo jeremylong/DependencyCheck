@@ -67,7 +67,7 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
     public void update() throws UpdateException {
         try {
             openDataStores();
-            UpdateableNvdCve updateable = getUpdatesNeeded();
+            final UpdateableNvdCve updateable = getUpdatesNeeded();
             if (updateable.isUpdateNeeded()) {
                 performUpdate(updateable);
             }
@@ -233,7 +233,8 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
                         } else {
                             long currentTimestamp = 0;
                             try {
-                                currentTimestamp = Long.parseLong(getProperties().getProperty(DatabaseProperties.LAST_UPDATED_BASE + entry.getId(), "0"));
+                                currentTimestamp = Long.parseLong(getProperties().getProperty(DatabaseProperties.LAST_UPDATED_BASE
+                                        + entry.getId(), "0"));
                             } catch (NumberFormatException ex) {
                                 LOGGER.debug("Error parsing '{}' '{}' from nvdcve.lastupdated",
                                         DatabaseProperties.LAST_UPDATED_BASE, entry.getId(), ex);

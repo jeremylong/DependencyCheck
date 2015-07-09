@@ -25,7 +25,6 @@ import org.owasp.dependencycheck.data.nexus.NexusSearch;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
-import org.owasp.dependencycheck.utils.*;
 import org.owasp.dependencycheck.xml.pom.PomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +35,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.owasp.dependencycheck.utils.DownloadFailedException;
+import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * Analyzer which will attempt to locate a dependency on a Nexus service by SHA-1 digest of the dependency.
@@ -181,8 +185,16 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
         return ANALYSIS_PHASE;
     }
 
+    /**
+     * The file filter used to determine which files this analyzer supports.
+     */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(SUPPORTED_EXTENSIONS).build();
 
+    /**
+     * Returns the FileFilter
+     *
+     * @return the FileFilter
+     */
     @Override
     protected FileFilter getFileFilter() {
         return FILTER;
@@ -218,7 +230,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
                     pomFile = File.createTempFile("pom", ".xml", baseDir);
                     if (!pomFile.delete()) {
                         LOGGER.warn("Unable to fetch pom.xml for {} from Nexus repository; "
-                            + "this could result in undetected CPE/CVEs.", dependency.getFileName());
+                                + "this could result in undetected CPE/CVEs.", dependency.getFileName());
                         LOGGER.debug("Unable to delete temp file");
                     }
                     LOGGER.debug("Downloading {}", ma.getPomUrl());
@@ -226,7 +238,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
                     PomUtils.analyzePOM(dependency, pomFile);
                 } catch (DownloadFailedException ex) {
                     LOGGER.warn("Unable to download pom.xml for {} from Nexus repository; "
-                        + "this could result in undetected CPE/CVEs.", dependency.getFileName());
+                            + "this could result in undetected CPE/CVEs.", dependency.getFileName());
                 } finally {
                     if (pomFile != null && !FileUtils.deleteQuietly(pomFile)) {
                         pomFile.deleteOnExit();
