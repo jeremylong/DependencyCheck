@@ -26,19 +26,13 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
+import org.owasp.dependencycheck.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import java.io.*;
-import java.util.regex.Pattern;
-import org.owasp.dependencycheck.utils.ExtractionException;
-import org.owasp.dependencycheck.utils.ExtractionUtil;
-import org.owasp.dependencycheck.utils.FileFilterBuilder;
-import org.owasp.dependencycheck.utils.FileUtils;
-import org.owasp.dependencycheck.utils.Settings;
-import org.owasp.dependencycheck.utils.UrlStringUtils;
 
 /**
  * Used to analyze a Wheel or egg distribution files, or their contents in unzipped form, and collect information that can be used
@@ -86,7 +80,12 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Used to match on egg archive candidate extensions.
      */
-    private static final Pattern EGG_OR_ZIP = Pattern.compile("egg|zip");
+    private static final FileFilter EGG_OR_ZIP = FileFilterBuilder.newInstance().addExtensions("egg", "zip").build();
+
+    /**
+     * Used to detect files with a .whl extension.
+     */
+    private static final FileFilter WHL_FILTER = FileFilterBuilder.newInstance().addExtensions("whl").build();
 
     /**
      * The parent directory for the individual directories per archive.
@@ -165,16 +164,14 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeFileType(Dependency dependency, Engine engine)
             throws AnalysisException {
-        if ("whl".equals(dependency.getFileExtension())) {
+        final File actualFile = dependency.getActualFile();
+        if (WHL_FILTER.accept(actualFile)) {
             collectMetadataFromArchiveFormat(dependency, DIST_INFO_FILTER,
                     METADATA_FILTER);
-        } else if (EGG_OR_ZIP.matcher(
-                StringUtils.stripToEmpty(dependency.getFileExtension()))
-                .matches()) {
+        } else if (EGG_OR_ZIP.accept(actualFile)) {
             collectMetadataFromArchiveFormat(dependency, EGG_INFO_FILTER,
                     PKG_INFO_FILTER);
         } else {
-            final File actualFile = dependency.getActualFile();
             final String name = actualFile.getName();
             final boolean metadata = METADATA.equals(name);
             if (metadata || PKG_INFO.equals(name)) {
