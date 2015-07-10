@@ -31,7 +31,7 @@ externalReport        | When using as a Site plugin this parameter sets whether 
 reportOutputDirectory | The location to write the report(s). Note, this is not used if generating the report as part of a `mvn site` build | 'target'
 failBuildOnCVSS       | Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11 which means since the CVSS scores are 0-10, by default the build will never fail.         | 11
 reportFormat          | The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | HTML
-suppressionFile       | The file path to the XML suppression file \- used to suppress [false positives](../suppression.html) | &nbsp;
+suppressionFile       | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html) | &nbsp;
 proxyServer           | The Proxy Server.                  | &nbsp;
 proxyPort             | The Proxy Port.                    | &nbsp;
 proxyUsername         | Defines the proxy user name.       | &nbsp;
