@@ -296,6 +296,9 @@ public final class ConnectionFactory {
         try {
             updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, schema);
             is = ConnectionFactory.class.getClassLoader().getResourceAsStream(updateFile);
+            if (is == null) {
+                throw new DatabaseException(String.format("Unable to load update file '%s'", updateFile));
+            }
             reader = new InputStreamReader(is, "UTF-8");
             in = new BufferedReader(reader);
             final StringBuilder sb = new StringBuilder(2110);
@@ -342,7 +345,9 @@ public final class ConnectionFactory {
             rs = cs.executeQuery();
             if (rs.next()) {
                 if (!DB_SCHEMA_VERSION.equals(rs.getString(1))) {
-                    LOGGER.debug("Updating from version: " + rs.getString(1));
+                    LOGGER.error("Current Schema: " + DB_SCHEMA_VERSION);
+                    LOGGER.error("DB Schema: " + rs.getString(1));
+                    LOGGER.error("-------------------------------------------------------\n\n\n\n\nUpdating from version: " + rs.getString(1) + "\n\n\n\n\n---------------------------------------------------------------------------------");
                     updateSchema(conn, rs.getString(1));
                 }
             } else {
