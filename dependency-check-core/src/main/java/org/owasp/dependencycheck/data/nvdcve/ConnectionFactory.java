@@ -345,9 +345,8 @@ public final class ConnectionFactory {
             rs = cs.executeQuery();
             if (rs.next()) {
                 if (!DB_SCHEMA_VERSION.equals(rs.getString(1))) {
-                    LOGGER.error("Current Schema: " + DB_SCHEMA_VERSION);
-                    LOGGER.error("DB Schema: " + rs.getString(1));
-                    LOGGER.error("-------------------------------------------------------\n\n\n\n\nUpdating from version: " + rs.getString(1) + "\n\n\n\n\n---------------------------------------------------------------------------------");
+                    LOGGER.debug("Current Schema: " + DB_SCHEMA_VERSION);
+                    LOGGER.debug("DB Schema: " + rs.getString(1));
                     updateSchema(conn, rs.getString(1));
                 }
             } else {
