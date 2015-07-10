@@ -265,6 +265,10 @@ public class App {
         final String databasePassword = cli.getDatabasePassword();
         final String additionalZipExtensions = cli.getAdditionalZipExtensions();
         final String pathToMono = cli.getPathToMono();
+        final String cveMod12 = cli.getModifiedCve12Url();
+        final String cveMod20 = cli.getModifiedCve20Url();
+        final String cveBase12 = cli.getBaseCve12Url();
+        final String cveBase20 = cli.getBaseCve20Url();
 
         if (propertiesFile != null) {
             try {
@@ -348,6 +352,12 @@ public class App {
         }
         if (pathToMono != null && !pathToMono.isEmpty()) {
             Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
+        }
+        if (cveBase12 != null && !cveBase12.isEmpty()) {
+            Settings.setString(Settings.KEYS.CVE_SCHEMA_1_2, cveBase12);
+            Settings.setString(Settings.KEYS.CVE_SCHEMA_2_0, cveBase20);
+            Settings.setString(Settings.KEYS.CVE_MODIFIED_12_URL, cveMod12);
+            Settings.setString(Settings.KEYS.CVE_MODIFIED_20_URL, cveMod20);
         }
     }
 

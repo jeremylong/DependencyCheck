@@ -110,6 +110,11 @@ public final class CliParser {
                     throw new ParseException(msg);
                 }
             }
+            if ((getBaseCve12Url() != null || getBaseCve20Url() != null || getModifiedCve12Url() != null || getModifiedCve20Url() != null)
+                    && (getBaseCve12Url() == null || getBaseCve20Url() == null || getModifiedCve12Url() == null || getModifiedCve20Url() == null)) {
+                final String msg = "If one of the CVE URLs is specified they must all be specified; please add the missing CVE URL.";
+                throw new ParseException(msg);
+            }
         }
     }
 
@@ -268,6 +273,22 @@ public final class CliParser {
     @SuppressWarnings("static-access")
     private void addAdvancedOptions(final Options options) throws IllegalArgumentException {
 
+        final Option cve12Base = OptionBuilder.withArgName("url").hasArg().withLongOpt(ARGUMENT.CVE_BASE_12)
+                .withDescription("Base URL for each year’s CVE 1.2, the %d will be replaced with the year. ")
+                .create();
+
+        final Option cve20Base = OptionBuilder.withArgName("url").hasArg().withLongOpt(ARGUMENT.CVE_BASE_20)
+                .withDescription("Base URL for each year’s CVE 2.0, the %d will be replaced with the year.")
+                .create();
+
+        final Option cve12Modified = OptionBuilder.withArgName("url").hasArg().withLongOpt(ARGUMENT.CVE_MOD_12)
+                .withDescription("URL for the modified CVE 1.2.")
+                .create();
+
+        final Option cve20Modified = OptionBuilder.withArgName("url").hasArg().withLongOpt(ARGUMENT.CVE_MOD_20)
+                .withDescription("URL for the modified CVE 2.0.")
+                .create();
+
         final Option updateOnly = OptionBuilder.withLongOpt(ARGUMENT.UPDATE_ONLY)
                 .withDescription("Only update the local NVD data cache; no scan will be executed.").create();
 
@@ -275,59 +296,66 @@ public final class CliParser {
                 .withDescription("The location of the H2 Database file. This option should generally not be set.")
                 .create(ARGUMENT.DATA_DIRECTORY_SHORT);
 
+        final Option nexusUrl = OptionBuilder.withArgName("url").hasArg().withLongOpt(ARGUMENT.NEXUS_URL)
+                .withDescription("The url to the Nexus Server's REST API Endpoint (http://domain/nexus/service/local). "
+                        + "If not set the Nexus Analyzer will be disabled.").create();
+
+        final Option nexusUsesProxy = OptionBuilder.withArgName("true/false").hasArg().withLongOpt(ARGUMENT.NEXUS_USES_PROXY)
+                .withDescription("Whether or not the configured proxy should be used when connecting to Nexus.")
+                .create();
+
+        final Option additionalZipExtensions = OptionBuilder.withArgName("extensions").hasArg()
+                .withLongOpt(ARGUMENT.ADDITIONAL_ZIP_EXTENSIONS)
+                .withDescription("A comma separated list of additional extensions to be scanned as ZIP files "
+                        + "(ZIP, EAR, WAR are already treated as zip files)").create();
+
+        final Option pathToMono = OptionBuilder.withArgName("path").hasArg().withLongOpt(ARGUMENT.PATH_TO_MONO)
+                .withDescription("The path to Mono for .NET Assembly analysis on non-windows systems.")
+                .create();
+
         final Option connectionTimeout = OptionBuilder.withArgName("timeout").hasArg().withLongOpt(ARGUMENT.CONNECTION_TIMEOUT)
                 .withDescription("The connection timeout (in milliseconds) to use when downloading resources.")
                 .create(ARGUMENT.CONNECTION_TIMEOUT_SHORT);
 
         final Option proxyServer = OptionBuilder.withArgName("server").hasArg().withLongOpt(ARGUMENT.PROXY_SERVER)
-                .withDescription("The proxy server to use when downloading resources.")
-                .create();
+                .withDescription("The proxy server to use when downloading resources.").create();
 
         final Option proxyPort = OptionBuilder.withArgName("port").hasArg().withLongOpt(ARGUMENT.PROXY_PORT)
-                .withDescription("The proxy port to use when downloading resources.")
-                .create();
+                .withDescription("The proxy port to use when downloading resources.").create();
 
         final Option proxyUsername = OptionBuilder.withArgName("user").hasArg().withLongOpt(ARGUMENT.PROXY_USERNAME)
-                .withDescription("The proxy username to use when downloading resources.")
-                .create();
+                .withDescription("The proxy username to use when downloading resources.").create();
 
         final Option proxyPassword = OptionBuilder.withArgName("pass").hasArg().withLongOpt(ARGUMENT.PROXY_PASSWORD)
-                .withDescription("The proxy password to use when downloading resources.")
-                .create();
+                .withDescription("The proxy password to use when downloading resources.").create();
 
         final Option connectionString = OptionBuilder.withArgName("connStr").hasArg().withLongOpt(ARGUMENT.CONNECTION_STRING)
-                .withDescription("The connection string to the database.")
-                .create();
+                .withDescription("The connection string to the database.").create();
 
         final Option dbUser = OptionBuilder.withArgName("user").hasArg().withLongOpt(ARGUMENT.DB_NAME)
-                .withDescription("The username used to connect to the database.")
-                .create();
+                .withDescription("The username used to connect to the database.").create();
 
         final Option dbPassword = OptionBuilder.withArgName("password").hasArg().withLongOpt(ARGUMENT.DB_PASSWORD)
-                .withDescription("The password for connecting to the database.")
-                .create();
+                .withDescription("The password for connecting to the database.").create();
 
         final Option dbDriver = OptionBuilder.withArgName("driver").hasArg().withLongOpt(ARGUMENT.DB_DRIVER)
-                .withDescription("The database driver name.")
-                .create();
+                .withDescription("The database driver name.").create();
 
         final Option dbDriverPath = OptionBuilder.withArgName("path").hasArg().withLongOpt(ARGUMENT.DB_DRIVER_PATH)
                 .withDescription("The path to the database driver; note, this does not need to be set unless the JAR is outside of the classpath.")
                 .create();
 
         final Option disableJarAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_JAR)
-                .withDescription("Disable the Jar Analyzer.")
-                .create();
+                .withDescription("Disable the Jar Analyzer.").create();
+
         final Option disableArchiveAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_ARCHIVE)
-                .withDescription("Disable the Archive Analyzer.")
-                .create();
+                .withDescription("Disable the Archive Analyzer.").create();
+
         final Option disableNuspecAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_NUSPEC)
-                .withDescription("Disable the Nuspec Analyzer.")
-                .create();
+                .withDescription("Disable the Nuspec Analyzer.").create();
 
         final Option disableAssemblyAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_ASSEMBLY)
-                .withDescription("Disable the .NET Assembly Analyzer.")
-                .create();
+                .withDescription("Disable the .NET Assembly Analyzer.").create();
 
         final Option disablePythonDistributionAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_PY_DIST)
                 .withDescription("Disable the Python Distribution Analyzer.").create();
@@ -341,33 +369,16 @@ public final class CliParser {
 
         final Option disableCentralAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_CENTRAL)
                 .withDescription("Disable the Central Analyzer. If this analyzer is disabled it is likely you also want to disable "
-                        + "the Nexus Analyzer.")
-                .create();
+                        + "the Nexus Analyzer.").create();
 
         final Option disableNexusAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_NEXUS)
-                .withDescription("Disable the Nexus Analyzer.")
-                .create();
-
-        final Option nexusUrl = OptionBuilder.withArgName("url").hasArg().withLongOpt(ARGUMENT.NEXUS_URL)
-                .withDescription("The url to the Nexus Server's REST API Endpoint (http://domain/nexus/service/local). "
-                        + "If not set the Nexus Analyzer will be disabled.")
-                .create();
-
-        final Option nexusUsesProxy = OptionBuilder.withArgName("true/false").hasArg().withLongOpt(ARGUMENT.NEXUS_USES_PROXY)
-                .withDescription("Whether or not the configured proxy should be used when connecting to Nexus.")
-                .create();
-
-        final Option additionalZipExtensions = OptionBuilder.withArgName("extensions").hasArg()
-                .withLongOpt(ARGUMENT.ADDITIONAL_ZIP_EXTENSIONS)
-                .withDescription("A comma separated list of additional extensions to be scanned as ZIP files "
-                        + "(ZIP, EAR, WAR are already treated as zip files)")
-                .create();
-
-        final Option pathToMono = OptionBuilder.withArgName("path").hasArg().withLongOpt(ARGUMENT.PATH_TO_MONO)
-                .withDescription("The path to Mono for .NET Assembly analysis on non-windows systems.")
-                .create();
+                .withDescription("Disable the Nexus Analyzer.").create();
 
         options.addOption(updateOnly)
+                .addOption(cve12Base)
+                .addOption(cve20Base)
+                .addOption(cve12Modified)
+                .addOption(cve20Modified)
                 .addOption(proxyPort)
                 .addOption(proxyServer)
                 .addOption(proxyUsername)
@@ -626,6 +637,42 @@ public final class CliParser {
      */
     public String getApplicationName() {
         return line.getOptionValue(ARGUMENT.APP_NAME);
+    }
+
+    /**
+     * Returns the base URL for the CVE 1.2 XMl file.
+     *
+     * @return the URL to the CVE 1.2 XML file.
+     */
+    public String getBaseCve12Url() {
+        return line.getOptionValue(ARGUMENT.CVE_BASE_12);
+    }
+
+    /**
+     * Returns the base URL for the CVE 2.0 XMl file.
+     *
+     * @return the URL to the CVE 2.0 XML file.
+     */
+    public String getBaseCve20Url() {
+        return line.getOptionValue(ARGUMENT.CVE_BASE_20);
+    }
+
+    /**
+     * Returns the URL for the modified CVE 1.2 XMl file.
+     *
+     * @return the URL to the modified CVE 1.2 XML file.
+     */
+    public String getModifiedCve12Url() {
+        return line.getOptionValue(ARGUMENT.CVE_MOD_12);
+    }
+
+    /**
+     * Returns the URL for the modified CVE 2.0 XMl file.
+     *
+     * @return the URL to the modified CVE 2.0 XML file.
+     */
+    public String getModifiedCve20Url() {
+        return line.getOptionValue(ARGUMENT.CVE_MOD_20);
     }
 
     /**
@@ -918,6 +965,22 @@ public final class CliParser {
          * The CLI argument name for setting the location of the data directory.
          */
         public static final String DATA_DIRECTORY = "data";
+        /**
+         * The CLI argument name for setting the URL for the CVE Data Files.
+         */
+        public static final String CVE_MOD_12 = "cveUrl12Modified";
+        /**
+         * The CLI argument name for setting the URL for the CVE Data Files.
+         */
+        public static final String CVE_MOD_20 = "cveUrl20Modified";
+        /**
+         * The CLI argument name for setting the URL for the CVE Data Files.
+         */
+        public static final String CVE_BASE_12 = "cveUrl12Base";
+        /**
+         * The CLI argument name for setting the URL for the CVE Data Files.
+         */
+        public static final String CVE_BASE_20 = "cveUrl20Base";
         /**
          * The short CLI argument name for setting the location of the data directory.
          */
