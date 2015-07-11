@@ -138,4 +138,19 @@
         <gav regex="true">com.microsoft.bingads:microsoft.bingads:.*</gav>
         <cpe>cpe:/a:microsoft:bing</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Oracle Jersey is flagged as glassfish.
+        ]]></notes>
+        <gav regex="true">.*jersey.*</gav>
+        <cpe>cpe:/a:oracle:glassfish_server</cpe>
+        <cpe>cpe:/a:oracle:glassfish</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Oracle HK2 is flagged as glassfish.
+        ]]></notes>
+        <gav regex="true">.*\bhk2\b.*</gav>
+        <cpe>cpe:/a:oracle:glassfish</cpe>
+    </suppress>
 </suppressions>
