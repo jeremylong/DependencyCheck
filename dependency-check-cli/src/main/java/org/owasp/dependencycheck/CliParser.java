@@ -367,6 +367,9 @@ public final class CliParser {
                 .withLongOpt(ARGUMENT.DISABLE_AUTOCONF)
                 .withDescription("Disable the Autoconf Analyzer.").create();
 
+        final Option disableOpenSSLAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_OPENSSL)
+                .withDescription("Disable the OpenSSL Analyzer.").create();
+
         final Option disableCentralAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_CENTRAL)
                 .withDescription("Disable the Central Analyzer. If this analyzer is disabled it is likely you also want to disable "
                         + "the Nexus Analyzer.").create();
@@ -396,6 +399,7 @@ public final class CliParser {
                 .addOption(disablePythonDistributionAnalyzer)
                 .addOption(disablePythonPackageAnalyzer)
                 .addOption(disableAutoconfAnalyzer)
+                .addOption(disableOpenSSLAnalyzer)
                 .addOption(disableNuspecAnalyzer)
                 .addOption(disableCentralAnalyzer)
                 .addOption(disableNexusAnalyzer)
@@ -519,6 +523,15 @@ public final class CliParser {
      */
     public boolean isNexusDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_NEXUS);
+    }
+
+    /**
+     * Returns true if the disableOpenSSL command line argument was specified.
+     *
+     * @return true if the disableOpenSSL command line argument was specified; otherwise false
+     */
+    public boolean isOpenSSLDisabled() {
+        return (line != null) && line.hasOption(ARGUMENT.DISABLE_OPENSSL);
     }
 
     /**
@@ -1033,6 +1046,10 @@ public final class CliParser {
          * Disables the Nexus Analyzer.
          */
         public static final String DISABLE_NEXUS = "disableNexus";
+        /**
+         * Disables the OpenSSL Analyzer.
+         */
+        public static final String DISABLE_OPENSSL = "disableOpenSSL";
         /**
          * The URL of the nexus server.
          */
