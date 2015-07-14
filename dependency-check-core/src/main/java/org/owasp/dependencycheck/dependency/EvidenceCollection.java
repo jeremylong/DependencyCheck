@@ -141,13 +141,13 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
     }
 
     /**
-     * Adds term to the weighting collection. The terms added here are used later to boost the score of other terms.
-     * This is a way of combining evidence from multiple sources to boost the confidence of the given evidence.
+     * Adds term to the weighting collection. The terms added here are used later to boost the score of other terms. This is a way
+     * of combining evidence from multiple sources to boost the confidence of the given evidence.
      *
-     * Example: The term 'Apache' is found in the manifest of a JAR and is added to the Collection. When we parse the
-     * package names within the JAR file we may add these package names to the "weighted" strings collection to boost
-     * the score in the Lucene query. That way when we construct the Lucene query we find the term Apache in the
-     * collection AND in the weighted strings; as such, we will boost the confidence of the term Apache.
+     * Example: The term 'Apache' is found in the manifest of a JAR and is added to the Collection. When we parse the package
+     * names within the JAR file we may add these package names to the "weighted" strings collection to boost the score in the
+     * Lucene query. That way when we construct the Lucene query we find the term Apache in the collection AND in the weighted
+     * strings; as such, we will boost the confidence of the term Apache.
      *
      * @param str to add to the weighting collection.
      */
@@ -156,8 +156,8 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
     }
 
     /**
-     * Returns a set of Weightings - a list of terms that are believed to be of higher confidence when also found in
-     * another location.
+     * Returns a set of Weightings - a list of terms that are believed to be of higher confidence when also found in another
+     * location.
      *
      * @return Set<String>
      */
@@ -322,11 +322,11 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
         final Set<Evidence> ret = new TreeSet<Evidence>();
         for (EvidenceCollection col : ec) {
             for (Evidence e : col) {
-                if (e.isUsed()) {
-                    final Evidence newEvidence = new Evidence(e.getSource(), e.getName(), e.getValue(), null);
-                    newEvidence.setUsed(true);
-                    ret.add(newEvidence);
-                }
+                //if (e.isUsed()) {
+                final Evidence newEvidence = new Evidence(e.getSource(), e.getName(), e.getValue(), null);
+                newEvidence.setUsed(true);
+                ret.add(newEvidence);
+                //}
             }
         }
         return ret;
@@ -357,11 +357,11 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
 
     /**
      * <p>
-     * Takes a string that may contain a fully qualified domain and it will return the string having removed the query
-     * string, the protocol, the sub-domain of 'www', and the file extension of the path.</p>
+     * Takes a string that may contain a fully qualified domain and it will return the string having removed the query string, the
+     * protocol, the sub-domain of 'www', and the file extension of the path.</p>
      * <p>
-     * This is useful for checking if the evidence contains a specific string. The presence of the protocol, file
-     * extension, etc. may produce false positives.
+     * This is useful for checking if the evidence contains a specific string. The presence of the protocol, file extension, etc.
+     * may produce false positives.
      *
      * <p>
      * Example, given the following input:</p>
