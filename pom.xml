@@ -245,6 +245,11 @@ Copyright (c) 2012 - Jeremy Long
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.18.1</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.8</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -335,6 +340,27 @@ Copyright (c) 2012 - Jeremy Long
                 <configuration>
                     <skipDeploy>true</skipDeploy>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <inherited>false</inherited>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>copy-xsd</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target name="copy xsd to site">
+                                <copy file="dependency-check-core/src/main/resources/schema/dependency-check.1.3.xsd" todir="target/site/"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
