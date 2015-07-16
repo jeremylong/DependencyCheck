@@ -147,7 +147,7 @@ public class ReportGeneratorIntegrationTest extends BaseTest {
 
         engine.cleanup();
 
-        InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/DependencyCheck.xsd");
+        InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/dependency-check.1.3.xsd");
         StreamSource xsdSource = new StreamSource(xsdStream);
         StreamSource xmlSource = new StreamSource(new File(writeTo));
         SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
