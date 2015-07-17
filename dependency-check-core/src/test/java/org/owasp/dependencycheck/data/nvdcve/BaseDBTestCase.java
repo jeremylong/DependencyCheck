@@ -53,6 +53,7 @@ public abstract class BaseDBTestCase extends BaseTest {
         java.io.File dataFile = new File(dataPath, fileName);
         LOGGER.trace("Ensuring {} exists", dataFile.toString());
         if (!dataPath.exists() || !dataFile.exists()) {
+            LOGGER.trace("Extracting database to {}", dataPath.toString());
             dataPath.mkdirs();
             FileInputStream fis = null;
             ZipInputStream zin = null;
