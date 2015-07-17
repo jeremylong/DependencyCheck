@@ -11,6 +11,9 @@
         <appender-ref ref="console"/>
     </root>
 
+    <logger name="org.owasp.dependencycheck.data.nvdcve.BaseDBTestCase" additivity="false" level="TRACE">
+        <appender-ref ref="console"/>
+    </logger>
     <!--logger name="org.owasp.dependencycheck.analyzer.AssemblyAnalyzerTest" additivity="false" level="WARN">
         <appender-ref ref="console"/>
     </logger>
