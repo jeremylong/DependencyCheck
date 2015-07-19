@@ -97,7 +97,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
             final boolean updateNeeded = shouldUpdate(lastChecked, now, properties, currentVersion);
             if (updateNeeded) {
                 LOGGER.warn("A new version of dependency-check is available. Consider updating to version {}.",
-                    updateToVersion);
+                        updateToVersion);
             }
         } catch (DatabaseException ex) {
             LOGGER.debug("Database Exception opening databases to retrieve properties", ex);
@@ -115,8 +115,8 @@ public class EngineVersionCheck implements CachedWebDataSource {
      * @param properties the database properties object
      * @param currentVersion the current version of dependency-check
      * @return <code>true</code> if a newer version of the database has been released; otherwise <code>false</code>
-     * @throws UpdateException thrown if there is an error connecting to the github documentation site or accessing the
-     * local database.
+     * @throws UpdateException thrown if there is an error connecting to the github documentation site or accessing the local
+     * database.
      */
     protected boolean shouldUpdate(final long lastChecked, final long now, final DatabaseProperties properties,
             String currentVersion) throws UpdateException {
@@ -172,6 +172,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
         if (cveDB != null) {
             try {
                 cveDB.close();
+                cveDB = null;
             } catch (Throwable ignore) {
                 LOGGER.trace("Error closing the cveDB", ignore);
             }

@@ -18,7 +18,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 @author Jeremy Long <jeremy.long@owasp.org>
 @version 1.1
 *#<?xml version="1.0"?>
-<analysis xmlns="https://www.owasp.org/index.php/OWASP_Dependency_Check#1.2">
+<analysis xmlns="https://jeremylong.github.io/DependencyCheck/dependency-check.1.3.xsd">
     <scanInfo>
         <engineVersion>$version</engineVersion>
 #foreach($prop in $properties.getMetaData().entrySet())
@@ -68,8 +68,22 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             </relatedDependencies>
 #end
             <evidenceCollected>
-#foreach($evidence in $dependency.getEvidenceForDisplay())
-                <evidence>
+#foreach($evidence in $dependency.getVendorEvidence())
+                <evidence type="vendor" confidence="$enc.xml($evidence.getConfidence().toString())">
+                    <source>$enc.xml($evidence.getSource())</source>
+                    <name>$enc.xml($evidence.getName())</name>
+                    <value>$enc.xml($evidence.getValue().trim())</value>
+                </evidence>
+#end
+#foreach($evidence in $dependency.getProductEvidence())
+                <evidence type="product" confidence="$enc.xml($evidence.getConfidence().toString())">
+                    <source>$enc.xml($evidence.getSource())</source>
+                    <name>$enc.xml($evidence.getName())</name>
+                    <value>$enc.xml($evidence.getValue().trim())</value>
+                </evidence>
+#end
+#foreach($evidence in $dependency.getVersionEvidence())
+                <evidence type="version" confidence="$enc.xml($evidence.getConfidence().toString())">
                     <source>$enc.xml($evidence.getSource())</source>
                     <name>$enc.xml($evidence.getName())</name>
                     <value>$enc.xml($evidence.getValue().trim())</value>

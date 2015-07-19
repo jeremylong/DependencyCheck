@@ -27,6 +27,7 @@ import java.util.zip.ZipInputStream;
 import org.junit.Before;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -37,6 +38,8 @@ public abstract class BaseDBTestCase extends BaseTest {
 
     protected final static int BUFFER_SIZE = 2048;
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(BaseDBTestCase.class);
+
     @Before
     public void setUp() throws Exception {
         ensureDBExists();
@@ -46,8 +49,11 @@ public abstract class BaseDBTestCase extends BaseTest {
 
         java.io.File dataPath = Settings.getDataDirectory();
         String fileName = Settings.getString(Settings.KEYS.DB_FILE_NAME);
+        LOGGER.trace("DB file name {}", fileName);
         java.io.File dataFile = new File(dataPath, fileName);
+        LOGGER.trace("Ensuring {} exists", dataFile.toString());
         if (!dataPath.exists() || !dataFile.exists()) {
+            LOGGER.trace("Extracting database to {}", dataPath.toString());
             dataPath.mkdirs();
             FileInputStream fis = null;
             ZipInputStream zin = null;
@@ -75,7 +81,7 @@ public abstract class BaseDBTestCase extends BaseTest {
                             dest.write(data, 0, count);
                         }
                     } catch (Throwable ex) {
-                        LoggerFactory.getLogger(BaseDBTestCase.class).error("", ex);
+                        LOGGER.error("", ex);
                     } finally {
                         try {
                             if (dest != null) {
@@ -83,14 +89,14 @@ public abstract class BaseDBTestCase extends BaseTest {
                                 dest.close();
                             }
                         } catch (Throwable ex) {
-                            LoggerFactory.getLogger(BaseDBTestCase.class).trace("", ex);
+                            LOGGER.trace("", ex);
                         }
                         try {
                             if (fos != null) {
                                 fos.close();
                             }
                         } catch (Throwable ex) {
-                            LoggerFactory.getLogger(BaseDBTestCase.class).trace("", ex);
+                            LOGGER.trace("", ex);
                         }
                     }
                 }
@@ -100,14 +106,14 @@ public abstract class BaseDBTestCase extends BaseTest {
                         zin.close();
                     }
                 } catch (Throwable ex) {
-                    LoggerFactory.getLogger(BaseDBTestCase.class).trace("", ex);
+                    LOGGER.trace("", ex);
                 }
                 try {
                     if (fis != null) {
                         fis.close();
                     }
                 } catch (Throwable ex) {
-                    LoggerFactory.getLogger(BaseDBTestCase.class).trace("", ex);
+                    LOGGER.trace("", ex);
                 }
             }
         }

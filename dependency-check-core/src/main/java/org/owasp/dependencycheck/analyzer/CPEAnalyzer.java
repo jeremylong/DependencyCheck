@@ -154,9 +154,11 @@ public class CPEAnalyzer implements Analyzer {
     public void close() {
         if (cpe != null) {
             cpe.close();
+            cpe = null;
         }
         if (cve != null) {
             cve.close();
+            cve = null;
         }
     }
 

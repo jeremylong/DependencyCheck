@@ -560,7 +560,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                         <th class="sortable" data-sort="int" title="The highest CVE Severity">Highest Severity</th>
                         <th class="sortable" data-sort="int" title="The number of Common Vulnerability and Exposure (CVE) entries">CVE Count</th>
                         <th class="sortable" data-sort="string" title="The confidence rating dependency-check has for the identified CPE">CPE Confidence</th>
-                        <th class="sortable" data-sort="int" title="The count of evidence used to identify the CPE">Evidence Count</th>
+                        <th class="sortable" data-sort="int" title="The count of evidence collected to identify the CPE">Evidence Count</th>
                     </tr></thead>
                     #foreach($dependency in $dependencies)
                     #set($lnkcnt=$lnkcnt+1)

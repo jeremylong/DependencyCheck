@@ -111,7 +111,6 @@ public class HintAnalyzerTest extends BaseTest {
         assertTrue(evidence.contains(springTest3));
         //assertTrue(evidence.contains(springTest4));
         //assertTrue(evidence.contains(springTest5));
-
     }
 
 }
