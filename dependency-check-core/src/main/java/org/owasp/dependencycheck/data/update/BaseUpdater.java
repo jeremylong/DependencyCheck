@@ -58,6 +58,8 @@ public abstract class BaseUpdater {
         if (cveDB != null) {
             try {
                 cveDB.close();
+                cveDB = null;
+                properties = null;
             } catch (Throwable ignore) {
                 LOGGER.trace("Error closing the database", ignore);
             }
@@ -76,11 +78,11 @@ public abstract class BaseUpdater {
         try {
             cveDB = new CveDB();
             cveDB.open();
+            properties = cveDB.getDatabaseProperties();
         } catch (DatabaseException ex) {
             closeDataStores();
             LOGGER.debug("Database Exception opening databases", ex);
             throw new UpdateException("Error updating the database, please see the log file for more details.");
         }
-        properties = cveDB.getDatabaseProperties();
     }
 }
