@@ -30,7 +30,6 @@ import org.owasp.dependencycheck.data.update.UpdateService;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.exception.NoDataException;
-import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -38,12 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Scans files, directories, etc. for Dependencies. Analyzers are loaded and used to process the files found by the scan, if a
@@ -308,22 +302,14 @@ public class Engine implements FileFilter {
      * @return the scanned dependency
      */
     protected Dependency scanFile(File file) {
-        if (!file.isFile()) {
-            LOGGER.debug("Path passed to scanFile(File) is not a file: {}. Skipping the file.", file);
-            return null;
-        }
-        final String fileName = file.getName();
-        String extension = FileUtils.getFileExtension(fileName);
-        if (null == extension) {
-            extension = fileName;
-        }
         Dependency dependency = null;
-        if (accept(file)) {
-            dependency = new Dependency(file);
-            if (extension.equals(fileName)) {
-                dependency.setFileExtension(extension);
+        if (file.isFile()) {
+            if (accept(file)) {
+                dependency = new Dependency(file);
+                dependencies.add(dependency);
             }
-            dependencies.add(dependency);
+        } else {
+            LOGGER.debug("Path passed to scanFile(File) is not a file: {}. Skipping the file.", file);
         }
         return dependency;
     }

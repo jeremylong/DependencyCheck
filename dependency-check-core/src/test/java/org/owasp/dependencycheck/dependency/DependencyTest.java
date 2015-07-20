@@ -128,29 +128,6 @@ public class DependencyTest {
     }
 
     /**
-     * Test of setFileExtension method, of class Dependency.
-     */
-    @Test
-    public void testSetFileExtension() {
-        String fileExtension = "jar";
-        Dependency instance = new Dependency();
-        instance.setFileExtension(fileExtension);
-        assertEquals(fileExtension, instance.getFileExtension());
-    }
-
-    /**
-     * Test of getFileExtension method, of class Dependency.
-     */
-    @Test
-    public void testGetFileExtension() {
-        Dependency instance = new Dependency();
-        String expResult = "jar";
-        instance.setFileExtension(expResult);
-        String result = instance.getFileExtension();
-        assertEquals(expResult, result);
-    }
-
-    /**
      * Test of getMd5sum method, of class Dependency.
      */
     @Test

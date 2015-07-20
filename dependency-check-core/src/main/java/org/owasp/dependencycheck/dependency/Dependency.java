@@ -68,11 +68,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * The file name of the dependency.
      */
     private String fileName;
-    /**
-     * The file extension of the dependency.
-     */
-    private String fileExtension;
-    /**
+   /**
      * The md5 hash of the dependency.
      */
     private String md5sum;
@@ -120,7 +116,6 @@ public class Dependency implements Serializable, Comparable<Dependency> {
         this.actualFilePath = file.getAbsolutePath();
         this.filePath = this.actualFilePath;
         this.fileName = file.getName();
-        this.fileExtension = FileUtils.getFileExtension(fileName);
         determineHashes(file);
     }
 
@@ -229,24 +224,6 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      */
     public String getFilePath() {
         return this.filePath;
-    }
-
-    /**
-     * Sets the file extension of the dependency.
-     *
-     * @param fileExtension the file name of the dependency
-     */
-    public void setFileExtension(String fileExtension) {
-        this.fileExtension = fileExtension;
-    }
-
-    /**
-     * Gets the file extension of the dependency.
-     *
-     * @return the file extension of the dependency
-     */
-    public String getFileExtension() {
-        return this.fileExtension;
     }
 
     /**
@@ -735,7 +712,6 @@ public class Dependency implements Serializable, Comparable<Dependency> {
         return ObjectUtils.equals(this.actualFilePath, other.actualFilePath)
                 && ObjectUtils.equals(this.filePath, other.filePath)
                 && ObjectUtils.equals(this.fileName, other.fileName)
-                && ObjectUtils.equals(this.fileExtension, other.fileExtension)
                 && ObjectUtils.equals(this.md5sum, other.md5sum)
                 && ObjectUtils.equals(this.sha1sum, other.sha1sum)
                 && ObjectUtils.equals(this.identifiers, other.identifiers)
@@ -758,7 +734,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     @Override
     public int hashCode() {
         int hash = MAGIC_HASH_INIT_VALUE;
-        for (Object field : new Object[]{this.actualFilePath, this.filePath, this.fileName, this.fileExtension, this.md5sum,
+        for (Object field : new Object[]{this.actualFilePath, this.filePath, this.fileName, this.md5sum,
             this.sha1sum, this.identifiers, this.vendorEvidence, this.productEvidence, this.versionEvidence,
             this.description, this.license, this.vulnerabilities, this.relatedDependencies, this.projectReferences,
             this.availableVersions}) {
