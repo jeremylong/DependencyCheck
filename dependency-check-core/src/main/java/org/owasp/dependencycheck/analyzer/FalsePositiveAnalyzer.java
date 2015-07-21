@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.io.FileFilter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +48,9 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      * The Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(FalsePositiveAnalyzer.class);
+
+    private static final FileFilter DLL_EXE_FILTER = FileFilterBuilder.newInstance().addExtensions("dll", "exe").build();
+
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
      * The name of the analyzer.
@@ -412,8 +417,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      */
     private void removeDuplicativeEntriesFromJar(Dependency dependency, Engine engine) {
         if (dependency.getFileName().toLowerCase().endsWith("pom.xml")
-                || "dll".equals(dependency.getFileExtension())
-                || "exe".equals(dependency.getFileExtension())) {
+                || DLL_EXE_FILTER.accept(dependency.getActualFile())) {
             String parentPath = dependency.getFilePath().toLowerCase();
             if (parentPath.contains(".jar")) {
                 parentPath = parentPath.substring(0, parentPath.indexOf(".jar") + 4);

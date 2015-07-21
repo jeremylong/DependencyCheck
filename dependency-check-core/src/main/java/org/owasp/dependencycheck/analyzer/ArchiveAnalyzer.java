@@ -106,9 +106,10 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     private static final Set<String> EXTENSIONS = newHashSet("tar", "gz", "tgz");
 
     /**
-     * The set of file extensions to remove from the engine's collection of dependencies.
+     * Detects files with extensions to remove from the engine's collection of dependencies.
      */
-    private static final Set<String> REMOVE_FROM_ANALYSIS = newHashSet("zip", "tar", "gz", "tgz"); //TODO add nupkg, apk, sar?
+    private static final FileFilter REMOVE_FROM_ANALYSIS =
+            FileFilterBuilder.newInstance().addExtensions("zip", "tar", "gz", "tgz").build(); //TODO add nupkg, apk, sar?
 
     static {
         final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
@@ -125,6 +126,11 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     protected FileFilter getFileFilter() {
         return FILTER;
     }
+
+    /**
+     * Detects files with .zip extension.
+     */
+    private static final FileFilter ZIP_FILTER = FileFilterBuilder.newInstance().addExtensions("zip").build();
 
     /**
      * Returns the name of the analyzer.
@@ -236,8 +242,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         }
-        if (REMOVE_FROM_ANALYSIS.contains(dependency.getFileExtension())) {
-            if ("zip".equals(dependency.getFileExtension()) && isZipFileActuallyJarFile(dependency)) {
+        if (REMOVE_FROM_ANALYSIS.accept(dependency.getActualFile())) {
+            if (ZIP_FILTER.accept(dependency.getActualFile()) && isZipFileActuallyJarFile(dependency)) {
                 final File tdir = getNextTempDirectory();
                 final String fileName = dependency.getFileName();
 

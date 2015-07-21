@@ -18,11 +18,13 @@
 package org.owasp.dependencycheck.data.update;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.owasp.dependencycheck.data.nvdcve.BaseDBTestCase;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
