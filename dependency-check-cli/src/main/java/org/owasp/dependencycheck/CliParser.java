@@ -115,6 +115,16 @@ public final class CliParser {
                 final String msg = "If one of the CVE URLs is specified they must all be specified; please add the missing CVE URL.";
                 throw new ParseException(msg);
             }
+            if (line.hasOption((ARGUMENT.SYM_LINK_DEPTH))) {
+                try {
+                    int i = Integer.parseInt(line.getOptionValue(ARGUMENT.SYM_LINK_DEPTH));
+                    if (i < 0) {
+                        throw new ParseException("Symbolic Link Depth (symLink) must be greater then zero.");
+                    }
+                } catch (NumberFormatException ex) {
+                    throw new ParseException("Symbolic Link Depth (symLink) is not a number.");
+                }
+            }
         }
     }
 
@@ -238,6 +248,10 @@ public final class CliParser {
                 .withDescription("The file path to write verbose logging information.")
                 .create(ARGUMENT.VERBOSE_LOG_SHORT);
 
+        final Option symLinkDepth = OptionBuilder.withArgName("depth").hasArg().withLongOpt(ARGUMENT.SYM_LINK_DEPTH)
+                .withDescription("Sets how deep nested symbolic links will be followed; 0 indicates symbolic links will not be followed.")
+                .create();
+
         final Option suppressionFile = OptionBuilder.withArgName("file").hasArg().withLongOpt(ARGUMENT.SUPPRESSION_FILE)
                 .withDescription("The file path to the suppression XML file.")
                 .create();
@@ -258,6 +272,7 @@ public final class CliParser {
                 .addOption(help)
                 .addOption(advancedHelp)
                 .addOption(noUpdate)
+                .addOption(symLinkDepth)
                 .addOption(props)
                 .addOption(verboseLog)
                 .addOption(suppressionFile);
@@ -451,6 +466,24 @@ public final class CliParser {
      */
     public boolean isRunScan() {
         return (line != null) && isValid && line.hasOption(ARGUMENT.SCAN);
+    }
+
+    /**
+     * Returns the symbolic link depth (how deeply symbolic links will be followed).
+     *
+     * @return the symbolic link depth
+     */
+    public int getSymLinkDepth() {
+        int value = 0;
+        try {
+            value = Integer.parseInt(line.getOptionValue(ARGUMENT.SYM_LINK_DEPTH, "0"));
+            if (value < 0) {
+                value = 0;
+            }
+        } catch (NumberFormatException ex) {
+            LOGGER.debug("Symbolic link was not a number");
+        }
+        return value;
     }
 
     /**
@@ -1006,6 +1039,11 @@ public final class CliParser {
          * The short CLI argument name for setting the location of the data directory.
          */
         public static final String VERBOSE_LOG_SHORT = "l";
+
+        /**
+         * The CLI argument name for setting the depth of symbolic links that will be followed.
+         */
+        public static final String SYM_LINK_DEPTH = "symLink";
         /**
          * The CLI argument name for setting the location of the suppression file.
          */
