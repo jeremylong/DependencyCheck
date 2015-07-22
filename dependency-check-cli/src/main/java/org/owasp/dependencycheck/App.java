@@ -99,7 +99,8 @@ public class App {
         } else if (cli.isRunScan()) {
             populateSettings(cli);
             try {
-                runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles(), cli.getExcludeList());
+                runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles(),
+                        cli.getExcludeList(), cli.getSymLinkDepth());
             } catch (InvalidScanPathException ex) {
                 LOGGER.error("An invalid scan path was detected; unable to scan '//*' paths");
             }
@@ -116,11 +117,12 @@ public class App {
      * @param applicationName the application name for the report
      * @param files the files/directories to scan
      * @param excludes the patterns for files/directories to exclude
+     * @param symLinkDepth the depth that symbolic links will be followed
      *
      * @throws InvalidScanPathException thrown if the path to scan starts with "//"
      */
     private void runScan(String reportDirectory, String outputFormat, String applicationName, String[] files,
-            String[] excludes) throws InvalidScanPathException {
+            String[] excludes, int symLinkDepth) throws InvalidScanPathException {
         Engine engine = null;
         try {
             engine = new Engine();
@@ -165,6 +167,7 @@ public class App {
                 }
                 scanner.setBasedir(baseDir);
                 scanner.setIncludes(include);
+                scanner.setMaxLevelsOfSymlinks(symLinkDepth);
                 if (excludes != null && excludes.length > 0) {
                     scanner.addExcludes(excludes);
                 }
