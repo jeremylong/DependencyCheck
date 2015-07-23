@@ -119,7 +119,7 @@ public final class CliParser {
                 try {
                     int i = Integer.parseInt(line.getOptionValue(ARGUMENT.SYM_LINK_DEPTH));
                     if (i < 0) {
-                        throw new ParseException("Symbolic Link Depth (symLink) must be greater then zero.");
+                        throw new ParseException("Symbolic Link Depth (symLink) must be greater than zero.");
                     }
                 } catch (NumberFormatException ex) {
                     throw new ParseException("Symbolic Link Depth (symLink) is not a number.");
