@@ -20,17 +20,17 @@ package org.owasp.dependencycheck.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
+
+import static java.lang.String.format;
+import static org.owasp.dependencycheck.utils.Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP;
+import static org.owasp.dependencycheck.utils.Settings.getBoolean;
 
 /**
  * A utility to download files from the Internet.
@@ -47,6 +47,16 @@ public final class Downloader {
      * The maximum number of redirects that will be followed when attempting to download a file.
      */
     private static final int MAX_REDIRECT_ATTEMPTS = 5;
+
+    /**
+     * The default HTTP request method for query timestamp
+     */
+    private static final String HEAD = "HEAD";
+
+    /**
+     * The HTTP request method which can be used by query timestamp
+     */
+    private static final String GET = "GET";
 
     /**
      * Private constructor for utility class.
@@ -79,18 +89,18 @@ public final class Downloader {
             try {
                 file = new File(url.toURI());
             } catch (URISyntaxException ex) {
-                final String msg = String.format("Download failed, unable to locate '%s'", url.toString());
+                final String msg = format("Download failed, unable to locate '%s'", url.toString());
                 throw new DownloadFailedException(msg);
             }
             if (file.exists()) {
                 try {
                     org.apache.commons.io.FileUtils.copyFile(file, outputPath);
                 } catch (IOException ex) {
-                    final String msg = String.format("Download failed, unable to copy '%s' to '%s'", url.toString(), outputPath.getAbsolutePath());
+                    final String msg = format("Download failed, unable to copy '%s' to '%s'", url.toString(), outputPath.getAbsolutePath());
                     throw new DownloadFailedException(msg);
                 }
             } else {
-                final String msg = String.format("Download failed, file ('%s') does not exist", url.toString());
+                final String msg = format("Download failed, file ('%s') does not exist", url.toString());
                 throw new DownloadFailedException(msg);
             }
         } else {
@@ -124,7 +134,7 @@ public final class Downloader {
                     } finally {
                         conn = null;
                     }
-                    final String msg = String.format("Error downloading file %s; received response code %s.", url.toString(), status);
+                    final String msg = format("Error downloading file %s; received response code %s.", url.toString(), status);
                     throw new DownloadFailedException(msg);
 
                 }
@@ -136,7 +146,7 @@ public final class Downloader {
                 } finally {
                     conn = null;
                 }
-                final String msg = String.format("Error downloading file %s; unable to connect.", url.toString());
+                final String msg = format("Error downloading file %s; unable to connect.", url.toString());
                 throw new DownloadFailedException(msg, ex);
             }
 
@@ -161,11 +171,11 @@ public final class Downloader {
                 LOGGER.debug("Download of {} complete", url.toString());
             } catch (IOException ex) {
                 analyzeException(ex);
-                final String msg = String.format("Error saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
+                final String msg = format("Error saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
                         url.toString(), outputPath.getAbsolutePath(), conn.getConnectTimeout(), encoding);
                 throw new DownloadFailedException(msg, ex);
             } catch (Throwable ex) {
-                final String msg = String.format("Unexpected exception saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
+                final String msg = format("Unexpected exception saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
                         url.toString(), outputPath.getAbsolutePath(), conn.getConnectTimeout(), encoding);
                 throw new DownloadFailedException(msg, ex);
             } finally {
@@ -208,27 +218,28 @@ public final class Downloader {
             try {
                 lastModifiedFile = new File(url.toURI());
             } catch (URISyntaxException ex) {
-                final String msg = String.format("Unable to locate '%s'", url.toString());
+                final String msg = format("Unable to locate '%s'", url.toString());
                 throw new DownloadFailedException(msg);
             }
             timestamp = lastModifiedFile.lastModified();
         } else {
+            String httpMethod = determineHttpMethod();
             HttpURLConnection conn = null;
             try {
                 conn = URLConnectionFactory.createHttpURLConnection(url);
-                conn.setRequestMethod("HEAD");
+                conn.setRequestMethod(httpMethod);
                 conn.connect();
                 final int t = conn.getResponseCode();
                 if (t >= 200 && t < 300) {
                     timestamp = conn.getLastModified();
                 } else {
-                    throw new DownloadFailedException("HEAD request returned a non-200 status code");
+                    throw new DownloadFailedException(format("%s request returned a non-200 status code", httpMethod));
                 }
             } catch (URLConnectionFailureException ex) {
-                throw new DownloadFailedException("Error creating URL Connection for HTTP HEAD request.", ex);
+                throw new DownloadFailedException(format("Error creating URL Connection for HTTP %s request.", httpMethod), ex);
             } catch (IOException ex) {
                 analyzeException(ex);
-                throw new DownloadFailedException("Error making HTTP HEAD request.", ex);
+                throw new DownloadFailedException(format("Error making HTTP %s request.", httpMethod), ex);
             } finally {
                 if (conn != null) {
                     try {
@@ -265,5 +276,20 @@ public final class Downloader {
             }
             cause = cause.getCause();
         }
+    }
+
+    private static String determineHttpMethod() {
+        return isQuickQuery() ? HEAD : GET;
+    }
+
+    private static boolean isQuickQuery() {
+        boolean quickQuery;
+
+        try {
+            quickQuery = getBoolean(DOWNLOADER_QUICK_QUERY_TIMESTAMP, true);
+        } catch (InvalidSettingException e) {
+            quickQuery = true;
+        }
+        return quickQuery;
     }
 }

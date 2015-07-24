@@ -275,6 +275,11 @@ public final class Settings {
          * The key to obtain the VFeed update status.
          */
         public static final String VFEED_UPDATE_STATUS = "vfeed.update_status";
+
+        /**
+         * The HTTP request method for query last modified date
+         */
+        public static final String DOWNLOADER_QUICK_QUERY_TIMESTAMP = "downloader.quick.query.timestamp";
     }
     //</editor-fold>
 
