@@ -35,6 +35,15 @@ public class BaseTest {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
+        File f = new File("./target/data/dc.h2.db");
+        if (f.exists() && f.isFile() && f.length() < 71680) {
+            System.err.println("------------------------------------------------");
+            System.err.println("------------------------------------------------");
+            System.err.println("I broke the build");
+            System.err.println("------------------------------------------------");
+            System.err.println("------------------------------------------------");
+        }
+
         Settings.cleanup(true);
     }
 

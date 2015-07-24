@@ -384,6 +384,8 @@ public final class CliParser {
 
         final Option disableOpenSSLAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_OPENSSL)
                 .withDescription("Disable the OpenSSL Analyzer.").create();
+        final Option disableCmakeAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_CMAKE).
+                withDescription("Disable the Cmake Analyzer.").create();
 
         final Option disableCentralAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_CENTRAL)
                 .withDescription("Disable the Central Analyzer. If this analyzer is disabled it is likely you also want to disable "
@@ -412,6 +414,7 @@ public final class CliParser {
                 .addOption(disableArchiveAnalyzer)
                 .addOption(disableAssemblyAnalyzer)
                 .addOption(disablePythonDistributionAnalyzer)
+                .addOption(disableCmakeAnalyzer)
                 .addOption(disablePythonPackageAnalyzer)
                 .addOption(disableAutoconfAnalyzer)
                 .addOption(disableOpenSSLAnalyzer)
@@ -431,7 +434,7 @@ public final class CliParser {
      * @param options a collection of command line arguments
      * @throws IllegalArgumentException thrown if there is an exception
      */
-    @SuppressWarnings("static-access")
+    @SuppressWarnings({"static-access", "deprecation"})
     private void addDeprecatedOptions(final Options options) throws IllegalArgumentException {
 
         final Option proxyServer = OptionBuilder.withArgName("url").hasArg().withLongOpt(ARGUMENT.PROXY_URL)
@@ -538,6 +541,15 @@ public final class CliParser {
      */
     public boolean isPythonPackageDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_PY_PKG);
+    }
+
+    /**
+     * Returns true if the disableCmake command line argument was specified.
+     *
+     * @return true if the disableCmake command line argument was specified; otherwise false
+     */
+    public boolean isCmakeDisabled() {
+        return (line != null) && line.hasOption(ARGUMENT.DISABLE_CMAKE);
     }
 
     /**
@@ -735,6 +747,7 @@ public final class CliParser {
      *
      * @return the proxy server
      */
+    @SuppressWarnings("deprecation")
     public String getProxyServer() {
 
         String server = line.getOptionValue(ARGUMENT.PROXY_SERVER);
@@ -979,7 +992,7 @@ public final class CliParser {
         /**
          * The CLI argument name indicating the proxy url.
          *
-         * @deprecated use {@link org.owasp.dependencycheck.cli.CliParser.ArgumentName#PROXY_SERVER} instead
+         * @deprecated use {@link #PROXY_SERVER} instead
          */
         @Deprecated
         public static final String PROXY_URL = "proxyurl";
@@ -1068,6 +1081,10 @@ public final class CliParser {
          * Disables the Autoconf Analyzer.
          */
         public static final String DISABLE_AUTOCONF = "disableAutoconf";
+        /**
+         * Disables the Cmake Analyzer.
+         */
+        public static final String DISABLE_CMAKE = "disableCmake";
         /**
          * Disables the Assembly Analyzer.
          */

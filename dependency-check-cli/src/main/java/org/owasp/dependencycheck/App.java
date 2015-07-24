@@ -253,6 +253,10 @@ public class App {
         final String suppressionFile = cli.getSuppressionFile();
         final boolean jarDisabled = cli.isJarDisabled();
         final boolean archiveDisabled = cli.isArchiveDisabled();
+        final boolean pyDistDisabled = cli.isPythonDistributionDisabled();
+        final boolean cMakeDisabled = cli.isCmakeDisabled();
+        final boolean pyPkgDisabled = cli.isPythonPackageDisabled();
+        final boolean autoconfDisabled = cli.isAutoconfDisabled();
         final boolean assemblyDisabled = cli.isAssemblyDisabled();
         final boolean nuspecDisabled = cli.isNuspecDisabled();
         final boolean centralDisabled = cli.isCentralDisabled();
@@ -320,9 +324,10 @@ public class App {
         //File Type Analyzer Settings
         Settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, !jarDisabled);
         Settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, !archiveDisabled);
-        Settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, !cli.isPythonDistributionDisabled());
-        Settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED, !cli.isPythonPackageDisabled());
-        Settings.setBoolean(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, !cli.isAutoconfDisabled());
+        Settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, !pyDistDisabled);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED, !pyPkgDisabled);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, !autoconfDisabled);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_CMAKE_ENABLED, !cMakeDisabled);
         Settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, !nuspecDisabled);
         Settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, !assemblyDisabled);
         Settings.setBoolean(Settings.KEYS.ANALYZER_OPENSSL_ENABLED, !cli.isOpenSSLDisabled());

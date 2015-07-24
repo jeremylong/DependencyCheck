@@ -16,3 +16,4 @@ org.owasp.dependencycheck.analyzer.PythonDistributionAnalyzer
 org.owasp.dependencycheck.analyzer.PythonPackageAnalyzer
 org.owasp.dependencycheck.analyzer.AutoconfAnalyzer
 org.owasp.dependencycheck.analyzer.OpenSSLAnalyzer
+org.owasp.dependencycheck.analyzer.CMakeAnalyzer
