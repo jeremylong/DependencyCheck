@@ -127,17 +127,18 @@ public class App {
         try {
             engine = new Engine();
             List<String> antStylePaths = new ArrayList<String>();
-            if (excludes == null || excludes.length == 0) {
-                for (String file : files) {
-                    if (file.contains("*") || file.contains("?")) {
-                        antStylePaths.add(file);
-                    } else {
-                        engine.scan(file);
-                    }
-                }
-            } else {
-                antStylePaths = Arrays.asList(files);
-            }
+            //removed and treating everything as an ant style path to ensure sym links are handled correctly.
+//            if (excludes == null || excludes.length == 0) {
+//                for (String file : files) {
+//                    if (file.contains("*") || file.contains("?")) {
+//                        antStylePaths.add(file);
+//                    } else {
+//                        engine.scan(file);
+//                    }
+//                }
+//            } else {
+            antStylePaths = Arrays.asList(files);
+//            }
 
             final Set<File> paths = new HashSet<File>();
             for (String file : antStylePaths) {
