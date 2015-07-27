@@ -16,7 +16,7 @@ limitations under the License.
 Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 
 @author Jeremy Long <jeremy.long@owasp.org>
-@version 1.1
+@version 1.2
 *#
 
 
@@ -757,7 +757,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                             #else
                                 Medium
                             #end
-                            <br/>CVSS Score: $vuln.cvssScore
+                            <br/>CVSS Score: $vuln.cvssScore (AV:$enc.html($vuln.cvssAccessVector.substring(0,1))/AC:$enc.html($vuln.cvssAccessComplexity.substring(0,1))/Au:$enc.html($vuln.cvssAuthentication.substring(0,1))/C:$enc.html($vuln.cvssConfidentialityImpact.substring(0,1))/I:$enc.html($vuln.cvssIntegrityImpact.substring(0,1))/A:$enc.html($vuln.cvssAvailabilityImpact.substring(0,1)))
                             #if ($vuln.cwe)
                                 <br/>CWE: $vuln.cwe
                             #end</p>

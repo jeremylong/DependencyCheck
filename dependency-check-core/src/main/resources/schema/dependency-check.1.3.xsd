@@ -158,7 +158,13 @@
                                                             <xs:complexType>
                                                                 <xs:sequence>
                                                                     <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
-                                                                    <xs:element name="cvssScore" type="xs:string" minOccurs="1" maxOccurs="1" />
+                                                                    <xs:element name="cvssScore" type="xs:decimal" minOccurs="1" maxOccurs="1" />
+                                                                    <xs:element name="cvssAccessVector" type="xs:string" minOccurs="1" maxOccurs="1" />
+                                                                    <xs:element name="cvssAccessComplexity" type="xs:string" minOccurs="1" maxOccurs="1" />
+                                                                    <xs:element name="cvssAuthenticationr" type="xs:string" minOccurs="1" maxOccurs="1" />
+                                                                    <xs:element name="cvssConfidentialImpact" type="xs:string" minOccurs="1" maxOccurs="1" />
+                                                                    <xs:element name="cvssIntegrityImpact" type="xs:string" minOccurs="1" maxOccurs="1" />
+                                                                    <xs:element name="cvssAvailabilityImpact" type="xs:string" minOccurs="1" maxOccurs="1" />
                                                                     <xs:element name="severity" type="xs:string" minOccurs="1" maxOccurs="1" />
                                                                     <xs:element name="cwe" type="xs:string" minOccurs="0" maxOccurs="1" />
                                                                     <xs:element name="description" type="xs:string" minOccurs="1" maxOccurs="1" />
