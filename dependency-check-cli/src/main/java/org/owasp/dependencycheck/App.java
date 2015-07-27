@@ -38,6 +38,7 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ch.qos.logback.core.FileAppender;
+import java.util.logging.Level;
 import org.slf4j.impl.StaticLoggerBinder;
 
 /**
@@ -127,45 +128,47 @@ public class App {
         try {
             engine = new Engine();
             List<String> antStylePaths = new ArrayList<String>();
-            //removed and treating everything as an ant style path to ensure sym links are handled correctly.
-//            if (excludes == null || excludes.length == 0) {
-//                for (String file : files) {
-//                    if (file.contains("*") || file.contains("?")) {
-//                        antStylePaths.add(file);
-//                    } else {
-//                        engine.scan(file);
-//                    }
+            //TODO remove and treating everything as an ant style path to ensure sym links are handled correctly.
+//            for (String file : files) {
+//                if (file.contains("*") || file.contains("?")) {
+//                    antStylePaths.add(file);
+//                } else {
+//                    engine.scan(file);
 //                }
-//            } else {
-            antStylePaths = Arrays.asList(files);
 //            }
+            for (String file : files) {
+                File f = new File(file);
+                if (f.exists() && f.isFile()) {
+                    engine.scan(f);
+                } else {
+                    String antPath = ensureCanonicalPath(file);
+                    antStylePaths.add(antPath);
+                }
+            }
 
             final Set<File> paths = new HashSet<File>();
             for (String file : antStylePaths) {
+                LOGGER.debug("Scanning {}", file);
                 final DirectoryScanner scanner = new DirectoryScanner();
                 String include = file.replace('\\', '/');
                 File baseDir;
 
                 if (include.startsWith("//")) {
                     throw new InvalidScanPathException("Unable to scan paths specified by //");
-                } else if (include.startsWith("./")) {
-                    baseDir = new File(".");
-                    include = include.substring(2);
-                } else if (include.startsWith("/")) {
-                    baseDir = new File("/");
-                    include = include.substring(1);
-                } else if (include.contains("/")) {
-                    final int pos = include.indexOf('/');
-                    final String tmp = include.substring(0, pos);
-                    if (tmp.contains("*") || tmp.contains("?")) {
-                        baseDir = new File(".");
+                } else {
+                    final int pos = getLastFileSeparator(include);
+                    final String tmpBase = include.substring(0, pos);
+                    final String tmpInclude = include.substring(pos + 1);
+                    if (tmpInclude.indexOf('*') >= 0 || tmpInclude.indexOf('?') >= 0) {
+                        baseDir = new File(tmpBase);
+                        include = tmpInclude;
                     } else {
-                        baseDir = new File(tmp);
-                        include = include.substring(pos + 1);
+                        baseDir = new File(tmpBase, tmpInclude);
+                        include = "**/*";
                     }
-                } else { //no path info - must just be a file in the working directory
-                    baseDir = new File(".");
                 }
+                //LOGGER.debug("baseDir: {}", baseDir);
+                //LOGGER.debug("include: {}", include);
                 scanner.setBasedir(baseDir);
                 scanner.setIncludes(include);
                 scanner.setMaxLevelsOfSymlinks(symLinkDepth);
@@ -176,6 +179,7 @@ public class App {
                 if (scanner.getIncludedFilesCount() > 0) {
                     for (String s : scanner.getIncludedFiles()) {
                         final File f = new File(baseDir, s);
+                        LOGGER.debug("Found file {}", f.toString());
                         paths.add(f);
                     }
                 }
@@ -396,5 +400,55 @@ public class App {
         fa.start();
         final ch.qos.logback.classic.Logger rootLogger = context.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
         rootLogger.addAppender(fa);
+    }
+
+    protected String ensureCanonicalPath(String path) {
+        String basePath = null;
+        String wildCards = null;
+        String file = path.replace('\\', '/');
+        if (file.contains("*") || file.contains("?")) {
+
+            int pos = getLastFileSeparator(file);
+            if (pos < 0) {
+                return file;
+            }
+            pos += 1;
+            basePath = file.substring(0, pos);
+            wildCards = file.substring(pos);
+        } else {
+            basePath = file;
+        }
+
+        File f = new File(basePath);
+        try {
+            f = f.getCanonicalFile();
+            if (wildCards != null) {
+                f = new File(f, wildCards);
+            }
+        } catch (IOException ex) {
+            LOGGER.warn("Invalid path '{}' was provided.", path);
+            LOGGER.debug("Invalid path provided", ex);
+        }
+        return f.getAbsolutePath().replace('\\', '/');
+    }
+
+    /**
+     * Returns the position of the last file separator.
+     *
+     * @param file a file path
+     * @return the position of the last file separator
+     */
+    private int getLastFileSeparator(String file) {
+        if (file.contains("*") || file.contains("?")) {
+            int p1 = file.indexOf('*');
+            int p2 = file.indexOf('?');
+            p1 = p1 > 0 ? p1 : file.length();
+            p2 = p2 > 0 ? p2 : file.length();
+            int pos = p1 < p2 ? p1 : p2;
+            pos = file.lastIndexOf('/', pos);
+            return pos;
+        } else {
+            return file.lastIndexOf('/');
+        }
     }
 }
