@@ -138,12 +138,12 @@ public class App {
 //            }
             for (String file : files) {
                 File f = new File(file);
-                if (f.exists() && f.isFile()) {
-                    engine.scan(f);
-                } else {
-                    String antPath = ensureCanonicalPath(file);
-                    antStylePaths.add(antPath);
-                }
+//                if (f.exists() && f.isFile()) {
+//                    engine.scan(f);
+//                } else {
+                String antPath = ensureCanonicalPath(file);
+                antStylePaths.add(antPath);
+                //}
             }
 
             final Set<File> paths = new HashSet<File>();
@@ -159,7 +159,8 @@ public class App {
                     final int pos = getLastFileSeparator(include);
                     final String tmpBase = include.substring(0, pos);
                     final String tmpInclude = include.substring(pos + 1);
-                    if (tmpInclude.indexOf('*') >= 0 || tmpInclude.indexOf('?') >= 0) {
+                    if (tmpInclude.indexOf('*') >= 0 || tmpInclude.indexOf('?') >= 0
+                            || (new File(include)).isFile()) {
                         baseDir = new File(tmpBase);
                         include = tmpInclude;
                     } else {
@@ -172,6 +173,9 @@ public class App {
                 scanner.setBasedir(baseDir);
                 scanner.setIncludes(include);
                 scanner.setMaxLevelsOfSymlinks(symLinkDepth);
+                if (symLinkDepth <= 0) {
+                    scanner.setFollowSymlinks(false);
+                }
                 if (excludes != null && excludes.length > 0) {
                     scanner.addExcludes(excludes);
                 }
