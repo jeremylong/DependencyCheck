@@ -71,8 +71,12 @@ Development Usage
 The following instructions outline how to compile and use the current snapshot. While every intention is to maintain a stable snapshot it is recommended
 that the release versions listed above be used.
 
-Note, currently the install goal may take a long time to execute the integration tests. However, if this takes more then 30 minutes it is likely that the
-download of data from the NVD is having an issue. This issue is still being researched and a solution should be published soon.
+The repository has some large files due to test resources. The team has tried to cleanup the history as much as possible.
+However, it is recommended that you perform a shallow clone to save yourself time:
+
+```bash
+git clone --depth 1 git@github.com:jeremylong/DependencyCheck.git
+```
 
 On *nix
 ```
@@ -101,7 +105,7 @@ Archive: [google group](https://groups.google.com/forum/#!forum/dependency-check
 Copyright & License
 -
 
-Dependency-Check is Copyright (c) 2012-2014 Jeremy Long. All Rights Reserved.
+Dependency-Check is Copyright (c) 2012-2015 Jeremy Long. All Rights Reserved.
 
 Permission to modify and redistribute is granted under the terms of the Apache 2.0 license. See the [LICENSE.txt](https://github.com/jeremylong/DependencyCheck/dependency-check-cli/blob/master/LICENSE.txt) file for the full license.
 
