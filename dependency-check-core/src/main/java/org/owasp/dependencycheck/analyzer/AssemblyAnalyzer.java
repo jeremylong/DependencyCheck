@@ -302,6 +302,9 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
+    /**
+     * The File Filter used to filter supported extensions.
+     */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(
             SUPPORTED_EXTENSIONS).build();
 

@@ -49,6 +49,9 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(FalsePositiveAnalyzer.class);
 
+    /**
+     * The file filter used to find DLL and EXE.
+     */
     private static final FileFilter DLL_EXE_FILTER = FileFilterBuilder.newInstance().addExtensions("dll", "exe").build();
 
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">

@@ -17,6 +17,12 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.input.AutoCloseInputStream;
@@ -32,7 +38,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
-import java.io.*;
 
 /**
  * Used to analyze a Wheel or egg distribution files, or their contents in unzipped form, and collect information that can be used
@@ -147,6 +152,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @return the phase that the analyzer is intended to run in.
      */
+    @Override
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }

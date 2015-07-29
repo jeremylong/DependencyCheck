@@ -17,7 +17,15 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -134,10 +142,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * item in some manifest, should be considered medium confidence.
      */
     private static final String BUNDLE_NAME = "Bundle-Name"; //: Struts 2 Core
-    /**
-     * item in some manifest, should be considered medium confidence.
-     */
-    private static final String BUNDLE_VENDOR = "Bundle-Vendor"; //: Apache Software Foundation
     /**
      * A pattern to detect HTML within text.
      */

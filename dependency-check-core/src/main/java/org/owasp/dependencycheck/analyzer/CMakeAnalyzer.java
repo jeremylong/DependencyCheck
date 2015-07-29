@@ -38,13 +38,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * <p>Used to analyze CMake build files, and collect information that can be used to
- * determine the associated CPE.</p>
+ * <p>
+ * Used to analyze CMake build files, and collect information that can be used to determine the associated CPE.</p>
  * <p/>
- * <p>Note: This analyzer catches straightforward invocations of the project command, plus some other observed
- * patterns of version inclusion in real CMake projects. Many projects make use of older versions of CMake and/or
- * use custom "homebrew" ways to insert version information. Hopefully as the newer CMake call pattern grows in usage,
- * this analyzer allow more CPEs to be identified.</p>
+ * <p>
+ * Note: This analyzer catches straightforward invocations of the project command, plus some other observed patterns of version
+ * inclusion in real CMake projects. Many projects make use of older versions of CMake and/or use custom "homebrew" ways to insert
+ * version information. Hopefully as the newer CMake call pattern grows in usage, this analyzer allow more CPEs to be
+ * identified.</p>
  *
  * @author Dale Visser <dvisser@ida.org>
  */
@@ -77,6 +78,9 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(".cmake")
             .addFilenames("CMakeLists.txt").build();
 
+    /**
+     * A reference to SHA1 message digest.
+     */
     private static MessageDigest sha1 = null;
 
     static {
@@ -91,7 +95,8 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * Returns the name of the CMake analyzer.
      *
      * @return the name of the analyzer
-     **/
+     *
+     */
     @Override
     public String getName() {
         return "CMake Analyzer";
@@ -131,9 +136,8 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * Analyzes python packages and adds evidence to the dependency.
      *
      * @param dependency the dependency being analyzed
-     * @param engine     the engine being used to perform the scan
-     * @throws AnalysisException thrown if there is an unrecoverable error analyzing the
-     *                           dependency
+     * @param engine the engine being used to perform the scan
+     * @throws AnalysisException thrown if there is an unrecoverable error analyzing the dependency
      */
     @Override
     protected void analyzeFileType(Dependency dependency, Engine engine)
@@ -151,7 +155,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         if (StringUtils.isNotBlank(contents)) {
-            Matcher m = PROJECT.matcher(contents);
+            final Matcher m = PROJECT.matcher(contents);
             int count = 0;
             while (m.find()) {
                 count++;
@@ -170,7 +174,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
 
     private void analyzeSetVersionCommand(Dependency dependency, Engine engine, String contents) {
         final Dependency orig = dependency;
-        Matcher m = SET_VERSION.matcher(contents);
+        final Matcher m = SET_VERSION.matcher(contents);
         int count = 0;
         while (m.find()) {
             count++;
@@ -181,11 +185,12 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
             final String version = m.group(2);
             LOGGER.debug("Group 1: " + product);
             LOGGER.debug("Group 2: " + version);
-            final String alias_prefix = "ALIASOF_";
-            if (product.startsWith(alias_prefix)) {
-                product = product.replaceFirst(alias_prefix, "");
+            final String aliasPrefix = "ALIASOF_";
+            if (product.startsWith(aliasPrefix)) {
+                product = product.replaceFirst(aliasPrefix, "");
             }
             if (count > 1) {
+                //TODO - refactor so we do not assign to the parameter (checkstyle)
                 dependency = new Dependency(orig.getActualFile());
                 dependency.setDisplayFileName(String.format("%s:%s", orig.getDisplayFileName(), product));
                 final String filePath = String.format("%s:%s", orig.getFilePath(), product);

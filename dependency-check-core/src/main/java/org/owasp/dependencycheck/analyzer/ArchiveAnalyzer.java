@@ -108,8 +108,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Detects files with extensions to remove from the engine's collection of dependencies.
      */
-    private static final FileFilter REMOVE_FROM_ANALYSIS =
-            FileFilterBuilder.newInstance().addExtensions("zip", "tar", "gz", "tgz").build(); //TODO add nupkg, apk, sar?
+    private static final FileFilter REMOVE_FROM_ANALYSIS
+            = FileFilterBuilder.newInstance().addExtensions("zip", "tar", "gz", "tgz").build(); //TODO add nupkg, apk, sar?
 
     static {
         final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
@@ -120,6 +120,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         EXTENSIONS.addAll(ZIPPABLES);
     }
 
+    /**
+     * The file filter used to filter supported files.
+     */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
 
     @Override
@@ -326,7 +329,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 extractArchive(new TarArchiveInputStream(new BufferedInputStream(fis)), destination, engine);
             } else if ("gz".equals(archiveExt) || "tgz".equals(archiveExt)) {
                 final String uncompressedName = GzipUtils.getUncompressedFilename(archive.getName());
-                File f = new File(destination, uncompressedName);
+                final File f = new File(destination, uncompressedName);
                 if (engine.accept(f)) {
                     decompressFile(new GzipCompressorInputStream(new BufferedInputStream(fis)), f);
                 }

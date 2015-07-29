@@ -48,7 +48,7 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
     /**
      * Ant tasks have the log method we actually want to call. So we hang onto the task as a delegate
      */
-    private Task task;
+    private Task task = null;
 
     /**
      * Set the Task which will this is to log through.
@@ -67,22 +67,37 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
     // to avoid constant folding by the compiler, this field must *not* be final
     public static String REQUESTED_API_VERSION = "1.7.12"; // final
 
-    private static final String loggerFactoryClassStr = AntLoggerFactory.class.getName();
+    private static final String LOGGER_FACTORY_CLASS = AntLoggerFactory.class.getName();
 
     /**
      * The ILoggerFactory instance returned by the {@link #getLoggerFactory} method should always be the smae object
      */
     private ILoggerFactory loggerFactory;
 
+    /**
+     * Constructs a new static logger binder.
+     */
     private StaticLoggerBinder() {
         loggerFactory = new AntLoggerFactory(task);
     }
 
+    /**
+     * Returns the logger factory.
+     *
+     * @return the logger factory
+     */
+    @Override
     public ILoggerFactory getLoggerFactory() {
         return loggerFactory;
     }
 
+    /**
+     * Returns the logger factory class string.
+     *
+     * @return the logger factory class string
+     */
+    @Override
     public String getLoggerFactoryClassStr() {
-        return loggerFactoryClassStr;
+        return LOGGER_FACTORY_CLASS;
     }
 }

@@ -17,10 +17,14 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import java.io.BufferedOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -223,7 +227,7 @@ public final class Downloader {
             }
             timestamp = lastModifiedFile.lastModified();
         } else {
-            String httpMethod = determineHttpMethod();
+            final String httpMethod = determineHttpMethod();
             HttpURLConnection conn = null;
             try {
                 conn = URLConnectionFactory.createHttpURLConnection(url);
@@ -278,10 +282,20 @@ public final class Downloader {
         }
     }
 
+    /**
+     * Returns the HEAD or GET HTTP method. HEAD is the default.
+     *
+     * @return the HTTP method to use
+     */
     private static String determineHttpMethod() {
         return isQuickQuery() ? HEAD : GET;
     }
 
+    /**
+     * Determines if the HTTP method GET or HEAD should be used to check the timestamp on external resources.
+     *
+     * @return true if configured to use HEAD requests
+     */
     private static boolean isQuickQuery() {
         boolean quickQuery;
 

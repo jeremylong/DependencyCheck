@@ -31,7 +31,6 @@ import java.util.TreeSet;
 import org.apache.commons.lang.ObjectUtils;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.utils.Checksum;
-import org.owasp.dependencycheck.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +67,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * The file name of the dependency.
      */
     private String fileName;
-   /**
+    /**
      * The md5 hash of the dependency.
      */
     private String md5sum;

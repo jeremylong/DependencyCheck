@@ -32,7 +32,6 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
 
     /**
      * The unique instance of this class
-     *
      */
     private static final StaticLoggerBinder SINGLETON = new StaticLoggerBinder();
 
@@ -67,13 +66,19 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
     // to avoid constant folding by the compiler, this field must *not* be final
     public static String REQUESTED_API_VERSION = "1.7.12"; // final
 
-    private static final String loggerFactoryClassStr = MavenLoggerFactory.class.getName();
+    /**
+     * The logger factory class string.
+     */
+    private static final String LOGGER_FACTORY_CLASS = MavenLoggerFactory.class.getName();
 
     /**
      * The ILoggerFactory instance returned by the {@link #getLoggerFactory} method should always be the same object
      */
     private ILoggerFactory loggerFactory;
 
+    /**
+     * Constructs the static logger factory.
+     */
     private StaticLoggerBinder() {
         loggerFactory = new MavenLoggerFactory(log);
     }
@@ -95,6 +100,6 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
      */
     @Override
     public String getLoggerFactoryClassStr() {
-        return loggerFactoryClassStr;
+        return LOGGER_FACTORY_CLASS;
     }
 }

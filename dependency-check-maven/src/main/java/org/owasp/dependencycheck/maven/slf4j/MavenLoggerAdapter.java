@@ -28,12 +28,15 @@ import org.slf4j.helpers.MessageFormatter;
  */
 public class MavenLoggerAdapter extends MarkerIgnoringBase {
 
-    private Log log;
+    /**
+     * A reference to the Maven log.
+     */
+    private final Log log;
 
     /**
      * Creates a new Maven Logger Adapter.
      *
-     * @param log the maven log
+     * @param log the Maven log
      */
     public MavenLoggerAdapter(Log log) {
         super();
@@ -41,8 +44,9 @@ public class MavenLoggerAdapter extends MarkerIgnoringBase {
     }
 
     /**
+     * Returns true if trace is enabled.
      *
-     * @return
+     * @return whether or not trace is enabled
      */
     @Override
     public boolean isTraceEnabled() {
@@ -63,7 +67,7 @@ public class MavenLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void trace(String format, Object arg) {
-        String message = MessageFormatter.format(format, arg).getMessage();
+        final String message = MessageFormatter.format(format, arg).getMessage();
         if (log != null) {
             log.debug(message);
         } else {
@@ -73,7 +77,7 @@ public class MavenLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void trace(String format, Object arg1, Object arg2) {
-        String message = MessageFormatter.format(format, arg1, arg2).getMessage();
+        final String message = MessageFormatter.format(format, arg1, arg2).getMessage();
         if (log != null) {
             log.debug(message);
         } else {
@@ -83,7 +87,7 @@ public class MavenLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void trace(String format, Object... arguments) {
-        String message = MessageFormatter.format(format, arguments).getMessage();
+        final String message = MessageFormatter.format(format, arguments).getMessage();
         if (log != null) {
             log.debug(message);
         } else {
@@ -120,7 +124,7 @@ public class MavenLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void debug(String format, Object arg) {
-        String message = MessageFormatter.format(format, arg).getMessage();
+        final String message = MessageFormatter.format(format, arg).getMessage();
         if (log != null) {
             log.debug(message);
         } else {
@@ -130,7 +134,7 @@ public class MavenLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void debug(String format, Object arg1, Object arg2) {
-        String message = MessageFormatter.format(format, arg1, arg2).getMessage();
+        final String message = MessageFormatter.format(format, arg1, arg2).getMessage();
         if (log != null) {
             log.debug(message);
         } else {
@@ -140,7 +144,7 @@ public class MavenLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void debug(String format, Object... arguments) {
-        String message = MessageFormatter.format(format, arguments).getMessage();
+        final String message = MessageFormatter.format(format, arguments).getMessage();
         if (log != null) {
             log.debug(message);
         } else {
@@ -177,7 +181,7 @@ public class MavenLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void info(String format, Object arg) {
-        String message = MessageFormatter.format(format, arg).getMessage();
+        final String message = MessageFormatter.format(format, arg).getMessage();
         if (log != null) {
             log.info(message);
         } else {
@@ -187,7 +191,7 @@ public class MavenLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void info(String format, Object arg1, Object arg2) {
-        String message = MessageFormatter.format(format, arg1, arg2).getMessage();
+        final String message = MessageFormatter.format(format, arg1, arg2).getMessage();
         if (log != null) {
             log.info(message);
         } else {
@@ -197,7 +201,7 @@ public class MavenLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void info(String format, Object... arguments) {
-        String message = MessageFormatter.format(format, arguments).getMessage();
+        final String message = MessageFormatter.format(format, arguments).getMessage();
         if (log != null) {
             log.info(message);
         } else {
@@ -234,7 +238,7 @@ public class MavenLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void warn(String format, Object arg) {
-        String message = MessageFormatter.format(format, arg).getMessage();
+        final String message = MessageFormatter.format(format, arg).getMessage();
         if (log != null) {
             log.warn(message);
         } else {
@@ -244,7 +248,7 @@ public class MavenLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void warn(String format, Object arg1, Object arg2) {
-        String message = MessageFormatter.format(format, arg1, arg2).getMessage();
+        final String message = MessageFormatter.format(format, arg1, arg2).getMessage();
         if (log != null) {
             log.warn(message);
         } else {
@@ -254,7 +258,7 @@ public class MavenLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void warn(String format, Object... arguments) {
-        String message = MessageFormatter.format(format, arguments).getMessage();
+        final String message = MessageFormatter.format(format, arguments).getMessage();
         if (log != null) {
             log.warn(message);
         } else {
@@ -291,7 +295,7 @@ public class MavenLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void error(String format, Object arg) {
-        String message = MessageFormatter.format(format, arg).getMessage();
+        final String message = MessageFormatter.format(format, arg).getMessage();
         if (log != null) {
             log.error(message);
         } else {
@@ -301,7 +305,7 @@ public class MavenLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void error(String format, Object arg1, Object arg2) {
-        String message = MessageFormatter.format(format, arg1, arg2).getMessage();
+        final String message = MessageFormatter.format(format, arg1, arg2).getMessage();
         if (log != null) {
             log.error(message);
         } else {
@@ -311,7 +315,7 @@ public class MavenLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void error(String format, Object... arguments) {
-        String message = MessageFormatter.format(format, arguments).getMessage();
+        final String message = MessageFormatter.format(format, arguments).getMessage();
         if (log != null) {
             log.error(message);
         } else {

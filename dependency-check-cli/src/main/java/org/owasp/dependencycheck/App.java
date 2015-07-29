@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,7 +37,6 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ch.qos.logback.core.FileAppender;
-import java.util.logging.Level;
 import org.slf4j.impl.StaticLoggerBinder;
 
 /**
@@ -127,23 +125,10 @@ public class App {
         Engine engine = null;
         try {
             engine = new Engine();
-            List<String> antStylePaths = new ArrayList<String>();
-            //TODO remove and treating everything as an ant style path to ensure sym links are handled correctly.
-//            for (String file : files) {
-//                if (file.contains("*") || file.contains("?")) {
-//                    antStylePaths.add(file);
-//                } else {
-//                    engine.scan(file);
-//                }
-//            }
+            final List<String> antStylePaths = new ArrayList<String>();
             for (String file : files) {
-                File f = new File(file);
-//                if (f.exists() && f.isFile()) {
-//                    engine.scan(f);
-//                } else {
-                String antPath = ensureCanonicalPath(file);
+                final String antPath = ensureCanonicalPath(file);
                 antStylePaths.add(antPath);
-                //}
             }
 
             final Set<File> paths = new HashSet<File>();
@@ -406,10 +391,18 @@ public class App {
         rootLogger.addAppender(fa);
     }
 
+    /**
+     * Takes a path and resolves it to be a canonical & absolute path. The caveats are that this method will take an Ant style
+     * file selector path (../someDir/**\/*.jar) and convert it to an absolute/canonical path (at least to the left of the first *
+     * or ?).
+     *
+     * @param path the path to canonicalize
+     * @return the canonical path
+     */
     protected String ensureCanonicalPath(String path) {
         String basePath = null;
         String wildCards = null;
-        String file = path.replace('\\', '/');
+        final String file = path.replace('\\', '/');
         if (file.contains("*") || file.contains("?")) {
 
             int pos = getLastFileSeparator(file);

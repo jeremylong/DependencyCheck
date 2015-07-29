@@ -281,7 +281,7 @@ public final class Settings {
         public static final String VFEED_UPDATE_STATUS = "vfeed.update_status";
 
         /**
-         * The HTTP request method for query last modified date
+         * The HTTP request method for query last modified date.
          */
         public static final String DOWNLOADER_QUICK_QUERY_TIMESTAMP = "downloader.quick.query.timestamp";
     }
@@ -757,8 +757,7 @@ public final class Settings {
             throws IOException, InvalidSettingException {
         final String connStr = Settings.getString(connectionStringKey);
         if (connStr == null) {
-            final String msg = String.format("Invalid properties file; data.connection_string is missing.",
-                    connectionStringKey);
+            final String msg = String.format("Invalid properties file; %s is missing.", connectionStringKey);
             throw new InvalidSettingException(msg);
         }
         if (connStr.contains("%s")) {

@@ -28,13 +28,28 @@ import org.slf4j.Logger;
  */
 public class MavenLoggerFactory implements ILoggerFactory {
 
-    private MavenLoggerAdapter mavenLoggerAdapter;
+    /**
+     * A reference to the Maven log adapter.
+     */
+    private final MavenLoggerAdapter mavenLoggerAdapter;
 
+    /**
+     * Constructs a new logger factory.
+     *
+     * @param log a reference to the Maven log
+     */
     public MavenLoggerFactory(Log log) {
         super();
         this.mavenLoggerAdapter = new MavenLoggerAdapter(log);
     }
 
+    /**
+     * Returns the Maven Logger Adapter.
+     *
+     * @param name ignored in this implementation
+     * @return the maven logger adapter
+     */
+    @Override
     public Logger getLogger(String name) {
         return mavenLoggerAdapter;
     }

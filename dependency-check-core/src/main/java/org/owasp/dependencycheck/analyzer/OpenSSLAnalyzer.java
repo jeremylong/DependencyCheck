@@ -50,7 +50,7 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
     private static final FileFilter OPENSSLV_FILTER = FileFilterBuilder.newInstance().addFilenames(OPENSSLV_H).build();
     private static final Pattern VERSION_PATTERN = Pattern.compile(
             "define\\s+OPENSSL_VERSION_NUMBER\\s+0x([0-9a-zA-Z]{8})L", Pattern.DOTALL
-                    | Pattern.CASE_INSENSITIVE);
+            | Pattern.CASE_INSENSITIVE);
     private static final int MAJOR_OFFSET = 28;
     private static final long MINOR_MASK = 0x0ff00000L;
     private static final int MINOR_OFFSET = 20;
@@ -61,16 +61,20 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
     private static final int NUM_LETTERS = 26;
     private static final int STATUS_MASK = 0x0000000f;
 
+    /**
+     * Returns the open SSL version as a string.
+     *
+     * @param openSSLVersionConstant The open SSL version
+     * @return the version of openssl
+     */
     static String getOpenSSLVersion(long openSSLVersionConstant) {
-        long major = openSSLVersionConstant >>> MAJOR_OFFSET;
-        long minor = (openSSLVersionConstant & MINOR_MASK) >>> MINOR_OFFSET;
-        long fix = (openSSLVersionConstant & FIX_MASK) >>> FIX_OFFSET;
-        long patchLevel = (openSSLVersionConstant & PATCH_MASK) >>> PATCH_OFFSET;
-        String patch = 0 == patchLevel || patchLevel > NUM_LETTERS ? "" :
-                String.valueOf((char) (patchLevel + 'a' - 1));
-        int statusCode = (int) (openSSLVersionConstant & STATUS_MASK);
-        String status = 0xf == statusCode ? "" :
-                (0 == statusCode ? "-dev" : "-beta" + statusCode);
+        final long major = openSSLVersionConstant >>> MAJOR_OFFSET;
+        final long minor = (openSSLVersionConstant & MINOR_MASK) >>> MINOR_OFFSET;
+        final long fix = (openSSLVersionConstant & FIX_MASK) >>> FIX_OFFSET;
+        final long patchLevel = (openSSLVersionConstant & PATCH_MASK) >>> PATCH_OFFSET;
+        String patch = 0 == patchLevel || patchLevel > NUM_LETTERS ? "" : String.valueOf((char) (patchLevel + 'a' - 1));
+        final int statusCode = (int) (openSSLVersionConstant & STATUS_MASK);
+        final String status = 0xf == statusCode ? "" : (0 == statusCode ? "-dev" : "-beta" + statusCode);
         return String.format("%d.%d.%d%s%s", major, minor, fix, patch, status);
     }
 
@@ -118,7 +122,7 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
      * Analyzes python packages and adds evidence to the dependency.
      *
      * @param dependency the dependency being analyzed
-     * @param engine     the engine being used to perform the scan
+     * @param engine the engine being used to perform the scan
      * @throws AnalysisException thrown if there is an unrecoverable error analyzing the dependency
      */
     @Override
@@ -163,7 +167,6 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
         }
         return contents;
     }
-
 
     @Override
     protected String getAnalyzerEnabledSettingKey() {

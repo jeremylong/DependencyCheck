@@ -30,13 +30,26 @@ import org.slf4j.helpers.MessageFormatter;
  */
 public class AntLoggerAdapter extends MarkerIgnoringBase {
 
+    /**
+     * A reference to the Ant task used for logging.
+     */
     private Task task;
 
+    /**
+     * Constructs an Ant Logger Adapter.
+     *
+     * @param task the Ant Task to use for logging
+     */
     public AntLoggerAdapter(Task task) {
         super();
         this.task = task;
     }
 
+    /**
+     * Sets the current Ant task to use for logging.
+     *
+     * @param task the Ant task to use for logging
+     */
     public void setTask(Task task) {
         this.task = task;
     }
@@ -56,7 +69,7 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
     @Override
     public void trace(String format, Object arg) {
         if (task != null) {
-            FormattingTuple tp = MessageFormatter.format(format, arg);
+            final FormattingTuple tp = MessageFormatter.format(format, arg);
             task.log(tp.getMessage(), Project.MSG_VERBOSE);
         }
     }
@@ -64,7 +77,7 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
     @Override
     public void trace(String format, Object arg1, Object arg2) {
         if (task != null) {
-            FormattingTuple tp = MessageFormatter.format(format, arg1, arg2);
+            final FormattingTuple tp = MessageFormatter.format(format, arg1, arg2);
             task.log(tp.getMessage(), Project.MSG_VERBOSE);
         }
     }
@@ -72,7 +85,7 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
     @Override
     public void trace(String format, Object... arguments) {
         if (task != null) {
-            FormattingTuple tp = MessageFormatter.format(format, arguments);
+            final FormattingTuple tp = MessageFormatter.format(format, arguments);
             task.log(tp.getMessage(), Project.MSG_VERBOSE);
         }
     }
@@ -99,7 +112,7 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
     @Override
     public void debug(String format, Object arg) {
         if (task != null) {
-            FormattingTuple tp = MessageFormatter.format(format, arg);
+            final FormattingTuple tp = MessageFormatter.format(format, arg);
             task.log(tp.getMessage(), Project.MSG_DEBUG);
         }
     }
@@ -107,7 +120,7 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
     @Override
     public void debug(String format, Object arg1, Object arg2) {
         if (task != null) {
-            FormattingTuple tp = MessageFormatter.format(format, arg1, arg2);
+            final FormattingTuple tp = MessageFormatter.format(format, arg1, arg2);
             task.log(tp.getMessage(), Project.MSG_DEBUG);
         }
     }
@@ -115,7 +128,7 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
     @Override
     public void debug(String format, Object... arguments) {
         if (task != null) {
-            FormattingTuple tp = MessageFormatter.format(format, arguments);
+            final FormattingTuple tp = MessageFormatter.format(format, arguments);
             task.log(tp.getMessage(), Project.MSG_DEBUG);
         }
     }
@@ -142,7 +155,7 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
     @Override
     public void info(String format, Object arg) {
         if (task != null) {
-            FormattingTuple tp = MessageFormatter.format(format, arg);
+            final FormattingTuple tp = MessageFormatter.format(format, arg);
             task.log(tp.getMessage(), Project.MSG_INFO);
         }
     }
@@ -150,7 +163,7 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
     @Override
     public void info(String format, Object arg1, Object arg2) {
         if (task != null) {
-            FormattingTuple tp = MessageFormatter.format(format, arg1, arg2);
+            final FormattingTuple tp = MessageFormatter.format(format, arg1, arg2);
             task.log(tp.getMessage(), Project.MSG_INFO);
         }
     }
@@ -158,7 +171,7 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
     @Override
     public void info(String format, Object... arguments) {
         if (task != null) {
-            FormattingTuple tp = MessageFormatter.format(format, arguments);
+            final FormattingTuple tp = MessageFormatter.format(format, arguments);
             task.log(tp.getMessage(), Project.MSG_INFO);
         }
     }
@@ -185,7 +198,7 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
     @Override
     public void warn(String format, Object arg) {
         if (task != null) {
-            FormattingTuple tp = MessageFormatter.format(format, arg);
+            final FormattingTuple tp = MessageFormatter.format(format, arg);
             task.log(tp.getMessage(), Project.MSG_WARN);
         }
     }
@@ -193,7 +206,7 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
     @Override
     public void warn(String format, Object... arguments) {
         if (task != null) {
-            FormattingTuple tp = MessageFormatter.format(format, arguments);
+            final FormattingTuple tp = MessageFormatter.format(format, arguments);
             task.log(tp.getMessage(), Project.MSG_WARN);
         }
     }
@@ -201,7 +214,7 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
     @Override
     public void warn(String format, Object arg1, Object arg2) {
         if (task != null) {
-            FormattingTuple tp = MessageFormatter.format(format, arg1, arg2);
+            final FormattingTuple tp = MessageFormatter.format(format, arg1, arg2);
             task.log(tp.getMessage(), Project.MSG_WARN);
         }
     }
@@ -228,7 +241,7 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
     @Override
     public void error(String format, Object arg) {
         if (task != null) {
-            FormattingTuple tp = MessageFormatter.format(format, arg);
+            final FormattingTuple tp = MessageFormatter.format(format, arg);
             task.log(tp.getMessage(), Project.MSG_ERR);
         }
     }
@@ -236,7 +249,7 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
     @Override
     public void error(String format, Object arg1, Object arg2) {
         if (task != null) {
-            FormattingTuple tp = MessageFormatter.format(format, arg1, arg2);
+            final FormattingTuple tp = MessageFormatter.format(format, arg1, arg2);
             task.log(tp.getMessage(), Project.MSG_ERR);
         }
     }
@@ -244,7 +257,7 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
     @Override
     public void error(String format, Object... arguments) {
         if (task != null) {
-            FormattingTuple tp = MessageFormatter.format(format, arguments);
+            final FormattingTuple tp = MessageFormatter.format(format, arguments);
             task.log(tp.getMessage(), Project.MSG_ERR);
         }
     }
