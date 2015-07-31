@@ -55,7 +55,7 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
         version = version.substring(0, length);
 
         double v = Double.parseDouble(version);
-        return v < 1.8;
+        return v == 1.7;
     }
 
     /**
