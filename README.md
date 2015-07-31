@@ -13,8 +13,10 @@ For instructions on the use of the Jenkins plugin please see the [Jenkins depend
 
 ### Command Line
 
-More detailed instructions can be found on the [dependency-check github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-cli/installation.html).
-The latest CLI can be downloaded from bintray's [dependency-check page](https://bintray.com/jeremy-long/owasp/dependency-check).
+More detailed instructions can be found on the
+[dependency-check github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-cli/).
+The latest CLI can be downloaded from bintray's
+[dependency-check page](https://bintray.com/jeremy-long/owasp/dependency-check).
 
 On *nix
 ```
