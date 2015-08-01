@@ -72,7 +72,7 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
         final long minor = (openSSLVersionConstant & MINOR_MASK) >>> MINOR_OFFSET;
         final long fix = (openSSLVersionConstant & FIX_MASK) >>> FIX_OFFSET;
         final long patchLevel = (openSSLVersionConstant & PATCH_MASK) >>> PATCH_OFFSET;
-        String patch = 0 == patchLevel || patchLevel > NUM_LETTERS ? "" : String.valueOf((char) (patchLevel + 'a' - 1));
+        final String patch = 0 == patchLevel || patchLevel > NUM_LETTERS ? "" : String.valueOf((char) (patchLevel + 'a' - 1));
         final int statusCode = (int) (openSSLVersionConstant & STATUS_MASK);
         final String status = 0xf == statusCode ? "" : (0 == statusCode ? "-dev" : "-beta" + statusCode);
         return String.format("%d.%d.%d%s%s", major, minor, fix, patch, status);

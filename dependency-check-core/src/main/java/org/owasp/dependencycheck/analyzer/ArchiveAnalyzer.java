@@ -108,8 +108,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Detects files with extensions to remove from the engine's collection of dependencies.
      */
-    private static final FileFilter REMOVE_FROM_ANALYSIS
-            = FileFilterBuilder.newInstance().addExtensions("zip", "tar", "gz", "tgz").build(); //TODO add nupkg, apk, sar?
+    private static final FileFilter REMOVE_FROM_ANALYSIS = FileFilterBuilder.newInstance().addExtensions("zip", "tar", "gz", "tgz").build();
 
     static {
         final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);

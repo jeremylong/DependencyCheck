@@ -144,7 +144,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             }
             if (rc == 3) {
                 LOGGER.debug("{} is not a .NET assembly or executable and as such cannot be analyzed by dependency-check",
-                    dependency.getActualFilePath());
+                        dependency.getActualFilePath());
                 return;
             } else if (rc != 0) {
                 LOGGER.warn("Return code {} from GrokAssembly", rc);
@@ -264,8 +264,8 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             if (e instanceof AnalysisException) {
                 throw (AnalysisException) e;
             } else {
-                LOGGER.warn("An error occurred with the .NET AssemblyAnalyzer;\n" +
-                    "this can be ignored unless you are scanning .NET DLLs. Please see the log for more details.");
+                LOGGER.warn("An error occurred with the .NET AssemblyAnalyzer;\n"
+                        + "this can be ignored unless you are scanning .NET DLLs. Please see the log for more details.");
                 LOGGER.debug("Could not execute GrokAssembly {}", e.getMessage());
                 this.setEnabled(false);
                 throw new AnalysisException("An error occured with the .NET AssemblyAnalyzer", e);
