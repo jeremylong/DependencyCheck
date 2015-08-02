@@ -12,25 +12,26 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <outputDirectory>/</outputDirectory>
+            <outputDirectory>dependency-check</outputDirectory>
             <directory>${project.build.directory}/release</directory>
         </fileSet>
         <fileSet>
+            <outputDirectory>dependency-check</outputDirectory>
             <includes>
                 <include>LICENSE*</include>
                 <include>NOTICE*</include>
             </includes>
         </fileSet>
         <fileSet>
-            <outputDirectory>licenses</outputDirectory>
+            <outputDirectory>dependency-check/licenses</outputDirectory>
             <directory>${basedir}/src/main/resources/META-INF/licenses</directory>
         </fileSet>
         <fileSet>
-            <outputDirectory>licenses</outputDirectory>
+            <outputDirectory>dependency-check/licenses</outputDirectory>
             <directory>${basedir}/../dependency-check-core/src/main/resources/META-INF/licenses</directory>
         </fileSet>
         <fileSet>
-            <outputDirectory>/</outputDirectory>
+            <outputDirectory>dependency-check</outputDirectory>
             <directory>${basedir}</directory>
             <includes>
                 <include>README.md</include>
