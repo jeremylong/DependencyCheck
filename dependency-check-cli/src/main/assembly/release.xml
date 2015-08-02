@@ -14,6 +14,17 @@
         <fileSet>
             <outputDirectory>dependency-check</outputDirectory>
             <directory>${project.build.directory}/release</directory>
+            <includes>
+                <include>*.sh</include>
+            </includes>
+            <fileMode>0755</fileMode>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>dependency-check</outputDirectory>
+            <directory>${project.build.directory}/release</directory>
+            <excludes>
+                <exclude>*.sh</exclude>
+            </excludes>
         </fileSet>
         <fileSet>
             <outputDirectory>dependency-check</outputDirectory>
