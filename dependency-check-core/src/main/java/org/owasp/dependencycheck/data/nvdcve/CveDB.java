@@ -490,12 +490,15 @@ public class CveDB {
             deleteReferences = getConnection().prepareStatement(statementBundle.getString("DELETE_REFERENCE"));
             deleteSoftware = getConnection().prepareStatement(statementBundle.getString("DELETE_SOFTWARE"));
             updateVulnerability = getConnection().prepareStatement(statementBundle.getString("UPDATE_VULNERABILITY"));
+            String ids[] = {"id"};
             insertVulnerability = getConnection().prepareStatement(statementBundle.getString("INSERT_VULNERABILITY"),
-                    Statement.RETURN_GENERATED_KEYS);
+                    //Statement.RETURN_GENERATED_KEYS);
+                    ids);
             insertReference = getConnection().prepareStatement(statementBundle.getString("INSERT_REFERENCE"));
             selectCpeId = getConnection().prepareStatement(statementBundle.getString("SELECT_CPE_ID"));
             insertCpe = getConnection().prepareStatement(statementBundle.getString("INSERT_CPE"),
-                    Statement.RETURN_GENERATED_KEYS);
+                    //Statement.RETURN_GENERATED_KEYS);
+                    ids);
             insertSoftware = getConnection().prepareStatement(statementBundle.getString("INSERT_SOFTWARE"));
             int vulnerabilityId = 0;
             selectVulnerabilityId.setString(1, vuln.getName());
