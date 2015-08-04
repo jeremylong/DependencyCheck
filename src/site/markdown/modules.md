@@ -5,6 +5,7 @@ build and reporting process:
 
 -  [Maven Plugin](dependency-check-maven/index.html)
 -  [Ant Task](dependency-check-ant/index.html)
+-  [Gradle Plugin](dependency-check-gradle/index.html)
 -  [Jenkins Plugin](dependency-check-jenkins/index.html)
 
 In addition, dependency-check can be executed from the [command line](dependency-check-cli/index.html).
