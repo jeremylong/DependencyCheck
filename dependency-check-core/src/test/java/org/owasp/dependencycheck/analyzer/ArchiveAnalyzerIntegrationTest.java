@@ -51,6 +51,8 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
         expResult.add("tar");
         expResult.add("gz");
         expResult.add("tgz");
+        expResult.add("bz2");
+        expResult.add("tbz2");
         for (String ext : expResult) {
             assertTrue(ext, instance.accept(new File("test." + ext)));
         }
@@ -197,28 +199,31 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
         }
     }
 
-//    /**
-//     * Test of analyze method, of class ArchiveAnalyzer.
-//     */
-//    @Test
-//    public void testNestedZipFolder() throws Exception {
-//        ArchiveAnalyzer instance = new ArchiveAnalyzer();
-//        try {
-//            instance.initialize();
-//
-//            File file = new File(this.getClass().getClassLoader().getResource("nested.zip").getPath());
-//            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
-//            Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
-//            Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-//            Engine engine = new Engine();
-//
-//            engine.scan(file);
-//            engine.analyzeDependencies();
-//
-//        } finally {
-//            instance.close();
-//        }
-//    }
+    /**
+     * Test of analyze method, of class ArchiveAnalyzer.
+     */
+    @Test
+    public void testAnalyzeTarBz2() throws Exception {
+        ArchiveAnalyzer instance = new ArchiveAnalyzer();
+        instance.accept(new File("zip")); //ensure analyzer is "enabled"
+        try {
+            instance.initialize();
+            File file = BaseTest.getResourceAsFile(this, "file.tar.bz2");
+            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
+            Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
+            Engine engine = new Engine();
+            int initial_size = engine.getDependencies().size();
+            engine.scan(file);
+            engine.analyzeDependencies();
+            int ending_size = engine.getDependencies().size();
+            engine.cleanup();
+            assertTrue(initial_size < ending_size);
+        } finally {
+            instance.close();
+        }
+    }
+
     /**
      * Test of analyze method, of class ArchiveAnalyzer.
      */
@@ -243,6 +248,31 @@ public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
             engine.cleanup();
             assertTrue(initial_size < ending_size);
 
+        } finally {
+            instance.close();
+        }
+    }
+
+    /**
+     * Test of analyze method, of class ArchiveAnalyzer.
+     */
+    @Test
+    public void testAnalyzeTbz2() throws Exception {
+        ArchiveAnalyzer instance = new ArchiveAnalyzer();
+        instance.accept(new File("zip")); //ensure analyzer is "enabled"
+        try {
+            instance.initialize();
+            File file = BaseTest.getResourceAsFile(this, "file.tbz2");
+            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
+            Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
+            Engine engine = new Engine();
+            int initial_size = engine.getDependencies().size();
+            engine.scan(file);
+            engine.analyzeDependencies();
+            int ending_size = engine.getDependencies().size();
+            engine.cleanup();
+            assertTrue(initial_size < ending_size);
         } finally {
             instance.close();
         }

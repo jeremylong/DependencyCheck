@@ -24,6 +24,8 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2Utils;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import org.owasp.dependencycheck.Engine;
@@ -87,15 +89,16 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final Set<String> ZIPPABLES = newHashSet("zip", "ear", "war", "jar", "sar", "apk", "nupkg");
     /**
-     * The set of file extensions supported by this analyzer. Note for developers, any additions to this list will need to be
-     * explicitly handled in extractFiles().
+     * The set of file extensions supported by this analyzer. Note for developers, any additions to this list will need
+     * to be explicitly handled in {@link #extractFiles(File, File, Engine)}.
      */
-    private static final Set<String> EXTENSIONS = newHashSet("tar", "gz", "tgz");
+    private static final Set<String> EXTENSIONS = newHashSet("tar", "gz", "tgz", "bz2", "tbz2");
 
     /**
      * Detects files with extensions to remove from the engine's collection of dependencies.
      */
-    private static final FileFilter REMOVE_FROM_ANALYSIS = FileFilterBuilder.newInstance().addExtensions("zip", "tar", "gz", "tgz").build();
+    private static final FileFilter REMOVE_FROM_ANALYSIS =
+            FileFilterBuilder.newInstance().addExtensions("zip", "tar", "gz", "tgz", "bz2", "tbz2").build();
 
     static {
         final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
@@ -330,6 +333,12 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 final File f = new File(destination, uncompressedName);
                 if (engine.accept(f)) {
                     decompressFile(new GzipCompressorInputStream(new BufferedInputStream(fis)), f);
+                }
+            } else if ("bz2".equals(archiveExt) || "tbz2".equals(archiveExt)) {
+                final String uncompressedName = BZip2Utils.getUncompressedFilename(archive.getName());
+                final File f = new File(destination, uncompressedName);
+                if (engine.accept(f)) {
+                    decompressFile(new BZip2CompressorInputStream(new BufferedInputStream(fis)), f);
                 }
             }
         } catch (ArchiveExtractionException ex) {
