@@ -263,22 +263,28 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
 
     private static final Set<Dependency> EMPTY_DEPENDENCY_SET = Collections.emptySet();
 
-    private Set<Dependency> findMoreDependencies(Engine engine, File tmpDir) {
-        //make a copy
-        List<Dependency> dependencies = new ArrayList<Dependency>(engine.getDependencies());
-        engine.scan(tmpDir);
-        List<Dependency> newDependencies = engine.getDependencies();
-        final boolean sizeChanged = dependencies.size() != newDependencies.size();
-        final Set<Dependency> dependencySet;
+    /**
+     * Scan the given file/folder, and return any new dependencies found.
+     *
+     * @param engine used to scan
+     * @param file target of scanning
+     * @return any dependencies that weren't known to the engine before
+     */
+    private static Set<Dependency> findMoreDependencies(Engine engine, File file) {
+        List<Dependency> before = new ArrayList<Dependency>(engine.getDependencies());
+        engine.scan(file);
+        List<Dependency> after = engine.getDependencies();
+        final boolean sizeChanged = before.size() != after.size();
+        final Set<Dependency> newDependencies;
         if (sizeChanged) {
             //get the new dependencies
-            dependencySet = new HashSet<Dependency>();
-            dependencySet.addAll(newDependencies);
-            dependencySet.removeAll(dependencies);
+            newDependencies = new HashSet<Dependency>();
+            newDependencies.addAll(after);
+            newDependencies.removeAll(before);
         } else {
-            dependencySet = EMPTY_DEPENDENCY_SET;
+            newDependencies = EMPTY_DEPENDENCY_SET;
         }
-        return dependencySet;
+        return newDependencies;
     }
 
 
@@ -311,47 +317,41 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws AnalysisException thrown if the archive is not found
      */
     private void extractFiles(File archive, File destination, Engine engine) throws AnalysisException {
-        if (archive == null || destination == null) {
-            return;
-        }
-
-        FileInputStream fis;
-        try {
-            fis = new FileInputStream(archive);
-        } catch (FileNotFoundException ex) {
-            LOGGER.debug("", ex);
-            throw new AnalysisException("Archive file was not found.", ex);
-        }
-        final String archiveExt = FileUtils.getFileExtension(archive.getName()).toLowerCase();
-        try {
-            if (ZIPPABLES.contains(archiveExt)) {
-                extractArchive(new ZipArchiveInputStream(new BufferedInputStream(fis)), destination, engine);
-            } else if ("tar".equals(archiveExt)) {
-                extractArchive(new TarArchiveInputStream(new BufferedInputStream(fis)), destination, engine);
-            } else if ("gz".equals(archiveExt) || "tgz".equals(archiveExt)) {
-                final String uncompressedName = GzipUtils.getUncompressedFilename(archive.getName());
-                final File f = new File(destination, uncompressedName);
-                if (engine.accept(f)) {
-                    decompressFile(new GzipCompressorInputStream(new BufferedInputStream(fis)), f);
-                }
-            } else if ("bz2".equals(archiveExt) || "tbz2".equals(archiveExt)) {
-                final String uncompressedName = BZip2Utils.getUncompressedFilename(archive.getName());
-                final File f = new File(destination, uncompressedName);
-                if (engine.accept(f)) {
-                    decompressFile(new BZip2CompressorInputStream(new BufferedInputStream(fis)), f);
-                }
-            }
-        } catch (ArchiveExtractionException ex) {
-            LOGGER.warn("Exception extracting archive '{}'.", archive.getName());
-            LOGGER.debug("", ex);
-        } catch (IOException ex) {
-            LOGGER.warn("Exception reading archive '{}'.", archive.getName());
-            LOGGER.debug("", ex);
-        } finally {
+        if (archive != null && destination != null) {
+            FileInputStream fis;
             try {
-                fis.close();
-            } catch (IOException ex) {
+                fis = new FileInputStream(archive);
+            } catch (FileNotFoundException ex) {
                 LOGGER.debug("", ex);
+                throw new AnalysisException("Archive file was not found.", ex);
+            }
+            final String archiveExt = FileUtils.getFileExtension(archive.getName()).toLowerCase();
+            try {
+                if (ZIPPABLES.contains(archiveExt)) {
+                    extractArchive(new ZipArchiveInputStream(new BufferedInputStream(fis)), destination, engine);
+                } else if ("tar".equals(archiveExt)) {
+                    extractArchive(new TarArchiveInputStream(new BufferedInputStream(fis)), destination, engine);
+                } else if ("gz".equals(archiveExt) || "tgz".equals(archiveExt)) {
+                    final String uncompressedName = GzipUtils.getUncompressedFilename(archive.getName());
+                    final File f = new File(destination, uncompressedName);
+                    if (engine.accept(f)) {
+                        decompressFile(new GzipCompressorInputStream(new BufferedInputStream(fis)), f);
+                    }
+                } else if ("bz2".equals(archiveExt) || "tbz2".equals(archiveExt)) {
+                    final String uncompressedName = BZip2Utils.getUncompressedFilename(archive.getName());
+                    final File f = new File(destination, uncompressedName);
+                    if (engine.accept(f)) {
+                        decompressFile(new BZip2CompressorInputStream(new BufferedInputStream(fis)), f);
+                    }
+                }
+            } catch (ArchiveExtractionException ex) {
+                LOGGER.warn("Exception extracting archive '{}'.", archive.getName());
+                LOGGER.debug("", ex);
+            } catch (IOException ex) {
+                LOGGER.warn("Exception reading archive '{}'.", archive.getName());
+                LOGGER.debug("", ex);
+            } finally {
+                close(fis);
             }
         }
     }
@@ -368,75 +368,54 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         ArchiveEntry entry;
         try {
             while ((entry = input.getNextEntry()) != null) {
+                final File file = new File(destination, entry.getName());
                 if (entry.isDirectory()) {
-                    final File d = new File(destination, entry.getName());
-                    if (!d.exists()) {
-                        if (!d.mkdirs()) {
-                            final String msg = String.format("Unable to create directory '%s'.", d.getAbsolutePath());
-                            throw new AnalysisException(msg);
-                        }
+                    if (!file.exists() && !file.mkdirs()) {
+                        final String msg = String.format("Unable to create directory '%s'.", file.getAbsolutePath());
+                        throw new AnalysisException(msg);
                     }
-                } else {
-                    final File file = new File(destination, entry.getName());
-                    if (engine.accept(file)) {
-                        LOGGER.debug("Extracting '{}'", file.getPath());
-                        BufferedOutputStream bos = null;
-                        FileOutputStream fos = null;
-                        try {
-                            final File parent = file.getParentFile();
-                            if (!parent.isDirectory()) {
-                                if (!parent.mkdirs()) {
-                                    final String msg = String.format("Unable to build directory '%s'.", parent.getAbsolutePath());
-                                    throw new AnalysisException(msg);
-                                }
-                            }
-                            fos = new FileOutputStream(file);
-                            bos = new BufferedOutputStream(fos, BUFFER_SIZE);
-                            int count;
-                            final byte[] data = new byte[BUFFER_SIZE];
-                            while ((count = input.read(data, 0, BUFFER_SIZE)) != -1) {
-                                bos.write(data, 0, count);
-                            }
-                            bos.flush();
-                        } catch (FileNotFoundException ex) {
-                            LOGGER.debug("", ex);
-                            final String msg = String.format("Unable to find file '%s'.", file.getName());
-                            throw new AnalysisException(msg, ex);
-                        } catch (IOException ex) {
-                            LOGGER.debug("", ex);
-                            final String msg = String.format("IO Exception while parsing file '%s'.", file.getName());
-                            throw new AnalysisException(msg, ex);
-                        } finally {
-                            if (bos != null) {
-                                try {
-                                    bos.close();
-                                } catch (IOException ex) {
-                                    LOGGER.trace("", ex);
-                                }
-                            }
-                            if (fos != null) {
-                                try {
-                                    fos.close();
-                                } catch (IOException ex) {
-                                    LOGGER.trace("", ex);
-                                }
-                            }
-                        }
-                    }
+                } else if (engine.accept(file)) {
+                    extractAcceptedFile(input, file);
                 }
             }
-        } catch (IOException ex) {
-            throw new ArchiveExtractionException(ex);
         } catch (Throwable ex) {
             throw new ArchiveExtractionException(ex);
         } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("", ex);
+            close(input);
+        }
+    }
+
+    private static void extractAcceptedFile(ArchiveInputStream input, File file) throws AnalysisException {
+        LOGGER.debug("Extracting '{}'", file.getPath());
+        BufferedOutputStream bos = null;
+        FileOutputStream fos = null;
+        try {
+            final File parent = file.getParentFile();
+            if (!parent.isDirectory()) {
+                if (!parent.mkdirs()) {
+                    final String msg = String.format("Unable to build directory '%s'.", parent.getAbsolutePath());
+                    throw new AnalysisException(msg);
                 }
             }
+            fos = new FileOutputStream(file);
+            bos = new BufferedOutputStream(fos, BUFFER_SIZE);
+            int count;
+            final byte[] data = new byte[BUFFER_SIZE];
+            while ((count = input.read(data, 0, BUFFER_SIZE)) != -1) {
+                bos.write(data, 0, count);
+            }
+            bos.flush();
+        } catch (FileNotFoundException ex) {
+            LOGGER.debug("", ex);
+            final String msg = String.format("Unable to find file '%s'.", file.getName());
+            throw new AnalysisException(msg, ex);
+        } catch (IOException ex) {
+            LOGGER.debug("", ex);
+            final String msg = String.format("IO Exception while parsing file '%s'.", file.getName());
+            throw new AnalysisException(msg, ex);
+        } finally {
+            close(bos);
+            close(fos);
         }
     }
 
@@ -464,12 +443,21 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.debug("", ex);
             throw new ArchiveExtractionException(ex);
         } finally {
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("", ex);
-                }
+            close(out);
+        }
+    }
+
+    /**
+     * Close the given {@link Closeable} instance, ignoring nulls, and logging any thrown {@link IOException}.
+     *
+     * @param closeable to be closed
+     */
+    private static void close(Closeable closeable){
+        if (null != closeable) {
+            try {
+                closeable.close();
+            } catch (IOException ex) {
+                LOGGER.trace("", ex);
             }
         }
     }
