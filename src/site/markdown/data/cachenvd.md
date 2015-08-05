@@ -86,8 +86,8 @@ of date formats. The following invokation would successfully point to the
 
     $ ./dep-check-date.sh ~/NVD "08/03/2015" -app Foo -scan /path/to/Foo --out ~/DCreports/FooFollowup/
 
-If today happened to be August 4th, 2015, `"yesterday"` would also have worked
-as well. Also notice the usage of the `--data` parameter. This places the
-H2 database file directly in the folder alongside the .xml.gz files. This is
+If today happened to be August 4th, 2015, `"yesterday"` also would have
+worked. Also notice the usage of the `--data` parameter. This places the H2
+database file directly in the folder alongside the .xml.gz files. This is
 critical, so that D-C doesn't run against another version of the database,
 like the usual default in `$CLI_LOCATION/data`.
