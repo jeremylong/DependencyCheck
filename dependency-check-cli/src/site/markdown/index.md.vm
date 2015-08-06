@@ -14,8 +14,15 @@ script executable:
 
     $ chmod +777 dependency-check.sh
 
-To scan a folder on the system you can run:
 #set( $H = '#' )
+
+$H$H$H Homebrew
+    $ brew install dependency-check
+
+This puts an executable `dependency-check` script in the `/bin` directory of
+your homebrew installation.
+
+To scan a folder on the system you can run:
 
 $H$H$H Windows
     dependency-check.bat --app "My App Name" --scan "c:\java\application\lib"
