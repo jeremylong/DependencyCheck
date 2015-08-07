@@ -30,6 +30,7 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Paramete
        | \-\-updateonly        |                 | If set only the update phase of dependency-check will be executed; no scan will be executed and no report will be generated. | &nbsp;
        | \-\-disablePyDist     |                 | Sets whether the Python Distribution Analyzer will be used.                      | false
        | \-\-disablePyPkg      |                 | Sets whether the Python Package Analyzer will be used.                           | false
+       | \-\-disableNodeJS     |                 | Sets whehter the Node.js Package Analyzer will be used.                           | false
        | \-\-disableAutoconf   |                 | Sets whether the Autoconf Analyzer will be used.                                 | false
        | \-\-disableOpenSSL    |                 | Sets whether the OpenSSL Analyzer will be used.                                  | false
        | \-\-disableCmake      |                 | Sets whether the Cmake Analyzer will be used.                                    | false

@@ -580,6 +580,15 @@ public final class CliParser {
     }
 
     /**
+     * Returns true if the disableNodeJS command line argument was specified.
+     *
+     * @return true if the disableNodeJS command line argument was specified; otherwise false
+     */
+    public boolean isNodeJsDisabled() {
+        return (line != null) && line.hasOption(ARGUMENT.DISABLE_NODE_JS);
+    }
+
+    /**
      * Returns true if the disableCentral command line argument was specified.
      *
      * @return true if the disableCentral command line argument was specified; otherwise false
@@ -1105,6 +1114,10 @@ public final class CliParser {
          * Disables the OpenSSL Analyzer.
          */
         public static final String DISABLE_OPENSSL = "disableOpenSSL";
+        /**
+         * Disables the Node.js Package Analyzer.
+         */
+        public static final String DISABLE_NODE_JS = "disableNodeJS";
         /**
          * The URL of the nexus server.
          */
