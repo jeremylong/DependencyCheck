@@ -17,13 +17,18 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import org.apache.commons.io.FileUtils;
+import org.json.JSONObject;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 
 import java.io.FileFilter;
+import java.io.IOException;
 
 /**
  * Used to analyze Node Package Manager (npm) package.json files, and collect information that can be used to determine
@@ -43,11 +48,12 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
 
+    public static final String PACKAGE_JSON = "package.json";
     /**
      * Filter that detects files named "package.json".
      */
     private static final FileFilter PACKAGE_JSON_FILTER =
-            FileFilterBuilder.newInstance().addFilenames("package.json").build();
+            FileFilterBuilder.newInstance().addFilenames(PACKAGE_JSON).build();
 
     /**
      * Returns the FileFilter
@@ -61,7 +67,7 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
 
     @Override
     protected void initializeFileTypeAnalyzer() throws Exception {
-        // TODO anaything?
+        // NO-OP
     }
 
     /**
@@ -97,6 +103,34 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeFileType(Dependency dependency, Engine engine)
             throws AnalysisException {
-        // TODO implement
+        String contents;
+        try {
+            contents = FileUtils.readFileToString(dependency.getActualFile()).trim();
+        } catch (IOException e) {
+            throw new AnalysisException(
+                    "Problem occurred while reading dependency file.", e);
+        }
+        JSONObject json = new JSONObject(contents);
+        final EvidenceCollection productEvidence = dependency.getProductEvidence();
+        addToEvidence(json, productEvidence, "name");
+        addToEvidence(json, productEvidence, "description");
+        addToEvidence(json, dependency.getVendorEvidence(), "author");
+        addToEvidence(json, dependency.getVersionEvidence(), "version");
+    }
+
+    private void addToEvidence(JSONObject json, EvidenceCollection productEvidence, String key) {
+        if (json.has(key)) {
+            Object value = json.get(key);
+            if (value instanceof String) {
+                productEvidence.addEvidence(PACKAGE_JSON, key, (String) value, Confidence.HIGHEST);
+            } else if (value instanceof JSONObject) {
+                for (String property : ((JSONObject) value).keySet()) {
+                    productEvidence.addEvidence(PACKAGE_JSON,
+                            String.format("%s.%s", key, property),
+                            ((JSONObject) value).getString(property),
+                            Confidence.HIGHEST);
+                }
+            }
+        }
     }
 }
