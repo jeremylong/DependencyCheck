@@ -591,6 +591,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                                 #else
                                     $enc.html($id.value)
                                 #end
+                                #set($cpeSort=0)
                                 #if ($cpeIdConf == "")
                                     #set($cpeIdConf=$id.confidence)
                                     #set($cpeSort=$id.confidence.ordinal())
@@ -602,11 +603,15 @@ arising out of or in connection with the use of this tool, the analysis performe
                             #end
                         #end
                         </td>
+                        #if ($mavenlink=="")
+                        <td data-sort-value="">
+                        #else
                         <td data-sort-value="$enc.html($mavenlink.value)">#if( $mavenlink.url )
-                            ##yes, we are HTML Encoding the href. this is okay. We can't URL encode as we have to trust the analyzer here...
+                            ##yes, we are HTML Encoding the href. This is okay. We can't URL encode as we have to trust the analyzer here...
                             <a href="$enc.html($mavenlink.url)" target="_blank">$enc.html($mavenlink.value)</a>
                         #elseif ($mavenlink.value)
                             $enc.html($mavenlink.value)
+                        #end
                         #end</td>
                         #set($cveImpact=-1)
                         #foreach($vuln in $dependency.getVulnerabilities())
