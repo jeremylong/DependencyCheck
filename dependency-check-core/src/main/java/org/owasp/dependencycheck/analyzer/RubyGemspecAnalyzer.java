@@ -52,11 +52,11 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
 
     private static final FileFilter FILTER =
             FileFilterBuilder.newInstance().addExtensions("gemspec").addFilenames("Rakefile").build();
-    public static final String AUTHORS = "authors";
-    public static final String NAME = "name";
-    public static final String EMAIL = "email";
-    public static final String HOMEPAGE = "homepage";
-    public static final String GEMSPEC = "gemspec";
+    private static final String AUTHORS = "authors";
+    private static final String NAME = "name";
+    private static final String EMAIL = "email";
+    private static final String HOMEPAGE = "homepage";
+    private static final String GEMSPEC = "gemspec";
     private static final String VERSION = "version";
 
     /**
@@ -105,39 +105,10 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Used when compiling file scanning regex patterns.
-     */
-    private static final int REGEX_OPTIONS = Pattern.DOTALL | Pattern.CASE_INSENSITIVE;
-
-    /**
      * The capture group #1 is the block variable.
      */
     private static final Pattern GEMSPEC_BLOCK_INIT =
             Pattern.compile("Gem::Specification\\.new\\s+?do\\s+?\\|(.+?)\\|");
-
-    /**
-     * Utility function to create a regex pattern matcher. Group 1 captures the choice of quote character.
-     * Group 2 captures the string literal.
-     *
-     * @param blockVariable the gemspec block variable (usually 's')
-     * @param field the gemspec field name to capture
-     * @return the compiled Pattern
-     */
-    private static Pattern compileStringAssignPattern(String blockVariable, String field) {
-        return Pattern.compile(String.format("\\s+?%s\\.%s\\s*?=\\s*?(['\"])(.*?)\\1", blockVariable, field));
-    }
-
-    /**
-     * Utility function to create a regex pattern matcher. Group 1 captures the list literal.
-     *
-     * @param blockVariable the gemspec block variable (usually 's')
-     * @param field the gemspec field name to capture
-     */
-    private static Pattern compileListAssignPattern(String blockVariable, String field) {
-        return Pattern.compile(
-                String.format("\\s+?%s\\.%s\\s*?=\\s*?\\[(.*?)\\]", blockVariable, field),
-                REGEX_OPTIONS);
-    }
 
     @Override
     protected void analyzeFileType(Dependency dependency, Engine engine)
@@ -152,39 +123,44 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
         }
         Matcher matcher = GEMSPEC_BLOCK_INIT.matcher(contents);
         if (matcher.find()){
-            final int startAt = matcher.end();
+            final int blockStart = matcher.end();
             final String blockVariable = matcher.group(1);
             final EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
-            matcher = compileListAssignPattern(blockVariable, AUTHORS).matcher(contents);
-            if (matcher.find(startAt)) {
-                final String authors = matcher.group(1).replaceAll("['\"]", " ").trim();
-                vendorEvidence.addEvidence(GEMSPEC, AUTHORS, authors, Confidence.HIGHEST);
-            }
-            matcher = compileStringAssignPattern(blockVariable, NAME).matcher(contents);
-            if (matcher.find(startAt)) {
-                final String name = matcher.group(2);
-                dependency.getProductEvidence().addEvidence(GEMSPEC, NAME, name, Confidence.HIGHEST);
+            addListEvidence(vendorEvidence, contents, blockStart, blockVariable, AUTHORS, Confidence.HIGHEST);
+            String name = addStringEvidence(
+                    dependency.getProductEvidence(), contents, blockStart, blockVariable, NAME, Confidence.HIGHEST);
+            if (!name.isEmpty()) {
                 vendorEvidence.addEvidence(GEMSPEC, "name_project", name + "_project", Confidence.LOW);
             }
-            matcher = compileStringAssignPattern(blockVariable, EMAIL).matcher(contents);
-            if (matcher.find(startAt)) {
-                final String email = matcher.group(2);
-                vendorEvidence.addEvidence(GEMSPEC, EMAIL, email, Confidence.MEDIUM);
-            } else {
-                matcher = compileListAssignPattern(blockVariable, EMAIL).matcher(contents);
-                final String email = matcher.group(1).replaceAll("['\"]", " ").trim();
-                vendorEvidence.addEvidence(GEMSPEC, EMAIL, email, Confidence.MEDIUM);
+            String email = addStringEvidence(vendorEvidence, contents, blockStart, blockVariable, EMAIL, Confidence.MEDIUM);
+            if (email.isEmpty()) {
+                addListEvidence(vendorEvidence, contents, blockStart, blockVariable, EMAIL, Confidence.MEDIUM);
             }
-            matcher = compileStringAssignPattern(blockVariable, HOMEPAGE).matcher(contents);
-            if (matcher.find(startAt)){
-                final String homepage = matcher.group(2);
-                vendorEvidence.addEvidence(GEMSPEC, HOMEPAGE, homepage, Confidence.MEDIUM);
-            }
-            matcher = compileStringAssignPattern(blockVariable, VERSION).matcher(contents);
-            if (matcher.find(startAt)){
-                final String version = matcher.group(2);
-                dependency.getVersionEvidence().addEvidence(GEMSPEC, VERSION, version, Confidence.HIGHEST);
-            }
+            addStringEvidence(vendorEvidence, contents, blockStart, blockVariable, HOMEPAGE, Confidence.MEDIUM);
+            addStringEvidence(
+                    dependency.getVersionEvidence(), contents, blockStart, blockVariable, VERSION, Confidence.HIGHEST);
         }
+    }
+
+    private void addListEvidence(EvidenceCollection vendorEvidence, String contents, int blockStart,
+                                 String blockVariable, String field, Confidence confidence) {
+        final Matcher matcher = Pattern.compile(
+                String.format("\\s+?%s\\.%s\\s*?=\\s*?\\[(.*?)\\]", blockVariable, field)).matcher(contents);
+        if (matcher.find(blockStart)) {
+            final String value = matcher.group(1).replaceAll("['\"]", " ").trim();
+            vendorEvidence.addEvidence(GEMSPEC, field, value, confidence);
+        }
+    }
+
+    private String addStringEvidence(EvidenceCollection collection, String contents, int blockStart,
+                                     String blockVariable, String field, Confidence confidence) {
+        final Matcher matcher = Pattern.compile(
+                String.format("\\s+?%s\\.%s\\s*?=\\s*?(['\"])(.*?)\\1", blockVariable, field)).matcher(contents);
+        String value = "";
+        if (matcher.find(blockStart)){
+            value = matcher.group(2);
+            collection.addEvidence(GEMSPEC, field, value, confidence);
+        }
+        return value;
     }
 }
