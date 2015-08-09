@@ -123,6 +123,11 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         <goals>
                             <goal>test-jar</goal>
                         </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/*.class</include>
+                            </includes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
