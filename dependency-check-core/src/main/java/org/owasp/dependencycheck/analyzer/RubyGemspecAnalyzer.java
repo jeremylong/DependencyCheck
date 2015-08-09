@@ -20,15 +20,17 @@ package org.owasp.dependencycheck.analyzer;
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Used to analyze Node Package Manager (npm) package.json files, and collect information that can be used to determine
@@ -37,11 +39,6 @@ import java.io.IOException;
  * @author Dale Visser <dvisser@ida.org>
  */
 public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(RubyGemspecAnalyzer.class);
 
     /**
      * The name of the analyzer.
@@ -55,6 +52,12 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
 
     private static final FileFilter FILTER =
             FileFilterBuilder.newInstance().addExtensions("gemspec").addFilenames("Rakefile").build();
+    public static final String AUTHORS = "authors";
+    public static final String NAME = "name";
+    public static final String EMAIL = "email";
+    public static final String HOMEPAGE = "homepage";
+    public static final String GEMSPEC = "gemspec";
+    private static final String VERSION = "version";
 
     /**
      * Returns the FileFilter
@@ -101,6 +104,41 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
         return Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED;
     }
 
+    /**
+     * Used when compiling file scanning regex patterns.
+     */
+    private static final int REGEX_OPTIONS = Pattern.DOTALL | Pattern.CASE_INSENSITIVE;
+
+    /**
+     * The capture group #1 is the block variable.
+     */
+    private static final Pattern GEMSPEC_BLOCK_INIT =
+            Pattern.compile("Gem::Specification\\.new\\s+?do\\s+?\\|(.+?)\\|");
+
+    /**
+     * Utility function to create a regex pattern matcher. Group 1 captures the choice of quote character.
+     * Group 2 captures the string literal.
+     *
+     * @param blockVariable the gemspec block variable (usually 's')
+     * @param field the gemspec field name to capture
+     * @return the compiled Pattern
+     */
+    private static Pattern compileStringAssignPattern(String blockVariable, String field) {
+        return Pattern.compile(String.format("\\s+?%s\\.%s\\s*?=\\s*?(['\"])(.*?)\\1", blockVariable, field));
+    }
+
+    /**
+     * Utility function to create a regex pattern matcher. Group 1 captures the list literal.
+     *
+     * @param blockVariable the gemspec block variable (usually 's')
+     * @param field the gemspec field name to capture
+     */
+    private static Pattern compileListAssignPattern(String blockVariable, String field) {
+        return Pattern.compile(
+                String.format("\\s+?%s\\.%s\\s*?=\\s*?\\[(.*?)\\]", blockVariable, field),
+                REGEX_OPTIONS);
+    }
+
     @Override
     protected void analyzeFileType(Dependency dependency, Engine engine)
             throws AnalysisException {
@@ -112,6 +150,41 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
             throw new AnalysisException(
                     "Problem occurred while reading dependency file.", e);
         }
-        // TODO analyze contents
+        Matcher matcher = GEMSPEC_BLOCK_INIT.matcher(contents);
+        if (matcher.find()){
+            final int startAt = matcher.end();
+            final String blockVariable = matcher.group(1);
+            final EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
+            matcher = compileListAssignPattern(blockVariable, AUTHORS).matcher(contents);
+            if (matcher.find(startAt)) {
+                final String authors = matcher.group(1).replaceAll("['\"]", " ").trim();
+                vendorEvidence.addEvidence(GEMSPEC, AUTHORS, authors, Confidence.HIGHEST);
+            }
+            matcher = compileStringAssignPattern(blockVariable, NAME).matcher(contents);
+            if (matcher.find(startAt)) {
+                final String name = matcher.group(2);
+                dependency.getProductEvidence().addEvidence(GEMSPEC, NAME, name, Confidence.HIGHEST);
+                vendorEvidence.addEvidence(GEMSPEC, "name_project", name + "_project", Confidence.LOW);
+            }
+            matcher = compileStringAssignPattern(blockVariable, EMAIL).matcher(contents);
+            if (matcher.find(startAt)) {
+                final String email = matcher.group(2);
+                vendorEvidence.addEvidence(GEMSPEC, EMAIL, email, Confidence.MEDIUM);
+            } else {
+                matcher = compileListAssignPattern(blockVariable, EMAIL).matcher(contents);
+                final String email = matcher.group(1).replaceAll("['\"]", " ").trim();
+                vendorEvidence.addEvidence(GEMSPEC, EMAIL, email, Confidence.MEDIUM);
+            }
+            matcher = compileStringAssignPattern(blockVariable, HOMEPAGE).matcher(contents);
+            if (matcher.find(startAt)){
+                final String homepage = matcher.group(2);
+                vendorEvidence.addEvidence(GEMSPEC, HOMEPAGE, homepage, Confidence.MEDIUM);
+            }
+            matcher = compileStringAssignPattern(blockVariable, VERSION).matcher(contents);
+            if (matcher.find(startAt)){
+                final String version = matcher.group(2);
+                dependency.getVersionEvidence().addEvidence(GEMSPEC, VERSION, version, Confidence.HIGHEST);
+            }
+        }
     }
 }
