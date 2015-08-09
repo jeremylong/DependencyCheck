@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.analyzer;
 
 import org.apache.commons.io.FileUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -29,6 +30,7 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 
@@ -110,29 +112,34 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeFileType(Dependency dependency, Engine engine)
             throws AnalysisException {
+        final File file = dependency.getActualFile();
         String contents;
         try {
-            contents = FileUtils.readFileToString(dependency.getActualFile()).trim();
+            contents = FileUtils.readFileToString(file).trim();
         } catch (IOException e) {
             throw new AnalysisException(
                     "Problem occurred while reading dependency file.", e);
         }
-        JSONObject json = new JSONObject(contents);
-        final EvidenceCollection productEvidence = dependency.getProductEvidence();
-        final EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
-        if (json.has("name")) {
-            Object value = json.get("name");
-            if (value instanceof String) {
-                productEvidence.addEvidence(PACKAGE_JSON, "name", (String) value, Confidence.HIGHEST);
-                vendorEvidence.addEvidence(PACKAGE_JSON, "name_project", String.format("%s_project", value), Confidence.LOW);
-            } else {
-                LOGGER.warn("JSON value not string as expected: %s", value);
+        try {
+            JSONObject json = new JSONObject(contents);
+            final EvidenceCollection productEvidence = dependency.getProductEvidence();
+            final EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
+            if (json.has("name")) {
+                Object value = json.get("name");
+                if (value instanceof String) {
+                    productEvidence.addEvidence(PACKAGE_JSON, "name", (String) value, Confidence.HIGHEST);
+                    vendorEvidence.addEvidence(PACKAGE_JSON, "name_project", String.format("%s_project", value), Confidence.LOW);
+                } else {
+                    LOGGER.warn("JSON value not string as expected: %s", value);
+                }
             }
+            addToEvidence(json, productEvidence, "description");
+            addToEvidence(json, vendorEvidence, "author");
+            addToEvidence(json, dependency.getVersionEvidence(), "version");
+            dependency.setDisplayFileName(String.format("%s/%s", file.getParentFile().getName(), file.getName()));
+        } catch (JSONException e) {
+            LOGGER.warn("Failed to parse package.json file.", e);
         }
-        addToEvidence(json, productEvidence, "description");
-
-        addToEvidence(json, vendorEvidence, "author");
-        addToEvidence(json, dependency.getVersionEvidence(), "version");
     }
 
     private void addToEvidence(JSONObject json, EvidenceCollection collection, String key) {
