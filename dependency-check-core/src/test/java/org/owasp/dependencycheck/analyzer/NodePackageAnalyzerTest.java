@@ -91,7 +91,9 @@ public class NodePackageAnalyzerTest extends BaseTest {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                 "nodejs/node_modules/dns-sync/package.json"));
         analyzer.analyze(result, null);
-        assertThat(result.getVendorEvidence().toString(), containsString("Sanjeev Koranga"));
+        final String vendorString = result.getVendorEvidence().toString();
+        assertThat(vendorString, containsString("Sanjeev Koranga"));
+        assertThat(vendorString, containsString("dns-sync_project"));
         assertThat(result.getProductEvidence().toString(), containsString("dns-sync"));
         assertThat(result.getVersionEvidence().toString(), containsString("0.1.0"));
     }

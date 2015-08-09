@@ -26,6 +26,8 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileFilter;
 import java.io.IOException;
@@ -37,6 +39,11 @@ import java.io.IOException;
  * @author Dale Visser <dvisser@ida.org>
  */
 public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
+
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(NodePackageAnalyzer.class);
 
     /**
      * The name of the analyzer.
@@ -112,24 +119,42 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
         }
         JSONObject json = new JSONObject(contents);
         final EvidenceCollection productEvidence = dependency.getProductEvidence();
-        addToEvidence(json, productEvidence, "name");
+        final EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
+        if (json.has("name")) {
+            Object value = json.get("name");
+            if (value instanceof String) {
+                productEvidence.addEvidence(PACKAGE_JSON, "name", (String) value, Confidence.HIGHEST);
+                vendorEvidence.addEvidence(PACKAGE_JSON, "name_project", String.format("%s_project", value), Confidence.LOW);
+            } else {
+                LOGGER.warn("JSON value not string as expected: %s", value);
+            }
+        }
         addToEvidence(json, productEvidence, "description");
-        addToEvidence(json, dependency.getVendorEvidence(), "author");
+
+        addToEvidence(json, vendorEvidence, "author");
         addToEvidence(json, dependency.getVersionEvidence(), "version");
     }
 
-    private void addToEvidence(JSONObject json, EvidenceCollection productEvidence, String key) {
+    private void addToEvidence(JSONObject json, EvidenceCollection collection, String key) {
         if (json.has(key)) {
             Object value = json.get(key);
             if (value instanceof String) {
-                productEvidence.addEvidence(PACKAGE_JSON, key, (String) value, Confidence.HIGHEST);
+                collection.addEvidence(PACKAGE_JSON, key, (String) value, Confidence.HIGHEST);
             } else if (value instanceof JSONObject) {
-                for (String property : ((JSONObject) value).keySet()) {
-                    productEvidence.addEvidence(PACKAGE_JSON,
-                            String.format("%s.%s", key, property),
-                            ((JSONObject) value).getString(property),
-                            Confidence.HIGHEST);
+                final JSONObject jsonObject = (JSONObject) value;
+                for (String property : jsonObject.keySet()) {
+                    final Object subValue = jsonObject.get(property);
+                    if (subValue instanceof String) {
+                        collection.addEvidence(PACKAGE_JSON,
+                                String.format("%s.%s", key, property),
+                                (String) subValue,
+                                Confidence.HIGHEST);
+                    } else {
+                        LOGGER.warn("JSON sub-value not string as expected: %s");
+                    }
                 }
+            } else {
+                LOGGER.warn("JSON value not string or JSON object as expected: %s", value);
             }
         }
     }
