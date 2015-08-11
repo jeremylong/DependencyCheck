@@ -33,8 +33,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Used to analyze Node Package Manager (npm) package.json files, and collect information that can be used to determine
- * the associated CPE.
+ * Used to analyze Ruby Gem specifications and collect information that can be used to determine the associated CPE.
+ * Regular expressions are used to parse the well-defined Ruby syntax that forms the specification.
  *
  * @author Dale Visser <dvisser@ida.org>
  */
@@ -52,6 +52,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
 
     private static final FileFilter FILTER =
             FileFilterBuilder.newInstance().addExtensions("gemspec").addFilenames("Rakefile").build();
+
     private static final String AUTHORS = "authors";
     private static final String NAME = "name";
     private static final String EMAIL = "email";
@@ -60,9 +61,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
     private static final String VERSION = "version";
 
     /**
-     * Returns the FileFilter
-     *
-     * @return the FileFilter
+     * @return a filter that accepts files named Rakefile or matching the glob pattern, *.gemspec
      */
     @Override
     protected FileFilter getFileFilter() {
@@ -113,51 +112,49 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeFileType(Dependency dependency, Engine engine)
             throws AnalysisException {
-        final File file = dependency.getActualFile();
         String contents;
         try {
-            contents = FileUtils.readFileToString(file).trim();
+            contents = FileUtils.readFileToString(dependency.getActualFile());
         } catch (IOException e) {
             throw new AnalysisException(
                     "Problem occurred while reading dependency file.", e);
         }
-        Matcher matcher = GEMSPEC_BLOCK_INIT.matcher(contents);
+        final Matcher matcher = GEMSPEC_BLOCK_INIT.matcher(contents);
         if (matcher.find()){
-            final int blockStart = matcher.end();
+            contents = contents.substring(matcher.end());
             final String blockVariable = matcher.group(1);
-            final EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
-            addListEvidence(vendorEvidence, contents, blockStart, blockVariable, AUTHORS, Confidence.HIGHEST);
-            String name = addStringEvidence(
-                    dependency.getProductEvidence(), contents, blockStart, blockVariable, NAME, Confidence.HIGHEST);
+            final EvidenceCollection vendor = dependency.getVendorEvidence();
+            addListEvidence(vendor, contents, blockVariable, AUTHORS, Confidence.HIGHEST);
+            final String name = addStringEvidence(
+                    dependency.getProductEvidence(), contents, blockVariable, NAME, Confidence.HIGHEST);
             if (!name.isEmpty()) {
-                vendorEvidence.addEvidence(GEMSPEC, "name_project", name + "_project", Confidence.LOW);
+                vendor.addEvidence(GEMSPEC, "name_project", name + "_project", Confidence.LOW);
             }
-            String email = addStringEvidence(vendorEvidence, contents, blockStart, blockVariable, EMAIL, Confidence.MEDIUM);
+            final String email = addStringEvidence(vendor, contents, blockVariable, EMAIL, Confidence.MEDIUM);
             if (email.isEmpty()) {
-                addListEvidence(vendorEvidence, contents, blockStart, blockVariable, EMAIL, Confidence.MEDIUM);
+                addListEvidence(vendor, contents, blockVariable, EMAIL, Confidence.MEDIUM);
             }
-            addStringEvidence(vendorEvidence, contents, blockStart, blockVariable, HOMEPAGE, Confidence.MEDIUM);
-            addStringEvidence(
-                    dependency.getVersionEvidence(), contents, blockStart, blockVariable, VERSION, Confidence.HIGHEST);
+            addStringEvidence(vendor, contents, blockVariable, HOMEPAGE, Confidence.MEDIUM);
+            addStringEvidence(dependency.getVersionEvidence(), contents, blockVariable, VERSION, Confidence.HIGHEST);
         }
     }
 
-    private void addListEvidence(EvidenceCollection vendorEvidence, String contents, int blockStart,
+    private void addListEvidence(EvidenceCollection vendorEvidence, String contents,
                                  String blockVariable, String field, Confidence confidence) {
         final Matcher matcher = Pattern.compile(
                 String.format("\\s+?%s\\.%s\\s*?=\\s*?\\[(.*?)\\]", blockVariable, field)).matcher(contents);
-        if (matcher.find(blockStart)) {
+        if (matcher.find()) {
             final String value = matcher.group(1).replaceAll("['\"]", " ").trim();
             vendorEvidence.addEvidence(GEMSPEC, field, value, confidence);
         }
     }
 
-    private String addStringEvidence(EvidenceCollection collection, String contents, int blockStart,
+    private String addStringEvidence(EvidenceCollection collection, String contents,
                                      String blockVariable, String field, Confidence confidence) {
         final Matcher matcher = Pattern.compile(
                 String.format("\\s+?%s\\.%s\\s*?=\\s*?(['\"])(.*?)\\1", blockVariable, field)).matcher(contents);
         String value = "";
-        if (matcher.find(blockStart)){
+        if (matcher.find()){
             value = matcher.group(2);
             collection.addEvidence(GEMSPEC, field, value, confidence);
         }
