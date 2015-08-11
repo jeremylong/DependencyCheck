@@ -421,6 +421,8 @@ public final class CliParser {
                 .addOption(disableNuspecAnalyzer)
                 .addOption(disableCentralAnalyzer)
                 .addOption(disableNexusAnalyzer)
+                .addOption(OptionBuilder.withLongOpt(ARGUMENT.DISABLE_NODE_JS)
+                        .withDescription("Disable the Node.js Package Analyzer.").create())
                 .addOption(nexusUrl)
                 .addOption(nexusUsesProxy)
                 .addOption(additionalZipExtensions)
