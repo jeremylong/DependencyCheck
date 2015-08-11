@@ -115,7 +115,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
                     "Problem occurred while reading dependency file.", e);
         }
         final Matcher matcher = GEMSPEC_BLOCK_INIT.matcher(contents);
-        if (matcher.find()){
+        if (matcher.find()) {
             contents = contents.substring(matcher.end());
             final String blockVariable = matcher.group(1);
             final EvidenceCollection vendor = dependency.getVendorEvidence();
@@ -136,24 +136,24 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
-    private void addListEvidence(EvidenceCollection vendorEvidence, String contents,
+    private void addListEvidence(EvidenceCollection evidences, String contents,
                                  String blockVariable, String field, Confidence confidence) {
         final Matcher matcher = Pattern.compile(
                 String.format("\\s+?%s\\.%s\\s*?=\\s*?\\[(.*?)\\]", blockVariable, field)).matcher(contents);
         if (matcher.find()) {
             final String value = matcher.group(1).replaceAll("['\"]", " ").trim();
-            vendorEvidence.addEvidence(GEMSPEC, field, value, confidence);
+            evidences.addEvidence(GEMSPEC, field, value, confidence);
         }
     }
 
-    private String addStringEvidence(EvidenceCollection collection, String contents,
+    private String addStringEvidence(EvidenceCollection evidences, String contents,
                                      String blockVariable, String field, Confidence confidence) {
         final Matcher matcher = Pattern.compile(
                 String.format("\\s+?%s\\.%s\\s*?=\\s*?(['\"])(.*?)\\1", blockVariable, field)).matcher(contents);
         String value = "";
-        if (matcher.find()){
+        if (matcher.find()) {
             value = matcher.group(2);
-            collection.addEvidence(GEMSPEC, field, value, confidence);
+            evidences.addEvidence(GEMSPEC, field, value, confidence);
         }
         return value;
     }
