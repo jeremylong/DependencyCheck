@@ -26,7 +26,6 @@ import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 
-import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -53,12 +52,8 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
     private static final FileFilter FILTER =
             FileFilterBuilder.newInstance().addExtensions("gemspec").addFilenames("Rakefile").build();
 
-    private static final String AUTHORS = "authors";
-    private static final String NAME = "name";
     private static final String EMAIL = "email";
-    private static final String HOMEPAGE = "homepage";
     private static final String GEMSPEC = "gemspec";
-    private static final String VERSION = "version";
 
     /**
      * @return a filter that accepts files named Rakefile or matching the glob pattern, *.gemspec
@@ -124,18 +119,20 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
             contents = contents.substring(matcher.end());
             final String blockVariable = matcher.group(1);
             final EvidenceCollection vendor = dependency.getVendorEvidence();
-            addListEvidence(vendor, contents, blockVariable, AUTHORS, Confidence.HIGHEST);
-            final String name = addStringEvidence(
-                    dependency.getProductEvidence(), contents, blockVariable, NAME, Confidence.HIGHEST);
-            if (!name.isEmpty()) {
-                vendor.addEvidence(GEMSPEC, "name_project", name + "_project", Confidence.LOW);
-            }
+            addStringEvidence(vendor, contents, blockVariable, "author", Confidence.HIGHEST);
+            addListEvidence(vendor, contents, blockVariable, "authors", Confidence.HIGHEST);
             final String email = addStringEvidence(vendor, contents, blockVariable, EMAIL, Confidence.MEDIUM);
             if (email.isEmpty()) {
                 addListEvidence(vendor, contents, blockVariable, EMAIL, Confidence.MEDIUM);
             }
-            addStringEvidence(vendor, contents, blockVariable, HOMEPAGE, Confidence.MEDIUM);
-            addStringEvidence(dependency.getVersionEvidence(), contents, blockVariable, VERSION, Confidence.HIGHEST);
+            addStringEvidence(vendor, contents, blockVariable, "homepage", Confidence.MEDIUM);
+            final EvidenceCollection product = dependency.getProductEvidence();
+            final String name = addStringEvidence(product, contents, blockVariable, "name", Confidence.HIGHEST);
+            if (!name.isEmpty()) {
+                vendor.addEvidence(GEMSPEC, "name_project", name + "_project", Confidence.LOW);
+            }
+            addStringEvidence(product, contents, blockVariable, "summary", Confidence.LOW);
+            addStringEvidence(dependency.getVersionEvidence(), contents, blockVariable, "version", Confidence.HIGHEST);
         }
     }
 
