@@ -102,6 +102,9 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 <item name="Sample Report" href="./general/SampleReport.html">
                     <description>Sample Report</description>
                 </item>
+                <item name="How to Scan an ISO Image" href="./general/scan_iso.html">
+                    <description>How to Scan an ISO Image</description>
+                </item>
             </item>
             <item collapse="true" name="File Type Analyzers" href="./analyzers/index.html">
                 <item name="Archive Analyzer" href="./analyzers/archive-analyzer.html">
