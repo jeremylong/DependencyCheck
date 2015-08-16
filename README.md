@@ -9,7 +9,7 @@ Current Releases
 -------------
 ### Jenkins Plugin
 
-For instructions on the use of the Jenkins plugin please see the [Jenkins dependency-check page](http://wiki.jenkins-ci.org/x/CwDgAQ).
+For instructions on the use of the Jenkins plugin please see the [OWASP Dependency-Check Plugin page](https://wiki.jenkins-ci.org/display/JENKINS/OWASP+Dependency-Check+Plugin).
 
 ### Command Line
 
@@ -37,7 +37,7 @@ $ dependency-check --app Testing --out . --scan [path to jar files to be scanned
 
 ### Maven Plugin
 
-More detailed instructions can be found on the [dependency-check-maven github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-maven/usage.html).
+More detailed instructions can be found on the [dependency-check-maven github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-maven).
 The plugin can be configured using the following:
 
 ```xml
@@ -66,7 +66,7 @@ The plugin can be configured using the following:
 
 ### Ant Task
 
-For instructions on the use of the Ant Task, please see the [dependency-check-ant github page](http://jeremylong.github.io/DependencyCheck/dependency-check-ant/installation.html).
+For instructions on the use of the Ant Task, please see the [dependency-check-ant github page](http://jeremylong.github.io/DependencyCheck/dependency-check-ant).
 
 Development Usage
 -------------
