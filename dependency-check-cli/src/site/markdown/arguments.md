@@ -13,7 +13,7 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp; | Parameter       | Description | Requir
  \-f   | \-\-format            | \<format\>      | The output format to write to (XML, HTML, VULN, ALL). The default is HTML. | Required
  \-l   | \-\-log               | \<file\>        | The file path to write verbose logging information. | Optional
  \-n   | \-\-noupdate          |                 | Disables the automatic updating of the CPE data. | Optional
-       | \-\-suppression       | \<file\>        | The file path to the suppression XML file; used to suppress [false positives](../suppression.html). | Optional
+       | \-\-suppression       | \<file\>        | The file path to the suppression XML file; used to suppress [false positives](../general/suppression.html). | Optional
  \-h   | \-\-help              |                 | Print the help message. | Optional
        | \-\-advancedHelp      |                 | Print the advanced help message. | Optional
  \-v   | \-\-version           |                 | Print the version information. | Optional
