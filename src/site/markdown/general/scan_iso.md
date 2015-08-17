@@ -2,11 +2,10 @@ How to Mount ISO Files for Scanning
 ===================================
 
 Dependency-Check can be used as one of your tools for vetting software
-distributed via an [ISO image](https://en.wikipedia.org/wiki/ISO_image). These
-disk image files are not a standard archive format, however. Tools must be
-used that can interpret the contained file system. As will be shown below,
-Linux, Mac OS X, and recent versions of Windows can be used to mount the
-image's file system, which can then be scanned by Dependency-Check.
+distributed via an [ISO image](https://en.wikipedia.org/wiki/ISO_image). (See
+[File Type Analyzers](../analyzers/) for a list of what types of artifacts
+Dependency-Check is capable of scanning.) These disk image files are not a standard archive format, however. Tools must be used that can interpret the contained file system. As will be shown below, Linux, Mac OS X, and recent versions of Windows can be used to mount the image's file system, which can
+then be scanned by Dependency-Check.
 
 ISO images are named for the fact that they nearly always contain one of a
 pair of international file system standards published by
@@ -31,7 +30,7 @@ command with `sudo`.
 $ sudo mount -o loop foo.iso /mnt/foo
 ```
 
-Next, you can use Dependency-Check's [command line tool](dependency-check-cli/index.html)
+Next, you can use Dependency-Check's [command line tool](dependency-check-cli/)
 to scan the mount point. When you are finished, run the
 [umount](http://linux.die.net/man/8/umount) command with root privileges:
 
@@ -76,7 +75,8 @@ Windows 8 and later versions support mounting ISO images as a virtual drive.
 1. In *File Explorer*, right-click on "foo.iso".
 2. Select "Mount"
 
-File Explorer then redirects to showing the files on your virtual drive. You can then use the [command line tool](dependency-check-cli/index.html) to scan the virtual drive. When finished, "Windows-E" will open File Explorer showing the various drives on your computer. To eject the virtual drive:
+File Explorer then redirects to showing the files on your virtual drive. You can then use the [command line tool](dependency-check-cli/) to scan the
+virtual drive. When finished, "Windows-E" will open File Explorer showing the various drives on your computer. To eject the virtual drive:
 
 1. Right-click on the virtual drive.
 2. Select "Eject"
