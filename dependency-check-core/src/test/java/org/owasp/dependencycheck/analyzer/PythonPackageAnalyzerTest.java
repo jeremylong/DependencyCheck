@@ -40,10 +40,10 @@ public class PythonPackageAnalyzerTest extends BaseTest {
     /**
      * The package analyzer to test.
      */
-    PythonPackageAnalyzer analyzer;
+    private PythonPackageAnalyzer analyzer;
 
     /**
-     * Setup the PtyhonPackageAnalyzer.
+     * Setup the {@link PythonPackageAnalyzer}.
      *
      * @throws Exception if there is a problem
      */
@@ -85,14 +85,9 @@ public class PythonPackageAnalyzerTest extends BaseTest {
 
     @Test
     public void testAnalyzeSourceMetadata() throws AnalysisException {
-        eggtestAssertions(this,
-                "python/eggtest/__init__.py");
-    }
-
-    public void eggtestAssertions(Object context, final String resource) throws AnalysisException {
         boolean found = false;
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(
-                context, resource));
+                this, "python/eggtest/__init__.py"));
         analyzer.analyze(result, null);
         assertTrue("Expected vendor evidence to contain \"example\".", result
                 .getVendorEvidence().toString().contains("example"));
@@ -104,4 +99,5 @@ public class PythonPackageAnalyzerTest extends BaseTest {
         }
         assertTrue("Version 0.0.1 not found in EggTest dependency.", found);
     }
+
 }
