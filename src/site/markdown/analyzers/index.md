@@ -13,4 +13,4 @@ to extract identification information from the files analyzed.
 | [Nexus Analyzer](./nexus-analyzer.html) | Java archive files (\*.jar) | Searches Sonatype or a configured Nexus repository for the file's SHA1 hash. In most cases, superceded by Central Analyzer. |
 | [Nuspec Analyzer](./nuspec-analyzer.html) | Nuget package specification file (\*.nuspec) | Uses XPath to parse specification XML. |
 | [OpenSSL Analyzer](./openssl-analyzer.html) | OpenSSL Version Source Header File (opensslv.h) | Regex parse of the OPENSSL_VERSION_NUMBER macro definition. |
-| [Python Analyzer](./python-analyzer.html) | Python source files (\*.py); Package metadata files (PKG-INFO, METADATA); Package Distribution Files (whl, egg, zip, PKG-INFO, and METADATA) | Regex scan of Python source files for setuptools metadata; Parse RFC822 header format for metadata in all other artifacts. |
+| [Python Analyzer](./python-analyzer.html) | Python source files (\*.py); Package metadata files (PKG-INFO, METADATA); Package Distribution Files (\*.whl, \*.egg, \*.zip) | Regex scan of Python source files for setuptools metadata; Parse RFC822 header format for metadata in all other artifacts. |
