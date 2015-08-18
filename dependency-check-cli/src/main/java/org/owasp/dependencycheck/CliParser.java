@@ -328,6 +328,10 @@ public final class CliParser {
                 .withDescription("The path to Mono for .NET Assembly analysis on non-windows systems.")
                 .create();
 
+        final Option pathToBundleAudit = OptionBuilder.withArgName("path").hasArg()
+                .withLongOpt(ARGUMENT.PATH_TO_BUNDLE_AUDIT)
+                .withDescription("The path to bundle-audit for Gem bundle analysis.").create();
+
         final Option connectionTimeout = OptionBuilder.withArgName("timeout").hasArg().withLongOpt(ARGUMENT.CONNECTION_TIMEOUT)
                 .withDescription("The connection timeout (in milliseconds) to use when downloading resources.")
                 .create(ARGUMENT.CONNECTION_TIMEOUT_SHORT);
@@ -426,7 +430,8 @@ public final class CliParser {
                 .addOption(nexusUrl)
                 .addOption(nexusUsesProxy)
                 .addOption(additionalZipExtensions)
-                .addOption(pathToMono);
+                .addOption(pathToMono)
+                .addOption(pathToBundleAudit);
     }
 
     /**
@@ -688,6 +693,15 @@ public final class CliParser {
      */
     public String getPathToMono() {
         return line.getOptionValue(ARGUMENT.PATH_TO_MONO);
+    }
+
+    /**
+     * Returns the path to bundle-audit for Ruby bundle analysis.
+     *
+     * @return the path to Mono
+     */
+    public String getPathToBundleAudit() {
+        return line.getOptionValue(ARGUMENT.PATH_TO_BUNDLE_AUDIT);
     }
 
     /**
@@ -1160,5 +1174,9 @@ public final class CliParser {
          * Exclude path argument.
          */
         public static final String EXCLUDE = "exclude";
+        /**
+         * The CLI argument name for setting the path to bundle-audit for Ruby bundle analysis.
+         */
+        public static final String PATH_TO_BUNDLE_AUDIT = "bundleAudit";
     }
 }

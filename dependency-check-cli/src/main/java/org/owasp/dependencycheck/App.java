@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang.StringUtils;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
@@ -353,6 +354,10 @@ public class App {
         }
         if (pathToMono != null && !pathToMono.isEmpty()) {
             Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
+        }
+        String pathToBundleAudit = cli.getPathToBundleAudit();
+        if (!StringUtils.isEmpty(pathToBundleAudit)){
+            Settings.setString(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, pathToBundleAudit);
         }
         if (cveBase12 != null && !cveBase12.isEmpty()) {
             Settings.setString(Settings.KEYS.CVE_SCHEMA_1_2, cveBase12);
