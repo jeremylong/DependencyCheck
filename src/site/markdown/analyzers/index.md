@@ -5,7 +5,7 @@ to extract identification information from the files analyzed.
 
 | Analyzer | File Types Scanned | Analysis Method |
 | -------- | ------------------ | --------------- |
-| [Archive Analyzer](./archive-analyzer.html) | Zip archive format (\*.zip, \*.ear, *.war, \*.jar, \*.sar, \*.apk, \*.nupkg); Tape Archive Format (\*.tar); Gzip format (\*.gz, \*.tgz); Bzip2 format (\*.bz2, \*.tbz2) | Extracts archive contents, then scans contents with all available analyzers. |
+| [Archive Analyzer](./archive-analyzer.html) | Zip archive format (\*.zip, \*.ear, \*.war, \*.jar, \*.sar, \*.apk, \*.nupkg); Tape Archive Format (\*.tar); Gzip format (\*.gz, \*.tgz); Bzip2 format (\*.bz2, \*.tbz2) | Extracts archive contents, then scans contents with all available analyzers. |
 | [Assembly Analyzer](./assembly-analyzer.html) | .NET Assemblies (\*.exe, \*.dll) | Uses [GrokAssembly.exe](https://github.com/colezlaw/GrokAssembly), which requires .NET Framework or Mono runtime to be installed. |
 | [Autoconf Analyzer](./autoconf-analyzer.html) | Autoconf project configuration files (configure, configure.in, configure.ac) | Regex scan for AC_INIT metadata, including in generated configuration script. |
 | [Central Analyzer](./central-analyzer.html) | Java archive files (\*.jar) | Searches Maven Central or a configured Nexus repository for the file's SHA1 hash. |
