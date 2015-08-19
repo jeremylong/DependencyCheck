@@ -72,6 +72,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         final String bundleAuditPath = Settings.getString(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH);
         args.add(null == bundleAuditPath ? "bundle-audit" : bundleAuditPath);
         args.add("check");
+        args.add("--verbose");
         final ProcessBuilder builder = new ProcessBuilder(args);
         builder.directory(folder);
         try {
