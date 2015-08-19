@@ -66,7 +66,7 @@ public class RubyGemspecAnalyzerTest extends BaseTest {
     }
 
     /**
-     * Test of getName method, of class PythonDistributionAnalyzer.
+     * Test Ruby Gemspec name.
      */
     @Test
     public void testGetName() {
@@ -74,7 +74,7 @@ public class RubyGemspecAnalyzerTest extends BaseTest {
     }
 
     /**
-     * Test of supportsExtension method, of class PythonDistributionAnalyzer.
+     * Test Ruby Gemspec file support.
      */
     @Test
     public void testSupportsFiles() {
@@ -83,14 +83,14 @@ public class RubyGemspecAnalyzerTest extends BaseTest {
     }
 
     /**
-     * Test of inspect method, of class PythonDistributionAnalyzer.
+     * Test Ruby Gemspec analysis.
      *
      * @throws AnalysisException is thrown when an exception occurs.
      */
     @Test
     public void testAnalyzePackageJson() throws AnalysisException {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
-                "ruby/gems/specifications/rest-client-1.7.2.gemspec"));
+                "ruby/vulnerable/gems/specifications/rest-client-1.7.2.gemspec"));
         analyzer.analyze(result, null);
         final String vendorString = result.getVendorEvidence().toString();
         assertThat(vendorString, containsString("REST Client Team"));
