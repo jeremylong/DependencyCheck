@@ -17,6 +17,7 @@
         <cpe>cpe:/a:mod_security:mod_security</cpe>
         <cpe>cpe:/a:springsource:spring_framework</cpe>
         <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
