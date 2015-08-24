@@ -31,6 +31,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.logging.Level;
 
 /**
  * A simple settings container that wraps the dependencycheck.properties file.
@@ -364,6 +365,14 @@ public final class Settings {
     public static void cleanup(boolean deleteTemporary) {
         if (deleteTemporary && tempDirectory != null && tempDirectory.exists()) {
             FileUtils.delete(tempDirectory);
+            if (tempDirectory.exists()) {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ex) {
+                    //ignore
+                }
+                FileUtils.delete(tempDirectory);
+            }
         }
         try {
             localSettings.remove();

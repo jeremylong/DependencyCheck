@@ -40,7 +40,7 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
     /**
      * The analyzer to test.
      */
-    PythonDistributionAnalyzer analyzer;
+    private PythonDistributionAnalyzer analyzer;
 
     /**
      * Correctly setup the analyzer for testing.
