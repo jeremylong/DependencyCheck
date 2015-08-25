@@ -325,6 +325,7 @@ public class App {
         Settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, !nuspecDisabled);
         Settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, !assemblyDisabled);
         Settings.setBoolean(Settings.KEYS.ANALYZER_OPENSSL_ENABLED, !cli.isOpenSSLDisabled());
+        Settings.setBoolean(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, !cli.isRubyGemspecDisabled());
 
         Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, !centralDisabled);
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, !nexusDisabled);
