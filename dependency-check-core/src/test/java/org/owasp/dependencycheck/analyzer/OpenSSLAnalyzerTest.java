@@ -39,10 +39,10 @@ public class OpenSSLAnalyzerTest extends BaseTest {
     /**
      * The package analyzer to test.
      */
-    OpenSSLAnalyzer analyzer;
+    private OpenSSLAnalyzer analyzer;
 
     /**
-     * Setup the PtyhonPackageAnalyzer.
+     * Setup the {@link OpenSSLAnalyzer}.
      *
      * @throws Exception if there is a problem
      */

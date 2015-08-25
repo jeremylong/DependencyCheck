@@ -720,7 +720,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
                 && ObjectUtils.equals(this.description, other.description)
                 && ObjectUtils.equals(this.license, other.license)
                 && ObjectUtils.equals(this.vulnerabilities, other.vulnerabilities)
-                && ObjectUtils.equals(this.relatedDependencies, other.relatedDependencies)
+                //&& ObjectUtils.equals(this.relatedDependencies, other.relatedDependencies)
                 && ObjectUtils.equals(this.projectReferences, other.projectReferences)
                 && ObjectUtils.equals(this.availableVersions, other.availableVersions);
     }
@@ -735,8 +735,9 @@ public class Dependency implements Serializable, Comparable<Dependency> {
         int hash = MAGIC_HASH_INIT_VALUE;
         for (Object field : new Object[]{this.actualFilePath, this.filePath, this.fileName, this.md5sum,
             this.sha1sum, this.identifiers, this.vendorEvidence, this.productEvidence, this.versionEvidence,
-            this.description, this.license, this.vulnerabilities, this.relatedDependencies, this.projectReferences,
-            this.availableVersions}) {
+            this.description, this.license, this.vulnerabilities,
+            //this.relatedDependencies,
+            this.projectReferences, this.availableVersions}) {
             hash = MAGIC_HASH_MULTIPLIER * hash + ObjectUtils.hashCode(field);
         }
         return hash;

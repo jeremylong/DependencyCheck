@@ -31,6 +31,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.logging.Level;
 
 /**
  * A simple settings container that wraps the dependencycheck.properties file.
@@ -193,6 +194,10 @@ public final class Settings {
          * The properties key for whether the Python Package analyzer is enabled.
          */
         public static final String ANALYZER_PYTHON_PACKAGE_ENABLED = "analyzer.python.package.enabled";
+        /**
+         * The properties key for whether the Ruby Gemspec Analyzer is enabled.
+         */
+        public static final String ANALYZER_RUBY_GEMSPEC_ENABLED = "analyzer.ruby.gemspec.enabled";
         /**
          * The properties key for whether the Autoconf analyzer is enabled.
          */
@@ -368,6 +373,14 @@ public final class Settings {
     public static void cleanup(boolean deleteTemporary) {
         if (deleteTemporary && tempDirectory != null && tempDirectory.exists()) {
             FileUtils.delete(tempDirectory);
+            if (tempDirectory.exists()) {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ex) {
+                    //ignore
+                }
+                FileUtils.delete(tempDirectory);
+            }
         }
         try {
             localSettings.remove();

@@ -504,7 +504,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         <div id="modal-background"></div>
         <div id="modal-content">
             <div>Press CTR-C to copy XML&nbsp;<a href="http://jeremylong.github.io/DependencyCheck/suppression.html" class="infolink" target="_blank" title="Help with suppressing false positives">[help]</a></div>
-                <textarea id="modal-text" cols="50" rows="10"></textarea><br/>
+                <textarea id="modal-text" cols="50" rows="10" readonly></textarea><br/>
                 <button id="modal-add-header" title="Add the parent XML nodes to create the complete XML file that can be used to suppress this finding" class="modal-button">Complete XML Doc</button><button id="modal-close" class="modal-button-right">Close</button>
         </div>
         <div class="wrapper">
@@ -591,6 +591,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                                 #else
                                     $enc.html($id.value)
                                 #end
+                                #set($cpeSort=0)
                                 #if ($cpeIdConf == "")
                                     #set($cpeIdConf=$id.confidence)
                                     #set($cpeSort=$id.confidence.ordinal())
@@ -602,11 +603,15 @@ arising out of or in connection with the use of this tool, the analysis performe
                             #end
                         #end
                         </td>
+                        #if ($mavenlink=="")
+                        <td data-sort-value="">
+                        #else
                         <td data-sort-value="$enc.html($mavenlink.value)">#if( $mavenlink.url )
-                            ##yes, we are HTML Encoding the href. this is okay. We can't URL encode as we have to trust the analyzer here...
+                            ##yes, we are HTML Encoding the href. This is okay. We can't URL encode as we have to trust the analyzer here...
                             <a href="$enc.html($mavenlink.url)" target="_blank">$enc.html($mavenlink.value)</a>
                         #elseif ($mavenlink.value)
                             $enc.html($mavenlink.value)
+                        #end
                         #end</td>
                         #set($cveImpact=-1)
                         #foreach($vuln in $dependency.getVulnerabilities())

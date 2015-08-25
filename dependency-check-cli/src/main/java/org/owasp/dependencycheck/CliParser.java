@@ -416,6 +416,8 @@ public final class CliParser {
                 .addOption(disablePythonDistributionAnalyzer)
                 .addOption(disableCmakeAnalyzer)
                 .addOption(disablePythonPackageAnalyzer)
+                .addOption(OptionBuilder.withLongOpt(ARGUMENT.DISABLE_RUBYGEMS)
+                        .withDescription("Disable the Ruby Gemspec Analyzer.").create())
                 .addOption(disableAutoconfAnalyzer)
                 .addOption(disableOpenSSLAnalyzer)
                 .addOption(disableNuspecAnalyzer)
@@ -543,6 +545,15 @@ public final class CliParser {
      */
     public boolean isPythonPackageDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_PY_PKG);
+    }
+
+    /**
+     * Returns whether the Ruby gemspec analyzer is disabled.
+     *
+     * @return true if the {@link ARGUMENT#DISABLE_RUBYGEMS} command line argument was specified; otherwise false
+     */
+    public boolean isRubyGemspecDisabled() {
+        return (null != line) && line.hasOption(ARGUMENT.DISABLE_RUBYGEMS);
     }
 
     /**
@@ -1088,6 +1099,10 @@ public final class CliParser {
          * Disables the Python Package Analyzer.
          */
         public static final String DISABLE_PY_PKG = "disablePyPkg";
+        /**
+         * Disables the Ruby Gemspec Analyzer.
+         */
+        public static final String DISABLE_RUBYGEMS = "disableRubygems";
         /**
          * Disables the Autoconf Analyzer.
          */
