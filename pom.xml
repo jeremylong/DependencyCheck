@@ -522,9 +522,9 @@ Copyright (c) 2012 - Jeremy Long
                 <version>1.7</version>
             </dependency>
             <dependency>
-                <groupId>org.json</groupId>
-                <artifactId>json</artifactId>
-                <version>20141113</version>
+                <groupId>org.glassfish</groupId>
+                <artifactId>javax.json</artifactId>
+                <version>1.0.4</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>

@@ -18,8 +18,6 @@
 package org.owasp.dependencycheck.analyzer;
 
 import org.apache.commons.io.FileUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
@@ -30,6 +28,7 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.json.*;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -113,22 +112,23 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
     protected void analyzeFileType(Dependency dependency, Engine engine)
             throws AnalysisException {
         final File file = dependency.getActualFile();
-        String contents;
+        JsonReader jsonReader;
         try {
-            contents = FileUtils.readFileToString(file).trim();
+            jsonReader = Json.createReader(FileUtils.openInputStream(file));
         } catch (IOException e) {
             throw new AnalysisException(
                     "Problem occurred while reading dependency file.", e);
         }
         try {
-            JSONObject json = new JSONObject(contents);
+            JsonObject json = jsonReader.readObject();
             final EvidenceCollection productEvidence = dependency.getProductEvidence();
             final EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
-            if (json.has("name")) {
+            if (json.containsKey("name")) {
                 Object value = json.get("name");
-                if (value instanceof String) {
-                    productEvidence.addEvidence(PACKAGE_JSON, "name", (String) value, Confidence.HIGHEST);
-                    vendorEvidence.addEvidence(PACKAGE_JSON, "name_project", String.format("%s_project", value), Confidence.LOW);
+                if (value instanceof JsonString) {
+                    String valueString = ((JsonString) value).getString();
+                    productEvidence.addEvidence(PACKAGE_JSON, "name", valueString, Confidence.HIGHEST);
+                    vendorEvidence.addEvidence(PACKAGE_JSON, "name_project", String.format("%s_project", valueString), Confidence.LOW);
                 } else {
                     LOGGER.warn("JSON value not string as expected: %s", value);
                 }
@@ -137,24 +137,26 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
             addToEvidence(json, vendorEvidence, "author");
             addToEvidence(json, dependency.getVersionEvidence(), "version");
             dependency.setDisplayFileName(String.format("%s/%s", file.getParentFile().getName(), file.getName()));
-        } catch (JSONException e) {
+        } catch (JsonException e) {
             LOGGER.warn("Failed to parse package.json file.", e);
+        } finally {
+            jsonReader.close();
         }
     }
 
-    private void addToEvidence(JSONObject json, EvidenceCollection collection, String key) {
-        if (json.has(key)) {
+    private void addToEvidence(JsonObject json, EvidenceCollection collection, String key) {
+        if (json.containsKey(key)) {
             Object value = json.get(key);
-            if (value instanceof String) {
-                collection.addEvidence(PACKAGE_JSON, key, (String) value, Confidence.HIGHEST);
-            } else if (value instanceof JSONObject) {
-                final JSONObject jsonObject = (JSONObject) value;
+            if (value instanceof JsonString) {
+                collection.addEvidence(PACKAGE_JSON, key, ((JsonString) value).getString(), Confidence.HIGHEST);
+            } else if (value instanceof JsonObject) {
+                final JsonObject jsonObject = (JsonObject) value;
                 for (String property : jsonObject.keySet()) {
                     final Object subValue = jsonObject.get(property);
-                    if (subValue instanceof String) {
+                    if (subValue instanceof JsonString) {
                         collection.addEvidence(PACKAGE_JSON,
                                 String.format("%s.%s", key, property),
-                                (String) subValue,
+                                ((JsonString) subValue).getString(),
                                 Confidence.HIGHEST);
                     } else {
                         LOGGER.warn("JSON sub-value not string as expected: %s");
