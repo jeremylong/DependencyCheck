@@ -6,7 +6,8 @@ Dependency-check can currently be used to scan Java, .NET, Python, Ruby and
 Node.js applications (and their dependent libraries) to identify known
 vulnerable components. In addition, Dependency-check can be used to scan some
 source code, including OpenSSL source code and source code for projects that
-use Autoconf.
+use [Autoconf](https://www.gnu.org/software/autoconf/) or
+[CMake](http://www.cmake.org/overview/).
 
 The problem with using known vulnerable components was covered in a paper by
 Jeff Williams and Arshan Dabirsiaghi titled, "[The Unfortunate Reality of
