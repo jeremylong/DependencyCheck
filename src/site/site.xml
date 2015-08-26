@@ -128,6 +128,9 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 <item name="Nexus Analyzer" href="./analyzers/nexus-analyzer.html">
                     <description>Nexus Analyzer</description>
                 </item>
+                <item name="Node.js Analyzer" href="./analyzers/nodejs.html">
+                    <description>Node.js Analyzer</description>
+                </item>
                 <item name="Nuspec Analyzer" href="./analyzers/nuspec-analyzer.html">
                     <description>Nuspec Analyzer</description>
                 </item>
