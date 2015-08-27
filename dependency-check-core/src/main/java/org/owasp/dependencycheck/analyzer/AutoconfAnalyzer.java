@@ -173,10 +173,10 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
             }
         } else {
             // copy, alter and set in case some other thread is iterating over
-            final List<Dependency> deps = new ArrayList<Dependency>(
+            final List<Dependency> dependencies = new ArrayList<Dependency>(
                     engine.getDependencies());
-            deps.remove(dependency);
-            engine.setDependencies(deps);
+            dependencies.remove(dependency);
+            engine.setDependencies(dependencies);
         }
     }
 
@@ -225,7 +225,7 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
             contents = FileUtils.readFileToString(actualFile).trim();
         } catch (IOException e) {
             throw new AnalysisException(
-                    "Problem occured while reading dependency file.", e);
+                    "Problem occurred while reading dependency file.", e);
         }
         return contents;
     }

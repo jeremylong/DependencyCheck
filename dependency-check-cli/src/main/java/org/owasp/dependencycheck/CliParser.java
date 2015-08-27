@@ -427,6 +427,8 @@ public final class CliParser {
                 .addOption(disableNuspecAnalyzer)
                 .addOption(disableCentralAnalyzer)
                 .addOption(disableNexusAnalyzer)
+                .addOption(OptionBuilder.withLongOpt(ARGUMENT.DISABLE_NODE_JS)
+                        .withDescription("Disable the Node.js Package Analyzer.").create())
                 .addOption(nexusUrl)
                 .addOption(nexusUsesProxy)
                 .addOption(additionalZipExtensions)
@@ -593,6 +595,15 @@ public final class CliParser {
      */
     public boolean isOpenSSLDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_OPENSSL);
+    }
+
+    /**
+     * Returns true if the disableNodeJS command line argument was specified.
+     *
+     * @return true if the disableNodeJS command line argument was specified; otherwise false
+     */
+    public boolean isNodeJsDisabled() {
+        return (line != null) && line.hasOption(ARGUMENT.DISABLE_NODE_JS);
     }
 
     /**
@@ -1134,6 +1145,10 @@ public final class CliParser {
          * Disables the OpenSSL Analyzer.
          */
         public static final String DISABLE_OPENSSL = "disableOpenSSL";
+        /**
+         * Disables the Node.js Package Analyzer.
+         */
+        public static final String DISABLE_NODE_JS = "disableNodeJS";
         /**
          * The URL of the nexus server.
          */

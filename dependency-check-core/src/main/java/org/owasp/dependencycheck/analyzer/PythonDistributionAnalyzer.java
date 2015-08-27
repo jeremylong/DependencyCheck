@@ -53,7 +53,7 @@ import org.owasp.dependencycheck.utils.UrlStringUtils;
 public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
-     * Name of egg metatdata files to analyze.
+     * Name of egg metadata files to analyze.
      */
     private static final String PKG_INFO = "PKG-INFO";
 
@@ -269,10 +269,8 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @param dependency the dependency being analyzed
      * @param file a reference to the manifest/properties file
-     * @throws AnalysisException thrown when there is an error
      */
-    private static void collectWheelMetadata(Dependency dependency, File file)
-            throws AnalysisException {
+    private static void collectWheelMetadata(Dependency dependency, File file) {
         final InternetHeaders headers = getManifestProperties(file);
         addPropertyToEvidence(headers, dependency.getVersionEvidence(),
                 "Version", Confidence.HIGHEST);
@@ -352,7 +350,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Retrieves the next temporary destingation directory for extracting an archive.
+     * Retrieves the next temporary destination directory for extracting an archive.
      *
      * @return a directory
      * @throws AnalysisException thrown if unable to create temporary directory
