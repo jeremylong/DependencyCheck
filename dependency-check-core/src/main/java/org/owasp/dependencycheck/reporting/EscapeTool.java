@@ -24,8 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An extremely simple wrapper around various escape utils to perform URL and HTML encoding within the reports. This
- * class was created to simplify the velocity configuration and avoid using the "built-in" escape tool.
+ * An extremely simple wrapper around various escape utils to perform URL and HTML encoding within the reports. This class was
+ * created to simplify the velocity configuration and avoid using the "built-in" escape tool.
  *
  * @author Jeremy Long
  */
@@ -43,6 +43,9 @@ public class EscapeTool {
      * @return the URL encoded text
      */
     public String url(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
         try {
             return URLEncoder.encode(text, "UTF-8");
         } catch (UnsupportedEncodingException ex) {
@@ -59,6 +62,9 @@ public class EscapeTool {
      * @return the HTML encoded text
      */
     public String html(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
         return StringEscapeUtils.escapeHtml(text);
     }
 
@@ -69,6 +75,9 @@ public class EscapeTool {
      * @return the XML encoded text
      */
     public String xml(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
         return StringEscapeUtils.escapeXml(text);
     }
 }
