@@ -17,8 +17,10 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
@@ -50,9 +52,11 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
 
     private static final FileFilter FILTER =
             FileFilterBuilder.newInstance().addFilenames("Gemfile.lock").build();
+    public static final String NAME = "Name: ";
+    public static final String VERSION = "Version: ";
 
     /**
-     * @return a filter that accepts files named Rakefile or matching the glob pattern, *.gemspec
+     * @return a filter that accepts files named Gemfile.lock
      */
     @Override
     protected FileFilter getFileFilter() {
@@ -65,7 +69,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      * @return a handle to the process
      */
     private Process launchBundleAudit(File folder) throws AnalysisException {
-        if (!folder.isDirectory()){
+        if (!folder.isDirectory()) {
             throw new AnalysisException(String.format("%s should have been a directory.", folder.getAbsolutePath()));
         }
         final List<String> args = new ArrayList<String>();
@@ -165,13 +169,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         BufferedReader rdr = null;
         try {
             rdr = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
-            while (rdr.ready()) {
-                final String nextLine = rdr.readLine();
-                if (null == nextLine) {
-                    break;
-                }
-                LOGGER.info(String.format("bundle-audit (%s): %s", parentFile.getName(), nextLine));
-            }
+            processBundlerAuditOutput(dependency, engine, rdr);
         } catch (IOException ioe) {
             LOGGER.warn("bundle-audit failure", ioe);
         } finally {
@@ -184,5 +182,36 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             }
         }
 
+    }
+
+    private void processBundlerAuditOutput(Dependency original, Engine engine, BufferedReader rdr) throws IOException {
+        final String parentName = original.getActualFile().getParentFile().getName();
+        final String fileName = original.getFileName();
+        Dependency dependency = null;
+        while (rdr.ready()) {
+            final String nextLine = rdr.readLine();
+            if (null == nextLine) {
+                break;
+            } else if (nextLine.startsWith(NAME)) {
+                final String gem = nextLine.substring(NAME.length());
+                final File tempFile = File.createTempFile("Gemfile-" + gem, ".lock", Settings.getTempDirectory());
+                final String displayFileName = String.format("%s%c%s:%s", parentName, File.separatorChar, fileName, gem);
+                FileUtils.write(tempFile, displayFileName); // unique contents to avoid dependency bundling
+                dependency = new Dependency(tempFile);
+                engine.getDependencies().add(dependency);
+                dependency.setDisplayFileName(displayFileName);
+                dependency.getProductEvidence().addEvidence("bundler-audit", "Name", gem, Confidence.HIGHEST);
+                LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
+            } else if (nextLine.startsWith(VERSION)) {
+                if (null != dependency) {
+                    dependency.getVersionEvidence().addEvidence(
+                            "bundler-audit",
+                            "Version",
+                            nextLine.substring(VERSION.length()),
+                            Confidence.HIGHEST);
+                }
+                LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
+            }
+        }
     }
 }
