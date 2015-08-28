@@ -22,6 +22,7 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -188,12 +189,14 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         final String parentName = original.getActualFile().getParentFile().getName();
         final String fileName = original.getFileName();
         Dependency dependency = null;
+        Vulnerability vulnerability= null;
+        String gem = null;
         while (rdr.ready()) {
             final String nextLine = rdr.readLine();
             if (null == nextLine) {
                 break;
             } else if (nextLine.startsWith(NAME)) {
-                final String gem = nextLine.substring(NAME.length());
+                gem = nextLine.substring(NAME.length());
                 final File tempFile = File.createTempFile("Gemfile-" + gem, ".lock", Settings.getTempDirectory());
                 final String displayFileName = String.format("%s%c%s:%s", parentName, File.separatorChar, fileName, gem);
                 FileUtils.write(tempFile, displayFileName); // unique contents to avoid dependency bundling
@@ -201,15 +204,26 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 engine.getDependencies().add(dependency);
                 dependency.setDisplayFileName(displayFileName);
                 dependency.getProductEvidence().addEvidence("bundler-audit", "Name", gem, Confidence.HIGHEST);
+                vulnerability = new Vulnerability();
+                vulnerability.setName(gem);
+                dependency.getVulnerabilities().add(vulnerability);
                 LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
             } else if (nextLine.startsWith(VERSION)) {
                 if (null != dependency) {
+                    final String version = nextLine.substring(VERSION.length());
                     dependency.getVersionEvidence().addEvidence(
                             "bundler-audit",
                             "Version",
-                            nextLine.substring(VERSION.length()),
+                            version,
                             Confidence.HIGHEST);
+                    vulnerability.setMatchedCPE(
+                            String.format("cpe:/a:%1$s_project:%1$s:%2$s::~~~ruby~~", gem, version),
+                            null);
                 }
+                LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
+            } else if (nextLine.startsWith("Advisory: ")){
+                final String advisory = nextLine.substring(("Advisory: ".length()));
+                vulnerability.setName(advisory);
                 LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
             }
         }
