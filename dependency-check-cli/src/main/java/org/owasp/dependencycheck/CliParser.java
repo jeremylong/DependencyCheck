@@ -728,8 +728,6 @@ public final class CliParser {
     public String getProjectName() {
         String appName = line.getOptionValue(ARGUMENT.APP_NAME);
         String name = line.getOptionValue(ARGUMENT.PROJECT);
-        LOGGER.error("PROJECT NAME: " + line.getOptionValue(ARGUMENT.PROJECT));
-
         if (name == null && appName != null) {
             name = appName;
             LOGGER.warn("The '" + ARGUMENT.APP_NAME + "' argument should no longer be used; use '" + ARGUMENT.PROJECT + "' instead.");
