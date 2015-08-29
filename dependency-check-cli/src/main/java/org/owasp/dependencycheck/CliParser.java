@@ -19,6 +19,7 @@ package org.owasp.dependencycheck;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.logging.Level;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -217,7 +218,7 @@ public final class CliParser {
         final Option noUpdate = new Option(ARGUMENT.DISABLE_AUTO_UPDATE_SHORT, ARGUMENT.DISABLE_AUTO_UPDATE,
                 false, "Disables the automatic updating of the CPE data.");
 
-        final Option projectName = OptionBuilder.withArgName("name").hasArg().withLongOpt(ARGUMENT.PROJECT)
+        final Option projectName = OptionBuilder.hasArg().withArgName("name").withLongOpt(ARGUMENT.PROJECT)
                 .withDescription("The name of the project being scanned. This is a required argument.")
                 .create();
 
@@ -229,7 +230,7 @@ public final class CliParser {
         final Option excludes = OptionBuilder.withArgName("pattern").hasArg().withLongOpt(ARGUMENT.EXCLUDE)
                 .withDescription("Specify and exclusion pattern. This option can be specified multiple times"
                         + " and it accepts Ant style excludsions.")
-                .create();
+                .create("p");
 
         final Option props = OptionBuilder.withArgName("file").hasArg().withLongOpt(ARGUMENT.PROP)
                 .withDescription("A property file to load.")
@@ -265,9 +266,9 @@ public final class CliParser {
 
         options.addOptionGroup(og)
                 .addOptionGroup(exog)
+                .addOption(projectName)
                 .addOption(out)
                 .addOption(outputFormat)
-                .addOption(projectName)
                 .addOption(version)
                 .addOption(help)
                 .addOption(advancedHelp)
@@ -394,7 +395,7 @@ public final class CliParser {
         final Option disableNexusAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_NEXUS)
                 .withDescription("Disable the Nexus Analyzer.").create();
 
-        final Option purge = OptionBuilder.withLongOpt(ARGUMENT.PROJECT)
+        final Option purge = OptionBuilder.withLongOpt(ARGUMENT.PURGE_NVD)
                 .withDescription("Purges the local NVD data cache")
                 .create();
 
@@ -450,7 +451,7 @@ public final class CliParser {
                 .withDescription("The proxy url argument is deprecated, use proxyserver instead.")
                 .create();
         final Option appName = OptionBuilder.withArgName("name").hasArg().withLongOpt(ARGUMENT.APP_NAME)
-                .withDescription("The name of the project being scanned. This is a required argument.")
+                .withDescription("The name of the project being scanned.")
                 .create(ARGUMENT.APP_NAME_SHORT);
 
         options.addOption(proxyServer);
@@ -727,9 +728,11 @@ public final class CliParser {
     public String getProjectName() {
         String appName = line.getOptionValue(ARGUMENT.APP_NAME);
         String name = line.getOptionValue(ARGUMENT.PROJECT);
+        LOGGER.error("PROJECT NAME: " + line.getOptionValue(ARGUMENT.PROJECT));
+
         if (name == null && appName != null) {
             name = appName;
-            LOGGER.warn("The '" + ARGUMENT.APP_NAME + "' should no longer be used; use '" + ARGUMENT.PROJECT + "' instead.");
+            LOGGER.warn("The '" + ARGUMENT.APP_NAME + "' argument should no longer be used; use '" + ARGUMENT.PROJECT + "' instead.");
         }
         return name;
     }
