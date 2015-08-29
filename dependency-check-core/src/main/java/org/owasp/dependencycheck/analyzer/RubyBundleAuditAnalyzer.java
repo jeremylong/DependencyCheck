@@ -195,10 +195,10 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         String gem = null;
         final Map<String, Dependency> map = new HashMap<String, Dependency>();
         int i = 0;
+        boolean appendToDescription = false;
         while (rdr.ready()) {
             final String nextLine = rdr.readLine();
             i++;
-            boolean appendToDescription = false;
             if (null == nextLine) {
                 break;
             } else if (nextLine.startsWith(NAME)) {
@@ -268,9 +268,9 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                     vulnerability.getReferences().add(ref);
                 }
                 LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
-            } else if (nextLine.startsWith("Description: ")) {
+            } else if (nextLine.startsWith("Description:")) {
                 appendToDescription = true;
-                vulnerability.setDescription("Vulnerability obtained from bundle-audit. NVD links may not work.\n\n");
+                vulnerability.setDescription("*** Vulnerability obtained from bundle-audit verbose report. Title link may not work. CPE below is guessed. CVSS score is estimated (-1.0 indicates unknown). See link below for full details. *** ");
             } else if (appendToDescription) {
                 vulnerability.setDescription(vulnerability.getDescription() + nextLine + "\n");
             }
