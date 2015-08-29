@@ -55,6 +55,8 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             FileFilterBuilder.newInstance().addFilenames("Gemfile.lock").build();
     public static final String NAME = "Name: ";
     public static final String VERSION = "Version: ";
+    public static final String ADVISORY = "Advisory: ";
+    public static final String CRITICALITY = "Criticality: ";
 
     /**
      * @return a filter that accepts files named Gemfile.lock
@@ -191,15 +193,17 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         Dependency dependency = null;
         Vulnerability vulnerability= null;
         String gem = null;
+        int i = 0;
         while (rdr.ready()) {
             final String nextLine = rdr.readLine();
+            i++;
             if (null == nextLine) {
                 break;
             } else if (nextLine.startsWith(NAME)) {
                 gem = nextLine.substring(NAME.length());
                 final File tempFile = File.createTempFile("Gemfile-" + gem, ".lock", Settings.getTempDirectory());
                 final String displayFileName = String.format("%s%c%s:%s", parentName, File.separatorChar, fileName, gem);
-                FileUtils.write(tempFile, displayFileName); // unique contents to avoid dependency bundling
+                FileUtils.write(tempFile, displayFileName + "\n" + i); // unique contents to avoid dependency bundling
                 dependency = new Dependency(tempFile);
                 engine.getDependencies().add(dependency);
                 dependency.setDisplayFileName(displayFileName);
@@ -221,9 +225,21 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                             null);
                 }
                 LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
-            } else if (nextLine.startsWith("Advisory: ")){
-                final String advisory = nextLine.substring(("Advisory: ".length()));
+            } else if (nextLine.startsWith(ADVISORY)){
+                final String advisory = nextLine.substring((ADVISORY.length()));
                 vulnerability.setName(advisory);
+                LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
+            } else if (nextLine.startsWith(CRITICALITY)) {
+                final String criticality = nextLine.substring(CRITICALITY.length()).trim();
+                if ("High".equals(criticality)) {
+                    vulnerability.setCvssScore(8.5f);
+                } else if ("Medium".equals(criticality)) {
+                    vulnerability.setCvssScore(5.5f);
+                } else if ("Low".equals(criticality)) {
+                    vulnerability.setCvssScore(2.0f);
+                } else {
+                    vulnerability.setCvssScore(-1.0f);
+                }
                 LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
             }
         }
