@@ -145,13 +145,15 @@ public class DependencyCheckTask extends Task {
     /**
      * The application name for the report.
      */
-    private String applicationName = "Dependency-Check";
+    @Deprecated
+    private String applicationName = null;
 
     /**
      * Get the value of applicationName.
      *
      * @return the value of applicationName
      */
+    @Deprecated
     public String getApplicationName() {
         return applicationName;
     }
@@ -161,9 +163,37 @@ public class DependencyCheckTask extends Task {
      *
      * @param applicationName new value of applicationName
      */
+    @Deprecated
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
     }
+
+    private String projectName = "Dependency-Check";
+
+    /**
+     * Get the value of projectName.
+     *
+     * @return the value of projectName
+     */
+    public String getProjectName() {
+        if (applicationName != null) {
+            log("Configuration 'applicationName' has been deprecated, please use 'projectName' instead", Project.MSG_WARN);
+            if ("Dependency-Check".equals(projectName)) {
+                projectName = applicationName;
+            }
+        }
+        return projectName;
+    }
+
+    /**
+     * Set the value of projectName.
+     *
+     * @param projectName new value of projectName
+     */
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
     /**
      * The location of the data directory that contains
      */
@@ -279,8 +309,7 @@ public class DependencyCheckTask extends Task {
     }
 
     /**
-     * The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this within the
-     * Site plugin unless the externalReport is set to true. Default is HTML.
+     * The report format to be generated (HTML, XML, VULN, ALL). Default is HTML.
      */
     private String reportFormat = "HTML";
 
@@ -933,7 +962,7 @@ public class DependencyCheckTask extends Task {
                             cve.close();
                         }
                     }
-                    final ReportGenerator reporter = new ReportGenerator(applicationName, engine.getDependencies(), engine.getAnalyzers(), prop);
+                    final ReportGenerator reporter = new ReportGenerator(getProjectName(), engine.getDependencies(), engine.getAnalyzers(), prop);
                     reporter.generateReports(reportOutputDirectory, reportFormat);
 
                     if (this.failBuildOnCVSS <= 10) {
