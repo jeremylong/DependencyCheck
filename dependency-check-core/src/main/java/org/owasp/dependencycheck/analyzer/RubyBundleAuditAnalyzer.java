@@ -22,6 +22,7 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Reference;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
@@ -29,10 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Used to analyze Ruby Bundler Gemspec.lock files utilizing the 3rd party bundle-audit tool.
@@ -245,8 +243,8 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 }
                 LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
             } else if (nextLine.startsWith(CRITICALITY)) {
-                final String criticality = nextLine.substring(CRITICALITY.length()).trim();
                 if (null != vulnerability) {
+                    final String criticality = nextLine.substring(CRITICALITY.length()).trim();
                     if ("High".equals(criticality)) {
                         vulnerability.setCvssScore(8.5f);
                     } else if ("Medium".equals(criticality)) {
@@ -258,6 +256,15 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                     }
                 }
                 LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
+            } else if (nextLine.startsWith("URL: ")){
+                final String url = nextLine.substring(("URL: ").length());
+                if (null != vulnerability) {
+                    Reference ref = new Reference();
+                    ref.setName(vulnerability.getName());
+                    ref.setSource("bundle-audit");
+                    ref.setUrl(url);
+                    vulnerability.getReferences().add(ref);
+                }
             }
         }
     }
