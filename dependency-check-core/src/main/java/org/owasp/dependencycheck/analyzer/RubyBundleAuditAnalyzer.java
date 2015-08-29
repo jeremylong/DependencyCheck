@@ -198,9 +198,11 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         while (rdr.ready()) {
             final String nextLine = rdr.readLine();
             i++;
+            boolean appendToDescription = false;
             if (null == nextLine) {
                 break;
             } else if (nextLine.startsWith(NAME)) {
+                appendToDescription = false;
                 gem = nextLine.substring(NAME.length());
                 if (map.containsKey(gem)) {
                     dependency = map.get(gem);
@@ -265,6 +267,12 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                     ref.setUrl(url);
                     vulnerability.getReferences().add(ref);
                 }
+                LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
+            } else if (nextLine.startsWith("Description: ")) {
+                appendToDescription = true;
+                vulnerability.setDescription("Vulnerability obtained from bundle-audit. NVD links may not work.\n\n");
+            } else if (appendToDescription) {
+                vulnerability.setDescription(vulnerability.getDescription() + nextLine + "\n");
             }
         }
     }
