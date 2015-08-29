@@ -394,6 +394,10 @@ public final class CliParser {
         final Option disableNexusAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_NEXUS)
                 .withDescription("Disable the Nexus Analyzer.").create();
 
+        final Option purge = OptionBuilder.withLongOpt(ARGUMENT.PROJECT)
+                .withDescription("Purges the local NVD data cache")
+                .create();
+
         options.addOption(updateOnly)
                 .addOption(cve12Base)
                 .addOption(cve20Base)
@@ -428,7 +432,8 @@ public final class CliParser {
                 .addOption(nexusUrl)
                 .addOption(nexusUsesProxy)
                 .addOption(additionalZipExtensions)
-                .addOption(pathToMono);
+                .addOption(pathToMono)
+                .addOption(purge);
     }
 
     /**
@@ -878,7 +883,7 @@ public final class CliParser {
      * @return <code>true</code> if auto-update is allowed; otherwise <code>false</code>
      */
     public boolean isAutoUpdate() {
-        return (line == null) || !line.hasOption(ARGUMENT.DISABLE_AUTO_UPDATE);
+        return line != null && !line.hasOption(ARGUMENT.DISABLE_AUTO_UPDATE);
     }
 
     /**
@@ -887,7 +892,16 @@ public final class CliParser {
      * @return <code>true</code> if the update only flag has been set; otherwise <code>false</code>.
      */
     public boolean isUpdateOnly() {
-        return (line == null) || line.hasOption(ARGUMENT.UPDATE_ONLY);
+        return line != null && line.hasOption(ARGUMENT.UPDATE_ONLY);
+    }
+
+    /**
+     * Checks if the purge NVD flag has been set.
+     *
+     * @return <code>true</code> if the purge nvd flag has been set; otherwise <code>false</code>.
+     */
+    public boolean isPurge() {
+        return line != null && line.hasOption(ARGUMENT.PURGE_NVD);
     }
 
     /**
@@ -969,6 +983,10 @@ public final class CliParser {
          * The long CLI argument name specifying that only the update phase should be executed; no scan should be run.
          */
         public static final String UPDATE_ONLY = "updateonly";
+        /**
+         * The long CLI argument name specifying that only the update phase should be executed; no scan should be run.
+         */
+        public static final String PURGE_NVD = "purgelocalnvd";
         /**
          * The long CLI argument name specifying the directory to write the reports to.
          */
