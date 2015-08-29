@@ -30,7 +30,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Used to analyze Ruby Bundler Gemspec.lock files utilizing the 3rd party bundle-audit tool.
@@ -191,8 +193,9 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         final String parentName = original.getActualFile().getParentFile().getName();
         final String fileName = original.getFileName();
         Dependency dependency = null;
-        Vulnerability vulnerability= null;
+        Vulnerability vulnerability = null;
         String gem = null;
+        final Map<String, Dependency> map = new HashMap<String, Dependency>();
         int i = 0;
         while (rdr.ready()) {
             final String nextLine = rdr.readLine();
@@ -201,16 +204,18 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 break;
             } else if (nextLine.startsWith(NAME)) {
                 gem = nextLine.substring(NAME.length());
-                final File tempFile = File.createTempFile("Gemfile-" + gem, ".lock", Settings.getTempDirectory());
-                final String displayFileName = String.format("%s%c%s:%s", parentName, File.separatorChar, fileName, gem);
-                FileUtils.write(tempFile, displayFileName + "\n" + i); // unique contents to avoid dependency bundling
-                dependency = new Dependency(tempFile);
-                engine.getDependencies().add(dependency);
-                dependency.setDisplayFileName(displayFileName);
-                dependency.getProductEvidence().addEvidence("bundler-audit", "Name", gem, Confidence.HIGHEST);
-                vulnerability = new Vulnerability();
-                vulnerability.setName(gem);
-                dependency.getVulnerabilities().add(vulnerability);
+                if (map.containsKey(gem)) {
+                    dependency = map.get(gem);
+                } else {
+                    final File tempFile = File.createTempFile("Gemfile-" + gem, ".lock", Settings.getTempDirectory());
+                    final String displayFileName = String.format("%s%c%s:%s", parentName, File.separatorChar, fileName, gem);
+                    FileUtils.write(tempFile, displayFileName + "\n" + i); // unique contents to avoid dependency bundling
+                    dependency = new Dependency(tempFile);
+                    dependency.getProductEvidence().addEvidence("bundler-audit", "Name", gem, Confidence.HIGHEST);
+                    dependency.setDisplayFileName(displayFileName);
+                    engine.getDependencies().add(dependency);
+                    map.put(gem, dependency);
+                }
                 LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
             } else if (nextLine.startsWith(VERSION)) {
                 if (null != dependency) {
@@ -220,25 +225,37 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                             "Version",
                             version,
                             Confidence.HIGHEST);
+                    vulnerability = new Vulnerability(); // don't add to dependency until we have name set later
                     vulnerability.setMatchedCPE(
                             String.format("cpe:/a:%1$s_project:%1$s:%2$s::~~~ruby~~", gem, version),
                             null);
                 }
                 LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
-            } else if (nextLine.startsWith(ADVISORY)){
+            } else if (nextLine.startsWith(ADVISORY)) {
                 final String advisory = nextLine.substring((ADVISORY.length()));
                 vulnerability.setName(advisory);
+                vulnerability.setCvssAccessVector("-");
+                vulnerability.setCvssAccessComplexity("-");
+                vulnerability.setCvssAuthentication("-");
+                vulnerability.setCvssAvailabilityImpact("-");
+                vulnerability.setCvssConfidentialityImpact("-");
+                vulnerability.setCvssIntegrityImpact("-");
+                if (null != dependency) {
+                    dependency.getVulnerabilities().add(vulnerability);
+                }
                 LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
             } else if (nextLine.startsWith(CRITICALITY)) {
                 final String criticality = nextLine.substring(CRITICALITY.length()).trim();
-                if ("High".equals(criticality)) {
-                    vulnerability.setCvssScore(8.5f);
-                } else if ("Medium".equals(criticality)) {
-                    vulnerability.setCvssScore(5.5f);
-                } else if ("Low".equals(criticality)) {
-                    vulnerability.setCvssScore(2.0f);
-                } else {
-                    vulnerability.setCvssScore(-1.0f);
+                if (null != vulnerability) {
+                    if ("High".equals(criticality)) {
+                        vulnerability.setCvssScore(8.5f);
+                    } else if ("Medium".equals(criticality)) {
+                        vulnerability.setCvssScore(5.5f);
+                    } else if ("Low".equals(criticality)) {
+                        vulnerability.setCvssScore(2.0f);
+                    } else {
+                        vulnerability.setCvssScore(-1.0f);
+                    }
                 }
                 LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
             }
