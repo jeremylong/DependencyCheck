@@ -98,7 +98,7 @@ public class App {
         } else if (cli.isRunScan()) {
             populateSettings(cli);
             try {
-                runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles(),
+                runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getProjectName(), cli.getScanFiles(),
                         cli.getExcludeList(), cli.getSymLinkDepth());
             } catch (InvalidScanPathException ex) {
                 LOGGER.error("An invalid scan path was detected; unable to scan '//*' paths");

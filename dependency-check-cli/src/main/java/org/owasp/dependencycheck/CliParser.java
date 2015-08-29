@@ -97,8 +97,8 @@ public final class CliParser {
             if (getPathToMono() != null) {
                 validatePathExists(getPathToMono(), ARGUMENT.PATH_TO_MONO);
             }
-            if (!line.hasOption(ARGUMENT.APP_NAME)) {
-                throw new ParseException("Missing 'app' argument; the scan cannot be run without the an application name.");
+            if (!line.hasOption(ARGUMENT.APP_NAME) && !line.hasOption(ARGUMENT.PROJECT)) {
+                throw new ParseException("Missing '" + ARGUMENT.PROJECT + "' argument; the scan cannot be run without the an project name.");
             }
             if (line.hasOption(ARGUMENT.OUTPUT_FORMAT)) {
                 final String format = line.getOptionValue(ARGUMENT.OUTPUT_FORMAT);
@@ -217,9 +217,9 @@ public final class CliParser {
         final Option noUpdate = new Option(ARGUMENT.DISABLE_AUTO_UPDATE_SHORT, ARGUMENT.DISABLE_AUTO_UPDATE,
                 false, "Disables the automatic updating of the CPE data.");
 
-        final Option appName = OptionBuilder.withArgName("name").hasArg().withLongOpt(ARGUMENT.APP_NAME)
-                .withDescription("The name of the application being scanned. This is a required argument.")
-                .create(ARGUMENT.APP_NAME_SHORT);
+        final Option projectName = OptionBuilder.withArgName("name").hasArg().withLongOpt(ARGUMENT.PROJECT)
+                .withDescription("The name of the project being scanned. This is a required argument.")
+                .create();
 
         final Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ARGUMENT.SCAN)
                 .withDescription("The path to scan - this option can be specified multiple times. Ant style"
@@ -267,7 +267,7 @@ public final class CliParser {
                 .addOptionGroup(exog)
                 .addOption(out)
                 .addOption(outputFormat)
-                .addOption(appName)
+                .addOption(projectName)
                 .addOption(version)
                 .addOption(help)
                 .addOption(advancedHelp)
@@ -444,8 +444,12 @@ public final class CliParser {
         final Option proxyServer = OptionBuilder.withArgName("url").hasArg().withLongOpt(ARGUMENT.PROXY_URL)
                 .withDescription("The proxy url argument is deprecated, use proxyserver instead.")
                 .create();
+        final Option appName = OptionBuilder.withArgName("name").hasArg().withLongOpt(ARGUMENT.APP_NAME)
+                .withDescription("The name of the project being scanned. This is a required argument.")
+                .create(ARGUMENT.APP_NAME_SHORT);
 
         options.addOption(proxyServer);
+        options.addOption(appName);
     }
 
     /**
@@ -715,8 +719,14 @@ public final class CliParser {
      *
      * @return the application name.
      */
-    public String getApplicationName() {
-        return line.getOptionValue(ARGUMENT.APP_NAME);
+    public String getProjectName() {
+        String appName = line.getOptionValue(ARGUMENT.APP_NAME);
+        String name = line.getOptionValue(ARGUMENT.PROJECT);
+        if (name == null && appName != null) {
+            name = appName;
+            LOGGER.warn("The '" + ARGUMENT.APP_NAME + "' should no longer be used; use '" + ARGUMENT.PROJECT + "' instead.");
+        }
+        return name;
     }
 
     /**
@@ -976,12 +986,18 @@ public final class CliParser {
          */
         public static final String OUTPUT_FORMAT_SHORT = "f";
         /**
+         * The long CLI argument name specifying the name of the project to be scanned.
+         */
+        public static final String PROJECT = "project";
+        /**
          * The long CLI argument name specifying the name of the application to be scanned.
          */
+        @Deprecated
         public static final String APP_NAME = "app";
         /**
          * The short CLI argument name specifying the name of the application to be scanned.
          */
+        @Deprecated
         public static final String APP_NAME_SHORT = "a";
         /**
          * The long CLI argument name asking for help.
