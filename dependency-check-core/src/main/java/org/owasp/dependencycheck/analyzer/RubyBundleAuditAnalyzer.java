@@ -124,7 +124,9 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         } catch (AnalysisException ae) {
-            LOGGER.warn("Exception while trying to launch bundle-audit. Disabling " + ANALYZER_NAME, ae.getCause());
+            LOGGER.warn("Exception while trying to launch bundle-audit. Disabling " +
+                    ANALYZER_NAME + ". See log file for more details.");
+            LOGGER.debug("Exception while trying to launch bundle-audit.", ae);
             setEnabled(false);
         }
     }
