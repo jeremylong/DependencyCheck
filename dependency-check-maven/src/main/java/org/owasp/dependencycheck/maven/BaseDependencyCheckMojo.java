@@ -233,6 +233,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @Parameter(property = "connectionString", defaultValue = "", required = false)
     private String connectionString;
+
+    /**
+     * Returns the connection string.
+     *
+     * @return the connection string
+     */
+    protected String getConnectionString() {
+        return connectionString;
+    }
     /**
      * The database driver name. An example would be org.h2.Driver.
      */
@@ -594,7 +603,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system properties
      * required to change the proxy url, port, and connection timeout.
      */
-    private void populateSettings() {
+    protected void populateSettings() {
         Settings.initialize();
         InputStream mojoProperties = null;
         try {

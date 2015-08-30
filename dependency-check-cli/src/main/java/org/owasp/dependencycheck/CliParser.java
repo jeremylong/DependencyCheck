@@ -987,7 +987,7 @@ public final class CliParser {
         /**
          * The long CLI argument name specifying that only the update phase should be executed; no scan should be run.
          */
-        public static final String PURGE_NVD = "purgelocalnvd";
+        public static final String PURGE_NVD = "purge";
         /**
          * The long CLI argument name specifying the directory to write the reports to.
          */

@@ -76,3 +76,4 @@ databaseDriverPath   | The path to the database driver JAR file; only used if th
 connectionString     | The connection string used to connect to the database.                                      | &nbsp;
 databaseUser         | The username used when connecting to the database.                                          | &nbsp;
 databasePassword     | The password used when connecting to the database.                                          | &nbsp;
+purge                | Delete the local copy of the NVD. This is used to force a refresh of the data.              | &nbsp;

@@ -56,3 +56,4 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Paramete
        | \-\-dbPassword        | \<password\>    | The password for connecting to the database.                                     | &nbsp;
        | \-\-dbUser            | \<user\>        | The username used to connect to the database.                                    | &nbsp;
  \-d   | \-\-data              | \<path\>        | The location of the data directory used to store persistent data. This option should generally not be set. | &nbsp;
+       | \-\-purge             |                 | Delete the local copy of the NVD. This is used to force a refresh of the data.   | &nbsp;

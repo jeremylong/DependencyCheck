@@ -606,6 +606,29 @@ public class DependencyCheckTask extends Task {
     }
 
     /**
+     * Whether or not the local copy of the NVD should be purged.
+     */
+    private boolean purge = false;
+
+    /**
+     * Used to determine if the local copy of the NVD should be purged.
+     *
+     * @return true if the local copy of the NVD should be purged
+     */
+    public boolean isPurge() {
+        return purge;
+    }
+
+    /**
+     * Set whether or not the local copy of the NVD should be purged.
+     *
+     * @param purge setting to true will cause the local copy of the NVD to be deleted.
+     */
+    public void setPurge(boolean purge) {
+        this.purge = purge;
+    }
+
+    /**
      * Whether or not the nexus analyzer is enabled.
      */
     private boolean nexusAnalyzerEnabled = true;
@@ -929,7 +952,23 @@ public class DependencyCheckTask extends Task {
         dealWithReferences();
         validateConfiguration();
         populateSettings();
-
+        if (purge) {
+            File db;
+            try {
+                db = new File(Settings.getDataDirectory(), "dc.h2.db");
+                if (db.exists()) {
+                    if (db.delete()) {
+                        log("Database file purged; local copy of the NVD has been removed", Project.MSG_INFO);
+                    } else {
+                        log(String.format("Unable to delete '%s'; please delete the file manually", db.getAbsolutePath()), Project.MSG_ERR);
+                    }
+                } else {
+                    log(String.format("Unable to purge database; the database file does not exists: %s", db.getAbsolutePath()), Project.MSG_ERR);
+                }
+            } catch (IOException ex) {
+                log("Unable to delete the database", Project.MSG_ERR);
+            }
+        }
         Engine engine = null;
         try {
             engine = new Engine(DependencyCheckTask.class.getClassLoader());
