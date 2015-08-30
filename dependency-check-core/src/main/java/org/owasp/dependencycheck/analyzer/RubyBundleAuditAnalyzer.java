@@ -233,13 +233,15 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
             } else if (nextLine.startsWith(ADVISORY)) {
                 final String advisory = nextLine.substring((ADVISORY.length()));
-                vulnerability.setName(advisory);
-                vulnerability.setCvssAccessVector("-");
-                vulnerability.setCvssAccessComplexity("-");
-                vulnerability.setCvssAuthentication("-");
-                vulnerability.setCvssAvailabilityImpact("-");
-                vulnerability.setCvssConfidentialityImpact("-");
-                vulnerability.setCvssIntegrityImpact("-");
+                if (null != vulnerability) {
+                    vulnerability.setName(advisory);
+                    vulnerability.setCvssAccessVector("-");
+                    vulnerability.setCvssAccessComplexity("-");
+                    vulnerability.setCvssAuthentication("-");
+                    vulnerability.setCvssAvailabilityImpact("-");
+                    vulnerability.setCvssConfidentialityImpact("-");
+                    vulnerability.setCvssIntegrityImpact("-");
+                }
                 if (null != dependency) {
                     dependency.getVulnerabilities().add(vulnerability);
                 }
@@ -270,9 +272,13 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
             } else if (nextLine.startsWith("Description:")) {
                 appendToDescription = true;
-                vulnerability.setDescription("*** Vulnerability obtained from bundle-audit verbose report. Title link may not work. CPE below is guessed. CVSS score is estimated (-1.0 indicates unknown). See link below for full details. *** ");
+                if (null != vulnerability) {
+                    vulnerability.setDescription("*** Vulnerability obtained from bundle-audit verbose report. Title link may not work. CPE below is guessed. CVSS score is estimated (-1.0 indicates unknown). See link below for full details. *** ");
+                }
             } else if (appendToDescription) {
-                vulnerability.setDescription(vulnerability.getDescription() + nextLine + "\n");
+                if (null != vulnerability) {
+                    vulnerability.setDescription(vulnerability.getDescription() + nextLine + "\n");
+                }
             }
         }
     }
