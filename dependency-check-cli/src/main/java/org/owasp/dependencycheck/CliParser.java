@@ -417,6 +417,8 @@ public final class CliParser {
                 .addOption(disableJarAnalyzer)
                 .addOption(disableArchiveAnalyzer)
                 .addOption(disableAssemblyAnalyzer)
+                .addOption(OptionBuilder.withLongOpt(ARGUMENT.DISABLE_BUNDLE_AUDIT)
+                        .withDescription("Disable the Ruby Bundler Audit Analyzer.").create())
                 .addOption(disablePythonDistributionAnalyzer)
                 .addOption(disableCmakeAnalyzer)
                 .addOption(disablePythonPackageAnalyzer)
@@ -533,6 +535,16 @@ public final class CliParser {
     public boolean isAssemblyDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_ASSEMBLY);
     }
+
+    /**
+     * Returns true if the disableBundleAudit command line argument was specified.
+     *
+     * @return true if the disableBundleAudit command line argument was specified; otherwise false
+     */
+    public boolean isBundleAuditDisabled() {
+        return (line != null) && line.hasOption(ARGUMENT.DISABLE_BUNDLE_AUDIT);
+    }
+
 
     /**
      * Returns true if the disablePyDist command line argument was specified.
@@ -1129,6 +1141,10 @@ public final class CliParser {
          * Disables the Assembly Analyzer.
          */
         public static final String DISABLE_ASSEMBLY = "disableAssembly";
+        /**
+         * Disables the Ruby Bundler Audit Analyzer.
+         */
+        public static final String DISABLE_BUNDLE_AUDIT = "disableBundleAudit";
         /**
          * Disables the Nuspec Analyzer.
          */

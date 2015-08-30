@@ -252,6 +252,7 @@ public class App {
         final boolean cMakeDisabled = cli.isCmakeDisabled();
         final boolean pyPkgDisabled = cli.isPythonPackageDisabled();
         final boolean autoconfDisabled = cli.isAutoconfDisabled();
+        final boolean bundleAuditDisabled = cli.isBundleAuditDisabled();
         final boolean assemblyDisabled = cli.isAssemblyDisabled();
         final boolean nuspecDisabled = cli.isNuspecDisabled();
         final boolean centralDisabled = cli.isCentralDisabled();
@@ -325,6 +326,7 @@ public class App {
         Settings.setBoolean(Settings.KEYS.ANALYZER_CMAKE_ENABLED, !cMakeDisabled);
         Settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, !nuspecDisabled);
         Settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, !assemblyDisabled);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, !bundleAuditDisabled);
         Settings.setBoolean(Settings.KEYS.ANALYZER_OPENSSL_ENABLED, !cli.isOpenSSLDisabled());
         Settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, !cli.isNodeJsDisabled());
         Settings.setBoolean(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, !cli.isRubyGemspecDisabled());

@@ -32,7 +32,7 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Paramete
        | \-\-disablePyPkg      |                 | Sets whether the Python Package Analyzer will be used.                           | false
        | \-\-disableNodeJS     |                 | Sets whehter the Node.js Package Analyzer will be used.                          | false
        | \-\-disableRubygems   |                 | Sets whether the Ruby Gemspec Analyzer will be used.                             | false
-       | \-\-disableBundlerAudit |               | Sets whether the Ruby Bundler Audit Analyzer will be used.                             | false
+       | \-\-disableBundleAudit |               | Sets whether the Ruby Bundler Audit Analyzer will be used.                             | false
        | \-\-disableAutoconf   |                 | Sets whether the Autoconf Analyzer will be used.                                 | false
        | \-\-disableOpenSSL    |                 | Sets whether the OpenSSL Analyzer will be used.                                  | false
        | \-\-disableCmake      |                 | Sets whether the Cmake Analyzer will be used.                                    | false

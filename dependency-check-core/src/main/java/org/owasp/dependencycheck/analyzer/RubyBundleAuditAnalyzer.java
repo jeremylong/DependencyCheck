@@ -162,7 +162,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-        return Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED;
+        return Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED;
     }
 
     @Override
