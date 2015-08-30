@@ -119,6 +119,8 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                     //we shouldn't write this because nothing is configured to generate this report.
                     outputDir = new File(current.getBuild().getDirectory());
                 }
+                getLog().warn("\n\n\nwritting: " + outputDir);
+                getLog().warn("for: " + current.getName());
                 writeReports(engine, current, outputDir);
             }
         }

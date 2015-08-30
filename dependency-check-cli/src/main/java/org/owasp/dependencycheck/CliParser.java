@@ -19,6 +19,7 @@ package org.owasp.dependencycheck;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.logging.Level;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -97,8 +98,8 @@ public final class CliParser {
             if (getPathToMono() != null) {
                 validatePathExists(getPathToMono(), ARGUMENT.PATH_TO_MONO);
             }
-            if (!line.hasOption(ARGUMENT.APP_NAME)) {
-                throw new ParseException("Missing 'app' argument; the scan cannot be run without the an application name.");
+            if (!line.hasOption(ARGUMENT.APP_NAME) && !line.hasOption(ARGUMENT.PROJECT)) {
+                throw new ParseException("Missing '" + ARGUMENT.PROJECT + "' argument; the scan cannot be run without the an project name.");
             }
             if (line.hasOption(ARGUMENT.OUTPUT_FORMAT)) {
                 final String format = line.getOptionValue(ARGUMENT.OUTPUT_FORMAT);
@@ -217,9 +218,9 @@ public final class CliParser {
         final Option noUpdate = new Option(ARGUMENT.DISABLE_AUTO_UPDATE_SHORT, ARGUMENT.DISABLE_AUTO_UPDATE,
                 false, "Disables the automatic updating of the CPE data.");
 
-        final Option appName = OptionBuilder.withArgName("name").hasArg().withLongOpt(ARGUMENT.APP_NAME)
-                .withDescription("The name of the application being scanned. This is a required argument.")
-                .create(ARGUMENT.APP_NAME_SHORT);
+        final Option projectName = OptionBuilder.hasArg().withArgName("name").withLongOpt(ARGUMENT.PROJECT)
+                .withDescription("The name of the project being scanned. This is a required argument.")
+                .create();
 
         final Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ARGUMENT.SCAN)
                 .withDescription("The path to scan - this option can be specified multiple times. Ant style"
@@ -229,7 +230,7 @@ public final class CliParser {
         final Option excludes = OptionBuilder.withArgName("pattern").hasArg().withLongOpt(ARGUMENT.EXCLUDE)
                 .withDescription("Specify and exclusion pattern. This option can be specified multiple times"
                         + " and it accepts Ant style excludsions.")
-                .create();
+                .create("p");
 
         final Option props = OptionBuilder.withArgName("file").hasArg().withLongOpt(ARGUMENT.PROP)
                 .withDescription("A property file to load.")
@@ -265,9 +266,9 @@ public final class CliParser {
 
         options.addOptionGroup(og)
                 .addOptionGroup(exog)
+                .addOption(projectName)
                 .addOption(out)
                 .addOption(outputFormat)
-                .addOption(appName)
                 .addOption(version)
                 .addOption(help)
                 .addOption(advancedHelp)
@@ -398,6 +399,10 @@ public final class CliParser {
         final Option disableNexusAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_NEXUS)
                 .withDescription("Disable the Nexus Analyzer.").create();
 
+        final Option purge = OptionBuilder.withLongOpt(ARGUMENT.PURGE_NVD)
+                .withDescription("Purges the local NVD data cache")
+                .create();
+
         options.addOption(updateOnly)
                 .addOption(cve12Base)
                 .addOption(cve20Base)
@@ -435,7 +440,8 @@ public final class CliParser {
                 .addOption(nexusUsesProxy)
                 .addOption(additionalZipExtensions)
                 .addOption(pathToMono)
-                .addOption(pathToBundleAudit);
+                .addOption(pathToBundleAudit)
+                .addOption(purge);
     }
 
     /**
@@ -451,8 +457,12 @@ public final class CliParser {
         final Option proxyServer = OptionBuilder.withArgName("url").hasArg().withLongOpt(ARGUMENT.PROXY_URL)
                 .withDescription("The proxy url argument is deprecated, use proxyserver instead.")
                 .create();
+        final Option appName = OptionBuilder.withArgName("name").hasArg().withLongOpt(ARGUMENT.APP_NAME)
+                .withDescription("The name of the project being scanned.")
+                .create(ARGUMENT.APP_NAME_SHORT);
 
         options.addOption(proxyServer);
+        options.addOption(appName);
     }
 
     /**
@@ -741,8 +751,14 @@ public final class CliParser {
      *
      * @return the application name.
      */
-    public String getApplicationName() {
-        return line.getOptionValue(ARGUMENT.APP_NAME);
+    public String getProjectName() {
+        String appName = line.getOptionValue(ARGUMENT.APP_NAME);
+        String name = line.getOptionValue(ARGUMENT.PROJECT);
+        if (name == null && appName != null) {
+            name = appName;
+            LOGGER.warn("The '" + ARGUMENT.APP_NAME + "' argument should no longer be used; use '" + ARGUMENT.PROJECT + "' instead.");
+        }
+        return name;
     }
 
     /**
@@ -894,7 +910,7 @@ public final class CliParser {
      * @return <code>true</code> if auto-update is allowed; otherwise <code>false</code>
      */
     public boolean isAutoUpdate() {
-        return (line == null) || !line.hasOption(ARGUMENT.DISABLE_AUTO_UPDATE);
+        return line != null && !line.hasOption(ARGUMENT.DISABLE_AUTO_UPDATE);
     }
 
     /**
@@ -903,7 +919,16 @@ public final class CliParser {
      * @return <code>true</code> if the update only flag has been set; otherwise <code>false</code>.
      */
     public boolean isUpdateOnly() {
-        return (line == null) || line.hasOption(ARGUMENT.UPDATE_ONLY);
+        return line != null && line.hasOption(ARGUMENT.UPDATE_ONLY);
+    }
+
+    /**
+     * Checks if the purge NVD flag has been set.
+     *
+     * @return <code>true</code> if the purge nvd flag has been set; otherwise <code>false</code>.
+     */
+    public boolean isPurge() {
+        return line != null && line.hasOption(ARGUMENT.PURGE_NVD);
     }
 
     /**
@@ -986,6 +1011,10 @@ public final class CliParser {
          */
         public static final String UPDATE_ONLY = "updateonly";
         /**
+         * The long CLI argument name specifying that only the update phase should be executed; no scan should be run.
+         */
+        public static final String PURGE_NVD = "purge";
+        /**
          * The long CLI argument name specifying the directory to write the reports to.
          */
         public static final String OUT = "out";
@@ -1002,12 +1031,18 @@ public final class CliParser {
          */
         public static final String OUTPUT_FORMAT_SHORT = "f";
         /**
+         * The long CLI argument name specifying the name of the project to be scanned.
+         */
+        public static final String PROJECT = "project";
+        /**
          * The long CLI argument name specifying the name of the application to be scanned.
          */
+        @Deprecated
         public static final String APP_NAME = "app";
         /**
          * The short CLI argument name specifying the name of the application to be scanned.
          */
+        @Deprecated
         public static final String APP_NAME_SHORT = "a";
         /**
          * The long CLI argument name asking for help.

@@ -145,13 +145,15 @@ public class DependencyCheckTask extends Task {
     /**
      * The application name for the report.
      */
-    private String applicationName = "Dependency-Check";
+    @Deprecated
+    private String applicationName = null;
 
     /**
      * Get the value of applicationName.
      *
      * @return the value of applicationName
      */
+    @Deprecated
     public String getApplicationName() {
         return applicationName;
     }
@@ -161,9 +163,37 @@ public class DependencyCheckTask extends Task {
      *
      * @param applicationName new value of applicationName
      */
+    @Deprecated
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
     }
+
+    private String projectName = "Dependency-Check";
+
+    /**
+     * Get the value of projectName.
+     *
+     * @return the value of projectName
+     */
+    public String getProjectName() {
+        if (applicationName != null) {
+            log("Configuration 'applicationName' has been deprecated, please use 'projectName' instead", Project.MSG_WARN);
+            if ("Dependency-Check".equals(projectName)) {
+                projectName = applicationName;
+            }
+        }
+        return projectName;
+    }
+
+    /**
+     * Set the value of projectName.
+     *
+     * @param projectName new value of projectName
+     */
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
     /**
      * The location of the data directory that contains
      */
@@ -279,8 +309,7 @@ public class DependencyCheckTask extends Task {
     }
 
     /**
-     * The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this within the
-     * Site plugin unless the externalReport is set to true. Default is HTML.
+     * The report format to be generated (HTML, XML, VULN, ALL). Default is HTML.
      */
     private String reportFormat = "HTML";
 
@@ -574,6 +603,29 @@ public class DependencyCheckTask extends Task {
      */
     public void setCentralAnalyzerEnabled(boolean centralAnalyzerEnabled) {
         this.centralAnalyzerEnabled = centralAnalyzerEnabled;
+    }
+
+    /**
+     * Whether or not the local copy of the NVD should be purged.
+     */
+    private boolean purge = false;
+
+    /**
+     * Used to determine if the local copy of the NVD should be purged.
+     *
+     * @return true if the local copy of the NVD should be purged
+     */
+    public boolean isPurge() {
+        return purge;
+    }
+
+    /**
+     * Set whether or not the local copy of the NVD should be purged.
+     *
+     * @param purge setting to true will cause the local copy of the NVD to be deleted.
+     */
+    public void setPurge(boolean purge) {
+        this.purge = purge;
     }
 
     /**
@@ -900,7 +952,23 @@ public class DependencyCheckTask extends Task {
         dealWithReferences();
         validateConfiguration();
         populateSettings();
-
+        if (purge) {
+            File db;
+            try {
+                db = new File(Settings.getDataDirectory(), "dc.h2.db");
+                if (db.exists()) {
+                    if (db.delete()) {
+                        log("Database file purged; local copy of the NVD has been removed", Project.MSG_INFO);
+                    } else {
+                        log(String.format("Unable to delete '%s'; please delete the file manually", db.getAbsolutePath()), Project.MSG_ERR);
+                    }
+                } else {
+                    log(String.format("Unable to purge database; the database file does not exists: %s", db.getAbsolutePath()), Project.MSG_ERR);
+                }
+            } catch (IOException ex) {
+                log("Unable to delete the database", Project.MSG_ERR);
+            }
+        }
         Engine engine = null;
         try {
             engine = new Engine(DependencyCheckTask.class.getClassLoader());
@@ -933,7 +1001,7 @@ public class DependencyCheckTask extends Task {
                             cve.close();
                         }
                     }
-                    final ReportGenerator reporter = new ReportGenerator(applicationName, engine.getDependencies(), engine.getAnalyzers(), prop);
+                    final ReportGenerator reporter = new ReportGenerator(getProjectName(), engine.getDependencies(), engine.getAnalyzers(), prop);
                     reporter.generateReports(reportOutputDirectory, reportFormat);
 
                     if (this.failBuildOnCVSS <= 10) {

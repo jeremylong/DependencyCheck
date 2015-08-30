@@ -8,7 +8,7 @@ the project's dependencies.
 
 ```xml
 <target name="dependency-check" description="Dependency-Check Analysis">
-    <dependency-check applicationname="Hello World"
+    <dependency-check projectname="Hello World"
                       reportoutputdirectory="${basedir}"
                       reportformat="ALL">
 
@@ -27,7 +27,7 @@ Property              | Description                        | Default Value
 ----------------------|------------------------------------|------------------
 autoUpdate            | Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. | true
 updateOnly            | If set to true only the update phase of dependency-check will be executed; no scan will be executed and no report will be generated. | false
-externalReport        | When using as a Site plugin this parameter sets whether or not the external report format should be used. | false
+projectName           | The name of the project being scanned. | Dependency-Check
 reportOutputDirectory | The location to write the report(s). Note, this is not used if generating the report as part of a `mvn site` build | 'target'
 failBuildOnCVSS       | Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11 which means since the CVSS scores are 0-10, by default the build will never fail.         | 11
 reportFormat          | The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | HTML
@@ -76,3 +76,4 @@ databaseDriverPath   | The path to the database driver JAR file; only used if th
 connectionString     | The connection string used to connect to the database.                                      | &nbsp;
 databaseUser         | The username used when connecting to the database.                                          | &nbsp;
 databasePassword     | The password used when connecting to the database.                                          | &nbsp;
+purge                | Delete the local copy of the NVD. This is used to force a refresh of the data.              | &nbsp;

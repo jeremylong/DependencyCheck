@@ -38,6 +38,7 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ch.qos.logback.core.FileAppender;
+import java.util.logging.Level;
 import org.slf4j.impl.StaticLoggerBinder;
 
 /**
@@ -91,7 +92,28 @@ public class App {
             prepareLogger(cli.getVerboseLog());
         }
 
-        if (cli.isGetVersion()) {
+        if (cli.isPurge()) {
+            if (cli.getConnectionString() != null) {
+                LOGGER.error("Unable to purge the database when using a non-default connection string");
+            } else {
+                populateSettings(cli);
+                File db;
+                try {
+                    db = new File(Settings.getDataDirectory(), "dc.h2.db");
+                    if (db.exists()) {
+                        if (db.delete()) {
+                            LOGGER.info("Database file purged; local copy of the NVD has been removed");
+                        } else {
+                            LOGGER.error("Unable to delete '{}'; please delete the file manually", db.getAbsolutePath());
+                        }
+                    } else {
+                        LOGGER.error("Unable to purge database; the database file does not exists: {}", db.getAbsolutePath());
+                    }
+                } catch (IOException ex) {
+                    LOGGER.error("Unable to delete the database");
+                }
+            }
+        } else if (cli.isGetVersion()) {
             cli.printVersionInfo();
         } else if (cli.isUpdateOnly()) {
             populateSettings(cli);
@@ -99,7 +121,7 @@ public class App {
         } else if (cli.isRunScan()) {
             populateSettings(cli);
             try {
-                runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getApplicationName(), cli.getScanFiles(),
+                runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getProjectName(), cli.getScanFiles(),
                         cli.getExcludeList(), cli.getSymLinkDepth());
             } catch (InvalidScanPathException ex) {
                 LOGGER.error("An invalid scan path was detected; unable to scan '//*' paths");
