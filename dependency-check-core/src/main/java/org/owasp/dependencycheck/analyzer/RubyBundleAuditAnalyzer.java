@@ -129,6 +129,10 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.debug("Exception while trying to launch bundle-audit.", ae);
             setEnabled(false);
         }
+        if (isEnabled()) {
+            LOGGER.info(ANALYZER_NAME + " is enabled. It is necessary to manually run \"bundle-audit update\" " +
+                    "occasionally to keep its database up to date.");
+        }
     }
 
     /**
@@ -208,7 +212,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                     map.put(gem, createDependencyForGem(engine, parentName, fileName, gem));
                 }
                 dependency = map.get(gem);
-                LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
+                LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
             } else if (nextLine.startsWith(VERSION)) {
                 vulnerability = createVulnerability(parentName, dependency, vulnerability, gem, nextLine);
             } else if (nextLine.startsWith(ADVISORY)) {
@@ -238,7 +242,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         if (null != dependency) {
             dependency.getVulnerabilities().add(vulnerability); // needed to wait for vulnerability name to avoid NPE
         }
-        LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
+        LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
     }
 
     private void addReferenceToVulnerability(String parentName, Vulnerability vulnerability, String nextLine) {
@@ -250,7 +254,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             ref.setUrl(url);
             vulnerability.getReferences().add(ref);
         }
-        LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
+        LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
     }
 
     private void addCriticalityToVulnerability(String parentName, Vulnerability vulnerability, String nextLine) {
@@ -266,7 +270,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 vulnerability.setCvssScore(-1.0f);
             }
         }
-        LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
+        LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
     }
 
     private Vulnerability createVulnerability(String parentName, Dependency dependency, Vulnerability vulnerability, String gem, String nextLine) {
@@ -288,7 +292,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             vulnerability.setCvssConfidentialityImpact("-");
             vulnerability.setCvssIntegrityImpact("-");
         }
-        LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
+        LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
         return vulnerability;
     }
 

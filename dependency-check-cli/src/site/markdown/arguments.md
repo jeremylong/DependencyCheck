@@ -32,6 +32,7 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Paramete
        | \-\-disablePyPkg      |                 | Sets whether the Python Package Analyzer will be used.                           | false
        | \-\-disableNodeJS     |                 | Sets whehter the Node.js Package Analyzer will be used.                          | false
        | \-\-disableRubygems   |                 | Sets whether the Ruby Gemspec Analyzer will be used.                             | false
+       | \-\-disableBundlerAudit |               | Sets whether the Ruby Bundler Audit Analyzer will be used.                             | false
        | \-\-disableAutoconf   |                 | Sets whether the Autoconf Analyzer will be used.                                 | false
        | \-\-disableOpenSSL    |                 | Sets whether the OpenSSL Analyzer will be used.                                  | false
        | \-\-disableCmake      |                 | Sets whether the Cmake Analyzer will be used.                                    | false
@@ -45,6 +46,7 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Paramete
        | \-\-disableNuspec     |                 | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.                 | false
        | \-\-disableAssembly   |                 | Sets whether or not the .NET Assembly Analyzer should be used.                   | false
        | \-\-mono              | \<path\>        | The path to Mono for .NET Assembly analysis on non-windows systems.              | &nbsp;
+       | \-\-bundleAudit       |                 | The path to the bundle-audit executable. | &nbsp;
        | \-\-proxyserver       | \<server\>      | The proxy server to use when downloading resources.                              | &nbsp;
        | \-\-proxyport         | \<port\>        | The proxy port to use when downloading resources.                                | &nbsp;
        | \-\-connectiontimeout | \<timeout\>     | The connection timeout (in milliseconds) to use when downloading resources.      | &nbsp;
