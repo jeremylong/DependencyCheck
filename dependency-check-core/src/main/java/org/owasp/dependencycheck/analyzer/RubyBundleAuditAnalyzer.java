@@ -194,17 +194,18 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         Vulnerability vulnerability = null;
         String gem = null;
         final Map<String, Dependency> map = new HashMap<String, Dependency>();
-        int i = 0;
         boolean appendToDescription = false;
         while (rdr.ready()) {
             final String nextLine = rdr.readLine();
-            i++;
             if (null == nextLine) {
                 break;
             } else if (nextLine.startsWith(NAME)) {
                 appendToDescription = false;
                 gem = nextLine.substring(NAME.length());
-                dependency = map.containsKey(gem) ? map.get(gem) : createDependencyForGem(engine, parentName, fileName, gem, map, i);
+                if (!map.containsKey(gem)){
+                    map.put(gem, createDependencyForGem(engine, parentName, fileName, gem));
+                }
+                dependency = map.get(gem);
                 LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
             } else if (nextLine.startsWith(VERSION)) {
                 if (null != dependency) {
@@ -272,16 +273,14 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
-    private Dependency createDependencyForGem(Engine engine, String parentName, String fileName, String gem, Map<String, Dependency> map, int i) throws IOException {
-        Dependency dependency;
+    private Dependency createDependencyForGem(Engine engine, String parentName, String fileName, String gem) throws IOException {
         final File tempFile = File.createTempFile("Gemfile-" + gem, ".lock", Settings.getTempDirectory());
         final String displayFileName = String.format("%s%c%s:%s", parentName, File.separatorChar, fileName, gem);
-        FileUtils.write(tempFile, displayFileName + "\n" + i); // unique contents to avoid dependency bundling
-        dependency = new Dependency(tempFile);
+        FileUtils.write(tempFile, displayFileName); // unique contents to avoid dependency bundling
+        final Dependency dependency = new Dependency(tempFile);
         dependency.getProductEvidence().addEvidence("bundler-audit", "Name", gem, Confidence.HIGHEST);
         dependency.setDisplayFileName(displayFileName);
         engine.getDependencies().add(dependency);
-        map.put(gem, dependency);
         return dependency;
     }
 }
