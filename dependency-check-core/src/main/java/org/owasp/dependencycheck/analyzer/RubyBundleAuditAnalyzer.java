@@ -204,18 +204,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             } else if (nextLine.startsWith(NAME)) {
                 appendToDescription = false;
                 gem = nextLine.substring(NAME.length());
-                if (map.containsKey(gem)) {
-                    dependency = map.get(gem);
-                } else {
-                    final File tempFile = File.createTempFile("Gemfile-" + gem, ".lock", Settings.getTempDirectory());
-                    final String displayFileName = String.format("%s%c%s:%s", parentName, File.separatorChar, fileName, gem);
-                    FileUtils.write(tempFile, displayFileName + "\n" + i); // unique contents to avoid dependency bundling
-                    dependency = new Dependency(tempFile);
-                    dependency.getProductEvidence().addEvidence("bundler-audit", "Name", gem, Confidence.HIGHEST);
-                    dependency.setDisplayFileName(displayFileName);
-                    engine.getDependencies().add(dependency);
-                    map.put(gem, dependency);
-                }
+                dependency = map.containsKey(gem) ? map.get(gem) : createDependencyForGem(engine, parentName, fileName, gem, map, i);
                 LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
             } else if (nextLine.startsWith(VERSION)) {
                 if (null != dependency) {
@@ -281,5 +270,18 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         }
+    }
+
+    private Dependency createDependencyForGem(Engine engine, String parentName, String fileName, String gem, Map<String, Dependency> map, int i) throws IOException {
+        Dependency dependency;
+        final File tempFile = File.createTempFile("Gemfile-" + gem, ".lock", Settings.getTempDirectory());
+        final String displayFileName = String.format("%s%c%s:%s", parentName, File.separatorChar, fileName, gem);
+        FileUtils.write(tempFile, displayFileName + "\n" + i); // unique contents to avoid dependency bundling
+        dependency = new Dependency(tempFile);
+        dependency.getProductEvidence().addEvidence("bundler-audit", "Name", gem, Confidence.HIGHEST);
+        dependency.setDisplayFileName(displayFileName);
+        engine.getDependencies().add(dependency);
+        map.put(gem, dependency);
+        return dependency;
     }
 }
