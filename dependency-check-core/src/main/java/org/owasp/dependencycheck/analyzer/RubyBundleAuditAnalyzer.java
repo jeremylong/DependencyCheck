@@ -208,58 +208,13 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 dependency = map.get(gem);
                 LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
             } else if (nextLine.startsWith(VERSION)) {
-                if (null != dependency) {
-                    final String version = nextLine.substring(VERSION.length());
-                    dependency.getVersionEvidence().addEvidence(
-                            "bundler-audit",
-                            "Version",
-                            version,
-                            Confidence.HIGHEST);
-                    vulnerability = new Vulnerability(); // don't add to dependency until we have name set later
-                    vulnerability.setMatchedCPE(
-                            String.format("cpe:/a:%1$s_project:%1$s:%2$s::~~~ruby~~", gem, version),
-                            null);
-                }
-                LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
+                vulnerability = createVulnerability(parentName, dependency, vulnerability, gem, nextLine);
             } else if (nextLine.startsWith(ADVISORY)) {
-                final String advisory = nextLine.substring((ADVISORY.length()));
-                if (null != vulnerability) {
-                    vulnerability.setName(advisory);
-                    vulnerability.setCvssAccessVector("-");
-                    vulnerability.setCvssAccessComplexity("-");
-                    vulnerability.setCvssAuthentication("-");
-                    vulnerability.setCvssAvailabilityImpact("-");
-                    vulnerability.setCvssConfidentialityImpact("-");
-                    vulnerability.setCvssIntegrityImpact("-");
-                }
-                if (null != dependency) {
-                    dependency.getVulnerabilities().add(vulnerability);
-                }
-                LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
+                setVulnerabilityName(parentName, dependency, vulnerability, nextLine);
             } else if (nextLine.startsWith(CRITICALITY)) {
-                if (null != vulnerability) {
-                    final String criticality = nextLine.substring(CRITICALITY.length()).trim();
-                    if ("High".equals(criticality)) {
-                        vulnerability.setCvssScore(8.5f);
-                    } else if ("Medium".equals(criticality)) {
-                        vulnerability.setCvssScore(5.5f);
-                    } else if ("Low".equals(criticality)) {
-                        vulnerability.setCvssScore(2.0f);
-                    } else {
-                        vulnerability.setCvssScore(-1.0f);
-                    }
-                }
-                LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
+                addCriticalityToVulnerability(parentName, vulnerability, nextLine);
             } else if (nextLine.startsWith("URL: ")){
-                final String url = nextLine.substring(("URL: ").length());
-                if (null != vulnerability) {
-                    Reference ref = new Reference();
-                    ref.setName(vulnerability.getName());
-                    ref.setSource("bundle-audit");
-                    ref.setUrl(url);
-                    vulnerability.getReferences().add(ref);
-                }
-                LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
+                addReferenceToVulnerability(parentName, vulnerability, nextLine);
             } else if (nextLine.startsWith("Description:")) {
                 appendToDescription = true;
                 if (null != vulnerability) {
@@ -271,6 +226,68 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         }
+    }
+
+    private void setVulnerabilityName(String parentName, Dependency dependency, Vulnerability vulnerability, String nextLine) {
+        final String advisory = nextLine.substring((ADVISORY.length()));
+        if (null != vulnerability) {
+            vulnerability.setName(advisory);
+        }
+        if (null != dependency) {
+            dependency.getVulnerabilities().add(vulnerability); // needed to wait for vulnerability name to avoid NPE
+        }
+        LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
+    }
+
+    private void addReferenceToVulnerability(String parentName, Vulnerability vulnerability, String nextLine) {
+        final String url = nextLine.substring(("URL: ").length());
+        if (null != vulnerability) {
+            Reference ref = new Reference();
+            ref.setName(vulnerability.getName());
+            ref.setSource("bundle-audit");
+            ref.setUrl(url);
+            vulnerability.getReferences().add(ref);
+        }
+        LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
+    }
+
+    private void addCriticalityToVulnerability(String parentName, Vulnerability vulnerability, String nextLine) {
+        if (null != vulnerability) {
+            final String criticality = nextLine.substring(CRITICALITY.length()).trim();
+            if ("High".equals(criticality)) {
+                vulnerability.setCvssScore(8.5f);
+            } else if ("Medium".equals(criticality)) {
+                vulnerability.setCvssScore(5.5f);
+            } else if ("Low".equals(criticality)) {
+                vulnerability.setCvssScore(2.0f);
+            } else {
+                vulnerability.setCvssScore(-1.0f);
+            }
+        }
+        LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
+    }
+
+    private Vulnerability createVulnerability(String parentName, Dependency dependency, Vulnerability vulnerability, String gem, String nextLine) {
+        if (null != dependency) {
+            final String version = nextLine.substring(VERSION.length());
+            dependency.getVersionEvidence().addEvidence(
+                    "bundler-audit",
+                    "Version",
+                    version,
+                    Confidence.HIGHEST);
+            vulnerability = new Vulnerability(); // don't add to dependency until we have name set later
+            vulnerability.setMatchedCPE(
+                    String.format("cpe:/a:%1$s_project:%1$s:%2$s::~~~ruby~~", gem, version),
+                    null);
+            vulnerability.setCvssAccessVector("-");
+            vulnerability.setCvssAccessComplexity("-");
+            vulnerability.setCvssAuthentication("-");
+            vulnerability.setCvssAvailabilityImpact("-");
+            vulnerability.setCvssConfidentialityImpact("-");
+            vulnerability.setCvssIntegrityImpact("-");
+        }
+        LOGGER.info(String.format("bundle-audit (%s): %s", parentName, nextLine));
+        return vulnerability;
     }
 
     private Dependency createDependencyForGem(Engine engine, String parentName, String fileName, String gem) throws IOException {
