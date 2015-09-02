@@ -475,31 +475,32 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                             getLog().debug(String.format("Adding project reference %s on dependency %s", project.getName(),
                                     d.getDisplayFileName()));
                         }
-                        if (metadataSource != null) {
-                            try {
-                                final DependencyVersion currentVersion = new DependencyVersion(a.getVersion());
-                                final List<ArtifactVersion> versions = metadataSource.retrieveAvailableVersions(a,
-                                        localRepository, remoteRepositories);
-                                for (ArtifactVersion av : versions) {
-                                    final DependencyVersion newVersion = new DependencyVersion(av.toString());
-                                    if (currentVersion.compareTo(newVersion) < 0) {
-                                        d.addAvailableVersion(av.toString());
-                                    }
-                                }
-                            } catch (ArtifactMetadataRetrievalException ex) {
-                                getLog().warn(
-                                        "Unable to check for new versions of dependencies; see the log for more details.");
-                                if (getLog().isDebugEnabled()) {
-                                    getLog().debug("", ex);
-                                }
-                            } catch (Throwable t) {
-                                getLog().warn(
-                                        "Unexpected error occured checking for new versions; see the log for more details.");
-                                if (getLog().isDebugEnabled()) {
-                                    getLog().debug("", t);
-                                }
-                            }
-                        }
+//                        //Removed - this was the start of tryinig to resolve issue #
+//                        if (metadataSource != null) {
+//                            try {
+//                                final DependencyVersion currentVersion = new DependencyVersion(a.getVersion());
+//                                final List<ArtifactVersion> versions = metadataSource.retrieveAvailableVersions(a,
+//                                        localRepository, remoteRepositories);
+//                                for (ArtifactVersion av : versions) {
+//                                    final DependencyVersion newVersion = new DependencyVersion(av.toString());
+//                                    if (currentVersion.compareTo(newVersion) < 0) {
+//                                        d.addAvailableVersion(av.toString());
+//                                    }
+//                                }
+//                            } catch (ArtifactMetadataRetrievalException ex) {
+//                                getLog().warn(
+//                                        "Unable to check for new versions of dependencies; see the log for more details.");
+//                                if (getLog().isDebugEnabled()) {
+//                                    getLog().debug("", ex);
+//                                }
+//                            } catch (Throwable t) {
+//                                getLog().warn(
+//                                        "Unexpected error occured checking for new versions; see the log for more details.");
+//                                if (getLog().isDebugEnabled()) {
+//                                    getLog().debug("", t);
+//                                }
+//                            }
+//                        }
                     }
                 } else {
                     if (getLog().isDebugEnabled()) {
