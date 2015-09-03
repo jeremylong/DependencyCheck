@@ -30,15 +30,12 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Locale;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
@@ -82,13 +79,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * The Maven Project Object.
      */
-    @Component
+    @Parameter(property = "project", required=true, readonly=true)
     private MavenProject project;
-    /**
-     * The meta data source for retrieving artifact version information.
-     */
-    @Component
-    private ArtifactMetadataSource metadataSource;
     /**
      * A reference to the local repository.
      */
@@ -475,32 +467,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                             getLog().debug(String.format("Adding project reference %s on dependency %s", project.getName(),
                                     d.getDisplayFileName()));
                         }
-//                        //Removed - this was the start of tryinig to resolve issue #
-//                        if (metadataSource != null) {
-//                            try {
-//                                final DependencyVersion currentVersion = new DependencyVersion(a.getVersion());
-//                                final List<ArtifactVersion> versions = metadataSource.retrieveAvailableVersions(a,
-//                                        localRepository, remoteRepositories);
-//                                for (ArtifactVersion av : versions) {
-//                                    final DependencyVersion newVersion = new DependencyVersion(av.toString());
-//                                    if (currentVersion.compareTo(newVersion) < 0) {
-//                                        d.addAvailableVersion(av.toString());
-//                                    }
-//                                }
-//                            } catch (ArtifactMetadataRetrievalException ex) {
-//                                getLog().warn(
-//                                        "Unable to check for new versions of dependencies; see the log for more details.");
-//                                if (getLog().isDebugEnabled()) {
-//                                    getLog().debug("", ex);
-//                                }
-//                            } catch (Throwable t) {
-//                                getLog().warn(
-//                                        "Unexpected error occured checking for new versions; see the log for more details.");
-//                                if (getLog().isDebugEnabled()) {
-//                                    getLog().debug("", t);
-//                                }
-//                            }
-//                        }
                     }
                 } else {
                     if (getLog().isDebugEnabled()) {
