@@ -226,6 +226,14 @@ public final class Settings {
          */
         public static final String ANALYZER_NODE_PACKAGE_ENABLED = "analyzer.node.package.enabled";
         /**
+         * The properties key for whether the composer json file analyzer is enabled.
+         */
+        public static final String ANALYZER_COMPOSER_JSON_ENABLED = "analyzer.composer.json.enabled";
+        /**
+         * The properties key for whether the composer lock file analyzer is enabled.
+         */
+        public static final String ANALYZER_COMPOSER_LOCK_ENABLED = "analyzer.composer.lock.enabled";
+        /**
          * The properties key for the Nexus search URL.
          */
         public static final String ANALYZER_NEXUS_URL = "analyzer.nexus.url";
