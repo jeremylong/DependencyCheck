@@ -155,7 +155,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 <version>${reporting.javadoc-plugin.version}</version>
                 <configuration>
                     <failOnError>false</failOnError>
-                    <bottom>Copyright© 2012-15 Jeremy Long. All Rights Reserved.</bottom>
+                    <bottom>Copyrightï¿½ 2012-15 Jeremy Long. All Rights Reserved.</bottom>
                 </configuration>
                 <reportSets>
                     <reportSet>
@@ -304,7 +304,6 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
         <dependency>
             <groupId>org.apache.maven.reporting</groupId>
             <artifactId>maven-reporting-api</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jmockit</groupId>
