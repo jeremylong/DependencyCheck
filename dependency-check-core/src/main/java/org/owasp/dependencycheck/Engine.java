@@ -352,6 +352,7 @@ public class Engine implements FileFilter {
 
         LOGGER.debug("\n----------------------------------------------------\nBEGIN ANALYSIS\n----------------------------------------------------");
         LOGGER.info("Analysis Starting");
+        final long analysisStart = System.currentTimeMillis();
 
         // analysis phases
         for (AnalysisPhase phase : AnalysisPhase.values()) {
@@ -398,7 +399,7 @@ public class Engine implements FileFilter {
         }
 
         LOGGER.debug("\n----------------------------------------------------\nEND ANALYSIS\n----------------------------------------------------");
-        LOGGER.info("Analysis Complete");
+        LOGGER.info("Analysis Complete ({} ms)", System.currentTimeMillis() - analysisStart);
     }
 
     /**
@@ -442,6 +443,7 @@ public class Engine implements FileFilter {
      */
     public void doUpdates() {
         LOGGER.info("Checking for updates");
+        final long updateStart = System.currentTimeMillis();
         final UpdateService service = new UpdateService(serviceClassLoader);
         final Iterator<CachedWebDataSource> iterator = service.getDataSources();
         while (iterator.hasNext()) {
@@ -454,7 +456,7 @@ public class Engine implements FileFilter {
                 LOGGER.debug("Unable to update details for {}", source.getClass().getName(), ex);
             }
         }
-        LOGGER.info("Check for updates complete");
+        LOGGER.info("Check for updates complete ({} ms)", System.currentTimeMillis() - updateStart);
     }
 
     /**
