@@ -441,8 +441,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         final Object obj = current.getContextValue(getDataFileContextKey());
         if (obj != null) {
-            if (obj instanceof File) {
-                return (File) obj;
+            if (obj instanceof String) {
+                File f = new File((String) obj);
+                return f;
             }
         } else {
             if (getLog().isDebugEnabled()) {
