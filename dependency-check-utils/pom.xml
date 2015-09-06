@@ -38,6 +38,7 @@ Copyright (c) 2014 - Jeremy Long. All Rights Reserved.
     <!-- end copy -->
 
     <properties>
+        <findbugs.onlyAnalyze>org.owasp.dependencycheck.utils.*</findbugs.onlyAnalyze>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <build>
@@ -201,14 +202,6 @@ Copyright (c) 2014 - Jeremy Long. All Rights Reserved.
                         <ruleset>/rulesets/java/imports.xml</ruleset>
                         <ruleset>/rulesets/java/unusedcode.xml</ruleset>
                     </rulesets>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>${reporting.findbugs-plugin.version}</version>
-                <configuration>
-                    <onlyAnalyze>org.owasp.dependencycheck.utils.*</onlyAnalyze>
                 </configuration>
             </plugin>
         </plugins>
