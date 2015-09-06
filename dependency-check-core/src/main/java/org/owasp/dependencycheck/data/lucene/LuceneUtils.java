@@ -93,17 +93,12 @@ public final class LuceneUtils {
      * @return the escaped text.
      */
     public static String escapeLuceneQuery(final CharSequence text) {
-
         if (text == null) {
             return null;
         }
-
-        int size = text.length();
-        size = size >> 1;
+        final int size = text.length() << 1;
         final StringBuilder buf = new StringBuilder(size);
-
         appendEscapedLuceneQuery(buf, text);
-
         return buf.toString();
     }
 }
