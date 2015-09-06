@@ -364,6 +364,10 @@ Copyright (c) 2012 - Jeremy Long
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
                 <version>${reporting.project-info-reports-plugin.version}</version>
                 <reportSets>
