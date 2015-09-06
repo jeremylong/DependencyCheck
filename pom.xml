@@ -131,7 +131,6 @@ Copyright (c) 2012 - Jeremy Long
         <logback.version>1.1.3</logback.version>
         <reporting.checkstyle-plugin.version>2.16</reporting.checkstyle-plugin.version>
         <reporting.cobertura-plugin.version>2.7</reporting.cobertura-plugin.version>
-        <reporting.findbugs-plugin.version>3.0.2</reporting.findbugs-plugin.version>
         <reporting.javadoc-plugin.version>2.10.3</reporting.javadoc-plugin.version>
         <!-- todo(code review): only used in maven module? Not needed elsewhere -->
         <reporting.maven-plugin-plugin.version>3.4</reporting.maven-plugin-plugin.version>
@@ -409,7 +408,7 @@ Copyright (c) 2012 - Jeremy Long
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <version>${reporting.findbugs-plugin.version}</version>
+                <version>3.0.2</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
