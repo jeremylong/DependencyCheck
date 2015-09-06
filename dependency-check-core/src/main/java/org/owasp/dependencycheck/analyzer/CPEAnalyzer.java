@@ -134,13 +134,14 @@ public class CPEAnalyzer implements Analyzer {
      * process.
      */
     public void open() throws IOException, DatabaseException {
-        LOGGER.debug("Opening the CVE Database");
         cve = new CveDB();
         cve.open();
-        LOGGER.debug("Creating the Lucene CPE Index");
         cpe = CpeMemoryIndex.getInstance();
         try {
+            LOGGER.info("Creating the CPE Index");
+            final long creationStart = System.currentTimeMillis();
             cpe.open(cve);
+            LOGGER.info("CPE Index Created ({} ms)", System.currentTimeMillis() - creationStart);
         } catch (IndexException ex) {
             LOGGER.debug("IndexException", ex);
             throw new DatabaseException(ex);
