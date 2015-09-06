@@ -30,8 +30,6 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Locale;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -50,7 +48,6 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
-import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -79,18 +76,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * The Maven Project Object.
      */
-    @Parameter(property = "project", required=true, readonly=true)
+    @Parameter(property = "project", required = true, readonly = true)
     private MavenProject project;
-    /**
-     * A reference to the local repository.
-     */
-    @Parameter(property = "localRepository", readonly = true)
-    private ArtifactRepository localRepository;
-    /**
-     * References to the remote repositories.
-     */
-    @Parameter(property = "project.remoteArtifactRepositories", readonly = true)
-    private List<ArtifactRepository> remoteRepositories;
     /**
      * List of Maven project of the current build
      */
@@ -434,7 +421,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         final Object obj = current.getContextValue(getDataFileContextKey());
         if (obj != null) {
             if (obj instanceof String) {
-                File f = new File((String) obj);
+                final File f = new File((String) obj);
                 return f;
             }
         } else {
@@ -923,11 +910,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 file = new File(writeTo, dataFileName);
             }
             final File parent = file.getParentFile();
-            if (!parent.isDirectory()) {
-                if (parent.mkdirs()) {
-                    getLog().error(String.format("Directory '%s' does not exist and cannot be created; unable to write data file.",
-                            parent.getAbsolutePath()));
-                }
+            if (!parent.isDirectory() && parent.mkdirs()) {
+                getLog().error(String.format("Directory '%s' does not exist and cannot be created; unable to write data file.",
+                        parent.getAbsolutePath()));
             }
 
             OutputStream os = null;
