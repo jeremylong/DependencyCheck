@@ -230,6 +230,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${reporting.checkstyle-plugin.version}</version>
                 <configuration>
+                    <excludes>**/HelpMojo.java</excludes>
                     <enableRulesSummary>false</enableRulesSummary>
                     <enableFilesSummary>false</enableFilesSummary>
                     <configLocation>${basedir}/../src/main/config/checkstyle-checks.xml</configLocation>
