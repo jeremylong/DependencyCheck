@@ -40,6 +40,9 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
         </site>
     </distributionManagement>
     <!-- end copy -->
+    <properties>
+        <version.maven-plugin-plugin>3.4</version.maven-plugin-plugin>
+    </properties>
     <build>
         <resources>
             <resource>
@@ -63,6 +66,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
+                <version>${version.maven-plugin-plugin}</version>
                 <configuration>
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                     <goalPrefix>dependency-check</goalPrefix>
@@ -126,7 +130,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>${reporting.maven-plugin-plugin.version}</version>
+                <version>${version.maven-plugin-plugin}</version>
                 <configuration>
                     <goalPrefix>dependency-check</goalPrefix>
                 </configuration>
