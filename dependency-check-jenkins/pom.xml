@@ -19,6 +19,11 @@
     </distributionManagement>
     <!-- end copy -->
 
+    <properties>
+        <!-- Skip the surefire report since there are no tests... -->
+        <skipSurefireReport>true</skipSurefireReport>
+    </properties>
+
     <packaging>pom</packaging>
     <inceptionYear>2012</inceptionYear>
     <organization>

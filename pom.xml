@@ -135,7 +135,6 @@ Copyright (c) 2012 - Jeremy Long
         <!-- todo(code review): only used in maven module? Not needed elsewhere -->
         <reporting.maven-plugin-plugin.version>3.4</reporting.maven-plugin-plugin.version>
         <reporting.pmd-plugin.version>3.5</reporting.pmd-plugin.version>
-        <reporting.surefire-report-plugin.version>2.18.1</reporting.surefire-report-plugin.version>
         <reporting.versions-plugin.version>2.2</reporting.versions-plugin.version>
     </properties>
     <distributionManagement>
@@ -389,6 +388,18 @@ Copyright (c) 2012 - Jeremy Long
                             <report>project-team</report>
                             <report>scm</report>
                             <report>license</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.18.1</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report-only</report>
                         </reports>
                     </reportSet>
                 </reportSets>
