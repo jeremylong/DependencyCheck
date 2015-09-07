@@ -32,6 +32,7 @@ import javax.json.*;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Used to analyze Node Package Manager (npm) package.json files, and collect information that can be used to determine
@@ -146,20 +147,21 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
 
     private void addToEvidence(JsonObject json, EvidenceCollection collection, String key) {
         if (json.containsKey(key)) {
-            Object value = json.get(key);
+            JsonValue value = json.get(key);
             if (value instanceof JsonString) {
                 collection.addEvidence(PACKAGE_JSON, key, ((JsonString) value).getString(), Confidence.HIGHEST);
             } else if (value instanceof JsonObject) {
                 final JsonObject jsonObject = (JsonObject) value;
-                for (String property : jsonObject.keySet()) {
-                    final Object subValue = jsonObject.get(property);
+                for (final Map.Entry<String, JsonValue> entry : jsonObject.entrySet()) {
+                    final String property = entry.getKey();
+                    final JsonValue subValue = entry.getValue();
                     if (subValue instanceof JsonString) {
                         collection.addEvidence(PACKAGE_JSON,
                                 String.format("%s.%s", key, property),
                                 ((JsonString) subValue).getString(),
                                 Confidence.HIGHEST);
                     } else {
-                        LOGGER.warn("JSON sub-value not string as expected: %s");
+                        LOGGER.warn("JSON sub-value not string as expected: %s", subValue);
                     }
                 }
             } else {
