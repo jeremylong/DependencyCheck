@@ -19,6 +19,13 @@
     </distributionManagement>
     <!-- end copy -->
 
+    <properties>
+        <!-- Skip the surefire report since there are no tests... -->
+        <skipSurefireReport>true</skipSurefireReport>
+        <!-- Skip the versions report since there are no dependencies... -->
+        <versions.skip>true</versions.skip>
+    </properties>
+
     <packaging>pom</packaging>
     <inceptionYear>2012</inceptionYear>
     <organization>
@@ -47,12 +54,6 @@
         <system>github</system>
         <url>https://github.com/jenkinsci/dependency-check-jenkins/issues</url>
     </issueManagement>
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-    </licenses>
     <build>
         <plugins>
             <plugin>
@@ -71,22 +72,4 @@
             </plugin>
         </plugins>
     </build>
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>${reporting.project-info-reports-plugin.version}</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>summary</report>
-                            <report>license</report>
-                            <report>help</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-        </plugins>
-    </reporting>
 </project>
