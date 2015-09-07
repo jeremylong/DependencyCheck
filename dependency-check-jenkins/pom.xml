@@ -22,6 +22,8 @@
     <properties>
         <!-- Skip the surefire report since there are no tests... -->
         <skipSurefireReport>true</skipSurefireReport>
+        <!-- Skip the versions report since there are no dependencies... -->
+        <versions.skip>true</versions.skip>
     </properties>
 
     <packaging>pom</packaging>

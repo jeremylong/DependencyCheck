@@ -132,7 +132,6 @@ Copyright (c) 2012 - Jeremy Long
         <reporting.checkstyle-plugin.version>2.16</reporting.checkstyle-plugin.version>
         <reporting.cobertura-plugin.version>2.7</reporting.cobertura-plugin.version>
         <reporting.pmd-plugin.version>3.5</reporting.pmd-plugin.version>
-        <reporting.versions-plugin.version>2.2</reporting.versions-plugin.version>
     </properties>
     <distributionManagement>
         <site>
@@ -453,6 +452,19 @@ Copyright (c) 2012 - Jeremy Long
                         </tagClasses>
                     </tagListOptions>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.2</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>dependency-updates-report</report>
+                            <report>plugin-updates-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
         </plugins>
     </reporting>
