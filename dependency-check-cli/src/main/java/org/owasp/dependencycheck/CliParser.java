@@ -226,7 +226,7 @@ public final class CliParser {
                         + " paths are supported (e.g. path/**/*.jar).")
                 .build();
 
-        final Option excludes = Option.builder("p").argName("pattern").hasArg().longOpt(ARGUMENT.EXCLUDE)
+        final Option excludes = Option.builder().argName("pattern").hasArg().longOpt(ARGUMENT.EXCLUDE)
                 .desc("Specify and exclusion pattern. This option can be specified multiple times"
                         + " and it accepts Ant style excludsions.")
                 .build();
