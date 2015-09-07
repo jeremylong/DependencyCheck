@@ -271,9 +271,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * @return any dependencies that weren't known to the engine before
      */
     private static Set<Dependency> findMoreDependencies(Engine engine, File file) {
-        List<Dependency> before = new ArrayList<Dependency>(engine.getDependencies());
+        final List<Dependency> before = new ArrayList<Dependency>(engine.getDependencies());
         engine.scan(file);
-        List<Dependency> after = engine.getDependencies();
+        final List<Dependency> after = engine.getDependencies();
         final boolean sizeChanged = before.size() != after.size();
         final Set<Dependency> newDependencies;
         if (sizeChanged) {
@@ -451,7 +451,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @param closeable to be closed
      */
-    private static void close(Closeable closeable){
+    private static void close(Closeable closeable) {
         if (null != closeable) {
             try {
                 closeable.close();
