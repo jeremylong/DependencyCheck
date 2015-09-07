@@ -184,7 +184,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         if (tempFileLocation != null && tempFileLocation.exists()) {
             LOGGER.debug("Attempting to delete temporary files");
             final boolean success = FileUtils.delete(tempFileLocation);
-            if (!success && tempFileLocation != null && tempFileLocation.exists() && tempFileLocation.list().length > 0) {
+            if (!success && tempFileLocation.exists() && tempFileLocation.list().length > 0) {
                 LOGGER.warn("Failed to delete some temporary files, see the log for more details");
             }
         }
@@ -278,8 +278,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         final Set<Dependency> newDependencies;
         if (sizeChanged) {
             //get the new dependencies
-            newDependencies = new HashSet<Dependency>();
-            newDependencies.addAll(after);
+            newDependencies = new HashSet<Dependency>(after);
             newDependencies.removeAll(before);
         } else {
             newDependencies = EMPTY_DEPENDENCY_SET;
