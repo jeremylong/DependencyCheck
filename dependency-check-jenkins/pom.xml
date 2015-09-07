@@ -54,12 +54,6 @@
         <system>github</system>
         <url>https://github.com/jenkinsci/dependency-check-jenkins/issues</url>
     </issueManagement>
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-    </licenses>
     <build>
         <plugins>
             <plugin>
