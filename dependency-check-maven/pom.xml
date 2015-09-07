@@ -136,23 +136,6 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${reporting.javadoc-plugin.version}</version>
-                <configuration>
-                    <failOnError>false</failOnError>
-                    <bottom>Copyright� 2012-15 Jeremy Long. All Rights Reserved.</bottom>
-                </configuration>
-                <reportSets>
-                    <reportSet>
-                        <id>default</id>
-                        <reports>
-                            <report>javadoc</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
                 <version>${reporting.versions-plugin.version}</version>
