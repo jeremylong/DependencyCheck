@@ -43,7 +43,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Analyzer for getting company, product, and version information from a .NET assembly.
