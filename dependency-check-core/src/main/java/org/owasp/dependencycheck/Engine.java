@@ -366,8 +366,7 @@ public class Engine implements FileFilter {
                  * This is okay for adds/deletes because it happens per analyzer.
                  */
                 LOGGER.debug("Begin Analyzer '{}'", a.getName());
-                final Set<Dependency> dependencySet = new HashSet<Dependency>();
-                dependencySet.addAll(dependencies);
+                final Set<Dependency> dependencySet = new HashSet<Dependency>(dependencies);
                 for (Dependency d : dependencySet) {
                     boolean shouldAnalyze = true;
                     if (a instanceof FileTypeAnalyzer) {

@@ -179,7 +179,7 @@ public class CPEHandler extends DefaultHandler {
     /**
      * A simple class to maintain information about the current element while parsing the CPE XML.
      */
-    protected class Element {
+    protected static final class Element {
 
         /**
          * A node type in the CPE Schema 2.2

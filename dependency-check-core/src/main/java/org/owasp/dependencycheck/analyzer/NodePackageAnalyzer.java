@@ -28,10 +28,16 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.json.*;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.Map;
+import javax.json.Json;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonString;
+import javax.json.JsonValue;
 
 /**
  * Used to analyze Node Package Manager (npm) package.json files, and collect information that can be used to determine
@@ -120,13 +126,13 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
                     "Problem occurred while reading dependency file.", e);
         }
         try {
-            JsonObject json = jsonReader.readObject();
+            final JsonObject json = jsonReader.readObject();
             final EvidenceCollection productEvidence = dependency.getProductEvidence();
             final EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
             if (json.containsKey("name")) {
-                Object value = json.get("name");
+                final Object value = json.get("name");
                 if (value instanceof JsonString) {
-                    String valueString = ((JsonString) value).getString();
+                    final String valueString = ((JsonString) value).getString();
                     productEvidence.addEvidence(PACKAGE_JSON, "name", valueString, Confidence.HIGHEST);
                     vendorEvidence.addEvidence(PACKAGE_JSON, "name_project", String.format("%s_project", valueString), Confidence.LOW);
                 } else {
@@ -146,20 +152,21 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
 
     private void addToEvidence(JsonObject json, EvidenceCollection collection, String key) {
         if (json.containsKey(key)) {
-            Object value = json.get(key);
+            final JsonValue value = json.get(key);
             if (value instanceof JsonString) {
                 collection.addEvidence(PACKAGE_JSON, key, ((JsonString) value).getString(), Confidence.HIGHEST);
             } else if (value instanceof JsonObject) {
                 final JsonObject jsonObject = (JsonObject) value;
-                for (String property : jsonObject.keySet()) {
-                    final Object subValue = jsonObject.get(property);
+                for (final Map.Entry<String, JsonValue> entry : jsonObject.entrySet()) {
+                    final String property = entry.getKey();
+                    final JsonValue subValue = entry.getValue();
                     if (subValue instanceof JsonString) {
                         collection.addEvidence(PACKAGE_JSON,
                                 String.format("%s.%s", key, property),
                                 ((JsonString) subValue).getString(),
                                 Confidence.HIGHEST);
                     } else {
-                        LOGGER.warn("JSON sub-value not string as expected: %s");
+                        LOGGER.warn("JSON sub-value not string as expected: %s", subValue);
                     }
                 }
             } else {
