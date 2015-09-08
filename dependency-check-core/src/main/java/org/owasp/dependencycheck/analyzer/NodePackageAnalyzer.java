@@ -40,8 +40,8 @@ import javax.json.JsonString;
 import javax.json.JsonValue;
 
 /**
- * Used to analyze Node Package Manager (npm) package.json files, and collect information that can be used to determine
- * the associated CPE.
+ * Used to analyze Node Package Manager (npm) package.json files, and collect information that can be used to determine the
+ * associated CPE.
  *
  * @author Dale Visser <dvisser@ida.org>
  */
@@ -66,8 +66,8 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Filter that detects files named "package.json".
      */
-    private static final FileFilter PACKAGE_JSON_FILTER =
-            FileFilterBuilder.newInstance().addFilenames(PACKAGE_JSON).build();
+    private static final FileFilter PACKAGE_JSON_FILTER
+            = FileFilterBuilder.newInstance().addFilenames(PACKAGE_JSON).build();
 
     /**
      * Returns the FileFilter
@@ -136,7 +136,7 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
                     productEvidence.addEvidence(PACKAGE_JSON, "name", valueString, Confidence.HIGHEST);
                     vendorEvidence.addEvidence(PACKAGE_JSON, "name_project", String.format("%s_project", valueString), Confidence.LOW);
                 } else {
-                    LOGGER.warn("JSON value not string as expected: %s", value);
+                    LOGGER.warn("JSON value not string as expected: {}", value);
                 }
             }
             addToEvidence(json, productEvidence, "description");
@@ -166,11 +166,11 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
                                 ((JsonString) subValue).getString(),
                                 Confidence.HIGHEST);
                     } else {
-                        LOGGER.warn("JSON sub-value not string as expected: %s", subValue);
+                        LOGGER.warn("JSON sub-value not string as expected: {}", subValue);
                     }
                 }
             } else {
-                LOGGER.warn("JSON value not string or JSON object as expected: %s", value);
+                LOGGER.warn("JSON value not string or JSON object as expected: {}", value);
             }
         }
     }

@@ -167,7 +167,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 dependency.getProductEvidence().addEvidence(name, "Project",
                         group, Confidence.HIGH);
             }
-            LOGGER.debug(String.format("Found %d matches.", count));
+            LOGGER.debug("Found {} matches.", count);
             analyzeSetVersionCommand(dependency, engine, contents);
         }
     }
@@ -178,9 +178,8 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
         int count = 0;
         while (m.find()) {
             count++;
-            LOGGER.debug(String.format(
-                    "Found project command match with %d groups: %s",
-                    m.groupCount(), m.group(0)));
+            LOGGER.debug("Found project command match with {} groups: {}",
+                    m.groupCount(), m.group(0));
             String product = m.group(1);
             final String version = m.group(2);
             LOGGER.debug("Group 1: " + product);
