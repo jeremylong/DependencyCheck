@@ -24,7 +24,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Date;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import javax.xml.parsers.ParserConfigurationException;
@@ -69,8 +68,8 @@ public class CpeUpdater extends BaseUpdater implements CachedWebDataSource {
                 for (Cpe cpe : cpes) {
                     getCveDB().addCpe(cpe.getValue(), cpe.getVendor(), cpe.getProduct());
                 }
-                final Date now = new Date();
-                getProperties().save(LAST_CPE_UPDATE, Long.toString(now.getTime()));
+                final long now = System.currentTimeMillis();
+                getProperties().save(LAST_CPE_UPDATE, Long.toString(now));
                 LOGGER.info("CPE update complete");
             }
         } finally {
@@ -134,14 +133,14 @@ public class CpeUpdater extends BaseUpdater implements CachedWebDataSource {
      * @return true if the CPE data should be refreshed
      */
     private boolean updateNeeded() {
-        final Date now = new Date();
+        final long now = System.currentTimeMillis();
         final int days = Settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS, 30);
         long timestamp = 0;
         final String ts = getProperties().getProperty(LAST_CPE_UPDATE);
         if (ts != null && ts.matches("^[0-9]+$")) {
             timestamp = Long.parseLong(ts);
         }
-        return !DateUtil.withinDateRange(timestamp, now.getTime(), days);
+        return !DateUtil.withinDateRange(timestamp, now, days);
     }
 
     /**
