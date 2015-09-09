@@ -106,9 +106,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                     }
                 } catch (AnalysisException ex) {
                     getLog().warn("An error occured grouping the dependencies; duplicate entries may exist in the report", ex);
-                    if (getLog().isDebugEnabled()) {
-                        getLog().debug("Bundling Exception", ex);
-                    }
+                    getLog().debug("Bundling Exception", ex);
                 }
 
                 File outputDir = getCorrectOutputDirectory(current);
