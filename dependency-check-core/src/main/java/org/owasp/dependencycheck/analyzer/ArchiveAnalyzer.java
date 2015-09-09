@@ -89,16 +89,16 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final Set<String> ZIPPABLES = newHashSet("zip", "ear", "war", "jar", "sar", "apk", "nupkg");
     /**
-     * The set of file extensions supported by this analyzer. Note for developers, any additions to this list will need
-     * to be explicitly handled in {@link #extractFiles(File, File, Engine)}.
+     * The set of file extensions supported by this analyzer. Note for developers, any additions to this list will need to be
+     * explicitly handled in {@link #extractFiles(File, File, Engine)}.
      */
     private static final Set<String> EXTENSIONS = newHashSet("tar", "gz", "tgz", "bz2", "tbz2");
 
     /**
      * Detects files with extensions to remove from the engine's collection of dependencies.
      */
-    private static final FileFilter REMOVE_FROM_ANALYSIS =
-            FileFilterBuilder.newInstance().addExtensions("zip", "tar", "gz", "tgz", "bz2", "tbz2").build();
+    private static final FileFilter REMOVE_FROM_ANALYSIS
+            = FileFilterBuilder.newInstance().addExtensions("zip", "tar", "gz", "tgz", "bz2", "tbz2").build();
 
     static {
         final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
@@ -184,7 +184,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         if (tempFileLocation != null && tempFileLocation.exists()) {
             LOGGER.debug("Attempting to delete temporary files");
             final boolean success = FileUtils.delete(tempFileLocation);
-            if (!success && tempFileLocation != null && tempFileLocation.exists() && tempFileLocation.list().length > 0) {
+            if (!success && tempFileLocation.exists() && tempFileLocation.list().length > 0) {
                 LOGGER.warn("Failed to delete some temporary files, see the log for more details");
             }
         }
@@ -195,7 +195,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * and added to the list of dependencies within the engine.
      *
      * @param dependency the dependency to analyze
-     * @param engine     the engine scanning
+     * @param engine the engine scanning
      * @throws AnalysisException thrown if there is an analysis exception
      */
     @Override
@@ -239,7 +239,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             final File tdir = getNextTempDirectory();
             final String fileName = dependency.getFileName();
 
-            LOGGER.info(String.format("The zip file '%s' appears to be a JAR file, making a copy and analyzing it as a JAR.", fileName));
+            LOGGER.info("The zip file '{}' appears to be a JAR file, making a copy and analyzing it as a JAR.", fileName);
 
             final File tmpLoc = new File(tdir, fileName.substring(0, fileName.length() - 3) + "jar");
             try {
@@ -271,22 +271,20 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * @return any dependencies that weren't known to the engine before
      */
     private static Set<Dependency> findMoreDependencies(Engine engine, File file) {
-        List<Dependency> before = new ArrayList<Dependency>(engine.getDependencies());
+        final List<Dependency> before = new ArrayList<Dependency>(engine.getDependencies());
         engine.scan(file);
-        List<Dependency> after = engine.getDependencies();
+        final List<Dependency> after = engine.getDependencies();
         final boolean sizeChanged = before.size() != after.size();
         final Set<Dependency> newDependencies;
         if (sizeChanged) {
             //get the new dependencies
-            newDependencies = new HashSet<Dependency>();
-            newDependencies.addAll(after);
+            newDependencies = new HashSet<Dependency>(after);
             newDependencies.removeAll(before);
         } else {
             newDependencies = EMPTY_DEPENDENCY_SET;
         }
         return newDependencies;
     }
-
 
     /**
      * Retrieves the next temporary directory to extract an archive too.
@@ -311,9 +309,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Extracts the contents of an archive into the specified directory.
      *
-     * @param archive     an archive file such as a WAR or EAR
+     * @param archive an archive file such as a WAR or EAR
      * @param destination a directory to extract the contents to
-     * @param engine      the scanning engine
+     * @param engine the scanning engine
      * @throws AnalysisException thrown if the archive is not found
      */
     private void extractFiles(File archive, File destination, Engine engine) throws AnalysisException {
@@ -359,9 +357,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Extracts files from an archive.
      *
-     * @param input       the archive to extract files from
+     * @param input the archive to extract files from
      * @param destination the location to write the files too
-     * @param engine      the dependency-check engine
+     * @param engine the dependency-check engine
      * @throws ArchiveExtractionException thrown if there is an exception extracting files from the archive
      */
     private void extractArchive(ArchiveInputStream input, File destination, Engine engine) throws ArchiveExtractionException {
@@ -423,7 +421,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * Decompresses a file.
      *
      * @param inputStream the compressed file
-     * @param outputFile  the location to write the decompressed file
+     * @param outputFile the location to write the decompressed file
      * @throws ArchiveExtractionException thrown if there is an exception decompressing the file
      */
     private void decompressFile(CompressorInputStream inputStream, File outputFile) throws ArchiveExtractionException {
@@ -452,7 +450,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @param closeable to be closed
      */
-    private static void close(Closeable closeable){
+    private static void close(Closeable closeable) {
         if (null != closeable) {
             try {
                 closeable.close();

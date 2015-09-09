@@ -31,7 +31,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Properties;
-import java.util.logging.Level;
 
 /**
  * A simple settings container that wraps the dependencycheck.properties file.
@@ -634,11 +633,9 @@ public final class Settings {
      */
     public static File getTempDirectory() throws IOException {
         final File tmpDir = new File(Settings.getString(Settings.KEYS.TEMP_DIRECTORY, System.getProperty("java.io.tmpdir")), "dctemp");
-        if (!tmpDir.exists()) {
-            if (!tmpDir.mkdirs()) {
-                final String msg = String.format("Unable to make a temporary folder '%s'", tmpDir.getPath());
-                throw new IOException(msg);
-            }
+        if (!tmpDir.exists() && !tmpDir.mkdirs()) {
+            final String msg = String.format("Unable to make a temporary folder '%s'", tmpDir.getPath());
+            throw new IOException(msg);
         }
         tempDirectory = tmpDir;
         return tmpDir;

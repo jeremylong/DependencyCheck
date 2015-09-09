@@ -46,7 +46,7 @@ import org.owasp.dependencycheck.utils.Settings;
 @Mojo(
         name = "aggregate",
         defaultPhase = LifecyclePhase.COMPILE,
-        aggregator = true,
+        /*aggregator = true,*/
         threadSafe = true,
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
         requiresOnline = true
@@ -69,9 +69,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
             for (MavenProject current : getReactorProjects()) {
                 final File dataFile = getDataFile(current);
                 if (dataFile == null) { //dc was never run on this project. write the ser to the target.
-                    if (getLog().isDebugEnabled()) {
-                        getLog().debug(String.format("Executing dependency-check on %s", current.getName()));
-                    }
+                    getLog().error(String.format("Module '%s' did not execute dependency-check; an attempt will be made to perform the check but dependencies may be missed resulting in false negatives.", current.getName()));
                     generateDataFile(engine, current);
                 }
             }
@@ -108,9 +106,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                     }
                 } catch (AnalysisException ex) {
                     getLog().warn("An error occured grouping the dependencies; duplicate entries may exist in the report", ex);
-                    if (getLog().isDebugEnabled()) {
-                        getLog().debug("Bundling Exception", ex);
-                    }
+                    getLog().debug("Bundling Exception", ex);
                 }
 
                 File outputDir = getCorrectOutputDirectory(current);
@@ -119,8 +115,6 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                     //we shouldn't write this because nothing is configured to generate this report.
                     outputDir = new File(current.getBuild().getDirectory());
                 }
-                getLog().warn("\n\n\nwritting: " + outputDir);
-                getLog().warn("for: " + current.getName());
                 writeReports(engine, current, outputDir);
             }
         }

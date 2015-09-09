@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Date;
 import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -88,7 +87,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
             LOGGER.debug("Begin Engine Version Check");
             final DatabaseProperties properties = cveDB.getDatabaseProperties();
             final long lastChecked = Long.parseLong(properties.getProperty(ENGINE_VERSION_CHECKED_ON, "0"));
-            final long now = (new Date()).getTime();
+            final long now = System.currentTimeMillis();
             updateToVersion = properties.getProperty(CURRENT_ENGINE_RELEASE, "");
             final String currentVersion = Settings.getString(Settings.KEYS.APPLICATION_VERSION, "0.0.0");
             LOGGER.debug("Last checked: {}", lastChecked);

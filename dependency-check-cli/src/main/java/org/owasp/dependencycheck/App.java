@@ -423,7 +423,7 @@ public class App {
     }
 
     /**
-     * Takes a path and resolves it to be a canonical & absolute path. The caveats are that this method will take an Ant style
+     * Takes a path and resolves it to be a canonical &amp; absolute path. The caveats are that this method will take an Ant style
      * file selector path (../someDir/**\/*.jar) and convert it to an absolute/canonical path (at least to the left of the first *
      * or ?).
      *

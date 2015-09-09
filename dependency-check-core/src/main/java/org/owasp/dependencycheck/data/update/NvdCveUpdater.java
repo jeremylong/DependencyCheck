@@ -19,7 +19,6 @@ package org.owasp.dependencycheck.data.update;
 
 import java.net.MalformedURLException;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -214,11 +213,11 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
         if (!getProperties().isEmpty()) {
             try {
                 final long lastUpdated = Long.parseLong(getProperties().getProperty(DatabaseProperties.LAST_UPDATED, "0"));
-                final Date now = new Date();
+                final long now = System.currentTimeMillis();
                 final int days = Settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS, 7);
                 if (lastUpdated == updates.getTimeStamp(MODIFIED)) {
                     updates.clear(); //we don't need to update anything.
-                } else if (DateUtil.withinDateRange(lastUpdated, now.getTime(), days)) {
+                } else if (DateUtil.withinDateRange(lastUpdated, now, days)) {
                     for (NvdCveInfo entry : updates) {
                         if (MODIFIED.equals(entry.getId())) {
                             entry.setNeedsUpdate(true);

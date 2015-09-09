@@ -1,3 +1,4 @@
+[![Build Status](https://dependency-check.ci.cloudbees.com/buildStatus/icon?job=dependency-check)](https://dependency-check.ci.cloudbees.com/job/dependency-check/)
 Dependency-Check
 ================
 

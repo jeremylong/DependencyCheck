@@ -19,7 +19,7 @@ package org.owasp.dependencycheck.reporting;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +65,7 @@ public class EscapeTool {
         if (text == null || text.isEmpty()) {
             return text;
         }
-        return StringEscapeUtils.escapeHtml(text);
+        return StringEscapeUtils.escapeHtml4(text);
     }
 
     /**
@@ -78,6 +78,6 @@ public class EscapeTool {
         if (text == null || text.isEmpty()) {
             return text;
         }
-        return StringEscapeUtils.escapeXml(text);
+        return StringEscapeUtils.escapeXml11(text);
     }
 }

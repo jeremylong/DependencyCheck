@@ -185,6 +185,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
             final URL url1 = new URL(nvdCveInfo.getUrl());
             final URL url2 = new URL(nvdCveInfo.getOldSchemaVersionUrl());
             LOGGER.info("Download Started for NVD CVE - {}", nvdCveInfo.getId());
+            final long startDownload = System.currentTimeMillis();
             try {
                 Downloader.fetchFile(url1, first);
                 Downloader.fetchFile(url2, second);
@@ -204,7 +205,8 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
                 extractGzip(second);
             }
 
-            LOGGER.info("Download Complete for NVD CVE - {}", nvdCveInfo.getId());
+            LOGGER.info("Download Complete for NVD CVE - {}  ({} ms)", nvdCveInfo.getId(),
+                System.currentTimeMillis() - startDownload);
             if (this.processorService == null) {
                 return null;
             }

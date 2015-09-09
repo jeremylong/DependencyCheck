@@ -23,13 +23,12 @@ import java.util.logging.Level;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 import org.owasp.dependencycheck.reporting.ReportGenerator.Format;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
@@ -79,7 +78,7 @@ public final class CliParser {
      * @throws ParseException if the arguments are invalid
      */
     private CommandLine parseArgs(String[] args) throws ParseException {
-        final CommandLineParser parser = new PosixParser();
+        final CommandLineParser parser = new DefaultParser();
         final Options options = createCommandLineOptions();
         return parser.parse(options, args);
     }
@@ -209,8 +208,8 @@ public final class CliParser {
         final Option help = new Option(ARGUMENT.HELP_SHORT, ARGUMENT.HELP, false,
                 "Print this message.");
 
-        final Option advancedHelp = OptionBuilder.withLongOpt(ARGUMENT.ADVANCED_HELP)
-                .withDescription("Print the advanced help message.").create();
+        final Option advancedHelp = Option.builder().longOpt(ARGUMENT.ADVANCED_HELP)
+                .desc("Print the advanced help message.").build();
 
         final Option version = new Option(ARGUMENT.VERSION_SHORT, ARGUMENT.VERSION,
                 false, "Print the version information.");
@@ -218,44 +217,44 @@ public final class CliParser {
         final Option noUpdate = new Option(ARGUMENT.DISABLE_AUTO_UPDATE_SHORT, ARGUMENT.DISABLE_AUTO_UPDATE,
                 false, "Disables the automatic updating of the CPE data.");
 
-        final Option projectName = OptionBuilder.hasArg().withArgName("name").withLongOpt(ARGUMENT.PROJECT)
-                .withDescription("The name of the project being scanned. This is a required argument.")
-                .create();
+        final Option projectName = Option.builder().hasArg().argName("name").longOpt(ARGUMENT.PROJECT)
+                .desc("The name of the project being scanned. This is a required argument.")
+                .build();
 
-        final Option path = OptionBuilder.withArgName("path").hasArg().withLongOpt(ARGUMENT.SCAN)
-                .withDescription("The path to scan - this option can be specified multiple times. Ant style"
+        final Option path = Option.builder(ARGUMENT.SCAN_SHORT).argName("path").hasArg().longOpt(ARGUMENT.SCAN)
+                .desc("The path to scan - this option can be specified multiple times. Ant style"
                         + " paths are supported (e.g. path/**/*.jar).")
-                .create(ARGUMENT.SCAN_SHORT);
+                .build();
 
-        final Option excludes = OptionBuilder.withArgName("pattern").hasArg().withLongOpt(ARGUMENT.EXCLUDE)
-                .withDescription("Specify and exclusion pattern. This option can be specified multiple times"
+        final Option excludes = Option.builder().argName("pattern").hasArg().longOpt(ARGUMENT.EXCLUDE)
+                .desc("Specify and exclusion pattern. This option can be specified multiple times"
                         + " and it accepts Ant style excludsions.")
-                .create("p");
+                .build();
 
-        final Option props = OptionBuilder.withArgName("file").hasArg().withLongOpt(ARGUMENT.PROP)
-                .withDescription("A property file to load.")
-                .create(ARGUMENT.PROP_SHORT);
+        final Option props = Option.builder(ARGUMENT.PROP_SHORT).argName("file").hasArg().longOpt(ARGUMENT.PROP)
+                .desc("A property file to load.")
+                .build();
 
-        final Option out = OptionBuilder.withArgName("path").hasArg().withLongOpt(ARGUMENT.OUT)
-                .withDescription("The folder to write reports to. This defaults to the current directory. "
+        final Option out = Option.builder(ARGUMENT.OUT_SHORT).argName("path").hasArg().longOpt(ARGUMENT.OUT)
+                .desc("The folder to write reports to. This defaults to the current directory. "
                         + "It is possible to set this to a specific file name if the format argument is not set to ALL.")
-                .create(ARGUMENT.OUT_SHORT);
+                .build();
 
-        final Option outputFormat = OptionBuilder.withArgName("format").hasArg().withLongOpt(ARGUMENT.OUTPUT_FORMAT)
-                .withDescription("The output format to write to (XML, HTML, VULN, ALL). The default is HTML.")
-                .create(ARGUMENT.OUTPUT_FORMAT_SHORT);
+        final Option outputFormat = Option.builder(ARGUMENT.OUTPUT_FORMAT_SHORT).argName("format").hasArg().longOpt(ARGUMENT.OUTPUT_FORMAT)
+                .desc("The output format to write to (XML, HTML, VULN, ALL). The default is HTML.")
+                .build();
 
-        final Option verboseLog = OptionBuilder.withArgName("file").hasArg().withLongOpt(ARGUMENT.VERBOSE_LOG)
-                .withDescription("The file path to write verbose logging information.")
-                .create(ARGUMENT.VERBOSE_LOG_SHORT);
+        final Option verboseLog = Option.builder(ARGUMENT.VERBOSE_LOG_SHORT).argName("file").hasArg().longOpt(ARGUMENT.VERBOSE_LOG)
+                .desc("The file path to write verbose logging information.")
+                .build();
 
-        final Option symLinkDepth = OptionBuilder.withArgName("depth").hasArg().withLongOpt(ARGUMENT.SYM_LINK_DEPTH)
-                .withDescription("Sets how deep nested symbolic links will be followed; 0 indicates symbolic links will not be followed.")
-                .create();
+        final Option symLinkDepth = Option.builder().argName("depth").hasArg().longOpt(ARGUMENT.SYM_LINK_DEPTH)
+                .desc("Sets how deep nested symbolic links will be followed; 0 indicates symbolic links will not be followed.")
+                .build();
 
-        final Option suppressionFile = OptionBuilder.withArgName("file").hasArg().withLongOpt(ARGUMENT.SUPPRESSION_FILE)
-                .withDescription("The file path to the suppression XML file.")
-                .create();
+        final Option suppressionFile = Option.builder().argName("file").hasArg().longOpt(ARGUMENT.SUPPRESSION_FILE)
+                .desc("The file path to the suppression XML file.")
+                .build();
 
         //This is an option group because it can be specified more then once.
         final OptionGroup og = new OptionGroup();
@@ -289,119 +288,119 @@ public final class CliParser {
     @SuppressWarnings("static-access")
     private void addAdvancedOptions(final Options options) throws IllegalArgumentException {
 
-        final Option cve12Base = OptionBuilder.withArgName("url").hasArg().withLongOpt(ARGUMENT.CVE_BASE_12)
-                .withDescription("Base URL for each year’s CVE 1.2, the %d will be replaced with the year. ")
-                .create();
+        final Option cve12Base = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.CVE_BASE_12)
+                .desc("Base URL for each year’s CVE 1.2, the %d will be replaced with the year. ")
+                .build();
 
-        final Option cve20Base = OptionBuilder.withArgName("url").hasArg().withLongOpt(ARGUMENT.CVE_BASE_20)
-                .withDescription("Base URL for each year’s CVE 2.0, the %d will be replaced with the year.")
-                .create();
+        final Option cve20Base = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.CVE_BASE_20)
+                .desc("Base URL for each year’s CVE 2.0, the %d will be replaced with the year.")
+                .build();
 
-        final Option cve12Modified = OptionBuilder.withArgName("url").hasArg().withLongOpt(ARGUMENT.CVE_MOD_12)
-                .withDescription("URL for the modified CVE 1.2.")
-                .create();
+        final Option cve12Modified = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.CVE_MOD_12)
+                .desc("URL for the modified CVE 1.2.")
+                .build();
 
-        final Option cve20Modified = OptionBuilder.withArgName("url").hasArg().withLongOpt(ARGUMENT.CVE_MOD_20)
-                .withDescription("URL for the modified CVE 2.0.")
-                .create();
+        final Option cve20Modified = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.CVE_MOD_20)
+                .desc("URL for the modified CVE 2.0.")
+                .build();
 
-        final Option updateOnly = OptionBuilder.withLongOpt(ARGUMENT.UPDATE_ONLY)
-                .withDescription("Only update the local NVD data cache; no scan will be executed.").create();
+        final Option updateOnly = Option.builder().longOpt(ARGUMENT.UPDATE_ONLY)
+                .desc("Only update the local NVD data cache; no scan will be executed.").build();
 
-        final Option data = OptionBuilder.withArgName("path").hasArg().withLongOpt(ARGUMENT.DATA_DIRECTORY)
-                .withDescription("The location of the H2 Database file. This option should generally not be set.")
-                .create(ARGUMENT.DATA_DIRECTORY_SHORT);
+        final Option data = Option.builder(ARGUMENT.DATA_DIRECTORY_SHORT).argName("path").hasArg().longOpt(ARGUMENT.DATA_DIRECTORY)
+                .desc("The location of the H2 Database file. This option should generally not be set.")
+                .build();
 
-        final Option nexusUrl = OptionBuilder.withArgName("url").hasArg().withLongOpt(ARGUMENT.NEXUS_URL)
-                .withDescription("The url to the Nexus Server's REST API Endpoint (http://domain/nexus/service/local). "
-                        + "If not set the Nexus Analyzer will be disabled.").create();
+        final Option nexusUrl = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.NEXUS_URL)
+                .desc("The url to the Nexus Server's REST API Endpoint (http://domain/nexus/service/local). "
+                        + "If not set the Nexus Analyzer will be disabled.").build();
 
-        final Option nexusUsesProxy = OptionBuilder.withArgName("true/false").hasArg().withLongOpt(ARGUMENT.NEXUS_USES_PROXY)
-                .withDescription("Whether or not the configured proxy should be used when connecting to Nexus.")
-                .create();
+        final Option nexusUsesProxy = Option.builder().argName("true/false").hasArg().longOpt(ARGUMENT.NEXUS_USES_PROXY)
+                .desc("Whether or not the configured proxy should be used when connecting to Nexus.")
+                .build();
 
-        final Option additionalZipExtensions = OptionBuilder.withArgName("extensions").hasArg()
-                .withLongOpt(ARGUMENT.ADDITIONAL_ZIP_EXTENSIONS)
-                .withDescription("A comma separated list of additional extensions to be scanned as ZIP files "
-                        + "(ZIP, EAR, WAR are already treated as zip files)").create();
+        final Option additionalZipExtensions = Option.builder().argName("extensions").hasArg()
+                .longOpt(ARGUMENT.ADDITIONAL_ZIP_EXTENSIONS)
+                .desc("A comma separated list of additional extensions to be scanned as ZIP files "
+                        + "(ZIP, EAR, WAR are already treated as zip files)").build();
 
-        final Option pathToMono = OptionBuilder.withArgName("path").hasArg().withLongOpt(ARGUMENT.PATH_TO_MONO)
-                .withDescription("The path to Mono for .NET Assembly analysis on non-windows systems.")
-                .create();
+        final Option pathToMono = Option.builder().argName("path").hasArg().longOpt(ARGUMENT.PATH_TO_MONO)
+                .desc("The path to Mono for .NET Assembly analysis on non-windows systems.")
+                .build();
 
-        final Option pathToBundleAudit = OptionBuilder.withArgName("path").hasArg()
-                .withLongOpt(ARGUMENT.PATH_TO_BUNDLE_AUDIT)
-                .withDescription("The path to bundle-audit for Gem bundle analysis.").create();
+        final Option pathToBundleAudit = Option.builder().argName("path").hasArg()
+                .longOpt(ARGUMENT.PATH_TO_BUNDLE_AUDIT)
+                .desc("The path to bundle-audit for Gem bundle analysis.").build();
 
-        final Option connectionTimeout = OptionBuilder.withArgName("timeout").hasArg().withLongOpt(ARGUMENT.CONNECTION_TIMEOUT)
-                .withDescription("The connection timeout (in milliseconds) to use when downloading resources.")
-                .create(ARGUMENT.CONNECTION_TIMEOUT_SHORT);
+        final Option connectionTimeout = Option.builder(ARGUMENT.CONNECTION_TIMEOUT_SHORT).argName("timeout").hasArg().longOpt(ARGUMENT.CONNECTION_TIMEOUT)
+                .desc("The connection timeout (in milliseconds) to use when downloading resources.")
+                .build();
 
-        final Option proxyServer = OptionBuilder.withArgName("server").hasArg().withLongOpt(ARGUMENT.PROXY_SERVER)
-                .withDescription("The proxy server to use when downloading resources.").create();
+        final Option proxyServer = Option.builder().argName("server").hasArg().longOpt(ARGUMENT.PROXY_SERVER)
+                .desc("The proxy server to use when downloading resources.").build();
 
-        final Option proxyPort = OptionBuilder.withArgName("port").hasArg().withLongOpt(ARGUMENT.PROXY_PORT)
-                .withDescription("The proxy port to use when downloading resources.").create();
+        final Option proxyPort = Option.builder().argName("port").hasArg().longOpt(ARGUMENT.PROXY_PORT)
+                .desc("The proxy port to use when downloading resources.").build();
 
-        final Option proxyUsername = OptionBuilder.withArgName("user").hasArg().withLongOpt(ARGUMENT.PROXY_USERNAME)
-                .withDescription("The proxy username to use when downloading resources.").create();
+        final Option proxyUsername = Option.builder().argName("user").hasArg().longOpt(ARGUMENT.PROXY_USERNAME)
+                .desc("The proxy username to use when downloading resources.").build();
 
-        final Option proxyPassword = OptionBuilder.withArgName("pass").hasArg().withLongOpt(ARGUMENT.PROXY_PASSWORD)
-                .withDescription("The proxy password to use when downloading resources.").create();
+        final Option proxyPassword = Option.builder().argName("pass").hasArg().longOpt(ARGUMENT.PROXY_PASSWORD)
+                .desc("The proxy password to use when downloading resources.").build();
 
-        final Option connectionString = OptionBuilder.withArgName("connStr").hasArg().withLongOpt(ARGUMENT.CONNECTION_STRING)
-                .withDescription("The connection string to the database.").create();
+        final Option connectionString = Option.builder().argName("connStr").hasArg().longOpt(ARGUMENT.CONNECTION_STRING)
+                .desc("The connection string to the database.").build();
 
-        final Option dbUser = OptionBuilder.withArgName("user").hasArg().withLongOpt(ARGUMENT.DB_NAME)
-                .withDescription("The username used to connect to the database.").create();
+        final Option dbUser = Option.builder().argName("user").hasArg().longOpt(ARGUMENT.DB_NAME)
+                .desc("The username used to connect to the database.").build();
 
-        final Option dbPassword = OptionBuilder.withArgName("password").hasArg().withLongOpt(ARGUMENT.DB_PASSWORD)
-                .withDescription("The password for connecting to the database.").create();
+        final Option dbPassword = Option.builder().argName("password").hasArg().longOpt(ARGUMENT.DB_PASSWORD)
+                .desc("The password for connecting to the database.").build();
 
-        final Option dbDriver = OptionBuilder.withArgName("driver").hasArg().withLongOpt(ARGUMENT.DB_DRIVER)
-                .withDescription("The database driver name.").create();
+        final Option dbDriver = Option.builder().argName("driver").hasArg().longOpt(ARGUMENT.DB_DRIVER)
+                .desc("The database driver name.").build();
 
-        final Option dbDriverPath = OptionBuilder.withArgName("path").hasArg().withLongOpt(ARGUMENT.DB_DRIVER_PATH)
-                .withDescription("The path to the database driver; note, this does not need to be set unless the JAR is outside of the classpath.")
-                .create();
+        final Option dbDriverPath = Option.builder().argName("path").hasArg().longOpt(ARGUMENT.DB_DRIVER_PATH)
+                .desc("The path to the database driver; note, this does not need to be set unless the JAR is outside of the classpath.")
+                .build();
 
-        final Option disableJarAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_JAR)
-                .withDescription("Disable the Jar Analyzer.").create();
+        final Option disableJarAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_JAR)
+                .desc("Disable the Jar Analyzer.").build();
 
-        final Option disableArchiveAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_ARCHIVE)
-                .withDescription("Disable the Archive Analyzer.").create();
+        final Option disableArchiveAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_ARCHIVE)
+                .desc("Disable the Archive Analyzer.").build();
 
-        final Option disableNuspecAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_NUSPEC)
-                .withDescription("Disable the Nuspec Analyzer.").create();
+        final Option disableNuspecAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_NUSPEC)
+                .desc("Disable the Nuspec Analyzer.").build();
 
-        final Option disableAssemblyAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_ASSEMBLY)
-                .withDescription("Disable the .NET Assembly Analyzer.").create();
+        final Option disableAssemblyAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_ASSEMBLY)
+                .desc("Disable the .NET Assembly Analyzer.").build();
 
-        final Option disablePythonDistributionAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_PY_DIST)
-                .withDescription("Disable the Python Distribution Analyzer.").create();
+        final Option disablePythonDistributionAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_PY_DIST)
+                .desc("Disable the Python Distribution Analyzer.").build();
 
-        final Option disablePythonPackageAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_PY_PKG)
-                .withDescription("Disable the Python Package Analyzer.").create();
+        final Option disablePythonPackageAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_PY_PKG)
+                .desc("Disable the Python Package Analyzer.").build();
 
-        final Option disableAutoconfAnalyzer = OptionBuilder
-                .withLongOpt(ARGUMENT.DISABLE_AUTOCONF)
-                .withDescription("Disable the Autoconf Analyzer.").create();
+        final Option disableAutoconfAnalyzer = Option.builder()
+                .longOpt(ARGUMENT.DISABLE_AUTOCONF)
+                .desc("Disable the Autoconf Analyzer.").build();
 
-        final Option disableOpenSSLAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_OPENSSL)
-                .withDescription("Disable the OpenSSL Analyzer.").create();
-        final Option disableCmakeAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_CMAKE).
-                withDescription("Disable the Cmake Analyzer.").create();
+        final Option disableOpenSSLAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_OPENSSL)
+                .desc("Disable the OpenSSL Analyzer.").build();
+        final Option disableCmakeAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_CMAKE)
+                .desc("Disable the Cmake Analyzer.").build();
 
-        final Option disableCentralAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_CENTRAL)
-                .withDescription("Disable the Central Analyzer. If this analyzer is disabled it is likely you also want to disable "
-                        + "the Nexus Analyzer.").create();
+        final Option disableCentralAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_CENTRAL)
+                .desc("Disable the Central Analyzer. If this analyzer is disabled it is likely you also want to disable "
+                        + "the Nexus Analyzer.").build();
 
-        final Option disableNexusAnalyzer = OptionBuilder.withLongOpt(ARGUMENT.DISABLE_NEXUS)
-                .withDescription("Disable the Nexus Analyzer.").create();
+        final Option disableNexusAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_NEXUS)
+                .desc("Disable the Nexus Analyzer.").build();
 
-        final Option purge = OptionBuilder.withLongOpt(ARGUMENT.PURGE_NVD)
-                .withDescription("Purges the local NVD data cache")
-                .create();
+        final Option purge = Option.builder().longOpt(ARGUMENT.PURGE_NVD)
+                .desc("Purges the local NVD data cache")
+                .build();
 
         options.addOption(updateOnly)
                 .addOption(cve12Base)
@@ -422,20 +421,21 @@ public final class CliParser {
                 .addOption(disableJarAnalyzer)
                 .addOption(disableArchiveAnalyzer)
                 .addOption(disableAssemblyAnalyzer)
-                .addOption(OptionBuilder.withLongOpt(ARGUMENT.DISABLE_BUNDLE_AUDIT)
-                        .withDescription("Disable the Ruby Bundler Audit Analyzer.").create())
+                .addOption(pathToBundleAudit)
                 .addOption(disablePythonDistributionAnalyzer)
                 .addOption(disableCmakeAnalyzer)
                 .addOption(disablePythonPackageAnalyzer)
-                .addOption(OptionBuilder.withLongOpt(ARGUMENT.DISABLE_RUBYGEMS)
-                        .withDescription("Disable the Ruby Gemspec Analyzer.").create())
+                .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_RUBYGEMS)
+                        .desc("Disable the Ruby Gemspec Analyzer.").build())
+                .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_BUNDLE_AUDIT)
+                        .desc("Disable the Ruby Bundler-Audit Analyzer.").build())
                 .addOption(disableAutoconfAnalyzer)
                 .addOption(disableOpenSSLAnalyzer)
                 .addOption(disableNuspecAnalyzer)
                 .addOption(disableCentralAnalyzer)
                 .addOption(disableNexusAnalyzer)
-                .addOption(OptionBuilder.withLongOpt(ARGUMENT.DISABLE_NODE_JS)
-                        .withDescription("Disable the Node.js Package Analyzer.").create())
+                .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_NODE_JS)
+                        .desc("Disable the Node.js Package Analyzer.").build())
                 .addOption(nexusUrl)
                 .addOption(nexusUsesProxy)
                 .addOption(additionalZipExtensions)
@@ -454,12 +454,12 @@ public final class CliParser {
     @SuppressWarnings({"static-access", "deprecation"})
     private void addDeprecatedOptions(final Options options) throws IllegalArgumentException {
 
-        final Option proxyServer = OptionBuilder.withArgName("url").hasArg().withLongOpt(ARGUMENT.PROXY_URL)
-                .withDescription("The proxy url argument is deprecated, use proxyserver instead.")
-                .create();
-        final Option appName = OptionBuilder.withArgName("name").hasArg().withLongOpt(ARGUMENT.APP_NAME)
-                .withDescription("The name of the project being scanned.")
-                .create(ARGUMENT.APP_NAME_SHORT);
+        final Option proxyServer = Option.builder().argName("url").hasArg().longOpt(ARGUMENT.PROXY_URL)
+                .desc("The proxy url argument is deprecated, use proxyserver instead.")
+                .build();
+        final Option appName = Option.builder(ARGUMENT.APP_NAME_SHORT).argName("name").hasArg().longOpt(ARGUMENT.APP_NAME)
+                .desc("The name of the project being scanned.")
+                .build();
 
         options.addOption(proxyServer);
         options.addOption(appName);

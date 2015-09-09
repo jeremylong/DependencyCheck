@@ -17,8 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import ch.qos.cal10n.IMessageConveyor;
-import ch.qos.cal10n.MessageConveyor;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
@@ -45,7 +43,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Analyzer for getting company, product, and version information from a .NET assembly.
@@ -75,10 +72,6 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      * The DocumentBuilder for parsing the XML
      */
     private DocumentBuilder builder;
-    /**
-     * Message Conveyer
-     */
-    private static final IMessageConveyor MESSAGE_CONVERYOR = new MessageConveyor(Locale.getDefault());
     /**
      * Logger
      */

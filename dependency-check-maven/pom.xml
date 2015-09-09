@@ -40,6 +40,9 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
         </site>
     </distributionManagement>
     <!-- end copy -->
+    <properties>
+        <version.maven-plugin-plugin>3.4</version.maven-plugin-plugin>
+    </properties>
     <build>
         <resources>
             <resource>
@@ -63,6 +66,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
+                <version>${version.maven-plugin-plugin}</version>
                 <configuration>
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                     <goalPrefix>dependency-check</goalPrefix>
@@ -119,110 +123,16 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
         </plugins>
     </build>
     <reporting>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>${reporting.project-info-reports-plugin.version}</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>summary</report>
-                            <report>license</report>
-                            <report>help</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>${reporting.maven-plugin-plugin.version}</version>
+                <version>${version.maven-plugin-plugin}</version>
                 <configuration>
                     <goalPrefix>dependency-check</goalPrefix>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${reporting.javadoc-plugin.version}</version>
-                <configuration>
-                    <failOnError>false</failOnError>
-                    <bottom>Copyright© 2012-15 Jeremy Long. All Rights Reserved.</bottom>
-                </configuration>
-                <reportSets>
-                    <reportSet>
-                        <id>default</id>
-                        <reports>
-                            <report>javadoc</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <version>${reporting.versions-plugin.version}</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>dependency-updates-report</report>
-                            <report>plugin-updates-report</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jxr-plugin</artifactId>
-                <version>${reporting.jxr-plugin.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>${reporting.cobertura-plugin.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>${reporting.surefire-report-plugin.version}</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>report-only</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>taglist-maven-plugin</artifactId>
-                <version>${reporting.taglist-plugin.version}</version>
-                <configuration>
-                    <tagListOptions>
-                        <tagClasses>
-                            <tagClass>
-                                <displayName>Todo Work</displayName>
-                                <tags>
-                                    <tag>
-                                        <matchString>todo</matchString>
-                                        <matchType>ignoreCase</matchType>
-                                    </tag>
-                                    <tag>
-                                        <matchString>FIXME</matchString>
-                                        <matchType>exact</matchType>
-                                    </tag>
-                                </tags>
-                            </tagClass>
-                        </tagClasses>
-                    </tagListOptions>
                 </configuration>
             </plugin>
             <plugin>
@@ -230,6 +140,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${reporting.checkstyle-plugin.version}</version>
                 <configuration>
+                    <excludes>**/HelpMojo.java</excludes>
                     <enableRulesSummary>false</enableRulesSummary>
                     <enableFilesSummary>false</enableFilesSummary>
                     <configLocation>${basedir}/../src/main/config/checkstyle-checks.xml</configLocation>
@@ -258,11 +169,6 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                     </rulesets>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>${reporting.findbugs-plugin.version}</version>
-            </plugin>
         </plugins>
     </reporting>
     <dependencies>
@@ -279,23 +185,22 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-settings</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-site-plugin</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.reporting</groupId>
