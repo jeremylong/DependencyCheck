@@ -321,7 +321,6 @@ public class CveDB {
      * @throws DatabaseException thrown if there is an exception retrieving data
      */
     public List<Vulnerability> getVulnerabilities(String cpeStr) throws DatabaseException {
-        ResultSet rs = null;
         final VulnerableSoftware cpe = new VulnerableSoftware();
         try {
             cpe.parseName(cpeStr);
@@ -331,7 +330,8 @@ public class CveDB {
         final DependencyVersion detectedVersion = parseDependencyVersion(cpe);
         final List<Vulnerability> vulnerabilities = new ArrayList<Vulnerability>();
 
-        PreparedStatement ps;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
         try {
             ps = getConnection().prepareStatement(statementBundle.getString("SELECT_CVE_FROM_SOFTWARE"));
             ps.setString(1, cpe.getVendor());
@@ -365,12 +365,11 @@ public class CveDB {
                 v.setMatchedCPE(matchedCPE.getKey(), matchedCPE.getValue() ? "Y" : null);
                 vulnerabilities.add(v);
             }
-            DBUtils.closeResultSet(rs);
-            DBUtils.closeStatement(ps);
         } catch (SQLException ex) {
             throw new DatabaseException("Exception retrieving vulnerability for " + cpeStr, ex);
         } finally {
             DBUtils.closeResultSet(rs);
+            DBUtils.closeStatement(ps);
         }
         return vulnerabilities;
     }
@@ -748,9 +747,9 @@ public class CveDB {
      * @return a dependency version
      */
     private DependencyVersion parseDependencyVersion(VulnerableSoftware cpe) {
-        DependencyVersion cpeVersion;
+        final DependencyVersion cpeVersion;
         if (cpe.getVersion() != null && !cpe.getVersion().isEmpty()) {
-            String versionText;
+            final String versionText;
             if (cpe.getUpdate() != null && !cpe.getUpdate().isEmpty()) {
                 versionText = String.format("%s.%s", cpe.getVersion(), cpe.getUpdate());
             } else {
