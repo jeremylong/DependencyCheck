@@ -147,7 +147,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
 
             // First, see if there was an error
             final String error = xpath.evaluate("/assembly/error", doc);
-            if (error != null && !"".equals(error)) {
+            if (error != null && !error.isEmpty()) {
                 throw new AnalysisException(error);
             }
 
@@ -246,7 +246,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(p.getInputStream());
             final XPath xpath = XPathFactory.newInstance().newXPath();
             final String error = xpath.evaluate("/assembly/error", doc);
-            if (p.waitFor() != 1 || error == null || "".equals(error)) {
+            if (p.waitFor() != 1 || error == null || error.isEmpty()) {
                 LOGGER.warn("An error occurred with the .NET AssemblyAnalyzer, please see the log for more details.");
                 LOGGER.debug("GrokAssembly.exe is not working properly");
                 grokAssemblyExe = null;
