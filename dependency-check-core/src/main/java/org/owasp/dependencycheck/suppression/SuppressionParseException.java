@@ -27,6 +27,11 @@ import java.io.IOException;
 public class SuppressionParseException extends IOException {
 
     /**
+     * The serial version UID for serialization.
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Creates a new SuppressionParseException.
      */
     public SuppressionParseException() {
