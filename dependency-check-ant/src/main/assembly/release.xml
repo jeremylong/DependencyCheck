@@ -14,7 +14,7 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <outputDirectory>/</outputDirectory>
+            <outputDirectory>dependency-check</outputDirectory>
             <directory>${project.build.directory}</directory>
             <includes>
                 <include>dependency-check*.jar</include>
@@ -23,7 +23,7 @@
     </fileSets>
     <dependencySets>
         <dependencySet>
-            <outputDirectory>/lib</outputDirectory>
+            <outputDirectory>dependency-check/lib</outputDirectory>
             <scope>runtime</scope>
         </dependencySet>
     </dependencySets>
