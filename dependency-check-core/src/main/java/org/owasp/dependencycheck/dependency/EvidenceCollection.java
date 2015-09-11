@@ -40,6 +40,10 @@ import org.slf4j.LoggerFactory;
 public class EvidenceCollection implements Serializable, Iterable<Evidence> {
 
     /**
+     * The serial version UID for serialization.
+     */
+    private static final long serialVersionUID = 1L;
+    /**
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(EvidenceCollection.class);

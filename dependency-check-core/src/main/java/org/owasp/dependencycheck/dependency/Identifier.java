@@ -26,6 +26,11 @@ import java.io.Serializable;
 public class Identifier implements Serializable, Comparable<Identifier> {
 
     /**
+     * The serial version UID for serialization.
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Default constructor. Should only be used for automatic class
      * creation as is the case with many XML parsers (for the parsing
      * of the Dependency-Check XML report). For all other use-cases,

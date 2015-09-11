@@ -339,7 +339,7 @@ public class CPEAnalyzer implements Analyzer {
 
         final String cleanText = cleanseText(searchText);
 
-        if ("".equals(cleanText)) {
+        if (cleanText.isEmpty()) {
             return false;
         }
 
