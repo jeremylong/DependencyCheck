@@ -258,10 +258,12 @@ public class CveDB {
      * @param props a collection of properties
      */
     void saveProperties(Properties props) {
-        PreparedStatement mergeProperty = null;
+        PreparedStatement updateProperty = null;
+        PreparedStatement insertProperty = null;
         try {
             try {
-                mergeProperty = getConnection().prepareStatement(statementBundle.getString("MERGE_PROPERTY"));
+                updateProperty = getConnection().prepareStatement(statementBundle.getString("UPDATE_PROPERTY"));
+                insertProperty = getConnection().prepareStatement(statementBundle.getString("INSERT_PROPERTY"));
             } catch (SQLException ex) {
                 LOGGER.warn("Unable to save properties to the database");
                 LOGGER.debug("Unable to save properties to the database", ex);
@@ -271,16 +273,20 @@ public class CveDB {
                 final String key = entry.getKey().toString();
                 final String value = entry.getValue().toString();
                 try {
-                    mergeProperty.setString(1, key);
-                    mergeProperty.setString(2, value);
-                    mergeProperty.executeUpdate();
+                    updateProperty.setString(1, value);
+                    updateProperty.setString(2, key);
+                    if (updateProperty.executeUpdate() == 0) {
+                        insertProperty.setString(1, key);
+                        insertProperty.setString(2, value);
+                    }
                 } catch (SQLException ex) {
                     LOGGER.warn("Unable to save property '{}' with a value of '{}' to the database", key, value);
                     LOGGER.debug("", ex);
                 }
             }
         } finally {
-            DBUtils.closeStatement(mergeProperty);
+            DBUtils.closeStatement(updateProperty);
+            DBUtils.closeStatement(insertProperty);
         }
     }
 
@@ -291,25 +297,38 @@ public class CveDB {
      * @param value the property value
      */
     void saveProperty(String key, String value) {
-        PreparedStatement mergeProperty = null;
+        PreparedStatement updateProperty = null;
+        PreparedStatement insertProperty = null;
         try {
             try {
-                mergeProperty = getConnection().prepareStatement(statementBundle.getString("MERGE_PROPERTY"));
+                updateProperty = getConnection().prepareStatement(statementBundle.getString("UPDATE_PROPERTY"));
             } catch (SQLException ex) {
                 LOGGER.warn("Unable to save properties to the database");
                 LOGGER.debug("Unable to save properties to the database", ex);
                 return;
             }
             try {
-                mergeProperty.setString(1, key);
-                mergeProperty.setString(2, value);
-                mergeProperty.executeUpdate();
+                updateProperty.setString(1, value);
+                updateProperty.setString(2, key);
+                if (updateProperty.executeUpdate() == 0) {
+                    try {
+                        insertProperty = getConnection().prepareStatement(statementBundle.getString("INSERT_PROPERTY"));
+                    } catch (SQLException ex) {
+                        LOGGER.warn("Unable to save properties to the database");
+                        LOGGER.debug("Unable to save properties to the database", ex);
+                        return;
+                    }
+                    insertProperty.setString(1, key);
+                    insertProperty.setString(2, value);
+                    insertProperty.execute();
+                }
             } catch (SQLException ex) {
                 LOGGER.warn("Unable to save property '{}' with a value of '{}' to the database", key, value);
                 LOGGER.debug("", ex);
             }
         } finally {
-            DBUtils.closeStatement(mergeProperty);
+            DBUtils.closeStatement(updateProperty);
+            DBUtils.closeStatement(insertProperty);
         }
     }
 
