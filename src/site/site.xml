@@ -151,7 +151,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 <item name="dependency-check-ant" href="./dependency-check-ant/index.html">
                     <description>Ant task to run OWASP dependency-check.</description>
                 </item>
-                <item name="dependency-check-maven" href="./dependency-check-maven/usage.html">
+                <item name="dependency-check-maven" href="./dependency-check-maven/index.html">
                     <description>Maven plugin for OWASP dependency-check.</description>
                 </item>
                 <item name="dependency-check-gradle" href="./dependency-check-gradle/index.html">
