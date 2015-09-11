@@ -43,6 +43,9 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 /**
+ *
+ * This class is currently unused and if enabled will likely not work on MySQL as the MERGE statement is used.
+ *
  * The CpeUpdater is designed to download the CPE data file from NIST and import the data into the database. However, as this
  * currently adds no beneficial data, compared to what is in the CPE data contained in the CVE data files, this class is not
  * currently used. The code is being kept as a future update may utilize more data from the CPE xml files.

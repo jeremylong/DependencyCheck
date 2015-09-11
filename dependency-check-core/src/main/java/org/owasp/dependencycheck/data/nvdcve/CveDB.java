@@ -782,6 +782,8 @@ public class CveDB {
     }
 
     /**
+     * This method is only referenced in unused code.
+     *
      * Deletes unused dictionary entries from the database.
      */
     public void deleteUnusedCpe() {
@@ -797,6 +799,8 @@ public class CveDB {
     }
 
     /**
+     * This method is only referenced in unused code and will likely break on MySQL if ever used due to the MERGE statement.
+     *
      * Merges CPE entries into the database.
      *
      * @param cpe the CPE identifier
