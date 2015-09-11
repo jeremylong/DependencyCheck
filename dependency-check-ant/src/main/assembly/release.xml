@@ -12,7 +12,7 @@
         <format>zip</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
-    <fileSets>
+    <!--fileSets>
         <fileSet>
             <outputDirectory>dependency-check</outputDirectory>
             <directory>${project.build.directory}</directory>
@@ -20,7 +20,14 @@
                 <include>dependency-check*.jar</include>
             </includes>
         </fileSet>
-    </fileSets>
+    </fileSets-->
+    <files>
+        <file>
+            <source>${project.build.directory}/${project.artifactId}-${project.version}.jar</source>
+            <outputDirectory>dependency-check</outputDirectory>
+            <destName>dependency-check-ant.jar</destName>
+        </file>
+    </files>
     <dependencySets>
         <dependencySet>
             <outputDirectory>dependency-check/lib</outputDirectory>
