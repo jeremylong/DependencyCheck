@@ -20,13 +20,9 @@ package org.owasp.dependencycheck.utils;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -34,25 +30,6 @@ import org.junit.Test;
  * @author Jeremy Long
  */
 public class DependencyVersionTest {
-
-    public DependencyVersionTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     /**
      * Test of parseVersion method, of class DependencyVersion.
