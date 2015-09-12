@@ -42,6 +42,7 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -59,7 +60,7 @@ public class Engine implements FileFilter {
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-    private EnumMap<AnalysisPhase, List<Analyzer>> analyzers = new EnumMap<AnalysisPhase, List<Analyzer>>(AnalysisPhase.class);
+    private Map<AnalysisPhase, List<Analyzer>> analyzers = new EnumMap<AnalysisPhase, List<Analyzer>>(AnalysisPhase.class);
 
     /**
      * A Map of analyzers grouped by Analysis phase.

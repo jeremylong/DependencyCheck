@@ -116,7 +116,7 @@ public class CentralSearch {
                 if ("0".equals(numFound)) {
                     missing = true;
                 } else {
-                    final ArrayList<MavenArtifact> result = new ArrayList<MavenArtifact>();
+                    final List<MavenArtifact> result = new ArrayList<MavenArtifact>();
                     final NodeList docs = (NodeList) xpath.evaluate("/response/result/doc", doc, XPathConstants.NODESET);
                     for (int i = 0; i < docs.getLength(); i++) {
                         final String g = xpath.evaluate("./str[@name='g']", docs.item(i));

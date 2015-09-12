@@ -20,13 +20,9 @@ package org.owasp.dependencycheck.suppression;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -39,25 +35,6 @@ import org.owasp.dependencycheck.dependency.Vulnerability;
  * @author Jeremy Long
  */
 public class SuppressionRuleTest {
-
-    public SuppressionRuleTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     //<editor-fold defaultstate="collapsed" desc="Stupid tests of properties">
     /**
@@ -91,7 +68,7 @@ public class SuppressionRuleTest {
     @Test
     public void testCpe() {
         SuppressionRule instance = new SuppressionRule();
-        ArrayList<PropertyType> cpe = new ArrayList<PropertyType>();
+        List<PropertyType> cpe = new ArrayList<PropertyType>();
         instance.setCpe(cpe);
         assertFalse(instance.hasCpe());
         PropertyType pt = new PropertyType();
@@ -109,7 +86,7 @@ public class SuppressionRuleTest {
     @Test
     public void testGetCvssBelow() {
         SuppressionRule instance = new SuppressionRule();
-        ArrayList<Float> cvss = new ArrayList<Float>();
+        List<Float> cvss = new ArrayList<Float>();
         instance.setCvssBelow(cvss);
         assertFalse(instance.hasCvssBelow());
         instance.addCvssBelow(0.7f);
@@ -124,7 +101,7 @@ public class SuppressionRuleTest {
     @Test
     public void testCwe() {
         SuppressionRule instance = new SuppressionRule();
-        ArrayList<String> cwe = new ArrayList<String>();
+        List<String> cwe = new ArrayList<String>();
         instance.setCwe(cwe);
         assertFalse(instance.hasCwe());
         instance.addCwe("2");
@@ -139,7 +116,7 @@ public class SuppressionRuleTest {
     @Test
     public void testCve() {
         SuppressionRule instance = new SuppressionRule();
-        ArrayList<String> cve = new ArrayList<String>();
+        List<String> cve = new ArrayList<String>();
         instance.setCve(cve);
         assertFalse(instance.hasCve());
         instance.addCve("CVE-2013-1337");
