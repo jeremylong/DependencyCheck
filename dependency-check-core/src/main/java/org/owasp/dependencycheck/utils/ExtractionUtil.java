@@ -33,6 +33,7 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.compress.utils.IOUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
@@ -50,10 +51,6 @@ public final class ExtractionUtil {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtractionUtil.class);
-    /**
-     * The buffer size to use when extracting files from the archive.
-     */
-    private static final int BUFFER_SIZE = 4096;
 
     /**
      * Private constructor for a utility class.
@@ -108,12 +105,10 @@ public final class ExtractionUtil {
                 } else {
                     final File file = new File(extractTo, entry.getName());
                     if (engine == null || engine.accept(file)) {
-                        BufferedOutputStream bos = null;
-                        FileOutputStream fos;
+                        FileOutputStream fos = null;
                         try {
                             fos = new FileOutputStream(file);
-                            bos = new BufferedOutputStream(fos, BUFFER_SIZE);
-                            transferUsingBuffer(zis, bos);
+                            IOUtils.copy(zis, fos);
                         } catch (FileNotFoundException ex) {
                             LOGGER.debug("", ex);
                             final String msg = String.format("Unable to find file '%s'.", file.getName());
@@ -123,7 +118,7 @@ public final class ExtractionUtil {
                             final String msg = String.format("IO Exception while parsing file '%s'.", file.getName());
                             throw new ExtractionException(msg, ex);
                         } finally {
-                            closeStream(bos);
+                            closeStream(fos);
                         }
                     }
                 }
@@ -225,13 +220,11 @@ public final class ExtractionUtil {
         if (filter.accept(file.getParentFile(), file.getName())) {
             LOGGER.debug("Extracting '{}'",
                     file.getPath());
-            BufferedOutputStream bos = null;
             FileOutputStream fos = null;
             try {
                 createParentFile(file);
                 fos = new FileOutputStream(file);
-                bos = new BufferedOutputStream(fos, BUFFER_SIZE);
-                transferUsingBuffer(input, bos);
+                IOUtils.copy(input, fos);
             } catch (FileNotFoundException ex) {
                 LOGGER.debug("", ex);
                 final String msg = String.format("Unable to find file '%s'.",
@@ -244,27 +237,9 @@ public final class ExtractionUtil {
                                 file.getName());
                 throw new ExtractionException(msg, ex);
             } finally {
-                closeStream(bos);
                 closeStream(fos);
             }
         }
-    }
-
-    /**
-     * Transfers data from one stream to another using a buffer.
-     *
-     * @param input the input stream
-     * @param bos the output stream
-     * @throws IOException thrown if there is an error reading/writing to the streams
-     */
-    private static void transferUsingBuffer(InputStream input,
-            BufferedOutputStream bos) throws IOException {
-        int count;
-        final byte[] data = new byte[BUFFER_SIZE];
-        while ((count = input.read(data, 0, BUFFER_SIZE)) != -1) {
-            bos.write(data, 0, count);
-        }
-        bos.flush();
     }
 
     /**

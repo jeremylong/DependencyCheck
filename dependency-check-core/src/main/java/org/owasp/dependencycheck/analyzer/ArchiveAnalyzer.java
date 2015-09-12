@@ -28,6 +28,7 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2Utils;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
+import org.apache.commons.compress.utils.IOUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
@@ -54,10 +55,6 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ArchiveAnalyzer.class);
-    /**
-     * The buffer size to use when extracting files from the archive.
-     */
-    private static final int BUFFER_SIZE = 4096;
     /**
      * The count of directories created during analysis. This is used for creating temporary directories.
      */
@@ -385,7 +382,6 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
 
     private static void extractAcceptedFile(ArchiveInputStream input, File file) throws AnalysisException {
         LOGGER.debug("Extracting '{}'", file.getPath());
-        BufferedOutputStream bos = null;
         FileOutputStream fos = null;
         try {
             final File parent = file.getParentFile();
@@ -396,13 +392,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
             fos = new FileOutputStream(file);
-            bos = new BufferedOutputStream(fos, BUFFER_SIZE);
-            int count;
-            final byte[] data = new byte[BUFFER_SIZE];
-            while ((count = input.read(data, 0, BUFFER_SIZE)) != -1) {
-                bos.write(data, 0, count);
-            }
-            bos.flush();
+            IOUtils.copy(input, fos);
         } catch (FileNotFoundException ex) {
             LOGGER.debug("", ex);
             final String msg = String.format("Unable to find file '%s'.", file.getName());
@@ -412,7 +402,6 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             final String msg = String.format("IO Exception while parsing file '%s'.", file.getName());
             throw new AnalysisException(msg, ex);
         } finally {
-            close(bos);
             close(fos);
         }
     }
@@ -429,11 +418,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(outputFile);
-            final byte[] buffer = new byte[BUFFER_SIZE];
-            int n; // = 0
-            while (-1 != (n = inputStream.read(buffer))) {
-                out.write(buffer, 0, n);
-            }
+            IOUtils.copy(inputStream, out);
         } catch (FileNotFoundException ex) {
             LOGGER.debug("", ex);
             throw new ArchiveExtractionException(ex);
