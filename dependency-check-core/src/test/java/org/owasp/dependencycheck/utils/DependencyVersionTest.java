@@ -204,7 +204,7 @@ public class DependencyVersionTest {
         DependencyVersion instance = new DependencyVersion();
         List<String> versionParts = Arrays.asList("1", "1", "1");
         instance.setVersionParts(versionParts);
-        List<String> expResult = Arrays.asList("1", "1", "1");;
+        List<String> expResult = Arrays.asList("1", "1", "1");
         List<String> result = instance.getVersionParts();
         assertEquals(expResult, result);
     }
