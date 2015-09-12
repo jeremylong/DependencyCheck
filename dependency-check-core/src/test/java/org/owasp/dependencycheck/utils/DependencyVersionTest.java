@@ -62,6 +62,7 @@ public class DependencyVersionTest {
     public void testIterator() {
         DependencyVersion instance = new DependencyVersion("1.2.3");
         Iterator result = instance.iterator();
+        assertTrue(result.hasNext());
         int count = 1;
         while (result.hasNext()) {
             String v = (String) result.next();
