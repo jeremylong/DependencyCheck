@@ -50,6 +50,7 @@ public class DependencyVersionTest {
         assertEquals(2, parts.size());
         assertEquals("x6", parts.get(0));
         assertEquals("0", parts.get(1));
+        // TODO(code review): should this be here/do something?
         //assertEquals("0", parts.get(2));
 
     }
