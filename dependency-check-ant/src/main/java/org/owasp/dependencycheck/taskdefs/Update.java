@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.taskdefs;
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.utils.Settings;
