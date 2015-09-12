@@ -132,7 +132,6 @@ public class DependencyVersionTest {
     public void testCompareTo() {
         DependencyVersion instance = new DependencyVersion("1.2.3");
         DependencyVersion version = new DependencyVersion("1.2.3");
-        int expResult = 0;
         assertEquals(0, instance.compareTo(version));
         version = new DependencyVersion("1.1");
         assertEquals(1, instance.compareTo(version));
