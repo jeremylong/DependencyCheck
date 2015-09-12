@@ -17,7 +17,7 @@ package org.owasp.dependencycheck.xml.pom;
 
 import org.owasp.dependencycheck.xml.pom.PomUtils;
 import java.io.File;
-import javax.xml.transform.sax.SAXSource;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -25,8 +25,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.owasp.dependencycheck.BaseTest;
-import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.xml.pom.Model;
 
 /**
  *

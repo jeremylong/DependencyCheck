@@ -26,7 +26,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.owasp.dependencycheck.utils.Checksum;
-import org.owasp.dependencycheck.utils.Checksum;
 
 /**
  *

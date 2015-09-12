@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.data.nuget;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
 import static org.junit.Assert.assertEquals;

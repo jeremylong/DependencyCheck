@@ -37,7 +37,6 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ch.qos.logback.core.FileAppender;
-import java.util.logging.Level;
 import org.slf4j.impl.StaticLoggerBinder;
 
 /**
