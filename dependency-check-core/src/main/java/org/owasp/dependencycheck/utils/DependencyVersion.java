@@ -103,6 +103,7 @@ public class DependencyVersion implements Iterable<String>, Comparable<Dependenc
      *
      * @return an iterator for the version parts
      */
+    @Override
     public Iterator<String> iterator() {
         return versionParts.iterator();
     }

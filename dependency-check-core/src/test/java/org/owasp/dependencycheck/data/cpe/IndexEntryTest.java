@@ -17,39 +17,14 @@
  */
 package org.owasp.dependencycheck.data.cpe;
 
-import junit.framework.TestCase;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  *
  * @author Jeremy Long
  */
-public class IndexEntryTest extends TestCase {
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
+public class IndexEntryTest {
 
     /**
      * Test of setName method, of class IndexEntry.

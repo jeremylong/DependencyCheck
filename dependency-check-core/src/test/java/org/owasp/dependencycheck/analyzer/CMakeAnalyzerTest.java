@@ -52,6 +52,7 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
      *
      * @throws Exception if there is a problem
      */
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

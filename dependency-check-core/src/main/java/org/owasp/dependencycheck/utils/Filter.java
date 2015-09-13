@@ -23,6 +23,7 @@ public abstract class Filter<T> {
     public Iterable<T> filter(final Iterable<T> iterable) {
         return new Iterable<T>() {
 
+            @Override
             public Iterator<T> iterator() {
                 return filter(iterable.iterator());
             }
@@ -39,10 +40,12 @@ public abstract class Filter<T> {
             toNext();
         }
 
+        @Override
         public boolean hasNext() {
             return next != null;
         }
 
+        @Override
         public T next() {
             if (next == null) {
                 throw new NoSuchElementException();
@@ -52,6 +55,7 @@ public abstract class Filter<T> {
             return returnValue;
         }
 
+        @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }

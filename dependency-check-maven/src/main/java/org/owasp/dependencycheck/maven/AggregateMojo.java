@@ -263,6 +263,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
      * @param locale the location
      * @return the report name
      */
+    @Override
     public String getName(Locale locale) {
         return "dependency-check:aggregate";
     }
@@ -273,6 +274,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
      * @param locale The Locale to get the description for
      * @return the description
      */
+    @Override
     public String getDescription(Locale locale) {
         return "Generates an aggregate report of all child Maven projects providing details on any "
                 + "published vulnerabilities within project dependencies. This report is a best "

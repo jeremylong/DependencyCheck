@@ -221,6 +221,7 @@ public class Identifier implements Serializable, Comparable<Identifier> {
      * @param o the object being compared
      * @return an integer indicating the ordering
      */
+    @Override
     public int compareTo(Identifier o) {
         if (o == null) {
             return -1;

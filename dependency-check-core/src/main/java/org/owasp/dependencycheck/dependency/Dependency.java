@@ -697,6 +697,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * @param o a dependency to compare
      * @return an integer representing the natural ordering
      */
+    @Override
     public int compareTo(Dependency o) {
         return this.getFilePath().compareToIgnoreCase(o.getFilePath());
     }
