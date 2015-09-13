@@ -29,6 +29,11 @@ import org.slf4j.helpers.MessageFormatter;
 public class MavenLoggerAdapter extends MarkerIgnoringBase {
 
     /**
+     * The serial version UID for serialization.
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * A reference to the Maven log.
      */
     private final Log log;

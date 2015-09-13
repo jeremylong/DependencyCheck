@@ -25,6 +25,11 @@ package org.owasp.dependencycheck;
 class InvalidScanPathException extends Exception {
 
     /**
+     * The serial version UID for serialization.
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Creates a new InvalidScanPathException.
      */
     public InvalidScanPathException() {
