@@ -131,14 +131,13 @@ public class Location implements Serializable {
      *         and the empty string for unknown locations.
      */
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        final StringBuilder buf = new StringBuilder();
 
         if (fileName != null) {
             buf.append(fileName);
 
             if (lineNumber != 0) {
-                buf.append(":");
-                buf.append(lineNumber);
+                buf.append(':').append(lineNumber);
             }
 
             buf.append(": ");

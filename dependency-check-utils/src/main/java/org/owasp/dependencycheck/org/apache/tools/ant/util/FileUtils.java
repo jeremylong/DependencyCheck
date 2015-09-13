@@ -672,8 +672,8 @@ public class FileUtils {
         if (toProcess == null || toProcess.length() == 0) {
             return "";
         }
-        StringBuffer path = new StringBuffer(toProcess.length() + EXPAND_SPACE);
-        PathTokenizer tokenizer = new PathTokenizer(toProcess);
+        final StringBuilder path = new StringBuilder(toProcess.length() + EXPAND_SPACE);
+        final PathTokenizer tokenizer = new PathTokenizer(toProcess);
         while (tokenizer.hasMoreTokens()) {
             String pathComponent = tokenizer.nextToken();
             pathComponent = pathComponent.replace('/', File.separatorChar);
@@ -725,7 +725,7 @@ public class FileUtils {
                 s.push(thisToken);
             }
         }
-        StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         final int size = s.size();
         for (int i = 0; i < size; i++) {
             if (i > 1) {
@@ -765,7 +765,7 @@ public class FileUtils {
             //remove the initial separator; the root has it.
             next = (ca[next] == sep) ? next + 1 : next;
 
-            StringBuffer sbPath = new StringBuffer();
+            final StringBuilder sbPath = new StringBuilder();
             // Eliminate consecutive slashes after the drive spec:
             for (int i = next; i < ca.length; i++) {
                 if (ca[i] != sep || ca[i - 1] != sep) {
@@ -805,7 +805,7 @@ public class FileUtils {
                 && !name.regionMatches(true, name.length() - 4, ".DIR", 0, 4);
         // CheckStyle:MagicNumber ON
         String device = null;
-        StringBuffer directory = null;
+        StringBuilder directory = null;
         String file = null;
 
         int index = 0;
@@ -818,13 +818,13 @@ public class FileUtils {
             device = path.substring(1, index++);
         }
         if (isDirectory) {
-            directory = new StringBuffer(path.substring(index).replace(File.separatorChar, '.'));
+            directory = new StringBuilder(path.substring(index).replace(File.separatorChar, '.'));
         } else {
             int dirEnd = path.lastIndexOf(File.separatorChar, path.length());
             if (dirEnd == -1 || dirEnd < index) {
                 file = path.substring(index);
             } else {
-                directory = new StringBuffer(path.substring(index, dirEnd).
+                directory = new StringBuilder(path.substring(index, dirEnd).
                         replace(File.separatorChar, '.'));
                 index = dirEnd + 1;
                 if (path.length() > index) {
@@ -1016,11 +1016,11 @@ public class FileUtils {
         }
         final char[] buffer = new char[bufferSize];
         int bufferLength = 0;
-        StringBuffer textBuffer = null;
+        StringBuilder textBuffer = null;
         while (bufferLength != -1) {
             bufferLength = rdr.read(buffer);
             if (bufferLength > 0) {
-                textBuffer = (textBuffer == null) ? new StringBuffer() : textBuffer;
+                textBuffer = (textBuffer == null) ? new StringBuilder() : textBuffer;
                 textBuffer.append(new String(buffer, 0, bufferLength));
             }
         }
@@ -1632,7 +1632,7 @@ public class FileUtils {
      * @since Ant 1.7
      */
     public static String getPath(final List pathStack, final char separatorChar) {
-        final StringBuffer buffer = new StringBuffer();
+        final StringBuilder buffer = new StringBuilder();
 
         final Iterator iter = pathStack.iterator();
         if (iter.hasNext()) {

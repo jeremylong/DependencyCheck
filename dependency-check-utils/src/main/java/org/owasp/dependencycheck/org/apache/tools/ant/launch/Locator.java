@@ -239,7 +239,7 @@ public final class Locator {
         if (url == null || !("file".equals(url.getProtocol()))) {
             throw new IllegalArgumentException(ERROR_NOT_FILE_URI + uri);
         }
-        StringBuffer buf = new StringBuffer(url.getHost());
+        final StringBuilder buf = new StringBuilder(url.getHost());
         if (buf.length() > 0) {
             buf.insert(0, File.separatorChar).insert(0, File.separatorChar);
         }
@@ -336,7 +336,7 @@ public final class Locator {
         int i = 0;
         int len = path.length();
         int ch = 0;
-        StringBuffer sb = null;
+        StringBuilder sb = null;
         for (; i < len; i++) {
             ch = path.charAt(i);
             // if it's not an ASCII character, break here, and use UTF-8 encoding
@@ -345,7 +345,7 @@ public final class Locator {
             }
             if (gNeedEscaping[ch]) {
                 if (sb == null) {
-                    sb = new StringBuffer(path.substring(0, i));
+                    sb = new StringBuilder(path.substring(0, i));
                 }
                 sb.append('%');
                 sb.append(gAfterEscaping1[ch]);
@@ -359,7 +359,7 @@ public final class Locator {
         // we saw some non-ascii character
         if (i < len) {
             if (sb == null) {
-                sb = new StringBuffer(path.substring(0, i));
+                sb = new StringBuilder(path.substring(0, i));
             }
             // get UTF-8 bytes for the remaining sub-string
             byte[] bytes = null;
