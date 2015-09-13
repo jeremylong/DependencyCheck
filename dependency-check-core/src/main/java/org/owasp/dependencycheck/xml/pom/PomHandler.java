@@ -100,7 +100,7 @@ public class PomHandler extends DefaultHandler {
     /**
      * The current node text being extracted from the element.
      */
-    private StringBuffer currentText;
+    private StringBuilder currentText;
 
     /**
      * Handles the start element event.
@@ -113,7 +113,7 @@ public class PomHandler extends DefaultHandler {
      */
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        currentText = new StringBuffer();
+        currentText = new StringBuilder();
         stack.push(qName);
         if (LICENSE.equals(qName)) {
             license = new License();
