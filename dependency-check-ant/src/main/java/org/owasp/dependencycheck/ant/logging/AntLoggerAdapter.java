@@ -31,6 +31,11 @@ import org.slf4j.helpers.MessageFormatter;
 public class AntLoggerAdapter extends MarkerIgnoringBase {
 
     /**
+     * The serial version UID for serialization.
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * A reference to the Ant task used for logging.
      */
     private Task task;
