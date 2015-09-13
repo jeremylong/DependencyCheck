@@ -86,7 +86,7 @@ public class SuppressionHandler extends DefaultHandler {
     /**
      * The current node text being extracted from the element.
      */
-    private StringBuffer currentText;
+    private StringBuilder currentText;
 
     /**
      * Handles the start element event.
@@ -100,7 +100,7 @@ public class SuppressionHandler extends DefaultHandler {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         currentAttributes = attributes;
-        currentText = new StringBuffer();
+        currentText = new StringBuilder();
         if (SUPPRESS.equals(qName)) {
             rule = new SuppressionRule();
             final String base = currentAttributes.getValue("base");
