@@ -234,6 +234,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
      * @param o the evidence being compared
      * @return an integer indicating the ordering of the two objects
      */
+    @Override
     public int compareTo(Evidence o) {
         if (o == null) {
             return 1;

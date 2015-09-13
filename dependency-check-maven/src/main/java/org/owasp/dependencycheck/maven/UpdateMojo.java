@@ -78,6 +78,7 @@ public class UpdateMojo extends BaseDependencyCheckMojo {
      * @param locale the location
      * @return the report name
      */
+    @Override
     public String getName(Locale locale) {
         return "dependency-check-update";
     }
@@ -88,6 +89,7 @@ public class UpdateMojo extends BaseDependencyCheckMojo {
      * @param locale The Locale to get the description for
      * @return the description
      */
+    @Override
     public String getDescription(Locale locale) {
         return "Updates the local cache of the NVD data from NIST.";
     }

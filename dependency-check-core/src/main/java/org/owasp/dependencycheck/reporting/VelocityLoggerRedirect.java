@@ -46,6 +46,7 @@ public class VelocityLoggerRedirect implements LogChute {
      *
      * @param rsvc the RuntimeServices
      */
+    @Override
     public void init(RuntimeServices rsvc) {
         // do nothing
     }
@@ -57,6 +58,7 @@ public class VelocityLoggerRedirect implements LogChute {
      * @param level the logging level
      * @param message the message to be logged
      */
+    @Override
     public void log(int level, String message) {
         switch (level) {
             case TRACE_ID:
@@ -87,6 +89,7 @@ public class VelocityLoggerRedirect implements LogChute {
      * @param message the message to be logged
      * @param t a throwable to log
      */
+    @Override
     public void log(int level, String message, Throwable t) {
         switch (level) {
             case TRACE_ID:
@@ -115,6 +118,7 @@ public class VelocityLoggerRedirect implements LogChute {
      * @param level the logging level
      * @return true
      */
+    @Override
     public boolean isLevelEnabled(int level) {
         return true;
     }

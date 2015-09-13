@@ -479,6 +479,7 @@ public class Engine implements FileFilter {
      * @param file a file extension
      * @return true or false depending on whether or not the file extension is supported
      */
+    @Override
     public boolean accept(File file) {
         if (file == null) {
             return false;

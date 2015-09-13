@@ -75,6 +75,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      *
      * @return the name of the analyzer.
      */
+    @Override
     public String getName() {
         return ANALYZER_NAME;
     }
@@ -84,6 +85,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      *
      * @return the phase that the analyzer is intended to run in.
      */
+    @Override
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }

@@ -133,6 +133,7 @@ public class Reference implements Serializable, Comparable<Reference> {
      * @param o the Reference being compared
      * @return an integer indicating the ordering of the two objects
      */
+    @Override
     public int compareTo(Reference o) {
         if (source.equals(o.source)) {
             if (name.equals(o.name)) {

@@ -116,6 +116,7 @@ class DriverShim implements Driver {
      * @see java.sql.Driver#getParentLogger()
      */
     //@Override
+    @Override
     public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
         //return driver.getParentLogger();
         Method m = null;
