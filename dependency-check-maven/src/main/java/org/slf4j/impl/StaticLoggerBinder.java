@@ -28,7 +28,9 @@ import org.slf4j.spi.LoggerFactoryBinder;
  *
  * @author colezlaw
  */
+//CSOFF: FinalClass
 public class StaticLoggerBinder implements LoggerFactoryBinder {
+//CSON: FinalClass
 
     /**
      * The unique instance of this class
@@ -64,7 +66,11 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
      * with each release.
      */
     // to avoid constant folding by the compiler, this field must *not* be final
+    //CSOFF: StaticVariableName
+    //CSOFF: VisibilityModifier
     public static String REQUESTED_API_VERSION = "1.7.12"; // final
+    //CSON: VisibilityModifier
+    //CSON: StaticVariableName
 
     /**
      * The logger factory class string.
