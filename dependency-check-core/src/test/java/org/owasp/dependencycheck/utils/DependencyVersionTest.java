@@ -20,13 +20,9 @@ package org.owasp.dependencycheck.utils;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -34,25 +30,6 @@ import org.junit.Test;
  * @author Jeremy Long
  */
 public class DependencyVersionTest {
-
-    public DependencyVersionTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     /**
      * Test of parseVersion method, of class DependencyVersion.
@@ -73,6 +50,7 @@ public class DependencyVersionTest {
         assertEquals(2, parts.size());
         assertEquals("x6", parts.get(0));
         assertEquals("0", parts.get(1));
+        // TODO(code review): should this be here/do something?
         //assertEquals("0", parts.get(2));
 
     }
@@ -84,6 +62,7 @@ public class DependencyVersionTest {
     public void testIterator() {
         DependencyVersion instance = new DependencyVersion("1.2.3");
         Iterator result = instance.iterator();
+        assertTrue(result.hasNext());
         int count = 1;
         while (result.hasNext()) {
             String v = (String) result.next();
@@ -155,7 +134,6 @@ public class DependencyVersionTest {
     public void testCompareTo() {
         DependencyVersion instance = new DependencyVersion("1.2.3");
         DependencyVersion version = new DependencyVersion("1.2.3");
-        int expResult = 0;
         assertEquals(0, instance.compareTo(version));
         version = new DependencyVersion("1.1");
         assertEquals(1, instance.compareTo(version));
@@ -204,7 +182,7 @@ public class DependencyVersionTest {
         DependencyVersion instance = new DependencyVersion();
         List<String> versionParts = Arrays.asList("1", "1", "1");
         instance.setVersionParts(versionParts);
-        List<String> expResult = Arrays.asList("1", "1", "1");;
+        List<String> expResult = Arrays.asList("1", "1", "1");
         List<String> result = instance.getVersionParts();
         assertEquals(expResult, result);
     }

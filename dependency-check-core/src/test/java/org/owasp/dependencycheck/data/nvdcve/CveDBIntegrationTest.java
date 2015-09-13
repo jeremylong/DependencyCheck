@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.data.nvdcve;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.junit.Assert;
@@ -121,7 +122,7 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
     @Test
     public void testGetMatchingSoftware() throws Exception {
         CveDB instance = null;
-        HashMap<String, Boolean> versions = new HashMap<String, Boolean>();
+        Map<String, Boolean> versions = new HashMap<String, Boolean>();
         DependencyVersion identifiedVersion = new DependencyVersion("1.0.1o");
         versions.put("cpe:/a:openssl:openssl:1.0.1e", Boolean.FALSE);
         try {
