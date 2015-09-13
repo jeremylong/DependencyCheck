@@ -69,7 +69,8 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
             for (MavenProject current : getReactorProjects()) {
                 final File dataFile = getDataFile(current);
                 if (dataFile == null) { //dc was never run on this project. write the ser to the target.
-                    getLog().error(String.format("Module '%s' did not execute dependency-check; an attempt will be made to perform the check but dependencies may be missed resulting in false negatives.", current.getName()));
+                    getLog().error(String.format("Module '%s' did not execute dependency-check; an attempt will be made to perform "
+                            + "the check but dependencies may be missed resulting in false negatives.", current.getName()));
                     generateDataFile(engine, current);
                 }
             }
