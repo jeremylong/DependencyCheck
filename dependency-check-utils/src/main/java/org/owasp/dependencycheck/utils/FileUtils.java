@@ -103,46 +103,6 @@ public final class FileUtils {
     }
 
     /**
-     * Returns the data directory. If a path was specified in dependencycheck.properties or was specified using the Settings
-     * object, and the path exists, that path will be returned as a File object. If it does not exist, then a File object will be
-     * created based on the file location of the JAR containing the specified class.
-     *
-     * @param configuredFilePath the configured relative or absolute path
-     * @param clazz the class to resolve the path
-     * @return a File object
-     * @throws IOException is thrown if the path could not be decoded
-     * @deprecated This method should no longer be used. See the implementation in dependency-check-cli/App.java to see how the
-     * data directory should be set.
-     */
-    @java.lang.Deprecated
-    public static File getDataDirectory(String configuredFilePath, Class clazz) throws IOException {
-        final File file = new File(configuredFilePath);
-        if (file.isDirectory() && file.canWrite()) {
-            return new File(file.getCanonicalPath());
-        } else {
-            final File exePath = getPathToJar(clazz);
-            return new File(exePath, configuredFilePath);
-        }
-    }
-
-    /**
-     * Retrieves the physical path to the parent directory containing the provided class. For example, if a JAR file contained a
-     * class org.something.clazz this method would return the parent directory of the JAR file.
-     *
-     * @param clazz the class to determine the parent directory of
-     * @return the parent directory of the file containing the specified class.
-     * @throws UnsupportedEncodingException thrown if UTF-8 is not supported.
-     * @deprecated this should no longer be used.
-     */
-    @java.lang.Deprecated
-    public static File getPathToJar(Class clazz) throws UnsupportedEncodingException {
-        final String filePath = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
-        final String decodedPath = URLDecoder.decode(filePath, "UTF-8");
-        final File jarPath = new File(decodedPath);
-        return jarPath.getParentFile();
-    }
-
-    /**
      * Return the bit bucket for the OS. '/dev/null' for Unix and 'NUL' for Windows
      *
      * @return a String containing the bit bucket
