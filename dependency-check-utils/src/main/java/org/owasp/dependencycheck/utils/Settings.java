@@ -376,7 +376,7 @@ public final class Settings {
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException ex) {
-                    //ignore
+                    LOGGER.trace("ignore", ex);
                 }
                 FileUtils.delete(tempDirectory);
             }
