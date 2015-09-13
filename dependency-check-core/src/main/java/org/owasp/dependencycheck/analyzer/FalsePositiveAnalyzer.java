@@ -380,18 +380,16 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      */
     private void addFalseNegativeCPEs(Dependency dependency) {
         //TODO move this to the hint analyzer
-        final Iterator<Identifier> itr = dependency.getIdentifiers().iterator();
-        while (itr.hasNext()) {
-            final Identifier i = itr.next();
-            if ("cpe".equals(i.getType()) && i.getValue() != null
-                    && (i.getValue().startsWith("cpe:/a:oracle:opensso:")
-                    || i.getValue().startsWith("cpe:/a:oracle:opensso_enterprise:")
-                    || i.getValue().startsWith("cpe:/a:sun:opensso_enterprise:")
-                    || i.getValue().startsWith("cpe:/a:sun:opensso:"))) {
-                final String newCpe = String.format("cpe:/a:sun:opensso_enterprise:%s", i.getValue().substring(22));
-                final String newCpe2 = String.format("cpe:/a:oracle:opensso_enterprise:%s", i.getValue().substring(22));
-                final String newCpe3 = String.format("cpe:/a:sun:opensso:%s", i.getValue().substring(22));
-                final String newCpe4 = String.format("cpe:/a:oracle:opensso:%s", i.getValue().substring(22));
+        for (final Identifier identifier : dependency.getIdentifiers()) {
+            if ("cpe".equals(identifier.getType()) && identifier.getValue() != null
+                    && (identifier.getValue().startsWith("cpe:/a:oracle:opensso:")
+                    || identifier.getValue().startsWith("cpe:/a:oracle:opensso_enterprise:")
+                    || identifier.getValue().startsWith("cpe:/a:sun:opensso_enterprise:")
+                    || identifier.getValue().startsWith("cpe:/a:sun:opensso:"))) {
+                final String newCpe = String.format("cpe:/a:sun:opensso_enterprise:%s", identifier.getValue().substring(22));
+                final String newCpe2 = String.format("cpe:/a:oracle:opensso_enterprise:%s", identifier.getValue().substring(22));
+                final String newCpe3 = String.format("cpe:/a:sun:opensso:%s", identifier.getValue().substring(22));
+                final String newCpe4 = String.format("cpe:/a:oracle:opensso:%s", identifier.getValue().substring(22));
                 try {
                     dependency.addIdentifier("cpe",
                             newCpe,
