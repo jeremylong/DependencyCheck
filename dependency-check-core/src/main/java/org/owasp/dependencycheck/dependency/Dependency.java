@@ -28,7 +28,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.utils.Checksum;
 import org.slf4j.Logger;
@@ -712,21 +713,24 @@ public class Dependency implements Serializable, Comparable<Dependency> {
             return false;
         }
         final Dependency other = (Dependency) obj;
-        return ObjectUtils.equals(this.actualFilePath, other.actualFilePath)
-                && ObjectUtils.equals(this.filePath, other.filePath)
-                && ObjectUtils.equals(this.fileName, other.fileName)
-                && ObjectUtils.equals(this.md5sum, other.md5sum)
-                && ObjectUtils.equals(this.sha1sum, other.sha1sum)
-                && ObjectUtils.equals(this.identifiers, other.identifiers)
-                && ObjectUtils.equals(this.vendorEvidence, other.vendorEvidence)
-                && ObjectUtils.equals(this.productEvidence, other.productEvidence)
-                && ObjectUtils.equals(this.versionEvidence, other.versionEvidence)
-                && ObjectUtils.equals(this.description, other.description)
-                && ObjectUtils.equals(this.license, other.license)
-                && ObjectUtils.equals(this.vulnerabilities, other.vulnerabilities)
-                //&& ObjectUtils.equals(this.relatedDependencies, other.relatedDependencies)
-                && ObjectUtils.equals(this.projectReferences, other.projectReferences)
-                && ObjectUtils.equals(this.availableVersions, other.availableVersions);
+        return new EqualsBuilder()
+            .appendSuper(super.equals(obj))
+            .append(this.actualFilePath, other.actualFilePath)
+            .append(this.filePath, other.filePath)
+            .append(this.fileName, other.fileName)
+            .append(this.md5sum, other.md5sum)
+            .append(this.sha1sum, other.sha1sum)
+            .append(this.identifiers, other.identifiers)
+            .append(this.vendorEvidence, other.vendorEvidence)
+            .append(this.productEvidence, other.productEvidence)
+            .append(this.versionEvidence, other.versionEvidence)
+            .append(this.description, other.description)
+            .append(this.license, other.license)
+            .append(this.vulnerabilities, other.vulnerabilities)
+            //.append(this.relatedDependencies, other.relatedDependencies)
+            .append(this.projectReferences, other.projectReferences)
+            .append(this.availableVersions, other.availableVersions)
+            .isEquals();
     }
 
     /**
@@ -736,15 +740,23 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      */
     @Override
     public int hashCode() {
-        int hash = MAGIC_HASH_INIT_VALUE;
-        for (Object field : new Object[]{this.actualFilePath, this.filePath, this.fileName, this.md5sum,
-            this.sha1sum, this.identifiers, this.vendorEvidence, this.productEvidence, this.versionEvidence,
-            this.description, this.license, this.vulnerabilities,
-            //this.relatedDependencies,
-            this.projectReferences, this.availableVersions}) {
-            hash = MAGIC_HASH_MULTIPLIER * hash + ObjectUtils.hashCode(field);
-        }
-        return hash;
+        return new HashCodeBuilder(MAGIC_HASH_INIT_VALUE, MAGIC_HASH_MULTIPLIER)
+            .append(actualFilePath)
+            .append(filePath)
+            .append(fileName)
+            .append(md5sum)
+            .append(sha1sum)
+            .append(identifiers)
+            .append(vendorEvidence)
+            .append(productEvidence)
+            .append(versionEvidence)
+            .append(description)
+            .append(license)
+            .append(vulnerabilities)
+            //.append(relatedDependencies)
+            .append(projectReferences)
+            .append(availableVersions)
+            .toHashCode();
     }
 
     /**
