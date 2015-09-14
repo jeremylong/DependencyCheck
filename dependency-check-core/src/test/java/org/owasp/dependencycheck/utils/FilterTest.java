@@ -64,6 +64,7 @@ public class FilterTest {
     }
     private static final Filter<String> TEST_FILTER
             = new Filter<String>() {
+                @Override
                 public boolean passes(String str) {
                     return str.contains("keep");
                 }

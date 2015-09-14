@@ -69,7 +69,8 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
             for (MavenProject current : getReactorProjects()) {
                 final File dataFile = getDataFile(current);
                 if (dataFile == null) { //dc was never run on this project. write the ser to the target.
-                    getLog().error(String.format("Module '%s' did not execute dependency-check; an attempt will be made to perform the check but dependencies may be missed resulting in false negatives.", current.getName()));
+                    getLog().error(String.format("Module '%s' did not execute dependency-check; an attempt will be made to perform "
+                            + "the check but dependencies may be missed resulting in false negatives.", current.getName()));
                     generateDataFile(engine, current);
                 }
             }
@@ -262,6 +263,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
      * @param locale the location
      * @return the report name
      */
+    @Override
     public String getName(Locale locale) {
         return "dependency-check:aggregate";
     }
@@ -272,6 +274,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
      * @param locale The Locale to get the description for
      * @return the description
      */
+    @Override
     public String getDescription(Locale locale) {
         return "Generates an aggregate report of all child Maven projects providing details on any "
                 + "published vulnerabilities within project dependencies. This report is a best "

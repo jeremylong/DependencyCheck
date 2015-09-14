@@ -37,7 +37,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Jeremy Long
  */
-public class DependencyVersion implements Iterable, Comparable<DependencyVersion> {
+public class DependencyVersion implements Iterable<String>, Comparable<DependencyVersion> {
 
     /**
      * Constructor for a empty DependencyVersion.
@@ -103,7 +103,8 @@ public class DependencyVersion implements Iterable, Comparable<DependencyVersion
      *
      * @return an iterator for the version parts
      */
-    public Iterator iterator() {
+    @Override
+    public Iterator<String> iterator() {
         return versionParts.iterator();
     }
 

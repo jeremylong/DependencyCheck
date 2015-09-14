@@ -47,11 +47,13 @@ public class TokenPairConcatenatingFilterTest extends BaseTokenStreamTestCase {
     public static void tearDownClass() {
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

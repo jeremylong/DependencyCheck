@@ -40,6 +40,10 @@ import org.slf4j.LoggerFactory;
 public class EvidenceCollection implements Serializable, Iterable<Evidence> {
 
     /**
+     * The serial version UID for serialization.
+     */
+    private static final long serialVersionUID = 1L;
+    /**
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(EvidenceCollection.class);
@@ -47,6 +51,7 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
      * Used to iterate over highest confidence evidence contained in the collection.
      */
     private static final Filter<Evidence> HIGHEST_CONFIDENCE = new Filter<Evidence>() {
+        @Override
         public boolean passes(Evidence evidence) {
             return evidence.getConfidence() == Confidence.HIGHEST;
         }
@@ -55,6 +60,7 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
      * Used to iterate over high confidence evidence contained in the collection.
      */
     private static final Filter<Evidence> HIGH_CONFIDENCE = new Filter<Evidence>() {
+        @Override
         public boolean passes(Evidence evidence) {
             return evidence.getConfidence() == Confidence.HIGH;
         }
@@ -63,6 +69,7 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
      * Used to iterate over medium confidence evidence contained in the collection.
      */
     private static final Filter<Evidence> MEDIUM_CONFIDENCE = new Filter<Evidence>() {
+        @Override
         public boolean passes(Evidence evidence) {
             return evidence.getConfidence() == Confidence.MEDIUM;
         }
@@ -71,6 +78,7 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
      * Used to iterate over low confidence evidence contained in the collection.
      */
     private static final Filter<Evidence> LOW_CONFIDENCE = new Filter<Evidence>() {
+        @Override
         public boolean passes(Evidence evidence) {
             return evidence.getConfidence() == Confidence.LOW;
         }
@@ -79,6 +87,7 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
      * Used to iterate over evidence that has was used (aka read) from the collection.
      */
     private static final Filter<Evidence> EVIDENCE_USED = new Filter<Evidence>() {
+        @Override
         public boolean passes(Evidence evidence) {
             return evidence.isUsed();
         }
@@ -218,6 +227,7 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
      *
      * @return an Iterator<Evidence>.
      */
+    @Override
     public Iterator<Evidence> iterator() {
         return list.iterator();
     }

@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
@@ -48,6 +49,7 @@ public final class URLConnectionFactory {
      * @return an HttpURLConnection
      * @throws URLConnectionFailureException thrown if there is an exception
      */
+    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE", justification = "Just being extra safe")
     public static HttpURLConnection createHttpURLConnection(URL url) throws URLConnectionFailureException {
         HttpURLConnection conn = null;
         Proxy proxy;

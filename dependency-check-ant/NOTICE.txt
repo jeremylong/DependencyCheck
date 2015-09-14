@@ -1,9 +1,6 @@
------------------------------
----begin dependency-check----
------------------------------
-dependency-check
+OWASP dependency-check
 
-Copyright (c) 2012-2013 Jeremy Long. All Rights Reserved.
+Copyright (c) 2012-2015 Jeremy Long. All Rights Reserved.
 
 The licenses for the software listed below can be found in the META-INF/licenses/[dependency name].
 
@@ -19,11 +16,3 @@ An original copy of the license agreement can be found at: http://www.h2database
 This product includes data from the Common Weakness Enumeration (CWE): http://cwe.mitre.org/
 
 This product downloads and utilizes data from the National Vulnerability Database hosted by NIST: http://nvd.nist.gov/download.cfm
-
------------------------------
----end dependency-check------
------------------------------
-
-Notices below are from dependent libraries and have been included via maven-shade-plugin.
-
------------------------------

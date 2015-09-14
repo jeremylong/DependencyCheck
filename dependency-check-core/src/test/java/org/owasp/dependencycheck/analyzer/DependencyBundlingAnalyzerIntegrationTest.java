@@ -17,14 +17,8 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.File;
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import org.owasp.dependencycheck.BaseTest;
-import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.cpe.AbstractDatabaseTestCase;
-import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *

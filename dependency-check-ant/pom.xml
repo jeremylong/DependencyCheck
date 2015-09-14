@@ -192,28 +192,34 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.1</version>
+                <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <transformers>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                            <resource>META-INF/NOTICE.txt</resource>
-                        </transformer>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
-                            <resource>META-INF/NOTICE</resource>
-                        </transformer>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
-                            <resource>META-INF/LICENSE</resource>
-                        </transformer>
-                    </transformers>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <attach>false</attach> <!-- don't install/deploy this archive -->
                 </configuration>
                 <executions>
                     <execution>
+                        <id>create-distribution</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>shade</goal>
+                            <goal>single</goal>
                         </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/main/assembly/release.xml</descriptor>
+                            </descriptors>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -221,9 +227,6 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
                 <configuration>
-                    <!--instrumentation>
-                        <ignoreTrivial>true</ignoreTrivial>
-                    </instrumentation-->
                     <check>
                         <branchRate>85</branchRate>
                         <lineRate>85</lineRate>
@@ -320,6 +323,7 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.ant</groupId>

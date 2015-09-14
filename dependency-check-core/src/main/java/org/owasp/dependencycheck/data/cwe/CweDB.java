@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -45,21 +46,21 @@ public final class CweDB {
     /**
      * A HashMap of the CWE data.
      */
-    private static final HashMap<String, String> CWE = loadData();
+    private static final Map<String, String> CWE = loadData();
 
     /**
      * Loads a HashMap containing the CWE data from a resource found in the jar.
      *
      * @return a HashMap of CWE data
      */
-    private static HashMap<String, String> loadData() {
+    private static Map<String, String> loadData() {
         ObjectInputStream oin = null;
         try {
             final String filePath = "data/cwe.hashmap.serialized";
             final InputStream input = CweDB.class.getClassLoader().getResourceAsStream(filePath);
             oin = new ObjectInputStream(input);
             @SuppressWarnings("unchecked")
-            final HashMap<String, String> ret = (HashMap<String, String>) oin.readObject();
+            final Map<String, String> ret = (HashMap<String, String>) oin.readObject();
             return ret;
         } catch (ClassNotFoundException ex) {
             LOGGER.warn("Unable to load CWE data. This should not be an issue.");

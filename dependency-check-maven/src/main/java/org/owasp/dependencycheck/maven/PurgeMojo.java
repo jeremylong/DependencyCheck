@@ -89,6 +89,7 @@ public class PurgeMojo extends BaseDependencyCheckMojo {
      * @param locale the location
      * @return the report name
      */
+    @Override
     public String getName(Locale locale) {
         return "dependency-check-purge";
     }
@@ -99,6 +100,7 @@ public class PurgeMojo extends BaseDependencyCheckMojo {
      * @param locale The Locale to get the description for
      * @return the description
      */
+    @Override
     public String getDescription(Locale locale) {
         return "Purges the local cache of the NVD dataT.";
     }

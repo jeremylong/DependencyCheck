@@ -95,6 +95,7 @@ public class CheckMojo extends BaseDependencyCheckMojo {
      * @param locale the location
      * @return the report name
      */
+    @Override
     public String getName(Locale locale) {
         return "dependency-check";
     }
@@ -105,6 +106,7 @@ public class CheckMojo extends BaseDependencyCheckMojo {
      * @param locale The Locale to get the description for
      * @return the description
      */
+    @Override
     public String getDescription(Locale locale) {
         return "Generates a report providing details on any published vulnerabilities within project dependencies. "
                 + "This report is a best effort and may contain false positives and false negatives.";

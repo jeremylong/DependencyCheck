@@ -1,5 +1,11 @@
 Configuration
 ====================
+Once dependency-check-ant has been [installed](index.html) the defined tasks can be used.
+
+* dependency-check - the primary task used to check the project dependencies. Configuration options are below.
+* dependency-check-purge - deletes the local copy of the NVD; this should rarely be used (if ever). See the [purge configuration](config-purge.html) for more information.
+* dependency-check-update - downloads and updates the local copy of the NVD. See the [update configuration](config-update.html) for more information.
+
 To configure the dependency-check task you can add it to a target and include a
 file based [resource collection](http://ant.apache.org/manual/Types/resources.html#collection)
 such as a [FileSet](http://ant.apache.org/manual/Types/fileset.html), [DirSet](http://ant.apache.org/manual/Types/dirset.html),
@@ -19,14 +25,13 @@ the project's dependencies.
 </target>
 ```
 
-Configuration
-====================
-The following properties can be set on the dependency-check-maven plugin.
+Configuration: dependency-check Task
+--------------------
+The following properties can be set on the dependency-check-update task.
 
 Property              | Description                        | Default Value
 ----------------------|------------------------------------|------------------
 autoUpdate            | Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. | true
-updateOnly            | If set to true only the update phase of dependency-check will be executed; no scan will be executed and no report will be generated. | false
 projectName           | The name of the project being scanned. | Dependency-Check
 reportOutputDirectory | The location to write the report(s). Note, this is not used if generating the report as part of a `mvn site` build | 'target'
 failBuildOnCVSS       | Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11 which means since the CVSS scores are 0-10, by default the build will never fail.         | 11
@@ -70,10 +75,9 @@ cveUrl12Modified     | URL for the modified CVE 1.2.                            
 cveUrl20Modified     | URL for the modified CVE 2.0.                                            | http://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-modified.xml
 cveUrl12Base         | Base URL for each year's CVE 1.2, the %d will be replaced with the year. | http://nvd.nist.gov/download/nvdcve-%d.xml
 cveUrl20Base         | Base URL for each year's CVE 2.0, the %d will be replaced with the year. | http://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-%d.xml
-dataDirectory        | Data directory to hold SQL CVEs contents. This should generally not be changed.             | &nbsp;
+dataDirectory        | Data directory that is used to store the local copy of the NVD. This should generally not be changed. | data
 databaseDriverName   | The name of the database driver. Example: org.h2.Driver.                                    | &nbsp;
 databaseDriverPath   | The path to the database driver JAR file; only used if the driver is not in the class path. | &nbsp;
 connectionString     | The connection string used to connect to the database.                                      | &nbsp;
 databaseUser         | The username used when connecting to the database.                                          | &nbsp;
 databasePassword     | The password used when connecting to the database.                                          | &nbsp;
-purge                | Delete the local copy of the NVD. This is used to force a refresh of the data.              | &nbsp;

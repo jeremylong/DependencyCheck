@@ -19,6 +19,6 @@ Copyright & License
 
 Dependency-Check is Copyright (c) 2012-2014 Jeremy Long. All Rights Reserved.
 
-Permission to modify and redistribute is granted under the terms of the Apache 2.0 license. See the [LICENSE.txt](https://github.com/jeremylong/DependencyCheck/dependency-check-cli/blob/master/LICENSE.txt) file for the full license.
+Permission to modify and redistribute is granted under the terms of the Apache 2.0 license. See the [LICENSE.txt](https://raw.githubusercontent.com/jeremylong/DependencyCheck/master/LICENSE.txt) file for the full license.
 
-Dependency-Check Command Line makes use of other open source libraries. Please see the [NOTICE.txt](https://github.com/jeremylong/DependencyCheck/dependency-check-cli/blob/master/NOTICES.txt) file for more information.
+Dependency-Check Command Line makes use of other open source libraries. Please see the [NOTICE.txt](https://raw.githubusercontent.com/jeremylong/DependencyCheck/master/dependency-check-cli/NOTICE.txt) file for more information.

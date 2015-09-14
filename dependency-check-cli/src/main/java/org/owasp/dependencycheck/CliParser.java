@@ -19,7 +19,6 @@ package org.owasp.dependencycheck;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.logging.Level;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;

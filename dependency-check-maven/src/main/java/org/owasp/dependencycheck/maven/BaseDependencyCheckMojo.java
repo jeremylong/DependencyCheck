@@ -352,6 +352,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @throws MavenReportException if a maven report exception occurs
      * @deprecated use {@link #generate(org.apache.maven.doxia.sink.Sink, java.util.Locale)} instead.
      */
+    @Override
     @Deprecated
     public final void generate(@SuppressWarnings("deprecation") org.codehaus.doxia.sink.Sink sink, Locale locale) throws MavenReportException {
         generate((Sink) sink, locale);
@@ -519,6 +520,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      *
      * @return the output name
      */
+    @Override
     public String getOutputName() {
         if ("HTML".equalsIgnoreCase(this.format) || "ALL".equalsIgnoreCase(this.format)) {
             return "dependency-check-report";
@@ -537,6 +539,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      *
      * @return the category name
      */
+    @Override
     public String getCategoryName() {
         return MavenReport.CATEGORY_PROJECT_REPORTS;
     }

@@ -7,23 +7,25 @@ identifiers, and the associated Common Vulnerability and Exposure (CVE) entries.
 
 Installation
 ====================
-Download dependency-check-ant from [bintray here](http://dl.bintray.com/jeremy-long/owasp/dependency-check-ant-${project.version}.jar).
-To install dependency-check-ant place the dependency-check-ant-${project.version}.jar into
-the lib directory of your Ant instalation directory. Once installed you can add
-the taskdef to you build.xml and add the task to a new or existing target:
+1. Download dependency-check-ant from [bintray here](http://dl.bintray.com/jeremy-long/owasp/dependency-check-ant-${project.version}-release.zip).
+2. Unzip the archive
+3. Add the taskdef to your build.xml:
 
-```xml
-<taskdef name="dependency-check" classname="org.owasp.dependencycheck.taskdefs.DependencyCheckTask"/>
-```
+    ```xml
+    <!-- Set the value to the installation directory's path -->
+    <property name="dependency-check.home" value="C:/tools/dependency-check-ant"/>
+    <path id="dependency-check.path">
+       <pathelement location="${dependency-check.home}/dependency-check-ant.jar"/>
+    </path>
+       <taskdef resource="dependency-check-taskdefs.properties">
+       <classpath refid="dependency-check.path" />
+    </taskdef>
+    ```
+4. Use the defined taskdefs:
+    * [dependency-check](configuration.html) - the primary task used to check the project dependencies.
+    * [dependency-check-purge](config-purge.html) - deletes the local copy of the NVD; this should rarely be used (if ever).
+    * [dependency-check-update](config-update.html) - downloads and updates the local copy of the NVD.
 
-If you do not want to install dependency-check-ant into your ant's lib directory when you define the task def you
-must add the classpath to the taskdef:
-
-```xml
-<taskdef name="dependency-check" classname="org.owasp.dependencycheck.taskdefs.DependencyCheckTask">
-    <classpath path="[path]/[to]/dependency-check-ant-${project.version}.jar"/>
-</taskdef>
-```
 
 It is important to understand that the first time this task is executed it may
 take 10 minutes or more as it downloads and processes the data from the National

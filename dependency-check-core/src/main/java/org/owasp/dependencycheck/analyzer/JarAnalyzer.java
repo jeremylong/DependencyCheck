@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
@@ -42,6 +41,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
+import org.apache.commons.compress.utils.IOUtils;
 import org.jsoup.Jsoup;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -69,10 +69,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(JarAnalyzer.class);
-    /**
-     * The buffer size to use when extracting files from the archive.
-     */
-    private static final int BUFFER_SIZE = 4096;
     /**
      * The count of directories created during analysis. This is used for creating temporary directories.
      */
@@ -198,6 +194,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @return the phase that the analyzer is intended to run in.
      */
+    @Override
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
@@ -396,26 +393,18 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     private Model extractPom(String path, JarFile jar, Dependency dependency) throws AnalysisException {
         InputStream input = null;
         FileOutputStream fos = null;
-        BufferedOutputStream bos = null;
         final File tmpDir = getNextTempDirectory();
         final File file = new File(tmpDir, "pom.xml");
         try {
             final ZipEntry entry = jar.getEntry(path);
             input = jar.getInputStream(entry);
             fos = new FileOutputStream(file);
-            bos = new BufferedOutputStream(fos, BUFFER_SIZE);
-            int count;
-            final byte[] data = new byte[BUFFER_SIZE];
-            while ((count = input.read(data, 0, BUFFER_SIZE)) != -1) {
-                bos.write(data, 0, count);
-            }
-            bos.flush();
+            IOUtils.copy(input, fos);
             dependency.setActualFilePath(file.getAbsolutePath());
         } catch (IOException ex) {
             LOGGER.warn("An error occurred reading '{}' from '{}'.", path, dependency.getFilePath());
             LOGGER.error("", ex);
         } finally {
-            closeStream(bos);
             closeStream(fos);
             closeStream(input);
         }

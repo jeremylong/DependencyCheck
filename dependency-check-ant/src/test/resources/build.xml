@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Dependency-Check Test Build" default="test.fileset" basedir=".">
 
-    <taskdef name="dependency-check" classname="org.owasp.dependencycheck.taskdefs.DependencyCheckTask" />
+    <taskdef name="dependency-check" classname="org.owasp.dependencycheck.taskdefs.Check" />
 
     <target name="test.fileset">
         <dependency-check
