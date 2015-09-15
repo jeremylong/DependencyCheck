@@ -606,9 +606,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>org.jmockit</groupId>
                 <artifactId>jmockit</artifactId>
-                <!-- Upgrading to 1.17 introduces build failures when building
-                with OpenJDK. -->
-                <version>1.16</version>
+                <version>1.19</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
