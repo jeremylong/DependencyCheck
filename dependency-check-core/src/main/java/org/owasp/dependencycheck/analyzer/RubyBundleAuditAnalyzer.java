@@ -49,7 +49,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The phase that this analyzer is intended to run in.
      */
-    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
+    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.PRE_INFORMATION_COLLECTION;
 
     private static final FileFilter FILTER =
             FileFilterBuilder.newInstance().addFilenames("Gemfile.lock").build();
@@ -165,9 +165,30 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         return Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED;
     }
 
+    /**
+     * If {@link #analyzeFileType(Dependency, Engine)} is called, then we have successfully initialized, and it will
+     * be necessary to disable {@link RubyGemspecAnalyzer}.
+     */
+    private boolean needToDisableGemspecAnalyzer = true;
+
     @Override
     protected void analyzeFileType(Dependency dependency, Engine engine)
             throws AnalysisException {
+        if (needToDisableGemspecAnalyzer) {
+            boolean failed = true;
+            final String className = RubyGemspecAnalyzer.class.getName();
+            for (FileTypeAnalyzer analyzer : engine.getFileTypeAnalyzers()) {
+                if (analyzer instanceof RubyGemspecAnalyzer) {
+                    ((RubyGemspecAnalyzer) analyzer).setEnabled(false);
+                    LOGGER.info("Disabled " + className + " to avoid noisy duplicate results.");
+                    failed = false;
+                }
+            }
+            if (failed) {
+                LOGGER.warn("Did not find" + className + '.');
+            }
+            needToDisableGemspecAnalyzer = false;
+        }
         final File parentFile = dependency.getActualFile().getParentFile();
         final Process process = launchBundleAudit(parentFile);
         try {
