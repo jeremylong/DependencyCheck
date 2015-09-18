@@ -1,0 +1,162 @@
+/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2015 OWASP. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.composer.ComposerDependency;
+import org.owasp.dependencycheck.data.composer.ComposerException;
+import org.owasp.dependencycheck.data.composer.ComposerLockParser;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.Checksum;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.nio.charset.Charset;
+import java.security.MessageDigest;
+
+/**
+ * Used to analyze a composer.lock file for a composer PHP app.
+ *
+ * @author colezlaw
+ */
+public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
+
+    /**
+     * The logger
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComposerLockAnalyzer.class);
+
+    /**
+     * The analyzer name
+     */
+    private static final String ANALYZER_NAME = "Composer.lock analyzer";
+
+    /**
+     * composer.json
+     */
+    private static final String COMPOSER_LOCK = "composer.lock";
+
+    /**
+     * The FileFilter
+     */
+    private static final FileFilter FILE_FILTER = FileFilterBuilder.newInstance().addFilenames(COMPOSER_LOCK).build();
+
+    /**
+     * Returns the FileFilter
+     *
+     * @return the FileFilter
+     */
+    @Override
+    protected FileFilter getFileFilter() {
+        return FILE_FILTER;
+    }
+
+    /**
+     * Initializes the analyzer
+     *
+     * @throws Exception
+     */
+    @Override
+    protected void initializeFileTypeAnalyzer() throws Exception {
+        sha1 = MessageDigest.getInstance("SHA1");
+    }
+
+    /**
+     * The MessageDigest for calculating a new digest for the new dependencies added
+     */
+    private MessageDigest sha1 = null;
+
+    /**
+     * Entry point for the analyzer.
+     *
+     * @param dependency the dependency to analyze
+     * @param engine the engine scanning
+     * @throws AnalysisException if there's a failure during analysis
+     */
+    @Override
+    protected void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException {
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(dependency.getActualFile());
+            final ComposerLockParser clp = new ComposerLockParser(fis);
+            LOGGER.info("Checking composer.lock file {}", dependency.getActualFilePath());
+            clp.process();
+            for (ComposerDependency dep : clp.getDependencies()) {
+                final Dependency d = new Dependency(dependency.getActualFile());
+                d.setDisplayFileName(String.format("%s:%s/%s", dependency.getDisplayFileName(), dep.getGroup(), dep.getProject()));
+                final String filePath = String.format("%s:%s/%s", dependency.getFilePath(), dep.getGroup(), dep.getProject());
+                d.setFilePath(filePath);
+                d.setSha1sum(Checksum.getHex(sha1.digest(filePath.getBytes(Charset.defaultCharset()))));
+                d.getVendorEvidence().addEvidence(COMPOSER_LOCK, "vendor", dep.getGroup(), Confidence.HIGHEST);
+                d.getProductEvidence().addEvidence(COMPOSER_LOCK, "product", dep.getProject(), Confidence.HIGHEST);
+                d.getVersionEvidence().addEvidence(COMPOSER_LOCK, "version", dep.getVersion(), Confidence.HIGHEST);
+                LOGGER.info("Adding dependency {}", d);
+                engine.getDependencies().add(d);
+            }
+        } catch (FileNotFoundException fnfe) {
+            LOGGER.warn("Error opening dependency {}", dependency.getActualFilePath());
+        } catch (ComposerException ce) {
+            LOGGER.warn("Error parsing composer.json {}", dependency.getActualFilePath(), ce);
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (Exception e) {
+                    LOGGER.debug("Unable to close file", e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Gets the key to determine whether the analyzer is enabled.
+     *
+     * @return the key specifying whether the analyzer is enabled
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+        return Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED;
+    }
+
+    /**
+     * Returns the analyzer's name.
+     *
+     * @return the analyzer's name
+     */
+    @Override
+    public String getName() {
+        return ANALYZER_NAME;
+    }
+
+    /**
+     * Returns the phase this analyzer should run under.
+     *
+     * @return the analysis phase
+     */
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+        return AnalysisPhase.INFORMATION_COLLECTION;
+    }
+}

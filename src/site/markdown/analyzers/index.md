@@ -10,6 +10,7 @@ to extract identification information from the files analyzed.
 | [Autoconf](./autoconf.html) | Autoconf project configuration files (configure, configure.in, configure.ac) | [Regex](https://en.wikipedia.org/wiki/Regular_expression) scan for AC_INIT metadata, including in generated configuration script. |
 | [Central](./central-analyzer.html) | Java archive files (\*.jar) | Searches Maven Central or a configured Nexus repository for the file's SHA1 hash. |
 | [CMake](./cmake.html) | CMake project files (CMakeLists.txt) and scripts (\*.cmake) | Regex scan for project initialization and version setting commands. |
+| [Composer Lock](./composer-lock.html) | PHP [Composer](http://getcomposer.org) Lock files (composer.lock) | Parses PHP [Composer](http://getcomposer.org) lock files for exact versions of dependencies. | 
 | [Jar](./jar-analyzer.html) | Java archive files (\*.jar); Web application archive (\*.war) | Examines archive manifest metadata, and Maven Project Object Model files (pom.xml). |
 | [Nexus](./nexus-analyzer.html) | Java archive files (\*.jar) | Searches Sonatype or a configured Nexus repository for the file's SHA1 hash. In most cases, superceded by Central . |
 | [Node.js](./nodejs.html) | NPM package specification files (package.json) | Parse JSON format for metadata. |

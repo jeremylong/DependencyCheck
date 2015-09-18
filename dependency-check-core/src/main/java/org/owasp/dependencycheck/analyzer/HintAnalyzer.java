@@ -104,6 +104,21 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
                 "spring-security-core",
                 Confidence.HIGH);
 
+        final Evidence symfony = new Evidence("composer.lock",
+            "vendor",
+            "symfony",
+            Confidence.HIGHEST);
+
+        final Evidence zendframeworkVendor = new Evidence("composer.lock",
+            "vendor",
+            "zendframework",
+            Confidence.HIGHEST);
+
+        final Evidence zendframeworkProduct = new Evidence("composer.lock",
+            "product",
+            "zendframework",
+            Confidence.HIGHEST);
+
         //springsource/vware problem
         final Set<Evidence> product = dependency.getProductEvidence().getEvidence();
         final Set<Evidence> vendor = dependency.getVendorEvidence().getEvidence();
@@ -126,6 +141,18 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
             dependency.getProductEvidence().addEvidence("hint analyzer", "product", "springsource_spring_security", Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "SpringSource", Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
+        }
+
+        if (vendor.contains(symfony)) {
+            dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "sensiolabs", Confidence.HIGHEST);
+        }
+
+        if (vendor.contains(zendframeworkVendor)) {
+            dependency.getVendorEvidence().addEvidence("hint analyzer", "vendor", "zend", Confidence.HIGHEST);
+        }
+
+        if (product.contains(zendframeworkProduct)) {
+            dependency.getProductEvidence().addEvidence("hint analyzer", "vendor", "zend_framework", Confidence.HIGHEST);
         }
 
         //sun/oracle problem
