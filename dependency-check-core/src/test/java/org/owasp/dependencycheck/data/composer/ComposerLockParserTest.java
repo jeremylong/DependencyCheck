@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2015 OWASP. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.composer;
 
@@ -30,6 +30,7 @@ import static org.junit.Assert.*;
  * Created by colezlaw on 9/5/15.
  */
 public class ComposerLockParserTest {
+
     private InputStream inputStream;
 
     @Before
@@ -45,21 +46,21 @@ public class ComposerLockParserTest {
         assertTrue(clp.getDependencies().contains(new ComposerDependency("symfony", "translation", "2.7.3")));
     }
 
-    @Test(expected=ComposerException.class)
+    @Test(expected = ComposerException.class)
     public void testNotJSON() throws Exception {
         String input = "NOT VALID JSON";
         ComposerLockParser clp = new ComposerLockParser(new ByteArrayInputStream(input.getBytes(Charset.defaultCharset())));
         clp.process();
     }
 
-    @Test(expected=ComposerException.class)
+    @Test(expected = ComposerException.class)
     public void testNotComposer() throws Exception {
         String input = "[\"ham\",\"eggs\"]";
         ComposerLockParser clp = new ComposerLockParser(new ByteArrayInputStream(input.getBytes(Charset.defaultCharset())));
         clp.process();
     }
 
-    @Test(expected=ComposerException.class)
+    @Test(expected = ComposerException.class)
     public void testNotPackagesArray() throws Exception {
         String input = "{\"packages\":\"eleventy\"}";
         ComposerLockParser clp = new ComposerLockParser(new ByteArrayInputStream(input.getBytes(Charset.defaultCharset())));

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2015 OWASP. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.composer;
 
@@ -36,16 +36,25 @@ import java.util.List;
  * @author colezlaw
  */
 public class ComposerLockParser {
-    /** The JsonReader for parsing JSON */
+
+    /**
+     * The JsonReader for parsing JSON
+     */
     private final JsonReader jsonReader;
 
-    /** The input stream we'll read */
+    /**
+     * The input stream we'll read
+     */
     private final InputStream inputStream; // NOPMD - it gets set in the constructor, read later
 
-    /** The List of ComposerDependencies found */
+    /**
+     * The List of ComposerDependencies found
+     */
     private final List<ComposerDependency> composerDependencies;
 
-    /** The LOGGER */
+    /**
+     * The LOGGER
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(ComposerLockParser.class);
 
     /**
