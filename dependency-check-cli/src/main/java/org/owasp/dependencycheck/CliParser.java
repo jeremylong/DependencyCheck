@@ -377,6 +377,9 @@ public final class CliParser {
         final Option disablePythonPackageAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_PY_PKG)
                 .desc("Disable the Python Package Analyzer.").build();
 
+        final Option disableComposerAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_COMPOSER)
+                .desc("Disable the PHP Composer Analyzer.").build();
+
         final Option disableAutoconfAnalyzer = Option.builder()
                 .longOpt(ARGUMENT.DISABLE_AUTOCONF)
                 .desc("Disable the Autoconf Analyzer.").build();
@@ -422,6 +425,7 @@ public final class CliParser {
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_RUBYGEMS)
                         .desc("Disable the Ruby Gemspec Analyzer.").build())
                 .addOption(disableAutoconfAnalyzer)
+                .addOption(disableComposerAnalyzer)
                 .addOption(disableOpenSSLAnalyzer)
                 .addOption(disableNuspecAnalyzer)
                 .addOption(disableCentralAnalyzer)
@@ -580,6 +584,15 @@ public final class CliParser {
      */
     public boolean isAutoconfDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_AUTOCONF);
+    }
+
+    /**
+     * Returns true if the disableComposer command line argument was specified.
+     *
+     * @return true if the disableComposer command line argument was specified; otherwise false
+     */
+    public boolean isComposerDisabled() {
+        return (line != null) && line.hasOption(ARGUMENT.DISABLE_COMPOSER);
     }
 
     /**
@@ -1132,6 +1145,10 @@ public final class CliParser {
          * Disables the Python Package Analyzer.
          */
         public static final String DISABLE_PY_PKG = "disablePyPkg";
+        /**
+         * Disables the Python Package Analyzer.
+         */
+        public static final String DISABLE_COMPOSER = "disableComposer";
         /**
          * Disables the Ruby Gemspec Analyzer.
          */

@@ -267,16 +267,6 @@ public class App {
         final String dataDirectory = cli.getDataDirectory();
         final File propertiesFile = cli.getPropertiesFile();
         final String suppressionFile = cli.getSuppressionFile();
-        final boolean jarDisabled = cli.isJarDisabled();
-        final boolean archiveDisabled = cli.isArchiveDisabled();
-        final boolean pyDistDisabled = cli.isPythonDistributionDisabled();
-        final boolean cMakeDisabled = cli.isCmakeDisabled();
-        final boolean pyPkgDisabled = cli.isPythonPackageDisabled();
-        final boolean autoconfDisabled = cli.isAutoconfDisabled();
-        final boolean assemblyDisabled = cli.isAssemblyDisabled();
-        final boolean nuspecDisabled = cli.isNuspecDisabled();
-        final boolean centralDisabled = cli.isCentralDisabled();
-        final boolean nexusDisabled = cli.isNexusDisabled();
         final String nexusUrl = cli.getNexusUrl();
         final String databaseDriverName = cli.getDatabaseDriverName();
         final String databaseDriverPath = cli.getDatabaseDriverPath();
@@ -338,20 +328,21 @@ public class App {
         }
 
         //File Type Analyzer Settings
-        Settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, !jarDisabled);
-        Settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, !archiveDisabled);
-        Settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, !pyDistDisabled);
-        Settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED, !pyPkgDisabled);
-        Settings.setBoolean(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, !autoconfDisabled);
-        Settings.setBoolean(Settings.KEYS.ANALYZER_CMAKE_ENABLED, !cMakeDisabled);
-        Settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, !nuspecDisabled);
-        Settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, !assemblyDisabled);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, !cli.isJarDisabled());
+        Settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, !cli.isArchiveDisabled());
+        Settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, !cli.isPythonDistributionDisabled());
+        Settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED, !cli.isPythonPackageDisabled());
+        Settings.setBoolean(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, !cli.isAutoconfDisabled());
+        Settings.setBoolean(Settings.KEYS.ANALYZER_CMAKE_ENABLED, !cli.isCmakeDisabled());
+        Settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, !cli.isNuspecDisabled());
+        Settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, !cli.isAssemblyDisabled());
         Settings.setBoolean(Settings.KEYS.ANALYZER_OPENSSL_ENABLED, !cli.isOpenSSLDisabled());
+        Settings.setBoolean(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, !cli.isComposerDisabled());
         Settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, !cli.isNodeJsDisabled());
         Settings.setBoolean(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, !cli.isRubyGemspecDisabled());
 
-        Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, !centralDisabled);
-        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, !nexusDisabled);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, !cli.isCentralDisabled());
+        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, !cli.isNexusDisabled());
         if (nexusUrl != null && !nexusUrl.isEmpty()) {
             Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
         }
