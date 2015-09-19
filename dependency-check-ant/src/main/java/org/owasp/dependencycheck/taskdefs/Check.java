@@ -146,6 +146,8 @@ public class Check extends Update {
      * Get the value of applicationName.
      *
      * @return the value of applicationName
+     *
+     * @deprecated use projectName instead.
      */
     @Deprecated
     public String getApplicationName() {
@@ -156,12 +158,15 @@ public class Check extends Update {
      * Set the value of applicationName.
      *
      * @param applicationName new value of applicationName
+     * @deprecated use projectName instead.
      */
     @Deprecated
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
     }
-
+    /**
+     * The name of the project being analyzed.
+     */
     private String projectName = "dependency-check";
 
     /**
@@ -441,7 +446,7 @@ public class Check extends Update {
     private boolean composerAnalyzerEnabled = true;
 
     /**
-     * Get the value of composerAnalyzerEnabled
+     * Get the value of composerAnalyzerEnabled.
      *
      * @return the value of composerAnalyzerEnabled
      */
@@ -450,18 +455,20 @@ public class Check extends Update {
     }
 
     /**
-     * Set the value of composerAnalyzerEnabled
+     * Set the value of composerAnalyzerEnabled.
      *
      * @param composerAnalyzerEnabled new value of composerAnalyzerEnabled
      */
     public void setComposerAnalyzerEnabled(boolean composerAnalyzerEnabled) {
         this.composerAnalyzerEnabled = composerAnalyzerEnabled;
     }
-
+    /**
+     * Whether the autoconf analyzer should be enabled.
+     */
     private boolean autoconfAnalyzerEnabled = true;
 
     /**
-     * Get the value of autoconfAnalyzerEnabled
+     * Get the value of autoconfAnalyzerEnabled.
      *
      * @return the value of autoconfAnalyzerEnabled
      */
@@ -470,18 +477,20 @@ public class Check extends Update {
     }
 
     /**
-     * Set the value of autoconfAnalyzerEnabled
+     * Set the value of autoconfAnalyzerEnabled.
      *
      * @param autoconfAnalyzerEnabled new value of autoconfAnalyzerEnabled
      */
     public void setAutoconfAnalyzerEnabled(boolean autoconfAnalyzerEnabled) {
         this.autoconfAnalyzerEnabled = autoconfAnalyzerEnabled;
     }
-
+    /**
+     * Whether the CMake analyzer should be enabled.
+     */
     private boolean cmakeAnalyzerEnabled = true;
 
     /**
-     * Get the value of cmakeAnalyzerEnabled
+     * Get the value of cmakeAnalyzerEnabled.
      *
      * @return the value of cmakeAnalyzerEnabled
      */
@@ -490,7 +499,7 @@ public class Check extends Update {
     }
 
     /**
-     * Set the value of cmakeAnalyzerEnabled
+     * Set the value of cmakeAnalyzerEnabled.
      *
      * @param cmakeAnalyzerEnabled new value of cmakeAnalyzerEnabled
      */
@@ -503,7 +512,7 @@ public class Check extends Update {
     private boolean opensslAnalyzerEnabled = true;
 
     /**
-     * Get the value of opensslAnalyzerEnabled
+     * Get the value of opensslAnalyzerEnabled.
      *
      * @return the value of opensslAnalyzerEnabled
      */
@@ -512,7 +521,7 @@ public class Check extends Update {
     }
 
     /**
-     * Set the value of opensslAnalyzerEnabled
+     * Set the value of opensslAnalyzerEnabled.
      *
      * @param opensslAnalyzerEnabled new value of opensslAnalyzerEnabled
      */
@@ -525,7 +534,7 @@ public class Check extends Update {
     private boolean nodeAnalyzerEnabled = true;
 
     /**
-     * Get the value of nodeAnalyzerEnabled
+     * Get the value of nodeAnalyzerEnabled.
      *
      * @return the value of nodeAnalyzerEnabled
      */
@@ -534,18 +543,20 @@ public class Check extends Update {
     }
 
     /**
-     * Set the value of nodeAnalyzerEnabled
+     * Set the value of nodeAnalyzerEnabled.
      *
      * @param nodeAnalyzerEnabled new value of nodeAnalyzerEnabled
      */
     public void setNodeAnalyzerEnabled(boolean nodeAnalyzerEnabled) {
         this.nodeAnalyzerEnabled = nodeAnalyzerEnabled;
     }
-
+    /**
+     * Whether the ruby gemspec analyzer should be enabled.
+     */
     private boolean rubygemsAnalyzerEnabled = true;
 
     /**
-     * Get the value of rubygemsAnalyzerEnabled
+     * Get the value of rubygemsAnalyzerEnabled.
      *
      * @return the value of rubygemsAnalyzerEnabled
      */
@@ -554,18 +565,20 @@ public class Check extends Update {
     }
 
     /**
-     * Set the value of rubygemsAnalyzerEnabled
+     * Set the value of rubygemsAnalyzerEnabled.
      *
      * @param rubygemsAnalyzerEnabled new value of rubygemsAnalyzerEnabled
      */
     public void setRubygemsAnalyzerEnabled(boolean rubygemsAnalyzerEnabled) {
         this.rubygemsAnalyzerEnabled = rubygemsAnalyzerEnabled;
     }
-
+    /**
+     * Whether the python package analyzer should be enabled.
+     */
     private boolean pyPackageAnalyzerEnabled = true;
 
     /**
-     * Get the value of pyPackageAnalyzerEnabled
+     * Get the value of pyPackageAnalyzerEnabled.
      *
      * @return the value of pyPackageAnalyzerEnabled
      */
@@ -574,7 +587,7 @@ public class Check extends Update {
     }
 
     /**
-     * Set the value of pyPackageAnalyzerEnabled
+     * Set the value of pyPackageAnalyzerEnabled.
      *
      * @param pyPackageAnalyzerEnabled new value of pyPackageAnalyzerEnabled
      */
@@ -582,10 +595,13 @@ public class Check extends Update {
         this.pyPackageAnalyzerEnabled = pyPackageAnalyzerEnabled;
     }
 
+    /**
+     * Whether the python distribution analyzer should be enabled.
+     */
     private boolean pyDistributionAnalyzerEnabled = true;
 
     /**
-     * Get the value of pyDistributionAnalyzerEnabled
+     * Get the value of pyDistributionAnalyzerEnabled.
      *
      * @return the value of pyDistributionAnalyzerEnabled
      */
@@ -594,7 +610,7 @@ public class Check extends Update {
     }
 
     /**
-     * Set the value of pyDistributionAnalyzerEnabled
+     * Set the value of pyDistributionAnalyzerEnabled.
      *
      * @param pyDistributionAnalyzerEnabled new value of pyDistributionAnalyzerEnabled
      */
