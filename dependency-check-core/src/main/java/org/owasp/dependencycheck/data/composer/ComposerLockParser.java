@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2015 OWASP. All Rights Reserved.
+ * Copyright (c) 2015 The OWASP Foundatio. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.composer;
 
