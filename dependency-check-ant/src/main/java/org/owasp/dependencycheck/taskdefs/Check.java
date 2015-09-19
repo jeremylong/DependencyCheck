@@ -138,6 +138,8 @@ public class Check extends Update {
     // END COPY from org.apache.tools.ant.taskdefs
     /**
      * The application name for the report.
+     *
+     * @deprecated use projectName instead.
      */
     @Deprecated
     private String applicationName = null;
