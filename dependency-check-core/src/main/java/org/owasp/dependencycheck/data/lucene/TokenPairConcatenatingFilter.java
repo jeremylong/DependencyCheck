@@ -19,7 +19,6 @@ package org.owasp.dependencycheck.data.lucene;
 
 import java.io.IOException;
 import java.util.LinkedList;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;

@@ -151,7 +151,7 @@ public final class CpeMemoryIndex {
      */
     @SuppressWarnings("unchecked")
     private Analyzer createIndexingAnalyzer() {
-        final Map<String,Analyzer> fieldAnalyzers = new HashMap<String, Analyzer>();
+        final Map<String, Analyzer> fieldAnalyzers = new HashMap<String, Analyzer>();
         fieldAnalyzers.put(Fields.DOCUMENT_KEY, new KeywordAnalyzer());
         return new PerFieldAnalyzerWrapper(new FieldAnalyzer(LuceneUtils.CURRENT_VERSION), fieldAnalyzers);
     }

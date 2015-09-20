@@ -62,12 +62,15 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
 
+    /**
+     * The file name to scan.
+     */
     public static final String PACKAGE_JSON = "package.json";
     /**
      * Filter that detects files named "package.json".
      */
-    private static final FileFilter PACKAGE_JSON_FILTER
-            = FileFilterBuilder.newInstance().addFilenames(PACKAGE_JSON).build();
+    private static final FileFilter PACKAGE_JSON_FILTER = FileFilterBuilder.newInstance()
+            .addFilenames(PACKAGE_JSON).build();
 
     /**
      * Returns the FileFilter
@@ -150,6 +153,13 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
+    /**
+     * Adds information to an evidence collection from the node json configuration.
+     *
+     * @param json information from node.js
+     * @param collection a set of evidence about a dependency
+     * @param key the key to obtain the data from the json information
+     */
     private void addToEvidence(JsonObject json, EvidenceCollection collection, String key) {
         if (json.containsKey(key)) {
             final JsonValue value = json.get(key);
