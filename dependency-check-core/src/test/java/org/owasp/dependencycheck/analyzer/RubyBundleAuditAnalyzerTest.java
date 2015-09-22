@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.analyzer;
 
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
@@ -25,6 +26,8 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
@@ -39,6 +42,8 @@ import static org.junit.Assert.assertThat;
  */
 public class RubyBundleAuditAnalyzerTest extends BaseTest {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RubyBundleAuditAnalyzerTest.class);
+
     /**
      * The analyzer to test.
      */
@@ -51,9 +56,14 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
      */
     @Before
     public void setUp() throws Exception {
-        analyzer = new RubyBundleAuditAnalyzer();
-        analyzer.setFilesMatched(true);
-        analyzer.initialize();
+        try {
+            analyzer = new RubyBundleAuditAnalyzer();
+            analyzer.setFilesMatched(true);
+            analyzer.initialize();
+        } catch (Exception e) {
+            LOGGER.warn("Exception setting up RubyBundleAuditAnalyzer. Tests will be incomplete", e);
+            Assume.assumeNoException("Is bundle-audit installed? TESTS WILL BE INCOMPLETE", e);
+        }
     }
 
     /**

@@ -97,37 +97,33 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void initializeFileTypeAnalyzer() throws Exception {
         // Now, need to see if bundle-audit actually runs from this location.
-        try {
-            Process process = launchBundleAudit(Settings.getTempDirectory());
-            int exitValue = process.waitFor();
-            if (0 == exitValue) {
-                LOGGER.warn("Unexpected exit code from bundle-audit process. Disabling %s: %d", ANALYZER_NAME, exitValue);
-                setEnabled(false);
-            } else {
-                BufferedReader reader = null;
-                try {
-                    reader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
-                    if (!reader.ready()) {
-                        LOGGER.warn("Bundle-audit error stream unexpectedly not ready. Disabling " + ANALYZER_NAME);
+        Process process = launchBundleAudit(Settings.getTempDirectory());
+        int exitValue = process.waitFor();
+        if (0 == exitValue) {
+            LOGGER.warn("Unexpected exit code from bundle-audit process. Disabling {}: {}", ANALYZER_NAME, exitValue);
+            setEnabled(false);
+            throw new AnalysisException("Unexpected exit code from bundle-audit process.");
+        } else {
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
+                if (!reader.ready()) {
+                    LOGGER.warn("Bundle-audit error stream unexpectedly not ready. Disabling " + ANALYZER_NAME);
+                    setEnabled(false);
+                    throw new AnalysisException("Bundle-audit error stream unexpectedly not ready.");
+                } else {
+                    final String line = reader.readLine();
+                    if (!line.contains("Errno::ENOENT")) {
+                        LOGGER.warn("Unexpected bundle-audit output. Disabling {}: {}", ANALYZER_NAME, line);
                         setEnabled(false);
-                    } else {
-                        final String line = reader.readLine();
-                        if (!line.contains("Errno::ENOENT")) {
-                            LOGGER.warn("Unexpected bundle-audit output. Disabling %s: %s", ANALYZER_NAME, line);
-                            setEnabled(false);
-                        }
-                    }
-                } finally {
-                    if (null != reader) {
-                        reader.close();
+                        throw new AnalysisException("Unexpected bundle-audit output.");
                     }
                 }
+            } finally {
+                if (null != reader) {
+                    reader.close();
+                }
             }
-        } catch (AnalysisException ae) {
-            LOGGER.warn("Exception while trying to launch bundle-audit. Disabling " +
-                    ANALYZER_NAME + ". See log file for more details.");
-            LOGGER.debug("Exception while trying to launch bundle-audit.", ae);
-            setEnabled(false);
         }
         if (isEnabled()) {
             LOGGER.info(ANALYZER_NAME + " is enabled. It is necessary to manually run \"bundle-audit update\" " +
@@ -229,7 +225,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             } else if (nextLine.startsWith(NAME)) {
                 appendToDescription = false;
                 gem = nextLine.substring(NAME.length());
-                if (!map.containsKey(gem)){
+                if (!map.containsKey(gem)) {
                     map.put(gem, createDependencyForGem(engine, parentName, fileName, gem));
                 }
                 dependency = map.get(gem);
@@ -240,7 +236,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 setVulnerabilityName(parentName, dependency, vulnerability, nextLine);
             } else if (nextLine.startsWith(CRITICALITY)) {
                 addCriticalityToVulnerability(parentName, vulnerability, nextLine);
-            } else if (nextLine.startsWith("URL: ")){
+            } else if (nextLine.startsWith("URL: ")) {
                 addReferenceToVulnerability(parentName, vulnerability, nextLine);
             } else if (nextLine.startsWith("Description:")) {
                 appendToDescription = true;
