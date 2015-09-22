@@ -24,13 +24,13 @@
     <files>
         <file>
             <source>${project.build.directory}/${project.artifactId}-${project.version}.jar</source>
-            <outputDirectory>dependency-check</outputDirectory>
+            <outputDirectory>dependency-check-ant</outputDirectory>
             <destName>dependency-check-ant.jar</destName>
         </file>
     </files>
     <dependencySets>
         <dependencySet>
-            <outputDirectory>dependency-check/lib</outputDirectory>
+            <outputDirectory>dependency-check-ant/lib</outputDirectory>
             <scope>runtime</scope>
         </dependencySet>
     </dependencySets>

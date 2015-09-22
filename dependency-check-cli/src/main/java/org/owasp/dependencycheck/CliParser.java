@@ -326,13 +326,13 @@ public final class CliParser {
         final Option pathToMono = Option.builder().argName("path").hasArg().longOpt(ARGUMENT.PATH_TO_MONO)
                 .desc("The path to Mono for .NET Assembly analysis on non-windows systems.")
                 .build();
-
+        
         final Option pathToBundleAudit = Option.builder().argName("path").hasArg()
                 .longOpt(ARGUMENT.PATH_TO_BUNDLE_AUDIT)
                 .desc("The path to bundle-audit for Gem bundle analysis.").build();
 
-        final Option connectionTimeout = Option.builder(ARGUMENT.CONNECTION_TIMEOUT_SHORT).argName("timeout").hasArg().longOpt(ARGUMENT.CONNECTION_TIMEOUT)
-                .desc("The connection timeout (in milliseconds) to use when downloading resources.")
+        final Option connectionTimeout = Option.builder(ARGUMENT.CONNECTION_TIMEOUT_SHORT).argName("timeout").hasArg()
+                .longOpt(ARGUMENT.CONNECTION_TIMEOUT).desc("The connection timeout (in milliseconds) to use when downloading resources.")
                 .build();
 
         final Option proxyServer = Option.builder().argName("server").hasArg().longOpt(ARGUMENT.PROXY_SERVER)
@@ -380,6 +380,9 @@ public final class CliParser {
 
         final Option disablePythonPackageAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_PY_PKG)
                 .desc("Disable the Python Package Analyzer.").build();
+
+        final Option disableComposerAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_COMPOSER)
+                .desc("Disable the PHP Composer Analyzer.").build();
 
         final Option disableAutoconfAnalyzer = Option.builder()
                 .longOpt(ARGUMENT.DISABLE_AUTOCONF)
@@ -429,6 +432,7 @@ public final class CliParser {
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_BUNDLE_AUDIT)
                         .desc("Disable the Ruby Bundler-Audit Analyzer.").build())
                 .addOption(disableAutoconfAnalyzer)
+                .addOption(disableComposerAnalyzer)
                 .addOption(disableOpenSSLAnalyzer)
                 .addOption(disableNuspecAnalyzer)
                 .addOption(disableCentralAnalyzer)
@@ -601,6 +605,15 @@ public final class CliParser {
     }
 
     /**
+     * Returns true if the disableComposer command line argument was specified.
+     *
+     * @return true if the disableComposer command line argument was specified; otherwise false
+     */
+    public boolean isComposerDisabled() {
+        return (line != null) && line.hasOption(ARGUMENT.DISABLE_COMPOSER);
+    }
+
+    /**
      * Returns true if the disableNexus command line argument was specified.
      *
      * @return true if the disableNexus command line argument was specified; otherwise false
@@ -751,7 +764,7 @@ public final class CliParser {
      * @return the application name.
      */
     public String getProjectName() {
-        String appName = line.getOptionValue(ARGUMENT.APP_NAME);
+        final String appName = line.getOptionValue(ARGUMENT.APP_NAME);
         String name = line.getOptionValue(ARGUMENT.PROJECT);
         if (name == null && appName != null) {
             name = appName;
@@ -1035,11 +1048,15 @@ public final class CliParser {
         public static final String PROJECT = "project";
         /**
          * The long CLI argument name specifying the name of the application to be scanned.
+         *
+         * @deprecated project should be used instead
          */
         @Deprecated
         public static final String APP_NAME = "app";
         /**
          * The short CLI argument name specifying the name of the application to be scanned.
+         *
+         * @deprecated project should be used instead
          */
         @Deprecated
         public static final String APP_NAME_SHORT = "a";
@@ -1159,6 +1176,10 @@ public final class CliParser {
          * Disables the Python Package Analyzer.
          */
         public static final String DISABLE_PY_PKG = "disablePyPkg";
+        /**
+         * Disables the Python Package Analyzer.
+         */
+        public static final String DISABLE_COMPOSER = "disableComposer";
         /**
          * Disables the Ruby Gemspec Analyzer.
          */

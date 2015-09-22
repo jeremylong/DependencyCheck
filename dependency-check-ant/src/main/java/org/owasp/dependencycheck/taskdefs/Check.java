@@ -138,6 +138,8 @@ public class Check extends Update {
     // END COPY from org.apache.tools.ant.taskdefs
     /**
      * The application name for the report.
+     *
+     * @deprecated use projectName instead.
      */
     @Deprecated
     private String applicationName = null;
@@ -146,6 +148,8 @@ public class Check extends Update {
      * Get the value of applicationName.
      *
      * @return the value of applicationName
+     *
+     * @deprecated use projectName instead.
      */
     @Deprecated
     public String getApplicationName() {
@@ -156,12 +160,15 @@ public class Check extends Update {
      * Set the value of applicationName.
      *
      * @param applicationName new value of applicationName
+     * @deprecated use projectName instead.
      */
     @Deprecated
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
     }
-
+    /**
+     * The name of the project being analyzed.
+     */
     private String projectName = "dependency-check";
 
     /**
@@ -436,6 +443,184 @@ public class Check extends Update {
         this.nuspecAnalyzerEnabled = nuspecAnalyzerEnabled;
     }
     /**
+     * Whether or not the PHP Composer Analyzer is enabled.
+     */
+    private boolean composerAnalyzerEnabled = true;
+
+    /**
+     * Get the value of composerAnalyzerEnabled.
+     *
+     * @return the value of composerAnalyzerEnabled
+     */
+    public boolean isComposerAnalyzerEnabled() {
+        return composerAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of composerAnalyzerEnabled.
+     *
+     * @param composerAnalyzerEnabled new value of composerAnalyzerEnabled
+     */
+    public void setComposerAnalyzerEnabled(boolean composerAnalyzerEnabled) {
+        this.composerAnalyzerEnabled = composerAnalyzerEnabled;
+    }
+    /**
+     * Whether the autoconf analyzer should be enabled.
+     */
+    private boolean autoconfAnalyzerEnabled = true;
+
+    /**
+     * Get the value of autoconfAnalyzerEnabled.
+     *
+     * @return the value of autoconfAnalyzerEnabled
+     */
+    public boolean isAutoconfAnalyzerEnabled() {
+        return autoconfAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of autoconfAnalyzerEnabled.
+     *
+     * @param autoconfAnalyzerEnabled new value of autoconfAnalyzerEnabled
+     */
+    public void setAutoconfAnalyzerEnabled(boolean autoconfAnalyzerEnabled) {
+        this.autoconfAnalyzerEnabled = autoconfAnalyzerEnabled;
+    }
+    /**
+     * Whether the CMake analyzer should be enabled.
+     */
+    private boolean cmakeAnalyzerEnabled = true;
+
+    /**
+     * Get the value of cmakeAnalyzerEnabled.
+     *
+     * @return the value of cmakeAnalyzerEnabled
+     */
+    public boolean isCMakeAnalyzerEnabled() {
+        return cmakeAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of cmakeAnalyzerEnabled.
+     *
+     * @param cmakeAnalyzerEnabled new value of cmakeAnalyzerEnabled
+     */
+    public void setCMakeAnalyzerEnabled(boolean cmakeAnalyzerEnabled) {
+        this.cmakeAnalyzerEnabled = cmakeAnalyzerEnabled;
+    }
+    /**
+     * Whether or not the openssl analyzer is enabled.
+     */
+    private boolean opensslAnalyzerEnabled = true;
+
+    /**
+     * Get the value of opensslAnalyzerEnabled.
+     *
+     * @return the value of opensslAnalyzerEnabled
+     */
+    public boolean isOpensslAnalyzerEnabled() {
+        return opensslAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of opensslAnalyzerEnabled.
+     *
+     * @param opensslAnalyzerEnabled new value of opensslAnalyzerEnabled
+     */
+    public void setOpensslAnalyzerEnabled(boolean opensslAnalyzerEnabled) {
+        this.opensslAnalyzerEnabled = opensslAnalyzerEnabled;
+    }
+    /**
+     * Whether or not the Node.js Analyzer is enabled.
+     */
+    private boolean nodeAnalyzerEnabled = true;
+
+    /**
+     * Get the value of nodeAnalyzerEnabled.
+     *
+     * @return the value of nodeAnalyzerEnabled
+     */
+    public boolean isNodeAnalyzerEnabled() {
+        return nodeAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of nodeAnalyzerEnabled.
+     *
+     * @param nodeAnalyzerEnabled new value of nodeAnalyzerEnabled
+     */
+    public void setNodeAnalyzerEnabled(boolean nodeAnalyzerEnabled) {
+        this.nodeAnalyzerEnabled = nodeAnalyzerEnabled;
+    }
+    /**
+     * Whether the ruby gemspec analyzer should be enabled.
+     */
+    private boolean rubygemsAnalyzerEnabled = true;
+
+    /**
+     * Get the value of rubygemsAnalyzerEnabled.
+     *
+     * @return the value of rubygemsAnalyzerEnabled
+     */
+    public boolean isRubygemsAnalyzerEnabled() {
+        return rubygemsAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of rubygemsAnalyzerEnabled.
+     *
+     * @param rubygemsAnalyzerEnabled new value of rubygemsAnalyzerEnabled
+     */
+    public void setRubygemsAnalyzerEnabled(boolean rubygemsAnalyzerEnabled) {
+        this.rubygemsAnalyzerEnabled = rubygemsAnalyzerEnabled;
+    }
+    /**
+     * Whether the python package analyzer should be enabled.
+     */
+    private boolean pyPackageAnalyzerEnabled = true;
+
+    /**
+     * Get the value of pyPackageAnalyzerEnabled.
+     *
+     * @return the value of pyPackageAnalyzerEnabled
+     */
+    public boolean isPyPackageAnalyzerEnabled() {
+        return pyPackageAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of pyPackageAnalyzerEnabled.
+     *
+     * @param pyPackageAnalyzerEnabled new value of pyPackageAnalyzerEnabled
+     */
+    public void setPyPackageAnalyzerEnabled(boolean pyPackageAnalyzerEnabled) {
+        this.pyPackageAnalyzerEnabled = pyPackageAnalyzerEnabled;
+    }
+
+    /**
+     * Whether the python distribution analyzer should be enabled.
+     */
+    private boolean pyDistributionAnalyzerEnabled = true;
+
+    /**
+     * Get the value of pyDistributionAnalyzerEnabled.
+     *
+     * @return the value of pyDistributionAnalyzerEnabled
+     */
+    public boolean isPyDistributionAnalyzerEnabled() {
+        return pyDistributionAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of pyDistributionAnalyzerEnabled.
+     *
+     * @param pyDistributionAnalyzerEnabled new value of pyDistributionAnalyzerEnabled
+     */
+    public void setPyDistributionAnalyzerEnabled(boolean pyDistributionAnalyzerEnabled) {
+        this.pyDistributionAnalyzerEnabled = pyDistributionAnalyzerEnabled;
+    }
+
+    /**
      * Whether or not the central analyzer is enabled.
      */
     private boolean centralAnalyzerEnabled = false;
@@ -664,25 +849,28 @@ public class Check extends Update {
             Settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
         }
 
-        //File Type Analyzer Settings
-        //JAR ANALYZER
         Settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
-        //NUSPEC ANALYZER
+
+        Settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, pyDistributionAnalyzerEnabled);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED, pyPackageAnalyzerEnabled);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, rubygemsAnalyzerEnabled);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_OPENSSL_ENABLED, opensslAnalyzerEnabled);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_CMAKE_ENABLED, cmakeAnalyzerEnabled);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, autoconfAnalyzerEnabled);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
+
         Settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
-        //CENTRAL ANALYZER
         Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
-        //NEXUS ANALYZER
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
         if (nexusUrl != null && !nexusUrl.isEmpty()) {
             Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
         }
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY, nexusUsesProxy);
-        //ARCHIVE ANALYZER
         Settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
         if (zipExtensions != null && !zipExtensions.isEmpty()) {
             Settings.setString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
         }
-        //ASSEMBLY ANALYZER
         Settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
         if (pathToMono != null && !pathToMono.isEmpty()) {
             Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);

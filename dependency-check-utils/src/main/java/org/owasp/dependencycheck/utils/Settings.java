@@ -186,6 +186,14 @@ public final class Settings {
          */
         public static final String ANALYZER_ARCHIVE_ENABLED = "analyzer.archive.enabled";
         /**
+         * The properties key for whether the node.js package analyzer is enabled.
+         */
+        public static final String ANALYZER_NODE_PACKAGE_ENABLED = "analyzer.node.package.enabled";
+        /**
+         * The properties key for whether the composer lock file analyzer is enabled.
+         */
+        public static final String ANALYZER_COMPOSER_LOCK_ENABLED = "analyzer.composer.lock.enabled";
+        /**
          * The properties key for whether the Python Distribution analyzer is enabled.
          */
         public static final String ANALYZER_PYTHON_DISTRIBUTION_ENABLED = "analyzer.python.distribution.enabled";
@@ -218,17 +226,9 @@ public final class Settings {
          */
         public static final String ANALYZER_NUSPEC_ENABLED = "analyzer.nuspec.enabled";
         /**
-         * The properties key for whether the JavaScript analyzer is enabled.
-         */
-        public static final String ANALYZER_JAVASCRIPT_ENABLED = "analyzer.javascript.enabled";
-        /**
          * The properties key for whether the Nexus analyzer is enabled.
          */
         public static final String ANALYZER_NEXUS_ENABLED = "analyzer.nexus.enabled";
-        /**
-         * The properties key for whether the node.js package analyzer is enabled.
-         */
-        public static final String ANALYZER_NODE_PACKAGE_ENABLED = "analyzer.node.package.enabled";
         /**
          * The properties key for the Nexus search URL.
          */

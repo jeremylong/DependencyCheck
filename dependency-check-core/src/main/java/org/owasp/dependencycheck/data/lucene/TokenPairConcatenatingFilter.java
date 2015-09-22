@@ -75,8 +75,8 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
     }
 
     /**
-     * Increments the underlying TokenStream and sets CharTermAttributes to construct an expanded set of tokens by
-     * concatenating tokens with the previous token.
+     * Increments the underlying TokenStream and sets CharTermAttributes to construct an expanded set of tokens by concatenating
+     * tokens with the previous token.
      *
      * @return whether or not we have hit the end of the TokenStream
      * @throws IOException is thrown when an IOException occurs
@@ -112,8 +112,7 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
 
     /**
      * <p>
-     * Resets the Filter and clears any internal state data that may have been left-over from previous uses of the
-     * Filter.</p>
+     * Resets the Filter and clears any internal state data that may have been left-over from previous uses of the Filter.</p>
      * <p>
      * <b>If this Filter is re-used this method must be called between uses.</b></p>
      */
@@ -121,4 +120,46 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
         previousWord = null;
         words.clear();
     }
+
+    /**
+     * Standard hash code implementation.
+     *
+     * @return the hash code
+     */
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 31 * hash + (this.termAtt != null ? this.termAtt.hashCode() : 0);
+        hash = 31 * hash + (this.previousWord != null ? this.previousWord.hashCode() : 0);
+        hash = 31 * hash + (this.words != null ? this.words.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     * Standard equals implementation.
+     *
+     * @param obj the object to compare
+     * @return true if the objects are equal; otherwise false.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final TokenPairConcatenatingFilter other = (TokenPairConcatenatingFilter) obj;
+        if (this.termAtt != other.termAtt && (this.termAtt == null || !this.termAtt.equals(other.termAtt))) {
+            return false;
+        }
+        if ((this.previousWord == null) ? (other.previousWord != null) : !this.previousWord.equals(other.previousWord)) {
+            return false;
+        }
+        if (this.words != other.words && (this.words == null || !this.words.equals(other.words))) {
+            return false;
+        }
+        return true;
+    }
+
 }

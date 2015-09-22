@@ -17,6 +17,21 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.io.BufferedInputStream;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -29,6 +44,7 @@ import org.apache.commons.compress.compressors.bzip2.BZip2Utils;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import org.apache.commons.compress.utils.IOUtils;
+
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
@@ -36,11 +52,9 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.util.*;
 
 /**
  * <p>
@@ -94,8 +108,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Detects files with extensions to remove from the engine's collection of dependencies.
      */
-    private static final FileFilter REMOVE_FROM_ANALYSIS
-            = FileFilterBuilder.newInstance().addExtensions("zip", "tar", "gz", "tgz", "bz2", "tbz2").build();
+    private static final FileFilter REMOVE_FROM_ANALYSIS = FileFilterBuilder.newInstance().addExtensions("zip", "tar", "gz", "tgz", "bz2", "tbz2")
+            .build();
 
     static {
         final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
@@ -231,6 +245,13 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         Collections.sort(engine.getDependencies());
     }
 
+    /**
+     * If a zip file was identified as a possible JAR, this method will add the zip to the list of dependencies.
+     *
+     * @param dependency the zip file
+     * @param engine the engine
+     * @throws AnalysisException thrown if there is an issue
+     */
     private void addDisguisedJarsToDependencies(Dependency dependency, Engine engine) throws AnalysisException {
         if (ZIP_FILTER.accept(dependency.getActualFile()) && isZipFileActuallyJarFile(dependency)) {
             final File tdir = getNextTempDirectory();
@@ -257,7 +278,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             }
         }
     }
-
+    /**
+     * An empty dependency set.
+     */
     private static final Set<Dependency> EMPTY_DEPENDENCY_SET = Collections.emptySet();
 
     /**
@@ -380,6 +403,13 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
+    /**
+     * Extracts a file from an archive.
+     *
+     * @param input the archives input stream
+     * @param file the file to extract
+     * @throws AnalysisException thrown if there is an error
+     */
     private static void extractAcceptedFile(ArchiveInputStream input, File file) throws AnalysisException {
         LOGGER.debug("Extracting '{}'", file.getPath());
         FileOutputStream fos = null;

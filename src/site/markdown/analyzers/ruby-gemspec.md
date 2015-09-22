@@ -9,7 +9,7 @@ into vendor, product, and version buckets. Other analyzers later use this
 evidence to identify any Common Platform Enumeration (CPE) identifiers that
 apply.
 
-__Note:__ Also consider using the Ruby 
-[bundler-audit](https://github.com/rubysec/bundler-audit#readme) tool.
+Note: It is highly recommended that Ruby projects use
+[bundler-audit](https://github.com/rubysec/bundler-audit#readme).
 
 Files Types Scanned: Rakefile, \*.gemspec

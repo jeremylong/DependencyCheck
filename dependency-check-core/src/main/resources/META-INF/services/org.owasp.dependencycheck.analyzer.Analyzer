@@ -20,3 +20,4 @@ org.owasp.dependencycheck.analyzer.CMakeAnalyzer
 org.owasp.dependencycheck.analyzer.NodePackageAnalyzer
 org.owasp.dependencycheck.analyzer.RubyGemspecAnalyzer
 org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer
+org.owasp.dependencycheck.analyzer.ComposerLockAnalyzer
