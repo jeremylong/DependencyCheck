@@ -8,7 +8,8 @@ as evidence and is grouped into vendor, product, and version buckets. Other
 analyzers later use this evidence to identify any Common Platform Enumeration
 (CPE) identifiers that apply.
 
-__Note:__ Also consider using the Node Security Project auditing tool,
-[nsp](https://nodesecurity.io/tools).
+Note:_Consider using [Retire.js](http://retirejs.github.io/retire.js/) or the
+Node Security Project auditing tool, [nsp](https://nodesecurity.io/tools) instead
+of, or in addition to OWASP dependency-check to analyze Node.js packages.
 
 Files Types Scanned: [package.json](https://docs.npmjs.com/files/package.json)
