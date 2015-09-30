@@ -623,7 +623,7 @@ public class Check extends Update {
     /**
      * Whether or not the central analyzer is enabled.
      */
-    private boolean centralAnalyzerEnabled = false;
+    private boolean centralAnalyzerEnabled = true;
 
     /**
      * Get the value of centralAnalyzerEnabled.
