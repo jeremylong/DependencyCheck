@@ -161,4 +161,11 @@
         <gav regex="true">.*\bhk2\b.*</gav>
         <cpe>cpe:/a:oracle:glassfish</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: petals-se-camel-1.0.0.jar - false positive for apache camel.
+        ]]></notes>
+        <gav regex="true">org.ow2.petals:petals-se-camel:.*</gav>
+        <cpe>cpe:/a:apache:camel:1.0.0</cpe>
+    </suppress>
 </suppressions>
