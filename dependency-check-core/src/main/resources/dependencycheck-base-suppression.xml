@@ -166,6 +166,6 @@
         file name: petals-se-camel-1.0.0.jar - false positive for apache camel.
         ]]></notes>
         <gav regex="true">org.ow2.petals:petals-se-camel:.*</gav>
-        <cpe>cpe:/a:apache:camel:1.0.0</cpe>
+        <cpe>cpe:/a:apache:camel</cpe>
     </suppress>
 </suppressions>
