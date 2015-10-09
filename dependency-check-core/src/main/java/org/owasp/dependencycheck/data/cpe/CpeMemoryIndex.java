@@ -149,7 +149,6 @@ public final class CpeMemoryIndex {
      *
      * @return the CPE Analyzer.
      */
-    @SuppressWarnings("unchecked")
     private Analyzer createIndexingAnalyzer() {
         final Map<String, Analyzer> fieldAnalyzers = new HashMap<String, Analyzer>();
         fieldAnalyzers.put(Fields.DOCUMENT_KEY, new KeywordAnalyzer());
@@ -161,7 +160,6 @@ public final class CpeMemoryIndex {
      *
      * @return the CPE Analyzer.
      */
-    @SuppressWarnings("unchecked")
     private Analyzer createSearchingAnalyzer() {
         final Map<String, Analyzer> fieldAnalyzers = new HashMap<String, Analyzer>();
         fieldAnalyzers.put(Fields.DOCUMENT_KEY, new KeywordAnalyzer());
