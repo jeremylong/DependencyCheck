@@ -61,7 +61,7 @@ public final class FileUtils {
         String ret = null;
         final int pos = fileName.lastIndexOf(".");
         if (pos >= 0) {
-            ret = fileName.substring(pos + 1, fileName.length()).toLowerCase();
+            ret = fileName.substring(pos + 1).toLowerCase();
         }
         return ret;
     }
