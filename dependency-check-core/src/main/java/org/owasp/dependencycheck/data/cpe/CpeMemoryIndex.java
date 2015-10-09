@@ -172,24 +172,6 @@ public final class CpeMemoryIndex {
     }
 
     /**
-     * Saves a CPE IndexEntry into the Lucene index.
-     *
-     * @param vendor the vendor to index
-     * @param product the product to index
-     * @param indexWriter the index writer to write the entry into
-     * @throws CorruptIndexException is thrown if the index is corrupt
-     * @throws IOException is thrown if an IOException occurs
-     */
-    public void saveEntry(String vendor, String product, IndexWriter indexWriter) throws CorruptIndexException, IOException {
-        final Document doc = new Document();
-        final Field v = new TextField(Fields.VENDOR, vendor, Field.Store.YES);
-        final Field p = new TextField(Fields.PRODUCT, product, Field.Store.YES);
-        doc.add(v);
-        doc.add(p);
-        indexWriter.addDocument(doc);
-    }
-
-    /**
      * Closes the CPE Index.
      */
     public void close() {
@@ -228,9 +210,20 @@ public final class CpeMemoryIndex {
             final IndexWriterConfig conf = new IndexWriterConfig(LuceneUtils.CURRENT_VERSION, analyzer);
             indexWriter = new IndexWriter(index, conf);
             try {
+                // Tip: reuse the Document and Fields for performance...
+                // See "Re-use Document and Field instances" from
+                // http://wiki.apache.org/lucene-java/ImproveIndexingSpeed
+                final Document doc = new Document();
+                final Field v = new TextField(Fields.VENDOR, Fields.VENDOR, Field.Store.YES);
+                final Field p = new TextField(Fields.PRODUCT, Fields.PRODUCT, Field.Store.YES);
+                doc.add(v);
+                doc.add(p);
+
                 final Set<Pair<String, String>> data = cve.getVendorProductList();
                 for (Pair<String, String> pair : data) {
-                    saveEntry(pair.getLeft(), pair.getRight(), indexWriter);
+                    v.setStringValue(pair.getLeft());
+                    p.setStringValue(pair.getRight());
+                    indexWriter.addDocument(doc);
                 }
             } catch (DatabaseException ex) {
                 LOGGER.debug("", ex);
