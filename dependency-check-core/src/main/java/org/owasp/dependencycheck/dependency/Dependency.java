@@ -341,7 +341,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
                 }
             }
             if (!found) {
-                LOGGER.debug("Adding new maven identifier {}", mavenArtifact.toString());
+                LOGGER.debug("Adding new maven identifier {}", mavenArtifact);
                 this.addIdentifier("maven", mavenArtifact.toString(), mavenArtifact.getArtifactUrl(), Confidence.HIGHEST);
             }
         }
