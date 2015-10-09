@@ -192,7 +192,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
             final List<MavenArtifact> mas = searcher.searchSha1(dependency.getSha1sum());
             final Confidence confidence = mas.size() > 1 ? Confidence.HIGH : Confidence.HIGHEST;
             for (MavenArtifact ma : mas) {
-                LOGGER.debug("Central analyzer found artifact ({}) for dependency ({})", ma.toString(), dependency.getFileName());
+                LOGGER.debug("Central analyzer found artifact ({}) for dependency ({})", ma, dependency.getFileName());
                 dependency.addAsEvidence("central", ma, confidence);
                 boolean pomAnalyzed = false;
                 for (Evidence e : dependency.getVendorEvidence()) {

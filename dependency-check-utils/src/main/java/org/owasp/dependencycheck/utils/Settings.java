@@ -460,12 +460,7 @@ public final class Settings {
      * @param value the value for the property
      */
     public static void setBoolean(String key, boolean value) {
-        if (value) {
-            localSettings.get().props.setProperty(key, Boolean.TRUE.toString());
-        } else {
-            localSettings.get().props.setProperty(key, Boolean.FALSE.toString());
-        }
-        LOGGER.debug("Setting: {}='{}'", key, value);
+        setString(key, Boolean.toString(value));
     }
 
     /**
@@ -664,13 +659,11 @@ public final class Settings {
      * @throws InvalidSettingException is thrown if there is an error retrieving the setting
      */
     public static int getInt(String key) throws InvalidSettingException {
-        int value;
         try {
-            value = Integer.parseInt(Settings.getString(key));
+            return Integer.parseInt(Settings.getString(key));
         } catch (NumberFormatException ex) {
             throw new InvalidSettingException("Could not convert property '" + key + "' to an int.", ex);
         }
-        return value;
     }
 
     /**
@@ -704,13 +697,11 @@ public final class Settings {
      * @throws InvalidSettingException is thrown if there is an error retrieving the setting
      */
     public static long getLong(String key) throws InvalidSettingException {
-        long value;
         try {
-            value = Long.parseLong(Settings.getString(key));
+            return Long.parseLong(Settings.getString(key));
         } catch (NumberFormatException ex) {
-            throw new InvalidSettingException("Could not convert property '" + key + "' to an int.", ex);
+            throw new InvalidSettingException("Could not convert property '" + key + "' to a long.", ex);
         }
-        return value;
     }
 
     /**
@@ -723,13 +714,7 @@ public final class Settings {
      * @throws InvalidSettingException is thrown if there is an error retrieving the setting
      */
     public static boolean getBoolean(String key) throws InvalidSettingException {
-        boolean value;
-        try {
-            value = Boolean.parseBoolean(Settings.getString(key));
-        } catch (NumberFormatException ex) {
-            throw new InvalidSettingException("Could not convert property '" + key + "' to an int.", ex);
-        }
-        return value;
+        return Boolean.parseBoolean(Settings.getString(key));
     }
 
     /**
@@ -743,17 +728,7 @@ public final class Settings {
      * @throws InvalidSettingException is thrown if there is an error retrieving the setting
      */
     public static boolean getBoolean(String key, boolean defaultValue) throws InvalidSettingException {
-        boolean value;
-        try {
-            final String strValue = Settings.getString(key);
-            if (strValue == null) {
-                return defaultValue;
-            }
-            value = Boolean.parseBoolean(strValue);
-        } catch (NumberFormatException ex) {
-            throw new InvalidSettingException("Could not convert property '" + key + "' to an int.", ex);
-        }
-        return value;
+        return Boolean.parseBoolean(Settings.getString(key, Boolean.toString(defaultValue)));
     }
 
     /**

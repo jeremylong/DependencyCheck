@@ -126,7 +126,7 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException {
-        LOGGER.debug("Checking Nuspec file {}", dependency.toString());
+        LOGGER.debug("Checking Nuspec file {}", dependency);
         try {
             final NuspecParser parser = new XPathNuspecParser();
             NugetPackage np = null;
