@@ -57,7 +57,6 @@ public final class Checksum {
      * @throws IOException when the file does not exist
      * @throws NoSuchAlgorithmException when an algorithm is specified that does not exist
      */
-    @SuppressWarnings("empty-statement")
     public static byte[] getChecksum(String algorithm, File file) throws NoSuchAlgorithmException, IOException {
         MessageDigest digest = MessageDigest.getInstance(algorithm);
         FileInputStream fis = null;
@@ -79,12 +78,6 @@ public final class Checksum {
                 digest.update(byteBuffer);
                 start += amountToRead;
             }
-
-//            BufferedInputStream bis = new BufferedInputStream(fis);
-//            DigestInputStream dis = new DigestInputStream(bis, digest);
-//            //yes, we are reading in a buffer for performance reasons - 1 byte at a time is SLOW
-//            byte[] buffer = new byte[8192];
-//            while (dis.read(buffer) != -1);
         } finally {
             if (fis != null) {
                 try {
