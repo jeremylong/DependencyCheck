@@ -168,4 +168,11 @@
         <gav regex="true">org.ow2.petals:petals-se-camel:.*</gav>
         <cpe>cpe:/a:apache:camel</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: mina-filter-ssl-1.1.7.jar
+        ]]></notes>
+        <gav regex="true">org.apache.mina:mina.*</gav>
+        <cpe>cpe:/a:apache-ssl:apache-ssl</cpe>
+    </suppress>
 </suppressions>
