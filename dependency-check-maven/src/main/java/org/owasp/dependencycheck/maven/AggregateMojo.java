@@ -45,7 +45,7 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 @Mojo(
         name = "aggregate",
-        defaultPhase = LifecyclePhase.COMPILE,
+        defaultPhase = LifecyclePhase.VERIFY,
         /*aggregator = true,*/
         threadSafe = true,
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
