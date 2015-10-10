@@ -173,21 +173,25 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                         }
                     }
                 }
+                Set<MavenProject> addedDescendants = new HashSet<MavenProject>();
                 for (MavenProject dec : descendants) {
                     for (String mod : dec.getModules()) {
                         try {
                             File mpp = new File(dec.getBasedir(), mod);
                             mpp = mpp.getCanonicalFile();
-                            if (mpp.compareTo(p.getBasedir()) == 0 && descendants.add(p)) {
-                                if (getLog().isDebugEnabled()) {
-                                    getLog().debug(String.format("Decendent module %s added", p.getName()));
-                                }
+                            if (mpp.compareTo(p.getBasedir()) == 0) {
+                                addedDescendants.add(p);
                             }
                         } catch (IOException ex) {
                             if (getLog().isDebugEnabled()) {
                                 getLog().debug("Unable to determine module path", ex);
                             }
                         }
+                    }
+                }
+                for (MavenProject addedDescendant : addedDescendants) {
+                    if (descendants.add(addedDescendant) && getLog().isDebugEnabled()) {
+                        getLog().debug(String.format("Decendent module %s added", addedDescendant.getName()));
                     }
                 }
             }
