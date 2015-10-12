@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
@@ -35,10 +36,12 @@ public class CveDBMySQLTest {
 
     @BeforeClass
     public static void setUpClass() {
+        Settings.initialize();
     }
 
     @AfterClass
     public static void tearDownClass() {
+        Settings.cleanup();
     }
 
     @Before
