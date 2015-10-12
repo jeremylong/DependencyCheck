@@ -25,6 +25,11 @@ package org.owasp.dependencycheck.data.composer;
 public class ComposerException extends RuntimeException {
 
     /**
+     * The serial version UID for serialization.
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Creates a ComposerException with default message.
      */
     public ComposerException() {
