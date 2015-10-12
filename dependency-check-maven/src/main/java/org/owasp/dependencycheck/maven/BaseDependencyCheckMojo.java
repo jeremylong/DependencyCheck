@@ -247,6 +247,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "zipExtensions", required = false)
     private String zipExtensions;
     /**
+     * Skip Dependency Check altogether.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "dependency-check.skip", defaultValue = "false", required = false)
+    private boolean skip = false;
+    /**
      * Skip Analysis for Test Scope Dependencies.
      */
     @SuppressWarnings("CanBeFinal")
@@ -325,9 +331,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        validateAggregate();
-        project.setContextValue(getOutputDirectoryContextKey(), this.outputDirectory);
-        runCheck();
+        if (skip) {
+            getLog().info("Skipping " + getName(Locale.US));
+        } else {
+            validateAggregate();
+            project.setContextValue(getOutputDirectoryContextKey(), this.outputDirectory);
+            runCheck();
+        }
     }
 
     /**
