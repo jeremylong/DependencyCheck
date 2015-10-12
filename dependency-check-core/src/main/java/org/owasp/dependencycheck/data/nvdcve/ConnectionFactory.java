@@ -30,6 +30,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import org.owasp.dependencycheck.utils.DBUtils;
+import org.owasp.dependencycheck.utils.DependencyVersion;
+import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -288,47 +290,58 @@ public final class ConnectionFactory {
      * @throws DatabaseException thrown if there is an exception upgrading the database schema
      */
     private static void updateSchema(Connection conn, String schema) throws DatabaseException {
-        LOGGER.debug("Updating database structure");
-        InputStream is;
-        InputStreamReader reader;
-        BufferedReader in = null;
-        String updateFile = null;
-        try {
-            updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, schema);
-            is = ConnectionFactory.class.getClassLoader().getResourceAsStream(updateFile);
-            if (is == null) {
-                throw new DatabaseException(String.format("Unable to load update file '%s'", updateFile));
-            }
-            reader = new InputStreamReader(is, "UTF-8");
-            in = new BufferedReader(reader);
-            final StringBuilder sb = new StringBuilder(2110);
-            String tmp;
-            while ((tmp = in.readLine()) != null) {
-                sb.append(tmp);
-            }
-            Statement statement = null;
+        final String databaseProductName = conn.getMetaData().getDatabaseProductName();
+        if ("h2".equalsIgnoreCase(databaseProductName)) {
+            LOGGER.debug("Updating database structure");
+            InputStream is;
+            InputStreamReader reader;
+            BufferedReader in = null;
+            String updateFile = null;
             try {
-                statement = conn.createStatement();
-                statement.execute(sb.toString());
-            } catch (SQLException ex) {
-                LOGGER.debug("", ex);
-                throw new DatabaseException("Unable to update database schema", ex);
-            } finally {
-                DBUtils.closeStatement(statement);
-            }
-        } catch (IOException ex) {
-            final String msg = String.format("Upgrade SQL file does not exist: %s", updateFile);
-            throw new DatabaseException(msg, ex);
-        } finally {
-            if (in != null) {
+                updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, schema);
+                is = ConnectionFactory.class.getClassLoader().getResourceAsStream(updateFile);
+                if (is == null) {
+                    throw new DatabaseException(String.format("Unable to load update file '%s'", updateFile));
+                }
+                reader = new InputStreamReader(is, "UTF-8");
+                in = new BufferedReader(reader);
+                final StringBuilder sb = new StringBuilder(2110);
+                String tmp;
+                while ((tmp = in.readLine()) != null) {
+                    sb.append(tmp);
+                }
+                Statement statement = null;
                 try {
-                    in.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("", ex);
+                    statement = conn.createStatement();
+                    statement.execute(sb.toString());
+                } catch (SQLException ex) {
+                    LOGGER.debug("", ex);
+                    throw new DatabaseException("Unable to update database schema", ex);
+                } finally {
+                    DBUtils.closeStatement(statement);
+                }
+            } catch (IOException ex) {
+                final String msg = String.format("Upgrade SQL file does not exist: %s", updateFile);
+                throw new DatabaseException(msg, ex);
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException ex) {
+                        LOGGER.trace("", ex);
+                    }
                 }
             }
+        } else {
+            LOGGER.error("The database schema must be upgraded to use this version of dependency-check. Please see {} for more information.", UPGRADE_HELP_URL);
+            throw new DatabaseException("Database schema is out of date");
         }
     }
+
+    /**
+     * Counter to ensure that calls to ensureSchemaVersion does not end up in an endless loop.
+     */
+    private static int callDepth = 0;
 
     /**
      * Uses the provided connection to check the specified schema version within the database.
@@ -344,10 +357,15 @@ public final class ConnectionFactory {
             cs = conn.prepareCall("SELECT value FROM properties WHERE id = 'version'");
             rs = cs.executeQuery();
             if (rs.next()) {
-                if (!DB_SCHEMA_VERSION.equals(rs.getString(1))) {
+                final DependencyVersion current = DependencyVersionUtil.parseVersion(DB_SCHEMA_VERSION);
+                final DependencyVersion db = DependencyVersionUtil.parseVersion(rs.getString(1));
+                if (current.compareTo(db) > 0) {
                     LOGGER.debug("Current Schema: " + DB_SCHEMA_VERSION);
                     LOGGER.debug("DB Schema: " + rs.getString(1));
                     updateSchema(conn, rs.getString(1));
+                    if (++callDepth < 10) {
+                        ensureSchemaVersion(conn);
+                    }
                 }
             } else {
                 throw new DatabaseException("Database schema is missing");
