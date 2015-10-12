@@ -32,6 +32,11 @@ To setup a centralized database the following generalized steps can be used:
    </ul>
 </li></ol>
 Depending on the database being used, you may need to customize the [dbStatements.properties](https://github.com/jeremylong/DependencyCheck/blob/master/dependency-check-core/src/main/resources/data/dbStatements.properties).
+Alternatively to modifying the dbStatements.properties it is now possible to use a dialect file to support other databases.
+See [dbStatements_h2.properties](https://github.com/jeremylong/DependencyCheck/blob/master/dependency-check-core/src/main/resources/data/dbStatements_h2.properties)
+as an example.
+
+Also, if using an external database you will need to manually upgrade the schema. See [database upgrades](./upgrade.html) for more information.
 
 As always, feel free to open an [issue](https://github.com/jeremylong/DependencyCheck/issues)
 or post a question to the [dependency-check google group](https://groups.google.com/forum/#!forum/dependency-check).
