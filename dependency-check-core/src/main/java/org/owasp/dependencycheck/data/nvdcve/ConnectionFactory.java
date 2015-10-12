@@ -29,6 +29,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
 import org.owasp.dependencycheck.utils.DBUtils;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
@@ -60,6 +61,10 @@ public final class ConnectionFactory {
      * Resource location for SQL file used to create the database schema.
      */
     public static final String DB_STRUCTURE_UPDATE_RESOURCE = "data/upgrade_%s.sql";
+    /**
+     * The URL that discusses upgrading non-H2 databases.
+     */
+    public static final String UPGRADE_HELP_URL = "http://jeremylong.github.io/DependencyCheck/data/upgrade.html";
     /**
      * The database driver used to connect to the database.
      */
@@ -290,7 +295,12 @@ public final class ConnectionFactory {
      * @throws DatabaseException thrown if there is an exception upgrading the database schema
      */
     private static void updateSchema(Connection conn, String schema) throws DatabaseException {
-        final String databaseProductName = conn.getMetaData().getDatabaseProductName();
+        final String databaseProductName;
+        try {
+            databaseProductName = conn.getMetaData().getDatabaseProductName();
+        } catch (SQLException ex) {
+            throw new DatabaseException("Unable to get the database product name");
+        }
         if ("h2".equalsIgnoreCase(databaseProductName)) {
             LOGGER.debug("Updating database structure");
             InputStream is;
