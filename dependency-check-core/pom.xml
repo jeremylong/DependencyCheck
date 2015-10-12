@@ -468,7 +468,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.18.1</version>
                         <configuration>
                             <skip>true</skip>
                         </configuration>
@@ -476,12 +475,11 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>2.18.1</version>
                         <configuration>
                             <systemProperties>
                                 <property>
                                     <name>data.driver_path</name>
-                                    <value>${basedir}/${driver_path}</value>
+                                    <value>${driver_path}</value>
                                 </property>
                                 <property>
                                     <name>data.driver_name</name>
