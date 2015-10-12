@@ -918,20 +918,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         parent.getAbsolutePath()));
             }
 
-            OutputStream os = null;
-            OutputStream bos = null;
             ObjectOutputStream out = null;
             try {
                 if (dependencies != null) {
-                    os = new FileOutputStream(file);
-                    bos = new BufferedOutputStream(os);
-                    out = new ObjectOutputStream(bos);
+                    out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
                     out.writeObject(dependencies);
-                    out.flush();
-
-                    //call reset to prevent resource leaks per
-                    //https://www.securecoding.cert.org/confluence/display/java/SER10-J.+Avoid+memory+and+resource+leaks+during+serialization
-                    out.reset();
                 }
                 if (getLog().isDebugEnabled()) {
                     getLog().debug(String.format("Serialized data file written to '%s' for %s, referenced by key %s",
@@ -948,24 +939,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 if (out != null) {
                     try {
                         out.close();
-                    } catch (IOException ex) {
-                        if (getLog().isDebugEnabled()) {
-                            getLog().debug("ignore", ex);
-                        }
-                    }
-                }
-                if (bos != null) {
-                    try {
-                        bos.close();
-                    } catch (IOException ex) {
-                        if (getLog().isDebugEnabled()) {
-                            getLog().debug("ignore", ex);
-                        }
-                    }
-                }
-                if (os != null) {
-                    try {
-                        os.close();
                     } catch (IOException ex) {
                         if (getLog().isDebugEnabled()) {
                             getLog().debug("ignore", ex);
