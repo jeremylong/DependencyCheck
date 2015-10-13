@@ -578,6 +578,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                         <td data-sort-value="$sortValue">
                         #set($sortValue="")
                         #foreach($id in $dependency.getIdentifiers())
+                            #set($cpeSort=0)
                             #if ($id.type=="maven")
                                 #if ($mavenlink=="" || !$mavenlink.url)
                                     #set($mavenlink=$id)
@@ -591,7 +592,6 @@ arising out of or in connection with the use of this tool, the analysis performe
                                 #else
                                     $enc.html($id.value)
                                 #end
-                                #set($cpeSort=0)
                                 #if ($cpeIdConf == "")
                                     #set($cpeIdConf=$id.confidence)
                                     #set($cpeSort=$id.confidence.ordinal())
