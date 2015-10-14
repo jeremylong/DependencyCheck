@@ -60,7 +60,7 @@ public final class FileUtils {
      */
     public static String getFileExtension(String fileName) {
         final String fileExt = FilenameUtils.getExtension(fileName);
-        return null != fileExt ? fileExt.toLowerCase() : null;
+        return null == fileExt || fileExt.isEmpty() ? null : fileExt.toLowerCase();
     }
 
     /**
