@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,12 +59,8 @@ public final class FileUtils {
      * @return the file extension.
      */
     public static String getFileExtension(String fileName) {
-        String ret = null;
-        final int pos = fileName.lastIndexOf(".");
-        if (pos >= 0) {
-            ret = fileName.substring(pos + 1).toLowerCase();
-        }
-        return ret;
+        final String fileExt = FilenameUtils.getExtension(fileName);
+        return null != fileExt ? fileExt.toLowerCase() : null;
     }
 
     /**
@@ -73,9 +70,8 @@ public final class FileUtils {
      * @return true if the file was deleted successfully, otherwise false
      */
     public static boolean delete(File file) {
-        boolean success = true;
-        if (!org.apache.commons.io.FileUtils.deleteQuietly(file)) {
-            success = false;
+        final boolean success = org.apache.commons.io.FileUtils.deleteQuietly(file);
+        if (!success) {
             LOGGER.debug("Failed to delete file: {}; attempting to delete on exit.", file.getPath());
             file.deleteOnExit();
         }
