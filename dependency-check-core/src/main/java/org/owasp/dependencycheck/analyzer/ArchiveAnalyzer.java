@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -114,8 +115,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     static {
         final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
         if (additionalZipExt != null) {
-            final Set<String> ext = new HashSet<String>(Collections.singletonList(additionalZipExt));
-            ZIPPABLES.addAll(ext);
+            String[] ext = additionalZipExt.split("\\s*,\\s*");
+            Collections.addAll(ZIPPABLES, ext);
         }
         EXTENSIONS.addAll(ZIPPABLES);
     }
