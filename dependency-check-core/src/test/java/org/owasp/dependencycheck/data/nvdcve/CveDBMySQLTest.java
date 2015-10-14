@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -96,7 +97,7 @@ public class CveDBMySQLTest {
         CveDB instance = new CveDB();
         try {
             instance.open();
-            List result = instance.getVulnerabilities(cpeStr);
+            List<Vulnerability> result = instance.getVulnerabilities(cpeStr);
             assertTrue(result.size() > 5);
         } catch (Exception ex) {
             System.out.println("Unable to access the My SQL database; verify that the db server is running and that the schema has been generated");

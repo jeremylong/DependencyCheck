@@ -34,7 +34,7 @@ public class AbstractFileTypeAnalyzerTest extends BaseTest {
      */
     @Test
     public void testNewHashSet() {
-        Set result = AbstractFileTypeAnalyzer.newHashSet("one", "two");
+        Set<String> result = AbstractFileTypeAnalyzer.newHashSet("one", "two");
         assertEquals(2, result.size());
         assertTrue(result.contains("one"));
         assertTrue(result.contains("two"));
