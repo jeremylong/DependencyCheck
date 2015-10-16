@@ -175,4 +175,11 @@
         <gav regex="true">org.apache.mina:mina.*</gav>
         <cpe>cpe:/a:apache-ssl:apache-ssl</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: woden-impl-dom-1.0M9.jar
+        ]]></notes>
+        <gav regex="true">org.apache.woden:woden.*</gav>
+        <cpe>cpe:/a:apache-ssl:apache-ssl</cpe>
+    </suppress>
 </suppressions>
