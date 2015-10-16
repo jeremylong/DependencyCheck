@@ -35,8 +35,8 @@ public class FileUtilsTest extends BaseTest {
      */
     @Test
     public void testGetFileExtension() {
-        String[] fileName = {"something-0.9.5.jar", "lib2-1.1.js"};
-        String[] expResult = {"jar", "js"};
+        String[] fileName = {"something-0.9.5.jar", "lib2-1.1.js", "dir.tmp/noext"};
+        String[] expResult = {"jar", "js", null};
 
         for (int i = 0; i < fileName.length; i++) {
             String result = FileUtils.getFileExtension(fileName[i]);

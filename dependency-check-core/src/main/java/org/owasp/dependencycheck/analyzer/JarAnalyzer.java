@@ -42,6 +42,7 @@ import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.jsoup.Jsoup;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -269,8 +270,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         }
         File externalPom = null;
         if (pomEntries.isEmpty()) {
-            String pomPath = dependency.getActualFilePath();
-            pomPath = pomPath.substring(0, pomPath.lastIndexOf('.')) + ".pom";
+            final String pomPath = FilenameUtils.removeExtension(dependency.getActualFilePath()) + ".pom";
             externalPom = new File(pomPath);
             if (externalPom.isFile()) {
                 pomEntries.add(pomPath);
