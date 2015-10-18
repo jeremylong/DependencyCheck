@@ -170,16 +170,23 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        file name: mina-filter-ssl-1.1.7.jar
+        Mina gets flagged as apache-ssl
         ]]></notes>
         <gav regex="true">org.apache.mina:mina.*</gav>
         <cpe>cpe:/a:apache-ssl:apache-ssl</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        file name: woden-impl-dom-1.0M9.jar
+        Woden gets flagged as apache-ssl
         ]]></notes>
         <gav regex="true">org.apache.woden:woden.*</gav>
         <cpe>cpe:/a:apache-ssl:apache-ssl</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        spec gets flagged as the implementation.
+        ]]></notes>
+        <gav regex="true">org.apache.geronimo.specs:.*</gav>
+        <cpe>cpe:/a:apache:geronimo</cpe>
     </suppress>
 </suppressions>
