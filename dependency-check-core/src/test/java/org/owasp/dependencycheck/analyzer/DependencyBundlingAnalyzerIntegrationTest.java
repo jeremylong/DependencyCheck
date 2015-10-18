@@ -18,13 +18,13 @@
 package org.owasp.dependencycheck.analyzer;
 
 import org.junit.Test;
-import org.owasp.dependencycheck.data.cpe.AbstractDatabaseTestCase;
+import org.owasp.dependencycheck.BaseDBTestCase;
 
 /**
  *
  * @author Jeremy Long
  */
-public class DependencyBundlingAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
+public class DependencyBundlingAnalyzerIntegrationTest extends BaseDBTestCase {
 
     /**
      * Test of analyze method, of class DependencyBundlingAnalyzer.

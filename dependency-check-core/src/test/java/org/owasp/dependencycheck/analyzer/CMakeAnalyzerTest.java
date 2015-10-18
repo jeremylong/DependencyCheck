@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
-import org.owasp.dependencycheck.data.nvdcve.BaseDBTestCase;
+import org.owasp.dependencycheck.BaseDBTestCase;
 
 /**
  * Unit tests for CmakeAnalyzer.

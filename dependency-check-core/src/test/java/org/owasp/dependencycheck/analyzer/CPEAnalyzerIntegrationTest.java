@@ -28,7 +28,7 @@ import org.junit.Assert;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
-import org.owasp.dependencycheck.data.cpe.AbstractDatabaseTestCase;
+import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.data.cpe.IndexEntry;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -38,7 +38,7 @@ import org.owasp.dependencycheck.dependency.Identifier;
  *
  * @author Jeremy Long
  */
-public class CPEAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
+public class CPEAnalyzerIntegrationTest extends BaseDBTestCase {
 
     /**
      * Tests of buildSearch of class CPEAnalyzer.

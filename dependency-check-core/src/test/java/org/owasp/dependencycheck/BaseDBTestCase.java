@@ -15,7 +15,7 @@
  *
  * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.data.nvdcve;
+package org.owasp.dependencycheck;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -31,6 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * An abstract database test case that is used to ensure the H2 DB exists prior to performing tests that utilize the data
+ * contained within.
  *
  * @author Jeremy Long
  */
