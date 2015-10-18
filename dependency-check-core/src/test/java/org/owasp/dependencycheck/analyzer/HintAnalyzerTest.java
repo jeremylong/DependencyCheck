@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.data.cpe.AbstractDatabaseTestCase;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
@@ -33,7 +34,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long
  */
-public class HintAnalyzerTest extends BaseTest {
+public class HintAnalyzerTest extends AbstractDatabaseTestCase {
 
     @Before
     public void setUp() throws Exception {
