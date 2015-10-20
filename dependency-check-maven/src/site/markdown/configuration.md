@@ -14,15 +14,16 @@ The following properties can be set on the dependency-check-maven plugin.
 
 Property             | Description                        | Default Value
 ---------------------|------------------------------------|------------------
-aggregate            | Deprecated - use the aggregate goal instead. | &nbsp;
 autoUpdate           | Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. | true
 outputDirectory      | The location to write the report(s). Note, this is not used if generating the report as part of a `mvn site` build | 'target'
 failBuildOnCVSS      | Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11 which means since the CVSS scores are 0-10, by default the build will never fail.         | 11
 format               | The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | HTML
+name                 | The name of the report in the site | dependency-check or dependency-check:aggregate
 suppressionFile      | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html) | &nbsp;
-skipTestScope        | Should be skip analysis for artifacts with Test Scope | true
+skip                 | Skips the dependency-check analysis                       | false
+skipTestScope        | Should be skip analysis for artifacts with Test Scope     | true
 skipProvidedScope    | Should be skip analysis for artifacts with Provided Scope | false
-skipRuntimeScope     | Should be skip analysis for artifacts with Runtime Scope | false
+skipRuntimeScope     | Should be skip analysis for artifacts with Runtime Scope  | false
 
 Analyzer Configuration
 ====================
