@@ -289,6 +289,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @Parameter(property = "cveUrl20Base", defaultValue = "", required = false)
     private String cveUrl20Base;
+    /**
+     * Optionally skip excessive CVE update checks for a designated duration in hours.
+     */
+    @Parameter(property = "cveValidForHours", defaultValue = "", required = false)
+    private String cveValidForHours;
 
     /**
      * The path to mono for .NET Assembly analysis on non-windows systems.
@@ -677,6 +682,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         if (cveUrl20Base != null && !cveUrl20Base.isEmpty()) {
             Settings.setString(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
+        }
+        if (cveValidForHours != null && !cveValidForHours.isEmpty()) {
+            Settings.setString(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
         }
     }
 
