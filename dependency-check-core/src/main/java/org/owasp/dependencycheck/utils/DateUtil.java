@@ -36,11 +36,12 @@ public final class DateUtil {
      *
      * @param date the date to be checked.
      * @param compareTo the date to compare to.
-     * @param range the range in days to be considered valid.
+     * @param dayRange the range in days to be considered valid.
      * @return whether or not the date is within the range.
      */
-    public static boolean withinDateRange(long date, long compareTo, int range) {
-        final double differenceInDays = (compareTo - date) / 1000.0 / 60.0 / 60.0 / 24.0;
-        return differenceInDays < range;
+    public static boolean withinDateRange(long date, long compareTo, int dayRange) {
+        // ms = dayRange x 24 hours/day x 60 min/hour x 60 sec/min x 1000 ms/sec
+        final long msRange = dayRange * 24L * 60L * 60L * 1000L;
+        return (compareTo - date) < msRange;
     }
 }
