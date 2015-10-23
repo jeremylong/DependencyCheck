@@ -468,6 +468,17 @@ public final class Settings {
     }
 
     /**
+     * Sets a property value.
+     *
+     * @param key the key for the property
+     * @param value the value for the property
+     */
+    public static void setInt(String key, int value) {
+        localSettings.get().props.setProperty(key, String.valueOf(value));
+        LOGGER.debug("Setting: {}='{}'", key, value);
+    }
+
+    /**
      * Merges a new properties file into the current properties. This method allows for the loading of a user provided properties
      * file.<br/><br/>
      * Note: even if using this method - system properties will be loaded before properties loaded from files.
