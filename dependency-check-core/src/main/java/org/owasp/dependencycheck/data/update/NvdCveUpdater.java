@@ -66,9 +66,11 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
     public void update() throws UpdateException {
         try {
             openDataStores();
-            final UpdateableNvdCve updateable = getUpdatesNeeded();
-            if (updateable.isUpdateNeeded()) {
-                performUpdate(updateable);
+            if (checkUpdate()) {
+                final UpdateableNvdCve updateable = getUpdatesNeeded();
+                if (updateable.isUpdateNeeded()) {
+                    performUpdate(updateable);
+                }
             }
         } catch (MalformedURLException ex) {
             LOGGER.warn(
@@ -85,6 +87,35 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
         } finally {
             closeDataStores();
         }
+    }
+
+    /**
+     * Checks if the NVD CVE XML files were last checked recently.
+     * As an optimization, we can avoid repetitive checks against the NVD.
+     * Setting CVE_CHECK_VALID_FOR_HOURS determines the duration since last check before checking again.
+     * A database property stores the timestamp of the last check. 
+     *
+     * @return true to proceed with the check, or false to skip.
+     */
+    private boolean checkUpdate () throws UpdateException {
+        boolean proceed = true;
+        // If the valid setting has not been specified, then we proceed to check...
+        final int validForHours = Settings.getInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, 0);
+        if (0 < validForHours) {
+            // ms Valid = valid (hours) x 60 min/hour x 60 sec/min x 1000 ms/sec
+            final long msValid = validForHours * 60L * 60L * 1000L;
+            final long lastChecked = Long.parseLong(getProperties().getProperty(DatabaseProperties.LAST_CHECKED, "0"));
+            final long now = System.currentTimeMillis();
+            proceed = (now - lastChecked) > msValid;
+            if (proceed) {
+                getProperties().save(DatabaseProperties.LAST_CHECKED, Long.toString(now));
+            } else {
+                LOGGER.info("Skipping NVD check since last check was within {} hours.", validForHours);
+                LOGGER.debug("Last NVD was at {}, and now {} is within {} ms.",
+                    lastChecked, now, msValid);
+            }
+        }
+        return proceed;
     }
 
     /**
