@@ -245,14 +245,14 @@ public class Check extends Update {
      * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. Default
      * is true.
      */
-    private boolean autoUpdate = true;
+    private Boolean autoUpdate;
 
     /**
      * Get the value of autoUpdate.
      *
      * @return the value of autoUpdate
      */
-    public boolean isAutoUpdate() {
+    public Boolean isAutoUpdate() {
         return autoUpdate;
     }
 
@@ -261,7 +261,7 @@ public class Check extends Update {
      *
      * @param autoUpdate new value of autoUpdate
      */
-    public void setAutoUpdate(boolean autoUpdate) {
+    public void setAutoUpdate(Boolean autoUpdate) {
         this.autoUpdate = autoUpdate;
     }
     /**
@@ -839,12 +839,15 @@ public class Check extends Update {
     /**
      * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system properties
      * required to change the proxy server, port, and connection timeout.
+     *
+     * @throws BuildException thrown when an invalid setting is configured.
      */
     @Override
-    protected void populateSettings() {
+    protected void populateSettings() throws BuildException {
         super.populateSettings();
-        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
-
+        if (autoUpdate != null) {
+            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
+        }
         if (suppressionFile != null && !suppressionFile.isEmpty()) {
             Settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
         }
