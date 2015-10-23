@@ -106,16 +106,16 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * is true.
      */
     @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "autoupdate", defaultValue = "true", required = true)
-    private boolean autoUpdate = true;
+    @Parameter(property = "autoupdate")
+    private Boolean autoUpdate;
     /**
      * Generate aggregate reports in multi-module projects.
      *
      * @deprecated use the aggregate goal instead
      */
-    @Parameter(property = "aggregate", defaultValue = "false")
+    @Parameter(property = "aggregate")
     @Deprecated
-    private boolean aggregate;
+    private Boolean aggregate;
     /**
      * The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this within the
      * Site plug-in unless the externalReport is set to true. Default is HTML.
@@ -299,7 +299,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Optionally skip excessive CVE update checks for a designated duration in hours.
      */
     @Parameter(property = "cveValidForHours", defaultValue = "", required = false)
-    private String cveValidForHours;
+    private Integer cveValidForHours;
 
     /**
      * The path to mono for .NET Assembly analysis on non-windows systems.
@@ -598,8 +598,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 }
             }
         }
-
-        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
+        if (autoUpdate != null) {
+            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
+        }
         if (externalReport != null) {
             getLog().warn("The 'externalReport' option was set; this configuration option has been removed. "
                     + "Please update the dependency-check-maven plugin's configuration");
@@ -693,8 +694,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         if (cveUrl20Base != null && !cveUrl20Base.isEmpty()) {
             Settings.setString(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
         }
-        if (cveValidForHours != null && !cveValidForHours.isEmpty()) {
-            Settings.setString(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
+        if (cveValidForHours != null) {
+            Settings.setInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
         }
     }
 
