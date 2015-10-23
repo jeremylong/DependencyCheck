@@ -357,6 +357,26 @@ public class Update extends Purge {
         this.cveUrl20Base = cveUrl20Base;
     }
 
+    private Integer cveValidForHours;
+
+    /**
+     * Get the value of cveValidForHours
+     *
+     * @return the value of cveValidForHours
+     */
+    public Integer getCveValidForHours() {
+        return cveValidForHours;
+    }
+
+    /**
+     * Set the value of cveValidForHours
+     *
+     * @param cveValidForHours new value of cveValidForHours
+     */
+    public void setCveValidForHours(Integer cveValidForHours) {
+        this.cveValidForHours = cveValidForHours;
+    }
+
     /**
      * Executes the update by initializing the settings, downloads the NVD XML data, and then processes the data storing it in the
      * local database.
@@ -383,9 +403,11 @@ public class Update extends Purge {
     /**
      * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system properties
      * required to change the proxy server, port, and connection timeout.
+     *
+     * @throws BuildException thrown when an invalid setting is configured.
      */
     @Override
-    protected void populateSettings() {
+    protected void populateSettings() throws BuildException {
         super.populateSettings();
         if (proxyServer != null && !proxyServer.isEmpty()) {
             Settings.setString(Settings.KEYS.PROXY_SERVER, proxyServer);
@@ -428,6 +450,13 @@ public class Update extends Purge {
         }
         if (cveUrl20Base != null && !cveUrl20Base.isEmpty()) {
             Settings.setString(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
+        }
+        if (cveValidForHours != null) {
+            if (cveValidForHours >= 0) {
+                Settings.setInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
+            } else {
+                throw new BuildException("Invalid setting: `cpeValidForHours` must be 0 or greater");
+            }
         }
     }
 }
