@@ -46,6 +46,10 @@ public class DatabaseProperties {
      */
     public static final String MODIFIED = "Modified";
     /**
+     * The properties file key for the last checked field - used to store the last check time of the Modified NVD CVE xml file.
+     */
+    public static final String LAST_CHECKED = "NVD CVE Checked";
+    /**
      * The properties file key for the last updated field - used to store the last updated time of the Modified NVD CVE xml file.
      */
     public static final String LAST_UPDATED = "NVD CVE Modified";

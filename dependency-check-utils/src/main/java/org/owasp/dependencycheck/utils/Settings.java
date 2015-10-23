@@ -118,6 +118,10 @@ public final class Settings {
          */
         public static final String CVE_MODIFIED_VALID_FOR_DAYS = "cve.url.modified.validfordays";
         /**
+         * The properties key to control the skipping of the check for CVE updates.
+         */
+        public static final String CVE_CHECK_VALID_FOR_HOURS = "cve.check.validforhours";
+        /**
          * The properties key for the telling us how many cve.url.* URLs exists. This is used in combination with CVE_BASE_URL to
          * be able to retrieve the URLs for all of the files that make up the NVD CVE listing.
          */
@@ -461,6 +465,17 @@ public final class Settings {
      */
     public static void setBoolean(String key, boolean value) {
         setString(key, Boolean.toString(value));
+    }
+
+    /**
+     * Sets a property value.
+     *
+     * @param key the key for the property
+     * @param value the value for the property
+     */
+    public static void setInt(String key, int value) {
+        localSettings.get().props.setProperty(key, String.valueOf(value));
+        LOGGER.debug("Setting: {}='{}'", key, value);
     }
 
     /**

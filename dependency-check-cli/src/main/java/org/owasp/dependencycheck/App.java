@@ -279,6 +279,7 @@ public class App {
         final String cveMod20 = cli.getModifiedCve20Url();
         final String cveBase12 = cli.getBaseCve12Url();
         final String cveBase20 = cli.getBaseCve20Url();
+        final Integer cveValidForHours = cli.getCveValidForHours();
 
         if (propertiesFile != null) {
             try {
@@ -325,6 +326,9 @@ public class App {
         }
         if (suppressionFile != null && !suppressionFile.isEmpty()) {
             Settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
+        }
+        if (cveValidForHours != null) {
+            Settings.setInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
         }
 
         //File Type Analyzer Settings
