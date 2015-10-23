@@ -29,19 +29,20 @@ Configuration: dependency-check Task
 --------------------
 The following properties can be set on the dependency-check-update task.
 
-Property              | Description                        | Default Value
-----------------------|------------------------------------|------------------
-autoUpdate            | Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. | true
-projectName           | The name of the project being scanned. | Dependency-Check
-reportOutputDirectory | The location to write the report(s). Note, this is not used if generating the report as part of a `mvn site` build | 'target'
-failBuildOnCVSS       | Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11 which means since the CVSS scores are 0-10, by default the build will never fail.         | 11
-reportFormat          | The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | HTML
-suppressionFile       | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html) | &nbsp;
-proxyServer           | The Proxy Server.                  | &nbsp;
-proxyPort             | The Proxy Port.                    | &nbsp;
-proxyUsername         | Defines the proxy user name.       | &nbsp;
-proxyPassword         | Defines the proxy password.        | &nbsp;
-connectionTimeout     | The URL Connection Timeout.        | &nbsp;
+Property              | Description                                                                                                                                                                                        | Default Value
+----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------
+autoUpdate            | Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false.                                                                                 | true
+cveValidForHours      | Sets the number of hours to wait before checking for new updates from the NVD                                                                                                                      | 4
+failBuildOnCVSS       | Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11 which means since the CVSS scores are 0-10, by default the build will never fail. | 11
+projectName           | The name of the project being scanned.                                                                                                                                                             | Dependency-Check
+reportFormat          | The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true.                   | HTML
+reportOutputDirectory | The location to write the report(s). Note, this is not used if generating the report as part of a `mvn site` build                                                                                 | 'target'
+suppressionFile       | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html)                                                                                       | &nbsp;
+proxyServer           | The Proxy Server.                                                                                                                                                                                  | &nbsp;
+proxyPort             | The Proxy Port.                                                                                                                                                                                    | &nbsp;
+proxyUsername         | Defines the proxy user name.                                                                                                                                                                       | &nbsp;
+proxyPassword         | Defines the proxy password.                                                                                                                                                                        | &nbsp;
+connectionTimeout     | The URL Connection Timeout.                                                                                                                                                                        | &nbsp;
 
 Analyzer Configuration
 ====================
