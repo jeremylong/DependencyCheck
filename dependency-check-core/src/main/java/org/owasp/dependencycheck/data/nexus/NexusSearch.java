@@ -63,7 +63,7 @@ public class NexusSearch {
         this.rootURL = rootURL;
         try {
             if (null != Settings.getString(Settings.KEYS.PROXY_SERVER)
-                    && Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY)) {
+                    && Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY)) {
                 useProxy = true;
                 LOGGER.debug("Using proxy");
             } else {
