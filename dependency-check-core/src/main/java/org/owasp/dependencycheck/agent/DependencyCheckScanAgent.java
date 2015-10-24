@@ -925,7 +925,7 @@ public class DependencyCheckScanAgent {
         if (nexusUrl != null && !nexusUrl.isEmpty()) {
             Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
         }
-        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY, nexusUsesProxy);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
         if (databaseDriverName != null && !databaseDriverName.isEmpty()) {
             Settings.setString(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
         }
