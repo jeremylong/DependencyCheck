@@ -236,7 +236,7 @@ public final class Settings {
         /**
          * The properties key for using the proxy to reach Nexus.
          */
-        public static final String ANALYZER_NEXUS_PROXY = "analyzer.nexus.proxy";
+        public static final String ANALYZER_NEXUS_USES_PROXY = "analyzer.nexus.proxy";
         /**
          * The properties key for whether the Central analyzer is enabled.
          */
@@ -257,19 +257,6 @@ public final class Settings {
          * The additional configured zip file extensions, if available.
          */
         public static final String ADDITIONAL_ZIP_EXTENSIONS = "extensions.zip";
-        /**
-         * The properties key for whether Test Scope dependencies should be skipped.
-         */
-        public static final String SKIP_TEST_SCOPE = "skip.test.scope";
-        /**
-         * The properties key for whether Runtime Scope dependencies should be skipped.
-         */
-        public static final String SKIP_RUNTIME_SCOPE = "skip.runtime.scope";
-        /**
-         * The properties key for whether Provided Scope dependencies should be skipped.
-         */
-        public static final String SKIP_PROVIDED_SCOPE = "skip.provided.scope";
-
         /**
          * The key to obtain the path to the VFEED data file.
          */
