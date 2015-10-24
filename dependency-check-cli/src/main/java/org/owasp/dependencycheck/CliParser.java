@@ -672,7 +672,7 @@ public final class CliParser {
         // still honor the property if it's set.
         if (line == null || !line.hasOption(ARGUMENT.NEXUS_USES_PROXY)) {
             try {
-                return Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY);
+                return Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY);
             } catch (InvalidSettingException ise) {
                 return true;
             }
