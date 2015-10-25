@@ -139,74 +139,65 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * The Connection Timeout.
      */
-    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "connectionTimeout", defaultValue = "", required = false)
-    private String connectionTimeout = null;
+    private String connectionTimeout;
     /**
      * The path to the suppression file.
      */
-    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "suppressionFile", defaultValue = "", required = false)
-    private String suppressionFile = null;
+    private String suppressionFile;
     /**
      * Flag indicating whether or not to show a summary in the output.
      */
-    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "showSummary", defaultValue = "true", required = false)
     private boolean showSummary = true;
 
     /**
      * Whether or not the Jar Analyzer is enabled.
      */
-    @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "jarAnalyzerEnabled", defaultValue = "true", required = false)
-    private boolean jarAnalyzerEnabled = true;
+    @Parameter(property = "jarAnalyzerEnabled", required = false)
+    private Boolean jarAnalyzerEnabled;
 
     /**
      * Whether or not the Archive Analyzer is enabled.
      */
-    @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "archiveAnalyzerEnabled", defaultValue = "true", required = false)
-    private boolean archiveAnalyzerEnabled = true;
+    @Parameter(property = "archiveAnalyzerEnabled", required = false)
+    private Boolean archiveAnalyzerEnabled;
 
     /**
      * Whether or not the .NET Assembly Analyzer is enabled.
      */
-    @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "assemblyAnalyzerEnabled", defaultValue = "true", required = false)
-    private boolean assemblyAnalyzerEnabled = true;
+    @Parameter(property = "assemblyAnalyzerEnabled", required = false)
+    private Boolean assemblyAnalyzerEnabled;
 
     /**
      * Whether or not the .NET Nuspec Analyzer is enabled.
      */
-    @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "nuspecAnalyzerEnabled", defaultValue = "true", required = false)
-    private boolean nuspecAnalyzerEnabled = true;
+    @Parameter(property = "nuspecAnalyzerEnabled", required = false)
+    private Boolean nuspecAnalyzerEnabled;
 
     /**
      * Whether or not the Central Analyzer is enabled.
      */
-    @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "centralAnalyzerEnabled", defaultValue = "true", required = false)
-    private boolean centralAnalyzerEnabled = true;
+    @Parameter(property = "centralAnalyzerEnabled", required = false)
+    private Boolean centralAnalyzerEnabled;
 
     /**
      * Whether or not the Nexus Analyzer is enabled.
      */
-    @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "nexusAnalyzerEnabled", defaultValue = "true", required = false)
-    private boolean nexusAnalyzerEnabled = true;
+    @Parameter(property = "nexusAnalyzerEnabled", required = false)
+    private Boolean nexusAnalyzerEnabled;
 
     /**
      * The URL of a Nexus server's REST API end point (http://domain/nexus/service/local).
      */
-    @Parameter(property = "nexusUrl", defaultValue = "", required = false)
+    @Parameter(property = "nexusUrl", required = false)
     private String nexusUrl;
     /**
      * Whether or not the configured proxy is used to connect to Nexus.
      */
-    @Parameter(property = "nexusUsesProxy", defaultValue = "true", required = false)
-    private boolean nexusUsesProxy = true;
+    @Parameter(property = "nexusUsesProxy", required = false)
+    private Boolean nexusUsesProxy;
     /**
      * The database connection string.
      */
@@ -352,7 +343,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @throws MojoExecutionException thrown if aggregate is set to true
      */
     private void validateAggregate() throws MojoExecutionException {
-        if (aggregate) {
+        if (aggregate != null && aggregate) {
             final String msg = "Aggregate configuration detected - as of dependency-check 1.2.8 this no longer supported. "
                     + "Please use the aggregate goal instead.";
             throw new MojoExecutionException(msg);
@@ -632,25 +623,34 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
 
         //File Type Analyzer Settings
-        //JAR ANALYZER
-        Settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
-        //NUSPEC ANALYZER
-        Settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
-        //NEXUS ANALYZER
-        Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
-        //NEXUS ANALYZER
-        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
+        if (jarAnalyzerEnabled != null) {
+            Settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
+        }
+        if (nuspecAnalyzerEnabled != null) {
+            Settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
+        }
+        if (centralAnalyzerEnabled != null) {
+            Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
+        }
+        if (nexusAnalyzerEnabled != null) {
+            Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
+        }
         if (nexusUrl != null && !nexusUrl.isEmpty()) {
             Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
         }
-        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY, nexusUsesProxy);
-        //ARCHIVE ANALYZER
-        Settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
+        if (nexusUsesProxy != null) {
+            Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
+        }
+        if (assemblyAnalyzerEnabled != null) {
+            Settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
+        }
+        if (archiveAnalyzerEnabled != null) {
+            Settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
+        }
         if (zipExtensions != null && !zipExtensions.isEmpty()) {
             Settings.setString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
         }
-        //ASSEMBLY ANALYZER
-        Settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
+
         if (pathToMono != null && !pathToMono.isEmpty()) {
             Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
         }
@@ -671,17 +671,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         if (databasePassword != null && !databasePassword.isEmpty()) {
             Settings.setString(Settings.KEYS.DB_PASSWORD, databasePassword);
         }
-        // Data Directory
+
         if (dataDirectory != null && !dataDirectory.isEmpty()) {
             Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
         }
 
-        // Scope Exclusion
-        Settings.setBoolean(Settings.KEYS.SKIP_TEST_SCOPE, skipTestScope);
-        Settings.setBoolean(Settings.KEYS.SKIP_RUNTIME_SCOPE, skipRuntimeScope);
-        Settings.setBoolean(Settings.KEYS.SKIP_PROVIDED_SCOPE, skipProvidedScope);
-
-        // CVE Data Mirroring
         if (cveUrl12Modified != null && !cveUrl12Modified.isEmpty()) {
             Settings.setString(Settings.KEYS.CVE_MODIFIED_12_URL, cveUrl12Modified);
         }
