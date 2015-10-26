@@ -315,7 +315,7 @@ public final class ConnectionFactory {
                 }
                 reader = new InputStreamReader(is, "UTF-8");
                 in = new BufferedReader(reader);
-                final StringBuilder sb = new StringBuilder(2110);
+                final StringBuilder sb = new StringBuilder(is.available());
                 String tmp;
                 while ((tmp = in.readLine()) != null) {
                     sb.append(tmp);
@@ -323,7 +323,10 @@ public final class ConnectionFactory {
                 Statement statement = null;
                 try {
                     statement = conn.createStatement();
-                    statement.execute(sb.toString());
+                    boolean success = statement.execute(sb.toString());
+                    if (!success && statement.getUpdateCount() <= 0) {
+                        throw new DatabaseException(String.format("Unable to upgrade the database schema to %s", schema));
+                    }
                 } catch (SQLException ex) {
                     LOGGER.debug("", ex);
                     throw new DatabaseException("Unable to update database schema", ex);
