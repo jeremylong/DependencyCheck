@@ -994,7 +994,11 @@ public final class CliParser {
      * @return the value of cveValidForHours
      */
     public Integer getCveValidForHours() {
-        return Integer.parseInt(line.getOptionValue(ARGUMENT.CVE_VALID_FOR_HOURS));
+        String v = line.getOptionValue(ARGUMENT.CVE_VALID_FOR_HOURS);
+        if (v != null) {
+            return Integer.parseInt(v);
+        }
+        return null;
     }
 
     /**
