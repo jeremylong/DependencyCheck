@@ -17,11 +17,9 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Driver;
