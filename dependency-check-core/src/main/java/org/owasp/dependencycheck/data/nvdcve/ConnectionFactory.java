@@ -30,6 +30,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
+import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.utils.DBUtils;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
@@ -250,22 +251,15 @@ public final class ConnectionFactory {
      */
     private static void createTables(Connection conn) throws DatabaseException {
         LOGGER.debug("Creating database structure");
-        InputStream is;
-        InputStreamReader reader;
-        BufferedReader in = null;
+        InputStream is = null;
         try {
             is = ConnectionFactory.class.getClassLoader().getResourceAsStream(DB_STRUCTURE_RESOURCE);
-            reader = new InputStreamReader(is, "UTF-8");
-            in = new BufferedReader(reader);
-            final StringBuilder sb = new StringBuilder(2110);
-            String tmp;
-            while ((tmp = in.readLine()) != null) {
-                sb.append(tmp);
-            }
+            final String dbStructure = IOUtils.toString(is, "UTF-8");
+
             Statement statement = null;
             try {
                 statement = conn.createStatement();
-                statement.execute(sb.toString());
+                statement.execute(dbStructure);
             } catch (SQLException ex) {
                 LOGGER.debug("", ex);
                 throw new DatabaseException("Unable to create database statement", ex);
@@ -275,13 +269,7 @@ public final class ConnectionFactory {
         } catch (IOException ex) {
             throw new DatabaseException("Unable to create database schema", ex);
         } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("", ex);
-                }
-            }
+            IOUtils.closeQuietly(is);
         }
     }
 
@@ -303,9 +291,7 @@ public final class ConnectionFactory {
         }
         if ("h2".equalsIgnoreCase(databaseProductName)) {
             LOGGER.debug("Updating database structure");
-            InputStream is;
-            InputStreamReader reader;
-            BufferedReader in = null;
+            InputStream is = null;
             String updateFile = null;
             try {
                 updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, schema);
@@ -313,17 +299,12 @@ public final class ConnectionFactory {
                 if (is == null) {
                     throw new DatabaseException(String.format("Unable to load update file '%s'", updateFile));
                 }
-                reader = new InputStreamReader(is, "UTF-8");
-                in = new BufferedReader(reader);
-                final StringBuilder sb = new StringBuilder(is.available());
-                String tmp;
-                while ((tmp = in.readLine()) != null) {
-                    sb.append(tmp);
-                }
+                final String dbStructureUpdate = IOUtils.toString(is, "UTF-8");
+
                 Statement statement = null;
                 try {
                     statement = conn.createStatement();
-                    boolean success = statement.execute(sb.toString());
+                    boolean success = statement.execute(dbStructureUpdate);
                     if (!success && statement.getUpdateCount() <= 0) {
                         throw new DatabaseException(String.format("Unable to upgrade the database schema to %s", schema));
                     }
@@ -337,13 +318,7 @@ public final class ConnectionFactory {
                 final String msg = String.format("Upgrade SQL file does not exist: %s", updateFile);
                 throw new DatabaseException(msg, ex);
             } finally {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (IOException ex) {
-                        LOGGER.trace("", ex);
-                    }
-                }
+                IOUtils.closeQuietly(is);
             }
         } else {
             LOGGER.error("The database schema must be upgraded to use this version of dependency-check. Please see {} for more information.", UPGRADE_HELP_URL);
