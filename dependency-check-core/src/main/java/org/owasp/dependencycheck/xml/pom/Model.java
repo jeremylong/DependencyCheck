@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.lang3.text.StrLookup;
+import org.apache.commons.lang3.text.StrSubstitutor;
+
 /**
  * A simple pojo to hold data related to a Maven POM file.
  *
@@ -307,33 +310,26 @@ public class Model {
      * @return the interpolated text.
      */
     public static String interpolateString(String text, Properties properties) {
-        final Properties props = properties;
-        if (text == null) {
+        if (null == text || null == properties) {
             return text;
         }
-        if (props == null) {
-            return text;
-        }
-
-        final int pos = text.indexOf("${");
-        if (pos < 0) {
-            return text;
-        }
-        final int end = text.indexOf("}");
-        if (end < pos) {
-            return text;
-        }
-
-        final String propName = text.substring(pos + 2, end);
-        String propValue = interpolateString(props.getProperty(propName), props);
-        if (propValue == null) {
-            propValue = "";
-        }
-        final StringBuilder sb = new StringBuilder(propValue.length() + text.length());
-        sb.append(text.subSequence(0, pos));
-        sb.append(propValue);
-        sb.append(text.substring(end + 1));
-        return interpolateString(sb.toString(), props); //yes yes, this should be a loop...
+        final StrSubstitutor substitutor = new StrSubstitutor(new PropertyLookup(properties));
+        return substitutor.replace(text);
     }
 
+    /**
+     * Utility class that can provide values from a Properties object to a StrSubstitutor.
+     */
+    private static class PropertyLookup extends StrLookup {
+        private final Properties props;
+
+        public PropertyLookup (Properties props) {
+            this.props = props;
+        }
+
+        @Override
+        public String lookup (String key) {
+            return props.getProperty(key);
+        }
+    }
 }
