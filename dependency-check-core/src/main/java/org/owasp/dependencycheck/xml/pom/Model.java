@@ -308,10 +308,7 @@ public class Model {
      */
     public static String interpolateString(String text, Properties properties) {
         final Properties props = properties;
-        if (text == null) {
-            return text;
-        }
-        if (props == null) {
+        if (text == null || props == null) {
             return text;
         }
 
@@ -319,7 +316,7 @@ public class Model {
         if (pos < 0) {
             return text;
         }
-        final int end = text.indexOf("}");
+        final int end = text.indexOf('}', pos + 2);
         if (end < pos) {
             return text;
         }
@@ -330,10 +327,9 @@ public class Model {
             propValue = "";
         }
         final StringBuilder sb = new StringBuilder(propValue.length() + text.length());
-        sb.append(text.subSequence(0, pos));
-        sb.append(propValue);
-        sb.append(text.substring(end + 1));
+        sb.append(text.subSequence(0, pos))
+            .append(propValue)
+            .append(text.substring(end + 1));
         return interpolateString(sb.toString(), props); //yes yes, this should be a loop...
     }
-
 }
