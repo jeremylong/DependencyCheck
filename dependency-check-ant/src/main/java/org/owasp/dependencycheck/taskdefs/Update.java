@@ -409,48 +409,20 @@ public class Update extends Purge {
     @Override
     protected void populateSettings() throws BuildException {
         super.populateSettings();
-        if (proxyServer != null && !proxyServer.isEmpty()) {
-            Settings.setString(Settings.KEYS.PROXY_SERVER, proxyServer);
-        }
-        if (proxyPort != null && !proxyPort.isEmpty()) {
-            Settings.setString(Settings.KEYS.PROXY_PORT, proxyPort);
-        }
-        if (proxyUsername != null && !proxyUsername.isEmpty()) {
-            Settings.setString(Settings.KEYS.PROXY_USERNAME, proxyUsername);
-        }
-        if (proxyPassword != null && !proxyPassword.isEmpty()) {
-            Settings.setString(Settings.KEYS.PROXY_PASSWORD, proxyPassword);
-        }
-        if (connectionTimeout != null && !connectionTimeout.isEmpty()) {
-            Settings.setString(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
-        }
-        if (databaseDriverName != null && !databaseDriverName.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
-        }
-        if (databaseDriverPath != null && !databaseDriverPath.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
-        }
-        if (connectionString != null && !connectionString.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
-        }
-        if (databaseUser != null && !databaseUser.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_USER, databaseUser);
-        }
-        if (databasePassword != null && !databasePassword.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_PASSWORD, databasePassword);
-        }
-        if (cveUrl12Modified != null && !cveUrl12Modified.isEmpty()) {
-            Settings.setString(Settings.KEYS.CVE_MODIFIED_12_URL, cveUrl12Modified);
-        }
-        if (cveUrl20Modified != null && !cveUrl20Modified.isEmpty()) {
-            Settings.setString(Settings.KEYS.CVE_MODIFIED_20_URL, cveUrl20Modified);
-        }
-        if (cveUrl12Base != null && !cveUrl12Base.isEmpty()) {
-            Settings.setString(Settings.KEYS.CVE_SCHEMA_1_2, cveUrl12Base);
-        }
-        if (cveUrl20Base != null && !cveUrl20Base.isEmpty()) {
-            Settings.setString(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
-        }
+        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);
+        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);
+        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUsername);
+        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPassword);
+        Settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
+        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_12_URL, cveUrl12Modified);
+        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_20_URL, cveUrl20Modified);
+        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_1_2, cveUrl12Base);
+        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
         if (cveValidForHours != null) {
             if (cveValidForHours >= 0) {
                 Settings.setInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
