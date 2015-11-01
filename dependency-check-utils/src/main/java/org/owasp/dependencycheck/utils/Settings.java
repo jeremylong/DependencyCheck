@@ -445,6 +445,30 @@ public final class Settings {
     }
 
     /**
+     * Sets a property value only if the value is not null.
+     *
+     * @param key the key for the property
+     * @param value the value for the property
+     */
+    public static void setStringIfNotNull(String key, String value) {
+        if (null != value) {
+            setString(key, value);
+        }
+    }
+
+    /**
+     * Sets a property value only if the value is not null and not empty.
+     *
+     * @param key the key for the property
+     * @param value the value for the property
+     */
+    public static void setStringIfNotEmpty(String key, String value) {
+        if (null != value && !value.isEmpty()) {
+            setString(key, value);
+        }
+    }
+
+    /**
      * Sets a property value.
      *
      * @param key the key for the property
@@ -452,6 +476,18 @@ public final class Settings {
      */
     public static void setBoolean(String key, boolean value) {
         setString(key, Boolean.toString(value));
+    }
+
+    /**
+     * Sets a property value only if the value is not null.
+     *
+     * @param key the key for the property
+     * @param value the value for the property
+     */
+    public static void setBooleanIfNotNull(String key, Boolean value) {
+        if (null != value) {
+            setBoolean(key, value);
+        }
     }
 
     /**
@@ -463,6 +499,18 @@ public final class Settings {
     public static void setInt(String key, int value) {
         localSettings.get().props.setProperty(key, String.valueOf(value));
         LOGGER.debug("Setting: {}='{}'", key, value);
+    }
+
+    /**
+     * Sets a property value only if the value is not null.
+     *
+     * @param key the key for the property
+     * @param value the value for the property
+     */
+    public static void setIntIfNotNull(String key, Integer value) {
+        if (null != value) {
+            setInt(key, value);
+        }
     }
 
     /**

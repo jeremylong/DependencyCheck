@@ -589,9 +589,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 }
             }
         }
-        if (autoUpdate != null) {
-            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
-        }
+        Settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
+
         if (externalReport != null) {
             getLog().warn("The 'externalReport' option was set; this configuration option has been removed. "
                     + "Please update the dependency-check-maven plugin's configuration");
@@ -606,91 +605,39 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             Settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(proxy.getPort()));
             final String userName = proxy.getUsername();
             final String password = proxy.getPassword();
-            if (userName != null) {
-                Settings.setString(Settings.KEYS.PROXY_USERNAME, userName);
-            }
-            if (password != null) {
-                Settings.setString(Settings.KEYS.PROXY_PASSWORD, password);
-            }
-
+            Settings.setStringIfNotNull(Settings.KEYS.PROXY_USERNAME, userName);
+            Settings.setStringIfNotNull(Settings.KEYS.PROXY_PASSWORD, password);
         }
 
-        if (connectionTimeout != null && !connectionTimeout.isEmpty()) {
-            Settings.setString(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
-        }
-        if (suppressionFile != null && !suppressionFile.isEmpty()) {
-            Settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
-        }
+        Settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
+        Settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
 
         //File Type Analyzer Settings
-        if (jarAnalyzerEnabled != null) {
-            Settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
-        }
-        if (nuspecAnalyzerEnabled != null) {
-            Settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
-        }
-        if (centralAnalyzerEnabled != null) {
-            Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
-        }
-        if (nexusAnalyzerEnabled != null) {
-            Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
-        }
-        if (nexusUrl != null && !nexusUrl.isEmpty()) {
-            Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
-        }
-        if (nexusUsesProxy != null) {
-            Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
-        }
-        if (assemblyAnalyzerEnabled != null) {
-            Settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
-        }
-        if (archiveAnalyzerEnabled != null) {
-            Settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
-        }
-        if (zipExtensions != null && !zipExtensions.isEmpty()) {
-            Settings.setString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
-        }
-
-        if (pathToMono != null && !pathToMono.isEmpty()) {
-            Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
-        }
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
+        Settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
+        Settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
+        Settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
 
         //Database configuration
-        if (databaseDriverName != null && !databaseDriverName.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
-        }
-        if (databaseDriverPath != null && !databaseDriverPath.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
-        }
-        if (connectionString != null && !connectionString.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
-        }
-        if (databaseUser != null && !databaseUser.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_USER, databaseUser);
-        }
-        if (databasePassword != null && !databasePassword.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_PASSWORD, databasePassword);
-        }
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
 
-        if (dataDirectory != null && !dataDirectory.isEmpty()) {
-            Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
-        }
+        Settings.setStringIfNotEmpty(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
 
-        if (cveUrl12Modified != null && !cveUrl12Modified.isEmpty()) {
-            Settings.setString(Settings.KEYS.CVE_MODIFIED_12_URL, cveUrl12Modified);
-        }
-        if (cveUrl20Modified != null && !cveUrl20Modified.isEmpty()) {
-            Settings.setString(Settings.KEYS.CVE_MODIFIED_20_URL, cveUrl20Modified);
-        }
-        if (cveUrl12Base != null && !cveUrl12Base.isEmpty()) {
-            Settings.setString(Settings.KEYS.CVE_SCHEMA_1_2, cveUrl12Base);
-        }
-        if (cveUrl20Base != null && !cveUrl20Base.isEmpty()) {
-            Settings.setString(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
-        }
-        if (cveValidForHours != null) {
-            Settings.setInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
-        }
+        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_12_URL, cveUrl12Modified);
+        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_20_URL, cveUrl20Modified);
+        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_1_2, cveUrl12Base);
+        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
+        Settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
     }
 
     /**
