@@ -507,6 +507,63 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             </build>
         </profile>
         <profile>
+            <id>Postgresql-IntegrationTest</id>
+            <activation>
+                <property>
+                    <name>postgresql</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                    <version>9.4-1204-jdbc42</version>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <systemProperties>
+                                <property>
+                                    <name>data.driver_path</name>
+                                    <value>${driver_path}</value>
+                                </property>
+                                <property>
+                                    <name>data.driver_name</name>
+                                    <value>${driver_name}</value>
+                                </property>
+                                <property>
+                                    <name>data.connection_string</name>
+                                    <value>${connection_string}</value>
+                                </property>
+                            </systemProperties>
+                            <includes>
+                                <include>**/*MySQLTest.java</include>
+                            </includes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <!-- The following profile adds additional
             dependencies that are only used during testing.
             Additionally, these are only added when using "allTests" to
