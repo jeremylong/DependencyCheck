@@ -307,27 +307,6 @@ public class SuppressionRuleTest {
     }
 
     /**
-     * Test of countCharacter method, of class SuppressionRule.
-     */
-    @Test
-    public void testCountCharacter() {
-        String str = "cpe:/a:microsoft:.net_framework:4.5";
-        char c = ':';
-        SuppressionRule instance = new SuppressionRule();
-        int expResult = 4;
-        int result = instance.countCharacter(str, c);
-        assertEquals(expResult, result);
-        str = "::";
-        expResult = 2;
-        result = instance.countCharacter(str, c);
-        assertEquals(expResult, result);
-        str = "these are not the characters you are looking for";
-        expResult = 0;
-        result = instance.countCharacter(str, c);
-        assertEquals(expResult, result);
-    }
-
-    /**
      * Test of identifierMatches method, of class SuppressionRule.
      */
     @Test
