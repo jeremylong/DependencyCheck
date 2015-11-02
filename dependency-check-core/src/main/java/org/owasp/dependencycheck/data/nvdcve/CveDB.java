@@ -392,7 +392,7 @@ public class CveDB {
                 if (cwe != null) {
                     final String name = CweDB.getCweName(cwe);
                     if (name != null) {
-                        cwe += " " + name;
+                        cwe += ' ' + name;
                     }
                 }
                 final int cveId = rsV.getInt(1);

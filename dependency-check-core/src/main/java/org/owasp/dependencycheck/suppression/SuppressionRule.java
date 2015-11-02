@@ -442,43 +442,43 @@ public class SuppressionRule {
         final StringBuilder sb = new StringBuilder();
         sb.append("SuppressionRule{");
         if (filePath != null) {
-            sb.append("filePath=").append(filePath).append(",");
+            sb.append("filePath=").append(filePath).append(',');
         }
         if (sha1 != null) {
-            sb.append("sha1=").append(sha1).append(",");
+            sb.append("sha1=").append(sha1).append(',');
         }
         if (gav != null) {
-            sb.append("gav=").append(gav).append(",");
+            sb.append("gav=").append(gav).append(',');
         }
         if (cpe != null && !cpe.isEmpty()) {
             sb.append("cpe={");
             for (PropertyType pt : cpe) {
-                sb.append(pt).append(",");
+                sb.append(pt).append(',');
             }
-            sb.append("}");
+            sb.append('}');
         }
         if (cwe != null && !cwe.isEmpty()) {
             sb.append("cwe={");
             for (String s : cwe) {
-                sb.append(s).append(",");
+                sb.append(s).append(',');
             }
-            sb.append("}");
+            sb.append('}');
         }
         if (cve != null && !cve.isEmpty()) {
             sb.append("cve={");
             for (String s : cve) {
-                sb.append(s).append(",");
+                sb.append(s).append(',');
             }
-            sb.append("}");
+            sb.append('}');
         }
         if (cvssBelow != null && !cvssBelow.isEmpty()) {
             sb.append("cvssBelow={");
             for (Float s : cvssBelow) {
-                sb.append(s).append(",");
+                sb.append(s).append(',');
             }
-            sb.append("}");
+            sb.append('}');
         }
-        sb.append("}");
+        sb.append('}');
         return sb.toString();
     }
 }

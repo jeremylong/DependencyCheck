@@ -114,10 +114,10 @@ public class NvdCve12Handler extends DefaultHandler {
                  in the nvd cve 2.0. */
                 String cpe = "cpe:/a:" + vendor + ":" + product;
                 if (num != null) {
-                    cpe += ":" + num;
+                    cpe += ':' + num;
                 }
                 if (edition != null) {
-                    cpe += ":" + edition;
+                    cpe += ':' + edition;
                 }
                 final VulnerableSoftware vs = new VulnerableSoftware();
                 vs.setCpe(cpe);

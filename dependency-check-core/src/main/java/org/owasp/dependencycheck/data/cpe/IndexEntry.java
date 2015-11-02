@@ -48,7 +48,7 @@ public class IndexEntry implements Serializable {
      */
     public String getDocumentId() {
         if (documentId == null && vendor != null && product != null) {
-            documentId = vendor + ":" + product;
+            documentId = vendor + ':' + product;
         }
         return documentId;
     }
