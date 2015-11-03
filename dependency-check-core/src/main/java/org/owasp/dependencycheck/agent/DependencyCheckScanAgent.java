@@ -840,8 +840,7 @@ public class DependencyCheckScanAgent {
      */
     private Engine executeDependencyCheck() throws DatabaseException {
         populateSettings();
-        Engine engine = null;
-        engine = new Engine();
+        final Engine engine = new Engine();
         engine.setDependencies(this.dependencies);
         engine.analyzeDependencies();
         return engine;

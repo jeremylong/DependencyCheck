@@ -51,7 +51,7 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
      */
     public boolean canRun() {
         String version = System.getProperty("java.version");
-        int length = version.indexOf(".", version.indexOf(".") + 1);
+        int length = version.indexOf('.', version.indexOf('.') + 1);
         version = version.substring(0, length);
 
         double v = Double.parseDouble(version);
