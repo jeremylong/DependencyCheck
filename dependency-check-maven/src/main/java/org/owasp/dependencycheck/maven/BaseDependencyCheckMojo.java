@@ -165,6 +165,47 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private Boolean archiveAnalyzerEnabled;
 
     /**
+     * Sets whether the Python Distribution Analyzer will be used.
+     */
+    @Parameter(property = "pyDistributionAnalyzerEnabled", required = false)
+    private Boolean pyDistributionAnalyzerEnabled;
+    /**
+     * Sets whether the Python Package Analyzer will be used.
+     */
+    @Parameter(property = "pyPackageAnalyzerEnabled", required = false)
+    private Boolean pyPackageAnalyzerEnabled;
+    /**
+     * Sets whether the Ruby Gemspec Analyzer will be used.
+     */
+    @Parameter(property = "rubygemsAnalyzerEnabled", required = false)
+    private Boolean rubygemsAnalyzerEnabled;
+    /**
+     * Sets whether or not the openssl Analyzer should be used.
+     */
+    @Parameter(property = "opensslAnalyzerEnabled", required = false)
+    private Boolean opensslAnalyzerEnabled;
+    /**
+     * Sets whether or not the CMake Analyzer should be used.
+     */
+    @Parameter(property = "cmakeAnalyzerEnabled", required = false)
+    private Boolean cmakeAnalyzerEnabled;
+    /**
+     * Sets whether or not the autoconf Analyzer should be used.
+     */
+    @Parameter(property = "autoconfAnalyzerEnabled", required = false)
+    private Boolean autoconfAnalyzerEnabled;
+    /**
+     * Sets whether or not the PHP Composer Lock File Analyzer should be used.
+     */
+    @Parameter(property = "composerAnalyzerEnabled", required = false)
+    private Boolean composerAnalyzerEnabled;
+    /**
+     * Sets whether or not the Node.js Analyzer should be used.
+     */
+    @Parameter(property = "nodeAnalyzerEnabled", required = false)
+    private Boolean nodeAnalyzerEnabled;
+
+    /**
      * Whether or not the .NET Assembly Analyzer is enabled.
      */
     @Parameter(property = "assemblyAnalyzerEnabled", required = false)
@@ -624,6 +665,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         Settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
         Settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
 
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, pyDistributionAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED, pyPackageAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, rubygemsAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OPENSSL_ENABLED, opensslAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CMAKE_ENABLED, cmakeAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, autoconfAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
+
         //Database configuration
         Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
         Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
@@ -638,6 +688,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         Settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_1_2, cveUrl12Base);
         Settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
         Settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
+
     }
 
     /**
