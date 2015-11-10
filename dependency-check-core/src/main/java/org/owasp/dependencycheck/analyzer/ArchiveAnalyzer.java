@@ -26,7 +26,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -416,11 +415,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         FileOutputStream fos = null;
         try {
             final File parent = file.getParentFile();
-            if (!parent.isDirectory()) {
-                if (!parent.mkdirs()) {
-                    final String msg = String.format("Unable to build directory '%s'.", parent.getAbsolutePath());
-                    throw new AnalysisException(msg);
-                }
+            if (!parent.isDirectory() && !parent.mkdirs()) {
+                final String msg = String.format("Unable to build directory '%s'.", parent.getAbsolutePath());
+                throw new AnalysisException(msg);
             }
             fos = new FileOutputStream(file);
             IOUtils.copy(input, fos);

@@ -73,7 +73,7 @@ public class NvdCveAnalyzer implements Analyzer {
      * @return true or false.
      */
     public boolean isOpen() {
-        return (cveDB != null);
+        return cveDB != null;
     }
 
     /**

@@ -104,7 +104,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
          */
         boolean retval = false;
         try {
-            if ((!DEFAULT_URL.equals(Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL)))
+            if (!DEFAULT_URL.equals(Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL))
                     && Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED)) {
                 LOGGER.info("Enabling Nexus analyzer");
                 retval = true;
