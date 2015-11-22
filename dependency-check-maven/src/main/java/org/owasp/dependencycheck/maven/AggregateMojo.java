@@ -174,7 +174,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                         }
                     }
                 }
-                Set<MavenProject> addedDescendants = new HashSet<MavenProject>();
+                final Set<MavenProject> addedDescendants = new HashSet<MavenProject>();
                 for (MavenProject dec : descendants) {
                     for (String mod : dec.getModules()) {
                         try {
