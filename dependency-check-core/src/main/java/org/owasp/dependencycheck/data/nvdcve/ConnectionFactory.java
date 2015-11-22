@@ -27,7 +27,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.utils.DBUtils;
 import org.owasp.dependencycheck.utils.DependencyVersion;
@@ -302,7 +301,7 @@ public final class ConnectionFactory {
                 Statement statement = null;
                 try {
                     statement = conn.createStatement();
-                    boolean success = statement.execute(dbStructureUpdate);
+                    final boolean success = statement.execute(dbStructureUpdate);
                     if (!success && statement.getUpdateCount() <= 0) {
                         throw new DatabaseException(String.format("Unable to upgrade the database schema to %s", schema));
                     }

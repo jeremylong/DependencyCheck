@@ -182,13 +182,11 @@ public final class ExtractionUtil {
             while ((entry = input.getNextEntry()) != null) {
                 if (entry.isDirectory()) {
                     final File dir = new File(destination, entry.getName());
-                    if (!dir.exists()) {
-                        if (!dir.mkdirs()) {
-                            final String msg = String.format(
-                                    "Unable to create directory '%s'.",
-                                    dir.getAbsolutePath());
-                            throw new AnalysisException(msg);
-                        }
+                    if (!dir.exists() && !dir.mkdirs()) {
+                        final String msg = String.format(
+                                "Unable to create directory '%s'.",
+                                dir.getAbsolutePath());
+                        throw new AnalysisException(msg);
                     }
                 } else {
                     extractFile(input, destination, filter, entry);
@@ -264,13 +262,11 @@ public final class ExtractionUtil {
     private static void createParentFile(final File file)
             throws ExtractionException {
         final File parent = file.getParentFile();
-        if (!parent.isDirectory()) {
-            if (!parent.mkdirs()) {
-                final String msg = String.format(
-                        "Unable to build directory '%s'.",
-                        parent.getAbsolutePath());
-                throw new ExtractionException(msg);
-            }
+        if (!parent.isDirectory() && !parent.mkdirs()) {
+            final String msg = String.format(
+                    "Unable to build directory '%s'.",
+                    parent.getAbsolutePath());
+            throw new ExtractionException(msg);
         }
     }
 }
