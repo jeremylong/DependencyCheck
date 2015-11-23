@@ -137,7 +137,7 @@ public class CpeUpdater extends BaseUpdater implements CachedWebDataSource {
      */
     private boolean updateNeeded() {
         final long now = System.currentTimeMillis();
-        final int days = Settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS, 30);
+        final int days = Settings.getInt(Settings.KEYS.CPE_MODIFIED_VALID_FOR_DAYS, 30);
         long timestamp = 0;
         final String ts = getProperties().getProperty(LAST_CPE_UPDATE);
         if (ts != null && ts.matches("^[0-9]+$")) {

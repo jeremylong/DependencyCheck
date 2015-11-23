@@ -32,10 +32,10 @@ may be the cvedUrl properties, which can be used to host a mirror of the NVD wit
 
 Property             | Description                                                                                           | Default Value
 ---------------------|-------------------------------------------------------------------------------------------------------|------------------
-cveUrl12Modified     | URL for the modified CVE 1.2.                                                                         | http://nvd.nist.gov/download/nvdcve-modified.xml
-cveUrl20Modified     | URL for the modified CVE 2.0.                                                                         | http://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-modified.xml
-cveUrl12Base         | Base URL for each year's CVE 1.2, the %d will be replaced with the year.                              | http://nvd.nist.gov/download/nvdcve-%d.xml
-cveUrl20Base         | Base URL for each year's CVE 2.0, the %d will be replaced with the year.                              | http://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-%d.xml
+cveUrl12Modified     | URL for the modified CVE 1.2.                                                                         | https://nvd.nist.gov/download/nvdcve-Modified.xml.gz
+cveUrl20Modified     | URL for the modified CVE 2.0.                                                                         | https://nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-Modified.xml.gz
+cveUrl12Base         | Base URL for each year's CVE 1.2, the %d will be replaced with the year.                              | https://nvd.nist.gov/download/nvdcve-%d.xml.gz
+cveUrl20Base         | Base URL for each year's CVE 2.0, the %d will be replaced with the year.                              | https://nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-%d.xml.gz
 dataDirectory        | Data directory that is used to store the local copy of the NVD. This should generally not be changed. | data
 databaseDriverName   | The name of the database driver. Example: org.h2.Driver.                                              | &nbsp;
 databaseDriverPath   | The path to the database driver JAR file; only used if the driver is not in the class path.           | &nbsp;

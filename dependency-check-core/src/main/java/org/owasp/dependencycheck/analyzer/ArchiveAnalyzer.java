@@ -114,8 +114,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     static {
         final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
         if (additionalZipExt != null) {
-            final Set<String> ext = new HashSet<String>(Collections.singletonList(additionalZipExt));
-            ZIPPABLES.addAll(ext);
+            String[] ext = additionalZipExt.split("\\s*,\\s*");
+            Collections.addAll(ZIPPABLES, ext);
         }
         EXTENSIONS.addAll(ZIPPABLES);
     }
@@ -415,11 +415,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         FileOutputStream fos = null;
         try {
             final File parent = file.getParentFile();
-            if (!parent.isDirectory()) {
-                if (!parent.mkdirs()) {
-                    final String msg = String.format("Unable to build directory '%s'.", parent.getAbsolutePath());
-                    throw new AnalysisException(msg);
-                }
+            if (!parent.isDirectory() && !parent.mkdirs()) {
+                final String msg = String.format("Unable to build directory '%s'.", parent.getAbsolutePath());
+                throw new AnalysisException(msg);
             }
             fos = new FileOutputStream(file);
             IOUtils.copy(input, fos);

@@ -14,15 +14,17 @@ The following properties can be set on the dependency-check-maven plugin.
 
 Property             | Description                        | Default Value
 ---------------------|------------------------------------|------------------
-aggregate            | Deprecated - use the aggregate goal instead. | &nbsp;
 autoUpdate           | Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. | true
-outputDirectory      | The location to write the report(s). Note, this is not used if generating the report as part of a `mvn site` build | 'target'
+cveValidForHours     | Sets the number of hours to wait before checking for new updates from the NVD.                                     | 4
 failBuildOnCVSS      | Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11 which means since the CVSS scores are 0-10, by default the build will never fail.         | 11
 format               | The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | HTML
-suppressionFile      | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html) | &nbsp;
-skipTestScope        | Should be skip analysis for artifacts with Test Scope | true
+name                 | The name of the report in the site | dependency-check or dependency-check:aggregate
+outputDirectory      | The location to write the report(s). Note, this is not used if generating the report as part of a `mvn site` build | 'target'
+skip                 | Skips the dependency-check analysis                       | false
+skipTestScope        | Should be skip analysis for artifacts with Test Scope     | true
 skipProvidedScope    | Should be skip analysis for artifacts with Provided Scope | false
-skipRuntimeScope     | Should be skip analysis for artifacts with Runtime Scope | false
+skipRuntimeScope     | Should be skip analysis for artifacts with Runtime Scope  | false
+suppressionFile      | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html) | &nbsp;
 
 Analyzer Configuration
 ====================
@@ -32,18 +34,26 @@ Note, that specific analyzers will automatically disable themselves if no file
 types that they support are detected - so specifically disabling them may not
 be needed.
 
-Property                | Description                                                               | Default Value
-------------------------|---------------------------------------------------------------------------|------------------
-archiveAnalyzerEnabled  | Sets whether the Archive Analyzer will be used.                           | true
-zipExtensions           | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
-jarAnalyzer             | Sets whether Jar Analyzer will be used.                                   | true
-centralAnalyzerEnabled  | Sets whether Central Analyzer will be used. If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer (see below). | true
-nexusAnalyzerEnabled    | Sets whether Nexus Analyzer will be used. This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
-nexusUrl                | Defines the Nexus Server's web service end point (example http://domain.enterprise/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
-nexusUsesProxy          | Whether or not the defined proxy should be used when connecting to Nexus. | true
-nuspecAnalyzerEnabled   | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.          | true
-assemblyAnalyzerEnabled | Sets whether or not the .NET Assembly Analyzer should be used.            | true
-pathToMono              | The path to Mono for .NET assembly analysis on non-windows systems.       | &nbsp;
+Property                      | Description                                                               | Default Value
+------------------------------|---------------------------------------------------------------------------|------------------
+archiveAnalyzerEnabled        | Sets whether the Archive Analyzer will be used.                           | true
+zipExtensions                 | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
+jarAnalyzer                   | Sets whether Jar Analyzer will be used.                                   | true
+centralAnalyzerEnabled        | Sets whether Central Analyzer will be used. If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer (see below). | true
+nexusAnalyzerEnabled          | Sets whether Nexus Analyzer will be used. This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
+nexusUrl                      | Defines the Nexus Server's web service end point (example http://domain.enterprise/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
+nexusUsesProxy                | Whether or not the defined proxy should be used when connecting to Nexus. | true
+pyDistributionAnalyzerEnabled | Sets whether the Python Distribution Analyzer will be used.               | true
+pyPackageAnalyzerEnabled      | Sets whether the Python Package Analyzer will be used.                    | true
+rubygemsAnalyzerEnabled       | Sets whether the Ruby Gemspec Analyzer will be used.                      | true
+opensslAnalyzerEnabled        | Sets whether or not the openssl Analyzer should be used.                  | true
+cmakeAnalyzerEnabled          | Sets whether or not the CMake Analyzer should be used.                    | true
+autoconfAnalyzerEnabled       | Sets whether or not the autoconf Analyzer should be used.                 | true
+composerAnalyzerEnabled       | Sets whether or not the PHP Composer Lock File Analyzer should be used.   | true
+nodeAnalyzerEnabled           | Sets whether or not the Node.js Analyzer should be used.                  | true
+nuspecAnalyzerEnabled         | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.          | true
+assemblyAnalyzerEnabled       | Sets whether or not the .NET Assembly Analyzer should be used.            | true
+pathToMono                    | The path to Mono for .NET assembly analysis on non-windows systems.       | &nbsp;
 
 Advanced Configuration
 ====================
@@ -52,10 +62,10 @@ may be the cvedUrl properties, which can be used to host a mirror of the NVD wit
 
 Property             | Description                                                                                 | Default Value
 ---------------------|---------------------------------------------------------------------------------------------|------------------
-cveUrl12Modified     | URL for the modified CVE 1.2.                                                               | http://nvd.nist.gov/download/nvdcve-modified.xml
-cveUrl20Modified     | URL for the modified CVE 2.0.                                                               | http://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-modified.xml
-cveUrl12Base         | Base URL for each year's CVE 1.2, the %d will be replaced with the year.                    | http://nvd.nist.gov/download/nvdcve-%d.xml
-cveUrl20Base         | Base URL for each year's CVE 2.0, the %d will be replaced with the year.                    | http://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-%d.xml
+cveUrl12Modified     | URL for the modified CVE 1.2.                                                               | https://nvd.nist.gov/download/nvdcve-Modified.xml.gz
+cveUrl20Modified     | URL for the modified CVE 2.0.                                                               | https://nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-Modified.xml.gz
+cveUrl12Base         | Base URL for each year's CVE 1.2, the %d will be replaced with the year.                    | https://nvd.nist.gov/download/nvdcve-%d.xml.gz
+cveUrl20Base         | Base URL for each year's CVE 2.0, the %d will be replaced with the year.                    | https://nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-%d.xml.gz
 connectionTimeout    | Sets the URL Connection Timeout used when downloading external data.                        | &nbsp;
 dataDirectory        | Sets the data directory to hold SQL CVEs contents. This should generally not be changed.    | &nbsp;
 databaseDriverName   | The name of the database driver. Example: org.h2.Driver.                                    | &nbsp;

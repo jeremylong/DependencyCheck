@@ -16,4 +16,4 @@
  * Copyright (c) 2015 Wei Ma. All Rights Reserved.
  */
 
-rootProject.name = 'dependency-check'
+rootProject.name = 'dependency-check-gradle'

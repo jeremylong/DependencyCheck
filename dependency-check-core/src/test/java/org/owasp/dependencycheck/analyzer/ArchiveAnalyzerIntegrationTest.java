@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.data.cpe.AbstractDatabaseTestCase;
+import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -32,7 +32,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long
  */
-public class ArchiveAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
+public class ArchiveAnalyzerIntegrationTest extends BaseDBTestCase {
 
     /**
      * Test of getSupportedExtensions method, of class ArchiveAnalyzer.

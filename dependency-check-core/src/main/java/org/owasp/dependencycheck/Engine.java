@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -174,8 +175,7 @@ public class Engine implements FileFilter {
     public List<Dependency> scan(String[] paths) {
         final List<Dependency> deps = new ArrayList<Dependency>();
         for (String path : paths) {
-            final File file = new File(path);
-            final List<Dependency> d = scan(file);
+            final List<Dependency> d = scan(path);
             if (d != null) {
                 deps.addAll(d);
             }
@@ -215,33 +215,14 @@ public class Engine implements FileFilter {
     }
 
     /**
-     * Scans a list of files or directories. If a directory is specified, it will be scanned recursively. Any dependencies
+     * Scans a collection of files or directories. If a directory is specified, it will be scanned recursively. Any dependencies
      * identified are added to the dependency collection.
      *
      * @param files a set of paths to files or directories to be analyzed
      * @return the list of dependencies scanned
      * @since v0.3.2.5
      */
-    public List<Dependency> scan(Set<File> files) {
-        final List<Dependency> deps = new ArrayList<Dependency>();
-        for (File file : files) {
-            final List<Dependency> d = scan(file);
-            if (d != null) {
-                deps.addAll(d);
-            }
-        }
-        return deps;
-    }
-
-    /**
-     * Scans a list of files or directories. If a directory is specified, it will be scanned recursively. Any dependencies
-     * identified are added to the dependency collection.
-     *
-     * @param files a set of paths to files or directories to be analyzed
-     * @return the list of dependencies scanned
-     * @since v0.3.2.5
-     */
-    public List<Dependency> scan(List<File> files) {
+    public List<Dependency> scan(Collection<File> files) {
         final List<Dependency> deps = new ArrayList<Dependency>();
         for (File file : files) {
             final List<Dependency> d = scan(file);

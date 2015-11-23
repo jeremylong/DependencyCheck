@@ -19,7 +19,7 @@ package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.apache.lucene.index.CorruptIndexException;
@@ -28,7 +28,7 @@ import org.junit.Assert;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
-import org.owasp.dependencycheck.data.cpe.AbstractDatabaseTestCase;
+import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.data.cpe.IndexEntry;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -38,7 +38,7 @@ import org.owasp.dependencycheck.dependency.Identifier;
  *
  * @author Jeremy Long
  */
-public class CPEAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
+public class CPEAnalyzerIntegrationTest extends BaseDBTestCase {
 
     /**
      * Tests of buildSearch of class CPEAnalyzer.
@@ -49,11 +49,9 @@ public class CPEAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
      */
     @Test
     public void testBuildSearch() throws IOException, CorruptIndexException, ParseException {
-        Set<String> productWeightings = new HashSet<String>(1);
-        productWeightings.add("struts2");
+        Set<String> productWeightings = Collections.singleton("struts2");
 
-        Set<String> vendorWeightings = new HashSet<String>(1);
-        vendorWeightings.add("apache");
+        Set<String> vendorWeightings = Collections.singleton("apache");
 
         String vendor = "apache software foundation";
         String product = "struts 2 core";
@@ -238,11 +236,9 @@ public class CPEAnalyzerIntegrationTest extends AbstractDatabaseTestCase {
         CPEAnalyzer instance = new CPEAnalyzer();
         instance.open();
 
-        Set<String> productWeightings = new HashSet<String>(1);
-        productWeightings.add("struts2");
+        Set<String> productWeightings = Collections.singleton("struts2");
 
-        Set<String> vendorWeightings = new HashSet<String>(1);
-        vendorWeightings.add("apache");
+        Set<String> vendorWeightings = Collections.singleton("apache");
 
         List<IndexEntry> result = instance.searchCPE(vendor, product, productWeightings, vendorWeightings);
         instance.close();

@@ -29,8 +29,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -74,9 +76,17 @@ public class CveDB {
      */
     public CveDB() throws DatabaseException {
         super();
-        statementBundle = ResourceBundle.getBundle("data/dbStatements");
         try {
             open();
+            try {
+                final String databaseProductName = conn.getMetaData().getDatabaseProductName();
+                LOGGER.debug("Database dialect: {}", databaseProductName);
+                final Locale dbDialect = new Locale(databaseProductName);
+                statementBundle = ResourceBundle.getBundle("data/dbStatements", dbDialect);
+            } catch (SQLException se) {
+                LOGGER.warn("Problem loading database specific dialect!", se);
+                statementBundle = ResourceBundle.getBundle("data/dbStatements");
+            }
             databaseProperties = new DatabaseProperties(this);
         } catch (DatabaseException ex) {
             throw ex;
@@ -253,82 +263,44 @@ public class CveDB {
     }
 
     /**
-     * Saves a set of properties to the database.
-     *
-     * @param props a collection of properties
-     */
-    void saveProperties(Properties props) {
-        PreparedStatement updateProperty = null;
-        PreparedStatement insertProperty = null;
-        try {
-            try {
-                updateProperty = getConnection().prepareStatement(statementBundle.getString("UPDATE_PROPERTY"));
-                insertProperty = getConnection().prepareStatement(statementBundle.getString("INSERT_PROPERTY"));
-            } catch (SQLException ex) {
-                LOGGER.warn("Unable to save properties to the database");
-                LOGGER.debug("Unable to save properties to the database", ex);
-                return;
-            }
-            for (Entry<Object, Object> entry : props.entrySet()) {
-                final String key = entry.getKey().toString();
-                final String value = entry.getValue().toString();
-                try {
-                    updateProperty.setString(1, value);
-                    updateProperty.setString(2, key);
-                    if (updateProperty.executeUpdate() == 0) {
-                        insertProperty.setString(1, key);
-                        insertProperty.setString(2, value);
-                    }
-                } catch (SQLException ex) {
-                    LOGGER.warn("Unable to save property '{}' with a value of '{}' to the database", key, value);
-                    LOGGER.debug("", ex);
-                }
-            }
-        } finally {
-            DBUtils.closeStatement(updateProperty);
-            DBUtils.closeStatement(insertProperty);
-        }
-    }
-
-    /**
      * Saves a property to the database.
      *
      * @param key the property key
      * @param value the property value
      */
     void saveProperty(String key, String value) {
-        PreparedStatement updateProperty = null;
-        PreparedStatement insertProperty = null;
         try {
             try {
-                updateProperty = getConnection().prepareStatement(statementBundle.getString("UPDATE_PROPERTY"));
-            } catch (SQLException ex) {
-                LOGGER.warn("Unable to save properties to the database");
-                LOGGER.debug("Unable to save properties to the database", ex);
-                return;
-            }
-            try {
-                updateProperty.setString(1, value);
-                updateProperty.setString(2, key);
-                if (updateProperty.executeUpdate() == 0) {
-                    try {
-                        insertProperty = getConnection().prepareStatement(statementBundle.getString("INSERT_PROPERTY"));
-                    } catch (SQLException ex) {
-                        LOGGER.warn("Unable to save properties to the database");
-                        LOGGER.debug("Unable to save properties to the database", ex);
-                        return;
-                    }
-                    insertProperty.setString(1, key);
-                    insertProperty.setString(2, value);
-                    insertProperty.execute();
+                final PreparedStatement mergeProperty = getConnection().prepareStatement(statementBundle.getString("MERGE_PROPERTY"));
+                try {
+                    mergeProperty.setString(1, key);
+                    mergeProperty.setString(2, value);
+                    mergeProperty.executeUpdate();
+                } finally {
+                    DBUtils.closeStatement(mergeProperty);
                 }
-            } catch (SQLException ex) {
-                LOGGER.warn("Unable to save property '{}' with a value of '{}' to the database", key, value);
-                LOGGER.debug("", ex);
+            } catch (MissingResourceException mre) {
+                // No Merge statement, so doing an Update/Insert...
+                PreparedStatement updateProperty = null;
+                PreparedStatement insertProperty = null;
+                try {
+                    updateProperty = getConnection().prepareStatement(statementBundle.getString("UPDATE_PROPERTY"));
+                    updateProperty.setString(1, value);
+                    updateProperty.setString(2, key);
+                    if (updateProperty.executeUpdate() == 0) {
+                        insertProperty = getConnection().prepareStatement(statementBundle.getString("INSERT_PROPERTY"));
+                        insertProperty.setString(1, key);
+                        insertProperty.setString(2, value);
+                        insertProperty.executeUpdate();
+                    }
+                } finally {
+                    DBUtils.closeStatement(updateProperty);
+                    DBUtils.closeStatement(insertProperty);
+                }
             }
-        } finally {
-            DBUtils.closeStatement(updateProperty);
-            DBUtils.closeStatement(insertProperty);
+        } catch (SQLException ex) {
+            LOGGER.warn("Unable to save property '{}' with a value of '{}' to the database", key, value);
+            LOGGER.debug("", ex);
         }
     }
 
@@ -420,7 +392,7 @@ public class CveDB {
                 if (cwe != null) {
                     final String name = CweDB.getCweName(cwe);
                     if (name != null) {
-                        cwe += " " + name;
+                        cwe += ' ' + name;
                     }
                 }
                 final int cveId = rsV.getInt(1);

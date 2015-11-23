@@ -78,6 +78,32 @@ public class SettingsTest extends BaseTest {
     }
 
     /**
+     * Test of setStringIfNotNull method, of class Settings.
+     */
+    @Test
+    public void testSetStringIfNotNull() {
+        String key = "nullableProperty";
+        String value = "someValue";
+        Settings.setString(key, value);
+        Settings.setStringIfNotNull(key, null); // NO-OP
+        String expResults = Settings.getString(key);
+        Assert.assertEquals(expResults, value);
+    }
+
+    /**
+     * Test of setStringIfNotNull method, of class Settings.
+     */
+    @Test
+    public void testSetStringIfNotEmpty() {
+        String key = "optionalProperty";
+        String value = "someValue";
+        Settings.setString(key, value);
+        Settings.setStringIfNotEmpty(key, ""); // NO-OP
+        String expResults = Settings.getString(key);
+        Assert.assertEquals(expResults, value);
+    }
+
+    /**
      * Test of getString method, of class Settings.
      */
     @Test

@@ -18,7 +18,7 @@
 package org.owasp.dependencycheck.data.update;
 
 import org.junit.Test;
-import org.owasp.dependencycheck.data.nvdcve.BaseDBTestCase;
+import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;

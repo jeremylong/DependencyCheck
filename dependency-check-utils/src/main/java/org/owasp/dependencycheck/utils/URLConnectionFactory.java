@@ -52,7 +52,6 @@ public final class URLConnectionFactory {
     @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE", justification = "Just being extra safe")
     public static HttpURLConnection createHttpURLConnection(URL url) throws URLConnectionFailureException {
         HttpURLConnection conn = null;
-        Proxy proxy;
         final String proxyUrl = Settings.getString(Settings.KEYS.PROXY_SERVER);
         try {
             if (proxyUrl != null) {
@@ -74,7 +73,7 @@ public final class URLConnectionFactory {
                     Authenticator.setDefault(auth);
                 }
 
-                proxy = new Proxy(Proxy.Type.HTTP, address);
+                final Proxy proxy = new Proxy(Proxy.Type.HTTP, address);
                 conn = (HttpURLConnection) url.openConnection(proxy);
             } else {
                 conn = (HttpURLConnection) url.openConnection();

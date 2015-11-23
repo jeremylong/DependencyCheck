@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
+import org.apache.commons.io.FilenameUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
@@ -76,13 +77,7 @@ public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
 
         //strip any path information that may get added by ArchiveAnalyzer, etc.
         final File f = dependency.getActualFile();
-        String fileName = f.getName();
-
-        //remove file extension
-        final int pos = fileName.lastIndexOf(".");
-        if (pos > 0) {
-            fileName = fileName.substring(0, pos);
-        }
+        final String fileName = FilenameUtils.removeExtension(f.getName());
 
         //add version evidence
         final DependencyVersion version = DependencyVersionUtil.parseVersion(fileName);

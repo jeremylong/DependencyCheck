@@ -115,7 +115,7 @@ public class DependencyVersion implements Iterable<String>, Comparable<Dependenc
      */
     @Override
     public String toString() {
-        return StringUtils.join(versionParts.toArray(), ".");
+        return StringUtils.join(versionParts, '.');
     }
 
     /**

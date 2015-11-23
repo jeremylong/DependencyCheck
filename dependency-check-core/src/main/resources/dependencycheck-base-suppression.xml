@@ -161,4 +161,32 @@
         <gav regex="true">.*\bhk2\b.*</gav>
         <cpe>cpe:/a:oracle:glassfish</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: petals-se-camel-1.0.0.jar - false positive for apache camel.
+        ]]></notes>
+        <gav regex="true">org.ow2.petals:petals-se-camel:.*</gav>
+        <cpe>cpe:/a:apache:camel</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Mina gets flagged as apache-ssl
+        ]]></notes>
+        <gav regex="true">org.apache.mina:mina.*</gav>
+        <cpe>cpe:/a:apache-ssl:apache-ssl</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Woden gets flagged as apache-ssl
+        ]]></notes>
+        <gav regex="true">org.apache.woden:woden.*</gav>
+        <cpe>cpe:/a:apache-ssl:apache-ssl</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        spec gets flagged as the implementation.
+        ]]></notes>
+        <gav regex="true">org.apache.geronimo.specs:.*</gav>
+        <cpe>cpe:/a:apache:geronimo</cpe>
+    </suppress>
 </suppressions>

@@ -17,13 +17,13 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.NullOutputStream;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
@@ -115,18 +115,15 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         final List<String> args = buildArgumentList();
         args.add(dependency.getActualFilePath());
         final ProcessBuilder pb = new ProcessBuilder(args);
-        BufferedReader rdr = null;
         Document doc = null;
         try {
             final Process proc = pb.start();
             // Try evacuating the error stream
-            rdr = new BufferedReader(new InputStreamReader(proc.getErrorStream(), "UTF-8"));
-            String line = null;
-            // CHECKSTYLE:OFF
-            while (rdr.ready() && (line = rdr.readLine()) != null) {
-                LOGGER.warn("Error from GrokAssembly: {}", line);
+            final String errorStream = IOUtils.toString(proc.getErrorStream(), "UTF-8");
+            if (null != errorStream && !errorStream.isEmpty()) {
+                LOGGER.warn("Error from GrokAssembly: {}", errorStream);
             }
-            // CHECKSTYLE:ON
+
             int rc = 0;
             doc = builder.parse(proc.getInputStream());
 
@@ -176,14 +173,6 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (XPathExpressionException xpe) {
             // This shouldn't happen
             throw new AnalysisException(xpe);
-        } finally {
-            if (rdr != null) {
-                try {
-                    rdr.close();
-                } catch (IOException ex) {
-                    LOGGER.debug("ignore", ex);
-                }
-            }
         }
     }
 
@@ -200,11 +189,8 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         try {
             fos = new FileOutputStream(tempFile);
             is = AssemblyAnalyzer.class.getClassLoader().getResourceAsStream("GrokAssembly.exe");
-            final byte[] buff = new byte[4096];
-            int bread = -1;
-            while ((bread = is.read(buff)) >= 0) {
-                fos.write(buff, 0, bread);
-            }
+            IOUtils.copy(is, fos);
+
             grokAssemblyExe = tempFile;
             // Set the temp file to get deleted when we're done
             grokAssemblyExe.deleteOnExit();
@@ -232,17 +218,12 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
 
         // Now, need to see if GrokAssembly actually runs from this location.
         final List<String> args = buildArgumentList();
-        BufferedReader rdr = null;
         try {
             final ProcessBuilder pb = new ProcessBuilder(args);
             final Process p = pb.start();
             // Try evacuating the error stream
-            rdr = new BufferedReader(new InputStreamReader(p.getErrorStream(), "UTF-8"));
-            // CHECKSTYLE:OFF
-            while (rdr.ready() && rdr.readLine() != null) {
-                // We expect this to complain
-            }
-            // CHECKSTYLE:ON
+            IOUtils.copy(p.getErrorStream(), NullOutputStream.NULL_OUTPUT_STREAM);
+
             final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(p.getInputStream());
             final XPath xpath = XPathFactory.newInstance().newXPath();
             final String error = xpath.evaluate("/assembly/error", doc);
@@ -262,14 +243,6 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.debug("Could not execute GrokAssembly {}", e.getMessage());
                 this.setEnabled(false);
                 throw new AnalysisException("An error occured with the .NET AssemblyAnalyzer", e);
-            }
-        } finally {
-            if (rdr != null) {
-                try {
-                    rdr.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("ignore", ex);
-                }
             }
         }
         builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();

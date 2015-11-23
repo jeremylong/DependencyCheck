@@ -94,13 +94,13 @@ public class MavenArtifact {
         }
         if (jarAvailable) {
             //org/springframework/spring-core/3.2.0.RELEASE/spring-core-3.2.0.RELEASE.pom
-            this.artifactUrl = base + groupId.replace('.', '/') + "/" + artifactId + "/"
-                    + version + "/" + artifactId + "-" + version + ".jar";
+            this.artifactUrl = base + groupId.replace('.', '/') + '/' + artifactId + '/'
+                    + version + '/' + artifactId + '-' + version + ".jar";
         }
         if (pomAvailable) {
             //org/springframework/spring-core/3.2.0.RELEASE/spring-core-3.2.0.RELEASE.pom
-            this.pomUrl = base + groupId.replace('.', '/') + "/" + artifactId + "/"
-                    + version + "/" + artifactId + "-" + version + ".pom";
+            this.pomUrl = base + groupId.replace('.', '/') + '/' + artifactId + '/'
+                    + version + '/' + artifactId + '-' + version + ".pom";
         }
     }
 

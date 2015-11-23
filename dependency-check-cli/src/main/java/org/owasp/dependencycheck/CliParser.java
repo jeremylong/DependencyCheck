@@ -90,6 +90,19 @@ public final class CliParser {
      * @throws ParseException is thrown if there is an exception parsing the command line.
      */
     private void validateArgs() throws FileNotFoundException, ParseException {
+        if (isUpdateOnly() || isRunScan()) {
+            String value = line.getOptionValue(ARGUMENT.CVE_VALID_FOR_HOURS);
+            if (value != null) {
+                try {
+                    int i = Integer.parseInt(value);
+                    if (i < 0) {
+                        throw new ParseException("Invalid Setting: cveValidForHours must be a number greater than or equal to 0.");
+                    }
+                } catch (NumberFormatException ex) {
+                    throw new ParseException("Invalid Setting: cveValidForHours must be a number greater than or equal to 0.");
+                }
+            }
+        }
         if (isRunScan()) {
             validatePathExists(getScanFiles(), ARGUMENT.SCAN);
             validatePathExists(getReportDirectory(), ARGUMENT.OUT);
@@ -255,6 +268,10 @@ public final class CliParser {
                 .desc("The file path to the suppression XML file.")
                 .build();
 
+        final Option cveValidForHours = Option.builder().argName("hours").hasArg().longOpt(ARGUMENT.CVE_VALID_FOR_HOURS)
+                .desc("The number of hours to wait before checking for new updates from the NVD.")
+                .build();
+
         //This is an option group because it can be specified more then once.
         final OptionGroup og = new OptionGroup();
         og.addOption(path);
@@ -274,7 +291,8 @@ public final class CliParser {
                 .addOption(symLinkDepth)
                 .addOption(props)
                 .addOption(verboseLog)
-                .addOption(suppressionFile);
+                .addOption(suppressionFile)
+                .addOption(cveValidForHours);
     }
 
     /**
@@ -672,7 +690,7 @@ public final class CliParser {
         // still honor the property if it's set.
         if (line == null || !line.hasOption(ARGUMENT.NEXUS_USES_PROXY)) {
             try {
-                return Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY);
+                return Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY);
             } catch (InvalidSettingException ise) {
                 return true;
             }
@@ -998,6 +1016,19 @@ public final class CliParser {
     }
 
     /**
+     * Get the value of cveValidForHours
+     *
+     * @return the value of cveValidForHours
+     */
+    public Integer getCveValidForHours() {
+        String v = line.getOptionValue(ARGUMENT.CVE_VALID_FOR_HOURS);
+        if (v != null) {
+            return Integer.parseInt(v);
+        }
+        return null;
+    }
+
+    /**
      * A collection of static final strings that represent the possible command line arguments.
      */
     public static class ARGUMENT {
@@ -1160,6 +1191,10 @@ public final class CliParser {
          * The CLI argument name for setting the location of the suppression file.
          */
         public static final String SUPPRESSION_FILE = "suppression";
+        /**
+         * The CLI argument name for setting the location of the suppression file.
+         */
+        public static final String CVE_VALID_FOR_HOURS = "cveValidForHours";
         /**
          * Disables the Jar Analyzer.
          */

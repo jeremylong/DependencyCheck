@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import org.owasp.dependencycheck.BaseDBTestCase;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

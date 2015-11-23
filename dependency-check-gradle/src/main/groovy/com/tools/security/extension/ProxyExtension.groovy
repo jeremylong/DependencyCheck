@@ -17,7 +17,10 @@
  */
 
 package com.tools.security.extension
-
+/**
+ * TODO - this should not be needed, instead rely on the configured HTTP or HTTPS proxies
+ * https://docs.gradle.org/current/userguide/build_environment.html
+ */
 class ProxyExtension {
     String server
     Integer port

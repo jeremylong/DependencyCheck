@@ -29,6 +29,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.owasp.dependencycheck.analyzer.DependencyBundlingAnalyzer;
@@ -45,7 +46,7 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 @Mojo(
         name = "aggregate",
-        defaultPhase = LifecyclePhase.COMPILE,
+        defaultPhase = LifecyclePhase.VERIFY,
         /*aggregator = true,*/
         threadSafe = true,
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
@@ -173,21 +174,25 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                         }
                     }
                 }
+                final Set<MavenProject> addedDescendants = new HashSet<MavenProject>();
                 for (MavenProject dec : descendants) {
                     for (String mod : dec.getModules()) {
                         try {
                             File mpp = new File(dec.getBasedir(), mod);
                             mpp = mpp.getCanonicalFile();
-                            if (mpp.compareTo(p.getBasedir()) == 0 && descendants.add(p)) {
-                                if (getLog().isDebugEnabled()) {
-                                    getLog().debug(String.format("Decendent module %s added", p.getName()));
-                                }
+                            if (mpp.compareTo(p.getBasedir()) == 0) {
+                                addedDescendants.add(p);
                             }
                         } catch (IOException ex) {
                             if (getLog().isDebugEnabled()) {
                                 getLog().debug("Unable to determine module path", ex);
                             }
                         }
+                    }
+                }
+                for (MavenProject addedDescendant : addedDescendants) {
+                    if (descendants.add(addedDescendant) && getLog().isDebugEnabled()) {
+                        getLog().debug(String.format("Decendent module %s added", addedDescendant.getName()));
                     }
                 }
             }
@@ -258,6 +263,13 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
     }
 
     /**
+     * The name of the report in the site.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "name", defaultValue = "dependency-check:aggregate", required = true)
+    private String name = "dependency-check:aggregate";
+
+    /**
      * Returns the report name.
      *
      * @param locale the location
@@ -265,7 +277,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
      */
     @Override
     public String getName(Locale locale) {
-        return "dependency-check:aggregate";
+        return name;
     }
 
     /**

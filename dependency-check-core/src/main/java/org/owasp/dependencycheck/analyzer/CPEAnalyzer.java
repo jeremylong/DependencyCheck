@@ -335,7 +335,7 @@ public class CPEAnalyzer implements Analyzer {
      * @return if the append was successful.
      */
     private boolean appendWeightedSearch(StringBuilder sb, String field, String searchText, Set<String> weightedText) {
-        sb.append(" ").append(field).append(":( ");
+        sb.append(' ').append(field).append(":( ");
 
         final String cleanText = cleanseText(searchText);
 
@@ -349,20 +349,27 @@ public class CPEAnalyzer implements Analyzer {
             final StringTokenizer tokens = new StringTokenizer(cleanText);
             while (tokens.hasMoreElements()) {
                 final String word = tokens.nextToken();
-                String temp = null;
+                StringBuilder temp = null;
                 for (String weighted : weightedText) {
                     final String weightedStr = cleanseText(weighted);
                     if (equalsIgnoreCaseAndNonAlpha(word, weightedStr)) {
-                        temp = LuceneUtils.escapeLuceneQuery(word) + WEIGHTING_BOOST;
+                        temp = new StringBuilder(word.length() + 2);
+                        LuceneUtils.appendEscapedLuceneQuery(temp, word);
+                        temp.append(WEIGHTING_BOOST);
                         if (!word.equalsIgnoreCase(weightedStr)) {
-                            temp += " " + LuceneUtils.escapeLuceneQuery(weightedStr) + WEIGHTING_BOOST;
+                            temp.append(' ');
+                            LuceneUtils.appendEscapedLuceneQuery(temp, weightedStr);
+                            temp.append(WEIGHTING_BOOST);
                         }
+                        break;
                     }
                 }
+                sb.append(' ');
                 if (temp == null) {
-                    temp = LuceneUtils.escapeLuceneQuery(word);
+                    LuceneUtils.appendEscapedLuceneQuery(sb, word);
+                } else {
+                    sb.append(temp);
                 }
-                sb.append(" ").append(temp);
             }
         }
         sb.append(" ) ");
@@ -515,7 +522,7 @@ public class CPEAnalyzer implements Analyzer {
                 for (VulnerableSoftware vs : cpes) {
                     DependencyVersion dbVer;
                     if (vs.getUpdate() != null && !vs.getUpdate().isEmpty()) {
-                        dbVer = DependencyVersionUtil.parseVersion(vs.getVersion() + "." + vs.getUpdate());
+                        dbVer = DependencyVersionUtil.parseVersion(vs.getVersion() + '.' + vs.getUpdate());
                     } else {
                         dbVer = DependencyVersionUtil.parseVersion(vs.getVersion());
                     }

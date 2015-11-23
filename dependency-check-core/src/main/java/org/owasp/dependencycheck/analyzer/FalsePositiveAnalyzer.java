@@ -113,7 +113,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         for (Identifier i : dependency.getIdentifiers()) {
             if ("maven".contains(i.getType())) {
                 if (i.getValue() != null && i.getValue().startsWith("org.springframework.")) {
-                    final int endPoint = i.getValue().indexOf(":", 19);
+                    final int endPoint = i.getValue().indexOf(':', 19);
                     if (endPoint >= 0) {
                         mustContain = i.getValue().substring(19, endPoint).toLowerCase();
                         break;
@@ -472,8 +472,8 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      */
     private String trimCpeToVendor(String value) {
         //cpe:/a:jruby:jruby:1.0.8
-        final int pos1 = value.indexOf(":", 7); //right of vendor
-        final int pos2 = value.indexOf(":", pos1 + 1); //right of product
+        final int pos1 = value.indexOf(':', 7); //right of vendor
+        final int pos2 = value.indexOf(':', pos1 + 1); //right of product
         if (pos2 < 0) {
             return value;
         } else {

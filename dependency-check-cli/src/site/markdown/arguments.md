@@ -17,15 +17,17 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp; | Parameter       | Description | Requir
  \-h   | \-\-help              |                 | Print the help message. | Optional
        | \-\-advancedHelp      |                 | Print the advanced help message. | Optional
  \-v   | \-\-version           |                 | Print the version information. | Optional
+       | \-\-cveValidForHours  | \<hours\>       | The number of hours to wait before checking for new updates from the NVD. The default is 4 hours. | Optional
+
 
 Advanced Options
 ================
 Short  | Argument&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Parameter | Description                                     | Default&nbsp;Value
 -------|-----------------------|-----------------|----------------------------------------------------------------------------------|-------------------
-       | \-\-cveUrl12Modified  | \<url\>         | URL for the modified CVE 1.2                                                     | http://nvd.nist.gov/download/nvdcve-modified.xml
-       | \-\-cveUrl20Modified  | \<url\>         | URL for the modified CVE 2.0                                                     | http://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-modified.xml
-       | \-\-cveUrl12Base      | \<url\>         | Base URL for each year's CVE 1.2, the %d will be replaced with the year          | http://nvd.nist.gov/download/nvdcve-%d.xml
-       | \-\-cveUrl20Base      | \<url\>         | Base URL for each year's CVE 2.0, the %d will be replaced with the year          | http://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-%d.xml
+       | \-\-cveUrl12Modified  | \<url\>         | URL for the modified CVE 1.2                                                     | https://nvd.nist.gov/download/nvdcve-Modified.xml.gz
+       | \-\-cveUrl20Modified  | \<url\>         | URL for the modified CVE 2.0                                                     | https://nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-Modified.xml.gz
+       | \-\-cveUrl12Base      | \<url\>         | Base URL for each year's CVE 1.2, the %d will be replaced with the year          | https://nvd.nist.gov/download/nvdcve-%d.xml.gz
+       | \-\-cveUrl20Base      | \<url\>         | Base URL for each year's CVE 2.0, the %d will be replaced with the year          | https://nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-%d.xml.gz
  \-P   | \-\-propertyfile      | \<file\>        | Specifies a file that contains properties to use instead of applicaion defaults. | &nbsp;
        | \-\-updateonly        |                 | If set only the update phase of dependency-check will be executed; no scan will be executed and no report will be generated. | &nbsp;
        | \-\-disablePyDist     |                 | Sets whether the Python Distribution Analyzer will be used.                      | false

@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.Locale;
 import org.apache.maven.artifact.Artifact;
@@ -106,16 +105,16 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * is true.
      */
     @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "autoupdate", defaultValue = "true", required = true)
-    private boolean autoUpdate = true;
+    @Parameter(property = "autoupdate")
+    private Boolean autoUpdate;
     /**
      * Generate aggregate reports in multi-module projects.
      *
      * @deprecated use the aggregate goal instead
      */
-    @Parameter(property = "aggregate", defaultValue = "false")
+    @Parameter(property = "aggregate")
     @Deprecated
-    private boolean aggregate;
+    private Boolean aggregate;
     /**
      * The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this within the
      * Site plug-in unless the externalReport is set to true. Default is HTML.
@@ -139,74 +138,106 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * The Connection Timeout.
      */
-    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "connectionTimeout", defaultValue = "", required = false)
-    private String connectionTimeout = null;
+    private String connectionTimeout;
     /**
      * The path to the suppression file.
      */
-    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "suppressionFile", defaultValue = "", required = false)
-    private String suppressionFile = null;
+    private String suppressionFile;
     /**
      * Flag indicating whether or not to show a summary in the output.
      */
-    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "showSummary", defaultValue = "true", required = false)
     private boolean showSummary = true;
 
     /**
      * Whether or not the Jar Analyzer is enabled.
      */
-    @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "jarAnalyzerEnabled", defaultValue = "true", required = false)
-    private boolean jarAnalyzerEnabled = true;
+    @Parameter(property = "jarAnalyzerEnabled", required = false)
+    private Boolean jarAnalyzerEnabled;
 
     /**
      * Whether or not the Archive Analyzer is enabled.
      */
-    @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "archiveAnalyzerEnabled", defaultValue = "true", required = false)
-    private boolean archiveAnalyzerEnabled = true;
+    @Parameter(property = "archiveAnalyzerEnabled", required = false)
+    private Boolean archiveAnalyzerEnabled;
+
+    /**
+     * Sets whether the Python Distribution Analyzer will be used.
+     */
+    @Parameter(property = "pyDistributionAnalyzerEnabled", required = false)
+    private Boolean pyDistributionAnalyzerEnabled;
+    /**
+     * Sets whether the Python Package Analyzer will be used.
+     */
+    @Parameter(property = "pyPackageAnalyzerEnabled", required = false)
+    private Boolean pyPackageAnalyzerEnabled;
+    /**
+     * Sets whether the Ruby Gemspec Analyzer will be used.
+     */
+    @Parameter(property = "rubygemsAnalyzerEnabled", required = false)
+    private Boolean rubygemsAnalyzerEnabled;
+    /**
+     * Sets whether or not the openssl Analyzer should be used.
+     */
+    @Parameter(property = "opensslAnalyzerEnabled", required = false)
+    private Boolean opensslAnalyzerEnabled;
+    /**
+     * Sets whether or not the CMake Analyzer should be used.
+     */
+    @Parameter(property = "cmakeAnalyzerEnabled", required = false)
+    private Boolean cmakeAnalyzerEnabled;
+    /**
+     * Sets whether or not the autoconf Analyzer should be used.
+     */
+    @Parameter(property = "autoconfAnalyzerEnabled", required = false)
+    private Boolean autoconfAnalyzerEnabled;
+    /**
+     * Sets whether or not the PHP Composer Lock File Analyzer should be used.
+     */
+    @Parameter(property = "composerAnalyzerEnabled", required = false)
+    private Boolean composerAnalyzerEnabled;
+    /**
+     * Sets whether or not the Node.js Analyzer should be used.
+     */
+    @Parameter(property = "nodeAnalyzerEnabled", required = false)
+    private Boolean nodeAnalyzerEnabled;
 
     /**
      * Whether or not the .NET Assembly Analyzer is enabled.
      */
-    @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "assemblyAnalyzerEnabled", defaultValue = "true", required = false)
-    private boolean assemblyAnalyzerEnabled = true;
+    @Parameter(property = "assemblyAnalyzerEnabled", required = false)
+    private Boolean assemblyAnalyzerEnabled;
 
     /**
      * Whether or not the .NET Nuspec Analyzer is enabled.
      */
-    @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "nuspecAnalyzerEnabled", defaultValue = "true", required = false)
-    private boolean nuspecAnalyzerEnabled = true;
+    @Parameter(property = "nuspecAnalyzerEnabled", required = false)
+    private Boolean nuspecAnalyzerEnabled;
 
     /**
      * Whether or not the Central Analyzer is enabled.
      */
-    @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "centralAnalyzerEnabled", defaultValue = "true", required = false)
-    private boolean centralAnalyzerEnabled = true;
+    @Parameter(property = "centralAnalyzerEnabled", required = false)
+    private Boolean centralAnalyzerEnabled;
 
     /**
      * Whether or not the Nexus Analyzer is enabled.
      */
-    @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "nexusAnalyzerEnabled", defaultValue = "true", required = false)
-    private boolean nexusAnalyzerEnabled = true;
+    @Parameter(property = "nexusAnalyzerEnabled", required = false)
+    private Boolean nexusAnalyzerEnabled;
 
     /**
      * The URL of a Nexus server's REST API end point (http://domain/nexus/service/local).
      */
-    @Parameter(property = "nexusUrl", defaultValue = "", required = false)
+    @Parameter(property = "nexusUrl", required = false)
     private String nexusUrl;
     /**
      * Whether or not the configured proxy is used to connect to Nexus.
      */
-    @Parameter(property = "nexusUsesProxy", defaultValue = "true", required = false)
-    private boolean nexusUsesProxy = true;
+    @Parameter(property = "nexusUsesProxy", required = false)
+    private Boolean nexusUsesProxy;
     /**
      * The database connection string.
      */
@@ -246,6 +277,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @Parameter(property = "zipExtensions", required = false)
     private String zipExtensions;
+    /**
+     * Skip Dependency Check altogether.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "dependency-check.skip", defaultValue = "false", required = false)
+    private boolean skip = false;
     /**
      * Skip Analysis for Test Scope Dependencies.
      */
@@ -289,6 +326,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @Parameter(property = "cveUrl20Base", defaultValue = "", required = false)
     private String cveUrl20Base;
+    /**
+     * Optionally skip excessive CVE update checks for a designated duration in hours.
+     */
+    @Parameter(property = "cveValidForHours", defaultValue = "", required = false)
+    private Integer cveValidForHours;
 
     /**
      * The path to mono for .NET Assembly analysis on non-windows systems.
@@ -325,9 +367,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        validateAggregate();
-        project.setContextValue(getOutputDirectoryContextKey(), this.outputDirectory);
-        runCheck();
+        if (skip) {
+            getLog().info("Skipping " + getName(Locale.US));
+        } else {
+            validateAggregate();
+            project.setContextValue(getOutputDirectoryContextKey(), this.outputDirectory);
+            runCheck();
+        }
     }
 
     /**
@@ -337,7 +383,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @throws MojoExecutionException thrown if aggregate is set to true
      */
     private void validateAggregate() throws MojoExecutionException {
-        if (aggregate) {
+        if (aggregate != null && aggregate) {
             final String msg = "Aggregate configuration detected - as of dependency-check 1.2.8 this no longer supported. "
                     + "Please use the aggregate goal instead.";
             throw new MojoExecutionException(msg);
@@ -583,8 +629,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 }
             }
         }
+        Settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
 
-        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
         if (externalReport != null) {
             getLog().warn("The 'externalReport' option was set; this configuration option has been removed. "
                     + "Please update the dependency-check-maven plugin's configuration");
@@ -599,85 +645,49 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             Settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(proxy.getPort()));
             final String userName = proxy.getUsername();
             final String password = proxy.getPassword();
-            if (userName != null) {
-                Settings.setString(Settings.KEYS.PROXY_USERNAME, userName);
-            }
-            if (password != null) {
-                Settings.setString(Settings.KEYS.PROXY_PASSWORD, password);
-            }
-
+            Settings.setStringIfNotNull(Settings.KEYS.PROXY_USERNAME, userName);
+            Settings.setStringIfNotNull(Settings.KEYS.PROXY_PASSWORD, password);
         }
 
-        if (connectionTimeout != null && !connectionTimeout.isEmpty()) {
-            Settings.setString(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
-        }
-        if (suppressionFile != null && !suppressionFile.isEmpty()) {
-            Settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
-        }
+        Settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
+        Settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
 
         //File Type Analyzer Settings
-        //JAR ANALYZER
-        Settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
-        //NUSPEC ANALYZER
-        Settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
-        //NEXUS ANALYZER
-        Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
-        //NEXUS ANALYZER
-        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
-        if (nexusUrl != null && !nexusUrl.isEmpty()) {
-            Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
-        }
-        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY, nexusUsesProxy);
-        //ARCHIVE ANALYZER
-        Settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
-        if (zipExtensions != null && !zipExtensions.isEmpty()) {
-            Settings.setString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
-        }
-        //ASSEMBLY ANALYZER
-        Settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
-        if (pathToMono != null && !pathToMono.isEmpty()) {
-            Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
-        }
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
+        Settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
+        Settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
+        Settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
+
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, pyDistributionAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED, pyPackageAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, rubygemsAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OPENSSL_ENABLED, opensslAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CMAKE_ENABLED, cmakeAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, autoconfAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
 
         //Database configuration
-        if (databaseDriverName != null && !databaseDriverName.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
-        }
-        if (databaseDriverPath != null && !databaseDriverPath.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
-        }
-        if (connectionString != null && !connectionString.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
-        }
-        if (databaseUser != null && !databaseUser.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_USER, databaseUser);
-        }
-        if (databasePassword != null && !databasePassword.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_PASSWORD, databasePassword);
-        }
-        // Data Directory
-        if (dataDirectory != null && !dataDirectory.isEmpty()) {
-            Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
-        }
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
 
-        // Scope Exclusion
-        Settings.setBoolean(Settings.KEYS.SKIP_TEST_SCOPE, skipTestScope);
-        Settings.setBoolean(Settings.KEYS.SKIP_RUNTIME_SCOPE, skipRuntimeScope);
-        Settings.setBoolean(Settings.KEYS.SKIP_PROVIDED_SCOPE, skipProvidedScope);
+        Settings.setStringIfNotEmpty(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
 
-        // CVE Data Mirroring
-        if (cveUrl12Modified != null && !cveUrl12Modified.isEmpty()) {
-            Settings.setString(Settings.KEYS.CVE_MODIFIED_12_URL, cveUrl12Modified);
-        }
-        if (cveUrl20Modified != null && !cveUrl20Modified.isEmpty()) {
-            Settings.setString(Settings.KEYS.CVE_MODIFIED_20_URL, cveUrl20Modified);
-        }
-        if (cveUrl12Base != null && !cveUrl12Base.isEmpty()) {
-            Settings.setString(Settings.KEYS.CVE_SCHEMA_1_2, cveUrl12Base);
-        }
-        if (cveUrl20Base != null && !cveUrl20Base.isEmpty()) {
-            Settings.setString(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
-        }
+        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_12_URL, cveUrl12Modified);
+        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_20_URL, cveUrl20Modified);
+        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_1_2, cveUrl12Base);
+        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
+        Settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
+
     }
 
     /**
@@ -918,20 +928,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                         parent.getAbsolutePath()));
             }
 
-            OutputStream os = null;
-            OutputStream bos = null;
             ObjectOutputStream out = null;
             try {
                 if (dependencies != null) {
-                    os = new FileOutputStream(file);
-                    bos = new BufferedOutputStream(os);
-                    out = new ObjectOutputStream(bos);
+                    out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
                     out.writeObject(dependencies);
-                    out.flush();
-
-                    //call reset to prevent resource leaks per
-                    //https://www.securecoding.cert.org/confluence/display/java/SER10-J.+Avoid+memory+and+resource+leaks+during+serialization
-                    out.reset();
                 }
                 if (getLog().isDebugEnabled()) {
                     getLog().debug(String.format("Serialized data file written to '%s' for %s, referenced by key %s",
@@ -948,24 +949,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 if (out != null) {
                     try {
                         out.close();
-                    } catch (IOException ex) {
-                        if (getLog().isDebugEnabled()) {
-                            getLog().debug("ignore", ex);
-                        }
-                    }
-                }
-                if (bos != null) {
-                    try {
-                        bos.close();
-                    } catch (IOException ex) {
-                        if (getLog().isDebugEnabled()) {
-                            getLog().debug("ignore", ex);
-                        }
-                    }
-                }
-                if (os != null) {
-                    try {
-                        os.close();
                     } catch (IOException ex) {
                         if (getLog().isDebugEnabled()) {
                             getLog().debug("ignore", ex);

@@ -280,6 +280,7 @@ public class App {
         final String cveMod20 = cli.getModifiedCve20Url();
         final String cveBase12 = cli.getBaseCve12Url();
         final String cveBase20 = cli.getBaseCve20Url();
+        final Integer cveValidForHours = cli.getCveValidForHours();
 
         if (propertiesFile != null) {
             try {
@@ -309,24 +310,13 @@ public class App {
             Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());
         }
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
-        if (proxyServer != null && !proxyServer.isEmpty()) {
-            Settings.setString(Settings.KEYS.PROXY_SERVER, proxyServer);
-        }
-        if (proxyPort != null && !proxyPort.isEmpty()) {
-            Settings.setString(Settings.KEYS.PROXY_PORT, proxyPort);
-        }
-        if (proxyUser != null && !proxyUser.isEmpty()) {
-            Settings.setString(Settings.KEYS.PROXY_USERNAME, proxyUser);
-        }
-        if (proxyPass != null && !proxyPass.isEmpty()) {
-            Settings.setString(Settings.KEYS.PROXY_PASSWORD, proxyPass);
-        }
-        if (connectionTimeout != null && !connectionTimeout.isEmpty()) {
-            Settings.setString(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
-        }
-        if (suppressionFile != null && !suppressionFile.isEmpty()) {
-            Settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
-        }
+        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);
+        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);
+        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUser);
+        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPass);
+        Settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
+        Settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
+        Settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
 
         //File Type Analyzer Settings
         Settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, !cli.isJarDisabled());
@@ -342,38 +332,19 @@ public class App {
         Settings.setBoolean(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, !cli.isComposerDisabled());
         Settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, !cli.isNodeJsDisabled());
         Settings.setBoolean(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, !cli.isRubyGemspecDisabled());
-
         Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, !cli.isCentralDisabled());
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, !cli.isNexusDisabled());
-        if (nexusUrl != null && !nexusUrl.isEmpty()) {
-            Settings.setString(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
-        }
-        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_PROXY, nexusUsesProxy);
-        if (databaseDriverName != null && !databaseDriverName.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
-        }
-        if (databaseDriverPath != null && !databaseDriverPath.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
-        }
-        if (connectionString != null && !connectionString.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
-        }
-        if (databaseUser != null && !databaseUser.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_USER, databaseUser);
-        }
-        if (databasePassword != null && !databasePassword.isEmpty()) {
-            Settings.setString(Settings.KEYS.DB_PASSWORD, databasePassword);
-        }
-        if (additionalZipExtensions != null && !additionalZipExtensions.isEmpty()) {
-            Settings.setString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, additionalZipExtensions);
-        }
-        if (pathToMono != null && !pathToMono.isEmpty()) {
-            Settings.setString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
-        }
-        String pathToBundleAudit = cli.getPathToBundleAudit();
-        if (!StringUtils.isEmpty(pathToBundleAudit)){
-            Settings.setString(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, pathToBundleAudit);
-        }
+
+        Settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, cli.getPathToBundleAudit());
+        Settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
+        Settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
+        Settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, additionalZipExtensions);
+        Settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
         if (cveBase12 != null && !cveBase12.isEmpty()) {
             Settings.setString(Settings.KEYS.CVE_SCHEMA_1_2, cveBase12);
             Settings.setString(Settings.KEYS.CVE_SCHEMA_2_0, cveBase20);

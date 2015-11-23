@@ -118,6 +118,10 @@ public final class Settings {
          */
         public static final String CVE_MODIFIED_VALID_FOR_DAYS = "cve.url.modified.validfordays";
         /**
+         * The properties key to control the skipping of the check for CVE updates.
+         */
+        public static final String CVE_CHECK_VALID_FOR_HOURS = "cve.check.validforhours";
+        /**
          * The properties key for the telling us how many cve.url.* URLs exists. This is used in combination with CVE_BASE_URL to
          * be able to retrieve the URLs for all of the files that make up the NVD CVE listing.
          */
@@ -236,7 +240,7 @@ public final class Settings {
         /**
          * The properties key for using the proxy to reach Nexus.
          */
-        public static final String ANALYZER_NEXUS_PROXY = "analyzer.nexus.proxy";
+        public static final String ANALYZER_NEXUS_USES_PROXY = "analyzer.nexus.proxy";
         /**
          * The properties key for whether the Central analyzer is enabled.
          */
@@ -261,19 +265,6 @@ public final class Settings {
          * The additional configured zip file extensions, if available.
          */
         public static final String ADDITIONAL_ZIP_EXTENSIONS = "extensions.zip";
-        /**
-         * The properties key for whether Test Scope dependencies should be skipped.
-         */
-        public static final String SKIP_TEST_SCOPE = "skip.test.scope";
-        /**
-         * The properties key for whether Runtime Scope dependencies should be skipped.
-         */
-        public static final String SKIP_RUNTIME_SCOPE = "skip.runtime.scope";
-        /**
-         * The properties key for whether Provided Scope dependencies should be skipped.
-         */
-        public static final String SKIP_PROVIDED_SCOPE = "skip.provided.scope";
-
         /**
          * The key to obtain the path to the VFEED data file.
          */
@@ -462,18 +453,72 @@ public final class Settings {
     }
 
     /**
+     * Sets a property value only if the value is not null.
+     *
+     * @param key the key for the property
+     * @param value the value for the property
+     */
+    public static void setStringIfNotNull(String key, String value) {
+        if (null != value) {
+            setString(key, value);
+        }
+    }
+
+    /**
+     * Sets a property value only if the value is not null and not empty.
+     *
+     * @param key the key for the property
+     * @param value the value for the property
+     */
+    public static void setStringIfNotEmpty(String key, String value) {
+        if (null != value && !value.isEmpty()) {
+            setString(key, value);
+        }
+    }
+
+    /**
      * Sets a property value.
      *
      * @param key the key for the property
      * @param value the value for the property
      */
     public static void setBoolean(String key, boolean value) {
-        if (value) {
-            localSettings.get().props.setProperty(key, Boolean.TRUE.toString());
-        } else {
-            localSettings.get().props.setProperty(key, Boolean.FALSE.toString());
+        setString(key, Boolean.toString(value));
+    }
+
+    /**
+     * Sets a property value only if the value is not null.
+     *
+     * @param key the key for the property
+     * @param value the value for the property
+     */
+    public static void setBooleanIfNotNull(String key, Boolean value) {
+        if (null != value) {
+            setBoolean(key, value);
         }
+    }
+
+    /**
+     * Sets a property value.
+     *
+     * @param key the key for the property
+     * @param value the value for the property
+     */
+    public static void setInt(String key, int value) {
+        localSettings.get().props.setProperty(key, String.valueOf(value));
         LOGGER.debug("Setting: {}='{}'", key, value);
+    }
+
+    /**
+     * Sets a property value only if the value is not null.
+     *
+     * @param key the key for the property
+     * @param value the value for the property
+     */
+    public static void setIntIfNotNull(String key, Integer value) {
+        if (null != value) {
+            setInt(key, value);
+        }
     }
 
     /**
@@ -672,13 +717,11 @@ public final class Settings {
      * @throws InvalidSettingException is thrown if there is an error retrieving the setting
      */
     public static int getInt(String key) throws InvalidSettingException {
-        int value;
         try {
-            value = Integer.parseInt(Settings.getString(key));
+            return Integer.parseInt(Settings.getString(key));
         } catch (NumberFormatException ex) {
             throw new InvalidSettingException("Could not convert property '" + key + "' to an int.", ex);
         }
-        return value;
     }
 
     /**
@@ -712,13 +755,11 @@ public final class Settings {
      * @throws InvalidSettingException is thrown if there is an error retrieving the setting
      */
     public static long getLong(String key) throws InvalidSettingException {
-        long value;
         try {
-            value = Long.parseLong(Settings.getString(key));
+            return Long.parseLong(Settings.getString(key));
         } catch (NumberFormatException ex) {
-            throw new InvalidSettingException("Could not convert property '" + key + "' to an int.", ex);
+            throw new InvalidSettingException("Could not convert property '" + key + "' to a long.", ex);
         }
-        return value;
     }
 
     /**
@@ -731,13 +772,7 @@ public final class Settings {
      * @throws InvalidSettingException is thrown if there is an error retrieving the setting
      */
     public static boolean getBoolean(String key) throws InvalidSettingException {
-        boolean value;
-        try {
-            value = Boolean.parseBoolean(Settings.getString(key));
-        } catch (NumberFormatException ex) {
-            throw new InvalidSettingException("Could not convert property '" + key + "' to an int.", ex);
-        }
-        return value;
+        return Boolean.parseBoolean(Settings.getString(key));
     }
 
     /**
@@ -751,17 +786,7 @@ public final class Settings {
      * @throws InvalidSettingException is thrown if there is an error retrieving the setting
      */
     public static boolean getBoolean(String key, boolean defaultValue) throws InvalidSettingException {
-        boolean value;
-        try {
-            final String strValue = Settings.getString(key);
-            if (strValue == null) {
-                return defaultValue;
-            }
-            value = Boolean.parseBoolean(strValue);
-        } catch (NumberFormatException ex) {
-            throw new InvalidSettingException("Could not convert property '" + key + "' to an int.", ex);
-        }
-        return value;
+        return Boolean.parseBoolean(Settings.getString(key, Boolean.toString(defaultValue)));
     }
 
     /**

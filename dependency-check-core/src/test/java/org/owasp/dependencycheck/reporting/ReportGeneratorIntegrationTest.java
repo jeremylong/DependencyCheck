@@ -40,7 +40,7 @@ public class ReportGeneratorIntegrationTest extends BaseTest {
 
     @Before
     public void setUp() throws Exception {
-        org.owasp.dependencycheck.data.nvdcve.BaseDBTestCase.ensureDBExists();
+        org.owasp.dependencycheck.BaseDBTestCase.ensureDBExists();
     }
 
     /**

@@ -23,6 +23,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.utils.Settings;
@@ -34,7 +35,7 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 @Mojo(
         name = "check",
-        defaultPhase = LifecyclePhase.COMPILE,
+        defaultPhase = LifecyclePhase.VERIFY,
         threadSafe = true,
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
         requiresOnline = true
@@ -90,6 +91,13 @@ public class CheckMojo extends BaseDependencyCheckMojo {
     }
 
     /**
+     * The name of the report in the site.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "name", defaultValue = "dependency-check", required = true)
+    private String name = "dependency-check";
+
+    /**
      * Returns the report name.
      *
      * @param locale the location
@@ -97,7 +105,7 @@ public class CheckMojo extends BaseDependencyCheckMojo {
      */
     @Override
     public String getName(Locale locale) {
-        return "dependency-check";
+        return name;
     }
 
     /**

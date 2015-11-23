@@ -1,11 +1,8 @@
 Dependency-Check-Gradle
 =========
 
-**Working in progress**
-
-This is a DependencyCheck gradle plugin designed for project which use Gradle as build script.
-
-Dependency-Check is a utility that attempts to detect publicly disclosed vulnerabilities contained within project dependencies. It does this by determining if there is a Common Platform Enumeration (CPE) identifier for a given dependency. If found, it will generate a report linking to the associated CVE entries.
+The dependency-check gradle plugin allows projects to monitor dependent libraries for
+known, published vulnerabilities.
 
 =========
 
@@ -24,11 +21,11 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.thoughtworks.tools:dependency-check:0.0.8'
+        classpath 'org.owasp:dependency-check-gradle:1.3.2'
     }
 }
 
-apply plugin: 'dependency-check'
+apply plugin: 'dependency-check-gradle'
 ```
 
 ### Step 2, Run gradle task
@@ -59,10 +56,10 @@ dependencyCheck {
     proxy {
         server = "127.0.0.1"      // required, the server name or IP address of the proxy
         port = 3128               // required, the port number of the proxy
-        
+
         // optional, the proxy server might require username
         // username = "username"
-    
+
         // optional, the proxy server might require password
         // password = "password"
     }

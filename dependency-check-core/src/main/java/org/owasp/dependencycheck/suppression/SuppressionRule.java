@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.suppression;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -381,30 +382,7 @@ public class SuppressionRule {
      * @return true if the property type does not specify a version; otherwise false
      */
     boolean cpeHasNoVersion(PropertyType c) {
-        if (c.isRegex()) {
-            return false;
-        }
-        if (countCharacter(c.getValue(), ':') == 3) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Counts the number of occurrences of the character found within the string.
-     *
-     * @param str the string to check
-     * @param c the character to count
-     * @return the number of times the character is found in the string
-     */
-    int countCharacter(String str, char c) {
-        int count = 0;
-        int pos = str.indexOf(c) + 1;
-        while (pos > 0) {
-            count += 1;
-            pos = str.indexOf(c, pos) + 1;
-        }
-        return count;
+        return !c.isRegex() && StringUtils.countMatches(c.getValue(), ':') == 3;
     }
 
     /**
@@ -442,43 +420,43 @@ public class SuppressionRule {
         final StringBuilder sb = new StringBuilder();
         sb.append("SuppressionRule{");
         if (filePath != null) {
-            sb.append("filePath=").append(filePath).append(",");
+            sb.append("filePath=").append(filePath).append(',');
         }
         if (sha1 != null) {
-            sb.append("sha1=").append(sha1).append(",");
+            sb.append("sha1=").append(sha1).append(',');
         }
         if (gav != null) {
-            sb.append("gav=").append(gav).append(",");
+            sb.append("gav=").append(gav).append(',');
         }
         if (cpe != null && !cpe.isEmpty()) {
             sb.append("cpe={");
             for (PropertyType pt : cpe) {
-                sb.append(pt).append(",");
+                sb.append(pt).append(',');
             }
-            sb.append("}");
+            sb.append('}');
         }
         if (cwe != null && !cwe.isEmpty()) {
             sb.append("cwe={");
             for (String s : cwe) {
-                sb.append(s).append(",");
+                sb.append(s).append(',');
             }
-            sb.append("}");
+            sb.append('}');
         }
         if (cve != null && !cve.isEmpty()) {
             sb.append("cve={");
             for (String s : cve) {
-                sb.append(s).append(",");
+                sb.append(s).append(',');
             }
-            sb.append("}");
+            sb.append('}');
         }
         if (cvssBelow != null && !cvssBelow.isEmpty()) {
             sb.append("cvssBelow={");
             for (Float s : cvssBelow) {
-                sb.append(s).append(",");
+                sb.append(s).append(',');
             }
-            sb.append("}");
+            sb.append('}');
         }
-        sb.append("}");
+        sb.append('}');
         return sb.toString();
     }
 }
