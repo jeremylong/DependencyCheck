@@ -218,6 +218,10 @@ public final class Settings {
          */
         public static final String ANALYZER_CMAKE_ENABLED = "analyzer.cmake.enabled";
         /**
+         * The properties key for whether the Ruby Bundler Audit analyzer is enabled.
+         */
+        public static final String ANALYZER_BUNDLE_AUDIT_ENABLED = "analyzer.bundle.audit.enabled";
+        /**
          * The properties key for whether the .NET Assembly analyzer is enabled.
          */
         public static final String ANALYZER_ASSEMBLY_ENABLED = "analyzer.assembly.enabled";
@@ -253,6 +257,10 @@ public final class Settings {
          * The path to mono, if available.
          */
         public static final String ANALYZER_ASSEMBLY_MONO_PATH = "analyzer.assembly.mono.path";
+        /**
+         * The path to bundle-audit, if available.
+         */
+        public static final String ANALYZER_BUNDLE_AUDIT_PATH = "analyzer.bundle.audit.path";
         /**
          * The additional configured zip file extensions, if available.
          */
