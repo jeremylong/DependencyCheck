@@ -63,7 +63,9 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void trace(String msg) {
-        task.log(msg, Project.MSG_VERBOSE);
+        if (task != null) {
+            task.log(msg, Project.MSG_VERBOSE);
+        }
     }
 
     @Override
