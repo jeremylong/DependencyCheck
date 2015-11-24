@@ -18,12 +18,11 @@
 package org.owasp.dependencycheck.data.nvdcve;
 
 /**
- * An exception used to indicate the db4o database is corrupt. This could be due to invalid data or a complete failure
- * of the db.
+ * An exception used to indicate the db4o database is corrupt. This could be due to invalid data or a complete failure of the db.
  *
  * @author Jeremy Long
  */
-class CorruptDatabaseException extends DatabaseException {
+public class CorruptDatabaseException extends DatabaseException {
 
     /**
      * the serial version uid.
@@ -31,7 +30,7 @@ class CorruptDatabaseException extends DatabaseException {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Creates an CorruptDatabaseException
+     * Creates an CorruptDatabaseException.
      *
      * @param msg the exception message
      */
@@ -40,7 +39,7 @@ class CorruptDatabaseException extends DatabaseException {
     }
 
     /**
-     * Creates an CorruptDatabaseException
+     * Creates an CorruptDatabaseException.
      *
      * @param msg the exception message
      * @param ex the cause of the exception

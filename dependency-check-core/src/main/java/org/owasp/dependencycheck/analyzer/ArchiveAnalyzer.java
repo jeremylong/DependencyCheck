@@ -114,7 +114,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     static {
         final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
         if (additionalZipExt != null) {
-            String[] ext = additionalZipExt.split("\\s*,\\s*");
+            final String[] ext = additionalZipExt.split("\\s*,\\s*");
             Collections.addAll(ZIPPABLES, ext);
         }
         EXTENSIONS.addAll(ZIPPABLES);
@@ -195,8 +195,11 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         if (tempFileLocation != null && tempFileLocation.exists()) {
             LOGGER.debug("Attempting to delete temporary files");
             final boolean success = FileUtils.delete(tempFileLocation);
-            if (!success && tempFileLocation.exists() && tempFileLocation.list().length > 0) {
-                LOGGER.warn("Failed to delete some temporary files, see the log for more details");
+            if (!success && tempFileLocation.exists()) {
+                final String[] l = tempFileLocation.list();
+                if (l != null && l.length > 0) {
+                    LOGGER.warn("Failed to delete some temporary files, see the log for more details");
+                }
             }
         }
     }

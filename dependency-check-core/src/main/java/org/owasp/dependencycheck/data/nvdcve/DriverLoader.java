@@ -63,15 +63,13 @@ public final class DriverLoader {
     }
 
     /**
-     * Loads the specified class by registering the supplied paths to the class loader and then registers the driver
-     * with the driver manager. The pathToDriver argument is added to the class loader so that an external driver can be
-     * loaded. Note, the pathToDriver can contain a semi-colon separated list of paths so any dependencies can be added
-     * as needed. If a path in the pathToDriver argument is a directory all files in the directory are added to the
-     * class path.
+     * Loads the specified class by registering the supplied paths to the class loader and then registers the driver with the
+     * driver manager. The pathToDriver argument is added to the class loader so that an external driver can be loaded. Note, the
+     * pathToDriver can contain a semi-colon separated list of paths so any dependencies can be added as needed. If a path in the
+     * pathToDriver argument is a directory all files in the directory are added to the class path.
      *
      * @param className the fully qualified name of the desired class
-     * @param pathToDriver the path to the JAR file containing the driver; note, this can be a semi-colon separated list
-     * of paths
+     * @param pathToDriver the path to the JAR file containing the driver; note, this can be a semi-colon separated list of paths
      * @return the loaded Driver
      * @throws DriverLoadException thrown if the driver cannot be loaded
      */
@@ -83,14 +81,15 @@ public final class DriverLoader {
             final File file = new File(path);
             if (file.isDirectory()) {
                 final File[] files = file.listFiles();
-
-                for (File f : files) {
-                    try {
-                        urls.add(f.toURI().toURL());
-                    } catch (MalformedURLException ex) {
-                        LOGGER.debug("Unable to load database driver '{}'; invalid path provided '{}'",
-                            className, f.getAbsoluteFile(), ex);
-                        throw new DriverLoadException("Unable to load database driver. Invalid path provided", ex);
+                if (files != null) {
+                    for (File f : files) {
+                        try {
+                            urls.add(f.toURI().toURL());
+                        } catch (MalformedURLException ex) {
+                            LOGGER.debug("Unable to load database driver '{}'; invalid path provided '{}'",
+                                    className, f.getAbsoluteFile(), ex);
+                            throw new DriverLoadException("Unable to load database driver. Invalid path provided", ex);
+                        }
                     }
                 }
             } else if (file.exists()) {
@@ -98,7 +97,7 @@ public final class DriverLoader {
                     urls.add(file.toURI().toURL());
                 } catch (MalformedURLException ex) {
                     LOGGER.debug("Unable to load database driver '{}'; invalid path provided '{}'",
-                        className, file.getAbsoluteFile(), ex);
+                            className, file.getAbsoluteFile(), ex);
                     throw new DriverLoadException("Unable to load database driver. Invalid path provided", ex);
                 }
             }

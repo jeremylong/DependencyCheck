@@ -144,10 +144,10 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                 try {
                     File mpp = new File(project.getBasedir(), m);
                     mpp = mpp.getCanonicalFile();
-                    if (mpp.compareTo(mod.getBasedir()) == 0 && descendants.add(mod)) {
-                        if (getLog().isDebugEnabled()) {
-                            getLog().debug(String.format("Decendent module %s added", mod.getName()));
-                        }
+                    if (mpp.compareTo(mod.getBasedir()) == 0 && descendants.add(mod)
+                            && getLog().isDebugEnabled()) {
+                        getLog().debug(String.format("Decendent module %s added", mod.getName()));
+
                     }
                 } catch (IOException ex) {
                     if (getLog().isDebugEnabled()) {
@@ -160,17 +160,15 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
             size = descendants.size();
             for (MavenProject p : getReactorProjects()) {
                 if (project.equals(p.getParent()) || descendants.contains(p.getParent())) {
-                    if (descendants.add(p)) {
-                        if (getLog().isDebugEnabled()) {
-                            getLog().debug(String.format("Decendent %s added", p.getName()));
-                        }
+                    if (descendants.add(p) && getLog().isDebugEnabled()) {
+                        getLog().debug(String.format("Decendent %s added", p.getName()));
+
                     }
                     for (MavenProject modTest : getReactorProjects()) {
                         if (p.getModules() != null && p.getModules().contains(modTest.getName())
-                                && descendants.add(modTest)) {
-                            if (getLog().isDebugEnabled()) {
-                                getLog().debug(String.format("Decendent %s added", modTest.getName()));
-                            }
+                                && descendants.add(modTest)
+                                && getLog().isDebugEnabled()) {
+                            getLog().debug(String.format("Decendent %s added", modTest.getName()));
                         }
                     }
                 }

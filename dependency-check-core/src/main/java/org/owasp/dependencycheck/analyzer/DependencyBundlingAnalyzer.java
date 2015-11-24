@@ -213,10 +213,8 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
         //version check
         final DependencyVersion version1 = DependencyVersionUtil.parseVersion(fileName1);
         final DependencyVersion version2 = DependencyVersionUtil.parseVersion(fileName2);
-        if (version1 != null && version2 != null) {
-            if (!version1.equals(version2)) {
-                return false;
-            }
+        if (version1 != null && version2 != null && !version1.equals(version2)) {
+            return false;
         }
 
         //filename check

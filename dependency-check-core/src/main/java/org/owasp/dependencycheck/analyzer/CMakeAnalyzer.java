@@ -62,11 +62,19 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     private static final int REGEX_OPTIONS = Pattern.DOTALL
             | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE;
 
+    /**
+     * Regex to extract the product information.
+     */
     private static final Pattern PROJECT = Pattern.compile(
             "^ *project *\\([ \\n]*(\\w+)[ \\n]*.*?\\)", REGEX_OPTIONS);
 
-    // Group 1: Product
-    // Group 2: Version
+    /**
+     * Regex to extract product and version information.
+     *
+     * Group 1: Product
+     *
+     * Group 2: Version
+     */
     private static final Pattern SET_VERSION = Pattern
             .compile(
                     "^ *set\\s*\\(\\s*(\\w+)_version\\s+\"?(\\d+(?:\\.\\d+)+)[\\s\"]?\\)",
@@ -172,8 +180,17 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
+    /**
+     * Extracts the version information from the contents. If more then one version is found additional dependencies are added to
+     * the dependency list.
+     *
+     * @param dependency the dependency being analyzed
+     * @param engine the dependency-check engine
+     * @param contents the version information
+     */
     private void analyzeSetVersionCommand(Dependency dependency, Engine engine, String contents) {
-        final Dependency orig = dependency;
+        Dependency currentDep = dependency;
+
         final Matcher m = SET_VERSION.matcher(contents);
         int count = 0;
         while (m.find()) {
@@ -190,19 +207,19 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
             }
             if (count > 1) {
                 //TODO - refactor so we do not assign to the parameter (checkstyle)
-                dependency = new Dependency(orig.getActualFile());
-                dependency.setDisplayFileName(String.format("%s:%s", orig.getDisplayFileName(), product));
-                final String filePath = String.format("%s:%s", orig.getFilePath(), product);
-                dependency.setFilePath(filePath);
+                currentDep = new Dependency(dependency.getActualFile());
+                currentDep.setDisplayFileName(String.format("%s:%s", dependency.getDisplayFileName(), product));
+                final String filePath = String.format("%s:%s", dependency.getFilePath(), product);
+                currentDep.setFilePath(filePath);
 
                 // prevents coalescing into the dependency provided by engine
-                dependency.setSha1sum(Checksum.getHex(sha1.digest(filePath.getBytes())));
-                engine.getDependencies().add(dependency);
+                currentDep.setSha1sum(Checksum.getHex(sha1.digest(filePath.getBytes())));
+                engine.getDependencies().add(currentDep);
             }
-            final String source = dependency.getDisplayFileName();
-            dependency.getProductEvidence().addEvidence(source, "Product",
+            final String source = currentDep.getDisplayFileName();
+            currentDep.getProductEvidence().addEvidence(source, "Product",
                     product, Confidence.MEDIUM);
-            dependency.getVersionEvidence().addEvidence(source, "Version",
+            currentDep.getVersionEvidence().addEvidence(source, "Version",
                     version, Confidence.MEDIUM);
         }
         LOGGER.debug(String.format("Found %d matches.", count));

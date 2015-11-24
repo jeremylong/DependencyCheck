@@ -22,7 +22,7 @@ package org.owasp.dependencycheck;
  *
  * @author Jeremy Long
  */
-class InvalidScanPathException extends Exception {
+public class InvalidScanPathException extends Exception {
 
     /**
      * The serial version UID for serialization.

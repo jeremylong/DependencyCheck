@@ -357,10 +357,13 @@ public class Update extends Purge {
         this.cveUrl20Base = cveUrl20Base;
     }
 
+    /**
+     * The number of hours to wait before re-checking for updates.
+     */
     private Integer cveValidForHours;
 
     /**
-     * Get the value of cveValidForHours
+     * Get the value of cveValidForHours.
      *
      * @return the value of cveValidForHours
      */
@@ -369,7 +372,7 @@ public class Update extends Purge {
     }
 
     /**
-     * Set the value of cveValidForHours
+     * Set the value of cveValidForHours.
      *
      * @param cveValidForHours new value of cveValidForHours
      */

@@ -322,12 +322,26 @@ public class Model {
      */
     private static class PropertyLookup extends StrLookup {
 
+        /**
+         * Reference to the properties to lookup.
+         */
         private final Properties props;
 
-        public PropertyLookup(Properties props) {
+        /**
+         * Constructs a new property lookup.
+         *
+         * @param props the properties to wrap.
+         */
+        PropertyLookup(Properties props) {
             this.props = props;
         }
 
+        /**
+         * Looks up the given property.
+         *
+         * @param key the key to the property
+         * @return the value of the property specified by the key
+         */
         @Override
         public String lookup(String key) {
             return props.getProperty(key);

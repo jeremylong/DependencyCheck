@@ -90,14 +90,14 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
     }
 
     /**
-     * Checks if the NVD CVE XML files were last checked recently.
-     * As an optimization, we can avoid repetitive checks against the NVD.
-     * Setting CVE_CHECK_VALID_FOR_HOURS determines the duration since last check before checking again.
-     * A database property stores the timestamp of the last check. 
+     * Checks if the NVD CVE XML files were last checked recently. As an optimization, we can avoid repetitive checks against the
+     * NVD. Setting CVE_CHECK_VALID_FOR_HOURS determines the duration since last check before checking again. A database property
+     * stores the timestamp of the last check.
      *
      * @return true to proceed with the check, or false to skip.
+     * @throws UpdateException thrown when there is an issue checking for updates.
      */
-    private boolean checkUpdate () throws UpdateException {
+    private boolean checkUpdate() throws UpdateException {
         boolean proceed = true;
         // If the valid setting has not been specified, then we proceed to check...
         final int validForHours = Settings.getInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, 0);
@@ -112,7 +112,7 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
             } else {
                 LOGGER.info("Skipping NVD check since last check was within {} hours.", validForHours);
                 LOGGER.debug("Last NVD was at {}, and now {} is within {} ms.",
-                    lastChecked, now, msValid);
+                        lastChecked, now, msValid);
             }
         }
         return proceed;

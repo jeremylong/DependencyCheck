@@ -91,10 +91,10 @@ public final class CliParser {
      */
     private void validateArgs() throws FileNotFoundException, ParseException {
         if (isUpdateOnly() || isRunScan()) {
-            String value = line.getOptionValue(ARGUMENT.CVE_VALID_FOR_HOURS);
+            final String value = line.getOptionValue(ARGUMENT.CVE_VALID_FOR_HOURS);
             if (value != null) {
                 try {
-                    int i = Integer.parseInt(value);
+                    final int i = Integer.parseInt(value);
                     if (i < 0) {
                         throw new ParseException("Invalid Setting: cveValidForHours must be a number greater than or equal to 0.");
                     }
@@ -989,12 +989,12 @@ public final class CliParser {
     }
 
     /**
-     * Get the value of cveValidForHours
+     * Get the value of cveValidForHours.
      *
      * @return the value of cveValidForHours
      */
     public Integer getCveValidForHours() {
-        String v = line.getOptionValue(ARGUMENT.CVE_VALID_FOR_HOURS);
+        final String v = line.getOptionValue(ARGUMENT.CVE_VALID_FOR_HOURS);
         if (v != null) {
             return Integer.parseInt(v);
         }
