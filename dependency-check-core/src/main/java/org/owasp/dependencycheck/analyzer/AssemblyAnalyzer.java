@@ -118,6 +118,9 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         Document doc = null;
         try {
             final Process proc = pb.start();
+
+            doc = builder.parse(proc.getInputStream());
+
             // Try evacuating the error stream
             final String errorStream = IOUtils.toString(proc.getErrorStream(), "UTF-8");
             if (null != errorStream && !errorStream.isEmpty()) {
@@ -125,8 +128,6 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             }
 
             int rc = 0;
-            doc = builder.parse(proc.getInputStream());
-
             try {
                 rc = proc.waitFor();
             } catch (InterruptedException ie) {
