@@ -18,29 +18,36 @@
 package org.owasp.dependencycheck.analyzer;
 
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
 
 /**
- * Unit tests for {@link RubyGemspecAnalyzer}.
+ * Unit tests for {@link RubyBundleAuditAnalyzer}.
  *
  * @author Dale Visser <dvisser@ida.org>
  */
-public class RubyGemspecAnalyzerTest extends BaseTest {
+public class RubyBundleAuditAnalyzerTest extends BaseTest {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RubyBundleAuditAnalyzerTest.class);
 
     /**
      * The analyzer to test.
      */
-    RubyGemspecAnalyzer analyzer;
+    RubyBundleAuditAnalyzer analyzer;
 
     /**
      * Correctly setup the analyzer for testing.
@@ -49,9 +56,14 @@ public class RubyGemspecAnalyzerTest extends BaseTest {
      */
     @Before
     public void setUp() throws Exception {
-        analyzer = new RubyGemspecAnalyzer();
-        analyzer.setFilesMatched(true);
-        analyzer.initialize();
+        try {
+            analyzer = new RubyBundleAuditAnalyzer();
+            analyzer.setFilesMatched(true);
+            analyzer.initialize();
+        } catch (Exception e) {
+            LOGGER.warn("Exception setting up RubyBundleAuditAnalyzer. Tests will be incomplete", e);
+            Assume.assumeNoException("Is bundle-audit installed? TESTS WILL BE INCOMPLETE", e);
+        }
     }
 
     /**
@@ -70,34 +82,28 @@ public class RubyGemspecAnalyzerTest extends BaseTest {
      */
     @Test
     public void testGetName() {
-        assertThat(analyzer.getName(), is("Ruby Gemspec Analyzer"));
+        assertThat(analyzer.getName(), is("Ruby Bundle Audit Analyzer"));
     }
 
     /**
-     * Test Ruby Gemspec file support.
+     * Test Ruby Bundler Audit file support.
      */
     @Test
     public void testSupportsFiles() {
-        assertThat(analyzer.accept(new File("test.gemspec")), is(true));
-        assertThat(analyzer.accept(new File("Rakefile")), is(true));
+        assertThat(analyzer.accept(new File("Gemfile.lock")), is(true));
     }
 
     /**
-     * Test Ruby Gemspec analysis.
+     * Test Ruby BundlerAudit analysis.
      *
      * @throws AnalysisException is thrown when an exception occurs.
      */
     @Test
-    public void testAnalyzePackageJson() throws AnalysisException {
+    public void testAnalysis() throws AnalysisException, DatabaseException {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
-                "ruby/vulnerable/gems/specifications/rest-client-1.7.2.gemspec"));
-        analyzer.analyze(result, null);
-        final String vendorString = result.getVendorEvidence().toString();
-        assertThat(vendorString, containsString("REST Client Team"));
-        assertThat(vendorString, containsString("rest-client_project"));
-        assertThat(vendorString, containsString("rest.client@librelist.com"));
-        assertThat(vendorString, containsString("https://github.com/rest-client/rest-client"));
-        assertThat(result.getProductEvidence().toString(), containsString("rest-client"));
-        assertThat(result.getVersionEvidence().toString(), containsString("1.7.2"));
+                "ruby/vulnerable/Gemfile.lock"));
+        final Engine engine = new Engine();
+        analyzer.analyze(result, engine);
+        assertThat(engine.getDependencies().size(), is(not(0)));
     }
 }

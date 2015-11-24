@@ -49,11 +49,12 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
 
+    private static final String GEMSPEC = "gemspec";
+
     private static final FileFilter FILTER =
-            FileFilterBuilder.newInstance().addExtensions("gemspec").addFilenames("Rakefile").build();
+            FileFilterBuilder.newInstance().addExtensions(GEMSPEC).addFilenames("Rakefile").build();
 
     private static final String EMAIL = "email";
-    private static final String GEMSPEC = "gemspec";
 
     /**
      * @return a filter that accepts files named Rakefile or matching the glob pattern, *.gemspec

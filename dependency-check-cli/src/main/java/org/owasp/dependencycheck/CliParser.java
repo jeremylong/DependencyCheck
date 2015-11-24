@@ -344,6 +344,10 @@ public final class CliParser {
         final Option pathToMono = Option.builder().argName("path").hasArg().longOpt(ARGUMENT.PATH_TO_MONO)
                 .desc("The path to Mono for .NET Assembly analysis on non-windows systems.")
                 .build();
+        
+        final Option pathToBundleAudit = Option.builder().argName("path").hasArg()
+                .longOpt(ARGUMENT.PATH_TO_BUNDLE_AUDIT)
+                .desc("The path to bundle-audit for Gem bundle analysis.").build();
 
         final Option connectionTimeout = Option.builder(ARGUMENT.CONNECTION_TIMEOUT_SHORT).argName("timeout").hasArg()
                 .longOpt(ARGUMENT.CONNECTION_TIMEOUT).desc("The connection timeout (in milliseconds) to use when downloading resources.")
@@ -437,11 +441,14 @@ public final class CliParser {
                 .addOption(disableJarAnalyzer)
                 .addOption(disableArchiveAnalyzer)
                 .addOption(disableAssemblyAnalyzer)
+                .addOption(pathToBundleAudit)
                 .addOption(disablePythonDistributionAnalyzer)
                 .addOption(disableCmakeAnalyzer)
                 .addOption(disablePythonPackageAnalyzer)
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_RUBYGEMS)
                         .desc("Disable the Ruby Gemspec Analyzer.").build())
+                .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_BUNDLE_AUDIT)
+                        .desc("Disable the Ruby Bundler-Audit Analyzer.").build())
                 .addOption(disableAutoconfAnalyzer)
                 .addOption(disableComposerAnalyzer)
                 .addOption(disableOpenSSLAnalyzer)
@@ -454,6 +461,7 @@ public final class CliParser {
                 .addOption(nexusUsesProxy)
                 .addOption(additionalZipExtensions)
                 .addOption(pathToMono)
+                .addOption(pathToBundleAudit)
                 .addOption(purge);
     }
 
@@ -558,6 +566,16 @@ public final class CliParser {
     public boolean isAssemblyDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_ASSEMBLY);
     }
+
+    /**
+     * Returns true if the disableBundleAudit command line argument was specified.
+     *
+     * @return true if the disableBundleAudit command line argument was specified; otherwise false
+     */
+    public boolean isBundleAuditDisabled() {
+        return (line != null) && line.hasOption(ARGUMENT.DISABLE_BUNDLE_AUDIT);
+    }
+
 
     /**
      * Returns true if the disablePyDist command line argument was specified.
@@ -738,6 +756,15 @@ public final class CliParser {
      */
     public String getPathToMono() {
         return line.getOptionValue(ARGUMENT.PATH_TO_MONO);
+    }
+
+    /**
+     * Returns the path to bundle-audit for Ruby bundle analysis.
+     *
+     * @return the path to Mono
+     */
+    public String getPathToBundleAudit() {
+        return line.getOptionValue(ARGUMENT.PATH_TO_BUNDLE_AUDIT);
     }
 
     /**
@@ -1205,6 +1232,10 @@ public final class CliParser {
          */
         public static final String DISABLE_ASSEMBLY = "disableAssembly";
         /**
+         * Disables the Ruby Bundler Audit Analyzer.
+         */
+        public static final String DISABLE_BUNDLE_AUDIT = "disableBundleAudit";
+        /**
          * Disables the Nuspec Analyzer.
          */
         public static final String DISABLE_NUSPEC = "disableNuspec";
@@ -1264,5 +1295,9 @@ public final class CliParser {
          * Exclude path argument.
          */
         public static final String EXCLUDE = "exclude";
+        /**
+         * The CLI argument name for setting the path to bundle-audit for Ruby bundle analysis.
+         */
+        public static final String PATH_TO_BUNDLE_AUDIT = "bundleAudit";
     }
 }
