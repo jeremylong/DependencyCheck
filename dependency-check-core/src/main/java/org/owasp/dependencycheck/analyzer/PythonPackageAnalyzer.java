@@ -164,7 +164,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
      * Analyzes python packages and adds evidence to the dependency.
      *
      * @param dependency the dependency being analyzed
-     * @param engine     the engine being used to perform the scan
+     * @param engine the engine being used to perform the scan
      * @throws AnalysisException thrown if there is an unrecoverable error analyzing the dependency
      */
     @Override
@@ -175,8 +175,11 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
         final String parentName = parent.getName();
         boolean found = false;
         if (INIT_PY_FILTER.accept(file)) {
-            for (final File sourceFile : parent.listFiles(PY_FILTER)) {
-                found |= analyzeFileContents(dependency, sourceFile);
+            final File[] fileList = parent.listFiles(PY_FILTER);
+            if (fileList != null) {
+                for (final File sourceFile : fileList) {
+                    found |= analyzeFileContents(dependency, sourceFile);
+                }
             }
         }
         if (found) {
@@ -197,7 +200,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
      * __summary__, __uri__, __url__, __home*page__, __author__, and their all caps equivalents.
      *
      * @param dependency the dependency being analyzed
-     * @param file       the file name to analyze
+     * @param file the file name to analyze
      * @return whether evidence was found
      * @throws AnalysisException thrown if there is an unrecoverable error
      */
@@ -241,15 +244,15 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
      * Adds summary information to the dependency
      *
      * @param dependency the dependency being analyzed
-     * @param pattern    the pattern used to perform analysis
-     * @param group      the group from the pattern that indicates the data to use
-     * @param contents   the data being analyzed
-     * @param source     the source name to use when recording the evidence
-     * @param key        the key name to use when recording the evidence
+     * @param pattern the pattern used to perform analysis
+     * @param group the group from the pattern that indicates the data to use
+     * @param contents the data being analyzed
+     * @param source the source name to use when recording the evidence
+     * @param key the key name to use when recording the evidence
      * @return true if evidence was collected; otherwise false
      */
     private boolean addSummaryInfo(Dependency dependency, Pattern pattern,
-                                   int group, String contents, String source, String key) {
+            int group, String contents, String source, String key) {
         final Matcher matcher = pattern.matcher(contents);
         final boolean found = matcher.find();
         if (found) {
@@ -262,16 +265,16 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Collects evidence from the home page URL.
      *
-     * @param pattern  the pattern to match
+     * @param pattern the pattern to match
      * @param evidence the evidence collection to add the evidence to
-     * @param source   the source of the evidence
-     * @param name     the name of the evidence
+     * @param source the source of the evidence
+     * @param name the name of the evidence
      * @param contents the home page URL
      * @return true if evidence was collected; otherwise false
      */
     private boolean gatherHomePageEvidence(Pattern pattern,
-                                           EvidenceCollection evidence, String source, String name,
-                                           String contents) {
+            EvidenceCollection evidence, String source, String name,
+            String contents) {
         final Matcher matcher = pattern.matcher(contents);
         boolean found = false;
         if (matcher.find()) {
@@ -287,17 +290,17 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Gather evidence from a Python source file using the given string assignment regex pattern.
      *
-     * @param pattern    to scan contents with
-     * @param contents   of Python source file
-     * @param source     for storing evidence
-     * @param evidence   to store evidence in
-     * @param name       of evidence
+     * @param pattern to scan contents with
+     * @param contents of Python source file
+     * @param source for storing evidence
+     * @param evidence to store evidence in
+     * @param name of evidence
      * @param confidence in evidence
      * @return whether evidence was found
      */
     private boolean gatherEvidence(Pattern pattern, String contents,
-                                   String source, EvidenceCollection evidence, String name,
-                                   Confidence confidence) {
+            String source, EvidenceCollection evidence, String name,
+            Confidence confidence) {
         final Matcher matcher = pattern.matcher(contents);
         final boolean found = matcher.find();
         if (found) {
