@@ -61,8 +61,8 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
             analyzer.setFilesMatched(true);
             analyzer.initialize();
         } catch (Exception e) {
-            LOGGER.warn("Exception setting up RubyBundleAuditAnalyzer. Tests will be incomplete", e);
-            Assume.assumeNoException("Is bundle-audit installed? TESTS WILL BE INCOMPLETE", e);
+            //LOGGER.warn("Exception setting up RubyBundleAuditAnalyzer. Tests will be incomplete", e);
+            Assume.assumeNoException("Exception setting up RubyBundleAuditAnalyzer; bundle audit may not be installed. Tests will be incomplete", e);
         }
     }
 
