@@ -28,8 +28,6 @@ Copyright (c) 2012 - Jeremy Long
         <module>dependency-check-cli</module>
         <module>dependency-check-ant</module>
         <module>dependency-check-maven</module>
-        <module>dependency-check-gradle</module>
-        <module>dependency-check-jenkins</module>
         <module>dependency-check-utils</module>
     </modules>
     <name>Dependency-Check</name>
@@ -134,6 +132,14 @@ Copyright (c) 2012 - Jeremy Long
         <reporting.pmd-plugin.version>3.5</reporting.pmd-plugin.version>
     </properties>
     <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
         <site>
             <id>gh-pages</id>
             <name>gh-pages</name>
@@ -231,13 +237,19 @@ Copyright (c) 2012 - Jeremy Long
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>1.8</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.2.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.9.1</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -246,6 +258,20 @@ Copyright (c) 2012 - Jeremy Long
                     <showDeprecation>true</showDeprecation>
                     <source>1.6</source>
                     <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                    <excludes>
+                        <exclude>**/checkstyle*</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -273,16 +299,9 @@ Copyright (c) 2012 - Jeremy Long
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
+                <artifactId>maven-release-plugin</artifactId>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                        </manifest>
-                    </archive>
-                    <excludes>
-                        <exclude>**/checkstyle*</exclude>
-                    </excludes>
+                    <releaseProfiles>release</releaseProfiles>
                 </configuration>
             </plugin>
             <plugin>
@@ -323,7 +342,6 @@ Copyright (c) 2012 - Jeremy Long
                     <skipDeploy>true</skipDeploy>
                 </configuration>
             </plugin>
-
             <plugin>
                 <inherited>false</inherited>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -346,6 +364,55 @@ Copyright (c) 2012 - Jeremy Long
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>release</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     <reporting>
         <plugins>
             <plugin>
@@ -359,7 +426,7 @@ Copyright (c) 2012 - Jeremy Long
                 <version>2.10.3</version>
                 <configuration>
                     <failOnError>false</failOnError>
-                    <bottom>CopyrightÂ© 2012-15 Jeremy Long. All Rights Reserved.</bottom>
+                    <bottom>Copyright© 2012-15 Jeremy Long. All Rights Reserved.</bottom>
                 </configuration>
                 <reportSets>
                     <reportSet>
