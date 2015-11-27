@@ -34,13 +34,14 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import org.owasp.dependencycheck.BaseDBTestCase;
 
 /**
  * Unit tests for NodePackageAnalyzer.
  *
  * @author Dale Visser <dvisser@ida.org>
  */
-public class ComposerLockAnalyzerTest extends BaseTest {
+public class ComposerLockAnalyzerTest extends BaseDBTestCase {
 
     /**
      * The analyzer to test.
