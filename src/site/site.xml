@@ -107,63 +107,66 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 </item>
             </item>
             <item collapse="true" name="File Type Analyzers" href="./analyzers/index.html">
-                <item name="Archive Analyzer" href="./analyzers/archive-analyzer.html">
+                <item name="Archive" href="./analyzers/archive-analyzer.html">
                     <description>Archive Analyzer</description>
                 </item>
-                <item name="Assembly Analyzer" href="./analyzers/assembly-analyzer.html">
+                <item name="Assembly" href="./analyzers/assembly-analyzer.html">
                     <description>Assembly Analyzer</description>
                 </item>
-                <item name="Autoconf Analyzer" href="./analyzers/autoconf.html">
+                <item name="Autoconf" href="./analyzers/autoconf.html">
                     <description>Autoconf Analyzer</description>
                 </item>
-                <item name="Central Analyzer" href="./analyzers/central-analyzer.html">
+                <item name="Central" href="./analyzers/central-analyzer.html">
                     <description>Central Analyzer</description>
                 </item>
-                <item name="CMake Analyzer" href="./analyzers/cmake.html">
+                <item name="CMake" href="./analyzers/cmake.html">
                     <description>CMake Analyzer</description>
                 </item>
-                <item name="Jar Analyzer" href="./analyzers/jar-analyzer.html">
+                <item name="Jar" href="./analyzers/jar-analyzer.html">
                     <description>Jar Analyzer</description>
                 </item>
-                <item name="Nexus Analyzer" href="./analyzers/nexus-analyzer.html">
+                <item name="Nexus" href="./analyzers/nexus-analyzer.html">
                     <description>Nexus Analyzer</description>
                 </item>
-                <item name="Node.js Analyzer" href="./analyzers/nodejs.html">
+                <item name="Node.js" href="./analyzers/nodejs.html">
                     <description>Node.js Analyzer</description>
                 </item>
-                <item name="Nuspec Analyzer" href="./analyzers/nuspec-analyzer.html">
+                <item name="Nuspec" href="./analyzers/nuspec-analyzer.html">
                     <description>Nuspec Analyzer</description>
                 </item>
-                <item name="OpenSSL Analyzer" href="./analyzers/openssl.html">
+                <item name="OpenSSL" href="./analyzers/openssl.html">
                     <description>OpenSSL Analyzer</description>
                 </item>
-                <item name="Python Analyzer" href="./analyzers/python.html">
+                <item name="Python" href="./analyzers/python.html">
                     <description>Python Analyzer</description>
                 </item>
-                <item name="Ruby Gemspec Analyzer" href="./analyzers/ruby-gemspec.html">
+                <item name="Ruby Gemspec" href="./analyzers/ruby-gemspec.html">
                     <description>Ruby Gemspec Analyzer</description>
                 </item>
             </item>
             <item collapse="true" name="Modules" href="./modules.html">
-                <item name="dependency-check-cli" href="./dependency-check-cli/index.html">
+                <item name="CLI" href="./dependency-check-cli/index.html">
                     <description>The command line interface for OWASP dependency-check.</description>
                 </item>
-                <item name="dependency-check-ant" href="./dependency-check-ant/index.html">
+                <item name="Ant Task" href="./dependency-check-ant/index.html">
                     <description>Ant task to run OWASP dependency-check.</description>
                 </item>
-                <item name="dependency-check-maven" href="./dependency-check-maven/index.html">
+                <item name="Maven Plugin" href="./dependency-check-maven/index.html">
                     <description>Maven plugin for OWASP dependency-check.</description>
                 </item>
-                <item name="dependency-check-gradle" href="./dependency-check-gradle/index.html">
+                <item collapse="true" name="Gradle Plugin" href="./dependency-check-gradle/index.html">
                     <description>Gradle plugin for OWASP dependency-check.</description>
+                    <item name="dependencyCheck" href="./dependency-check-gradle/configuration.html" />
+                    <item name="dependencyCheckUpdate" href="./dependency-check-gradle/configuration-update.html" />
+                    <item name="dependencyCheckPurge" href="./dependency-check-gradle/configuration-purge.html" />
                 </item>
-                <item name="dependency-check-jenkins" href="./dependency-check-jenkins/index.html">
+                <item name="Jenkins Plugin" href="./dependency-check-jenkins/index.html">
                     <description>A Jenkins plugin for OWASP dependency-check.</description>
                 </item>
-                <item name="dependency-check-core" href="./dependency-check-core/index.html">
+                <item name="Core" href="./dependency-check-core/index.html">
                     <description>The core OWASP dependency-check engine and reporting tool.</description>
                 </item>
-                <item name="dependency-check-utils" href="./dependency-check-utils/index.html">
+                <item name="Utils" href="./dependency-check-utils/index.html">
                     <description>A set of utility classes used by OWASP dependency-check.</description>
                 </item>
             </item>

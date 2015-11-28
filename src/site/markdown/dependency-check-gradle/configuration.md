@@ -1,11 +1,11 @@
 Tasks
 ====================
 
-Task                                        | Description
---------------------------------------------|-----------------------
-dependencyCheck                             | Runs dependency-check against the project and generates a report.
-[dependencyCheckUpdate](config-update.html) | Updates the local cache of the NVD data from NIST.
-[dependencyCheckPurge](config-purge.html)   | Deletes the local copy of the NVD. This is used to force a refresh of the data.
+Task                                               | Description
+---------------------------------------------------|-----------------------
+dependencyCheck                                    | Runs dependency-check against the project and generates a report.
+[dependencyCheckUpdate](configuration-update.html) | Updates the local cache of the NVD data from NIST.
+[dependencyCheckPurge](configuration-purge.html)   | Deletes the local copy of the NVD. This is used to force a refresh of the data.
 
 Configuration: dependencyCheck
 ====================
@@ -21,7 +21,7 @@ reportsDirName       | The location to write the report(s). This directory will 
 skipTestGroups       | When set to true (the default) all dependency groups that being with 'test' will be skipped.                       | true
 suppressionFile      | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html)       | &nbsp;
 
-$H$H$H$H Example
+#### Example
 ```groovy
 dependencyCheck {
     autoUpdate=false
@@ -30,7 +30,7 @@ dependencyCheck {
 }
 ```
 
-$H$H$H Proxy Configuration
+### Proxy Configuration
 
 Property          | Description                        | Default Value
 ------------------|------------------------------------|------------------
@@ -40,7 +40,7 @@ username          | Defines the proxy user name.       | &nbsp;
 password          | Defines the proxy password.        | &nbsp;
 connectionTimeout | The URL Connection Timeout.        | &nbsp;
 
-$H$H$H$H Example
+#### Example
 ```groovy
 dependencyCheck {
     proxy {
@@ -50,7 +50,7 @@ dependencyCheck {
 }
 ```
 
-$H$H$H Advanced Configuration
+### Advanced Configuration
 
 The following properties can be configured in the dependencyCheck task. However, they are less frequently changed. One exception
 may be the cvedUrl properties, which can be used to host a mirror of the NVD within an enterprise environment.
@@ -69,7 +69,7 @@ data         | connectionString  | The connection string used to connect to the 
 data         | username          | The username used when connecting to the database.                                          | &nbsp;
 data         | password          | The password used when connecting to the database.                                          | &nbsp;
 
-$H$H$H$H Example
+#### Example
 ```groovy
 dependencyCheck {
     data {
@@ -78,7 +78,7 @@ dependencyCheck {
 }
 ```
 
-$H$H$H Analyzer Configuration
+### Analyzer Configuration
 
 In addition to the above, the dependencyCheck plugin can be configured to enable or disable specific
 analyzers by configuring the `analyzer` section. Note, specific file type analyzers will automatically
@@ -106,7 +106,7 @@ nuspecEnabled         | Sets whether or not the .NET Nuget Nuspec Analyzer will 
 assemblyEnabled       | Sets whether or not the .NET Assembly Analyzer should be used.            | true
 pathToMono            | The path to Mono for .NET assembly analysis on non-windows systems.       | &nbsp;
 
-$H$H$H$H Example
+#### Example
 ```groovy
 dependencyCheck {
     analyzer {
