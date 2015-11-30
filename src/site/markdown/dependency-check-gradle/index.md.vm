@@ -12,6 +12,8 @@ seven days the update will only take a few seconds.
 
 #set( $H = '#' )
 
+$H$H Quick Start
+
 $H$H$H Step 1, Apply dependency-check-gradle plugin
 Install from Maven central repo
 
@@ -25,7 +27,7 @@ buildscript {
     }
 }
 
-apply plugin: 'dependencyCheck'
+apply plugin: 'org.owasp.dependencycheck'
 ```
 
 $H$H$H Step 2, Run the dependencyCheck task
@@ -36,8 +38,13 @@ Once gradle plugin applied, run following gradle task to check dependencies:
 gradle dependencyCheck --info
 ```
 
-The reports will be generated automatically under `buildDir/reports` folder.
+The reports will be generated automatically under `build/reports` folder.
 
+
+$H$H Task Configuration
+The OWASP dependency-check-gradle plugin contains three tasks: [dependencyCheck](configuration.html),
+[dependencyCheckUpdate](configuration-update.html), and [dependencyCheckPurge](configuration-purge.html).
+Please see each tasks configuration page for more information.
 
 Mailing List
 ------------
