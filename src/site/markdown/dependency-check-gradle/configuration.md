@@ -17,7 +17,7 @@ autoUpdate           | Sets whether auto-updating of the NVD CVE/CPE data is ena
 cveValidForHours     | Sets the number of hours to wait before checking for new updates from the NVD.                                     | 4
 failBuildOnCVSS      | Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11; since the CVSS scores are 0-10, by default the build will never fail. | 11
 format               | The report format to be generated (HTML, XML, VULN, ALL).                                                          | HTML
-reportsDirName       | The location to write the report(s). This directory will be located in the build directory.                        | reports
+outputDirectory      | The location to write the report(s). This directory will be located in the build directory.                        | build/reports
 skipTestGroups       | When set to true (the default) all dependency groups that being with 'test' will be skipped.                       | true
 suppressionFile      | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html)       | &nbsp;
 
@@ -81,7 +81,7 @@ dependencyCheck {
 ### Analyzer Configuration
 
 In addition to the above, the dependencyCheck plugin can be configured to enable or disable specific
-analyzers by configuring the `analyzer` section. Note, specific file type analyzers will automatically
+analyzers by configuring the `analyzers` section. Note, specific file type analyzers will automatically
 disable themselves if no file types that they support are detected - so specifically disabling the
 analyzers is likely not needed.
 
@@ -109,7 +109,7 @@ pathToMono            | The path to Mono for .NET assembly analysis on non-windo
 #### Example
 ```groovy
 dependencyCheck {
-    analyzer {
+    analyzers {
         assemblyEnabled=false
     }
 }
