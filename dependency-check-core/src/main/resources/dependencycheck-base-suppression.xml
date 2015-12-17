@@ -189,4 +189,28 @@
         <gav regex="true">org.apache.geronimo.specs:.*</gav>
         <cpe>cpe:/a:apache:geronimo</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+        This suppresses false positives identified on tomcat-embed-el.
+        ]]></notes>
+        <gav regex="true">org\.apache\.tomcat\.embed:tomcat-embed-el:.*</gav>
+        <cpe>cpe:/a:apache:tomcat</cpe>
+        <cpe>cpe:/a:apache_tomcat:apache_tomcat</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+        This suppresses false positives identified on tomcat-jdbc.
+        ]]></notes>
+        <gav regex="true">org\.apache\.tomcat:tomcat-jdbc:.*</gav>
+        <cpe>cpe:/a:apache:tomcat</cpe>
+        <cpe>cpe:/a:apache_tomcat:apache_tomcat</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+        This suppresses false positives identified on tomcat-juli.
+        ]]></notes>
+        <gav regex="true">org\.apache\.tomcat:tomcat-juli:.*</gav>
+        <cpe>cpe:/a:apache:tomcat</cpe>
+        <cpe>cpe:/a:apache_tomcat:apache_tomcat</cpe>
+    </suppress>
 </suppressions>
