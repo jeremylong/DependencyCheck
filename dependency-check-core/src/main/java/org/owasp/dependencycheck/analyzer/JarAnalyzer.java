@@ -320,7 +320,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     foundSomething |= setPomEvidence(dependency, pom, classes);
                 }
             } catch (AnalysisException ex) {
-                LOGGER.warn("An error occured while analyzing '{}'.", dependency.getActualFilePath());
+                LOGGER.warn("An error occurred while analyzing '{}'.", dependency.getActualFilePath());
                 LOGGER.trace("", ex);
             }
         }

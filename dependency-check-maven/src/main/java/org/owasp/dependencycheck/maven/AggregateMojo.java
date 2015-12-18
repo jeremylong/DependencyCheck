@@ -107,7 +107,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                         getLog().debug(String.format("Dependency count post-bundler: %s", engine.getDependencies().size()));
                     }
                 } catch (AnalysisException ex) {
-                    getLog().warn("An error occured grouping the dependencies; duplicate entries may exist in the report", ex);
+                    getLog().warn("An error occurred grouping the dependencies; duplicate entries may exist in the report", ex);
                     getLog().debug("Bundling Exception", ex);
                 }
 

@@ -243,7 +243,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                         + "this can be ignored unless you are scanning .NET DLLs. Please see the log for more details.");
                 LOGGER.debug("Could not execute GrokAssembly {}", e.getMessage());
                 this.setEnabled(false);
-                throw new AnalysisException("An error occured with the .NET AssemblyAnalyzer", e);
+                throw new AnalysisException("An error occurred with the .NET AssemblyAnalyzer", e);
             }
         }
         builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();

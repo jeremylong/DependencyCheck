@@ -286,10 +286,10 @@ public class CPEAnalyzer implements Analyzer {
             }
             return ret;
         } catch (ParseException ex) {
-            LOGGER.warn("An error occured querying the CPE data. See the log for more details.");
+            LOGGER.warn("An error occurred querying the CPE data. See the log for more details.");
             LOGGER.info("Unable to parse: {}", searchString, ex);
         } catch (IOException ex) {
-            LOGGER.warn("An error occured reading CPE data. See the log for more details.");
+            LOGGER.warn("An error occurred reading CPE data. See the log for more details.");
             LOGGER.info("IO Error with search string: {}", searchString, ex);
         }
         return null;

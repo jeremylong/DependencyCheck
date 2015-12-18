@@ -159,7 +159,7 @@ public class AssemblyAnalyzerTest extends BaseTest {
             aanalyzer.initialize();
             fail("Expected an AnalysisException");
         } catch (AnalysisException ae) {
-            assertEquals("An error occured with the .NET AssemblyAnalyzer", ae.getMessage());
+            assertEquals("An error occurred with the .NET AssemblyAnalyzer", ae.getMessage());
         } finally {
             System.setProperty(LOG_KEY, oldProp);
             // Recover the logger
