@@ -48,7 +48,7 @@ import org.owasp.dependencycheck.utils.Settings;
         name = "aggregate",
         defaultPhase = LifecyclePhase.VERIFY,
         /*aggregator = true,*/
-        threadSafe = true,
+        threadSafe = false,
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
         requiresOnline = true
 )
