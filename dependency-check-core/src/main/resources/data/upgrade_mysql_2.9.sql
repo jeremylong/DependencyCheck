@@ -12,4 +12,4 @@ DELIMITER ;
 
 GRANT EXECUTE ON PROCEDURE dependencycheck.save_property TO 'dcuser';
 
-UPDATE Properties SET value='3.0' WHERE ID='version';
+UPDATE properties SET value='3.0' WHERE ID='version';
