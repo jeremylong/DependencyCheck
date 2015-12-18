@@ -105,7 +105,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * is true.
      */
     @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "autoupdate")
+    @Parameter(property = "autoUpdate")
     private Boolean autoUpdate;
     /**
      * Generate aggregate reports in multi-module projects.
