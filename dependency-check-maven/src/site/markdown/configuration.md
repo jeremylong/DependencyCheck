@@ -71,6 +71,7 @@ dataDirectory        | Sets the data directory to hold SQL CVEs contents. This s
 databaseDriverName   | The name of the database driver. Example: org.h2.Driver.                                    | &nbsp;
 databaseDriverPath   | The path to the database driver JAR file; only used if the driver is not in the class path. | &nbsp;
 connectionString     | The connection string used to connect to the database.                                      | &nbsp;
+serverId             | The id of a server defined in the settings.xml; this can be used to encrypt the database password. See [password encryption](http://maven.apache.org/guides/mini/guide-encryption.html) for more information. | &nbsp;
 databaseUser         | The username used when connecting to the database.                                          | &nbsp;
 databasePassword     | The password used when connecting to the database.                                          | &nbsp;
 metaFileName         | Sets the name of the file to use for storing the metadata about the project.                | dependency-check.ser
