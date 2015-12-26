@@ -28,16 +28,20 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Server;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -48,6 +52,9 @@ import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.Settings;
+import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
 
 /**
  *
@@ -262,6 +269,21 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @Parameter(property = "databaseDriverPath", defaultValue = "", required = false)
     private String databaseDriverPath;
+    /**
+     * The server id in the settings.xml; used to retrieve encrypted passwords from the settings.xml.
+     */
+    @Parameter(property = "serverId", defaultValue = "", required = false)
+    private String serverId;
+    /**
+     * A reference to the settings.xml settings.
+     */
+    @Parameter(defaultValue = "${settings}", readonly = true, required = true)
+    private org.apache.maven.settings.Settings settingsXml;
+    /**
+     * The security dispatcher that can decrypt passwords in the settings.xml.
+     */
+    @Component(role = org.sonatype.plexus.components.sec.dispatcher.SecDispatcher.class, hint = "default")
+    private SecDispatcher securityDispatcher;
     /**
      * The database user name.
      */
@@ -677,9 +699,45 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
         Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
         Settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
+
+        if (databaseUser == null && databasePassword == null && serverId != null) {
+            Server server = settingsXml.getServer(serverId);
+            if (server != null) {
+                databaseUser = server.getUsername();
+                try {
+                    //The following fix was copied from:
+                    //   https://github.com/bsorrentino/maven-confluence-plugin/blob/master/maven-confluence-reporting-plugin/src/main/java/org/bsc/maven/confluence/plugin/AbstractBaseConfluenceMojo.java
+                    //
+                    // FIX to resolve
+                    // org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException:
+                    // java.io.FileNotFoundException: ~/.settings-security.xml (No such file or directory)
+                    //
+                    if (securityDispatcher instanceof DefaultSecDispatcher) {
+                        ((DefaultSecDispatcher) securityDispatcher).setConfigurationFile("~/.m2/settings-security.xml");
+                    }
+
+                    databasePassword = securityDispatcher.decrypt(server.getPassword());
+                } catch (SecDispatcherException ex) {
+                    if (ex.getCause() instanceof java.io.FileNotFoundException
+                            || (ex.getCause() != null && ex.getCause().getCause() instanceof java.io.FileNotFoundException)) {
+                        //maybe its not encrypted?
+                        final String tmp = server.getPassword();
+                        if (tmp.startsWith("{") && tmp.endsWith("}")) {
+                            getLog().error(String.format("Unable to decrypt the server password for server id '%s' in settings.xml%n\tCause: %s", serverId, ex.getMessage()));
+                        } else {
+                            databasePassword = tmp;
+                        }
+                    } else {
+                        getLog().error(String.format("Unable to decrypt the server password for server id '%s' in settings.xml%n\tCause: %s", serverId, ex.getMessage()));
+                    }
+                }
+            } else {
+                getLog().error(String.format("Server '%s' not found in the settings.xml file", serverId));
+            }
+        }
+
         Settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
         Settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
-
         Settings.setStringIfNotEmpty(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
 
         Settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_12_URL, cveUrl12Modified);
