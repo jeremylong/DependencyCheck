@@ -99,7 +99,6 @@ public class NvdCve12Handler extends DefaultHandler {
                 software = null;
             }
         } else if (!skip && current.isProdNode()) {
-
             vendor = attributes.getValue("vendor");
             product = attributes.getValue("name");
         } else if (!skip && current.isVersNode()) {
@@ -112,15 +111,16 @@ public class NvdCve12Handler extends DefaultHandler {
                 /*yes yes, this may not actually be an "a" - it could be an OS, etc. but for our
                  purposes this is good enough as we won't use this if we don't find a corresponding "a"
                  in the nvd cve 2.0. */
-                String cpe = "cpe:/a:" + vendor + ":" + product;
+                final StringBuilder cpe = new StringBuilder();
+                cpe.append("cpe:/a:").append(vendor).append(':').append(product);
                 if (num != null) {
-                    cpe += ':' + num;
+                    cpe.append(':').append(num);
                 }
                 if (edition != null) {
-                    cpe += ':' + edition;
+                    cpe.append(':').append(edition);
                 }
                 final VulnerableSoftware vs = new VulnerableSoftware();
-                vs.setCpe(cpe);
+                vs.setCpe(cpe.toString());
                 vs.setPreviousVersion(prev);
                 software.add(vs);
             }
