@@ -46,7 +46,7 @@ public class CPEHandler extends DefaultHandler {
     /**
      * A reference to the current element.
      */
-    private Element current = new Element();
+    private final Element current = new Element();
     /**
      * The logger.
      */
@@ -54,7 +54,7 @@ public class CPEHandler extends DefaultHandler {
     /**
      * The list of CPE values.
      */
-    private List<Cpe> data = new ArrayList<Cpe>();
+    private final List<Cpe> data = new ArrayList<Cpe>();
 
     /**
      * Returns the list of CPE values.
