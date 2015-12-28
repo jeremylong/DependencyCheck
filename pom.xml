@@ -661,6 +661,11 @@ Copyright (c) 2012 - Jeremy Long
                 <version>1.7</version>
             </dependency>
             <dependency>
+                <groupId>org.sonatype.plexus</groupId>
+                <artifactId>plexus-sec-dispatcher</artifactId>
+                <version>1.4</version>
+            </dependency>
+            <dependency>
                 <groupId>org.glassfish</groupId>
                 <artifactId>javax.json</artifactId>
                 <version>1.0.4</version>
