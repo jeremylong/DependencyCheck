@@ -80,11 +80,11 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
     /**
      * The CVE DB to use when processing the files.
      */
-    private CveDB cveDB;
+    private final CveDB cveDB;
     /**
      * The processor service to pass the results of the download to.
      */
-    private ExecutorService processorService;
+    private final ExecutorService processorService;
     /**
      * The NVD CVE Meta Data.
      */
@@ -92,7 +92,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
     /**
      * A reference to the global settings object.
      */
-    private Settings settings;
+    private final Settings settings;
 
     /**
      * Get the value of nvdCveInfo.
@@ -154,28 +154,6 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
      */
     public void setSecond(File second) {
         this.second = second;
-    }
-    /**
-     * A placeholder for an exception.
-     */
-    private Exception exception = null;
-
-    /**
-     * Get the value of exception.
-     *
-     * @return the value of exception
-     */
-    public Exception getException() {
-        return exception;
-    }
-
-    /**
-     * returns whether or not an exception occurred during download.
-     *
-     * @return whether or not an exception occurred during download
-     */
-    public boolean hasException() {
-        return exception != null;
     }
 
     @Override
