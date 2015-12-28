@@ -32,12 +32,12 @@ import org.owasp.dependencycheck.utils.Downloader;
  *
  * @author Jeremy Long
  */
-public class UpdateableNvdCve implements java.lang.Iterable<NvdCveInfo>, Iterator<NvdCveInfo> {
+public class UpdateableNvdCve implements Iterable<NvdCveInfo>, Iterator<NvdCveInfo> {
 
     /**
      * A collection of sources of data.
      */
-    private Map<String, NvdCveInfo> collection = new TreeMap<String, NvdCveInfo>();
+    private final Map<String, NvdCveInfo> collection = new TreeMap<String, NvdCveInfo>();
 
     /**
      * Returns the collection of NvdCveInfo objects. This method is mainly used for testing.
