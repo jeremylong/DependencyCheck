@@ -85,7 +85,7 @@ public class ProcessTask implements Callable<ProcessTask> {
     /**
      * A reference to the global settings object.
      */
-    private Settings settings;
+    private final Settings settings;
 
     /**
      * Constructs a new ProcessTask used to process an NVD CVE update.
