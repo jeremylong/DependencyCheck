@@ -78,7 +78,7 @@ public class PomHandler extends DefaultHandler {
     /**
      * The pom model.
      */
-    private Model model = new Model();
+    private final Model model = new Model();
 
     /**
      * Returns the model obtained from the pom.xml.
