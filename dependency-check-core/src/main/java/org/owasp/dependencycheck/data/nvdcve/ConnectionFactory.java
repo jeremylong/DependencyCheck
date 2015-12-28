@@ -345,8 +345,8 @@ public final class ConnectionFactory {
                 final DependencyVersion current = DependencyVersionUtil.parseVersion(DB_SCHEMA_VERSION);
                 final DependencyVersion db = DependencyVersionUtil.parseVersion(rs.getString(1));
                 if (current.compareTo(db) > 0) {
-                    LOGGER.debug("Current Schema: " + DB_SCHEMA_VERSION);
-                    LOGGER.debug("DB Schema: " + rs.getString(1));
+                    LOGGER.debug("Current Schema: {}", DB_SCHEMA_VERSION);
+                    LOGGER.debug("DB Schema: {}", rs.getString(1));
                     updateSchema(conn, rs.getString(1));
                     if (++callDepth < 10) {
                         ensureSchemaVersion(conn);
