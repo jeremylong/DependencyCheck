@@ -235,16 +235,14 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 this.setEnabled(false);
                 throw new AnalysisException("Could not execute .NET AssemblyAnalyzer");
             }
+        } catch (AnalysisException e) {
+            throw e;
         } catch (Throwable e) {
-            if (e instanceof AnalysisException) {
-                throw (AnalysisException) e;
-            } else {
-                LOGGER.warn("An error occurred with the .NET AssemblyAnalyzer;\n"
-                        + "this can be ignored unless you are scanning .NET DLLs. Please see the log for more details.");
-                LOGGER.debug("Could not execute GrokAssembly {}", e.getMessage());
-                this.setEnabled(false);
-                throw new AnalysisException("An error occurred with the .NET AssemblyAnalyzer", e);
-            }
+            LOGGER.warn("An error occurred with the .NET AssemblyAnalyzer;\n"
+                    + "this can be ignored unless you are scanning .NET DLLs. Please see the log for more details.");
+            LOGGER.debug("Could not execute GrokAssembly {}", e.getMessage());
+            this.setEnabled(false);
+            throw new AnalysisException("An error occurred with the .NET AssemblyAnalyzer", e);
         }
         builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
     }
