@@ -111,7 +111,10 @@ public class NvdCve12Handler extends DefaultHandler {
                 /*yes yes, this may not actually be an "a" - it could be an OS, etc. but for our
                  purposes this is good enough as we won't use this if we don't find a corresponding "a"
                  in the nvd cve 2.0. */
-                final StringBuilder cpe = new StringBuilder();
+                final int cpeLen = 8 + vendor.length() + product.length()
+                    + (null != num ? (1 + num.length()) : 0)
+                    + (null != edition ? (1 + edition.length()) : 0);
+                final StringBuilder cpe = new StringBuilder(cpeLen);
                 cpe.append("cpe:/a:").append(vendor).append(':').append(product);
                 if (num != null) {
                     cpe.append(':').append(num);
