@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -28,6 +29,7 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.DateUtil;
 import org.owasp.dependencycheck.utils.DependencyVersion;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.URLConnectionFactory;
 import org.owasp.dependencycheck.utils.URLConnectionFailureException;
@@ -82,27 +84,33 @@ public class EngineVersionCheck implements CachedWebDataSource {
 
     @Override
     public void update() throws UpdateException {
+
         try {
-            openDatabase();
-            LOGGER.debug("Begin Engine Version Check");
-            final DatabaseProperties properties = cveDB.getDatabaseProperties();
-            final long lastChecked = Long.parseLong(properties.getProperty(ENGINE_VERSION_CHECKED_ON, "0"));
-            final long now = System.currentTimeMillis();
-            updateToVersion = properties.getProperty(CURRENT_ENGINE_RELEASE, "");
-            final String currentVersion = Settings.getString(Settings.KEYS.APPLICATION_VERSION, "0.0.0");
-            LOGGER.debug("Last checked: {}", lastChecked);
-            LOGGER.debug("Now: {}", now);
-            LOGGER.debug("Current version: {}", currentVersion);
-            final boolean updateNeeded = shouldUpdate(lastChecked, now, properties, currentVersion);
-            if (updateNeeded) {
-                LOGGER.warn("A new version of dependency-check is available. Consider updating to version {}.",
-                        updateToVersion);
+            if (Settings.getBoolean(Settings.KEYS.AUTO_UPDATE)) {
+                openDatabase();
+                LOGGER.debug("Begin Engine Version Check");
+                final DatabaseProperties properties = cveDB.getDatabaseProperties();
+                final long lastChecked = Long.parseLong(properties.getProperty(ENGINE_VERSION_CHECKED_ON, "0"));
+                final long now = System.currentTimeMillis();
+                updateToVersion = properties.getProperty(CURRENT_ENGINE_RELEASE, "");
+                final String currentVersion = Settings.getString(Settings.KEYS.APPLICATION_VERSION, "0.0.0");
+                LOGGER.debug("Last checked: {}", lastChecked);
+                LOGGER.debug("Now: {}", now);
+                LOGGER.debug("Current version: {}", currentVersion);
+                final boolean updateNeeded = shouldUpdate(lastChecked, now, properties, currentVersion);
+                if (updateNeeded) {
+                    LOGGER.warn("A new version of dependency-check is available. Consider updating to version {}.",
+                            updateToVersion);
+                }
             }
         } catch (DatabaseException ex) {
             LOGGER.debug("Database Exception opening databases to retrieve properties", ex);
             throw new UpdateException("Error occured updating database properties.");
+        } catch (InvalidSettingException ex) {
+            LOGGER.debug("Unable to determine if autoupdate is enabled", ex);
         } finally {
             closeDatabase();
+
         }
     }
 
@@ -121,9 +129,6 @@ public class EngineVersionCheck implements CachedWebDataSource {
             String currentVersion) throws UpdateException {
         //check every 30 days if we know there is an update, otherwise check every 7 days
         int checkRange = 30;
-        if (updateToVersion == null || updateToVersion.isEmpty()) {
-            checkRange = 7;
-        }
         if (!DateUtil.withinDateRange(lastChecked, now, checkRange)) {
             LOGGER.debug("Checking web for new version.");
             final String currentRelease = getCurrentReleaseVersion();

@@ -124,7 +124,7 @@ public class EngineVersionCheckTest extends BaseTest {
         updateToVersion = "";
         currentVersion = "1.2.5";
         lastChecked = df.parse("2014-12-01").getTime();
-        now = df.parse("2014-12-08").getTime();
+        now = df.parse("2015-12-08").getTime();
         expResult = true;
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, properties, currentVersion);
