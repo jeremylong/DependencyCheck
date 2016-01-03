@@ -189,7 +189,7 @@
         <gav regex="true">org.apache.geronimo.specs:.*</gav>
         <cpe>cpe:/a:apache:geronimo</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         This suppresses false positives identified on tomcat-embed-el.
         ]]></notes>
@@ -197,7 +197,7 @@
         <cpe>cpe:/a:apache:tomcat</cpe>
         <cpe>cpe:/a:apache_tomcat:apache_tomcat</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         This suppresses false positives identified on tomcat-jdbc.
         ]]></notes>
@@ -205,12 +205,19 @@
         <cpe>cpe:/a:apache:tomcat</cpe>
         <cpe>cpe:/a:apache_tomcat:apache_tomcat</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         This suppresses false positives identified on tomcat-juli.
         ]]></notes>
         <gav regex="true">org\.apache\.tomcat:tomcat-juli:.*</gav>
         <cpe>cpe:/a:apache:tomcat</cpe>
         <cpe>cpe:/a:apache_tomcat:apache_tomcat</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        suppress false positive per issue #433
+        ]]></notes>
+        <gav regex="true">com\.google\.javascript:closure-compiler:.*</gav>
+        <cpe>cpe:/a:google:google_apps:-</cpe>
     </suppress>
 </suppressions>
