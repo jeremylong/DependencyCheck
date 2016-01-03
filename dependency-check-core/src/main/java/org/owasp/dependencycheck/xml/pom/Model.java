@@ -241,7 +241,7 @@ public class Model {
     /**
      * The list of licenses.
      */
-    private List<License> licenses = new ArrayList<License>();
+    private final List<License> licenses = new ArrayList<License>();
 
     /**
      * Returns the list of licenses.

@@ -50,7 +50,7 @@ public abstract class Filter<T> {
             if (next == null) {
                 throw new NoSuchElementException();
             }
-            T returnValue = next;
+            final T returnValue = next;
             toNext();
             return returnValue;
         }
@@ -63,7 +63,7 @@ public abstract class Filter<T> {
         private void toNext() {
             next = null;
             while (iterator.hasNext()) {
-                T item = iterator.next();
+                final T item = iterator.next();
                 if (item != null && passes(item)) {
                     next = item;
                     break;

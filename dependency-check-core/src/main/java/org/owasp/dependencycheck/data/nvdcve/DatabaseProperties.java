@@ -70,11 +70,11 @@ public class DatabaseProperties {
     /**
      * A collection of properties about the data.
      */
-    private Properties properties;
+    private final Properties properties;
     /**
      * A reference to the database.
      */
-    private CveDB cveDB;
+    private final CveDB cveDB;
 
     /**
      * Constructs a new data properties object.
@@ -83,13 +83,6 @@ public class DatabaseProperties {
      */
     DatabaseProperties(CveDB cveDB) {
         this.cveDB = cveDB;
-        loadProperties();
-    }
-
-    /**
-     * Loads the properties from the database.
-     */
-    private void loadProperties() {
         this.properties = cveDB.getProperties();
     }
 

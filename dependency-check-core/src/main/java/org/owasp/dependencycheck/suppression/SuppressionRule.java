@@ -417,7 +417,7 @@ public class SuppressionRule {
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(64);
         sb.append("SuppressionRule{");
         if (filePath != null) {
             sb.append("filePath=").append(filePath).append(',');

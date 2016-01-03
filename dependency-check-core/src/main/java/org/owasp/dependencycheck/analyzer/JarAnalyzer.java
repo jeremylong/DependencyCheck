@@ -835,10 +835,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             }
 
             if (pos > 0) {
-                final StringBuilder sb = new StringBuilder(pos + 3);
-                sb.append(desc.substring(0, pos));
-                sb.append("...");
-                desc = sb.toString();
+                desc = desc.substring(0, pos) + "...";
             }
             dependency.getProductEvidence().addEvidence(source, key, desc, Confidence.LOW);
             dependency.getVendorEvidence().addEvidence(source, key, desc, Confidence.LOW);
