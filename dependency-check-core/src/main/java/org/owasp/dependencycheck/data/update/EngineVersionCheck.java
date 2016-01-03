@@ -121,7 +121,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
             String currentVersion) throws UpdateException {
         //check every 30 days if we know there is an update, otherwise check every 7 days
         int checkRange = 30;
-        if (updateToVersion.isEmpty()) {
+        if (updateToVersion == null || updateToVersion.isEmpty()) {
             checkRange = 7;
         }
         if (!DateUtil.withinDateRange(lastChecked, now, checkRange)) {
@@ -133,13 +133,15 @@ public class EngineVersionCheck implements CachedWebDataSource {
                     updateToVersion = v.toString();
                     if (!currentRelease.equals(updateToVersion)) {
                         properties.save(CURRENT_ENGINE_RELEASE, updateToVersion);
-                    } else {
-                        properties.save(CURRENT_ENGINE_RELEASE, "");
                     }
                     properties.save(ENGINE_VERSION_CHECKED_ON, Long.toString(now));
                 }
             }
             LOGGER.debug("Current Release: {}", updateToVersion);
+        }
+        if (updateToVersion == null) {
+            LOGGER.debug("Unable to obtain current release");
+            return false;
         }
         final DependencyVersion running = new DependencyVersion(currentVersion);
         final DependencyVersion released = new DependencyVersion(updateToVersion);
