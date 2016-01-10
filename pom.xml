@@ -496,7 +496,7 @@ Copyright (c) 2012 - Jeremy Long
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <version>3.0.2</version>
+                <version>3.0.3</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -567,7 +567,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>com.sun.mail</groupId>
                 <artifactId>mailapi</artifactId>
-                <version>1.5.4</version>
+                <version>1.5.5</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
@@ -679,7 +679,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>org.jmockit</groupId>
                 <artifactId>jmockit</artifactId>
-                <version>1.20</version>
+                <version>1.21</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
