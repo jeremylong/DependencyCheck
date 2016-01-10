@@ -220,4 +220,19 @@
         <gav regex="true">com\.google\.javascript:closure-compiler:.*</gav>
         <cpe>cpe:/a:google:google_apps:-</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        suppress false positives per issue #437
+        ]]></notes>
+        <gav regex="true">.*mongodb.*:.*:.*</gav>
+        <cpe>cpe:/a:mongodb:mongodb</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        suppress false positives per issue #438
+            Note, there will be more false positives for Netty. Trying to figure out a better suppression.
+        ]]></notes>
+        <gav regex="true">com.typesafe.netty:netty-http-pipelining:.*</gav>
+        <cpe>cpe:/a:netty_project:netty:1.1.4</cpe>
+    </suppress>
 </suppressions>
