@@ -21,7 +21,7 @@
     </xs:simpleType>
     <xs:simpleType name="cveType">
         <xs:restriction base="xs:string">
-            <xs:pattern value="CVE\-\d\d\d\d\-\d+"/>
+            <xs:pattern value="(\w+\-)?CVE\-\d\d\d\d\-\d+"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="sha1Type">
