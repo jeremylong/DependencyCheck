@@ -503,7 +503,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     <body>
         <div id="modal-background"></div>
         <div id="modal-content">
-            <div>Press CTR-C to copy XML&nbsp;<a href="http://jeremylong.github.io/DependencyCheck/suppression.html" class="infolink" target="_blank" title="Help with suppressing false positives">[help]</a></div>
+            <div>Press CTR-C to copy XML&nbsp;<a href="http://jeremylong.github.io/DependencyCheck/general/suppression.html" class="infolink" target="_blank" title="Help with suppressing false positives">[help]</a></div>
                 <textarea id="modal-text" cols="50" rows="10" readonly></textarea><br/>
                 <button id="modal-add-header" title="Add the parent XML nodes to create the complete XML file that can be used to suppress this finding" class="modal-button">Complete XML Doc</button><button id="modal-close" class="modal-button-right">Close</button>
         </div>
