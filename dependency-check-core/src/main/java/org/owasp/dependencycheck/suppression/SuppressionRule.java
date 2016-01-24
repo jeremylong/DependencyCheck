@@ -20,7 +20,6 @@ package org.owasp.dependencycheck.suppression;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -268,8 +267,8 @@ public class SuppressionRule {
     }
 
     /**
-     * A flag indicating whether or not the suppression rule is a core/base rule that should not be included in the
-     * resulting report in the "suppressed" section.
+     * A flag indicating whether or not the suppression rule is a core/base rule that should not be included in the resulting
+     * report in the "suppressed" section.
      */
     private boolean base;
 
@@ -292,8 +291,8 @@ public class SuppressionRule {
     }
 
     /**
-     * Processes a given dependency to determine if any CPE, CVE, CWE, or CVSS scores should be suppressed. If any
-     * should be, they are removed from the dependency.
+     * Processes a given dependency to determine if any CPE, CVE, CWE, or CVSS scores should be suppressed. If any should be, they
+     * are removed from the dependency.
      *
      * @param dependency a project dependency to analyze
      */
@@ -382,7 +381,24 @@ public class SuppressionRule {
      * @return true if the property type does not specify a version; otherwise false
      */
     boolean cpeHasNoVersion(PropertyType c) {
-        return !c.isRegex() && StringUtils.countMatches(c.getValue(), ':') == 3;
+        return !c.isRegex() && countCharacter(c.getValue(), ':') <= 3;
+    }
+
+    /**
+     * Counts the number of occurrences of the character found within the string.
+     *
+     * @param str the string to check
+     * @param c the character to count
+     * @return the number of times the character is found in the string
+     */
+    int countCharacter(String str, char c) {
+        int count = 0;
+        int pos = str.indexOf(c) + 1;
+        while (pos > 0) {
+            count += 1;
+            pos = str.indexOf(c, pos) + 1;
+        }
+        return count;
     }
 
     /**
