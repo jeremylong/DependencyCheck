@@ -166,6 +166,10 @@ public final class Settings {
          */
         public static final String PROXY_PASSWORD = "proxy.password";
         /**
+         * The properties key for the non proxy hosts.
+         */
+        public static final String PROXY_NON_PROXY_HOSTS = "proxy.nonproxyhosts";
+        /**
          * The properties key for the connection timeout.
          */
         public static final String CONNECTION_TIMEOUT = "connection.timeout";

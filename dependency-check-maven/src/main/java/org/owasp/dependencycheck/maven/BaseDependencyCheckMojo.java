@@ -667,6 +667,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             final String password = proxy.getPassword();
             Settings.setStringIfNotNull(Settings.KEYS.PROXY_USERNAME, userName);
             Settings.setStringIfNotNull(Settings.KEYS.PROXY_PASSWORD, password);
+            Settings.setStringIfNotNull(Settings.KEYS.PROXY_NON_PROXY_HOSTS, proxy.getNonProxyHosts());
         }
 
         Settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);

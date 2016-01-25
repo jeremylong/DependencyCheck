@@ -53,13 +53,15 @@ public final class URLConnectionFactory {
     public static HttpURLConnection createHttpURLConnection(URL url) throws URLConnectionFailureException {
         HttpURLConnection conn = null;
         final String proxyUrl = Settings.getString(Settings.KEYS.PROXY_SERVER);
+
         try {
-            if (proxyUrl != null) {
+            if (proxyUrl != null && !skipProxy(url)) {
                 final int proxyPort = Settings.getInt(Settings.KEYS.PROXY_PORT);
                 final SocketAddress address = new InetSocketAddress(proxyUrl, proxyPort);
 
                 final String username = Settings.getString(Settings.KEYS.PROXY_USERNAME);
                 final String password = Settings.getString(Settings.KEYS.PROXY_PASSWORD);
+
                 if (username != null && password != null) {
                     final Authenticator auth = new Authenticator() {
                         @Override
@@ -92,6 +94,24 @@ public final class URLConnectionFactory {
             throw new URLConnectionFailureException("Error getting connection.", ex);
         }
         return conn;
+    }
+
+    /**
+     * Checks of for the given URL the proxy shall be used or not checking the nonProxyHosts configuration.
+     * @param url The URL to check.
+     * @return If the proxy shall be skip for the given URL or not.
+     */
+    private static boolean skipProxy(URL url) {
+        boolean skip = false;
+        final String nonProxySettings = Settings.getString(Settings.KEYS.PROXY_NON_PROXY_HOSTS);
+        String[] nonProxyHosts = nonProxySettings.split(",");
+        for (int i = 0; i < nonProxyHosts.length; i++) {
+            if (url.getHost().matches(nonProxyHosts[i])) {
+                skip = true;
+                break;
+            }
+        }
+        return skip;
     }
 
     /**
