@@ -29,7 +29,7 @@ public enum AnalysisPhase {
      */
     INITIAL,
     /**
-     * Pre information collection phase
+     * Pre information collection phase.
      */
     PRE_INFORMATION_COLLECTION,
     /**

@@ -51,8 +51,8 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.PRE_INFORMATION_COLLECTION;
 
-    private static final FileFilter FILTER =
-            FileFilterBuilder.newInstance().addFilenames("Gemfile.lock").build();
+    private static final FileFilter FILTER
+            = FileFilterBuilder.newInstance().addFilenames("Gemfile.lock").build();
     public static final String NAME = "Name: ";
     public static final String VERSION = "Version: ";
     public static final String ADVISORY = "Advisory: ";
@@ -113,7 +113,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                     throw new AnalysisException("Bundle-audit error stream unexpectedly not ready.");
                 } else {
                     final String line = reader.readLine();
-                    if (!line.contains("Errno::ENOENT")) {
+                    if (line == null || !line.contains("Errno::ENOENT")) {
                         LOGGER.warn("Unexpected bundle-audit output. Disabling {}: {}", ANALYZER_NAME, line);
                         setEnabled(false);
                         throw new AnalysisException("Unexpected bundle-audit output.");
@@ -126,8 +126,8 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             }
         }
         if (isEnabled()) {
-            LOGGER.info(ANALYZER_NAME + " is enabled. It is necessary to manually run \"bundle-audit update\" " +
-                    "occasionally to keep its database up to date.");
+            LOGGER.info(ANALYZER_NAME + " is enabled. It is necessary to manually run \"bundle-audit update\" "
+                    + "occasionally to keep its database up to date.");
         }
     }
 
@@ -162,8 +162,8 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * If {@link #analyzeFileType(Dependency, Engine)} is called, then we have successfully initialized, and it will
-     * be necessary to disable {@link RubyGemspecAnalyzer}.
+     * If {@link #analyzeFileType(Dependency, Engine)} is called, then we have successfully initialized, and it will be necessary
+     * to disable {@link RubyGemspecAnalyzer}.
      */
     private boolean needToDisableGemspecAnalyzer = true;
 

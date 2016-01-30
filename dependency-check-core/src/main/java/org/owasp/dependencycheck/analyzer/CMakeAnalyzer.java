@@ -32,8 +32,10 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -212,8 +214,13 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 final String filePath = String.format("%s:%s", dependency.getFilePath(), product);
                 currentDep.setFilePath(filePath);
 
-                // prevents coalescing into the dependency provided by engine
-                currentDep.setSha1sum(Checksum.getHex(sha1.digest(filePath.getBytes())));
+                byte[] path;
+                try {
+                    path = filePath.getBytes("UTF-8");
+                } catch (UnsupportedEncodingException ex) {
+                    path = filePath.getBytes();
+                }
+                currentDep.setSha1sum(Checksum.getHex(sha1.digest(path)));
                 engine.getDependencies().add(currentDep);
             }
             final String source = currentDep.getDisplayFileName();

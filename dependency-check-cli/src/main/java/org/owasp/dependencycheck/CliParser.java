@@ -344,7 +344,7 @@ public final class CliParser {
         final Option pathToMono = Option.builder().argName("path").hasArg().longOpt(ARGUMENT.PATH_TO_MONO)
                 .desc("The path to Mono for .NET Assembly analysis on non-windows systems.")
                 .build();
-        
+
         final Option pathToBundleAudit = Option.builder().argName("path").hasArg()
                 .longOpt(ARGUMENT.PATH_TO_BUNDLE_AUDIT)
                 .desc("The path to bundle-audit for Gem bundle analysis.").build();
@@ -575,7 +575,6 @@ public final class CliParser {
     public boolean isBundleAuditDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_BUNDLE_AUDIT);
     }
-
 
     /**
      * Returns true if the disablePyDist command line argument was specified.

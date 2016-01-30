@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -128,7 +127,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
     protected boolean shouldUpdate(final long lastChecked, final long now, final DatabaseProperties properties,
             String currentVersion) throws UpdateException {
         //check every 30 days if we know there is an update, otherwise check every 7 days
-        int checkRange = 30;
+        final int checkRange = 30;
         if (!DateUtil.withinDateRange(lastChecked, now, checkRange)) {
             LOGGER.debug("Checking web for new version.");
             final String currentRelease = getCurrentReleaseVersion();

@@ -28,8 +28,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.AbstractMojo;
@@ -282,7 +280,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * The security dispatcher that can decrypt passwords in the settings.xml.
      */
-    @Component(role = org.sonatype.plexus.components.sec.dispatcher.SecDispatcher.class, hint = "default")
+    @Component(role = SecDispatcher.class, hint = "default")
     private SecDispatcher securityDispatcher;
     /**
      * The database user name.
@@ -701,7 +699,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         Settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
 
         if (databaseUser == null && databasePassword == null && serverId != null) {
-            Server server = settingsXml.getServer(serverId);
+            final Server server = settingsXml.getServer(serverId);
             if (server != null) {
                 databaseUser = server.getUsername();
                 try {
@@ -718,17 +716,21 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
                     databasePassword = securityDispatcher.decrypt(server.getPassword());
                 } catch (SecDispatcherException ex) {
-                    if (ex.getCause() instanceof java.io.FileNotFoundException
-                            || (ex.getCause() != null && ex.getCause().getCause() instanceof java.io.FileNotFoundException)) {
+                    if (ex.getCause() instanceof FileNotFoundException
+                            || (ex.getCause() != null && ex.getCause().getCause() instanceof FileNotFoundException)) {
                         //maybe its not encrypted?
                         final String tmp = server.getPassword();
                         if (tmp.startsWith("{") && tmp.endsWith("}")) {
-                            getLog().error(String.format("Unable to decrypt the server password for server id '%s' in settings.xml%n\tCause: %s", serverId, ex.getMessage()));
+                            getLog().error(String.format(
+                                    "Unable to decrypt the server password for server id '%s' in settings.xml%n\tCause: %s",
+                                    serverId, ex.getMessage()));
                         } else {
                             databasePassword = tmp;
                         }
                     } else {
-                        getLog().error(String.format("Unable to decrypt the server password for server id '%s' in settings.xml%n\tCause: %s", serverId, ex.getMessage()));
+                        getLog().error(String.format(
+                                "Unable to decrypt the server password for server id '%s' in settings.xml%n\tCause: %s",
+                                serverId, ex.getMessage()));
                     }
                 }
             } else {
