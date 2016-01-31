@@ -25,6 +25,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import static org.owasp.dependencycheck.data.nvdcve.DatabaseProperties.MODIFIED;
 import org.owasp.dependencycheck.data.update.exception.InvalidDataException;
@@ -33,6 +35,7 @@ import org.owasp.dependencycheck.data.update.nvd.DownloadTask;
 import org.owasp.dependencycheck.data.update.nvd.NvdCveInfo;
 import org.owasp.dependencycheck.data.update.nvd.ProcessTask;
 import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
+import org.owasp.dependencycheck.exception.NoDataException;
 import org.owasp.dependencycheck.utils.DateUtil;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
@@ -101,7 +104,7 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
         boolean proceed = true;
         // If the valid setting has not been specified, then we proceed to check...
         final int validForHours = Settings.getInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, 0);
-        if (0 < validForHours) {
+        if (dataExists() && 0 < validForHours) {
             // ms Valid = valid (hours) x 60 min/hour x 60 sec/min x 1000 ms/sec
             final long msValid = validForHours * 60L * 60L * 1000L;
             final long lastChecked = Long.parseLong(getProperties().getProperty(DatabaseProperties.LAST_CHECKED, "0"));
@@ -116,6 +119,24 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
             }
         }
         return proceed;
+    }
+
+    /**
+     * Checks the CPE Index to ensure documents exists.
+     */
+    private boolean dataExists() {
+        CveDB cve = null;
+        try {
+            cve = new CveDB();
+            cve.open();
+            return cve.dataExists();
+        } catch (DatabaseException ex) {
+            return false;
+        } finally {
+            if (cve != null) {
+                cve.close();
+            }
+        }
     }
 
     /**
