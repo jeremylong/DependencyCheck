@@ -33,6 +33,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
 import static java.lang.String.format;
+import java.util.logging.Level;
 import static org.owasp.dependencycheck.utils.Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP;
 import static org.owasp.dependencycheck.utils.Settings.getBoolean;
 
@@ -243,6 +244,16 @@ public final class Downloader {
                 throw new DownloadFailedException(format("Error creating URL Connection for HTTP %s request.", httpMethod), ex);
             } catch (IOException ex) {
                 analyzeException(ex);
+                try {
+                    //retry
+                    if (!Settings.getBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP)) {
+                        Settings.setBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP, true);
+                        return getLastModified(url);
+                    }
+                } catch (InvalidSettingException ex1) {
+                    LOGGER.debug("invalid setting?", ex);
+                }
+
                 throw new DownloadFailedException(format("Error making HTTP %s request.", httpMethod), ex);
             } finally {
                 if (conn != null) {
