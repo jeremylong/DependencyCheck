@@ -22,10 +22,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
@@ -176,15 +178,15 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
                 LOGGER.debug("", ex);
                 return null;
             }
-            if (url1.toExternalForm().endsWith(".xml.gz")) {
+            if (url1.toExternalForm().endsWith(".xml.gz") && !isXml(first)) {
                 extractGzip(first);
             }
-            if (url2.toExternalForm().endsWith(".xml.gz")) {
+            if (url2.toExternalForm().endsWith(".xml.gz") && !isXml(second)) {
                 extractGzip(second);
             }
 
             LOGGER.info("Download Complete for NVD CVE - {}  ({} ms)", nvdCveInfo.getId(),
-                System.currentTimeMillis() - startDownload);
+                    System.currentTimeMillis() - startDownload);
             if (this.processorService == null) {
                 return null;
             }
@@ -222,6 +224,45 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
         } finally {
             if (second != null && (second.exists() || !deleted)) {
                 second.deleteOnExit();
+            }
+        }
+    }
+
+    /**
+     * Checks the file header to see if it is an XML file.
+     *
+     * @param file the file to check
+     * @return true if the file is XML
+     */
+    public static boolean isXml(File file) {
+        if (file == null || !file.isFile()) {
+            return false;
+        }
+        InputStream is = null;
+        try {
+            is = new FileInputStream(file);
+
+            byte[] buf = new byte[5];
+            int read = 0;
+            try {
+                read = is.read(buf);
+            } catch (IOException ex) {
+                return false;
+            }
+            return read == 5
+                    && buf[0] == '<'
+                    && (buf[1] == '?')
+                    && (buf[2] == 'x' || buf[2] == 'X')
+                    && (buf[3] == 'm' || buf[3] == 'M')
+                    && (buf[4] == 'l' || buf[4] == 'L');
+        } catch (FileNotFoundException ex) {
+            return false;
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException ex) {
+                }
             }
         }
     }

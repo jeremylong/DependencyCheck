@@ -17,25 +17,26 @@
  */
 package org.owasp.dependencycheck.data.update.nvd;
 
-import org.owasp.dependencycheck.data.update.nvd.ProcessTask;
-import org.owasp.dependencycheck.data.update.nvd.DownloadTask;
+import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
-import org.owasp.dependencycheck.data.update.nvd.NvdCveInfo;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
  * @author Jeremy Long
  */
-public class DownloadTaskTest {
+public class DownloadTaskTest extends BaseTest {
 
     public DownloadTaskTest() {
     }
@@ -73,5 +74,17 @@ public class DownloadTaskTest {
         DownloadTask instance = new DownloadTask(cve, processExecutor, cveDB, Settings.getInstance());
         Future<ProcessTask> result = instance.call();
         assertNull(result);
+    }
+
+    /**
+     * Test of isXml(file).
+     */
+    @Test
+    public void testIsXML() {
+        File f = getResourceAsFile(this, "nvdcve-modified.xml");
+        assertTrue(DownloadTask.isXml(f));
+        f = getResourceAsFile(this, "file.tar.gz");
+        assertFalse(DownloadTask.isXml(f));
+
     }
 }
