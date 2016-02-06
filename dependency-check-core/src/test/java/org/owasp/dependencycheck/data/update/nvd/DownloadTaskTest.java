@@ -41,24 +41,6 @@ public class DownloadTaskTest extends BaseTest {
     public DownloadTaskTest() {
     }
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-        Settings.initialize();
-    }
-
-    @After
-    public void tearDown() {
-        Settings.cleanup();
-    }
-
     /**
      * Test of call method, of class DownloadTask.
      */
