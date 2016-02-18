@@ -18,6 +18,8 @@
 package org.owasp.dependencycheck.utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
@@ -53,13 +55,15 @@ public final class URLConnectionFactory {
     public static HttpURLConnection createHttpURLConnection(URL url) throws URLConnectionFailureException {
         HttpURLConnection conn = null;
         final String proxyUrl = Settings.getString(Settings.KEYS.PROXY_SERVER);
+
         try {
-            if (proxyUrl != null) {
+            if (proxyUrl != null && !matchNonProxy(url)) {
                 final int proxyPort = Settings.getInt(Settings.KEYS.PROXY_PORT);
                 final SocketAddress address = new InetSocketAddress(proxyUrl, proxyPort);
 
                 final String username = Settings.getString(Settings.KEYS.PROXY_USERNAME);
                 final String password = Settings.getString(Settings.KEYS.PROXY_PASSWORD);
+
                 if (username != null && password != null) {
                     final Authenticator auth = new Authenticator() {
                         @Override
@@ -93,6 +97,48 @@ public final class URLConnectionFactory {
         }
         return conn;
     }
+
+    /**
+     * Check if hostname matches nonProxy settings
+     *
+     * @param url the url to connect to
+     * @return matching result. true: match nonProxy
+     */
+    private static boolean matchNonProxy(final URL url) {
+        String host = url.getHost();
+
+        // code partially from org.apache.maven.plugins.site.AbstractDeployMojo#getProxyInfo
+        final String nonProxyHosts = Settings.getString(Settings.KEYS.PROXY_NON_PROXY_HOSTS);
+        if (null != nonProxyHosts) {
+            final String[] nonProxies = nonProxyHosts.split( "(,)|(;)|(\\|)" );
+            for (final String nonProxyHost : nonProxies) {
+                //if ( StringUtils.contains( nonProxyHost, "*" ) )
+                if (null != nonProxyHost && nonProxyHost.contains("*")) {
+                    // Handle wildcard at the end, beginning or middle of the nonProxyHost
+                    final int pos = nonProxyHost.indexOf('*');
+                    String nonProxyHostPrefix = nonProxyHost.substring(0, pos);
+                    String nonProxyHostSuffix = nonProxyHost.substring(pos + 1);
+                    // prefix*
+                    if (!StringUtils.isEmpty(nonProxyHostPrefix) && host.startsWith(nonProxyHostPrefix) && StringUtils.isEmpty(nonProxyHostSuffix)) {
+                        return true;
+                    }
+                    // *suffix
+                    if (StringUtils.isEmpty(nonProxyHostPrefix) && !StringUtils.isEmpty(nonProxyHostSuffix) && host.endsWith(nonProxyHostSuffix)) {
+                        return true;
+                    }
+                    // prefix*suffix
+                    if (!StringUtils.isEmpty(nonProxyHostPrefix) && host.startsWith(nonProxyHostPrefix) && !StringUtils.isEmpty(nonProxyHostSuffix) && host.endsWith(nonProxyHostSuffix)) {
+                        return true;
+                    }
+                }
+                else if (host.equals(nonProxyHost)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     /**
      * Utility method to create an HttpURLConnection. The use of a proxy here is optional as there may be cases where a proxy is
