@@ -481,7 +481,7 @@ public class CPEAnalyzer implements Analyzer {
      * @throws AnalysisException is thrown if there is an issue analyzing the dependency.
      */
     @Override
-    public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
+    public synchronized void analyze(Dependency dependency, Engine engine) throws AnalysisException {
         try {
             determineCPE(dependency);
         } catch (CorruptIndexException ex) {
