@@ -324,8 +324,11 @@ public final class ConnectionFactory {
             int c0 = Integer.parseInt(currentDbVersion.getVersionParts().get(0));
             int e1 = Integer.parseInt(appExpectedVersion.getVersionParts().get(1));
             int c1 = Integer.parseInt(currentDbVersion.getVersionParts().get(1));
-            if (e0 == c0 && e1 <= c1) {
+            if (e0 == c0 && e1 < c1) {
                 LOGGER.warn("A new version of dependency-check is available; consider upgrading");
+                Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            } else if (e0 == c0 && e1 == c1) {
+                //do nothing - not sure how we got here, but just incase...
             } else {
                 LOGGER.error("The database schema must be upgraded to use this version of dependency-check. Please see {} for more information.", UPGRADE_HELP_URL);
                 throw new DatabaseException("Database schema is out of date");

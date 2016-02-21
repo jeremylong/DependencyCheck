@@ -18,6 +18,9 @@
 package org.owasp.dependencycheck.data.update;
 
 import java.net.MalformedURLException;
+import java.sql.CallableStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,6 +28,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import static org.owasp.dependencycheck.data.nvdcve.ConnectionFactory.DB_SCHEMA_VERSION;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
@@ -37,6 +41,8 @@ import org.owasp.dependencycheck.data.update.nvd.ProcessTask;
 import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
 import org.owasp.dependencycheck.exception.NoDataException;
 import org.owasp.dependencycheck.utils.DateUtil;
+import org.owasp.dependencycheck.utils.DependencyVersion;
+import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
@@ -69,7 +75,13 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
     public void update() throws UpdateException {
         try {
             openDataStores();
-            if (checkUpdate()) {
+            boolean autoUpdate = true;
+            try {
+                autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
+            } catch (InvalidSettingException ex) {
+                LOGGER.debug("Invalid setting for auto-update; using true.");
+            }
+            if (autoUpdate && checkUpdate()) {
                 final UpdateableNvdCve updateable = getUpdatesNeeded();
                 if (updateable.isUpdateNeeded()) {
                     performUpdate(updateable);
