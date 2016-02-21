@@ -276,10 +276,11 @@ public final class ConnectionFactory {
      * execute it against the database. The upgrade script must update the 'version' in the properties table.
      *
      * @param conn the database connection object
-     * @param schema the current schema version that is being upgraded
+     * @param appExpectedVersion the schema version that the application expects
+     * @param currentDbVersion the current schema version of the database
      * @throws DatabaseException thrown if there is an exception upgrading the database schema
      */
-    private static void updateSchema(Connection conn, String schema) throws DatabaseException {
+    private static void updateSchema(Connection conn, DependencyVersion appExpectedVersion, DependencyVersion currentDbVersion) throws DatabaseException {
         final String databaseProductName;
         try {
             databaseProductName = conn.getMetaData().getDatabaseProductName();
@@ -291,7 +292,7 @@ public final class ConnectionFactory {
             InputStream is = null;
             String updateFile = null;
             try {
-                updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, schema);
+                updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, currentDbVersion.toString());
                 is = ConnectionFactory.class.getClassLoader().getResourceAsStream(updateFile);
                 if (is == null) {
                     throw new DatabaseException(String.format("Unable to load update file '%s'", updateFile));
@@ -303,7 +304,8 @@ public final class ConnectionFactory {
                     statement = conn.createStatement();
                     final boolean success = statement.execute(dbStructureUpdate);
                     if (!success && statement.getUpdateCount() <= 0) {
-                        throw new DatabaseException(String.format("Unable to upgrade the database schema to %s", schema));
+                        throw new DatabaseException(String.format("Unable to upgrade the database schema to %s",
+                                currentDbVersion.toString()));
                     }
                 } catch (SQLException ex) {
                     LOGGER.debug("", ex);
@@ -318,8 +320,16 @@ public final class ConnectionFactory {
                 IOUtils.closeQuietly(is);
             }
         } else {
-            LOGGER.error("The database schema must be upgraded to use this version of dependency-check. Please see {} for more information.", UPGRADE_HELP_URL);
-            throw new DatabaseException("Database schema is out of date");
+            int e0 = Integer.parseInt(appExpectedVersion.getVersionParts().get(0));
+            int c0 = Integer.parseInt(currentDbVersion.getVersionParts().get(0));
+            int e1 = Integer.parseInt(appExpectedVersion.getVersionParts().get(1));
+            int c1 = Integer.parseInt(currentDbVersion.getVersionParts().get(1));
+            if (e0 == c0 && e1 <= c1) {
+                LOGGER.warn("A new version of dependency-check is available; consider upgrading");
+            } else {
+                LOGGER.error("The database schema must be upgraded to use this version of dependency-check. Please see {} for more information.", UPGRADE_HELP_URL);
+                throw new DatabaseException("Database schema is out of date");
+            }
         }
     }
 
@@ -342,12 +352,12 @@ public final class ConnectionFactory {
             cs = conn.prepareCall("SELECT value FROM properties WHERE id = 'version'");
             rs = cs.executeQuery();
             if (rs.next()) {
-                final DependencyVersion current = DependencyVersionUtil.parseVersion(DB_SCHEMA_VERSION);
+                final DependencyVersion appDbVersion = DependencyVersionUtil.parseVersion(DB_SCHEMA_VERSION);
                 final DependencyVersion db = DependencyVersionUtil.parseVersion(rs.getString(1));
-                if (current.compareTo(db) > 0) {
+                if (appDbVersion.compareTo(db) > 0) {
                     LOGGER.debug("Current Schema: {}", DB_SCHEMA_VERSION);
                     LOGGER.debug("DB Schema: {}", rs.getString(1));
-                    updateSchema(conn, rs.getString(1));
+                    updateSchema(conn, appDbVersion, db);
                     if (++callDepth < 10) {
                         ensureSchemaVersion(conn);
                     }
