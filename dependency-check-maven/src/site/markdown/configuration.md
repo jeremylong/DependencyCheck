@@ -3,7 +3,7 @@ Goals
 
 Goal        | Description
 ------------|-----------------------
-aggregate   | Runs dependency-check against the child projects and aggregates the results into a single report.
+aggregate   | Runs dependency-check against the child projects and aggregates the results into a single report. **Warning**: if the aggregate goal is used within the site reporting a blank report will likely be present for any goal beyond site:site (i.e. site:stage or site:deploy will likely result in blank reports being staged or deployed); however, site:site will work. See issue [#325](https://github.com/jeremylong/DependencyCheck/issues/325) for more information.
 check       | Runs dependency-check against the project and generates a report.
 update-only | Updates the local cache of the NVD data from NIST.
 purge       | Deletes the local copy of the NVD. This is used to force a refresh of the data.
