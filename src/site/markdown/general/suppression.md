@@ -80,7 +80,7 @@ The full schema for suppression files can be found here: [suppression.xsd](https
 
 Please see the appropriate configuration option in each interfaces configuration guide:
 
--  [Command Line Tool](dependency-check-cli/arguments.html)
--  [Maven Plugin](dependency-check-maven/configuration.html)
--  [Ant Task](dependency-check-ant/configuration.html)
--  [Jenkins Plugin](dependency-check-jenkins/index.html)
+-  [Command Line Tool](../dependency-check-cli/arguments.html)
+-  [Maven Plugin](../dependency-check-maven/configuration.html)
+-  [Ant Task](../dependency-check-ant/configuration.html)
+-  [Jenkins Plugin](../dependency-check-jenkins/index.html)
