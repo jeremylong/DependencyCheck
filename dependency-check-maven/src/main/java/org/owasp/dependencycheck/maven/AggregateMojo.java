@@ -64,12 +64,13 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
     public void runCheck() throws MojoExecutionException, MojoFailureException {
         final Engine engine = generateDataFile();
 
-        if (getProject() == getReactorProjects().get(getReactorProjects().size() - 1)) {
+        //if (getProject() == getReactorProjects().get(getReactorProjects().size() - 1)) {
+        if (getProject() == getLastProject()) {
 
             //ensure that the .ser file was created for each.
             for (MavenProject current : getReactorProjects()) {
                 final File dataFile = getDataFile(current);
-                if (dataFile == null) { //dc was never run on this project. write the ser to the target.
+                if (dataFile == null && !skipProject(current)) { //dc was never run on this project. write the ser to the target.
                     getLog().error(String.format("Module '%s' did not execute dependency-check; an attempt will be made to perform "
                             + "the check but dependencies may be missed resulting in false negatives.", current.getName()));
                     generateDataFile(engine, current);
@@ -122,6 +123,22 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         }
         engine.cleanup();
         Settings.cleanup();
+    }
+
+    private MavenProject getLastProject() {
+        for (int x = getReactorProjects().size() - 1; x >= 0; x--) {
+            MavenProject p = getReactorProjects().get(x);
+            if (!skipProject(p)) {
+                return p;
+            }
+
+        }
+        return null;
+    }
+
+    private boolean skipProject(MavenProject project) {
+        String skip = (String) project.getProperties().get("maven.site.skip");
+        return "true".equalsIgnoreCase(skip);
     }
 
     /**
