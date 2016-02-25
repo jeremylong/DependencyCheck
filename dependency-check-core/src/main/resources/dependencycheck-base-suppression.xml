@@ -163,6 +163,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        HK2-utils is flagged as glassfish.
+        ]]></notes>
+        <filePath regex="true">.*\bhk2-utils.*\.jar</filePath>
+        <cpe>cpe:/a:oracle:glassfish</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         file name: petals-se-camel-1.0.0.jar - false positive for apache camel.
         ]]></notes>
         <gav regex="true">org.ow2.petals:petals-se-camel:.*</gav>
@@ -233,6 +240,76 @@
             Note, there will be more false positives for Netty. Trying to figure out a better suppression.
         ]]></notes>
         <gav regex="true">com.typesafe.netty:netty-http-pipelining:.*</gav>
-        <cpe>cpe:/a:netty_project:netty:1.1.4</cpe>
+        <cpe>cpe:/a:netty_project:netty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        JVM instrumentation to Ganglia
+        ]]></notes>
+        <gav regex="true">info\.ganglia\.gmetric4j:gmetric4j:.*</gav>
+        <cpe>cpe:/a:ganglia:ganglia</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        A reporter for Metrics which announces measurements to a Ganglia cluster
+        ]]></notes>
+        <gav regex="true">io\.dropwizard\.metrics:metrics-ganglia:.*</gav>
+        <cpe>cpe:/a:ganglia:ganglia</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        drop wizard false positives
+        ]]></notes>
+        <gav regex="true">io\.dropwizard:dropwizard-jetty:.*</gav>
+        <cpe>cpe:/a:jetty:jetty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        drop wizard false positives
+        ]]></notes>
+        <gav regex="true">io\.dropwizard\.metrics:metrics-jetty:.*</gav>
+        <cpe>cpe:/a:jetty:jetty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        drop wizard false positives
+        ]]></notes>
+        <gav regex="true">org\.eclipse\.jetty\.toolchain\.setuid:jetty-setuid-java:.*</gav>
+        <cpe>cpe:/a:jetty:jetty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        drop wizard false positives
+        ]]></notes>
+        <gav regex="true">org\.eclipse\.jetty:jetty-io:.*</gav>
+        <cpe>cpe:/a:jetty:jetty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        drop wizard false positives
+        ]]></notes>
+        <gav regex="true">org\.eclipse\.jetty\.http2:http2-hpack:.*</gav>
+        <cpe>cpe:/a:jetty:jetty</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        drop wizard false positives
+        ]]></notes>
+        <gav regex="true">io\.dropwizard\.metrics:metrics-httpclient:.*</gav>
+        <cpe>cpe:/a:apache:httpclient</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive in drop wizard
+        ]]></notes>
+        <filePath regex="true">.*\.(jar|ear|war|pom)</filePath>
+        <cpe>cpe:/a:tiger:tiger</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        php cpe
+        ]]></notes>
+        <filePath regex="true">.*\.(jar|exe|dll|ear|war|pom)</filePath>
+        <cpe>cpe:/a:class:class</cpe>
     </suppress>
 </suppressions>
