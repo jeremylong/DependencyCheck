@@ -23,6 +23,8 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -113,4 +115,14 @@ public class JarAnalyzerTest extends BaseTest {
         assertEquals(expResult, result);
     }
 
+    @Test
+    public void testParseManifest() throws Exception {
+        File file = BaseTest.getResourceAsFile(this, "xalan-2.7.0.jar");
+        Dependency result = new Dependency(file);
+        JarAnalyzer instance = new JarAnalyzer();
+        List<JarAnalyzer.ClassNameInformation> cni = new ArrayList<JarAnalyzer.ClassNameInformation>();
+        instance.parseManifest(result, cni);
+
+        assertTrue(result.getVersionEvidence().getEvidence("manifest: org/apache/xalan/").size() > 0);
+    }
 }
