@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -641,13 +642,13 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 }
                 return false;
             }
-            final Attributes atts = manifest.getMainAttributes();
+            Attributes atts = manifest.getMainAttributes();
 
             final EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
             final EvidenceCollection productEvidence = dependency.getProductEvidence();
             final EvidenceCollection versionEvidence = dependency.getVersionEvidence();
 
-            final String source = "Manifest";
+            String source = "Manifest";
 
             String specificationVersion = null;
             boolean hasImplementationVersion = false;
@@ -776,9 +777,37 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     }
                 }
             }
+
+            Map<String, Attributes> entries = manifest.getEntries();
+            for (Iterator<String> it = entries.keySet().iterator(); it.hasNext();) {
+                String name = it.next();
+                source = "manifest: " + name;
+                atts = entries.get(name);
+                for (Entry<Object, Object> entry : atts.entrySet()) {
+                    String key = entry.getKey().toString();
+                    String value = atts.getValue(key);
+                    if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {
+                        foundSomething = true;
+                        productEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
+                        addMatchingValues(classInformation, value, productEvidence);
+                    } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VERSION.toString())) {
+                        foundSomething = true;
+                        versionEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
+                    } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VENDOR.toString())) {
+                        foundSomething = true;
+                        vendorEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
+                        addMatchingValues(classInformation, value, vendorEvidence);
+                    } else if (key.equalsIgnoreCase(Attributes.Name.SPECIFICATION_TITLE.toString())) {
+                        foundSomething = true;
+                        productEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
+                        addMatchingValues(classInformation, value, productEvidence);
+                    }
+                }
+            }
+
             if (specificationVersion != null && !hasImplementationVersion) {
                 foundSomething = true;
-                versionEvidence.addEvidence(source, "specificationn-version", specificationVersion, Confidence.HIGH);
+                versionEvidence.addEvidence(source, "specification-version", specificationVersion, Confidence.HIGH);
             }
         } finally {
             if (jar != null) {
@@ -1011,7 +1040,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         final String text = value.toLowerCase();
         for (ClassNameInformation cni : classes) {
             for (String key : cni.getPackageStructure()) {
-                if (text.contains(key)) { //note, package structure elements are already lowercase.
+                final Pattern p = Pattern.compile("\b" + key + "\b");
+                if (p.matcher(text).find()) {
+                    //if (text.contains(key)) { //note, package structure elements are already lowercase.
                     evidence.addEvidence("jar", "package name", key, Confidence.HIGHEST);
                 }
             }
