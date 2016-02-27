@@ -454,6 +454,13 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <scope>test</scope>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <version>2.7.0</version>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
