@@ -49,6 +49,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
+import org.owasp.dependencycheck.utils.ExpectedOjectInputStream;
 import org.owasp.dependencycheck.utils.Settings;
 import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
@@ -1035,9 +1036,26 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         List<Dependency> ret = null;
         final String path = (String) oPath;
-        ObjectInputStream ois = null;
+        //ObjectInputStream ois = null;
+        ExpectedOjectInputStream ois = null;
         try {
-            ois = new ObjectInputStream(new FileInputStream(path));
+            //ois = new ObjectInputStream(new FileInputStream(path));
+            ois = new ExpectedOjectInputStream(new FileInputStream(path),
+                    "java.util.ArrayList",
+                    "java.util.HashSet",
+                    "java.util.TreeSet",
+                    "java.lang.AbstractSet",
+                    "java.lang.AbstractCollection",
+                    "java.lang.Enum",
+                    "org.owasp.dependencycheck.dependency.Confidence",
+                    "org.owasp.dependencycheck.dependency.Dependency",
+                    "org.owasp.dependencycheck.dependency.Evidence",
+                    "org.owasp.dependencycheck.dependency.EvidenceCollection",
+                    "org.owasp.dependencycheck.dependency.Identifier",
+                    "org.owasp.dependencycheck.dependency.Reference",
+                    "org.owasp.dependencycheck.dependency.Vulnerability",
+                    "org.owasp.dependencycheck.dependency.VulnerabilityComparator",
+                    "org.owasp.dependencycheck.dependency.VulnerableSoftware");
             ret = (List<Dependency>) ois.readObject();
         } catch (FileNotFoundException ex) {
             //TODO fix logging
