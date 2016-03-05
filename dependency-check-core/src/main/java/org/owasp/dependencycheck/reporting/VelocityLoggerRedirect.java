@@ -24,15 +24,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p>
- * DependencyCheck uses {@link org.slf4j.Logger} as a logging framework, and Apache Velocity uses a custom
- * logging implementation that outputs to a file named velocity.log by default. This class is an implementation of a
- * custom Velocity logger that redirects all velocity logging to the Java Logger class.
+ * DependencyCheck uses {@link org.slf4j.Logger} as a logging framework, and Apache Velocity uses a custom logging implementation
+ * that outputs to a file named velocity.log by default. This class is an implementation of a custom Velocity logger that
+ * redirects all velocity logging to the Java Logger class.
  * </p><p>
- * This class was written to address permission issues when using Dependency-Check in a server environment (such as the
- * Jenkins plugin). In some circumstances, Velocity would attempt to create velocity.log in an un-writable
- * directory.</p>
+ * This class was written to address permission issues when using Dependency-Check in a server environment (such as the Jenkins
+ * plugin). In some circumstances, Velocity would attempt to create velocity.log in an un-writable directory.</p>
  *
- * @author Steve Springett <steve.springett@owasp.org>
+ * @author Steve Springett
  */
 public class VelocityLoggerRedirect implements LogChute {
 
@@ -52,8 +51,7 @@ public class VelocityLoggerRedirect implements LogChute {
     }
 
     /**
-     * Given a Velocity log level and message, this method will call the appropriate Logger level and log the specified
-     * values.
+     * Given a Velocity log level and message, this method will call the appropriate Logger level and log the specified values.
      *
      * @param level the logging level
      * @param message the message to be logged
@@ -82,8 +80,8 @@ public class VelocityLoggerRedirect implements LogChute {
     }
 
     /**
-     * Given a Velocity log level, message and Throwable, this method will call the appropriate Logger level and log the
-     * specified values.
+     * Given a Velocity log level, message and Throwable, this method will call the appropriate Logger level and log the specified
+     * values.
      *
      * @param level the logging level
      * @param message the message to be logged
