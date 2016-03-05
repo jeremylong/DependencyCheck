@@ -54,7 +54,7 @@ public class ExpectedOjectInputStream extends ObjectInputStream {
     /**
      * Only deserialize instances of expected classes by validating the class name prior to deserialization.
      *
-     * @param the class from the object stream to validate
+     * @param desc the class from the object stream to validate
      * @return the resolved class
      * @throws java.io.IOException thrown if the class being read is not one of the expected classes or if there is an error
      * reading from the stream
