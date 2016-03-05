@@ -692,7 +692,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * Implementation of the Comparable<Dependency> interface. The comparison is solely based on the file path.
+     * Implementation of the Comparable&lt;Dependency&gt; interface. The comparison is solely based on the file path.
      *
      * @param o a dependency to compare
      * @return an integer representing the natural ordering
@@ -715,23 +715,23 @@ public class Dependency implements Serializable, Comparable<Dependency> {
         }
         final Dependency other = (Dependency) obj;
         return new EqualsBuilder()
-            .appendSuper(super.equals(obj))
-            .append(this.actualFilePath, other.actualFilePath)
-            .append(this.filePath, other.filePath)
-            .append(this.fileName, other.fileName)
-            .append(this.md5sum, other.md5sum)
-            .append(this.sha1sum, other.sha1sum)
-            .append(this.identifiers, other.identifiers)
-            .append(this.vendorEvidence, other.vendorEvidence)
-            .append(this.productEvidence, other.productEvidence)
-            .append(this.versionEvidence, other.versionEvidence)
-            .append(this.description, other.description)
-            .append(this.license, other.license)
-            .append(this.vulnerabilities, other.vulnerabilities)
-            //.append(this.relatedDependencies, other.relatedDependencies)
-            .append(this.projectReferences, other.projectReferences)
-            .append(this.availableVersions, other.availableVersions)
-            .isEquals();
+                .appendSuper(super.equals(obj))
+                .append(this.actualFilePath, other.actualFilePath)
+                .append(this.filePath, other.filePath)
+                .append(this.fileName, other.fileName)
+                .append(this.md5sum, other.md5sum)
+                .append(this.sha1sum, other.sha1sum)
+                .append(this.identifiers, other.identifiers)
+                .append(this.vendorEvidence, other.vendorEvidence)
+                .append(this.productEvidence, other.productEvidence)
+                .append(this.versionEvidence, other.versionEvidence)
+                .append(this.description, other.description)
+                .append(this.license, other.license)
+                .append(this.vulnerabilities, other.vulnerabilities)
+                //.append(this.relatedDependencies, other.relatedDependencies)
+                .append(this.projectReferences, other.projectReferences)
+                .append(this.availableVersions, other.availableVersions)
+                .isEquals();
     }
 
     /**
@@ -742,22 +742,22 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(MAGIC_HASH_INIT_VALUE, MAGIC_HASH_MULTIPLIER)
-            .append(actualFilePath)
-            .append(filePath)
-            .append(fileName)
-            .append(md5sum)
-            .append(sha1sum)
-            .append(identifiers)
-            .append(vendorEvidence)
-            .append(productEvidence)
-            .append(versionEvidence)
-            .append(description)
-            .append(license)
-            .append(vulnerabilities)
-            //.append(relatedDependencies)
-            .append(projectReferences)
-            .append(availableVersions)
-            .toHashCode();
+                .append(actualFilePath)
+                .append(filePath)
+                .append(fileName)
+                .append(md5sum)
+                .append(sha1sum)
+                .append(identifiers)
+                .append(vendorEvidence)
+                .append(productEvidence)
+                .append(versionEvidence)
+                .append(description)
+                .append(license)
+                .append(vulnerabilities)
+                //.append(relatedDependencies)
+                .append(projectReferences)
+                .append(availableVersions)
+                .toHashCode();
     }
 
     /**
