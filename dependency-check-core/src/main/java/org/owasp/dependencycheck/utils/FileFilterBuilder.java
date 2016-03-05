@@ -40,7 +40,7 @@ import java.util.Set;
  *     FileFilter filter = FileFilterBuilder.newInstance().addExtensions("jar", "war").build();
  * </pre>
  *
- * @author Dale Visser <dvisser@ida.org>
+ * @author Dale Visser
  * @see <a href="https://en.wikipedia.org/wiki/Builder_pattern">Builder pattern</a>
  */
 public class FileFilterBuilder {
