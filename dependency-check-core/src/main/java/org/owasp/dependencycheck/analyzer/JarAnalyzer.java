@@ -628,9 +628,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         JarFile jar = null;
         try {
             jar = new JarFile(dependency.getActualFilePath());
-
             final Manifest manifest = jar.getManifest();
-
             if (manifest == null) {
                 //don't log this for javadoc or sources jar files
                 if (!dependency.getFileName().toLowerCase().endsWith("-sources.jar")
@@ -642,17 +640,15 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 }
                 return false;
             }
-            Attributes atts = manifest.getMainAttributes();
-
             final EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
             final EvidenceCollection productEvidence = dependency.getProductEvidence();
             final EvidenceCollection versionEvidence = dependency.getVersionEvidence();
 
             String source = "Manifest";
-
             String specificationVersion = null;
             boolean hasImplementationVersion = false;
 
+            Attributes atts = manifest.getMainAttributes();
             for (Entry<Object, Object> entry : atts.entrySet()) {
                 String key = entry.getKey().toString();
                 String value = atts.getValue(key);
@@ -708,7 +704,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 //                    addMatchingValues(classInformation, value, productEvidence);
                 } else {
                     key = key.toLowerCase();
-
                     if (!IGNORE_KEYS.contains(key)
                             && !key.endsWith("jdk")
                             && !key.contains("lastmodified")
@@ -724,8 +719,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                         foundSomething = true;
                         if (key.contains("version")) {
                             if (!key.contains("specification")) {
-                                //versionEvidence.addEvidence(source, key, value, Confidence.LOW);
-                                //} else {
                                 versionEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
                             }
                         } else if ("build-id".equals(key)) {
@@ -778,14 +771,14 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
 
-            Map<String, Attributes> entries = manifest.getEntries();
+            final Map<String, Attributes> entries = manifest.getEntries();
             for (Iterator<String> it = entries.keySet().iterator(); it.hasNext();) {
-                String name = it.next();
+                final String name = it.next();
                 source = "manifest: " + name;
                 atts = entries.get(name);
                 for (Entry<Object, Object> entry : atts.entrySet()) {
-                    String key = entry.getKey().toString();
-                    String value = atts.getValue(key);
+                    final String key = entry.getKey().toString();
+                    final String value = atts.getValue(key);
                     if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {
                         foundSomething = true;
                         productEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
@@ -804,7 +797,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     }
                 }
             }
-
             if (specificationVersion != null && !hasImplementationVersion) {
                 foundSomething = true;
                 versionEvidence.addEvidence(source, "specification-version", specificationVersion, Confidence.HIGH);

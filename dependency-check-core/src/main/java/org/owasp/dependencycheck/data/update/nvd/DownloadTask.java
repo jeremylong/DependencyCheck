@@ -27,7 +27,6 @@ import java.net.URL;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
@@ -242,7 +241,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
         try {
             is = new FileInputStream(file);
 
-            byte[] buf = new byte[5];
+            final byte[] buf = new byte[5];
             int read = 0;
             try {
                 read = is.read(buf);

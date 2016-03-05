@@ -125,9 +125,14 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         Settings.cleanup();
     }
 
+    /**
+     * Gets the last project in the reactor - taking into account skipped projects.
+     *
+     * @return the last projecct in the reactor
+     */
     private MavenProject getLastProject() {
         for (int x = getReactorProjects().size() - 1; x >= 0; x--) {
-            MavenProject p = getReactorProjects().get(x);
+            final MavenProject p = getReactorProjects().get(x);
             if (!skipProject(p)) {
                 return p;
             }
@@ -136,8 +141,14 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         return null;
     }
 
+    /**
+     * Tests if the project is being skipped in the Maven site report.
+     *
+     * @param project a project in the reactor
+     * @return true if the project is skipped; otherwise false
+     */
     private boolean skipProject(MavenProject project) {
-        String skip = (String) project.getProperties().get("maven.site.skip");
+        final String skip = (String) project.getProperties().get("maven.site.skip");
         return "true".equalsIgnoreCase(skip);
     }
 

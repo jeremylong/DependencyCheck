@@ -33,9 +33,6 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
 import static java.lang.String.format;
-import java.util.logging.Level;
-import static org.owasp.dependencycheck.utils.Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP;
-import static org.owasp.dependencycheck.utils.Settings.getBoolean;
 
 /**
  * A utility to download files from the Internet.
@@ -311,7 +308,7 @@ public final class Downloader {
         boolean quickQuery;
 
         try {
-            quickQuery = getBoolean(DOWNLOADER_QUICK_QUERY_TIMESTAMP, true);
+            quickQuery = Settings.getBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP, true);
         } catch (InvalidSettingException e) {
             quickQuery = true;
         }
