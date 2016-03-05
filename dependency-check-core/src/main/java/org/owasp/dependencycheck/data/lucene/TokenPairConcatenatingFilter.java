@@ -27,7 +27,7 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
  * <p>
  * Takes a TokenStream and adds additional tokens by concatenating pairs of words.</p>
  * <p>
- * <b>Example:</b> "Spring Framework Core" -> "Spring SpringFramework Framework FrameworkCore Core".</p>
+ * <b>Example:</b> "Spring Framework Core" -&gt; "Spring SpringFramework Framework FrameworkCore Core".</p>
  *
  * @author Jeremy Long
  */
