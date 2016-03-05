@@ -48,7 +48,7 @@ import org.owasp.dependencycheck.utils.UrlStringUtils;
  * Used to analyze a Wheel or egg distribution files, or their contents in unzipped form, and collect information that can be used
  * to determine the associated CPE.
  *
- * @author Dale Visser <dvisser@ida.org>
+ * @author Dale Visser
  */
 public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 
