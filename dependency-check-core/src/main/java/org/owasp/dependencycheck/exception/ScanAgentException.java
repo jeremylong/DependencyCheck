@@ -22,7 +22,7 @@ import java.io.IOException;
 /**
  * An exception used when using @{link DependencyCheckScanAgent} to conduct a scan and the scan fails.
  *
- * @author Steve Springett <steve.springett@owasp.org>
+ * @author Steve Springett
  */
 public class ScanAgentException extends IOException {
 
