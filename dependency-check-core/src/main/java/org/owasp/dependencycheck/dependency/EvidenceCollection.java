@@ -97,7 +97,7 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
      * Used to iterate over evidence of the specified confidence.
      *
      * @param confidence the confidence level for the evidence to be iterated over.
-     * @return Iterable<Evidence> an iterable collection of evidence
+     * @return Iterable&lt;Evidence&gt; an iterable collection of evidence
      */
     public final Iterable<Evidence> iterator(Confidence confidence) {
         if (confidence == Confidence.HIGHEST) {
@@ -168,7 +168,7 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
      * Returns a set of Weightings - a list of terms that are believed to be of higher confidence when also found in another
      * location.
      *
-     * @return Set<String>
+     * @return Set&lt;String&gt;
      */
     public Set<String> getWeighting() {
         return weightedStrings;
@@ -225,7 +225,7 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
     /**
      * Implements the iterator interface for the Evidence Collection.
      *
-     * @return an Iterator<Evidence>.
+     * @return an Iterator&lt;Evidence&gt;
      */
     @Override
     public Iterator<Evidence> iterator() {
