@@ -32,10 +32,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Used to analyze Ruby Gem specifications and collect information that can be used to determine the associated CPE.
- * Regular expressions are used to parse the well-defined Ruby syntax that forms the specification.
+ * Used to analyze Ruby Gem specifications and collect information that can be used to determine the associated CPE. Regular
+ * expressions are used to parse the well-defined Ruby syntax that forms the specification.
  *
- * @author Dale Visser <dvisser@ida.org>
+ * @author Dale Visser
  */
 public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
 
@@ -51,8 +51,8 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
 
     private static final String GEMSPEC = "gemspec";
 
-    private static final FileFilter FILTER =
-            FileFilterBuilder.newInstance().addExtensions(GEMSPEC).addFilenames("Rakefile").build();
+    private static final FileFilter FILTER
+            = FileFilterBuilder.newInstance().addExtensions(GEMSPEC).addFilenames("Rakefile").build();
 
     private static final String EMAIL = "email";
 
@@ -102,8 +102,8 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The capture group #1 is the block variable.
      */
-    private static final Pattern GEMSPEC_BLOCK_INIT =
-            Pattern.compile("Gem::Specification\\.new\\s+?do\\s+?\\|(.+?)\\|");
+    private static final Pattern GEMSPEC_BLOCK_INIT
+            = Pattern.compile("Gem::Specification\\.new\\s+?do\\s+?\\|(.+?)\\|");
 
     @Override
     protected void analyzeFileType(Dependency dependency, Engine engine)
@@ -138,7 +138,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     private void addListEvidence(EvidenceCollection evidences, String contents,
-                                 String blockVariable, String field, Confidence confidence) {
+            String blockVariable, String field, Confidence confidence) {
         final Matcher matcher = Pattern.compile(
                 String.format("\\s+?%s\\.%s\\s*?=\\s*?\\[(.*?)\\]", blockVariable, field)).matcher(contents);
         if (matcher.find()) {
@@ -148,7 +148,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     private String addStringEvidence(EvidenceCollection evidences, String contents,
-                                     String blockVariable, String field, Confidence confidence) {
+            String blockVariable, String field, Confidence confidence) {
         final Matcher matcher = Pattern.compile(
                 String.format("\\s+?%s\\.%s\\s*?=\\s*?(['\"])(.*?)\\1", blockVariable, field)).matcher(contents);
         String value = "";
