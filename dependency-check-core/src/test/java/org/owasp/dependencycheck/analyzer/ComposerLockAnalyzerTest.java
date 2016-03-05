@@ -39,7 +39,7 @@ import org.owasp.dependencycheck.BaseDBTestCase;
 /**
  * Unit tests for NodePackageAnalyzer.
  *
- * @author Dale Visser <dvisser@ida.org>
+ * @author Dale Visser
  */
 public class ComposerLockAnalyzerTest extends BaseDBTestCase {
 
