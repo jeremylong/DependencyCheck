@@ -35,7 +35,7 @@ import java.util.*;
 /**
  * Used to analyze Ruby Bundler Gemspec.lock files utilizing the 3rd party bundle-audit tool.
  *
- * @author Dale Visser <dvisser@ida.org>
+ * @author Dale Visser
  */
 public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
 
