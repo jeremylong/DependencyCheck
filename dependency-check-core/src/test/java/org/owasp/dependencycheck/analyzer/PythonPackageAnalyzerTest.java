@@ -33,7 +33,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Unit tests for PythonPackageAnalyzer.
  *
- * @author Dale Visser <dvisser@ida.org>
+ * @author Dale Visser
  */
 public class PythonPackageAnalyzerTest extends BaseTest {
 
