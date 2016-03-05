@@ -527,8 +527,8 @@ public final class Settings {
 
     /**
      * Merges a new properties file into the current properties. This method allows for the loading of a user provided properties
-     * file.<br/><br/>
-     * Note: even if using this method - system properties will be loaded before properties loaded from files.
+     * file.<br><br>
+     * <b>Note</b>: even if using this method - system properties will be loaded before properties loaded from files.
      *
      * @param filePath the path to the properties file to merge.
      * @throws FileNotFoundException is thrown when the filePath points to a non-existent file
@@ -552,7 +552,7 @@ public final class Settings {
 
     /**
      * Merges a new properties file into the current properties. This method allows for the loading of a user provided properties
-     * file.<br/><br/>
+     * file.<br><br>
      * Note: even if using this method - system properties will be loaded before properties loaded from files.
      *
      * @param filePath the path to the properties file to merge.
@@ -577,8 +577,8 @@ public final class Settings {
 
     /**
      * Merges a new properties file into the current properties. This method allows for the loading of a user provided properties
-     * file.<br/><br/>
-     * Note: even if using this method - system properties will be loaded before properties loaded from files.
+     * file.<br><br>
+     * <b>Note</b>: even if using this method - system properties will be loaded before properties loaded from files.
      *
      * @param stream an Input Stream pointing at a properties file to merge
      * @throws IOException is thrown when there is an exception loading/merging the properties
