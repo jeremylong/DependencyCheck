@@ -104,12 +104,11 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
      * <p>
      * Returns the {@link java.io.FileFilter} used to determine which files are to be analyzed. An example would be an analyzer
      * that inspected Java jar files. Implementors may use {@link org.owasp.dependencycheck.utils.FileFilterBuilder}.</p>
-     *
-     * @return the file filter used to determine which files are to be analyzed
-     * <p/>
      * <p>
      * If the analyzer returns null it will not cause additional files to be analyzed, but will be executed against every file
      * loaded.</p>
+     *
+     * @return the file filter used to determine which files are to be analyzed
      */
     protected abstract FileFilter getFileFilter();
 
@@ -205,7 +204,6 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
      * <p>
      * Utility method to help in the creation of the extensions set. This constructs a new Set that can be used in a final static
      * declaration.</p>
-     * <p/>
      * <p>
      * This implementation was copied from
      * http://stackoverflow.com/questions/2041778/initialize-java-hashset-values-by-construction</p>
