@@ -38,7 +38,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Unit tests for {@link RubyBundleAuditAnalyzer}.
  *
- * @author Dale Visser <dvisser@ida.org>
+ * @author Dale Visser
  */
 public class RubyBundleAuditAnalyzerTest extends BaseTest {
 
