@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 /**
  * Unit tests for {@link RubyGemspecAnalyzer}.
  *
- * @author Dale Visser <dvisser@ida.org>
+ * @author Dale Visser
  */
 public class RubyGemspecAnalyzerTest extends BaseTest {
 
