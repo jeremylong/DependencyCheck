@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 /**
  * Used to analyze OpenSSL source code present in the file system.
  *
- * @author Dale Visser <dvisser@ida.org>
+ * @author Dale Visser
  */
 public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
 
