@@ -48,10 +48,11 @@ public final class DependencyVersionUtil {
 
     /**
      * <p>
-     * A utility class to extract version numbers from file names (or other strings containing version numbers.<br/>
-     * Example:<br/>
-     * Give the file name: library-name-1.4.1r2-release.jar<br/>
-     * This function would return: 1.4.1.r2</p>
+     * A utility class to extract version numbers from file names (or other strings containing version numbers.</p>
+     * <pre>
+     * Example:
+     * Give the file name: library-name-1.4.1r2-release.jar
+     * This function would return: 1.4.1.r2</pre>
      *
      * @param text the text being analyzed
      * @return a DependencyVersion containing the version
