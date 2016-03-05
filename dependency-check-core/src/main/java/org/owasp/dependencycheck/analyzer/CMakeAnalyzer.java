@@ -41,14 +41,13 @@ import java.util.regex.Pattern;
 /**
  * <p>
  * Used to analyze CMake build files, and collect information that can be used to determine the associated CPE.</p>
- * <p/>
  * <p>
  * Note: This analyzer catches straightforward invocations of the project command, plus some other observed patterns of version
  * inclusion in real CMake projects. Many projects make use of older versions of CMake and/or use custom "homebrew" ways to insert
  * version information. Hopefully as the newer CMake call pattern grows in usage, this analyzer allow more CPEs to be
  * identified.</p>
  *
- * @author Dale Visser <dvisser@ida.org>
+ * @author Dale Visser
  */
 public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
 
