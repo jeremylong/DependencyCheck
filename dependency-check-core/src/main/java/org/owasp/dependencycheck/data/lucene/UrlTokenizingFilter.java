@@ -31,15 +31,17 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Takes a TokenStream and splits or adds tokens to correctly index version numbers.</p>
  * <p>
- * <b>Example:</b> "3.0.0.RELEASE" -> "3 3.0 3.0.0 RELEASE 3.0.0.RELEASE".</p>
+ * <b>Example:</b> "3.0.0.RELEASE" -&gt; "3 3.0 3.0.0 RELEASE 3.0.0.RELEASE".</p>
  *
  * @author Jeremy Long
  */
 public final class UrlTokenizingFilter extends AbstractTokenizingFilter {
+
     /**
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(UrlTokenizingFilter.class);
+
     /**
      * Constructs a new VersionTokenizingFilter.
      *
@@ -50,8 +52,8 @@ public final class UrlTokenizingFilter extends AbstractTokenizingFilter {
     }
 
     /**
-     * Increments the underlying TokenStream and sets CharTermAttributes to construct an expanded set of tokens by
-     * concatenating tokens with the previous token.
+     * Increments the underlying TokenStream and sets CharTermAttributes to construct an expanded set of tokens by concatenating
+     * tokens with the previous token.
      *
      * @return whether or not we have hit the end of the TokenStream
      * @throws IOException is thrown when an IOException occurs
