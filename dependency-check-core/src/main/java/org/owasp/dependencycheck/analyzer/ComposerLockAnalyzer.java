@@ -44,27 +44,27 @@ import java.security.MessageDigest;
 public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
-     * The logger
+     * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ComposerLockAnalyzer.class);
 
     /**
-     * The analyzer name
+     * The analyzer name.
      */
     private static final String ANALYZER_NAME = "Composer.lock analyzer";
 
     /**
-     * composer.json
+     * composer.json.
      */
     private static final String COMPOSER_LOCK = "composer.lock";
 
     /**
-     * The FileFilter
+     * The FileFilter.
      */
     private static final FileFilter FILE_FILTER = FileFilterBuilder.newInstance().addFilenames(COMPOSER_LOCK).build();
 
     /**
-     * Returns the FileFilter
+     * Returns the FileFilter.
      *
      * @return the FileFilter
      */
@@ -74,9 +74,9 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Initializes the analyzer
+     * Initializes the analyzer.
      *
-     * @throws Exception
+     * @throws Exception thrown if an exception occurs getting an instance of SHA1
      */
     @Override
     protected void initializeFileTypeAnalyzer() throws Exception {
@@ -84,7 +84,7 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * The MessageDigest for calculating a new digest for the new dependencies added
+     * The MessageDigest for calculating a new digest for the new dependencies added.
      */
     private MessageDigest sha1 = null;
 
