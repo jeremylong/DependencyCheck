@@ -38,7 +38,7 @@ import org.owasp.dependencycheck.BaseDBTestCase;
 /**
  * Unit tests for CmakeAnalyzer.
  *
- * @author Dale Visser <dvisser@ida.org>
+ * @author Dale Visser
  */
 public class CMakeAnalyzerTest extends BaseDBTestCase {
 
