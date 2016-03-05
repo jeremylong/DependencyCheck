@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 /**
  * Used to analyze a Python package, and collect information that can be used to determine the associated CPE.
  *
- * @author Dale Visser <dvisser@ida.org>
+ * @author Dale Visser
  */
 public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
 
