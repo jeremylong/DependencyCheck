@@ -125,8 +125,8 @@ Copyright (c) 2012 - Jeremy Long
         <!-- new versions of lucene are compiled with JDK 1.7 and cannot be used ubiquitously in Jenkins
         thus, we cannot upgrade beyond 4.7.2 -->
         <apache.lucene.version>4.7.2</apache.lucene.version>
-        <slf4j.version>1.7.16</slf4j.version>
-        <logback.version>1.1.5</logback.version>
+        <slf4j.version>1.7.18</slf4j.version>
+        <logback.version>1.1.6</logback.version>
         <reporting.checkstyle-plugin.version>2.17</reporting.checkstyle-plugin.version>
         <reporting.cobertura-plugin.version>2.7</reporting.cobertura-plugin.version>
         <reporting.pmd-plugin.version>3.6</reporting.pmd-plugin.version>
@@ -637,11 +637,6 @@ Copyright (c) 2012 - Jeremy Long
                 <version>3.3.3</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.4</version>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.maven.plugin-testing</groupId>
                 <artifactId>maven-plugin-testing-harness</artifactId>
                 <version>3.3.0</version>
@@ -680,7 +675,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>org.jmockit</groupId>
                 <artifactId>jmockit</artifactId>
-                <version>1.21</version>
+                <version>1.22</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
