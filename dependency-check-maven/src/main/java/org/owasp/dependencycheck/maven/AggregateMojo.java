@@ -128,7 +128,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
     /**
      * Gets the last project in the reactor - taking into account skipped projects.
      *
-     * @return the last projecct in the reactor
+     * @return the last project in the reactor
      */
     private MavenProject getLastProject() {
         for (int x = getReactorProjects().size() - 1; x >= 0; x--) {
@@ -149,7 +149,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
      */
     private boolean skipProject(MavenProject project) {
         final String skip = (String) project.getProperties().get("maven.site.skip");
-        return "true".equalsIgnoreCase(skip);
+        return "true".equalsIgnoreCase(skip) && isGeneratingSite();
     }
 
     /**

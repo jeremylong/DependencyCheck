@@ -63,7 +63,7 @@ public class ExpectedOjectInputStream extends ObjectInputStream {
     @Override
     protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
         if (!this.expected.contains(desc.getName())) {
-            throw new InvalidClassException("Unexpected deserialization", desc.getName());
+            throw new InvalidClassException("Unexpected deserialization ", desc.getName());
         }
         return super.resolveClass(desc);
     }

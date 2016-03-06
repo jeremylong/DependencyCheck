@@ -387,6 +387,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        generatingSite = false;
         if (skip) {
             getLog().info("Skipping " + getName(Locale.US));
         } else {
@@ -425,6 +426,20 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
+     * A flag indicating whether or not the maven site is being generated.
+     */
+    private boolean generatingSite = false;
+
+    /**
+     * Returns true if the Maven site is being generated.
+     *
+     * @return true if the Maven site is being generated
+     */
+    protected boolean isGeneratingSite() {
+        return generatingSite;
+    }
+
+    /**
      * Generates the Dependency-Check Site Report.
      *
      * @param sink the sink to write the report to
@@ -432,6 +447,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @throws MavenReportException if a maven report exception occurs
      */
     public void generate(Sink sink, Locale locale) throws MavenReportException {
+        generatingSite = true;
         try {
             validateAggregate();
         } catch (MojoExecutionException ex) {
@@ -1054,7 +1070,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     "org.owasp.dependencycheck.dependency.Reference",
                     "org.owasp.dependencycheck.dependency.Vulnerability",
                     "org.owasp.dependencycheck.dependency.VulnerabilityComparator",
-                    "org.owasp.dependencycheck.dependency.VulnerableSoftware");
+                    "org.owasp.dependencycheck.dependency.VulnerableSoftware",
+                    "org.owasp.dependencycheck.data.cpe.IndexEntry");
             ret = (List<Dependency>) ois.readObject();
         } catch (FileNotFoundException ex) {
             //TODO fix logging
