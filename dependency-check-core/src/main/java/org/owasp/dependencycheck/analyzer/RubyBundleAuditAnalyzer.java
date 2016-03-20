@@ -83,6 +83,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         final ProcessBuilder builder = new ProcessBuilder(args);
         builder.directory(folder);
         try {
+        	LOGGER.info("Launching: " + args + " from " + folder);
             return builder.start();
         } catch (IOException ioe) {
             throw new AnalysisException("bundle-audit failure", ioe);
@@ -194,6 +195,11 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         }
         BufferedReader rdr = null;
         try {
+        	BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
+        	while(errReader.ready()) {
+        		String error = errReader.readLine();
+        		LOGGER.warn(error);
+        	}
             rdr = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
             processBundlerAuditOutput(dependency, engine, rdr);
         } catch (IOException ioe) {
