@@ -18,8 +18,8 @@
 package org.owasp.dependencycheck.analyzer;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
@@ -27,7 +27,6 @@ import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertTrue;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -59,7 +58,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
     @Before
     public void setUp() throws Exception {
         try {
-//            Settings.initialize();
+        	Settings.initialize();
             analyzer = new RubyBundleAuditAnalyzer();
             analyzer.setFilesMatched(true);
             analyzer.initialize();
@@ -76,6 +75,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
      */
     @After
     public void tearDown() throws Exception {
+    	Settings.cleanup();
         analyzer.close();
         analyzer = null;
     }
@@ -108,10 +108,32 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
         final Engine engine = new Engine();
         analyzer.analyze(result, engine);
         int size = engine.getDependencies().size();
-        assertTrue(size == 1);
+        assertThat(size, is(1));
         
         Dependency dependency = engine.getDependencies().get(0);
         assertTrue(dependency.getProductEvidence().toString().toLowerCase().contains("redcarpet"));
         assertTrue(dependency.getVersionEvidence().toString().toLowerCase().contains("2.2.2"));
+    }
+    
+
+    /**
+     * Test when Ruby bundle-audit is not available on the system.
+     *
+     * @throws AnalysisException is thrown when an exception occurs.
+     */
+    @Test
+    public void testMissingBundleAudit() throws AnalysisException, DatabaseException {
+    	//set a non-exist bundle-audit
+        Settings.setString(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, "phantom-bundle-audit");
+        try {
+            //initialize should fail.
+			analyzer.initialize();
+		} catch (Exception e) {
+			//expected, so ignore.
+		}
+        finally {
+	        assertThat(analyzer.isEnabled(), is(false));
+			LOGGER.info("Ruby Bundle Audit Analyzer is disabled as expected.");
+        }
     }
 }

@@ -98,7 +98,16 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void initializeFileTypeAnalyzer() throws Exception {
         // Now, need to see if bundle-audit actually runs from this location.
-        Process process = launchBundleAudit(Settings.getTempDirectory());
+    	Process process = null;
+    	try {
+	        process = launchBundleAudit(Settings.getTempDirectory());
+    	}
+    	catch(AnalysisException ae) {
+    		LOGGER.warn("Exception from bundle-audit process: {}. Disabling {}", ae.getCause(), ANALYZER_NAME);
+            setEnabled(false);
+            throw ae;
+    	}
+    	
         int exitValue = process.waitFor();
         if (0 == exitValue) {
             LOGGER.warn("Unexpected exit code from bundle-audit process. Disabling {}: {}", ANALYZER_NAME, exitValue);
@@ -126,6 +135,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         }
+    	
         if (isEnabled()) {
             LOGGER.info(ANALYZER_NAME + " is enabled. It is necessary to manually run \"bundle-audit update\" "
                     + "occasionally to keep its database up to date.");
