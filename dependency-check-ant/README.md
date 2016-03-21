@@ -1,134 +1,25 @@
-Dependency-Check-Gradle
+Dependency-Check Ant Task
 =========
 
-**Working in progress**
+Dependency-Check Ant Task can be used to check the project dependencies for published security vulnerabilities. The checks
+performed are a "best effort" and as such, there could be false positives as well as false negatives. However,
+vulnerabilities in 3rd party components is a well-known problem and is currently documented in the 2013 OWASP
+Top 10 as [A9 - Using Components with Known Vulnerabilities](https://www.owasp.org/index.php/Top_10_2013-A9-Using_Components_with_Known_Vulnerabilities).
 
-This is a DependencyCheck gradle plugin designed for project which use Gradle as build script.
+Documentation and links to production binary releases can be found on the [github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-ant/index.html).
 
-Dependency-Check is a utility that attempts to detect publicly disclosed vulnerabilities contained within project dependencies. It does this by determining if there is a Common Platform Enumeration (CPE) identifier for a given dependency. If found, it will generate a report linking to the associated CVE entries.
+Mailing List
+------------
 
-=========
+Subscribe: [dependency-check+subscribe@googlegroups.com](mailto:dependency-check+subscribe@googlegroups.com)
 
-## What's New
-Current latest version is `0.0.8`
+Post: [dependency-check@googlegroups.com](mailto:dependency-check@googlegroups.com)
 
-## Usage
+Copyright & License
+-------------------
 
-### Step 1, Apply dependency check gradle plugin
+Dependency-Check is Copyright (c) 2012-2014 Jeremy Long. All Rights Reserved.
 
-Install from Maven central repo
+Permission to modify and redistribute is granted under the terms of the Apache 2.0 license. See the [LICENSE.txt](https://raw.githubusercontent.com/jeremylong/DependencyCheck/master/LICENSE.txt) file for the full license.
 
-```groovy
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.owasp:dependency-check-gradle:1.3.2'
-    }
-}
-
-apply plugin: 'dependency-check-gradle'
-```
-
-### Step 2, Run gradle task
-
-Once gradle plugin applied, run following gradle task to check dependencies:
-
-```
-gradle dependencyCheck --info
-```
-
-The reports will be generated automatically under `./reports` folder.
-
-If your project includes multiple sub-projects, the report will be generated for each sub-project in different sub-directory.
-
-## FAQ
-
-> **Questions List:**
-> - What if I'm behind a proxy?
-> - What if my project includes multiple sub-project? How can I use this plugin for each of them including the root project?
-> - How to customize the report directory?
-
-### What if I'm behind a proxy?
-
-Maybe you have to use proxy to access internet, in this case, you could configure proxy settings for this plugin:
-
-```groovy
-dependencyCheck {
-    proxy {
-        server = "127.0.0.1"      // required, the server name or IP address of the proxy
-        port = 3128               // required, the port number of the proxy
-
-        // optional, the proxy server might require username
-        // username = "username"
-
-        // optional, the proxy server might require password
-        // password = "password"
-    }
-}
-```
-
-In addition, if the proxy only allow HTTP `GET` or `POST` methods, you will find that the update process will always fail,
- the root cause is that every time you run `dependencyCheck` task, it will try to query the latest timestamp to determine whether need to perform an update action,
- and for performance reason the HTTP method it uses by default is `HEAD`, which probably is disabled or not supported by the proxy. To avoid this problem, you can simply change the HTTP method by below configuration:
-
-```groovy
-dependencyCheck {
-    quickQueryTimestamp = false    // when set to false, it means use HTTP GET method to query timestamp. (default value is true)
-}
-```
-
-### What if my project includes multiple sub-project? How can I use this plugin for each of them including the root project?
-
-Try put 'apply plugin: "dependency-check"' inside the 'allprojects' or 'subprojects' if you'd like to check all sub-projects only, see below:
-
-(1) For all projects including root project:
-
-```groovy
-buildscript {
-  repositories {
-    mavenCentral()
-  }
-  dependencies {
-    classpath "gradle.plugin.com.tools.security:dependency-check:0.0.8"
-  }
-}
-
-allprojects {
-    apply plugin: "dependency-check"
-}
-```
-
-(2) For all sub-projects:
-
-```groovy
-buildscript {
-  repositories {
-    mavenCentral()
-  }
-  dependencies {
-    classpath "gradle.plugin.com.tools.security:dependency-check:0.0.8"
-  }
-}
-
-subprojects {
-    apply plugin: "dependency-check"
-}
-```
-
-In this way, the dependency check will be executed for all projects (including root project) or just sub projects.
-
-### How to customize the report directory?
-
-By default, all reports will be placed under `./reports` folder, to change the default directory, just modify it in the configuration section like this:
-
-```groovy
-subprojects {
-    apply plugin: "dependency-check"
-
-    dependencyCheck {
-        outputDirectory = "./customized-path/security-report"
-    }
-}
-```
+Dependency-Check-Ant makes use of other open source libraries. Please see the [NOTICE.txt](https://raw.githubusercontent.com/jeremylong/DependencyCheck/master/dependency-check-ant/NOTICE.txt) file for more information.
