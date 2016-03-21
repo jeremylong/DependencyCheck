@@ -17,6 +17,12 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
@@ -26,14 +32,9 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
 
 /**
  * Unit tests for {@link RubyBundleAuditAnalyzer}.
@@ -57,6 +58,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
     @Before
     public void setUp() throws Exception {
         try {
+        	Settings.initialize();
             analyzer = new RubyBundleAuditAnalyzer();
             analyzer.setFilesMatched(true);
             analyzer.initialize();
@@ -73,6 +75,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
      */
     @After
     public void tearDown() throws Exception {
+    	Settings.cleanup();
         analyzer.close();
         analyzer = null;
     }
@@ -101,9 +104,36 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
     @Test
     public void testAnalysis() throws AnalysisException, DatabaseException {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
-                "ruby/vulnerable/Gemfile.lock"));
+                "ruby/vulnerable/gems/rails-4.1.15/Gemfile.lock"));
         final Engine engine = new Engine();
         analyzer.analyze(result, engine);
-        assertThat(engine.getDependencies().size(), is(not(0)));
+        int size = engine.getDependencies().size();
+        assertThat(size, is(1));
+        
+        Dependency dependency = engine.getDependencies().get(0);
+        assertTrue(dependency.getProductEvidence().toString().toLowerCase().contains("redcarpet"));
+        assertTrue(dependency.getVersionEvidence().toString().toLowerCase().contains("2.2.2"));
+    }
+    
+
+    /**
+     * Test when Ruby bundle-audit is not available on the system.
+     *
+     * @throws AnalysisException is thrown when an exception occurs.
+     */
+    @Test
+    public void testMissingBundleAudit() throws AnalysisException, DatabaseException {
+    	//set a non-exist bundle-audit
+        Settings.setString(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, "phantom-bundle-audit");
+        try {
+            //initialize should fail.
+			analyzer.initialize();
+		} catch (Exception e) {
+			//expected, so ignore.
+		}
+        finally {
+	        assertThat(analyzer.isEnabled(), is(false));
+			LOGGER.info("Ruby Bundle Audit Analyzer is disabled as expected.");
+        }
     }
 }
