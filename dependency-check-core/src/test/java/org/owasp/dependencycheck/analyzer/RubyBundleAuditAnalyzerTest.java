@@ -57,15 +57,9 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
      */
     @Before
     public void setUp() throws Exception {
-        try {
-        	Settings.initialize();
-            analyzer = new RubyBundleAuditAnalyzer();
-            analyzer.setFilesMatched(true);
-            analyzer.initialize();
-        } catch (Exception e) {
-            //LOGGER.warn("Exception setting up RubyBundleAuditAnalyzer. Tests will be incomplete", e);
-            Assume.assumeNoException("Exception setting up RubyBundleAuditAnalyzer; bundle audit may not be installed. Tests will be incomplete", e);
-        }
+    	Settings.initialize();
+        analyzer = new RubyBundleAuditAnalyzer();
+        analyzer.setFilesMatched(true);
     }
 
     /**
@@ -103,18 +97,25 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
      */
     @Test
     public void testAnalysis() throws AnalysisException, DatabaseException {
-        final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
-                "ruby/vulnerable/gems/rails-4.1.15/Gemfile.lock"));
-        final Engine engine = new Engine();
-        analyzer.analyze(result, engine);
-        int size = engine.getDependencies().size();
-        assertThat(size, is(1));
-        
-        Dependency dependency = engine.getDependencies().get(0);
-        assertTrue(dependency.getProductEvidence().toString().toLowerCase().contains("redcarpet"));
-        assertTrue(dependency.getVersionEvidence().toString().toLowerCase().contains("2.2.2"));
+    	try {
+            analyzer.initialize();
+
+            final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
+                    "ruby/vulnerable/gems/rails-4.1.15/Gemfile.lock"));
+            final Engine engine = new Engine();
+            analyzer.analyze(result, engine);
+            int size = engine.getDependencies().size();
+            assertThat(size, is(1));
+            
+            Dependency dependency = engine.getDependencies().get(0);
+            assertTrue(dependency.getProductEvidence().toString().toLowerCase().contains("redcarpet"));
+            assertTrue(dependency.getVersionEvidence().toString().toLowerCase().contains("2.2.2"));
+            
+        } catch (Exception e) {
+            LOGGER.warn("Exception setting up RubyBundleAuditAnalyzer. Make sure Ruby gem bundle-audit is installed. You may also need to set property \"analyzer.bundle.audit.path\".", e);
+            Assume.assumeNoException("Exception setting up RubyBundleAuditAnalyzer; bundle audit may not be installed, or property \"analyzer.bundle.audit.path\" may not be set.", e);
+        }
     }
-    
 
     /**
      * Test when Ruby bundle-audit is not available on the system.
@@ -133,7 +134,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
 		}
         finally {
 	        assertThat(analyzer.isEnabled(), is(false));
-			LOGGER.info("Ruby Bundle Audit Analyzer is disabled as expected.");
+			LOGGER.info("phantom-bundle-audit is not available. Ruby Bundle Audit Analyzer is disabled as expected.");
         }
     }
 }
