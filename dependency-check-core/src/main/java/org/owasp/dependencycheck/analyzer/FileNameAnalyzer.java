@@ -18,7 +18,9 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
+
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.filefilter.NameFileFilter;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
@@ -65,6 +67,13 @@ public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
     //</editor-fold>
 
+    // Python init files
+    private static final NameFileFilter IGNORED_FILES = new NameFileFilter(new String[] {
+        "__init__.py",
+        "__init__.pyc",
+        "__init__.pyo"
+    });
+
     /**
      * Collects information about the file name.
      *
@@ -102,7 +111,7 @@ public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
                     fileName, Confidence.HIGHEST);
             dependency.getVendorEvidence().addEvidence("file", "name",
                     fileName, Confidence.HIGHEST);
-        } else {
+        } else if (!IGNORED_FILES.accept(f)) {
             dependency.getProductEvidence().addEvidence("file", "name",
                     fileName, Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("file", "name",
