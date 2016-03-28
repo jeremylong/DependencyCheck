@@ -26,8 +26,14 @@ import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,9 +58,11 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
     private static final String GEMSPEC = "gemspec";
 
     private static final FileFilter FILTER
-            = FileFilterBuilder.newInstance().addExtensions(GEMSPEC).addFilenames("Rakefile").build();
+            = FileFilterBuilder.newInstance().addExtensions(GEMSPEC).build();
 
     private static final String EMAIL = "email";
+
+    private static final String VERSION_FILE_NAME = "VERSION";
 
     /**
      * @return a filter that accepts files named Rakefile or matching the glob pattern, *.gemspec
@@ -133,7 +141,9 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
                 vendor.addEvidence(GEMSPEC, "name_project", name + "_project", Confidence.LOW);
             }
             addStringEvidence(product, contents, blockVariable, "summary", Confidence.LOW);
-            addStringEvidence(dependency.getVersionEvidence(), contents, blockVariable, "version", Confidence.HIGHEST);
+            String value = addStringEvidence(dependency.getVersionEvidence(), contents, blockVariable, "version", Confidence.HIGHEST);
+            if(value.length() < 1) 
+            	addEvidenceFromVersionFile(dependency.getActualFile(), dependency.getVersionEvidence());
         }
     }
 
@@ -157,5 +167,32 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
             evidences.addEvidence(GEMSPEC, field, value, confidence);
         }
         return value;
+    }
+    
+    private String addEvidenceFromVersionFile(File dependencyFile, EvidenceCollection versionEvidences) {
+    	String value = null;
+    	File parentDir = dependencyFile.getParentFile();
+    	if(parentDir != null) {
+    		File[] matchingFiles = parentDir.listFiles(new FilenameFilter() {
+    		    public boolean accept(File dir, String name) {
+    		        return name.contains(VERSION_FILE_NAME);
+    		    }
+    		});
+    		
+    		for(int i = 0; i < matchingFiles.length; i++) {
+    			try {
+					List<String> lines = FileUtils.readLines(matchingFiles[i]);
+					if(lines.size() == 1) { //TODO other checking?
+						value = lines.get(0).trim();
+						versionEvidences.addEvidence(GEMSPEC, "version", value, Confidence.HIGH);
+					}
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+    		}
+    	}
+    	
+    	return value;
     }
 }
