@@ -25,7 +25,8 @@ CREATE TABLE cpeEntry (id INT auto_increment PRIMARY KEY, cpe VARCHAR(250), vend
 
 CREATE TABLE software (cveid INT, cpeEntryId INT, previousVersion VARCHAR(50)
     , CONSTRAINT fkSoftwareCve FOREIGN KEY (cveid) REFERENCES vulnerability(id) ON DELETE CASCADE
-    , CONSTRAINT fkSoftwareCpeProduct FOREIGN KEY (cpeEntryId) REFERENCES cpeEntry(id));
+    , CONSTRAINT fkSoftwareCpeProduct FOREIGN KEY (cpeEntryId) REFERENCES cpeEntry(id)
+    , PRIMARY KEY (cveid, cpeEntryId));
 
 CREATE INDEX idxVulnerability ON vulnerability(cve);
 CREATE INDEX idxReference ON reference(cveid);

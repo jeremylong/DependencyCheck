@@ -5,7 +5,7 @@ performed are a "best effort" and as such, there could be false positives as wel
 vulnerabilities in 3rd party components is a well-known problem and is currently documented in the 2013 OWASP
 Top 10 as [A9 - Using Components with Known Vulnerabilities](https://www.owasp.org/index.php/Top_10_2013-A9-Using_Components_with_Known_Vulnerabilities).
 
-Documentation and links to production binary releases can be found on the [github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-cli/installation.html).
+Documentation and links to production binary releases can be found on the [github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-cli/index.html).
 
 Mailing List
 ------------

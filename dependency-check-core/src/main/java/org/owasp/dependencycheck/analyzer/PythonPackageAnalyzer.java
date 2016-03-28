@@ -185,7 +185,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
         if (found) {
             dependency.setDisplayFileName(parentName + "/__init__.py");
             dependency.getProductEvidence().addEvidence(file.getName(),
-                    "PackageName", parentName, Confidence.MEDIUM);
+                    "PackageName", parentName, Confidence.HIGH);
         } else {
             // copy, alter and set in case some other thread is iterating over
             final List<Dependency> dependencies = new ArrayList<Dependency>(
