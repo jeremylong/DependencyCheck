@@ -106,16 +106,16 @@ public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
         }
 
         //add as vendor and product evidence
-        if (fileName.contains("-")) {
-            dependency.getProductEvidence().addEvidence("file", "name",
-                    fileName, Confidence.HIGHEST);
-            dependency.getVendorEvidence().addEvidence("file", "name",
-                    fileName, Confidence.HIGHEST);
-        } else if (!IGNORED_FILES.accept(f)) {
+//        if (fileName.contains("-")) {
+//            dependency.getProductEvidence().addEvidence("file", "name",
+//                    fileName, Confidence.HIGHEST);
+//            dependency.getVendorEvidence().addEvidence("file", "name",
+//                    fileName, Confidence.HIGHEST);
+//        } else if (!IGNORED_FILES.accept(f)) {
             dependency.getProductEvidence().addEvidence("file", "name",
                     fileName, Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("file", "name",
                     fileName, Confidence.HIGH);
-        }
+//        }
     }
 }

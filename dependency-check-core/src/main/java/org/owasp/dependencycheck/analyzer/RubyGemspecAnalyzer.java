@@ -134,7 +134,9 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
             if (email.isEmpty()) {
                 addListEvidence(vendor, contents, blockVariable, EMAIL, Confidence.MEDIUM);
             }
-            addStringEvidence(vendor, contents, blockVariable, "homepage", Confidence.MEDIUM);
+            addStringEvidence(vendor, contents, blockVariable, "homepage", Confidence.HIGHEST);
+            addStringEvidence(vendor, contents, blockVariable, "licenses", Confidence.HIGHEST);
+            
             final EvidenceCollection product = dependency.getProductEvidence();
             final String name = addStringEvidence(product, contents, blockVariable, "name", Confidence.HIGHEST);
             if (!name.isEmpty()) {
