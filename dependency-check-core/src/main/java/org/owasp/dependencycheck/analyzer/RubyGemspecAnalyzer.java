@@ -163,7 +163,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
                 String.format("\\s*?%s\\.%s\\s*?=\\s*?\\[(.*?)\\]", blockVariable, fieldPattern), Pattern.CASE_INSENSITIVE).matcher(contents);
     	if(arrayMatcher.find()) {
     		String arrayValue = arrayMatcher.group(1);
-    		value = arrayValue.replaceAll("\\s*?['\"]", "").trim(); //strip quotes
+    		value = arrayValue.replaceAll("['\"]", "").trim(); //strip quotes
     	}
     	//capture single value between quotes
     	else {
