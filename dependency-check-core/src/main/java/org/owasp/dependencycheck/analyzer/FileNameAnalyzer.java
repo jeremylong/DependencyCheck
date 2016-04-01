@@ -98,7 +98,7 @@ public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
                 dependency.getVersionEvidence().addEvidence("file", "name",
                         version.toString(), Confidence.MEDIUM);
             } else {
-                dependency.getVersionEvidence().addEvidence("file", "name",
+                dependency.getVersionEvidence().addEvidence("file", "version",
                         version.toString(), Confidence.HIGHEST);
             }
             dependency.getVersionEvidence().addEvidence("file", "name",
