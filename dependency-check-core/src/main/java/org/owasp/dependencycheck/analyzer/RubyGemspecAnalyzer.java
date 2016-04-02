@@ -122,7 +122,15 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
         if (matcher.find()) {
             contents = contents.substring(matcher.end());
             final String blockVariable = matcher.group(1);
+            
             final EvidenceCollection vendor = dependency.getVendorEvidence();
+            final EvidenceCollection product = dependency.getProductEvidence();
+            final String name = addStringEvidence(product, contents, blockVariable, "name", "name", Confidence.HIGHEST);
+            if (!name.isEmpty()) {
+                vendor.addEvidence(GEMSPEC, "name_project", name + "_project", Confidence.LOW);
+            }
+            addStringEvidence(product, contents, blockVariable, "summary", "summary", Confidence.LOW);
+
             addStringEvidence(vendor, contents, blockVariable, "author", "authors?", Confidence.HIGHEST);
 //            addListEvidence(vendor, contents, blockVariable, "authors", Confidence.HIGHEST);
             addStringEvidence(vendor, contents, blockVariable, "email", "emails?", Confidence.MEDIUM);
@@ -130,18 +138,14 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
 //                addListEvidence(vendor, contents, blockVariable, EMAIL, Confidence.MEDIUM);
 //            }
             addStringEvidence(vendor, contents, blockVariable, "homepage", "homepage", Confidence.HIGHEST);
-            addStringEvidence(vendor, contents, blockVariable, "license", "licen[cs]es", Confidence.HIGHEST);
+            addStringEvidence(vendor, contents, blockVariable, "license", "licen[cs]es?", Confidence.HIGHEST);
             
-            final EvidenceCollection product = dependency.getProductEvidence();
-            final String name = addStringEvidence(product, contents, blockVariable, "name", "name", Confidence.HIGHEST);
-            if (!name.isEmpty()) {
-                vendor.addEvidence(GEMSPEC, "name_project", name + "_project", Confidence.LOW);
-            }
-            addStringEvidence(product, contents, blockVariable, "summary", "summary", Confidence.LOW);
             String value = addStringEvidence(dependency.getVersionEvidence(), contents, blockVariable, "version", "version", Confidence.HIGHEST);
             if(value.length() < 1) 
             	addEvidenceFromVersionFile(dependency.getActualFile(), dependency.getVersionEvidence());
         }
+        
+        setPackagePath(dependency);
     }
 
 //    private void addListEvidence(EvidenceCollection evidences, String contents,
@@ -204,5 +208,12 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
     	}
     	
     	return value;
+    }
+    
+    private void setPackagePath(Dependency dep) {
+    	File file = new File(dep.getFilePath());
+    	String parent = file.getParent();
+    	if(parent != null)
+    		dep.setPackagePath(parent);
     }
 }
