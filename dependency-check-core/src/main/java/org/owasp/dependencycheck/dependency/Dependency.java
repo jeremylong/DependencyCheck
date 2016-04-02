@@ -782,6 +782,6 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      */
     @Override
     public String toString() {
-        return "Dependency{ fileName='" + fileName + "', actualFilePath='" + actualFilePath + "', filePath='" + filePath + "'}";
+        return "Dependency{ fileName='" + fileName + "', actualFilePath='" + actualFilePath + "', filePath='" + filePath + "', packagePath='" + packagePath + "'}";
     }
 }
