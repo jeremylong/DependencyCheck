@@ -125,7 +125,7 @@ Copyright (c) 2012 - Jeremy Long
         <!-- new versions of lucene are compiled with JDK 1.7 and cannot be used ubiquitously in Jenkins
         thus, we cannot upgrade beyond 4.7.2 -->
         <apache.lucene.version>4.7.2</apache.lucene.version>
-        <slf4j.version>1.7.20</slf4j.version>
+        <slf4j.version>1.7.21</slf4j.version>
         <logback.version>1.1.7</logback.version>
         <reporting.checkstyle-plugin.version>2.17</reporting.checkstyle-plugin.version>
         <reporting.cobertura-plugin.version>2.7</reporting.cobertura-plugin.version>
@@ -589,7 +589,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
-                <version>1.10</version>
+                <version>1.11</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.ant</groupId>
@@ -651,6 +651,7 @@ Copyright (c) 2012 - Jeremy Long
                 <artifactId>maven-reporting-api</artifactId>
                 <version>3.0</version>
             </dependency>
+            <!-- Upgrading transitive commons-collections-3.2.1 from velocity-1.7. -->
             <dependency>
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
