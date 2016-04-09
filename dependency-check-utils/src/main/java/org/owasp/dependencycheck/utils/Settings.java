@@ -743,7 +743,7 @@ public final class Settings {
         try {
             value = Integer.parseInt(Settings.getString(key));
         } catch (NumberFormatException ex) {
-            LOGGER.trace("Could not convert property '{}={}' to an int.", key, Settings.getString(key));
+            LOGGER.debug("Could not convert property '{}={}' to an int; using {} instead.", key, Settings.getString(key), defaultValue);
             value = defaultValue;
         }
         return value;
