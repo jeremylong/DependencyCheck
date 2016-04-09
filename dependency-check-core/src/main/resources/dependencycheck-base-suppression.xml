@@ -300,6 +300,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        javax.transaction false positives
+        ]]></notes>
+        <gav regex="true">javax\.transaction:javax\.transaction-api:.*</gav>
+        <cpe>cpe:/a:oracle:glassfish</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         false positive in drop wizard
         ]]></notes>
         <filePath regex="true">.*\.(jar|ear|war|pom)</filePath>
