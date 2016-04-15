@@ -565,6 +565,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             addMatchingValues(classes, trimmedDescription, dependency.getVendorEvidence());
             addMatchingValues(classes, trimmedDescription, dependency.getProductEvidence());
         }
+        
+        String projectURL = pom.getProjectURL();
+        if(projectURL != null && !projectURL.trim().isEmpty()) {
+            dependency.getVersionEvidence().addEvidence("pom", "url", projectURL, Confidence.HIGHEST);
+        }
 
         extractLicense(pom, dependency);
         return foundSomething;

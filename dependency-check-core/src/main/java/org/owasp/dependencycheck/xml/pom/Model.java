@@ -260,6 +260,29 @@ public class Model {
     public void addLicense(License license) {
         licenses.add(license);
     }
+    
+    /**
+     * The project URL.
+     */
+    private String projectURL;
+
+    /**
+     * Get the value of projectURL.
+     *
+     * @return the value of projectURL
+     */
+    public String getProjectURL() {
+		return projectURL;
+	}
+
+    /**
+     * Set the value of projectURL.
+     *
+     * @param parentVersion new value of projectURL
+     */
+	public void setProjectURL(String projectURL) {
+		this.projectURL = projectURL;
+	}
 
     /**
      * Process the Maven properties file and interpolate all properties.
@@ -276,11 +299,11 @@ public class Model {
             l.setUrl(interpolateString(l.getUrl(), properties));
         }
         this.name = interpolateString(this.name, properties);
+        this.projectURL = interpolateString(this.projectURL, properties);
         this.organization = interpolateString(this.organization, properties);
         this.parentGroupId = interpolateString(this.parentGroupId, properties);
         this.parentArtifactId = interpolateString(this.parentArtifactId, properties);
         this.parentVersion = interpolateString(this.parentVersion, properties);
-
     }
 
     /**
@@ -317,7 +340,7 @@ public class Model {
         return substitutor.replace(text);
     }
 
-    /**
+	/**
      * Utility class that can provide values from a Properties object to a StrSubstitutor.
      */
     private static class PropertyLookup extends StrLookup {

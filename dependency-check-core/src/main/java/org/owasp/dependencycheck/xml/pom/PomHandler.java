@@ -145,6 +145,8 @@ public class PomHandler extends DefaultHandler {
                 model.setOrganization(currentText.toString());
             } else if (DESCRIPTION.equals(qName)) {
                 model.setDescription(currentText.toString());
+            } else if (URL.equals(qName)) {
+                model.setProjectURL(currentText.toString());
             }
         } else if (PARENT.equals(parentNode)) {
             if (GROUPID.equals(qName)) {
