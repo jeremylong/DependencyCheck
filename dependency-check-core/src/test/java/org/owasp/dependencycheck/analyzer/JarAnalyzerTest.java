@@ -17,23 +17,25 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.junit.Test;
-import org.owasp.dependencycheck.BaseTest;
-import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Evidence;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Evidence;
 
 /**
  * @author Jeremy Long
  */
 public class JarAnalyzerTest extends BaseTest {
 
+//    private static final Logger LOGGER = LoggerFactory.getLogger(JarAnalyzerTest.class);
+    
     /**
      * Test of inspect method, of class JarAnalyzer.
      *
@@ -48,12 +50,25 @@ public class JarAnalyzerTest extends BaseTest {
         instance.analyze(result, null);
         assertTrue(result.getVendorEvidence().toString().toLowerCase().contains("apache"));
         assertTrue(result.getVendorEvidence().getWeighting().contains("apache"));
+        
+        file = BaseTest.getResourceAsFile(this, "dwr.jar");
+        result = new Dependency(file);
+        instance.analyze(result, null);
+        boolean found = false;
+        for (Evidence e : result.getVendorEvidence()) {
+            if (e.getName().equals("url")) {
+            	assertEquals("Project url was not as expected in dwr.jar", e.getValue(), "http://getahead.ltd.uk/dwr");
+                found = true;
+                break;
+            }
+        }
+        assertTrue("Project url was not found in dwr.jar", found);
 
         //file = new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath());
         file = BaseTest.getResourceAsFile(this, "org.mortbay.jetty.jar");
         result = new Dependency(file);
         instance.analyze(result, null);
-        boolean found = false;
+        found = false;
         for (Evidence e : result.getProductEvidence()) {
             if (e.getName().equalsIgnoreCase("package-title")
                     && e.getValue().equalsIgnoreCase("org.mortbay.http")) {
