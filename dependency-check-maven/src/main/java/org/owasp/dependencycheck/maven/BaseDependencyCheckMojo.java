@@ -1072,7 +1072,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     "org.owasp.dependencycheck.dependency.VulnerabilityComparator",
                     "org.owasp.dependencycheck.dependency.VulnerableSoftware",
                     "org.owasp.dependencycheck.data.cpe.IndexEntry");
-            ret = (List<Dependency>) ois.readObject();
+            @SuppressWarnings("unchecked")
+            final List<Dependency> depList = (List<Dependency>) ois.readObject();
+            ret = depList;
         } catch (FileNotFoundException ex) {
             //TODO fix logging
             getLog().error("", ex);
