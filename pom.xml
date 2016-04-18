@@ -127,6 +127,8 @@ Copyright (c) 2012 - Jeremy Long
         <apache.lucene.version>4.7.2</apache.lucene.version>
         <slf4j.version>1.7.21</slf4j.version>
         <logback.version>1.1.7</logback.version>
+        <!-- Note that Maven will use classes from the distro, ignoring declared dependencies for Maven core... -->
+        <maven.api.version>3.3.9</maven.api.version>
         <reporting.checkstyle-plugin.version>2.17</reporting.checkstyle-plugin.version>
         <reporting.cobertura-plugin.version>2.7</reporting.cobertura-plugin.version>
         <reporting.pmd-plugin.version>3.6</reporting.pmd-plugin.version>
@@ -225,7 +227,7 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.5</version>
+                    <version>3.5.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -335,7 +337,7 @@ Copyright (c) 2012 - Jeremy Long
                     <dependency>
                         <groupId>org.apache.maven.doxia</groupId>
                         <artifactId>doxia-module-markdown</artifactId>
-                        <version>1.7</version>
+                        <version>1.7.1</version>
                     </dependency>
                 </dependencies>
                 <configuration>
@@ -594,12 +596,12 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>org.apache.ant</groupId>
                 <artifactId>ant</artifactId>
-                <version>1.9.6</version>
+                <version>1.9.7</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.ant</groupId>
                 <artifactId>ant-testutil</artifactId>
-                <version>1.9.6</version>
+                <version>1.9.7</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.lucene</groupId>
@@ -624,17 +626,17 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-core</artifactId>
-                <version>3.3.3</version>
+                <version>${maven.api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-plugin-api</artifactId>
-                <version>3.3.3</version>
+                <version>${maven.api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-settings</artifactId>
-                <version>3.3.3</version>
+                <version>${maven.api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.plugin-testing</groupId>
