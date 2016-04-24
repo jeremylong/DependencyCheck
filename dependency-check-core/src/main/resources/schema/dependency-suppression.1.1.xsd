@@ -2,7 +2,8 @@
 <xs:schema id="suppressions"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            elementFormDefault="qualified"
-           targetNamespace="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+           targetNamespace="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd"
+           xmlns:dc="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
 
     <xs:complexType name="regexStringType">
         <xs:simpleContent>
