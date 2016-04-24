@@ -26,3 +26,4 @@ _site/**
 .LCKpom.xml~
 #coverity
 /cov-int/
+/dependency-check-core/nbproject/
