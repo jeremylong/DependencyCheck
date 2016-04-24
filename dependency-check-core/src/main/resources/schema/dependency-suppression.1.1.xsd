@@ -2,8 +2,7 @@
 <xs:schema id="suppressions"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            elementFormDefault="qualified"
-           targetNamespace="https://www.owasp.org/index.php/OWASP_Dependency_Check_Suppression"
-           xmlns:dc="https://www.owasp.org/index.php/OWASP_Dependency_Check_Suppression">
+           targetNamespace="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
 
     <xs:complexType name="regexStringType">
         <xs:simpleContent>
@@ -43,7 +42,7 @@
                                 <xs:element name="sha1" type="dc:sha1Type"/>
                                 <xs:element name="gav" type="dc:regexStringType"/>
                             </xs:choice>
-                            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                            <xs:choice minOccurs="1" maxOccurs="unbounded">
                                 <xs:element name="cpe" type="dc:regexStringType"/>
                                 <xs:element name="cve" type="dc:cveType"/>
                                 <xs:element name="cwe" type="xs:positiveInteger"/>
