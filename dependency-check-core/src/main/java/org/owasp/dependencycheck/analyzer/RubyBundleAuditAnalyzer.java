@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.analyzer;
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Reference;
@@ -57,6 +58,10 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     public static final String VERSION = "Version: ";
     public static final String ADVISORY = "Advisory: ";
     public static final String CRITICALITY = "Criticality: ";
+
+    public static CveDB CVEDB = new CveDB();
+    //instance.open();
+    //Vulnerability result = instance.getVulnerability("CVE-2015-3225");
 
     /**
      * @return a filter that accepts files named Gemfile.lock
@@ -300,6 +305,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             } else if ("Low".equals(criticality)) {
                 vulnerability.setCvssScore(2.0f);
             } else {
+                //vulnerability.getName()
                 vulnerability.setCvssScore(-1.0f);
             }
         }
