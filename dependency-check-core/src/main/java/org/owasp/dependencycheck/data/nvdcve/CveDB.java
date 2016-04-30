@@ -372,7 +372,7 @@ public class CveDB {
      * @return a vulnerability object
      * @throws DatabaseException if an exception occurs
      */
-    private Vulnerability getVulnerability(String cve) throws DatabaseException {
+    public Vulnerability getVulnerability(String cve) throws DatabaseException {
         PreparedStatement psV = null;
         PreparedStatement psR = null;
         PreparedStatement psS = null;
