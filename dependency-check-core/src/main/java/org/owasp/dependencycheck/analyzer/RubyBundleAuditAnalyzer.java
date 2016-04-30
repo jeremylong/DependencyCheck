@@ -32,9 +32,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 
 /**
- * Used to analyze Ruby Bundler Gemspec.lock files utilizing the 3rd party bundle-audit tool.
+ * Used to analyze Ruby Bundler Gemspec.lock files utilizing the 3rd party
+ * bundle-audit tool.
  *
  * @author Dale Visser
  */
@@ -59,7 +62,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     public static final String ADVISORY = "Advisory: ";
     public static final String CRITICALITY = "Criticality: ";
 
-    public static CveDB CVEDB = new CveDB();
+    public CveDB cvedb;
     //instance.open();
     //Vulnerability result = instance.getVulnerability("CVE-2015-3225");
 
@@ -88,7 +91,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         final ProcessBuilder builder = new ProcessBuilder(args);
         builder.directory(folder);
         try {
-        	LOGGER.info("Launching: " + args + " from " + folder);
+            LOGGER.info("Launching: " + args + " from " + folder);
             return builder.start();
         } catch (IOException ioe) {
             throw new AnalysisException("bundle-audit failure", ioe);
@@ -96,23 +99,34 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Initialize the analyzer. In this case, extract GrokAssembly.exe to a temporary location.
+     * Initialize the analyzer. In this case, extract GrokAssembly.exe to a
+     * temporary location.
      *
      * @throws Exception if anything goes wrong
      */
     @Override
     public void initializeFileTypeAnalyzer() throws Exception {
-        // Now, need to see if bundle-audit actually runs from this location.
-    	Process process = null;
-    	try {
-	        process = launchBundleAudit(Settings.getTempDirectory());
-    	}
-    	catch(AnalysisException ae) {
-    		LOGGER.warn("Exception from bundle-audit process: {}. Disabling {}", ae.getCause(), ANALYZER_NAME);
+        try {
+            cvedb = new CveDB();
+            cvedb.open();
+        } catch (DatabaseException ex) {
+            LOGGER.warn("Exception opening the database");
+            LOGGER.debug("error", ex);
             setEnabled(false);
+            throw ex;
+        }
+        // Now, need to see if bundle-audit actually runs from this location.
+        Process process = null;
+        try {
+            process = launchBundleAudit(Settings.getTempDirectory());
+        } catch (AnalysisException ae) {
+            LOGGER.warn("Exception from bundle-audit process: {}. Disabling {}", ae.getCause(), ANALYZER_NAME);
+            setEnabled(false);
+            cvedb.close();
+            cvedb = null;
             throw ae;
-    	}
-    	
+        }
+
         int exitValue = process.waitFor();
         if (0 == exitValue) {
             LOGGER.warn("Unexpected exit code from bundle-audit process. Disabling {}: {}", ANALYZER_NAME, exitValue);
@@ -140,7 +154,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         }
-    	
+
         if (isEnabled()) {
             LOGGER.info(ANALYZER_NAME + " is enabled. It is necessary to manually run \"bundle-audit update\" "
                     + "occasionally to keep its database up to date.");
@@ -168,7 +182,8 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Returns the key used in the properties file to reference the analyzer's enabled property.
+     * Returns the key used in the properties file to reference the analyzer's
+     * enabled property.
      *
      * @return the analyzer's enabled property setting key
      */
@@ -178,8 +193,9 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * If {@link #analyzeFileType(Dependency, Engine)} is called, then we have successfully initialized, and it will be necessary
-     * to disable {@link RubyGemspecAnalyzer}.
+     * If {@link #analyzeFileType(Dependency, Engine)} is called, then we have
+     * successfully initialized, and it will be necessary to disable
+     * {@link RubyGemspecAnalyzer}.
      */
     private boolean needToDisableGemspecAnalyzer = true;
 
@@ -210,11 +226,11 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         }
         BufferedReader rdr = null;
         try {
-        	BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
-        	while(errReader.ready()) {
-        		String error = errReader.readLine();
-        		LOGGER.warn(error);
-        	}
+            BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
+            while (errReader.ready()) {
+                String error = errReader.readLine();
+                LOGGER.warn(error);
+            }
             rdr = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
             processBundlerAuditOutput(dependency, engine, rdr);
         } catch (IOException ioe) {
@@ -305,8 +321,15 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             } else if ("Low".equals(criticality)) {
                 vulnerability.setCvssScore(2.0f);
             } else {
-                //vulnerability.getName()
-                vulnerability.setCvssScore(-1.0f);
+                try {
+                    //TODO wouldn't we want to do this for all items from bundle-audit? This
+                    //should give a more correct CVSS
+                     Vulnerability v = cvedb.getVulnerability(vulnerability.getName());
+                     vulnerability.setCvssScore(v.getCvssScore());
+                } catch (DatabaseException ex) {
+                    vulnerability.setCvssScore(-1.0f);
+                    LOGGER.debug("Unable to look up vulnerability {}",vulnerability.getName());
+                }
             }
         }
         LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
