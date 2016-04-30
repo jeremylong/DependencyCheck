@@ -20,13 +20,13 @@ package org.owasp.dependencycheck.analyzer;
 import java.util.Iterator;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.BaseDBTestCase;
 
 /**
  *
  * @author Jeremy Long
  */
-public class AnalyzerServiceTest extends BaseTest {
+public class AnalyzerServiceTest extends BaseDBTestCase {
 
     /**
      * Test of getAnalyzers method, of class AnalyzerService.

@@ -19,12 +19,13 @@ package org.owasp.dependencycheck.data.cpe;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 
 /**
  *
  * @author Jeremy Long
  */
-public class IndexEntryTest {
+public class IndexEntryTest extends BaseTest  {
 
     /**
      * Test of setName method, of class IndexEntry.

@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.utils.Settings;
@@ -33,25 +34,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long
  */
-public class CveDBMySQLTest {
-
-    @BeforeClass
-    public static void setUpClass() {
-        Settings.initialize();
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-        Settings.cleanup();
-    }
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
+public class CveDBMySQLTest extends BaseTest {
 
     /**
      * Pretty useless tests of open, commit, and close methods, of class CveDB.

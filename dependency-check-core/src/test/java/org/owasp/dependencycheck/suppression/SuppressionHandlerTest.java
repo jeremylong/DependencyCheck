@@ -39,26 +39,7 @@ import org.xml.sax.XMLReader;
  *
  * @author Jeremy Long
  */
-public class SuppressionHandlerTest {
-
-    public SuppressionHandlerTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
+public class SuppressionHandlerTest extends BaseTest {
 
     /**
      * Test of getSuppressionRules method, of class SuppressionHandler.

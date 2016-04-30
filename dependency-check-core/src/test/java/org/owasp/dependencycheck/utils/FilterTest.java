@@ -23,12 +23,13 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 
 /**
  *
  * @author Jeremy Long
  */
-public class FilterTest {
+public class FilterTest extends BaseTest {
 
     /**
      * Test of passes method, of class Filter.

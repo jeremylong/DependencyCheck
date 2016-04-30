@@ -39,7 +39,7 @@ public class BaseTest {
         if (f.exists() && f.isFile() && f.length() < 71680) {
             System.err.println("------------------------------------------------");
             System.err.println("------------------------------------------------");
-            System.err.println("I broke the build");
+            System.err.println("Test referenced CveDB() and does not extend BaseDbTestCases?");
             System.err.println("------------------------------------------------");
             System.err.println("------------------------------------------------");
         }

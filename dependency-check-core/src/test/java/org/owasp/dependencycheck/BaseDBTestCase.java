@@ -31,8 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An abstract database test case that is used to ensure the H2 DB exists prior to performing tests that utilize the data
- * contained within.
+ * An abstract database test case that is used to ensure the H2 DB exists prior
+ * to performing tests that utilize the data contained within.
  *
  * @author Jeremy Long
  */
@@ -48,6 +48,11 @@ public abstract class BaseDBTestCase extends BaseTest {
     }
 
     public static void ensureDBExists() throws Exception {
+
+        File f = new File("./target/data/dc.h2.db");
+        if (f.exists() && f.isFile() && f.length() < 71680) {
+            f.delete();
+        }
 
         java.io.File dataPath = Settings.getDataDirectory();
         String fileName = Settings.getString(Settings.KEYS.DB_FILE_NAME);

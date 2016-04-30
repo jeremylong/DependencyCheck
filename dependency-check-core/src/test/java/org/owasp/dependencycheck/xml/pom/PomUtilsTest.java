@@ -27,7 +27,7 @@ import org.owasp.dependencycheck.BaseTest;
  *
  * @author jeremy
  */
-public class PomUtilsTest {
+public class PomUtilsTest extends BaseTest {
 
     /**
      * Test of readPom method, of class PomUtils.

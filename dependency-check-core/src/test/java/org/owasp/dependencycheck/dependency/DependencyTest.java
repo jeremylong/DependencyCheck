@@ -35,26 +35,7 @@ import org.owasp.dependencycheck.data.nexus.MavenArtifact;
  *
  * @author Jeremy Long
  */
-public class DependencyTest {
-
-    public DependencyTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
+public class DependencyTest extends BaseTest {
 
     /**
      * Test of getFileName method, of class Dependency.
