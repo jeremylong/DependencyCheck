@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.junit.Assert;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -66,6 +68,24 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
             instance.open();
             Set<VulnerableSoftware> result = instance.getCPEs(vendor, product);
             assertTrue(result.size() > 5);
+        } finally {
+            if (instance != null) {
+                instance.close();
+            }
+        }
+    }
+    /**
+     * Test of getVulnerability method, of class CveDB.
+     */
+    @Test
+    public void testgetVulnerability() throws Exception {
+        CveDB instance = null;
+        try {
+            instance = new CveDB();
+            instance.open();
+            Vulnerability result = instance.getVulnerability("CVE-2015-3225");
+            assertTrue(result.getDescription().contains("lib/rack/utils.rb in Rack before 1.5.4 and 1.6.x before 1.6.2"));
+
         } finally {
             if (instance != null) {
                 instance.close();
