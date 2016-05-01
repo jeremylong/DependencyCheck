@@ -314,23 +314,23 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     private void addCriticalityToVulnerability(String parentName, Vulnerability vulnerability, String nextLine) {
         if (null != vulnerability) {
             final String criticality = nextLine.substring(CRITICALITY.length()).trim();
-            if ("High".equals(criticality)) {
-                vulnerability.setCvssScore(8.5f);
-            } else if ("Medium".equals(criticality)) {
-                vulnerability.setCvssScore(5.5f);
-            } else if ("Low".equals(criticality)) {
-                vulnerability.setCvssScore(2.0f);
-            } else {
-                try {
-                    //TODO wouldn't we want to do this for all items from bundle-audit? This
-                    //should give a more correct CVSS
-                     Vulnerability v = cvedb.getVulnerability(vulnerability.getName());
-                     vulnerability.setCvssScore(v.getCvssScore());
-                } catch (DatabaseException ex) {
-                    vulnerability.setCvssScore(-1.0f);
-                    LOGGER.debug("Unable to look up vulnerability {}",vulnerability.getName());
-                }
+            float score = -1.0f;
+            Vulnerability v = null;
+            try {
+                v = cvedb.getVulnerability(vulnerability.getName());
+            } catch (DatabaseException ex) {
+                LOGGER.debug("Unable to look up vulnerability {}", vulnerability.getName());
             }
+            if (v != null) {
+                score = v.getCvssScore();
+            } else if ("High".equalsIgnoreCase(criticality)) {
+                score = 8.5f;
+            } else if ("Medium".equalsIgnoreCase(criticality)) {
+                score = 5.5f;
+            } else if ("Low".equalsIgnoreCase(criticality)) {
+                score = 2.0f;
+            }
+            vulnerability.setCvssScore(score);
         }
         LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
     }
