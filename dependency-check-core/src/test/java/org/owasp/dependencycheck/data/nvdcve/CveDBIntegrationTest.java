@@ -74,6 +74,7 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
             }
         }
     }
+
     /**
      * Test of getVulnerability method, of class CveDB.
      */
@@ -83,8 +84,8 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
         try {
             instance = new CveDB();
             instance.open();
-            Vulnerability result = instance.getVulnerability("CVE-2015-3225");
-            assertTrue(result.getDescription().contains("lib/rack/utils.rb in Rack before 1.5.4 and 1.6.x before 1.6.2"));
+            Vulnerability result = instance.getVulnerability("CVE-2014-0094");
+            assertEquals("The ParametersInterceptor in Apache Struts before 2.3.16.1 allows remote attackers to \"manipulate\" the ClassLoader via the class parameter, which is passed to the getClass method.", result.getDescription());
 
         } finally {
             if (instance != null) {
