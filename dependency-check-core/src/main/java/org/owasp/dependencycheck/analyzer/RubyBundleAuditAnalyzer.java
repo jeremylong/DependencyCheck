@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.logging.Level;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -361,7 +362,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     private Dependency createDependencyForGem(Engine engine, String parentName, String fileName, String gem) throws IOException {
         final File tempFile = File.createTempFile("Gemfile-" + gem, ".lock", Settings.getTempDirectory());
         final String displayFileName = String.format("%s%c%s:%s", parentName, File.separatorChar, fileName, gem);
-        FileUtils.write(tempFile, displayFileName); // unique contents to avoid dependency bundling
+        FileUtils.write(tempFile, displayFileName, Charset.defaultCharset()); // unique contents to avoid dependency bundling
         final Dependency dependency = new Dependency(tempFile);
         dependency.getProductEvidence().addEvidence("bundler-audit", "Name", gem, Confidence.HIGHEST);
         dependency.setDisplayFileName(displayFileName);
