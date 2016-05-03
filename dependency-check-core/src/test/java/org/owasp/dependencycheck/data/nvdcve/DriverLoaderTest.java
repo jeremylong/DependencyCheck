@@ -33,26 +33,7 @@ import org.owasp.dependencycheck.BaseTest;
  *
  * @author Jeremy Long
  */
-public class DriverLoaderTest {
-
-    public DriverLoaderTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
+public class DriverLoaderTest extends BaseTest {
 
     /**
      * Test of load method, of class DriverLoader.
@@ -71,7 +52,8 @@ public class DriverLoaderTest {
     }
 
     /**
-     * Test of load method, of class DriverLoader; expecting an exception due to a bad driver class name.
+     * Test of load method, of class DriverLoader; expecting an exception due to
+     * a bad driver class name.
      */
     @Test(expected = DriverLoadException.class)
     public void testLoad_String_ex() throws Exception {

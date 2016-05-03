@@ -24,12 +24,13 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 
 /**
  *
  * @author Jeremy Long
  */
-public class DependencyVersionTest {
+public class DependencyVersionTest extends BaseTest {
 
     /**
      * Test of parseVersion method, of class DependencyVersion.

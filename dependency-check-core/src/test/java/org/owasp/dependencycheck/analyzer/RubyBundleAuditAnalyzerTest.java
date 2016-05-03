@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.analyzer;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -37,6 +38,7 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.dependency.Identifier;
+import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,12 +118,36 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
             assertTrue(dependency.getVersionEvidence().toString().toLowerCase().contains("2.2.2"));
             assertTrue(dependency.getFilePath().endsWith(resource));
             assertTrue(dependency.getFileName().equals("Gemfile.lock"));
-            
         } catch (Exception e) {
             LOGGER.warn("Exception setting up RubyBundleAuditAnalyzer. Make sure Ruby gem bundle-audit is installed. You may also need to set property \"analyzer.bundle.audit.path\".", e);
             Assume.assumeNoException("Exception setting up RubyBundleAuditAnalyzer; bundle audit may not be installed, or property \"analyzer.bundle.audit.path\" may not be set.", e);
         }
     }
+
+    /**
+     * Test Ruby addCriticalityToVulnerability
+     */
+    @Test
+    public void testAddCriticalityToVulnerability() throws AnalysisException, DatabaseException {
+        try {
+            analyzer.initialize();
+
+            final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
+                    "ruby/vulnerable/gems/sinatra/Gemfile.lock"));
+            final Engine engine = new Engine();
+            analyzer.analyze(result, engine);
+
+
+            Dependency dependency = engine.getDependencies().get(0);
+            Vulnerability vulnerability = dependency.getVulnerabilities().first();
+            assertEquals(vulnerability.getCvssScore(), 5.0f, 0.0);
+
+        } catch (Exception e) {
+            LOGGER.warn("Exception setting up RubyBundleAuditAnalyzer. Make sure Ruby gem bundle-audit is installed. You may also need to set property \"analyzer.bundle.audit.path\".", e);
+            Assume.assumeNoException("Exception setting up RubyBundleAuditAnalyzer; bundle audit may not be installed, or property \"analyzer.bundle.audit.path\" may not be set.", e);
+        }
+    }
+
 
     /**
      * Test when Ruby bundle-audit is not available on the system.

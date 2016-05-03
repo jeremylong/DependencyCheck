@@ -77,8 +77,8 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
         Settings.setString(Settings.KEYS.SUPPRESSION_FILE, "suppressions.xml");
         instance.initialize();
         int expCount = 5;
-        List<SuppressionRule> result = instance.getRules();
-        assertTrue(expCount <= result.size());
+        int currentSize = instance.getRules().size();
+        assertTrue(expCount <= currentSize);
     }
 
     @Test(expected = SuppressionParseException.class)

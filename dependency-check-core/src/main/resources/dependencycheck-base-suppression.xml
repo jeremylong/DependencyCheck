@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<suppressions xmlns="https://www.owasp.org/index.php/OWASP_Dependency_Check_Suppression">
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
     <suppress base="true">
         <notes><![CDATA[
         This suppresses false positives identified on spring security.
@@ -297,6 +297,13 @@
         ]]></notes>
         <gav regex="true">io\.dropwizard\.metrics:metrics-httpclient:.*</gav>
         <cpe>cpe:/a:apache:httpclient</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        javax.transaction false positives
+        ]]></notes>
+        <gav regex="true">javax\.transaction:javax\.transaction-api:.*</gav>
+        <cpe>cpe:/a:oracle:glassfish</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[

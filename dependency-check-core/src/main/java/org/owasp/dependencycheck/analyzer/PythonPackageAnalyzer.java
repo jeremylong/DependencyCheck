@@ -32,6 +32,7 @@ import org.owasp.dependencycheck.utils.UrlStringUtils;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -210,7 +211,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
             throws AnalysisException {
         String contents;
         try {
-            contents = FileUtils.readFileToString(file).trim();
+            contents = FileUtils.readFileToString(file, Charset.defaultCharset()).trim();
         } catch (IOException e) {
             throw new AnalysisException(
                     "Problem occurred while reading dependency file.", e);

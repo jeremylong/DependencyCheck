@@ -23,12 +23,13 @@ import java.util.Properties;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.owasp.dependencycheck.BaseTest;
 
 /**
  *
  * @author jeremy
  */
-public class ModelTest {
+public class ModelTest extends BaseTest {
 
     /**
      * Test of getName method, of class Model.

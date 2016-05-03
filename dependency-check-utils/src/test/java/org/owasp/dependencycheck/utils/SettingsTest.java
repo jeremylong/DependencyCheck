@@ -140,6 +140,18 @@ public class SettingsTest extends BaseTest {
     }
 
     /**
+     * Test of getInt method, of class Settings.
+     */
+    @Test
+    public void testGetIntDefault() throws InvalidSettingException {
+        String key = "SomeKey";
+        int expResult = 85;
+        Settings.setString(key, "blue");
+        int result = Settings.getInt(key, expResult);
+        Assert.assertEquals(expResult, result);
+    }
+
+    /**
      * Test of getLong method, of class Settings.
      */
     @Test
