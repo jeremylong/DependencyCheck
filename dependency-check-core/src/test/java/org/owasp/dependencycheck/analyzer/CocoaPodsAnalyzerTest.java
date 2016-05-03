@@ -81,9 +81,5 @@ public class CocoaPodsAnalyzerTest extends BaseTest {
         assertThat(vendorString, containsString("MIT"));
         assertThat(result.getProductEvidence().toString(), containsString("EasyPeasy"));
         assertThat(result.getVersionEvidence().toString(), containsString("0.2.3"));
-        
-        System.out.println("vendor: " + vendorString);
-        System.out.println("product: " + result.getProductEvidence().toString());
-        System.out.println("version: " + result.getVersionEvidence().toString());
     }
 }
