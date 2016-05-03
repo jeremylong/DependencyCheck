@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.analyzer;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -129,7 +130,7 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
     	
     	String contents;
         try {
-            contents = FileUtils.readFileToString(dependency.getActualFile());
+            contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());
         } catch (IOException e) {
             throw new AnalysisException(
                     "Problem occurred while reading dependency file.", e);
@@ -157,38 +158,6 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
         }
         
         setPackagePath(dependency);
-    	
-//        final File file = dependency.getActualFile();
-//        JsonReader jsonReader;
-//        try {
-//            jsonReader = Json.createReader(FileUtils.openInputStream(file));
-//        } catch (IOException e) {
-//            throw new AnalysisException(
-//                    "Problem occurred while reading dependency file.", e);
-//        }
-//        try {
-//            final JsonObject json = jsonReader.readObject();
-//            final EvidenceCollection productEvidence = dependency.getProductEvidence();
-//            final EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
-//            if (json.containsKey("name")) {
-//                final Object value = json.get("name");
-//                if (value instanceof JsonString) {
-//                    final String valueString = ((JsonString) value).getString();
-//                    productEvidence.addEvidence(PODSPEC, "name", valueString, Confidence.HIGHEST);
-//                    vendorEvidence.addEvidence(PODSPEC, "name_project", String.format("%s_project", valueString), Confidence.LOW);
-//                } else {
-//                    LOGGER.warn("JSON value not string as expected: {}", value);
-//                }
-//            }
-//            addToEvidence(json, productEvidence, "description");
-//            addToEvidence(json, vendorEvidence, "author");
-//            addToEvidence(json, dependency.getVersionEvidence(), "version");
-//            dependency.setDisplayFileName(String.format("%s/%s", file.getParentFile().getName(), file.getName()));
-//        } catch (JsonException e) {
-//            LOGGER.warn("Failed to parse package.json file.", e);
-//        } finally {
-//            jsonReader.close();
-//        }
     }
     
     private String addStringEvidence(EvidenceCollection evidences, String contents,
@@ -197,10 +166,9 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
         
     	//capture array value between [ ]
     	final Matcher arrayMatcher = Pattern.compile(
-                String.format("\\s*?%s\\.%s\\s*?=\\s*?\\[(.*?)\\]", blockVariable, fieldPattern), Pattern.CASE_INSENSITIVE).matcher(contents);
+                String.format("\\s*?%s\\.%s\\s*?=\\s*?\\{\\s*?(.*?)\\s*?\\}", blockVariable, fieldPattern), Pattern.CASE_INSENSITIVE).matcher(contents);
     	if(arrayMatcher.find()) {
-    		String arrayValue = arrayMatcher.group(1);
-    		value = arrayValue.replaceAll("['\"]", "").trim(); //strip quotes
+    		value = arrayMatcher.group(1);
     	}
     	//capture single value between quotes
     	else {
