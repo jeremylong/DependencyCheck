@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
@@ -156,7 +157,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
         dependency.setDisplayFileName(String.format("%s%c%s", parentName, File.separatorChar, name));
         String contents;
         try {
-            contents = FileUtils.readFileToString(file).trim();
+            contents = FileUtils.readFileToString(file, Charset.defaultCharset()).trim();
         } catch (IOException e) {
             throw new AnalysisException(
                     "Problem occurred while reading dependency file.", e);

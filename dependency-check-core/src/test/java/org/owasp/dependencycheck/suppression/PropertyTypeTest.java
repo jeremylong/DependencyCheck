@@ -25,31 +25,13 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 
 /**
  *
  * @author Jeremy Long
  */
-public class PropertyTypeTest {
-
-    public PropertyTypeTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
+public class PropertyTypeTest extends BaseTest {
 
     /**
      * Test of set and getValue method, of class PropertyType.

@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.suppression.SuppressionParseException;
 import org.owasp.dependencycheck.suppression.SuppressionParser;
@@ -34,6 +35,7 @@ import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 /**
  * Abstract base suppression analyzer that contains methods for parsing the suppression xml file.
@@ -103,6 +105,10 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         try {
             rules = parser.parseSuppressionRules(this.getClass().getClassLoader().getResourceAsStream("dependencycheck-base-suppression.xml"));
         } catch (SuppressionParseException ex) {
+            LOGGER.error("Unable to parse the base suppression data file");
+            LOGGER.debug("Unable to parse the base suppression data file", ex);
+        } catch (SAXException ex) {
+            LOGGER.error("Unable to parse the base suppression data file");
             LOGGER.debug("Unable to parse the base suppression data file", ex);
         }
         final String suppressionFilePath = Settings.getString(Settings.KEYS.SUPPRESSION_FILE);

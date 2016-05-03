@@ -22,31 +22,13 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 
 /**
  *
  * @author Jeremy Long
  */
-public class DateUtilTest {
-
-    public DateUtilTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
+public class DateUtilTest extends BaseTest {
 
     /**
      * Test of withinDateRange method, of class DateUtil.

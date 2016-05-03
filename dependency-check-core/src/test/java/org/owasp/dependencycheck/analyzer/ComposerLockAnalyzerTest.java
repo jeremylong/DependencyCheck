@@ -55,6 +55,7 @@ public class ComposerLockAnalyzerTest extends BaseDBTestCase {
      */
     @Before
     public void setUp() throws Exception {
+        super.setUp();
         analyzer = new ComposerLockAnalyzer();
         analyzer.setFilesMatched(true);
         analyzer.initialize();

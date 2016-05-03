@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.junit.Assert;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -66,6 +68,25 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
             instance.open();
             Set<VulnerableSoftware> result = instance.getCPEs(vendor, product);
             assertTrue(result.size() > 5);
+        } finally {
+            if (instance != null) {
+                instance.close();
+            }
+        }
+    }
+
+    /**
+     * Test of getVulnerability method, of class CveDB.
+     */
+    @Test
+    public void testgetVulnerability() throws Exception {
+        CveDB instance = null;
+        try {
+            instance = new CveDB();
+            instance.open();
+            Vulnerability result = instance.getVulnerability("CVE-2014-0094");
+            assertEquals("The ParametersInterceptor in Apache Struts before 2.3.16.1 allows remote attackers to \"manipulate\" the ClassLoader via the class parameter, which is passed to the getClass method.", result.getDescription());
+
         } finally {
             if (instance != null) {
                 instance.close();

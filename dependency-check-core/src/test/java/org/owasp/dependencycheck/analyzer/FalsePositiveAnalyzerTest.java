@@ -18,6 +18,7 @@ package org.owasp.dependencycheck.analyzer;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
 
@@ -25,7 +26,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
  *
  * @author Jeremy Long
  */
-public class FalsePositiveAnalyzerTest {
+public class FalsePositiveAnalyzerTest extends BaseTest {
 
     /**
      * Test of getName method, of class FalsePositiveAnalyzer.

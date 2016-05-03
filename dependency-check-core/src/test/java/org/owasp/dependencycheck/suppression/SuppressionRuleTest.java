@@ -34,7 +34,7 @@ import org.owasp.dependencycheck.dependency.Vulnerability;
  *
  * @author Jeremy Long
  */
-public class SuppressionRuleTest {
+public class SuppressionRuleTest extends BaseTest {
 
     //<editor-fold defaultstate="collapsed" desc="Stupid tests of properties">
     /**

@@ -25,11 +25,12 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 
 import static org.junit.Assert.*;
+import org.owasp.dependencycheck.BaseTest;
 
 /**
  * Created by colezlaw on 9/5/15.
  */
-public class ComposerLockParserTest {
+public class ComposerLockParserTest extends BaseTest  {
 
     private InputStream inputStream;
 

@@ -20,12 +20,13 @@ package org.owasp.dependencycheck.dependency;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+import org.owasp.dependencycheck.BaseTest;
 
 /**
  *
  * @author Jeremy Long
  */
-public class EvidenceTest {
+public class EvidenceTest extends BaseTest {
 
     /**
      * Test of equals method, of class Evidence.

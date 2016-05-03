@@ -28,7 +28,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
  *
  * @author Jeremy Long
  */
-public class FileNameAnalyzerTest {
+public class FileNameAnalyzerTest extends BaseTest  {
 
     /**
      * Test of getName method, of class FileNameAnalyzer.

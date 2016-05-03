@@ -6,7 +6,7 @@ A sample suppression file would look like:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<suppressions xmlns="https://www.owasp.org/index.php/OWASP_Dependency_Check_Suppression">
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
    <suppress>
       <notes><![CDATA[
       file name: some.jar
@@ -26,10 +26,7 @@ HTML version of the report. The other common scenario would be to ignore all CVE
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<suppressions
-    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-    xmlns='https://www.owasp.org/index.php/OWASP_Dependency_Check_Suppression'
-    xsi:schemaLocation='https://www.owasp.org/index.php/OWASP_Dependency_Check_Suppression suppression.xsd'>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
     <suppress>
         <notes><![CDATA[
         This suppresses cpe:/a:csv:csv:1.0 for some.jar in the "c:\path\to" directory.

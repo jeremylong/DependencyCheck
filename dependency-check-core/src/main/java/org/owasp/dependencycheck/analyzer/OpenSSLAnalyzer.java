@@ -28,6 +28,7 @@ import org.owasp.dependencycheck.utils.Settings;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -158,14 +159,12 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private String getFileContents(final File actualFile)
             throws AnalysisException {
-        String contents;
         try {
-            contents = FileUtils.readFileToString(actualFile).trim();
+            return FileUtils.readFileToString(actualFile, Charset.defaultCharset()).trim();
         } catch (IOException e) {
             throw new AnalysisException(
                     "Problem occurred while reading dependency file.", e);
         }
-        return contents;
     }
 
     @Override

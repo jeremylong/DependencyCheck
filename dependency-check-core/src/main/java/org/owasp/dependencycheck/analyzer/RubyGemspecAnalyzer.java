@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -113,7 +114,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
             throws AnalysisException {
         String contents;
         try {
-            contents = FileUtils.readFileToString(dependency.getActualFile());
+            contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());
         } catch (IOException e) {
             throw new AnalysisException(
                     "Problem occurred while reading dependency file.", e);

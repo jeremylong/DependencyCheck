@@ -30,16 +30,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long
  */
-public class EngineIntegrationTest extends BaseTest {
-
-    @Before
-    public void setUp() throws Exception {
-        org.owasp.dependencycheck.BaseDBTestCase.ensureDBExists();
-    }
-
-    @After
-    public void tearDown() {
-    }
+public class EngineIntegrationTest extends BaseDBTestCase {
 
     /**
      * Test running the entire engine.

@@ -39,14 +39,6 @@ import org.junit.Test;
  */
 public class TokenPairConcatenatingFilterTest extends BaseTokenStreamTestCase {
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
     @Override
     @Before
     public void setUp() throws Exception {

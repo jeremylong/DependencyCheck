@@ -26,6 +26,7 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import org.junit.Before;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
@@ -36,12 +37,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long
  */
-public class ReportGeneratorIntegrationTest extends BaseTest {
-
-    @Before
-    public void setUp() throws Exception {
-        org.owasp.dependencycheck.BaseDBTestCase.ensureDBExists();
-    }
+public class ReportGeneratorIntegrationTest extends BaseDBTestCase {
 
     /**
      * Test of generateReport method, of class ReportGenerator.

@@ -32,26 +32,7 @@ import org.owasp.dependencycheck.BaseTest;
  *
  * @author Jeremy Long
  */
-public class SuppressionParserTest {
-
-    public SuppressionParserTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
+public class SuppressionParserTest extends BaseTest {
 
     /**
      * Test of parseSuppressionRules method, of class SuppressionParser.
