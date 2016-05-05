@@ -44,17 +44,17 @@ import org.slf4j.LoggerFactory;
  * @author Bianca Xue Jiang
  *
  */
-public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
+public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CocoaPodsAnalyzer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SwiftPackageManagerAnalyzer.class);
 
     /**
      * The name of the analyzer.
      */
-    private static final String ANALYZER_NAME = "CocoaPods Package Analyzer";
+    private static final String ANALYZER_NAME = "SWIFT Package Manager Analyzer";
 
     /**
      * The phase that this analyzer is intended to run in.
@@ -64,20 +64,22 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The file name to scan.
      */
-    public static final String PODSPEC = "podspec";
+    public static final String SPM_FILE_NAME = "Package.swift";
     /**
      * Filter that detects files named "package.json".
      */
-    private static final FileFilter PODSPEC_FILTER = FileFilterBuilder.newInstance().addExtensions(PODSPEC).build();
-
+    private static final FileFilter SPM_FILE_FILTER = FileFilterBuilder.newInstance().addFilenames(SPM_FILE_NAME).build();
 
     /**
      * The capture group #1 is the block variable.  
-     * e.g. "Pod::Spec.new do |spec|"
+     * e.g. 
+     * "import PackageDescription
+     * let package = Package(
+     *     name: "Gloss"
+     *     )"
      */
-    private static final Pattern PODSPEC_BLOCK_PATTERN
-            = Pattern.compile("Pod::Spec\\.new\\s+?do\\s+?\\|(.+?)\\|");
-    
+    private static final Pattern SPM_BLOCK_PATTERN
+            = Pattern.compile("let[^=]+=\\s*Package\\s*\\(\\s*([^)]*)\\s*\\)", Pattern.DOTALL);
     
     /**
      * Returns the FileFilter
@@ -86,7 +88,7 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     protected FileFilter getFileFilter() {
-        return PODSPEC_FILTER;
+        return SPM_FILE_FILTER;
     }
 
     @Override
@@ -135,51 +137,48 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
             throw new AnalysisException(
                     "Problem occurred while reading dependency file.", e);
         }
-        final Matcher matcher = PODSPEC_BLOCK_PATTERN.matcher(contents);
+        final Matcher matcher = SPM_BLOCK_PATTERN.matcher(contents);
         if (matcher.find()) {
             contents = contents.substring(matcher.end());
-            final String blockVariable = matcher.group(1);
+            final String packageDescription = matcher.group(1);
+            if(packageDescription.isEmpty())
+            	return;
             
             final EvidenceCollection vendor = dependency.getVendorEvidence();
             final EvidenceCollection product = dependency.getProductEvidence();
-            final EvidenceCollection version = dependency.getVersionEvidence();
+//            final EvidenceCollection version = dependency.getVersionEvidence();
             
-            final String name = addStringEvidence(product, contents, blockVariable, "name", "name", Confidence.HIGHEST);
+            final String name = addStringEvidence(product, packageDescription, "name", "name", Confidence.HIGHEST);
             if (!name.isEmpty()) {
-                vendor.addEvidence(PODSPEC, "name_project", name, Confidence.HIGHEST);
+                vendor.addEvidence(SPM_FILE_NAME, "name_project", name, Confidence.HIGHEST);
             }
-            addStringEvidence(product, contents, blockVariable, "summary", "summary", Confidence.HIGHEST);
-
-            addStringEvidence(vendor, contents, blockVariable, "author", "authors?", Confidence.HIGHEST);
-            addStringEvidence(vendor, contents, blockVariable, "homepage", "homepage", Confidence.HIGHEST);
-            addStringEvidence(vendor, contents, blockVariable, "license", "licen[cs]es?", Confidence.HIGHEST);
-            
-            addStringEvidence(version, contents, blockVariable, "version", "version", Confidence.HIGHEST);
+//            addStringEvidence(product, contents, blockVariable, "summary", "summary", Confidence.LOW);
+//            addStringEvidence(vendor, contents, blockVariable, "author", "authors?", Confidence.HIGHEST);
+//            addStringEvidence(vendor, contents, blockVariable, "homepage", "homepage", Confidence.HIGHEST);
+//            addStringEvidence(vendor, contents, blockVariable, "license", "licen[cs]es?", Confidence.HIGHEST);
+//            addStringEvidence(version, contents, blockVariable, "version", "version", Confidence.HIGHEST);
+              
+              setPackagePath(dependency);
         }
-        
-        setPackagePath(dependency);
     }
     
-    private String addStringEvidence(EvidenceCollection evidences, String contents,
-            String blockVariable, String field, String fieldPattern, Confidence confidence) {
+    private String addStringEvidence(EvidenceCollection evidences,
+            String packageDescription, String field, String fieldPattern, Confidence confidence) {
         String value = "";
         
     	//capture array value between [ ]
-    	final Matcher arrayMatcher = Pattern.compile(
-                String.format("\\s*?%s\\.%s\\s*?=\\s*?\\{\\s*?(.*?)\\s*?\\}", blockVariable, fieldPattern), Pattern.CASE_INSENSITIVE).matcher(contents);
-    	if(arrayMatcher.find()) {
-    		value = arrayMatcher.group(1);
+    	final Matcher matcher = Pattern.compile(
+                String.format("%s *:\\s*\"([^\"]*)", fieldPattern), Pattern.DOTALL).matcher(packageDescription);
+    	if(matcher.find()) {
+    		value = matcher.group(1);
     	}
-    	//capture single value between quotes
-    	else {
-	        final Matcher matcher = Pattern.compile(
-	                String.format("\\s*?%s\\.%s\\s*?=\\s*?(['\"])(.*?)\\1", blockVariable, fieldPattern), Pattern.CASE_INSENSITIVE).matcher(contents);
-	        if (matcher.find()) {
-	            value = matcher.group(2);
-	        }
+    	
+    	if(value != null) {
+    		value = value.trim();
+    		if(value.length() > 0)
+    			evidences.addEvidence (SPM_FILE_NAME, field, value, confidence);
     	}
-    	if(value.length() > 0)
-    		evidences.addEvidence(PODSPEC, field, value, confidence);
+    		
     	
         return value;
     }
@@ -202,14 +201,14 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
         if (json.containsKey(key)) {
             final JsonValue value = json.get(key);
             if (value instanceof JsonString) {
-                collection.addEvidence(PODSPEC, key, ((JsonString) value).getString(), Confidence.HIGHEST);
+                collection.addEvidence(SPM_FILE_NAME, key, ((JsonString) value).getString(), Confidence.HIGHEST);
             } else if (value instanceof JsonObject) {
                 final JsonObject jsonObject = (JsonObject) value;
                 for (final Map.Entry<String, JsonValue> entry : jsonObject.entrySet()) {
                     final String property = entry.getKey();
                     final JsonValue subValue = entry.getValue();
                     if (subValue instanceof JsonString) {
-                        collection.addEvidence(PODSPEC,
+                        collection.addEvidence(SPM_FILE_NAME,
                                 String.format("%s.%s", key, property),
                                 ((JsonString) subValue).getString(),
                                 Confidence.HIGHEST);
