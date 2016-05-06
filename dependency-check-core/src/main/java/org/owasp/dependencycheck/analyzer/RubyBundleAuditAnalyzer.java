@@ -203,21 +203,25 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeFileType(Dependency dependency, Engine engine)
             throws AnalysisException {
-//        if (needToDisableGemspecAnalyzer) {
-//            boolean failed = true;
-//            final String className = RubyGemspecAnalyzer.class.getName();
-//            for (FileTypeAnalyzer analyzer : engine.getFileTypeAnalyzers()) {
-//                if (analyzer instanceof RubyGemspecAnalyzer) {
-//                    ((RubyGemspecAnalyzer) analyzer).setEnabled(false);
-//                    LOGGER.info("Disabled " + className + " to avoid noisy duplicate results.");
-//                    failed = false;
-//                }
-//            }
-//            if (failed) {
-//                LOGGER.warn("Did not find" + className + '.');
-//            }
-//            needToDisableGemspecAnalyzer = false;
-//        }
+        if (needToDisableGemspecAnalyzer) {
+            boolean failed = true;
+            final String className = RubyGemspecAnalyzer.class.getName();
+            for (FileTypeAnalyzer analyzer : engine.getFileTypeAnalyzers()) {
+            	if (analyzer instanceof RubyBundlerAnalyzer) {
+                    ((RubyBundlerAnalyzer) analyzer).setEnabled(false);
+                    LOGGER.info("Disabled " + RubyBundlerAnalyzer.class.getName() + " to avoid noisy duplicate results.");
+                }
+            	else if (analyzer instanceof RubyGemspecAnalyzer) {
+                    ((RubyGemspecAnalyzer) analyzer).setEnabled(false);
+                    LOGGER.info("Disabled " + className + " to avoid noisy duplicate results.");
+                    failed = false;
+                }
+            }
+            if (failed) {
+                LOGGER.warn("Did not find " + className + '.');
+            }
+            needToDisableGemspecAnalyzer = false;
+        }
         final File parentFile = dependency.getActualFile().getParentFile();
         final Process process = launchBundleAudit(parentFile);
         try {
