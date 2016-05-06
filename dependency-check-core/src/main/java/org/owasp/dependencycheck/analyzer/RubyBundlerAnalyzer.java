@@ -23,21 +23,19 @@ import java.io.FilenameFilter;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * Used to leverage Ruby gems that are deployed or installed by Ruby bundler (http://bundler.io).
- * Ruby bundler creates new .gemspec files under a folder called "specifications" at deploy time, 
- * in addition to the original .gemspec files from source. The advantage of bundler generated 
- * .gemspec files is that they contain fully resolved attributes thus provides more accurate 
- * evidences, whereas the original .gemspec from source often contain variables for attributes
- * that can't be used for evidences.
- * 
- * This analyzer accepts the fully resolved .gemspec installed by the bundler for 
- * better evidence results. It also tries to resolve the dependency packagePath 
+ * This analyzer accepts the fully resolved .gemspec created by the Ruby bundler (http://bundler.io)
+ * for better evidence results. It also tries to resolve the dependency packagePath 
  * to where the gem is actually installed. Then during <code>AnalysisPhase.PRE_FINDING_ANALYSIS</code>
  * <code>DependencyBundlingAnalyzer</code> would merge two .gemspec dependencies together if 
  * <code>Dependency.getPackagePath()</code> are the same.
+ * 
+ * Ruby bundler creates new .gemspec files under a folder called "specifications" at deploy time, 
+ * in addition to the original .gemspec files from source. The bundler generated 
+ * .gemspec files always contain fully resolved attributes thus provide more accurate 
+ * evidences, whereas the original .gemspec from source often contain variables for attributes
+ * that can't be used for evidences.
  * 
  * Note this analyzer share the same <code>Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED</code> as
  * <code>RubyGemspecAnalyzer</code>, so it will enabled/disabled with <code>RubyGemspecAnalyzer</code>.
