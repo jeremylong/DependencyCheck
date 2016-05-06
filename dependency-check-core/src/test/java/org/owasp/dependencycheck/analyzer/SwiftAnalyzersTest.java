@@ -117,12 +117,7 @@ public class SwiftAnalyzersTest extends BaseTest {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                 "swift/Gloss/Package.swift"));
         spmAnalyzer.analyze(result, null);
-        System.out.println(result.getProductEvidence().toString());
-        
-//        assertThat(vendorString, containsString("Carlos Vidal"));
-//        assertThat(vendorString, containsString("https://github.com/nakiostudio/EasyPeasy"));
-//        assertThat(vendorString, containsString("MIT"));
+
         assertThat(result.getProductEvidence().toString(), containsString("Gloss"));
-//        assertThat(result.getVersionEvidence().toString(), containsString("0.2.3"));
     }
 }

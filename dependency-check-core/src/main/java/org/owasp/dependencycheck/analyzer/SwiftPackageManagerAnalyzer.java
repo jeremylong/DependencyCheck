@@ -21,13 +21,8 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.json.JsonObject;
-import javax.json.JsonString;
-import javax.json.JsonValue;
 
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
@@ -37,8 +32,6 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Bianca Xue Jiang
@@ -119,7 +112,7 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-        return Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED;
+        return Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED;
     }
 
     @Override
@@ -149,8 +142,8 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
             if (!name.isEmpty()) {
                 vendor.addEvidence(SPM_FILE_NAME, "name_project", name, Confidence.HIGHEST);
             }
-            setPackagePath(dependency);
         }
+        setPackagePath(dependency);
     }
     
     private String addStringEvidence(EvidenceCollection evidences,

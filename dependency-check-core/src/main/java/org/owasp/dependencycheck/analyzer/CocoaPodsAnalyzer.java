@@ -114,7 +114,7 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-        return Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED;
+        return Settings.KEYS.ANALYZER_COCOAPODS_ENABLED;
     }
 
     @Override
