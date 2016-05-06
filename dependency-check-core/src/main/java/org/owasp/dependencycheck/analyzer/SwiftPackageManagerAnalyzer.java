@@ -47,11 +47,6 @@ import org.slf4j.LoggerFactory;
 public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(SwiftPackageManagerAnalyzer.class);
-
-    /**
      * The name of the analyzer.
      */
     private static final String ANALYZER_NAME = "SWIFT Package Manager Analyzer";
@@ -65,6 +60,7 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
      * The file name to scan.
      */
     public static final String SPM_FILE_NAME = "Package.swift";
+    
     /**
      * Filter that detects files named "package.json".
      */
@@ -143,22 +139,17 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
             final String packageDescription = matcher.group(1);
             if(packageDescription.isEmpty())
             	return;
-            
-            final EvidenceCollection vendor = dependency.getVendorEvidence();
+
             final EvidenceCollection product = dependency.getProductEvidence();
-//            final EvidenceCollection version = dependency.getVersionEvidence();
+            final EvidenceCollection vendor = dependency.getVendorEvidence();
             
+            //SPM is currently under development for SWIFT 3. Its current metadata includes package name and dependencies.
+            //Future interesting metadata: version, license, homepage, author, summary, etc.
             final String name = addStringEvidence(product, packageDescription, "name", "name", Confidence.HIGHEST);
             if (!name.isEmpty()) {
                 vendor.addEvidence(SPM_FILE_NAME, "name_project", name, Confidence.HIGHEST);
             }
-//            addStringEvidence(product, contents, blockVariable, "summary", "summary", Confidence.LOW);
-//            addStringEvidence(vendor, contents, blockVariable, "author", "authors?", Confidence.HIGHEST);
-//            addStringEvidence(vendor, contents, blockVariable, "homepage", "homepage", Confidence.HIGHEST);
-//            addStringEvidence(vendor, contents, blockVariable, "license", "licen[cs]es?", Confidence.HIGHEST);
-//            addStringEvidence(version, contents, blockVariable, "version", "version", Confidence.HIGHEST);
-              
-              setPackagePath(dependency);
+            setPackagePath(dependency);
         }
     }
     
@@ -166,7 +157,6 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
             String packageDescription, String field, String fieldPattern, Confidence confidence) {
         String value = "";
         
-    	//capture array value between [ ]
     	final Matcher matcher = Pattern.compile(
                 String.format("%s *:\\s*\"([^\"]*)", fieldPattern), Pattern.DOTALL).matcher(packageDescription);
     	if(matcher.find()) {
@@ -178,7 +168,6 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
     		if(value.length() > 0)
     			evidences.addEvidence (SPM_FILE_NAME, field, value, confidence);
     	}
-    		
     	
         return value;
     }
@@ -189,36 +178,4 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
     	if(parent != null)
     		dep.setPackagePath(parent);
     }
-
-    /**
-     * Adds information to an evidence collection from the node json configuration.
-     *
-     * @param json information from node.js
-     * @param collection a set of evidence about a dependency
-     * @param key the key to obtain the data from the json information
-     */
-    private void addToEvidence(JsonObject json, EvidenceCollection collection, String key) {
-        if (json.containsKey(key)) {
-            final JsonValue value = json.get(key);
-            if (value instanceof JsonString) {
-                collection.addEvidence(SPM_FILE_NAME, key, ((JsonString) value).getString(), Confidence.HIGHEST);
-            } else if (value instanceof JsonObject) {
-                final JsonObject jsonObject = (JsonObject) value;
-                for (final Map.Entry<String, JsonValue> entry : jsonObject.entrySet()) {
-                    final String property = entry.getKey();
-                    final JsonValue subValue = entry.getValue();
-                    if (subValue instanceof JsonString) {
-                        collection.addEvidence(SPM_FILE_NAME,
-                                String.format("%s.%s", key, property),
-                                ((JsonString) subValue).getString(),
-                                Confidence.HIGHEST);
-                    } else {
-                        LOGGER.warn("JSON sub-value not string as expected: {}", subValue);
-                    }
-                }
-            } else {
-                LOGGER.warn("JSON value not string or JSON object as expected: {}", value);
-            }
-        }
-    } 
 }
