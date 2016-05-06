@@ -21,13 +21,8 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.json.JsonObject;
-import javax.json.JsonString;
-import javax.json.JsonValue;
 
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
@@ -37,8 +32,6 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Bianca Xue Jiang
@@ -49,7 +42,7 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CocoaPodsAnalyzer.class);
+//    private static final Logger LOGGER = LoggerFactory.getLogger(CocoaPodsAnalyzer.class);
 
     /**
      * The name of the analyzer.
@@ -66,7 +59,7 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
      */
     public static final String PODSPEC = "podspec";
     /**
-     * Filter that detects files named "package.json".
+     * Filter that detects files named "*.podspec".
      */
     private static final FileFilter PODSPEC_FILTER = FileFilterBuilder.newInstance().addExtensions(PODSPEC).build();
 
@@ -190,36 +183,4 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
     	if(parent != null)
     		dep.setPackagePath(parent);
     }
-
-    /**
-     * Adds information to an evidence collection from the node json configuration.
-     *
-     * @param json information from node.js
-     * @param collection a set of evidence about a dependency
-     * @param key the key to obtain the data from the json information
-     */
-    private void addToEvidence(JsonObject json, EvidenceCollection collection, String key) {
-        if (json.containsKey(key)) {
-            final JsonValue value = json.get(key);
-            if (value instanceof JsonString) {
-                collection.addEvidence(PODSPEC, key, ((JsonString) value).getString(), Confidence.HIGHEST);
-            } else if (value instanceof JsonObject) {
-                final JsonObject jsonObject = (JsonObject) value;
-                for (final Map.Entry<String, JsonValue> entry : jsonObject.entrySet()) {
-                    final String property = entry.getKey();
-                    final JsonValue subValue = entry.getValue();
-                    if (subValue instanceof JsonString) {
-                        collection.addEvidence(PODSPEC,
-                                String.format("%s.%s", key, property),
-                                ((JsonString) subValue).getString(),
-                                Confidence.HIGHEST);
-                    } else {
-                        LOGGER.warn("JSON sub-value not string as expected: {}", subValue);
-                    }
-                }
-            } else {
-                LOGGER.warn("JSON value not string or JSON object as expected: {}", value);
-            }
-        }
-    } 
 }
