@@ -311,6 +311,10 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
         return false;
     }
     
+    /**
+     * Bundling Ruby gems that are identified from different .gemspec files but denote the same package path.
+     * This happens when Ruby bundler installs an app's dependencies by running "bundle install".
+     */
     private boolean isSameRubyGem(Dependency dependency1, Dependency dependency2) {
     	if (dependency1 == null || dependency2 == null ||
     		!dependency1.getFileName().endsWith(".gemspec") ||
@@ -326,8 +330,8 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     }
     
     /**
-     * A gem install may have zero or more *.gemspec files, all of which have the same packagePath and should be grouped.
-     * If one of these gemspec is from <parent>/specifications/*.gemspec, which is a stub with fully resolved gem meta-data
+     * Ruby gems installed by "bundle install" can have zero or more *.gemspec files, all of which have the same packagePath and should be grouped.
+     * If one of these gemspec is from <parent>/specifications/*.gemspec, because it is a stub with fully resolved gem meta-data
      * created by Ruby bundler, this dependency should be the main one.  Otherwise, use dependency2 as main.
      * 
      * This method returns null if any dependency is not from *.gemspec, or the two do not have the same packagePath.

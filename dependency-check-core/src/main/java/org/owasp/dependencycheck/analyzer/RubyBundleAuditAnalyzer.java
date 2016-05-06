@@ -17,10 +17,22 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Reference;
@@ -29,12 +41,6 @@ import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.nio.charset.Charset;
-import java.util.*;
-import java.util.logging.Level;
-import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 
 /**
  * Used to analyze Ruby Bundler Gemspec.lock files utilizing the 3rd party
@@ -364,6 +370,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         final File gemFile = new File(Settings.getTempDirectory(), gem + "_Gemfile.lock");
         gemFile.createNewFile();
         final String displayFileName = String.format("%s%c%s:%s", parentName, File.separatorChar, fileName, gem);
+
         FileUtils.write(gemFile, displayFileName, Charset.defaultCharset()); // unique contents to avoid dependency bundling
         final Dependency dependency = new Dependency(gemFile);
         dependency.getProductEvidence().addEvidence("bundler-audit", "Name", gem, Confidence.HIGHEST);
