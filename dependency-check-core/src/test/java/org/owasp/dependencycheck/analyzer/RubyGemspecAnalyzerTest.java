@@ -100,4 +100,17 @@ public class RubyGemspecAnalyzerTest extends BaseTest {
         assertThat(result.getProductEvidence().toString(), containsString("rest-client"));
         assertThat(result.getVersionEvidence().toString(), containsString("1.7.2"));
     }
+    
+    /**
+     * Test Rakefile analysis.
+     *
+     * @throws AnalysisException is thrown when an exception occurs.
+     */
+    //@Test  TODO: place holder to test Rakefile support
+    public void testAnalyzeRakefile() throws AnalysisException {
+        final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
+                "ruby/vulnerable/gems/rails-4.1.15/vendor/bundle/ruby/2.2.0/gems/pg-0.18.4/Rakefile"));
+        analyzer.analyze(result, null);
+        //TODO add verification
+    }
 }
