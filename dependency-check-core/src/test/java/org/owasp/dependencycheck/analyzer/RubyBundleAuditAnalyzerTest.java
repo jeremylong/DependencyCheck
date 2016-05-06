@@ -180,9 +180,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
         
         final Engine engine = new Engine();
         engine.scan(BaseTest.getResourceAsFile(this,
-//              "ruby/vulnerable/gems/chef-12.8.4/"));
                 "ruby/vulnerable/gems/rails-4.1.15/"));
-//        		"java"));
         engine.analyzeDependencies();
         
         List<Dependency> dependencies = engine.getDependencies();

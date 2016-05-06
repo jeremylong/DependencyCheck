@@ -57,11 +57,13 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
 
     private static final FileFilter FILTER
             = FileFilterBuilder.newInstance().addExtensions(GEMSPEC).build();
+    		//TODO: support Rakefile
+    		//= FileFilterBuilder.newInstance().addExtensions(GEMSPEC).addFilenames("Rakefile").build();
 
     private static final String VERSION_FILE_NAME = "VERSION";
 
     /**
-     * @return a filter that accepts files named Rakefile or matching the glob pattern, *.gemspec
+     * @return a filter that accepts files matching the glob pattern, *.gemspec
      */
     @Override
     protected FileFilter getFileFilter() {
@@ -133,11 +135,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
             addStringEvidence(product, contents, blockVariable, "summary", "summary", Confidence.LOW);
 
             addStringEvidence(vendor, contents, blockVariable, "author", "authors?", Confidence.HIGHEST);
-//            addListEvidence(vendor, contents, blockVariable, "authors", Confidence.HIGHEST);
             addStringEvidence(vendor, contents, blockVariable, "email", "emails?", Confidence.MEDIUM);
-//            if (email.isEmpty()) {
-//                addListEvidence(vendor, contents, blockVariable, EMAIL, Confidence.MEDIUM);
-//            }
             addStringEvidence(vendor, contents, blockVariable, "homepage", "homepage", Confidence.HIGHEST);
             addStringEvidence(vendor, contents, blockVariable, "license", "licen[cs]es?", Confidence.HIGHEST);
             
@@ -148,16 +146,6 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
         
         setPackagePath(dependency);
     }
-
-//    private void addListEvidence(EvidenceCollection evidences, String contents,
-//            String blockVariable, String field, Confidence confidence) {
-//        final Matcher matcher = Pattern.compile(
-//                String.format("\\s+?%s\\.%s\\s*?=\\s*?\\[(.*?)\\]", blockVariable, field)).matcher(contents);
-//        if (matcher.find()) {
-//            final String value = matcher.group(1).replaceAll("['\"]", " ").trim();
-//            evidences.addEvidence(GEMSPEC, field, value, confidence);
-//        }
-//    }
 
     private String addStringEvidence(EvidenceCollection evidences, String contents,
             String blockVariable, String field, String fieldPattern, Confidence confidence) {
