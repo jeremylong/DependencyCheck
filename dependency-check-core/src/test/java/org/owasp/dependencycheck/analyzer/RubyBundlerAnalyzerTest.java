@@ -78,7 +78,8 @@ public class RubyBundlerAnalyzerTest extends BaseTest {
      */
     @Test
     public void testSupportsFiles() {
-        assertThat(analyzer.accept(new File("test.gemspec")), is(true));
+        assertThat(analyzer.accept(new File("test.gemspec")), is(false));
+        assertThat(analyzer.accept(new File("specifications" + File.separator + "test.gemspec")), is(true));
     }
 
     /**
