@@ -43,7 +43,12 @@ import org.owasp.dependencycheck.dependency.Dependency;
  * @author Bianca Jiang (biancajiang@gmail.com)
  */
 public class RubyBundlerAnalyzer extends RubyGemspecAnalyzer {
-	
+
+    /**
+     * The name of the analyzer.
+     */
+    private static final String ANALYZER_NAME = "Ruby Bundler Analyzer";
+    
 	//Folder name that contains .gemspec files created by "bundle install"
 	private static final String SPECIFICATIONS = "specifications";
 	
