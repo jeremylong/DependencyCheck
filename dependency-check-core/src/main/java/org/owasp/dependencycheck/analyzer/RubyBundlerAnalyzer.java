@@ -103,8 +103,21 @@ public class RubyBundlerAnalyzer extends RubyGemspecAnalyzer {
 		    		
 		    		if(matchingFiles.length > 0) {
 		    			String gemPath = matchingFiles[0].getAbsolutePath();
-		    			if(gemPath != null)
-		    				dependency.setPackagePath(gemPath);
+		    			if(dependency.getActualFilePath().equals(dependency.getFilePath())) {
+			    			if(gemPath != null)
+			    				dependency.setPackagePath(gemPath);
+		    			} else {
+		    				//.gemspec's actualFilePath and filePath are different when it's from a compressed file
+		    				//in which case actualFilePath is the temp directory used by decompression.
+		    				//packagePath should use the filePath of the identified gem file in "gems" folder
+		    				File gemspecStub = new File(dependency.getFilePath());
+		    				File specDir = gemspecStub.getParentFile();
+		    				if(specDir != null && specDir.getName().equals(SPECIFICATIONS)) {
+		    					File gemsDir2 = new File(specDir.getParentFile(), GEMS);
+		    					File packageDir = new File(gemsDir2, gemName);
+		    					dependency.setPackagePath(packageDir.getAbsolutePath());
+		    				}
+		    			}
 		    		}
     			}
     		}
