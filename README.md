@@ -22,18 +22,18 @@ The latest CLI can be downloaded from bintray's
 On *nix
 ```
 $ ./bin/dependency-check.sh -h
-$ ./bin/dependency-check.sh --app Testing --out . --scan [path to jar files to be scanned]
+$ ./bin/dependency-check.sh --project Testing --out . --scan [path to jar files to be scanned]
 ```
 On Windows
 ```
 > bin/dependency-check.bat -h
-> bin/dependency-check.bat --app Testing --out . --scan [path to jar files to be scanned]
+> bin/dependency-check.bat --project Testing --out . --scan [path to jar files to be scanned]
 ```
 On Mac with [Homebrew](http://brew.sh)
 ```
 $ brew update && brew install dependency-check
 $ dependency-check -h
-$ dependency-check --app Testing --out . --scan [path to jar files to be scanned]
+$ dependency-check --project Testing --out . --scan [path to jar files to be scanned]
 ```
 
 ### Maven Plugin
@@ -85,13 +85,13 @@ On *nix
 ```
 $ mvn install
 $ ./dependency-check-cli/target/release/bin/dependency-check.sh -h
-$ ./dependency-check-cli/target/release/bin/dependency-check.sh --app Testing --out . --scan ./src/test/resources
+$ ./dependency-check-cli/target/release/bin/dependency-check.sh --project Testing --out . --scan ./src/test/resources
 ```
 On Windows
 ```
 > mvn install
 > dependency-check-cli/target/release/bin/dependency-check.bat -h
-> dependency-check-cli/target/release/bin/dependency-check.bat --app Testing --out . --scan ./src/test/resources
+> dependency-check-cli/target/release/bin/dependency-check.bat --project Testing --out . --scan ./src/test/resources
 ```
 
 Then load the resulting 'DependencyCheck-Report.html' into your favorite browser.

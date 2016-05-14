@@ -30,6 +30,7 @@ import org.owasp.dependencycheck.utils.UrlStringUtils;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -220,14 +221,12 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private String getFileContents(final File actualFile)
             throws AnalysisException {
-        String contents = "";
         try {
-            contents = FileUtils.readFileToString(actualFile).trim();
+            return FileUtils.readFileToString(actualFile, Charset.defaultCharset()).trim();
         } catch (IOException e) {
             throw new AnalysisException(
                     "Problem occurred while reading dependency file.", e);
         }
-        return contents;
     }
 
     /**
