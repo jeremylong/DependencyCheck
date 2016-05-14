@@ -362,6 +362,29 @@ public class Check extends Update {
     }
 
     /**
+     * Whether experimental analyzers are enabled.
+     */
+    private Boolean enableExperimental;
+
+    /**
+     * Get the value of enableExperimental.
+     *
+     * @return the value of enableExperimental
+     */
+    public Boolean isEnableExperimental() {
+        return enableExperimental;
+    }
+
+    /**
+     * Set the value of enableExperimental.
+     *
+     * @param enableExperimental new value of enableExperimental
+     */
+    public void setEnableExperimental(Boolean enableExperimental) {
+        this.enableExperimental = enableExperimental;
+    }
+    
+    /**
      * Whether or not the Jar Analyzer is enabled.
      */
     private Boolean jarAnalyzerEnabled;
@@ -854,6 +877,7 @@ public class Check extends Update {
         super.populateSettings();
         Settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
         Settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, enableExperimental);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, pyDistributionAnalyzerEnabled);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED, pyPackageAnalyzerEnabled);

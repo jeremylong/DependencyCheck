@@ -190,6 +190,10 @@ public final class Settings {
          */
         public static final String ANALYZER_JAR_ENABLED = "analyzer.jar.enabled";
         /**
+         * The properties key for whether experimental analyzers are loaded.
+         */
+        public static final String ANALYZER_EXPERIMENTAL_ENABLED = "analyzer.experimental.enabled";
+        /**
          * The properties key for whether the Archive analyzer is enabled.
          */
         public static final String ANALYZER_ARCHIVE_ENABLED = "analyzer.archive.enabled";
@@ -309,7 +313,7 @@ public final class Settings {
     /**
      * Thread local settings.
      */
-    private static ThreadLocal<Settings> localSettings = new ThreadLocal<Settings>();
+    private static final ThreadLocal<Settings> LOCAL_SETTINGS = new ThreadLocal<Settings>();
     /**
      * The properties.
      */
@@ -346,7 +350,7 @@ public final class Settings {
      * also call Settings.cleanup() to properly release resources.
      */
     public static void initialize() {
-        localSettings.set(new Settings(PROPERTIES_FILE));
+        LOCAL_SETTINGS.set(new Settings(PROPERTIES_FILE));
     }
 
     /**
@@ -356,7 +360,7 @@ public final class Settings {
      * @param propertiesFilePath the path to the base properties file to load
      */
     public static void initialize(String propertiesFilePath) {
-        localSettings.set(new Settings(propertiesFilePath));
+        LOCAL_SETTINGS.set(new Settings(propertiesFilePath));
     }
 
     /**
@@ -385,7 +389,7 @@ public final class Settings {
             }
         }
         try {
-            localSettings.remove();
+            LOCAL_SETTINGS.remove();
         } catch (Throwable ex) {
             LOGGER.debug("Error cleaning up Settings", ex);
         }
@@ -397,7 +401,7 @@ public final class Settings {
      * @return the Settings object
      */
     public static Settings getInstance() {
-        return localSettings.get();
+        return LOCAL_SETTINGS.get();
     }
 
     /**
@@ -406,7 +410,7 @@ public final class Settings {
      * @param instance the instance of the settings object to use in this thread
      */
     public static void setInstance(Settings instance) {
-        localSettings.set(instance);
+        LOCAL_SETTINGS.set(instance);
     }
 
     /**
@@ -452,7 +456,7 @@ public final class Settings {
      * @param value the value for the property
      */
     public static void setString(String key, String value) {
-        localSettings.get().props.setProperty(key, value);
+        LOCAL_SETTINGS.get().props.setProperty(key, value);
         LOGGER.debug("Setting: {}='{}'", key, value);
     }
 
@@ -509,7 +513,7 @@ public final class Settings {
      * @param value the value for the property
      */
     public static void setInt(String key, int value) {
-        localSettings.get().props.setProperty(key, String.valueOf(value));
+        LOCAL_SETTINGS.get().props.setProperty(key, String.valueOf(value));
         LOGGER.debug("Setting: {}='{}'", key, value);
     }
 
@@ -584,8 +588,8 @@ public final class Settings {
      * @throws IOException is thrown when there is an exception loading/merging the properties
      */
     public static void mergeProperties(InputStream stream) throws IOException {
-        localSettings.get().props.load(stream);
-        logProperties("Properties updated via merge", localSettings.get().props);
+        LOCAL_SETTINGS.get().props.load(stream);
+        logProperties("Properties updated via merge", LOCAL_SETTINGS.get().props);
     }
 
     /**
@@ -665,7 +669,7 @@ public final class Settings {
      * @return the property from the properties file
      */
     public static String getString(String key, String defaultValue) {
-        final String str = System.getProperty(key, localSettings.get().props.getProperty(key, defaultValue));
+        final String str = System.getProperty(key, LOCAL_SETTINGS.get().props.getProperty(key, defaultValue));
         return str;
     }
 
@@ -699,7 +703,7 @@ public final class Settings {
      * @return the property from the properties file
      */
     public static String getString(String key) {
-        return System.getProperty(key, localSettings.get().props.getProperty(key));
+        return System.getProperty(key, LOCAL_SETTINGS.get().props.getProperty(key));
     }
 
     /**
@@ -708,7 +712,7 @@ public final class Settings {
      * @param key the property key to remove
      */
     public static void removeProperty(String key) {
-        localSettings.get().props.remove(key);
+        LOCAL_SETTINGS.get().props.remove(key);
     }
 
     /**

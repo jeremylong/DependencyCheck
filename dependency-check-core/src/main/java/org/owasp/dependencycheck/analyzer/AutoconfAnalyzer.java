@@ -42,6 +42,7 @@ import java.util.regex.Pattern;
  * @author Dale Visser
  * @see <a href="https://www.gnu.org/software/autoconf/">Autoconf - GNU Project - Free Software Foundation (FSF)</a>
  */
+@Experimental
 public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**

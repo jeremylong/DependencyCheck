@@ -17,8 +17,13 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ServiceLoader;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Analyzer Service Loader. This class loads all services that implement
@@ -27,11 +32,15 @@ import java.util.ServiceLoader;
  * @author Jeremy Long
  */
 public class AnalyzerService {
+    /**
+     * The Logger for use throughout the class.
+     */
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(AnalyzerService.class);
 
     /**
      * The service loader for analyzers.
      */
-    private final ServiceLoader<Analyzer> loader;
+    private final ServiceLoader<Analyzer> service;
 
     /**
      * Creates a new instance of AnalyzerService.
@@ -39,15 +48,31 @@ public class AnalyzerService {
      * @param classLoader the ClassLoader to use when dynamically loading Analyzer and Update services
      */
     public AnalyzerService(ClassLoader classLoader) {
-        loader = ServiceLoader.load(Analyzer.class, classLoader);
+        service = ServiceLoader.load(Analyzer.class, classLoader);
     }
 
     /**
-     * Returns an Iterator for all instances of the Analyzer interface.
+     * Returns a list of all instances of the Analyzer interface.
      *
-     * @return an iterator of Analyzers.
+     * @return a list of Analyzers.
      */
-    public Iterator<Analyzer> getAnalyzers() {
-        return loader.iterator();
+    public List<Analyzer> getAnalyzers() {
+        List<Analyzer> analyzers = new ArrayList<Analyzer>();
+        final Iterator<Analyzer> iterator = service.iterator();
+        boolean experimentalEnabled = false;
+        try {
+            experimentalEnabled = Settings.getBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, false);
+        } catch (InvalidSettingException ex) {
+            LOGGER.error("invalide experimental setting", ex);
+        }
+        while (iterator.hasNext()) {
+            final Analyzer a = iterator.next();
+            if (!experimentalEnabled && a.getClass().isAnnotationPresent(Experimental.class)) {
+                continue;
+            }
+            LOGGER.debug("Loaded Analyzer {}", a.getName());
+            analyzers.add(a);
+        }
+        return analyzers;
     }
 }

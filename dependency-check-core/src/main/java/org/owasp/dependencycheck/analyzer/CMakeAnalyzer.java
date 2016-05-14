@@ -49,6 +49,7 @@ import java.util.regex.Pattern;
  *
  * @author Dale Visser
  */
+@Experimental
 public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**

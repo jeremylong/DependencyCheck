@@ -27,7 +27,7 @@ the project's dependencies.
 
 Configuration: dependency-check Task
 --------------------
-The following properties can be set on the dependency-check-update task.
+The following properties can be set on the dependency-check task.
 
 Property              | Description                                                                                                                                                                                        | Default Value
 ----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------
@@ -43,6 +43,7 @@ proxyPort             | The Proxy Port.                                         
 proxyUsername         | Defines the proxy user name.                                                                                                                                                                       | &nbsp;
 proxyPassword         | Defines the proxy password.                                                                                                                                                                        | &nbsp;
 connectionTimeout     | The URL Connection Timeout.                                                                                                                                                                        | &nbsp;
+enableExperimental    | Enable the experimental analyzers.                                                                                                                                                                 | false
 
 Analyzer Configuration
 ====================
