@@ -337,7 +337,7 @@ Copyright (c) 2012 - Jeremy Long
                     <dependency>
                         <groupId>org.apache.maven.doxia</groupId>
                         <artifactId>doxia-module-markdown</artifactId>
-                        <version>1.7.1</version>
+                        <version>1.7</version>
                     </dependency>
                 </dependencies>
                 <configuration>
