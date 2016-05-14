@@ -17,6 +17,15 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -25,12 +34,6 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
-
-import java.io.FileFilter;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Used to analyze Ruby Gem specifications and collect information that can be used to determine the associated CPE. Regular
@@ -53,12 +56,14 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
     private static final String GEMSPEC = "gemspec";
 
     private static final FileFilter FILTER
-            = FileFilterBuilder.newInstance().addExtensions(GEMSPEC).addFilenames("Rakefile").build();
+            = FileFilterBuilder.newInstance().addExtensions(GEMSPEC).build();
+    		//TODO: support Rakefile
+    		//= FileFilterBuilder.newInstance().addExtensions(GEMSPEC).addFilenames("Rakefile").build();
 
-    private static final String EMAIL = "email";
+    private static final String VERSION_FILE_NAME = "VERSION";
 
     /**
-     * @return a filter that accepts files named Rakefile or matching the glob pattern, *.gemspec
+     * @return a filter that accepts files matching the glob pattern, *.gemspec
      */
     @Override
     protected FileFilter getFileFilter() {
@@ -120,43 +125,84 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
         if (matcher.find()) {
             contents = contents.substring(matcher.end());
             final String blockVariable = matcher.group(1);
+            
             final EvidenceCollection vendor = dependency.getVendorEvidence();
-            addStringEvidence(vendor, contents, blockVariable, "author", Confidence.HIGHEST);
-            addListEvidence(vendor, contents, blockVariable, "authors", Confidence.HIGHEST);
-            final String email = addStringEvidence(vendor, contents, blockVariable, EMAIL, Confidence.MEDIUM);
-            if (email.isEmpty()) {
-                addListEvidence(vendor, contents, blockVariable, EMAIL, Confidence.MEDIUM);
-            }
-            addStringEvidence(vendor, contents, blockVariable, "homepage", Confidence.MEDIUM);
             final EvidenceCollection product = dependency.getProductEvidence();
-            final String name = addStringEvidence(product, contents, blockVariable, "name", Confidence.HIGHEST);
+            final String name = addStringEvidence(product, contents, blockVariable, "name", "name", Confidence.HIGHEST);
             if (!name.isEmpty()) {
                 vendor.addEvidence(GEMSPEC, "name_project", name + "_project", Confidence.LOW);
             }
-            addStringEvidence(product, contents, blockVariable, "summary", Confidence.LOW);
-            addStringEvidence(dependency.getVersionEvidence(), contents, blockVariable, "version", Confidence.HIGHEST);
-        }
-    }
+            addStringEvidence(product, contents, blockVariable, "summary", "summary", Confidence.LOW);
 
-    private void addListEvidence(EvidenceCollection evidences, String contents,
-            String blockVariable, String field, Confidence confidence) {
-        final Matcher matcher = Pattern.compile(
-                String.format("\\s+?%s\\.%s\\s*?=\\s*?\\[(.*?)\\]", blockVariable, field)).matcher(contents);
-        if (matcher.find()) {
-            final String value = matcher.group(1).replaceAll("['\"]", " ").trim();
-            evidences.addEvidence(GEMSPEC, field, value, confidence);
+            addStringEvidence(vendor, contents, blockVariable, "author", "authors?", Confidence.HIGHEST);
+            addStringEvidence(vendor, contents, blockVariable, "email", "emails?", Confidence.MEDIUM);
+            addStringEvidence(vendor, contents, blockVariable, "homepage", "homepage", Confidence.HIGHEST);
+            addStringEvidence(vendor, contents, blockVariable, "license", "licen[cs]es?", Confidence.HIGHEST);
+            
+            String value = addStringEvidence(dependency.getVersionEvidence(), contents, blockVariable, "version", "version", Confidence.HIGHEST);
+            if(value.length() < 1) 
+            	addEvidenceFromVersionFile(dependency.getActualFile(), dependency.getVersionEvidence());
         }
+        
+        setPackagePath(dependency);
     }
 
     private String addStringEvidence(EvidenceCollection evidences, String contents,
-            String blockVariable, String field, Confidence confidence) {
-        final Matcher matcher = Pattern.compile(
-                String.format("\\s+?%s\\.%s\\s*?=\\s*?(['\"])(.*?)\\1", blockVariable, field)).matcher(contents);
+            String blockVariable, String field, String fieldPattern, Confidence confidence) {
         String value = "";
-        if (matcher.find()) {
-            value = matcher.group(2);
-            evidences.addEvidence(GEMSPEC, field, value, confidence);
-        }
+        
+    	//capture array value between [ ]
+    	final Matcher arrayMatcher = Pattern.compile(
+                String.format("\\s*?%s\\.%s\\s*?=\\s*?\\[(.*?)\\]", blockVariable, fieldPattern), Pattern.CASE_INSENSITIVE).matcher(contents);
+    	if(arrayMatcher.find()) {
+    		String arrayValue = arrayMatcher.group(1);
+    		value = arrayValue.replaceAll("['\"]", "").trim(); //strip quotes
+    	}
+    	//capture single value between quotes
+    	else {
+	        final Matcher matcher = Pattern.compile(
+	                String.format("\\s*?%s\\.%s\\s*?=\\s*?(['\"])(.*?)\\1", blockVariable, fieldPattern), Pattern.CASE_INSENSITIVE).matcher(contents);
+	        if (matcher.find()) {
+	            value = matcher.group(2);
+	        }
+    	}
+    	if(value.length() > 0)
+    		evidences.addEvidence(GEMSPEC, field, value, confidence);
+    	
         return value;
+    }
+    
+    private String addEvidenceFromVersionFile(File dependencyFile, EvidenceCollection versionEvidences) {
+    	String value = null;
+    	File parentDir = dependencyFile.getParentFile();
+    	if(parentDir != null) {
+    		File[] matchingFiles = parentDir.listFiles(new FilenameFilter() {
+    		    public boolean accept(File dir, String name) {
+    		        return name.contains(VERSION_FILE_NAME);
+    		    }
+    		});
+    		
+    		for(int i = 0; i < matchingFiles.length; i++) {
+    			try {
+					List<String> lines = FileUtils.readLines(matchingFiles[i]);
+					if(lines.size() == 1) { //TODO other checking?
+						value = lines.get(0).trim();
+						versionEvidences.addEvidence(GEMSPEC, "version", value, Confidence.HIGH);
+					}
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+    		}
+    	}
+    	
+    	return value;
+    }
+    
+    private void setPackagePath(Dependency dep) {
+    	File file = new File(dep.getFilePath());
+    	String parent = file.getParent();
+    	if(parent != null)
+    		dep.setPackagePath(parent);
     }
 }

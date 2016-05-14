@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2015 Institute for Defense Analyses. All Rights Reserved.
+ * Copyright (c) 2016 Bianca Jiang. All Rights Reserved.
  */
 package org.owasp.dependencycheck.analyzer;
 
@@ -31,16 +31,16 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for {@link RubyGemspecAnalyzer}.
+ * Unit tests for {@link RubyBundlerAnalyzer}.
  *
- * @author Dale Visser
+ * @author Bianca Jiang
  */
-public class RubyGemspecAnalyzerTest extends BaseTest {
+public class RubyBundlerAnalyzerTest extends BaseTest {
 
     /**
      * The analyzer to test.
      */
-    RubyGemspecAnalyzer analyzer;
+    RubyBundlerAnalyzer analyzer;
 
     /**
      * Correctly setup the analyzer for testing.
@@ -49,7 +49,7 @@ public class RubyGemspecAnalyzerTest extends BaseTest {
      */
     @Before
     public void setUp() throws Exception {
-        analyzer = new RubyGemspecAnalyzer();
+        analyzer = new RubyBundlerAnalyzer();
         analyzer.setFilesMatched(true);
         analyzer.initialize();
     }
@@ -66,11 +66,11 @@ public class RubyGemspecAnalyzerTest extends BaseTest {
     }
 
     /**
-     * Test Ruby Gemspec name.
+     * Test Analyzer name.
      */
     @Test
     public void testGetName() {
-        assertThat(analyzer.getName(), is("Ruby Gemspec Analyzer"));
+        assertThat(analyzer.getName(), is("Ruby Bundler Analyzer"));
     }
 
     /**
@@ -78,39 +78,29 @@ public class RubyGemspecAnalyzerTest extends BaseTest {
      */
     @Test
     public void testSupportsFiles() {
-        assertThat(analyzer.accept(new File("test.gemspec")), is(true));
-//        assertThat(analyzer.accept(new File("Rakefile")), is(true));
+        assertThat(analyzer.accept(new File("test.gemspec")), is(false));
+        assertThat(analyzer.accept(new File("specifications" + File.separator + "test.gemspec")), is(true));
     }
 
     /**
-     * Test Ruby Gemspec analysis.
+     * Test Ruby Bundler created gemspec analysis.
      *
      * @throws AnalysisException is thrown when an exception occurs.
      */
     @Test
-    public void testAnalyzePackageJson() throws AnalysisException {
+    public void testAnalyzeGemspec() throws AnalysisException {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
-                "ruby/vulnerable/gems/specifications/rest-client-1.7.2.gemspec"));
+                "ruby/vulnerable/gems/rails-4.1.15/vendor/bundle/ruby/2.2.0/specifications/dalli-2.7.5.gemspec"));
         analyzer.analyze(result, null);
+        
         final String vendorString = result.getVendorEvidence().toString();
-        assertThat(vendorString, containsString("REST Client Team"));
-        assertThat(vendorString, containsString("rest-client_project"));
-        assertThat(vendorString, containsString("rest.client@librelist.com"));
-        assertThat(vendorString, containsString("https://github.com/rest-client/rest-client"));
-        assertThat(result.getProductEvidence().toString(), containsString("rest-client"));
-        assertThat(result.getVersionEvidence().toString(), containsString("1.7.2"));
-    }
-    
-    /**
-     * Test Rakefile analysis.
-     *
-     * @throws AnalysisException is thrown when an exception occurs.
-     */
-    //@Test  TODO: place holder to test Rakefile support
-    public void testAnalyzeRakefile() throws AnalysisException {
-        final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
-                "ruby/vulnerable/gems/rails-4.1.15/vendor/bundle/ruby/2.2.0/gems/pg-0.18.4/Rakefile"));
-        analyzer.analyze(result, null);
-        //TODO add verification
+        assertThat(vendorString, containsString("Peter M. Goldstein"));
+        assertThat(vendorString, containsString("Mike Perham"));
+        assertThat(vendorString, containsString("peter.m.goldstein@gmail.com"));
+        assertThat(vendorString, containsString("https://github.com/petergoldstein/dalli"));
+        assertThat(vendorString, containsString("MIT"));
+        assertThat(result.getProductEvidence().toString(), containsString("dalli"));
+        assertThat(result.getProductEvidence().toString(), containsString("High performance memcached client for Ruby"));
+        assertThat(result.getVersionEvidence().toString(), containsString("2.7.5"));
     }
 }

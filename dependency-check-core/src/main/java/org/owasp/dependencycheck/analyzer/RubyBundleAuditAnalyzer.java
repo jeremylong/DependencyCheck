@@ -207,14 +207,18 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             boolean failed = true;
             final String className = RubyGemspecAnalyzer.class.getName();
             for (FileTypeAnalyzer analyzer : engine.getFileTypeAnalyzers()) {
-                if (analyzer instanceof RubyGemspecAnalyzer) {
+            	if (analyzer instanceof RubyBundlerAnalyzer) {
+                    ((RubyBundlerAnalyzer) analyzer).setEnabled(false);
+                    LOGGER.info("Disabled " + RubyBundlerAnalyzer.class.getName() + " to avoid noisy duplicate results.");
+                }
+            	else if (analyzer instanceof RubyGemspecAnalyzer) {
                     ((RubyGemspecAnalyzer) analyzer).setEnabled(false);
                     LOGGER.info("Disabled " + className + " to avoid noisy duplicate results.");
                     failed = false;
                 }
             }
             if (failed) {
-                LOGGER.warn("Did not find" + className + '.');
+                LOGGER.warn("Did not find " + className + '.');
             }
             needToDisableGemspecAnalyzer = false;
         }
@@ -251,6 +255,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     private void processBundlerAuditOutput(Dependency original, Engine engine, BufferedReader rdr) throws IOException {
         final String parentName = original.getActualFile().getParentFile().getName();
         final String fileName = original.getFileName();
+        final String filePath = original.getFilePath();
         Dependency dependency = null;
         Vulnerability vulnerability = null;
         String gem = null;
@@ -264,7 +269,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 appendToDescription = false;
                 gem = nextLine.substring(NAME.length());
                 if (!map.containsKey(gem)) {
-                    map.put(gem, createDependencyForGem(engine, parentName, fileName, gem));
+                    map.put(gem, createDependencyForGem(engine, parentName, fileName, filePath, gem));
                 }
                 dependency = map.get(gem);
                 LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
@@ -359,13 +364,17 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         return vulnerability;
     }
 
-    private Dependency createDependencyForGem(Engine engine, String parentName, String fileName, String gem) throws IOException {
-        final File tempFile = File.createTempFile("Gemfile-" + gem, ".lock", Settings.getTempDirectory());
+    private Dependency createDependencyForGem(Engine engine, String parentName, String fileName, String filePath, String gem) throws IOException {
+        final File gemFile = new File(Settings.getTempDirectory(), gem + "_Gemfile.lock");
+        gemFile.createNewFile();
         final String displayFileName = String.format("%s%c%s:%s", parentName, File.separatorChar, fileName, gem);
-        FileUtils.write(tempFile, displayFileName, Charset.defaultCharset()); // unique contents to avoid dependency bundling
-        final Dependency dependency = new Dependency(tempFile);
+
+        FileUtils.write(gemFile, displayFileName, Charset.defaultCharset()); // unique contents to avoid dependency bundling
+        final Dependency dependency = new Dependency(gemFile);
         dependency.getProductEvidence().addEvidence("bundler-audit", "Name", gem, Confidence.HIGHEST);
         dependency.setDisplayFileName(displayFileName);
+        dependency.setFileName(fileName);
+        dependency.setFilePath(filePath);
         engine.getDependencies().add(dependency);
         return dependency;
     }
