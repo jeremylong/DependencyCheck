@@ -23,16 +23,22 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -43,7 +49,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Dale Visser
  */
-public class RubyBundleAuditAnalyzerTest extends BaseTest {
+public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RubyBundleAuditAnalyzerTest.class);
 
@@ -101,19 +107,19 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
     public void testAnalysis() throws AnalysisException, DatabaseException {
     	try {
             analyzer.initialize();
-
-            final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
-                    "ruby/vulnerable/gems/rails-4.1.15/Gemfile.lock"));
+            final String resource = "ruby/vulnerable/gems/rails-4.1.15/Gemfile.lock";
+            final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, resource));
             final Engine engine = new Engine();
             analyzer.analyze(result, engine);
             int size = engine.getDependencies().size();
-            assertThat(size, is(1));
 
+            assertTrue(size >= 1);
+            
             Dependency dependency = engine.getDependencies().get(0);
             assertTrue(dependency.getProductEvidence().toString().toLowerCase().contains("redcarpet"));
             assertTrue(dependency.getVersionEvidence().toString().toLowerCase().contains("2.2.2"));
-
-
+            assertTrue(dependency.getFilePath().endsWith(resource));
+            assertTrue(dependency.getFileName().equals("Gemfile.lock"));
         } catch (Exception e) {
             LOGGER.warn("Exception setting up RubyBundleAuditAnalyzer. Make sure Ruby gem bundle-audit is installed. You may also need to set property \"analyzer.bundle.audit.path\".", e);
             Assume.assumeNoException("Exception setting up RubyBundleAuditAnalyzer; bundle audit may not be installed, or property \"analyzer.bundle.audit.path\" may not be set.", e);
@@ -166,5 +172,52 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
         }
     }
 
+    /**
+     * Test Ruby dependencies and their paths.
+     *
+     * @throws AnalysisException is thrown when an exception occurs.
+     */
+    @Test
+    public void testDependenciesPath() throws AnalysisException, DatabaseException {
+        
+        final Engine engine = new Engine();
+        engine.scan(BaseTest.getResourceAsFile(this,
+                "ruby/vulnerable/gems/rails-4.1.15/"));
+        engine.analyzeDependencies();
+        
+        List<Dependency> dependencies = engine.getDependencies();
+        LOGGER.info(dependencies.size() + " dependencies found.");
+        Iterator<Dependency> dIterator = dependencies.iterator();
+        while(dIterator.hasNext()) {
+        	Dependency dept = dIterator.next();
+        	LOGGER.info("dept path: " + dept.getActualFilePath());
 
+        	Set<Identifier> identifiers = dept.getIdentifiers();
+        	Iterator<Identifier> idIterator = identifiers.iterator();
+        	while(idIterator.hasNext()) {
+        		Identifier id = idIterator.next();
+        		LOGGER.info("  Identifier: " + id.getValue() + ", type=" + id.getType() + ", url=" + id.getUrl() + ", conf="+ id.getConfidence());
+        	}
+        	
+        	Set<Evidence> prodEv = dept.getProductEvidence().getEvidence();
+        	Iterator<Evidence> it = prodEv.iterator();
+        	while(it.hasNext()) {
+        		Evidence e = it.next();
+        		LOGGER.info("  prod: name=" + e.getName() + ", value=" + e.getValue() + ", source=" + e.getSource() + ", confidence=" + e.getConfidence());
+        	}
+        	Set<Evidence> versionEv = dept.getVersionEvidence().getEvidence();
+        	Iterator<Evidence> vIt = versionEv.iterator();
+        	while(vIt.hasNext()) {
+        		Evidence e = vIt.next();
+        		LOGGER.info("  version: name=" + e.getName() + ", value=" + e.getValue() + ", source=" + e.getSource() + ", confidence=" + e.getConfidence());
+        	}
+
+        	Set<Evidence> vendorEv = dept.getVendorEvidence().getEvidence();
+        	Iterator<Evidence> vendorIt = vendorEv.iterator();
+        	while(vendorIt.hasNext()) {
+        		Evidence e = vendorIt.next();
+        		LOGGER.info("  vendor: name=" + e.getName() + ", value=" + e.getValue() + ", source=" + e.getSource() + ", confidence=" + e.getConfidence());
+        	}
+        }
+    }
 }

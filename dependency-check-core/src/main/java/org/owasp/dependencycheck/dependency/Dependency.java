@@ -72,7 +72,17 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * The file name of the dependency.
      */
     private String fileName;
-    /**
+    
+    private String packagePath;
+    public String getPackagePath() {
+		return packagePath;
+	}
+
+	public void setPackagePath(String packagePath) {
+		this.packagePath = packagePath;
+	}
+
+	/**
      * The md5 hash of the dependency.
      */
     private String md5sum;
@@ -120,6 +130,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
         this.actualFilePath = file.getAbsolutePath();
         this.filePath = this.actualFilePath;
         this.fileName = file.getName();
+        this.packagePath = filePath;
         determineHashes(file);
     }
 
@@ -188,6 +199,9 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * @param filePath the file path of the dependency
      */
     public void setFilePath(String filePath) {
+    	if(this.packagePath == null || this.packagePath.equals(this.filePath))
+    		this.packagePath = filePath;
+    	
         this.filePath = filePath;
     }
 
@@ -719,6 +733,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
                 .append(this.actualFilePath, other.actualFilePath)
                 .append(this.filePath, other.filePath)
                 .append(this.fileName, other.fileName)
+                .append(this.packagePath, other.packagePath)
                 .append(this.md5sum, other.md5sum)
                 .append(this.sha1sum, other.sha1sum)
                 .append(this.identifiers, other.identifiers)
@@ -767,6 +782,6 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      */
     @Override
     public String toString() {
-        return "Dependency{ fileName='" + fileName + "', actualFilePath='" + actualFilePath + "', filePath='" + filePath + "'}";
+        return "Dependency{ fileName='" + fileName + "', actualFilePath='" + actualFilePath + "', filePath='" + filePath + "', packagePath='" + packagePath + "'}";
     }
 }

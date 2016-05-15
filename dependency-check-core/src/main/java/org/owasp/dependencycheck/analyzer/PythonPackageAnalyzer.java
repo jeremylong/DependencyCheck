@@ -174,20 +174,22 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
         final File file = dependency.getActualFile();
         final File parent = file.getParentFile();
         final String parentName = parent.getName();
-        boolean found = false;
         if (INIT_PY_FILTER.accept(file)) {
+        	//by definition, the containing folder of __init__.py is considered the package, even the file is empty:
+        	//"The __init__.py files are required to make Python treat the directories as containing packages"
+        	//see section "6.4 Packages" from https://docs.python.org/2/tutorial/modules.html;
+            dependency.setDisplayFileName(parentName + "/__init__.py");
+            dependency.getProductEvidence().addEvidence(file.getName(),
+                    "PackageName", parentName, Confidence.HIGHEST);
+            
             final File[] fileList = parent.listFiles(PY_FILTER);
             if (fileList != null) {
                 for (final File sourceFile : fileList) {
-                    found |= analyzeFileContents(dependency, sourceFile);
+                    analyzeFileContents(dependency, sourceFile);
                 }
             }
         }
-        if (found) {
-            dependency.setDisplayFileName(parentName + "/__init__.py");
-            dependency.getProductEvidence().addEvidence(file.getName(),
-                    "PackageName", parentName, Confidence.HIGH);
-        } else {
+        else {
             // copy, alter and set in case some other thread is iterating over
             final List<Dependency> dependencies = new ArrayList<Dependency>(
                     engine.getDependencies());
