@@ -225,8 +225,9 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             throw new AnalysisException("bundle-audit process interrupted", ie);
         }
         BufferedReader rdr = null;
+        BufferedReader errReader = null;
         try {
-            BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
+            errReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
             while (errReader.ready()) {
                 String error = errReader.readLine();
                 LOGGER.warn(error);
@@ -236,6 +237,13 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (IOException ioe) {
             LOGGER.warn("bundle-audit failure", ioe);
         } finally {
+            if (errReader!= null) {
+                try {
+                    errReader.close();
+                } catch (IOException ioe) {
+                    LOGGER.warn("bundle-audit close failure", ioe);
+                }
+            }
             if (null != rdr) {
                 try {
                     rdr.close();
