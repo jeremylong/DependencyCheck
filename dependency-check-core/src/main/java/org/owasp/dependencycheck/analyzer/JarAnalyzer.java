@@ -577,9 +577,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             addMatchingValues(classes, trimmedDescription, dependency.getVendorEvidence());
             addMatchingValues(classes, trimmedDescription, dependency.getProductEvidence());
         }
-        
+
         String projectURL = pom.getProjectURL();
-        if(projectURL != null && !projectURL.trim().isEmpty()) {
+        if (projectURL != null && !projectURL.trim().isEmpty()) {
             dependency.getVendorEvidence().addEvidence("pom", "url", projectURL, Confidence.HIGHEST);
         }
 
@@ -645,7 +645,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @return whether evidence was identified parsing the manifest
      * @throws IOException if there is an issue reading the JAR file
      */
-    protected boolean parseManifest(Dependency dependency, List<ClassNameInformation> classInformation) 
+    protected boolean parseManifest(Dependency dependency, List<ClassNameInformation> classInformation)
             throws IOException {
         boolean foundSomething = false;
         JarFile jar = null;
@@ -792,11 +792,10 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
 
-            final Map<String, Attributes> entries = manifest.getEntries();
-            for (Iterator<String> it = entries.keySet().iterator(); it.hasNext();) {
-                final String name = it.next();
+            for (Map.Entry<String, Attributes> item : manifest.getEntries().entrySet()) {
+                final String name = item.getKey();
                 source = "manifest: " + name;
-                atts = entries.get(name);
+                atts = item.getValue();
                 for (Entry<Object, Object> entry : atts.entrySet()) {
                     final String key = entry.getKey().toString();
                     final String value = atts.getValue(key);
