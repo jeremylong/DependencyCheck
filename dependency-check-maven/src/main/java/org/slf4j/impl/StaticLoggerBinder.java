@@ -23,8 +23,9 @@ import org.slf4j.ILoggerFactory;
 import org.slf4j.spi.LoggerFactoryBinder;
 
 /**
- * The binding of org.slf4j.LoggerFactory class with an actual instance of org.slf4j.ILoggerFactory is performed using information
- * returned by this class.
+ * The binding of org.slf4j.LoggerFactory class with an actual instance of
+ * org.slf4j.ILoggerFactory is performed using information returned by this
+ * class.
  *
  * @author colezlaw
  */
@@ -47,7 +48,7 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
     }
 
     /**
-     * Maven mojos have their own logger, so we'll use one of those
+     * Maven mojos have their own logger, so we'll use one of those.
      */
     private Log log = null;
 
@@ -62,8 +63,8 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
     }
 
     /**
-     * Declare the version of the SLF4J API this implementation is compiled against. The value of this filed is usually modified
-     * with each release.
+     * Declare the version of the SLF4J API this implementation is compiled
+     * against. The value of this filed is usually modified with each release.
      */
     // to avoid constant folding by the compiler, this field must *not* be final
     //CSOFF: StaticVariableName
@@ -78,7 +79,8 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
     private static final String LOGGER_FACTORY_CLASS = MavenLoggerFactory.class.getName();
 
     /**
-     * The ILoggerFactory instance returned by the {@link #getLoggerFactory} method should always be the same object
+     * The ILoggerFactory instance returned by the {@link #getLoggerFactory}
+     * method should always be the same object
      */
     private ILoggerFactory loggerFactory;
 

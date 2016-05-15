@@ -17,6 +17,15 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -30,9 +39,6 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.*;
-import java.util.logging.Level;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 
 /**
@@ -62,10 +68,8 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     public static final String ADVISORY = "Advisory: ";
     public static final String CRITICALITY = "Criticality: ";
 
-    public CveDB cvedb;
-    //instance.open();
-    //Vulnerability result = instance.getVulnerability("CVE-2015-3225");
-
+    private CveDB cvedb;
+    
     /**
      * @return a filter that accepts files named Gemfile.lock
      */
@@ -237,7 +241,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (IOException ioe) {
             LOGGER.warn("bundle-audit failure", ioe);
         } finally {
-            if (errReader!= null) {
+            if (errReader != null) {
                 try {
                     errReader.close();
                 } catch (IOException ioe) {

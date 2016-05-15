@@ -59,7 +59,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
      */
     @Before
     public void setUp() throws Exception {
-    	Settings.initialize();
+        Settings.initialize();
         analyzer = new RubyBundleAuditAnalyzer();
         analyzer.setFilesMatched(true);
     }
@@ -71,7 +71,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
      */
     @After
     public void tearDown() throws Exception {
-    	Settings.cleanup();
+        Settings.cleanup();
         analyzer.close();
         analyzer = null;
     }
@@ -99,7 +99,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
      */
     @Test
     public void testAnalysis() throws AnalysisException, DatabaseException {
-    	try {
+        try {
             analyzer.initialize();
 
             final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
@@ -112,7 +112,6 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
             Dependency dependency = engine.getDependencies().get(0);
             assertTrue(dependency.getProductEvidence().toString().toLowerCase().contains("redcarpet"));
             assertTrue(dependency.getVersionEvidence().toString().toLowerCase().contains("2.2.2"));
-
 
         } catch (Exception e) {
             LOGGER.warn("Exception setting up RubyBundleAuditAnalyzer. Make sure Ruby gem bundle-audit is installed. You may also need to set property \"analyzer.bundle.audit.path\".", e);
@@ -133,7 +132,6 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
             final Engine engine = new Engine();
             analyzer.analyze(result, engine);
 
-
             Dependency dependency = engine.getDependencies().get(0);
             Vulnerability vulnerability = dependency.getVulnerabilities().first();
             assertEquals(vulnerability.getCvssScore(), 5.0f, 0.0);
@@ -144,7 +142,6 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
         }
     }
 
-
     /**
      * Test when Ruby bundle-audit is not available on the system.
      *
@@ -152,19 +149,17 @@ public class RubyBundleAuditAnalyzerTest extends BaseTest {
      */
     @Test
     public void testMissingBundleAudit() throws AnalysisException, DatabaseException {
-    	//set a non-exist bundle-audit
+        //set a non-exist bundle-audit
         Settings.setString(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, "phantom-bundle-audit");
         try {
             //initialize should fail.
-			analyzer.initialize();
-		} catch (Exception e) {
-			//expected, so ignore.
-		}
-        finally {
-	        assertThat(analyzer.isEnabled(), is(false));
-			LOGGER.info("phantom-bundle-audit is not available. Ruby Bundle Audit Analyzer is disabled as expected.");
+            analyzer.initialize();
+        } catch (Exception e) {
+            //expected, so ignore.
+        } finally {
+            assertThat(analyzer.isEnabled(), is(false));
+            LOGGER.info("phantom-bundle-audit is not available. Ruby Bundle Audit Analyzer is disabled as expected.");
         }
     }
-
 
 }

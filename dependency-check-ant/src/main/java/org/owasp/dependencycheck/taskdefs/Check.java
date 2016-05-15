@@ -86,8 +86,8 @@ public class Check extends Update {
     }
 
     /**
-     * Returns the path. If the path has not been initialized yet, this class is synchronized, and will instantiate the path
-     * object.
+     * Returns the path. If the path has not been initialized yet, this class is
+     * synchronized, and will instantiate the path object.
      *
      * @return the path
      */
@@ -109,7 +109,8 @@ public class Check extends Update {
     }
 
     /**
-     * Add a reference to a Path, FileSet, DirSet, or FileList defined elsewhere.
+     * Add a reference to a Path, FileSet, DirSet, or FileList defined
+     * elsewhere.
      *
      * @param r the reference to a path, fileset, dirset or filelist.
      */
@@ -121,7 +122,8 @@ public class Check extends Update {
     }
 
     /**
-     * If this is a reference, this method will add the referenced resource collection to the collection of paths.
+     * If this is a reference, this method will add the referenced resource
+     * collection to the collection of paths.
      *
      * @throws BuildException if the reference is not to a resource collection
      */
@@ -196,7 +198,8 @@ public class Check extends Update {
     }
 
     /**
-     * Specifies the destination directory for the generated Dependency-Check report.
+     * Specifies the destination directory for the generated Dependency-Check
+     * report.
      */
     private String reportOutputDirectory = ".";
 
@@ -218,9 +221,11 @@ public class Check extends Update {
         this.reportOutputDirectory = reportOutputDirectory;
     }
     /**
-     * Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11 which
-     * means since the CVSS scores are 0-10, by default the build will never fail and the CVSS score is set to 11. The valid range
-     * for the fail build on CVSS is 0 to 11, where anything above 10 will not cause the build to fail.
+     * Specifies if the build should be failed if a CVSS score above a specified
+     * level is identified. The default is 11 which means since the CVSS scores
+     * are 0-10, by default the build will never fail and the CVSS score is set
+     * to 11. The valid range for the fail build on CVSS is 0 to 11, where
+     * anything above 10 will not cause the build to fail.
      */
     private float failBuildOnCVSS = 11;
 
@@ -242,8 +247,8 @@ public class Check extends Update {
         this.failBuildOnCVSS = failBuildOnCVSS;
     }
     /**
-     * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. Default
-     * is true.
+     * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not
+     * recommended that this be turned to false. Default is true.
      */
     private Boolean autoUpdate;
 
@@ -295,7 +300,8 @@ public class Check extends Update {
     }
 
     /**
-     * The report format to be generated (HTML, XML, VULN, ALL). Default is HTML.
+     * The report format to be generated (HTML, XML, VULN, ALL). Default is
+     * HTML.
      */
     private String reportFormat = "HTML";
 
@@ -383,7 +389,7 @@ public class Check extends Update {
     public void setEnableExperimental(Boolean enableExperimental) {
         this.enableExperimental = enableExperimental;
     }
-    
+
     /**
      * Whether or not the Jar Analyzer is enabled.
      */
@@ -644,7 +650,8 @@ public class Check extends Update {
     /**
      * Set the value of pyDistributionAnalyzerEnabled.
      *
-     * @param pyDistributionAnalyzerEnabled new value of pyDistributionAnalyzerEnabled
+     * @param pyDistributionAnalyzerEnabled new value of
+     * pyDistributionAnalyzerEnabled
      */
     public void setPyDistributionAnalyzerEnabled(Boolean pyDistributionAnalyzerEnabled) {
         this.pyDistributionAnalyzerEnabled = pyDistributionAnalyzerEnabled;
@@ -697,7 +704,8 @@ public class Check extends Update {
     }
 
     /**
-     * The URL of a Nexus server's REST API end point (http://domain/nexus/service/local).
+     * The URL of a Nexus server's REST API end point
+     * (http://domain/nexus/service/local).
      */
     private String nexusUrl;
 
@@ -742,8 +750,8 @@ public class Check extends Update {
     }
 
     /**
-     * Additional ZIP File extensions to add analyze. This should be a comma-separated list of file extensions to treat like ZIP
-     * files.
+     * Additional ZIP File extensions to add analyze. This should be a
+     * comma-separated list of file extensions to treat like ZIP files.
      */
     private String zipExtensions;
 
@@ -853,7 +861,8 @@ public class Check extends Update {
     }
 
     /**
-     * Validate the configuration to ensure the parameters have been properly configured/initialized.
+     * Validate the configuration to ensure the parameters have been properly
+     * configured/initialized.
      *
      * @throws BuildException if the task was not configured correctly.
      */
@@ -867,8 +876,9 @@ public class Check extends Update {
     }
 
     /**
-     * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system properties
-     * required to change the proxy server, port, and connection timeout.
+     * Takes the properties supplied and updates the dependency-check settings.
+     * Additionally, this sets the system properties required to change the
+     * proxy server, port, and connection timeout.
      *
      * @throws BuildException thrown when an invalid setting is configured.
      */
@@ -899,11 +909,12 @@ public class Check extends Update {
     }
 
     /**
-     * Checks to see if a vulnerability has been identified with a CVSS score that is above the threshold set in the
-     * configuration.
+     * Checks to see if a vulnerability has been identified with a CVSS score
+     * that is above the threshold set in the configuration.
      *
      * @param dependencies the list of dependency objects
-     * @throws BuildException thrown if a CVSS score is found that is higher then the threshold set
+     * @throws BuildException thrown if a CVSS score is found that is higher
+     * then the threshold set
      */
     private void checkForFailure(List<Dependency> dependencies) throws BuildException {
         final StringBuilder ids = new StringBuilder();
@@ -927,7 +938,8 @@ public class Check extends Update {
     }
 
     /**
-     * Generates a warning message listing a summary of dependencies and their associated CPE and CVE entries.
+     * Generates a warning message listing a summary of dependencies and their
+     * associated CPE and CVE entries.
      *
      * @param dependencies a list of dependency objects
      */
@@ -967,7 +979,8 @@ public class Check extends Update {
     }
 
     /**
-     * An enumeration of supported report formats: "ALL", "HTML", "XML", "VULN", etc..
+     * An enumeration of supported report formats: "ALL", "HTML", "XML", "VULN",
+     * etc..
      */
     public static class ReportFormats extends EnumeratedAttribute {
 

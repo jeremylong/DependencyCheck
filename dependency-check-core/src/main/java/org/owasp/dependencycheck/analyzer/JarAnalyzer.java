@@ -60,7 +60,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Used to load a JAR file and collect information that can be used to determine the associated CPE.
+ * Used to load a JAR file and collect information that can be used to determine
+ * the associated CPE.
  *
  * @author Jeremy Long
  */
@@ -72,7 +73,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(JarAnalyzer.class);
     /**
-     * The count of directories created during analysis. This is used for creating temporary directories.
+     * The count of directories created during analysis. This is used for
+     * creating temporary directories.
      */
     private static int dirCount = 0;
     /**
@@ -80,7 +82,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final String NEWLINE = System.getProperty("line.separator");
     /**
-     * A list of values in the manifest to ignore as they only result in false positives.
+     * A list of values in the manifest to ignore as they only result in false
+     * positives.
      */
     private static final Set<String> IGNORE_VALUES = newHashSet(
             "Sun Java System Application Server");
@@ -123,7 +126,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             "ipojo-extension",
             "eclipse-sourcereferences");
     /**
-     * Deprecated Jar manifest attribute, that is, nonetheless, useful for analysis.
+     * Deprecated Jar manifest attribute, that is, nonetheless, useful for
+     * analysis.
      */
     @SuppressWarnings("deprecation")
     private static final String IMPLEMENTATION_VENDOR_ID = Attributes.Name.IMPLEMENTATION_VENDOR_ID
@@ -203,7 +207,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     //</editor-fold>
 
     /**
-     * Returns the key used in the properties file to reference the analyzer's enabled property.
+     * Returns the key used in the properties file to reference the analyzer's
+     * enabled property.
      *
      * @return the analyzer's enabled property setting key
      */
@@ -213,12 +218,13 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Loads a specified JAR file and collects information from the manifest and checksums to identify the correct CPE
-     * information.
+     * Loads a specified JAR file and collects information from the manifest and
+     * checksums to identify the correct CPE information.
      *
      * @param dependency the dependency to analyze.
      * @param engine the engine that is scanning the dependencies
-     * @throws AnalysisException is thrown if there is an error reading the JAR file.
+     * @throws AnalysisException is thrown if there is an error reading the JAR
+     * file.
      */
     @Override
     public void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException {
@@ -242,13 +248,15 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Attempts to find a pom.xml within the JAR file. If found it extracts information and adds it to the evidence. This will
-     * attempt to interpolate the strings contained within the pom.properties if one exists.
+     * Attempts to find a pom.xml within the JAR file. If found it extracts
+     * information and adds it to the evidence. This will attempt to interpolate
+     * the strings contained within the pom.properties if one exists.
      *
      * @param dependency the dependency being analyzed
      * @param classes a collection of class name information
      * @param engine the analysis engine, used to add additional dependencies
-     * @throws AnalysisException is thrown if there is an exception parsing the pom
+     * @throws AnalysisException is thrown if there is an exception parsing the
+     * pom
      * @return whether or not evidence was added to the dependency
      */
     protected boolean analyzePOM(Dependency dependency, List<ClassNameInformation> classes, Engine engine) throws AnalysisException {
@@ -329,12 +337,14 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Given a path to a pom.xml within a JarFile, this method attempts to load a sibling pom.properties if one exists.
+     * Given a path to a pom.xml within a JarFile, this method attempts to load
+     * a sibling pom.properties if one exists.
      *
      * @param path the path to the pom.xml within the JarFile
      * @param jar the JarFile to load the pom.properties from
      * @return a Properties object or null if no pom.properties was found
-     * @throws IOException thrown if there is an exception reading the pom.properties
+     * @throws IOException thrown if there is an exception reading the
+     * pom.properties
      */
     private Properties retrievePomProperties(String path, final JarFile jar) throws IOException {
         Properties pomProperties = null;
@@ -361,7 +371,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Searches a JarFile for pom.xml entries and returns a listing of these entries.
+     * Searches a JarFile for pom.xml entries and returns a listing of these
+     * entries.
      *
      * @param jar the JarFile to search
      * @return a list of pom.xml entries
@@ -388,8 +399,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @param jar the jar file to extract the pom from
      * @param dependency the dependency being analyzed
      * @return returns the POM object
-     * @throws AnalysisException is thrown if there is an exception extracting or parsing the POM
-     * {@link org.owasp.dependencycheck.xml.pom.Model} object
+     * @throws AnalysisException is thrown if there is an exception extracting
+     * or parsing the POM {@link org.owasp.dependencycheck.xml.pom.Model} object
      */
     private Model extractPom(String path, JarFile jar, Dependency dependency) throws AnalysisException {
         InputStream input = null;
@@ -447,9 +458,10 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @param dependency the dependency to set data on
      * @param pom the information from the pom
-     * @param classes a collection of ClassNameInformation - containing data about the fully qualified class names within the JAR
-     * file being analyzed
-     * @return true if there was evidence within the pom that we could use; otherwise false
+     * @param classes a collection of ClassNameInformation - containing data
+     * about the fully qualified class names within the JAR file being analyzed
+     * @return true if there was evidence within the pom that we could use;
+     * otherwise false
      */
     public static boolean setPomEvidence(Dependency dependency, Model pom, List<ClassNameInformation> classes) {
         boolean foundSomething = false;
@@ -571,12 +583,15 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Analyzes the path information of the classes contained within the JarAnalyzer to try and determine possible vendor or
-     * product names. If any are found they are stored in the packageVendor and packageProduct hashSets.
+     * Analyzes the path information of the classes contained within the
+     * JarAnalyzer to try and determine possible vendor or product names. If any
+     * are found they are stored in the packageVendor and packageProduct
+     * hashSets.
      *
      * @param classNames a list of class names
      * @param dependency a dependency to analyze
-     * @param addPackagesAsEvidence a flag indicating whether or not package names should be added as evidence.
+     * @param addPackagesAsEvidence a flag indicating whether or not package
+     * names should be added as evidence.
      */
     protected void analyzePackageNames(List<ClassNameInformation> classNames,
             Dependency dependency, boolean addPackagesAsEvidence) {
@@ -611,11 +626,13 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
      * <p>
-     * Reads the manifest from the JAR file and collects the entries. Some vendorKey entries are:</p>
+     * Reads the manifest from the JAR file and collects the entries. Some
+     * vendorKey entries are:</p>
      * <ul><li>Implementation Title</li>
      * <li>Implementation Version</li> <li>Implementation Vendor</li>
-     * <li>Implementation VendorId</li> <li>Bundle Name</li> <li>Bundle Version</li> <li>Bundle Vendor</li> <li>Bundle
-     * Description</li> <li>Main Class</li> </ul>
+     * <li>Implementation VendorId</li> <li>Bundle Name</li> <li>Bundle
+     * Version</li> <li>Bundle Vendor</li> <li>Bundle Description</li> <li>Main
+     * Class</li> </ul>
      * However, all but a handful of specific entries are read in.
      *
      * @param dependency A reference to the dependency
@@ -623,7 +640,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @return whether evidence was identified parsing the manifest
      * @throws IOException if there is an issue reading the JAR file
      */
-    protected boolean parseManifest(Dependency dependency, List<ClassNameInformation> classInformation) throws IOException {
+    protected boolean parseManifest(Dependency dependency, List<ClassNameInformation> classInformation) 
+            throws IOException {
         boolean foundSomething = false;
         JarFile jar = null;
         try {
@@ -748,21 +766,19 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                             addMatchingValues(classInformation, value, productEvidence);
                         } else if (key.contains("license")) {
                             addLicense(dependency, value);
+                        } else if (key.contains("description")) {
+                            addDescription(dependency, value, "manifest", key);
                         } else {
-                            if (key.contains("description")) {
-                                addDescription(dependency, value, "manifest", key);
-                            } else {
-                                productEvidence.addEvidence(source, key, value, Confidence.LOW);
-                                vendorEvidence.addEvidence(source, key, value, Confidence.LOW);
-                                addMatchingValues(classInformation, value, vendorEvidence);
-                                addMatchingValues(classInformation, value, productEvidence);
-                                if (value.matches(".*\\d.*")) {
-                                    final StringTokenizer tokenizer = new StringTokenizer(value, " ");
-                                    while (tokenizer.hasMoreElements()) {
-                                        final String s = tokenizer.nextToken();
-                                        if (s.matches("^[0-9.]+$")) {
-                                            versionEvidence.addEvidence(source, key, s, Confidence.LOW);
-                                        }
+                            productEvidence.addEvidence(source, key, value, Confidence.LOW);
+                            vendorEvidence.addEvidence(source, key, value, Confidence.LOW);
+                            addMatchingValues(classInformation, value, vendorEvidence);
+                            addMatchingValues(classInformation, value, productEvidence);
+                            if (value.matches(".*\\d.*")) {
+                                final StringTokenizer tokenizer = new StringTokenizer(value, " ");
+                                while (tokenizer.hasMoreElements()) {
+                                    final String s = tokenizer.nextToken();
+                                    if (s.matches("^[0-9.]+$")) {
+                                        versionEvidence.addEvidence(source, key, s, Confidence.LOW);
                                     }
                                 }
                             }
@@ -810,15 +826,18 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Adds a description to the given dependency. If the description contains one of the following strings beyond 100 characters,
-     * then the description used will be trimmed to that position:
-     * <ul><li>"such as"</li><li>"like "</li><li>"will use "</li><li>"* uses "</li></ul>
+     * Adds a description to the given dependency. If the description contains
+     * one of the following strings beyond 100 characters, then the description
+     * used will be trimmed to that position:
+     * <ul><li>"such as"</li><li>"like "</li><li>"will use "</li><li>"* uses
+     * "</li></ul>
      *
      * @param dependency a dependency
      * @param description the description
      * @param source the source of the evidence
      * @param key the "name" of the evidence
-     * @return if the description is trimmed, the trimmed version is returned; otherwise the original description is returned
+     * @return if the description is trimmed, the trimmed version is returned;
+     * otherwise the original description is returned
      */
     public static String addDescription(Dependency dependency, String description, String source, String key) {
         if (dependency.getDescription() == null) {
@@ -889,7 +908,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Initializes the JarAnalyzer.
      *
-     * @throws Exception is thrown if there is an exception creating a temporary directory
+     * @throws Exception is thrown if there is an exception creating a temporary
+     * directory
      */
     @Override
     public void initializeFileTypeAnalyzer() throws Exception {
@@ -920,11 +940,13 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Determines if the key value pair from the manifest is for an "import" type entry for package names.
+     * Determines if the key value pair from the manifest is for an "import"
+     * type entry for package names.
      *
      * @param key the key from the manifest
      * @param value the value from the manifest
-     * @return true or false depending on if it is believed the entry is an "import" entry
+     * @return true or false depending on if it is believed the entry is an
+     * "import" entry
      */
     private boolean isImportPackage(String key, String value) {
         final Pattern packageRx = Pattern.compile("^([a-zA-Z0-9_#\\$\\*\\.]+\\s*[,;]\\s*)+([a-zA-Z0-9_#\\$\\*\\.]+\\s*)?$");
@@ -933,8 +955,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Cycles through an enumeration of JarEntries, contained within the dependency, and returns a list of the class names. This
-     * does not include core Java package names (i.e. java.* or javax.*).
+     * Cycles through an enumeration of JarEntries, contained within the
+     * dependency, and returns a list of the class names. This does not include
+     * core Java package names (i.e. java.* or javax.*).
      *
      * @param dependency the dependency being analyzed
      * @return an list of fully qualified class names
@@ -970,12 +993,16 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Cycles through the list of class names and places the package levels 0-3 into the provided maps for vendor and product.
-     * This is helpful when analyzing vendor/product as many times this is included in the package name.
+     * Cycles through the list of class names and places the package levels 0-3
+     * into the provided maps for vendor and product. This is helpful when
+     * analyzing vendor/product as many times this is included in the package
+     * name.
      *
      * @param classNames a list of class names
-     * @param vendor HashMap of possible vendor names from package names (e.g. owasp)
-     * @param product HashMap of possible product names from package names (e.g. dependencycheck)
+     * @param vendor HashMap of possible vendor names from package names (e.g.
+     * owasp)
+     * @param product HashMap of possible product names from package names (e.g.
+     * dependencycheck)
      */
     private void analyzeFullyQualifiedClassNames(List<ClassNameInformation> classNames,
             Map<String, Integer> vendor, Map<String, Integer> product) {
@@ -1002,8 +1029,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Adds an entry to the specified collection and sets the Integer (e.g. the count) to 1. If the entry already exists in the
-     * collection then the Integer is incremented by 1.
+     * Adds an entry to the specified collection and sets the Integer (e.g. the
+     * count) to 1. If the entry already exists in the collection then the
+     * Integer is incremented by 1.
      *
      * @param collection a collection of strings and their occurrence count
      * @param key the key to add to the collection
@@ -1017,9 +1045,10 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Cycles through the collection of class name information to see if parts of the package names are contained in the provided
-     * value. If found, it will be added as the HIGHEST confidence evidence because we have more then one source corroborating the
-     * value.
+     * Cycles through the collection of class name information to see if parts
+     * of the package names are contained in the provided value. If found, it
+     * will be added as the HIGHEST confidence evidence because we have more
+     * then one source corroborating the value.
      *
      * @param classes a collection of class name information
      * @param value the value to check to see if it contains a package name
@@ -1042,7 +1071,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Simple check to see if the attribute from a manifest is just a package name.
+     * Simple check to see if the attribute from a manifest is just a package
+     * name.
      *
      * @param key the key of the value to check
      * @param value the value to check
@@ -1056,7 +1086,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Extracts the license information from the pom and adds it to the dependency.
+     * Extracts the license information from the pom and adds it to the
+     * dependency.
      *
      * @param pom the pom object
      * @param dependency the dependency to add license information too
@@ -1103,9 +1134,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
         /**
          * <p>
-         * Stores information about a given class name. This class will keep the fully qualified class name and a list of the
-         * important parts of the package structure. Up to the first four levels of the package structure are stored, excluding a
-         * leading "org" or "com". Example:</p>
+         * Stores information about a given class name. This class will keep the
+         * fully qualified class name and a list of the important parts of the
+         * package structure. Up to the first four levels of the package
+         * structure are stored, excluding a leading "org" or "com".
+         * Example:</p>
          * <code>ClassNameInformation obj = new ClassNameInformation("org.owasp.dependencycheck.analyzer.JarAnalyzer");
          * System.out.println(obj.getName());
          * for (String p : obj.getPackageStructure())
@@ -1164,7 +1197,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             this.name = name;
         }
         /**
-         * Up to the first four levels of the package structure, excluding a leading "org" or "com".
+         * Up to the first four levels of the package structure, excluding a
+         * leading "org" or "com".
          */
         private final ArrayList<String> packageStructure = new ArrayList<String>();
 

@@ -261,6 +261,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
                 try {
                     is.close();
                 } catch (IOException ex) {
+                    LOGGER.debug("Error closing stream", ex);
                 }
             }
         }

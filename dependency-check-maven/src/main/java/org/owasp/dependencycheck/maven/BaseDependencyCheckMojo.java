@@ -688,7 +688,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
         }
         Settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
-        
+
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, enableExperimental);
 
         if (externalReport != null) {
