@@ -126,9 +126,8 @@ public class Engine implements FileFilter {
         }
 
         final AnalyzerService service = new AnalyzerService(serviceClassLoader);
-        final Iterator<Analyzer> iterator = service.getAnalyzers();
-        while (iterator.hasNext()) {
-            final Analyzer a = iterator.next();
+        final List<Analyzer> iterator = service.getAnalyzers();
+        for (Analyzer a : iterator) {
             analyzers.get(a.getAnalysisPhase()).add(a);
             if (a instanceof FileTypeAnalyzer) {
                 this.fileTypeAnalyzers.add((FileTypeAnalyzer) a);

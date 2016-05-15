@@ -67,11 +67,13 @@ public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
     //</editor-fold>
 
-    // Python init files
+    /**
+     * Python init files
+     */
     private static final NameFileFilter IGNORED_FILES = new NameFileFilter(new String[] {
         "__init__.py",
         "__init__.pyc",
-        "__init__.pyo"
+        "__init__.pyo",
     });
 
     /**

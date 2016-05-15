@@ -23,16 +23,18 @@ import org.slf4j.ILoggerFactory;
 import org.slf4j.spi.LoggerFactoryBinder;
 
 /**
- * The binding of org.slf4j.LoggerFactory class with an actual instance of org.slf4j.ILoggerFactory is performed using information
- * returned by this class.
+ * The binding of org.slf4j.LoggerFactory class with an actual instance of
+ * org.slf4j.ILoggerFactory is performed using information returned by this
+ * class.
  *
  * @author colezlaw
  */
+//CSOFF: FinalClass
 public class StaticLoggerBinder implements LoggerFactoryBinder {
+//CSON: FinalClass
 
     /**
      * The unique instance of this class
-     *
      */
     private static final StaticLoggerBinder SINGLETON = new StaticLoggerBinder();
 
@@ -46,7 +48,8 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
     }
 
     /**
-     * Ant tasks have the log method we actually want to call. So we hang onto the task as a delegate
+     * Ant tasks have the log method we actually want to call. So we hang onto
+     * the task as a delegate
      */
     private Task task = null;
 
@@ -61,16 +64,24 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
     }
 
     /**
-     * Declare the version of the SLF4J API this implementation is compiled against. The value of this filed is usually modified
-     * with each release.
+     * Declare the version of the SLF4J API this implementation is compiled
+     * against. The value of this filed is usually modified with each release.
      */
     // to avoid constant folding by the compiler, this field must *not* be final
+    //CSOFF: StaticVariableName
+    //CSOFF: VisibilityModifier
     public static String REQUESTED_API_VERSION = "1.7.12"; // final
-
+    //CSON: VisibilityModifier
+    //CSON: StaticVariableName
+    
+    /**
+     * The logger factory class string.
+     */
     private static final String LOGGER_FACTORY_CLASS = AntLoggerFactory.class.getName();
 
     /**
-     * The ILoggerFactory instance returned by the {@link #getLoggerFactory} method should always be the smae object
+     * The ILoggerFactory instance returned by the {@link #getLoggerFactory}
+     * method should always be the smae object
      */
     private ILoggerFactory loggerFactory;
 

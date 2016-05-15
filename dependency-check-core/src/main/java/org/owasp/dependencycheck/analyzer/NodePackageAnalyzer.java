@@ -45,6 +45,7 @@ import javax.json.JsonValue;
  *
  * @author Dale Visser
  */
+@Experimental
 public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**

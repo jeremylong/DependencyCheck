@@ -18,7 +18,7 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp; | Parameter       | Description | Requir
        | \-\-advancedHelp      |                 | Print the advanced help message. | Optional
  \-v   | \-\-version           |                 | Print the version information. | Optional
        | \-\-cveValidForHours  | \<hours\>       | The number of hours to wait before checking for new updates from the NVD. The default is 4 hours. | Optional
-
+       | \-\-experimental      |                 | Enable the experimental analyzers. | Optional
 
 Advanced Options
 ================

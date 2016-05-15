@@ -17,6 +17,16 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.nio.charset.Charset;
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -29,11 +39,6 @@ import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.nio.charset.Charset;
-import java.util.*;
-import java.util.logging.Level;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 
 /**
@@ -63,9 +68,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     public static final String ADVISORY = "Advisory: ";
     public static final String CRITICALITY = "Criticality: ";
 
-    public CveDB cvedb;
-    //instance.open();
-    //Vulnerability result = instance.getVulnerability("CVE-2015-3225");
+    private CveDB cvedb;
 
     /**
      * @return a filter that accepts files named Gemfile.lock
@@ -207,11 +210,10 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             boolean failed = true;
             final String className = RubyGemspecAnalyzer.class.getName();
             for (FileTypeAnalyzer analyzer : engine.getFileTypeAnalyzers()) {
-            	if (analyzer instanceof RubyBundlerAnalyzer) {
+                if (analyzer instanceof RubyBundlerAnalyzer) {
                     ((RubyBundlerAnalyzer) analyzer).setEnabled(false);
                     LOGGER.info("Disabled " + RubyBundlerAnalyzer.class.getName() + " to avoid noisy duplicate results.");
-                }
-            	else if (analyzer instanceof RubyGemspecAnalyzer) {
+                } else if (analyzer instanceof RubyGemspecAnalyzer) {
                     ((RubyGemspecAnalyzer) analyzer).setEnabled(false);
                     LOGGER.info("Disabled " + className + " to avoid noisy duplicate results.");
                     failed = false;
@@ -230,8 +232,9 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             throw new AnalysisException("bundle-audit process interrupted", ie);
         }
         BufferedReader rdr = null;
+        BufferedReader errReader = null;
         try {
-            BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
+            errReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
             while (errReader.ready()) {
                 String error = errReader.readLine();
                 LOGGER.warn(error);
@@ -241,6 +244,13 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (IOException ioe) {
             LOGGER.warn("bundle-audit failure", ioe);
         } finally {
+            if (errReader != null) {
+                try {
+                    errReader.close();
+                } catch (IOException ioe) {
+                    LOGGER.warn("bundle-audit close failure", ioe);
+                }
+            }
             if (null != rdr) {
                 try {
                     rdr.close();
