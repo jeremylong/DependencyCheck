@@ -121,7 +121,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
             assertTrue(dependency.getFilePath().endsWith(resource));
             assertTrue(dependency.getFileName().equals("Gemfile.lock"));
         } catch (Exception e) {
-            LOGGER.warn("Exception setting up RubyBundleAuditAnalyzer. Make sure Ruby gem bundle-audit is installed. You may also need to set property \"analyzer.bundle.audit.path\".", e);
+            LOGGER.warn("Exception setting up RubyBundleAuditAnalyzer. Make sure Ruby gem bundle-audit is installed. You may also need to set property \"analyzer.bundle.audit.path\".");
             Assume.assumeNoException("Exception setting up RubyBundleAuditAnalyzer; bundle audit may not be installed, or property \"analyzer.bundle.audit.path\" may not be set.", e);
         }
     }
