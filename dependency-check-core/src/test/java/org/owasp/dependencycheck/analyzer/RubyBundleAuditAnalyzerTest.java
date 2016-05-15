@@ -31,6 +31,7 @@ import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Dale Visser
  */
-public class RubyBundleAuditAnalyzerTest extends BaseTest {
+public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RubyBundleAuditAnalyzerTest.class);
 
