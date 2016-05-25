@@ -36,9 +36,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A program dependency. This object is one of the core components within DependencyCheck. It is used to collect information about
- * the dependency in the form of evidence. The Evidence is then used to determine if there are any known, published,
- * vulnerabilities associated with the program dependency.
+ * A program dependency. This object is one of the core components within
+ * DependencyCheck. It is used to collect information about the dependency in
+ * the form of evidence. The Evidence is then used to determine if there are any
+ * known, published, vulnerabilities associated with the program dependency.
  *
  * @author Jeremy Long
  */
@@ -72,17 +73,31 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * The file name of the dependency.
      */
     private String fileName;
-    
+
+    /**
+     * The package path.
+     */
     private String packagePath;
+
+    /**
+     * Returns the package path.
+     *
+     * @return the package path
+     */
     public String getPackagePath() {
-		return packagePath;
-	}
+        return packagePath;
+    }
 
-	public void setPackagePath(String packagePath) {
-		this.packagePath = packagePath;
-	}
+    /**
+     * Sets the package path.
+     *
+     * @param packagePath the package path
+     */
+    public void setPackagePath(String packagePath) {
+        this.packagePath = packagePath;
+    }
 
-	/**
+    /**
      * The md5 hash of the dependency.
      */
     private String md5sum;
@@ -144,10 +159,12 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * Returns the file name of the dependency with the backslash escaped for use in JavaScript. This is a complete hack as I
-     * could not get the replace to work in the template itself.
+     * Returns the file name of the dependency with the backslash escaped for
+     * use in JavaScript. This is a complete hack as I could not get the replace
+     * to work in the template itself.
      *
-     * @return the file name of the dependency with the backslash escaped for use in JavaScript
+     * @return the file name of the dependency with the backslash escaped for
+     * use in JavaScript
      */
     public String getFileNameForJavaScript() {
         return this.fileName.replace("\\", "\\\\");
@@ -199,9 +216,9 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * @param filePath the file path of the dependency
      */
     public void setFilePath(String filePath) {
-    	if(this.packagePath == null || this.packagePath.equals(this.filePath))
-    		this.packagePath = filePath;
-    	
+        if (this.packagePath == null || this.packagePath.equals(this.filePath)) {
+            this.packagePath = filePath;
+        }
         this.filePath = filePath;
     }
 
@@ -220,7 +237,8 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * Returns the file name to display in reports; if no display file name has been set it will default to the actual file name.
+     * Returns the file name to display in reports; if no display file name has
+     * been set it will default to the actual file name.
      *
      * @return the file name to display
      */
@@ -235,8 +253,9 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * <p>
      * Gets the file path of the dependency.</p>
      * <p>
-     * <b>NOTE:</b> This may not be the actual path of the file on disk. The actual path of the file on disk can be obtained via
-     * the getActualFilePath().</p>
+     * <b>NOTE:</b> This may not be the actual path of the file on disk. The
+     * actual path of the file on disk can be obtained via the
+     * getActualFilePath().</p>
      *
      * @return the file path of the dependency
      */
@@ -299,7 +318,8 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * Adds an entry to the list of detected Identifiers for the dependency file.
+     * Adds an entry to the list of detected Identifiers for the dependency
+     * file.
      *
      * @param type the type of identifier (such as CPE)
      * @param value the value of the identifier
@@ -311,7 +331,8 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * Adds an entry to the list of detected Identifiers for the dependency file.
+     * Adds an entry to the list of detected Identifiers for the dependency
+     * file.
      *
      * @param type the type of identifier (such as CPE)
      * @param value the value of the identifier
@@ -362,7 +383,8 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * Adds an entry to the list of detected Identifiers for the dependency file.
+     * Adds an entry to the list of detected Identifiers for the dependency
+     * file.
      *
      * @param identifier the identifier to add
      */
@@ -594,8 +616,9 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     private Set<Dependency> relatedDependencies = new TreeSet<Dependency>();
 
     /**
-     * Get the value of {@link #relatedDependencies}. This field is used to collect other dependencies which really represent the
-     * same dependency, and may be presented as one item in reports.
+     * Get the value of {@link #relatedDependencies}. This field is used to
+     * collect other dependencies which really represent the same dependency,
+     * and may be presented as one item in reports.
      *
      * @return the value of relatedDependencies
      */
@@ -654,9 +677,11 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * Adds a related dependency. The internal collection is normally a {@link java.util.TreeSet}, which relies on
-     * {@link #compareTo(Dependency)}. A consequence of this is that if you attempt to add a dependency with the same file path
-     * (modulo character case) as one that is already in the collection, it won't get added.
+     * Adds a related dependency. The internal collection is normally a
+     * {@link java.util.TreeSet}, which relies on
+     * {@link #compareTo(Dependency)}. A consequence of this is that if you
+     * attempt to add a dependency with the same file path (modulo character
+     * case) as one that is already in the collection, it won't get added.
      *
      * @param dependency a reference to the related dependency
      */
@@ -706,7 +731,8 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * Implementation of the Comparable&lt;Dependency&gt; interface. The comparison is solely based on the file path.
+     * Implementation of the Comparable&lt;Dependency&gt; interface. The
+     * comparison is solely based on the file path.
      *
      * @param o a dependency to compare
      * @return an integer representing the natural ordering
@@ -776,12 +802,14 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * Standard toString() implementation showing the filename, actualFilePath, and filePath.
+     * Standard toString() implementation showing the filename, actualFilePath,
+     * and filePath.
      *
      * @return the string representation of the file
      */
     @Override
     public String toString() {
-        return "Dependency{ fileName='" + fileName + "', actualFilePath='" + actualFilePath + "', filePath='" + filePath + "', packagePath='" + packagePath + "'}";
+        return "Dependency{ fileName='" + fileName + "', actualFilePath='" + actualFilePath
+                + "', filePath='" + filePath + "', packagePath='" + packagePath + "'}";
     }
 }

@@ -61,8 +61,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.PRE_INFORMATION_COLLECTION;
 
-    private static final FileFilter FILTER
-            = FileFilterBuilder.newInstance().addFilenames("Gemfile.lock").build();
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFilenames("Gemfile.lock").build();
     public static final String NAME = "Name: ";
     public static final String VERSION = "Version: ";
     public static final String ADVISORY = "Advisory: ";
@@ -81,7 +80,9 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Launch bundle-audit.
      *
+     * @param folder directory that contains bundle audit
      * @return a handle to the process
+     * @throws AnalysisException thrown when there is an issue launching bundle audit
      */
     private Process launchBundleAudit(File folder) throws AnalysisException {
         if (!folder.isDirectory()) {
@@ -131,7 +132,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             throw ae;
         }
 
-        int exitValue = process.waitFor();
+        final int exitValue = process.waitFor();
         if (0 == exitValue) {
             LOGGER.warn("Unexpected exit code from bundle-audit process. Disabling {}: {}", ANALYZER_NAME, exitValue);
             setEnabled(false);
@@ -236,7 +237,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         try {
             errReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
             while (errReader.ready()) {
-                String error = errReader.readLine();
+                final String error = errReader.readLine();
                 LOGGER.warn(error);
             }
             rdr = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
@@ -284,7 +285,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 dependency = map.get(gem);
                 LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
             } else if (nextLine.startsWith(VERSION)) {
-                vulnerability = createVulnerability(parentName, dependency, vulnerability, gem, nextLine);
+                vulnerability = createVulnerability(parentName, dependency, gem, nextLine);
             } else if (nextLine.startsWith(ADVISORY)) {
                 setVulnerabilityName(parentName, dependency, vulnerability, nextLine);
             } else if (nextLine.startsWith(CRITICALITY)) {
@@ -318,7 +319,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     private void addReferenceToVulnerability(String parentName, Vulnerability vulnerability, String nextLine) {
         final String url = nextLine.substring(("URL: ").length());
         if (null != vulnerability) {
-            Reference ref = new Reference();
+            final Reference ref = new Reference();
             ref.setName(vulnerability.getName());
             ref.setSource("bundle-audit");
             ref.setUrl(url);
@@ -351,7 +352,8 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
     }
 
-    private Vulnerability createVulnerability(String parentName, Dependency dependency, Vulnerability vulnerability, String gem, String nextLine) {
+    private Vulnerability createVulnerability(String parentName, Dependency dependency, String gem, String nextLine) {
+        Vulnerability vulnerability = null;
         if (null != dependency) {
             final String version = nextLine.substring(VERSION.length());
             dependency.getVersionEvidence().addEvidence(

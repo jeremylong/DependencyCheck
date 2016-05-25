@@ -73,7 +73,7 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
     public static String REQUESTED_API_VERSION = "1.7.12"; // final
     //CSON: VisibilityModifier
     //CSON: StaticVariableName
-    
+
     /**
      * The logger factory class string.
      */

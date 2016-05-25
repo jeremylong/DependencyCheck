@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -578,7 +577,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             addMatchingValues(classes, trimmedDescription, dependency.getProductEvidence());
         }
 
-        String projectURL = pom.getProjectURL();
+        final String projectURL = pom.getProjectURL();
         if (projectURL != null && !projectURL.trim().isEmpty()) {
             dependency.getVendorEvidence().addEvidence("pom", "url", projectURL, Confidence.HIGHEST);
         }
