@@ -69,6 +69,11 @@ public class CveDB {
     private ResourceBundle statementBundle = null;
 
     /**
+     * Does the underlying connection support batch operations?
+     */
+    private boolean batchSupported;
+
+    /**
      * Creates a new CveDB object and opens the database connection. Note, the connection must be closed by the caller by calling
      * the close method.
      *
@@ -80,6 +85,7 @@ public class CveDB {
             open();
             try {
                 final String databaseProductName = conn.getMetaData().getDatabaseProductName();
+                batchSupported = conn.getMetaData().supportsBatchUpdates();
                 LOGGER.debug("Database dialect: {}", databaseProductName);
                 final Locale dbDialect = new Locale(databaseProductName);
                 statementBundle = ResourceBundle.getBundle("data/dbStatements", dbDialect);
@@ -380,6 +386,7 @@ public class CveDB {
         ResultSet rsR = null;
         ResultSet rsS = null;
         Vulnerability vuln = null;
+
         try {
             psV = getConnection().prepareStatement(statementBundle.getString("SELECT_VULNERABILITY"));
             psV.setString(1, cve);
@@ -484,6 +491,7 @@ public class CveDB {
             }
             DBUtils.closeResultSet(rs);
             rs = null;
+
             if (vulnerabilityId != 0) {
                 if (vuln.getDescription().contains("** REJECT **")) {
                     deleteVulnerability.setInt(1, vulnerabilityId);
@@ -525,13 +533,24 @@ public class CveDB {
                     rs = null;
                 }
             }
-            insertReference.setInt(1, vulnerabilityId);
+
             for (Reference r : vuln.getReferences()) {
+                insertReference.setInt(1, vulnerabilityId);
                 insertReference.setString(2, r.getName());
                 insertReference.setString(3, r.getUrl());
                 insertReference.setString(4, r.getSource());
-                insertReference.execute();
+
+                if (batchSupported) {
+                    insertReference.addBatch();
+                } else {
+                    insertReference.execute();
+                }
             }
+
+            if (batchSupported) {
+                insertReference.executeBatch();
+            }
+
             for (VulnerableSoftware s : vuln.getVulnerableSoftware()) {
                 int cpeProductId = 0;
                 selectCpeId.setString(1, s.getName());
@@ -560,12 +579,22 @@ public class CveDB {
 
                 insertSoftware.setInt(1, vulnerabilityId);
                 insertSoftware.setInt(2, cpeProductId);
+
                 if (s.getPreviousVersion() == null) {
                     insertSoftware.setNull(3, java.sql.Types.VARCHAR);
                 } else {
                     insertSoftware.setString(3, s.getPreviousVersion());
                 }
-                insertSoftware.execute();
+
+                if (batchSupported) {
+                    insertSoftware.addBatch();
+                } else {
+                    insertSoftware.execute();
+                }
+            }
+
+            if (batchSupported) {
+              insertSoftware.executeBatch();
             }
 
         } catch (SQLException ex) {
