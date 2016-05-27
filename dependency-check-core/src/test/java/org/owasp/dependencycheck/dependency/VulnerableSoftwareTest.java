@@ -78,4 +78,14 @@ public class VulnerableSoftwareTest extends BaseTest  {
         result = instance.compareTo(vs);
         assertEquals(expResult, result);
     }
+
+    @Test
+    public void testParseCPE() {
+        VulnerableSoftware vs = new VulnerableSoftware();
+        /* Version for test taken from CVE-2008-2079 */
+        vs.setCpe("cpe:/a:mysql:mysql:5.0.0:alpha");
+        assertEquals("mysql", vs.getVendor());
+        assertEquals("mysql", vs.getProduct());
+        assertEquals("5.0.0:alpha", vs.getVersion());
+    }
 }

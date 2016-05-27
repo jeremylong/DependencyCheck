@@ -73,7 +73,7 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     public void parseName(String cpeName) throws UnsupportedEncodingException {
         this.name = cpeName;
         if (cpeName != null && cpeName.length() > 7) {
-            final String[] data = cpeName.substring(7).split(":");
+            final String[] data = cpeName.substring(7).split(":", 4);
             if (data.length >= 1) {
                 this.setVendor(urlDecode(data[0]));
             }
