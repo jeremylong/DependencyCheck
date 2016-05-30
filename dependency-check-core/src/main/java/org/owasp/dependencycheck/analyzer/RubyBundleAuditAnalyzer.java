@@ -82,7 +82,8 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @param folder directory that contains bundle audit
      * @return a handle to the process
-     * @throws AnalysisException thrown when there is an issue launching bundle audit
+     * @throws AnalysisException thrown when there is an issue launching bundle
+     * audit
      */
     private Process launchBundleAudit(File folder) throws AnalysisException {
         if (!folder.isDirectory()) {
@@ -295,7 +296,9 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             } else if (nextLine.startsWith("Description:")) {
                 appendToDescription = true;
                 if (null != vulnerability) {
-                    vulnerability.setDescription("*** Vulnerability obtained from bundle-audit verbose report. Title link may not work. CPE below is guessed. CVSS score is estimated (-1.0 indicates unknown). See link below for full details. *** ");
+                    vulnerability.setDescription("*** Vulnerability obtained from bundle-audit verbose report. "
+                            + "Title link may not work. CPE below is guessed. CVSS score is estimated (-1.0 "
+                            + " indicates unknown). See link below for full details. *** ");
                 }
             } else if (appendToDescription) {
                 if (null != vulnerability) {
