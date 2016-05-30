@@ -652,7 +652,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             jar = new JarFile(dependency.getActualFilePath());
             final Manifest manifest = jar.getManifest();
             if (manifest == null) {
-                //don't log this for javadoc or sources jar files
                 if (!dependency.getFileName().toLowerCase().endsWith("-sources.jar")
                         && !dependency.getFileName().toLowerCase().endsWith("-javadoc.jar")
                         && !dependency.getFileName().toLowerCase().endsWith("-src.jar")
@@ -669,7 +668,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             String source = "Manifest";
             String specificationVersion = null;
             boolean hasImplementationVersion = false;
-
             Attributes atts = manifest.getMainAttributes();
             for (Entry<Object, Object> entry : atts.entrySet()) {
                 String key = entry.getKey().toString();
@@ -700,7 +698,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 } else if (key.equalsIgnoreCase(BUNDLE_DESCRIPTION)) {
                     foundSomething = true;
                     addDescription(dependency, value, "manifest", key);
-                    //productEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
                     addMatchingValues(classInformation, value, productEvidence);
                 } else if (key.equalsIgnoreCase(BUNDLE_NAME)) {
                     foundSomething = true;
@@ -719,11 +716,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     //skipping main class as if this has important information to add
                     // it will be added during class name analysis...  if other fields
                     // have the information from the class name then they will get added...
-//                    foundSomething = true;
-//                    productEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
-//                    vendorEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
-//                    addMatchingValues(classInformation, value, vendorEvidence);
-//                    addMatchingValues(classInformation, value, productEvidence);
                 } else {
                     key = key.toLowerCase();
                     if (!IGNORE_KEYS.contains(key)
@@ -737,7 +729,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                             && !value.trim().startsWith("scm:")
                             && !isImportPackage(key, value)
                             && !isPackage(key, value)) {
-
                         foundSomething = true;
                         if (key.contains("version")) {
                             if (!key.contains("specification")) {
