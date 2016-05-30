@@ -83,9 +83,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             </testResource>
             <testResource>
                 <directory>${basedir}/src/test/resources</directory>
-                <excludes>
-                    <exclude>**/mysql-connector-java-5.1.27-bin.jar</exclude>
-                </excludes>
                 <filtering>false</filtering>
             </testResource>
         </testResources>
