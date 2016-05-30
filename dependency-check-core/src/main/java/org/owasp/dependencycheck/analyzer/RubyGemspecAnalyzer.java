@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Dale Visser
  */
+@Experimental
 public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**

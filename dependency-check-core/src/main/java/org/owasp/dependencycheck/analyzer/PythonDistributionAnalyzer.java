@@ -50,6 +50,7 @@ import org.owasp.dependencycheck.utils.UrlStringUtils;
  *
  * @author Dale Visser
  */
+@Experimental
 public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**

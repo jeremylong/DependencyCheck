@@ -44,6 +44,7 @@ import java.util.regex.Pattern;
  *
  * @author Dale Visser
  */
+@Experimental
 public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**

@@ -47,6 +47,7 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
  *
  * @author Dale Visser
  */
+@Experimental
 public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RubyBundleAuditAnalyzer.class);

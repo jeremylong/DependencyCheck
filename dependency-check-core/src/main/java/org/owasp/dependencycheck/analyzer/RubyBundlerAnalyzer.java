@@ -45,6 +45,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
  *
  * @author Bianca Jiang (biancajiang@gmail.com)
  */
+@Experimental
 public class RubyBundlerAnalyzer extends RubyGemspecAnalyzer {
 
     /**
