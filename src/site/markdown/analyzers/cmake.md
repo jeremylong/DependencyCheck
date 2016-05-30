@@ -1,6 +1,10 @@
 CMake Analyzer
 ==============
 
+*Experimental*: This analyzer is considered experimental. While this analyzer may 
+be useful and provide valid results more testing must be completed to ensure that
+the false negative/false positive rates are acceptable. 
+
 OWASP dependency-check includes an analyzer that will scan CMake project
 configuration files. The analyzer will collect as much information it can
 about the project. The information collected is internally referred to as
