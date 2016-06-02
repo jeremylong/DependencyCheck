@@ -1033,7 +1033,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 file = new File(writeTo, dataFileName);
             }
             final File parent = file.getParentFile();
-            if (!parent.isDirectory() && parent.mkdirs()) {
+            if (!parent.isDirectory() && !parent.mkdirs()) {
                 getLog().error(String.format("Directory '%s' does not exist and cannot be created; unable to write data file.",
                         parent.getAbsolutePath()));
             }
