@@ -98,6 +98,11 @@ public class Reference implements Serializable, Comparable<Reference> {
     }
 
     @Override
+    public String toString() {
+      return "Reference: { name='"+this.name+"', url='"+this.url+"', source='"+this.source+"' }";
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
