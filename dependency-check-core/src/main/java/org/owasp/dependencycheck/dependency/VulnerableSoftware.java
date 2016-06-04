@@ -138,7 +138,7 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
             return false;
         }
         final VulnerableSoftware other = (VulnerableSoftware) obj;
-        if ((this.getName() == null) ? (other.getName() != null) : !this.getName().equals(other.getName())) {
+        if ((this.name == null) ? (other.getName() != null) : !this.name.equals(other.getName())) {
             return false;
         }
         return true;
@@ -152,7 +152,7 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 83 * hash + (this.getName() != null ? this.getName().hashCode() : 0);
+        hash = 83 * hash + (this.name != null ? this.name.hashCode() : 0);
         return hash;
     }
 
@@ -163,7 +163,7 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
      */
     @Override
     public String toString() {
-        return "VulnerableSoftware{ name=" + name + ", previousVersion=" + previousVersion + '}';
+        return "VulnerableSoftware{" + name + "[" + previousVersion + "]}";
     }
 
     /**
@@ -175,7 +175,7 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     @Override
     public int compareTo(VulnerableSoftware vs) {
         int result = 0;
-        final String[] left = this.getName().split(":");
+        final String[] left = this.name.split(":");
         final String[] right = vs.getName().split(":");
         final int max = (left.length <= right.length) ? left.length : right.length;
         if (max > 0) {
