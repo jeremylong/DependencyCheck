@@ -644,7 +644,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @return whether evidence was identified parsing the manifest
      * @throws IOException if there is an issue reading the JAR file
      */
-    protected boolean parseManifest(Dependency dependency, List<ClassNameInformation> classInformation)
+    protected boolean parseManifest(Dependency dependency, 
+            List<ClassNameInformation> classInformation)
             throws IOException {
         boolean foundSomething = false;
         JarFile jar = null;
