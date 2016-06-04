@@ -39,6 +39,9 @@ import java.util.regex.Pattern;
  */
 public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
 
+    /**
+     * Hexadecimal.
+     */
     private static final int HEXADECIMAL = 16;
     /**
      * Filename to analyze. All other .h files get removed from consideration.
@@ -49,17 +52,47 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
      * Filter that detects files named "__init__.py".
      */
     private static final FileFilter OPENSSLV_FILTER = FileFilterBuilder.newInstance().addFilenames(OPENSSLV_H).build();
+    /**
+     * Open SSL Version number pattern.
+     */
     private static final Pattern VERSION_PATTERN = Pattern.compile(
             "define\\s+OPENSSL_VERSION_NUMBER\\s+0x([0-9a-zA-Z]{8})L", Pattern.DOTALL
             | Pattern.CASE_INSENSITIVE);
+    /**
+     * The offset of the major version number.
+     */
     private static final int MAJOR_OFFSET = 28;
+    /**
+     * The mask for the minor version number.
+     */
     private static final long MINOR_MASK = 0x0ff00000L;
+    /**
+     * The offset of the minor version number.
+     */
     private static final int MINOR_OFFSET = 20;
+    /**
+     * The max for the fix version.
+     */
     private static final long FIX_MASK = 0x000ff000L;
+    /**
+     * The offset for the fix version.
+     */
     private static final int FIX_OFFSET = 12;
+    /**
+     * The mask for the patch version.
+     */
     private static final long PATCH_MASK = 0x00000ff0L;
+    /**
+     * The offset for the patch version.
+     */
     private static final int PATCH_OFFSET = 4;
+    /**
+     * Number of letters.
+     */
     private static final int NUM_LETTERS = 26;
+    /**
+     * The status mask.
+     */
     private static final int STATUS_MASK = 0x0000000f;
 
     /**
@@ -124,7 +157,8 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @param dependency the dependency being analyzed
      * @param engine the engine being used to perform the scan
-     * @throws AnalysisException thrown if there is an unrecoverable error analyzing the dependency
+     * @throws AnalysisException thrown if there is an unrecoverable error
+     * analyzing the dependency
      */
     @Override
     protected void analyzeFileType(Dependency dependency, Engine engine)
@@ -167,6 +201,11 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
+    /**
+     * Returns the setting for the analyzer enabled setting key.
+     *
+     * @return the setting for the analyzer enabled setting key
+     */
     @Override
     protected String getAnalyzerEnabledSettingKey() {
         return Settings.KEYS.ANALYZER_OPENSSL_ENABLED;
