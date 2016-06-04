@@ -206,6 +206,13 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private boolean needToDisableGemspecAnalyzer = true;
 
+    /**
+     * Determines if the analyzer can analyze the given file type.
+     *
+     * @param dependency the dependency to determine if it can analyze
+     * @param engine the dependency-check engine
+     * @throws AnalysisException thrown if there is an analysis exception.
+     */
     @Override
     protected void analyzeFileType(Dependency dependency, Engine engine)
             throws AnalysisException {
@@ -265,6 +272,14 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
 
     }
 
+    /**
+     * Processes the bundler audit output.
+     *
+     * @param original the dependency
+     * @param engine the dependency-check engine
+     * @param rdr the reader of the report
+     * @throws IOException thrown if the report cannot be read.
+     */
     private void processBundlerAuditOutput(Dependency original, Engine engine, BufferedReader rdr) throws IOException {
         final String parentName = original.getActualFile().getParentFile().getName();
         final String fileName = original.getFileName();
@@ -309,6 +324,14 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
+    /**
+     * Sets the vulnerability name.
+     *
+     * @param parentName the parent name
+     * @param dependency the dependency
+     * @param vulnerability the vulnerability
+     * @param nextLine the line to parse
+     */
     private void setVulnerabilityName(String parentName, Dependency dependency, Vulnerability vulnerability, String nextLine) {
         final String advisory = nextLine.substring((ADVISORY.length()));
         if (null != vulnerability) {
@@ -320,6 +343,13 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
     }
 
+    /**
+     * Adds a reference to the vulnerability.
+     *
+     * @param parentName the parent name
+     * @param vulnerability the vulnerability
+     * @param nextLine the line to parse
+     */
     private void addReferenceToVulnerability(String parentName, Vulnerability vulnerability, String nextLine) {
         final String url = nextLine.substring(("URL: ").length());
         if (null != vulnerability) {
@@ -332,6 +362,13 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
     }
 
+    /**
+     * Adds the criticality to the vulnerability
+     *
+     * @param parentName the parent name
+     * @param vulnerability the vulnerability
+     * @param nextLine the line to parse
+     */
     private void addCriticalityToVulnerability(String parentName, Vulnerability vulnerability, String nextLine) {
         if (null != vulnerability) {
             final String criticality = nextLine.substring(CRITICALITY.length()).trim();
@@ -356,6 +393,15 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
     }
 
+    /**
+     * Creates a vulnerability.
+     *
+     * @param parentName the parent name
+     * @param dependency the dependency
+     * @param gem the gem name
+     * @param nextLine the line to parse
+     * @return the vulnerability
+     */
     private Vulnerability createVulnerability(String parentName, Dependency dependency, String gem, String nextLine) {
         Vulnerability vulnerability = null;
         if (null != dependency) {
@@ -380,6 +426,17 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         return vulnerability;
     }
 
+    /**
+     * Creates the dependency based off of the gem.
+     *
+     * @param engine the engine used for scanning
+     * @param parentName the gem parent
+     * @param fileName the file name
+     * @param filePath the file path
+     * @param gem the gem name
+     * @return the dependency to add
+     * @throws IOException thrown if a temporary gem file could not be written
+     */
     private Dependency createDependencyForGem(Engine engine, String parentName, String fileName, String filePath, String gem) throws IOException {
         final File gemFile = new File(Settings.getTempDirectory(), gem + "_Gemfile.lock");
         gemFile.createNewFile();
