@@ -79,6 +79,7 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
                 if (updateable.isUpdateNeeded()) {
                     performUpdate(updateable);
                 }
+                getProperties().save(DatabaseProperties.LAST_CHECKED, Long.toString(System.currentTimeMillis()));
             }
         } catch (MalformedURLException ex) {
             LOGGER.warn(
@@ -115,9 +116,7 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
             final long lastChecked = Long.parseLong(getProperties().getProperty(DatabaseProperties.LAST_CHECKED, "0"));
             final long now = System.currentTimeMillis();
             proceed = (now - lastChecked) > msValid;
-            if (proceed) {
-                getProperties().save(DatabaseProperties.LAST_CHECKED, Long.toString(now));
-            } else {
+            if (!proceed) {
                 LOGGER.info("Skipping NVD check since last check was within {} hours.", validForHours);
                 LOGGER.debug("Last NVD was at {}, and now {} is within {} ms.",
                         lastChecked, now, msValid);
@@ -339,5 +338,4 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
         }
         return updates;
     }
-
 }
