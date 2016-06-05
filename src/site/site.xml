@@ -57,10 +57,6 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
               title="developed using" width="170px"
               alt="developed using"
               img="http://jeremylong.github.io/DependencyCheck/images/logos/logo_intellij_idea.png"/>
-        <logo name="Cloudbees" href="http://www.cloudbees.com/"
-              title="built on cloudbees"
-              alt="built on cloudbees"
-              img="http://jeremylong.github.io/DependencyCheck/images/logos/Button-Built-on-CB-1.png"/>
     </poweredBy>
 
     <body>

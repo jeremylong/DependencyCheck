@@ -100,8 +100,8 @@ Copyright (c) 2012 - Jeremy Long
         <url>https://github.com/jeremylong/DependencyCheck/issues</url>
     </issueManagement>
     <ciManagement>
-        <system>Cloudbees</system>
-        <url>https://dependency-check.ci.cloudbees.com/</url>
+        <system>travis-ci</system>
+        <url>https://travis-ci.org/jeremylong/DependencyCheck</url>
     </ciManagement>
     <mailingLists>
         <mailingList>
