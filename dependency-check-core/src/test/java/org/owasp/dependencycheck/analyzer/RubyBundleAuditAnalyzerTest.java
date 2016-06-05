@@ -113,7 +113,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
             int size = engine.getDependencies().size();
 
             assertTrue(size >= 1);
-            
+
             Dependency dependency = engine.getDependencies().get(0);
             assertTrue(dependency.getProductEvidence().toString().toLowerCase().contains("redcarpet"));
             assertTrue(dependency.getVersionEvidence().toString().toLowerCase().contains("2.2.2"));
@@ -175,45 +175,51 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
      */
     @Test
     public void testDependenciesPath() throws AnalysisException, DatabaseException {
-        
+
         final Engine engine = new Engine();
         engine.scan(BaseTest.getResourceAsFile(this,
                 "ruby/vulnerable/gems/rails-4.1.15/"));
-        engine.analyzeDependencies();
         
+        
+        try {
+            engine.analyzeDependencies();
+        } catch (NullPointerException ex) {
+            LOGGER.error("NPE", ex);
+            throw ex;
+        }
         List<Dependency> dependencies = engine.getDependencies();
         LOGGER.info(dependencies.size() + " dependencies found.");
         Iterator<Dependency> dIterator = dependencies.iterator();
-        while(dIterator.hasNext()) {
-        	Dependency dept = dIterator.next();
-        	LOGGER.info("dept path: " + dept.getActualFilePath());
+        while (dIterator.hasNext()) {
+            Dependency dept = dIterator.next();
+            LOGGER.info("dept path: " + dept.getActualFilePath());
 
-        	Set<Identifier> identifiers = dept.getIdentifiers();
-        	Iterator<Identifier> idIterator = identifiers.iterator();
-        	while(idIterator.hasNext()) {
-        		Identifier id = idIterator.next();
-        		LOGGER.info("  Identifier: " + id.getValue() + ", type=" + id.getType() + ", url=" + id.getUrl() + ", conf="+ id.getConfidence());
-        	}
-        	
-        	Set<Evidence> prodEv = dept.getProductEvidence().getEvidence();
-        	Iterator<Evidence> it = prodEv.iterator();
-        	while(it.hasNext()) {
-        		Evidence e = it.next();
-        		LOGGER.info("  prod: name=" + e.getName() + ", value=" + e.getValue() + ", source=" + e.getSource() + ", confidence=" + e.getConfidence());
-        	}
-        	Set<Evidence> versionEv = dept.getVersionEvidence().getEvidence();
-        	Iterator<Evidence> vIt = versionEv.iterator();
-        	while(vIt.hasNext()) {
-        		Evidence e = vIt.next();
-        		LOGGER.info("  version: name=" + e.getName() + ", value=" + e.getValue() + ", source=" + e.getSource() + ", confidence=" + e.getConfidence());
-        	}
+            Set<Identifier> identifiers = dept.getIdentifiers();
+            Iterator<Identifier> idIterator = identifiers.iterator();
+            while (idIterator.hasNext()) {
+                Identifier id = idIterator.next();
+                LOGGER.info("  Identifier: " + id.getValue() + ", type=" + id.getType() + ", url=" + id.getUrl() + ", conf=" + id.getConfidence());
+            }
 
-        	Set<Evidence> vendorEv = dept.getVendorEvidence().getEvidence();
-        	Iterator<Evidence> vendorIt = vendorEv.iterator();
-        	while(vendorIt.hasNext()) {
-        		Evidence e = vendorIt.next();
-        		LOGGER.info("  vendor: name=" + e.getName() + ", value=" + e.getValue() + ", source=" + e.getSource() + ", confidence=" + e.getConfidence());
-        	}
+            Set<Evidence> prodEv = dept.getProductEvidence().getEvidence();
+            Iterator<Evidence> it = prodEv.iterator();
+            while (it.hasNext()) {
+                Evidence e = it.next();
+                LOGGER.info("  prod: name=" + e.getName() + ", value=" + e.getValue() + ", source=" + e.getSource() + ", confidence=" + e.getConfidence());
+            }
+            Set<Evidence> versionEv = dept.getVersionEvidence().getEvidence();
+            Iterator<Evidence> vIt = versionEv.iterator();
+            while (vIt.hasNext()) {
+                Evidence e = vIt.next();
+                LOGGER.info("  version: name=" + e.getName() + ", value=" + e.getValue() + ", source=" + e.getSource() + ", confidence=" + e.getConfidence());
+            }
+
+            Set<Evidence> vendorEv = dept.getVendorEvidence().getEvidence();
+            Iterator<Evidence> vendorIt = vendorEv.iterator();
+            while (vendorIt.hasNext()) {
+                Evidence e = vendorIt.next();
+                LOGGER.info("  vendor: name=" + e.getName() + ", value=" + e.getValue() + ", source=" + e.getSource() + ", confidence=" + e.getConfidence());
+            }
         }
     }
 }
