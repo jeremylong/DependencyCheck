@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jeremylong/DependencyCheck.svg?branch=master)](https://travis-ci.org/jeremylong/DependencyCheck)
+[![Build Status](https://travis-ci.org/jeremylong/DependencyCheck.svg?branch=master)](https://travis-ci.org/jeremylong/DependencyCheck) [![Apache 2.0 License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.txt)
 Dependency-Check
 ================
 
