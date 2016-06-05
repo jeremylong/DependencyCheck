@@ -180,23 +180,14 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
         final int max = (left.length <= right.length) ? left.length : right.length;
         if (max > 0) {
             for (int i = 0; result == 0 && i < max; i++) {
-                final String[] subLeft = left[i].split("\\.");
-                final String[] subRight = right[i].split("\\.");
+                final String[] subLeft = left[i].split("(\\.|-)");
+                final String[] subRight = right[i].split("(\\.|-)");
                 final int subMax = (subLeft.length <= subRight.length) ? subLeft.length : subRight.length;
                 if (subMax > 0) {
                     for (int x = 0; result == 0 && x < subMax; x++) {
                         if (isPositiveInteger(subLeft[x]) && isPositiveInteger(subRight[x])) {
                             try {
                                 result = Long.valueOf(subLeft[x]).compareTo(Long.valueOf(subRight[x]));
-//                                final long iLeft = Long.parseLong(subLeft[x]);
-//                                final long iRight = Long.parseLong(subRight[x]);
-//                                if (iLeft != iRight) {
-//                                    if (iLeft > iRight) {
-//                                        result = 2;
-//                                    } else {
-//                                        result = -2;
-//                                    }
-//                                }
                             } catch (NumberFormatException ex) {
                                 //ignore the exception - they obviously aren't numbers
                                 if (!subLeft[x].equalsIgnoreCase(subRight[x])) {
