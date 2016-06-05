@@ -1,4 +1,4 @@
-[![Build Status](https://dependency-check.ci.cloudbees.com/buildStatus/icon?job=dependency-check)](https://dependency-check.ci.cloudbees.com/job/dependency-check/)
+[![Build Status](https://travis-ci.org/jeremylong/DependencyCheck.svg?branch=master)](https://travis-ci.org/jeremylong/DependencyCheck)
 Dependency-Check
 ================
 
