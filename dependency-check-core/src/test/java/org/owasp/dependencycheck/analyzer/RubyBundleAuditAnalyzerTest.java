@@ -65,7 +65,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
      */
     @Before
     public void setUp() throws Exception {
-        Settings.initialize();
+        super.setUp();
         analyzer = new RubyBundleAuditAnalyzer();
         analyzer.setFilesMatched(true);
     }
@@ -77,7 +77,6 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
      */
     @After
     public void tearDown() throws Exception {
-        Settings.cleanup();
         analyzer.close();
         analyzer = null;
     }
