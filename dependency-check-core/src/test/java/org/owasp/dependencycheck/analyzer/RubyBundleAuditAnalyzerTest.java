@@ -66,6 +66,9 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
+        Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
         analyzer = new RubyBundleAuditAnalyzer();
         analyzer.setFilesMatched(true);
     }
@@ -175,12 +178,9 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
      */
     @Test
     public void testDependenciesPath() throws AnalysisException, DatabaseException {
-
         final Engine engine = new Engine();
         engine.scan(BaseTest.getResourceAsFile(this,
                 "ruby/vulnerable/gems/rails-4.1.15/"));
-        
-        
         try {
             engine.analyzeDependencies();
         } catch (NullPointerException ex) {
