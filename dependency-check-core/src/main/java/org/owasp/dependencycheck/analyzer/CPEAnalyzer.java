@@ -512,10 +512,11 @@ public class CPEAnalyzer implements Analyzer {
         Confidence bestGuessConf = null;
         boolean hasBroadMatch = false;
         final List<IdentifierMatch> collected = new ArrayList<IdentifierMatch>();
+        
+        //TODO the following algorithm incorrectly identifies things as a lower version
+        // if there lower confidence evidence when the current (highest) version number 
+        // is newer then anything in the NVD.
         for (Confidence conf : Confidence.values()) {
-//            if (conf.compareTo(currentConfidence) > 0) {
-//                break;
-//            }
             for (Evidence evidence : dependency.getVersionEvidence().iterator(conf)) {
                 final DependencyVersion evVer = DependencyVersionUtil.parseVersion(evidence.getValue());
                 if (evVer == null) {
