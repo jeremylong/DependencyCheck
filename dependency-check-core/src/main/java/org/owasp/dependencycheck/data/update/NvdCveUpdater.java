@@ -76,10 +76,10 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
             }
             if (autoUpdate && checkUpdate()) {
                 final UpdateableNvdCve updateable = getUpdatesNeeded();
+                getProperties().save(DatabaseProperties.LAST_CHECKED, Long.toString(System.currentTimeMillis()));
                 if (updateable.isUpdateNeeded()) {
                     performUpdate(updateable);
-                }
-                getProperties().save(DatabaseProperties.LAST_CHECKED, Long.toString(System.currentTimeMillis()));
+                }                
             }
         } catch (MalformedURLException ex) {
             LOGGER.warn(
