@@ -27,7 +27,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 /**
  * This analyzer accepts the fully resolved .gemspec created by the Ruby bundler
  * (http://bundler.io) for better evidence results. It also tries to resolve the
- * dependency packagePath to where the gem is actually installed. Then during {@link AnalysisPhase.PRE_FINDING_ANALYSIS}
+ * dependency packagePath to where the gem is actually installed. Then during {@link org.owasp.dependencycheck.analyzer.AnalysisPhase#PRE_FINDING_ANALYSIS}
  * {@link DependencyBundlingAnalyzer} will merge two .gemspec dependencies
  * together if <code>Dependency.getPackagePath()</code> are the same.
  *
@@ -39,7 +39,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
  * can't be used for evidences.
  *
  * Note this analyzer share the same
- * {@link Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED} as
+ * {@link org.owasp.dependencycheck.utils.Settings.KEYS#ANALYZER_RUBY_GEMSPEC_ENABLED} as
  * {@link RubyGemspecAnalyzer}, so it will enabled/disabled with
  * {@link RubyGemspecAnalyzer}.
  *
