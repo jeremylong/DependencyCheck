@@ -69,7 +69,7 @@ public class CveDB {
     private ResourceBundle statementBundle = null;
 
     /**
-     * <<<<<<< HEAD Creates a new CveDB object and opens the database
+     * Creates a new CveDB object and opens the database
      * connection. Note, the connection must be closed by the caller by calling
      * the close method. ======= Does the underlying connection support batch
      * operations?
@@ -79,8 +79,7 @@ public class CveDB {
     /**
      * Creates a new CveDB object and opens the database connection. Note, the
      * connection must be closed by the caller by calling the close method.
-     * >>>>>>> e79da72711dc0f326fcdce52deab89e37c0d8230
-     *
+     * 
      * @throws DatabaseException thrown if there is an exception opening the
      * database.
      */
