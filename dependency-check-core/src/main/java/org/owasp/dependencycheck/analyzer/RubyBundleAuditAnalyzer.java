@@ -61,13 +61,30 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      * The phase that this analyzer is intended to run in.
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.PRE_INFORMATION_COLLECTION;
-
+    /**
+     * The filter defining which files will be analyzed.
+     */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFilenames("Gemfile.lock").build();
+    /**
+     * Name.
+     */
     public static final String NAME = "Name: ";
+    /**
+     * Version.
+     */
     public static final String VERSION = "Version: ";
+    /**
+     * Advisory.
+     */
     public static final String ADVISORY = "Advisory: ";
+    /**
+     * Criticality.
+     */
     public static final String CRITICALITY = "Criticality: ";
 
+    /**
+     * The DAL.
+     */
     private CveDB cvedb;
 
     /**

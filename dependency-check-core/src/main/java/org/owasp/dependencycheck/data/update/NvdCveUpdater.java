@@ -60,9 +60,11 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
 
     /**
      * <p>
-     * Downloads the latest NVD CVE XML file from the web and imports it into the current CVE Database.</p>
+     * Downloads the latest NVD CVE XML file from the web and imports it into
+     * the current CVE Database.</p>
      *
-     * @throws UpdateException is thrown if there is an error updating the database
+     * @throws UpdateException is thrown if there is an error updating the
+     * database
      */
     @Override
     public void update() throws UpdateException {
@@ -79,7 +81,7 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
                 getProperties().save(DatabaseProperties.LAST_CHECKED, Long.toString(System.currentTimeMillis()));
                 if (updateable.isUpdateNeeded()) {
                     performUpdate(updateable);
-                }                
+                }
             }
         } catch (MalformedURLException ex) {
             LOGGER.warn(
@@ -99,12 +101,15 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
     }
 
     /**
-     * Checks if the NVD CVE XML files were last checked recently. As an optimization, we can avoid repetitive checks against the
-     * NVD. Setting CVE_CHECK_VALID_FOR_HOURS determines the duration since last check before checking again. A database property
-     * stores the timestamp of the last check.
+     * Checks if the NVD CVE XML files were last checked recently. As an
+     * optimization, we can avoid repetitive checks against the NVD. Setting
+     * CVE_CHECK_VALID_FOR_HOURS determines the duration since last check before
+     * checking again. A database property stores the timestamp of the last
+     * check.
      *
      * @return true to proceed with the check, or false to skip.
-     * @throws UpdateException thrown when there is an issue checking for updates.
+     * @throws UpdateException thrown when there is an issue checking for
+     * updates.
      */
     private boolean checkUpdate() throws UpdateException {
         boolean proceed = true;
@@ -146,11 +151,13 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
     }
 
     /**
-     * Downloads the latest NVD CVE XML file from the web and imports it into the current CVE Database.
+     * Downloads the latest NVD CVE XML file from the web and imports it into
+     * the current CVE Database.
      *
-     * @param updateable a collection of NVD CVE data file references that need to be downloaded and processed to update the
+     * @param updateable a collection of NVD CVE data file references that need
+     * to be downloaded and processed to update the database
+     * @throws UpdateException is thrown if there is an error updating the
      * database
-     * @throws UpdateException is thrown if there is an error updating the database
      */
     public void performUpdate(UpdateableNvdCve updateable) throws UpdateException {
         int maxUpdates = 0;
@@ -244,13 +251,18 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
     }
 
     /**
-     * Determines if the index needs to be updated. This is done by fetching the NVD CVE meta data and checking the last update
-     * date. If the data needs to be refreshed this method will return the NvdCveUrl for the files that need to be updated.
+     * Determines if the index needs to be updated. This is done by fetching the
+     * NVD CVE meta data and checking the last update date. If the data needs to
+     * be refreshed this method will return the NvdCveUrl for the files that
+     * need to be updated.
      *
      * @return the collection of files that need to be updated
-     * @throws MalformedURLException is thrown if the URL for the NVD CVE Meta data is incorrect
-     * @throws DownloadFailedException is thrown if there is an error. downloading the NVD CVE download data file
-     * @throws UpdateException Is thrown if there is an issue with the last updated properties file
+     * @throws MalformedURLException is thrown if the URL for the NVD CVE Meta
+     * data is incorrect
+     * @throws DownloadFailedException is thrown if there is an error.
+     * downloading the NVD CVE download data file
+     * @throws UpdateException Is thrown if there is an issue with the last
+     * updated properties file
      */
     protected final UpdateableNvdCve getUpdatesNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
         UpdateableNvdCve updates = null;
@@ -314,9 +326,12 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
      * Retrieves the timestamps from the NVD CVE meta data file.
      *
      * @return the timestamp from the currently published nvdcve downloads page
-     * @throws MalformedURLException thrown if the URL for the NVD CCE Meta data is incorrect.
-     * @throws DownloadFailedException thrown if there is an error downloading the nvd cve meta data file
-     * @throws InvalidDataException thrown if there is an exception parsing the timestamps
+     * @throws MalformedURLException thrown if the URL for the NVD CCE Meta data
+     * is incorrect.
+     * @throws DownloadFailedException thrown if there is an error downloading
+     * the nvd cve meta data file
+     * @throws InvalidDataException thrown if there is an exception parsing the
+     * timestamps
      * @throws InvalidSettingException thrown if the settings are invalid
      */
     private UpdateableNvdCve retrieveCurrentTimestampsFromWeb()
