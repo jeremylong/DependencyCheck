@@ -25,7 +25,7 @@ skipTestScope        | Skip analysis for artifacts with Test Scope              
 skipProvidedScope    | Skip analysis for artifacts with Provided Scope           | false
 skipRuntimeScope     | Skip analysis for artifacts with Runtime Scope            | false
 suppressionFile      | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html) | &nbsp;
-enableExperimental   | Enable the experimental analyzers                         | false
+enableExperimental   | Enable the experimental analyzers. If not enabled the *experimental* analyzers (see below) will not be loaded or used. | false
 
 Analyzer Configuration
 ====================
@@ -44,16 +44,16 @@ centralAnalyzerEnabled        | Sets whether Central Analyzer will be used. If t
 nexusAnalyzerEnabled          | Sets whether Nexus Analyzer will be used. This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
 nexusUrl                      | Defines the Nexus Server's web service end point (example http://domain.enterprise/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
 nexusUsesProxy                | Whether or not the defined proxy should be used when connecting to Nexus. | true
-pyDistributionAnalyzerEnabled | Sets whether the Python Distribution Analyzer will be used.               | true
-pyPackageAnalyzerEnabled      | Sets whether the Python Package Analyzer will be used.                    | true
-rubygemsAnalyzerEnabled       | Sets whether the Ruby Gemspec Analyzer will be used.                      | true
-opensslAnalyzerEnabled        | Sets whether or not the openssl Analyzer should be used.                  | true
-cmakeAnalyzerEnabled          | Sets whether or not the CMake Analyzer should be used.                    | true
-autoconfAnalyzerEnabled       | Sets whether or not the autoconf Analyzer should be used.                 | true
-composerAnalyzerEnabled       | Sets whether or not the PHP Composer Lock File Analyzer should be used.   | true
-nodeAnalyzerEnabled           | Sets whether or not the Node.js Analyzer should be used.                  | true
-nuspecAnalyzerEnabled         | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.          | true
-assemblyAnalyzerEnabled       | Sets whether or not the .NET Assembly Analyzer should be used.            | true
+pyDistributionAnalyzerEnabled | Sets whether the *experimental* Python Distribution Analyzer will be used.               | true
+pyPackageAnalyzerEnabled      | Sets whether the *experimental* Python Package Analyzer will be used.                    | true
+rubygemsAnalyzerEnabled       | Sets whether the *experimental* Ruby Gemspec Analyzer will be used.                      | true
+opensslAnalyzerEnabled        | Sets whether the openssl Analyzer should be used.                  | true
+cmakeAnalyzerEnabled          | Sets whether the *experimental* CMake Analyzer should be used.                    | true
+autoconfAnalyzerEnabled       | Sets whether the *experimental* autoconf Analyzer should be used.                 | true
+composerAnalyzerEnabled       | Sets whether the *experimental* PHP Composer Lock File Analyzer should be used.   | true
+nodeAnalyzerEnabled           | Sets whether the *experimental* Node.js Analyzer should be used.                  | true
+nuspecAnalyzerEnabled         | Sets whether the .NET Nuget Nuspec Analyzer will be used.          | true
+assemblyAnalyzerEnabled       | Sets whether the .NET Assembly Analyzer should be used.            | true
 pathToMono                    | The path to Mono for .NET assembly analysis on non-windows systems.       | &nbsp;
 
 Advanced Configuration

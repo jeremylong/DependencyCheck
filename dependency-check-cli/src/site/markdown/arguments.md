@@ -18,7 +18,7 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp; | Parameter       | Description | Requir
        | \-\-advancedHelp      |                 | Print the advanced help message. | Optional
  \-v   | \-\-version           |                 | Print the version information. | Optional
        | \-\-cveValidForHours  | \<hours\>       | The number of hours to wait before checking for new updates from the NVD. The default is 4 hours. | Optional
-       | \-\-experimental      |                 | Enable the experimental analyzers. | Optional
+       | \-\-experimental      |                 | Enable the experimental analyzers. If not set the analyzers marked as experimental below will not be loaded or used. | Optional
 
 Advanced Options
 ================
@@ -30,18 +30,18 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Paramete
        | \-\-cveUrl20Base      | \<url\>         | Base URL for each year's CVE 2.0, the %d will be replaced with the year          | https://nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-%d.xml.gz
  \-P   | \-\-propertyfile      | \<file\>        | Specifies a file that contains properties to use instead of applicaion defaults. | &nbsp;
        | \-\-updateonly        |                 | If set only the update phase of dependency-check will be executed; no scan will be executed and no report will be generated. | &nbsp;
-       | \-\-disablePyDist     |                 | Sets whether the Python Distribution Analyzer will be used.                      | false
-       | \-\-disablePyPkg      |                 | Sets whether the Python Package Analyzer will be used.                           | false
-       | \-\-disableNodeJS     |                 | Sets whether the Node.js Package Analyzer will be used.                          | false
-       | \-\-disableRubygems   |                 | Sets whether the Ruby Gemspec Analyzer will be used.                             | false
-       | \-\-disableBundleAudit |               | Sets whether the Ruby Bundler Audit Analyzer will be used.                             | false
-       | \-\-disableAutoconf   |                 | Sets whether the Autoconf Analyzer will be used.                                 | false
+       | \-\-disablePyDist     |                 | Sets whether the *experimental* Python Distribution Analyzer will be used.                      | false
+       | \-\-disablePyPkg      |                 | Sets whether the *experimental* Python Package Analyzer will be used.                           | false
+       | \-\-disableNodeJS     |                 | Sets whether the *experimental* Node.js Package Analyzer will be used.                          | false
+       | \-\-disableRubygems   |                 | Sets whether the *experimental* Ruby Gemspec Analyzer will be used.                             | false
+       | \-\-disableBundleAudit |               | Sets whether the *experimental* Ruby Bundler Audit Analyzer will be used.                             | false
+       | \-\-disableAutoconf   |                 | Sets whether the *experimental* Autoconf Analyzer will be used.                                 | false
        | \-\-disableOpenSSL    |                 | Sets whether the OpenSSL Analyzer will be used.                                  | false
-       | \-\-disableCmake      |                 | Sets whether the Cmake Analyzer will be disabled.                                | false
+       | \-\-disableCmake      |                 | Sets whether the *experimental* Cmake Analyzer will be disabled.                                | false
        | \-\-disableArchive    |                 | Sets whether the Archive Analyzer will be disabled.                              | false
        | \-\-zipExtensions     | \<strings\>     | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
        | \-\-disableJar        |                 | Sets whether the Jar Analyzer will be disabled.                                  | false
-       | \-\-disableComposer   |                 | Sets whether the PHP Composer Lock File Analyzer will be disabled.               | false
+       | \-\-disableComposer   |                 | Sets whether the *experimental* PHP Composer Lock File Analyzer will be disabled.               | false
        | \-\-disableCentral    |                 | Sets whether the Central Analyzer will be used. **Disabling this analyzer is not recommended as it could lead to false negatives (e.g. libraries that have vulnerabilities may not be reported correctly).** If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer. | false
        | \-\-disableNexus      |                 | Sets whether the Nexus Analyzer will be used. Note, this has been superceded by the Central Analyzer. However, you can configure the Nexus URL to utilize an internally hosted Nexus Pro server. | false
        | \-\-nexus             | \<url\>         | The url to the Nexus Server's web service end point (example: http://domain.enterprise/nexus/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
