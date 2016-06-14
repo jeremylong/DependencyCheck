@@ -198,8 +198,8 @@ public class CPEAnalyzer implements Analyzer {
                 LOGGER.debug("product search: {}", products);
             }
             if (!vendors.isEmpty() && !products.isEmpty()) {
-                final List<IndexEntry> entries = searchCPE(vendors, products, dependency.getProductEvidence().getWeighting(),
-                        dependency.getVendorEvidence().getWeighting());
+                final List<IndexEntry> entries = searchCPE(vendors, products, dependency.getVendorEvidence().getWeighting(),
+                        dependency.getProductEvidence().getWeighting());
                 if (entries == null) {
                     continue;
                 }
