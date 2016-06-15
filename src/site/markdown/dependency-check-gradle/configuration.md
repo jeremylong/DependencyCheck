@@ -34,7 +34,7 @@ dependencyCheck {
 
 Property          | Description                        | Default Value
 ------------------|------------------------------------|------------------
-server            | The proxy server.                  | &nbsp;
+server            | The proxy server; see the [proxy configuration](../data/proxy.html) page for more information. | &nbsp;
 port              | The proxy port.                    | &nbsp;
 username          | Defines the proxy user name.       | &nbsp;
 password          | Defines the proxy password.        | &nbsp;

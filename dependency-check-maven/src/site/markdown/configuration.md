@@ -79,7 +79,8 @@ metaFileName         | Sets the name of the file to use for storing the metadata
 
 Proxy Configuration
 ====================
-Use [Maven's settings](https://maven.apache.org/settings.html#Proxies) to configure a proxy server. If multiple proxies
+Use [Maven's settings](https://maven.apache.org/settings.html#Proxies) to configure a proxy server. Please see the
+dependency-check [proxy configuration](../data/proxy.html) page for additional problem solving techniques. If multiple proxies
 are configured in the Maven settings file you must tell dependency-check which proxy to use with the following property:
 
 Property             | Description                                                                          | Default Value
