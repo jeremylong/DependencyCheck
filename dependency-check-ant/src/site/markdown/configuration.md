@@ -43,7 +43,7 @@ proxyPort             | The Proxy Port.                                         
 proxyUsername         | Defines the proxy user name.                                                                                                                                                                       | &nbsp;
 proxyPassword         | Defines the proxy password.                                                                                                                                                                        | &nbsp;
 connectionTimeout     | The URL Connection Timeout.                                                                                                                                                                        | &nbsp;
-enableExperimental    | Enable the experimental analyzers. If not enabled the *experimental* analyzers (see below) will not be loaded or used.                                                                             | false
+enableExperimental    | Enable the [experimental analyzers](../analyzers/index.html). If not enabled the experimental analyzers (see below) will not be loaded or used.                                                                             | false
 
 Analyzer Configuration
 ====================
@@ -62,14 +62,14 @@ centralAnalyzerEnabled        | Sets whether the Central Analyzer will be used. 
 nexusAnalyzerEnabled          | Sets whether Nexus Analyzer will be used. This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
 nexusUrl                      | Defines the Nexus web service endpoint (example http://domain.enterprise/nexus/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
 nexusUsesProxy                | Whether or not the defined proxy should be used when connecting to Nexus.         | true
-pyDistributionAnalyzerEnabled | Sets whether the *experimental* Python Distribution Analyzer will be used.        | true
-pyPackageAnalyzerEnabled      | Sets whether the *experimental* Python Package Analyzer will be used.             | true
-rubygemsAnalyzerEnabled       | Sets whether the *experimental* Ruby Gemspec Analyzer will be used.               | true
+pyDistributionAnalyzerEnabled | Sets whether the [experimental](../analyzers/index.html) Python Distribution Analyzer will be used.        | true
+pyPackageAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) Python Package Analyzer will be used.             | true
+rubygemsAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used.               | true
 opensslAnalyzerEnabled        | Sets whether the openssl Analyzer should be used.                                 | true
-cmakeAnalyzerEnabled          | Sets whether the *experimental* CMake Analyzer should be used.                    | true
-autoconfAnalyzerEnabled       | Sets whether the *experimental* autoconf Analyzer should be used.                 | true
-composerAnalyzerEnabled       | Sets whether the *experimental* PHP Composer Lock File Analyzer should be used.   | true
-nodeAnalyzerEnabled           | Sets whether the *experimental* Node.js Analyzer should be used.                  | true
+cmakeAnalyzerEnabled          | Sets whether the [experimental](../analyzers/index.html) CMake Analyzer should be used.                    | true
+autoconfAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) autoconf Analyzer should be used.                 | true
+composerAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.   | true
+nodeAnalyzerEnabled           | Sets whether the [experimental](../analyzers/index.html) Node.js Analyzer should be used.                  | true
 nuspecAnalyzerEnabled         | Sets whether the .NET Nuget Nuspec Analyzer will be used.                         | true
 assemblyAnalyzerEnabled       | Sets whether the .NET Assembly Analyzer should be used.                           | true
 pathToMono                    | The path to Mono for .NET assembly analysis on non-windows systems.               | &nbsp;
