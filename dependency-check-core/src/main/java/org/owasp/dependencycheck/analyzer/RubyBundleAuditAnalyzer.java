@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -48,6 +47,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Dale Visser
  */
+@Experimental
 public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RubyBundleAuditAnalyzer.class);
@@ -61,17 +61,31 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      * The phase that this analyzer is intended to run in.
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.PRE_INFORMATION_COLLECTION;
-
-    private static final FileFilter FILTER
-            = FileFilterBuilder.newInstance().addFilenames("Gemfile.lock").build();
+    /**
+     * The filter defining which files will be analyzed.
+     */
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFilenames("Gemfile.lock").build();
+    /**
+     * Name.
+     */
     public static final String NAME = "Name: ";
+    /**
+     * Version.
+     */
     public static final String VERSION = "Version: ";
+    /**
+     * Advisory.
+     */
     public static final String ADVISORY = "Advisory: ";
+    /**
+     * Criticality.
+     */
     public static final String CRITICALITY = "Criticality: ";
 
-    public CveDB cvedb;
-    //instance.open();
-    //Vulnerability result = instance.getVulnerability("CVE-2015-3225");
+    /**
+     * The DAL.
+     */
+    private CveDB cvedb;
 
     /**
      * @return a filter that accepts files named Gemfile.lock
@@ -84,7 +98,10 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Launch bundle-audit.
      *
+     * @param folder directory that contains bundle audit
      * @return a handle to the process
+     * @throws AnalysisException thrown when there is an issue launching bundle
+     * audit
      */
     private Process launchBundleAudit(File folder) throws AnalysisException {
         if (!folder.isDirectory()) {
@@ -134,7 +151,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             throw ae;
         }
 
-        int exitValue = process.waitFor();
+        final int exitValue = process.waitFor();
         if (0 == exitValue) {
             LOGGER.warn("Unexpected exit code from bundle-audit process. Disabling {}: {}", ANALYZER_NAME, exitValue);
             setEnabled(false);
@@ -206,6 +223,13 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private boolean needToDisableGemspecAnalyzer = true;
 
+    /**
+     * Determines if the analyzer can analyze the given file type.
+     *
+     * @param dependency the dependency to determine if it can analyze
+     * @param engine the dependency-check engine
+     * @throws AnalysisException thrown if there is an analysis exception.
+     */
     @Override
     protected void analyzeFileType(Dependency dependency, Engine engine)
             throws AnalysisException {
@@ -213,11 +237,10 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             boolean failed = true;
             final String className = RubyGemspecAnalyzer.class.getName();
             for (FileTypeAnalyzer analyzer : engine.getFileTypeAnalyzers()) {
-            	if (analyzer instanceof RubyBundlerAnalyzer) {
+                if (analyzer instanceof RubyBundlerAnalyzer) {
                     ((RubyBundlerAnalyzer) analyzer).setEnabled(false);
                     LOGGER.info("Disabled " + RubyBundlerAnalyzer.class.getName() + " to avoid noisy duplicate results.");
-                }
-            	else if (analyzer instanceof RubyGemspecAnalyzer) {
+                } else if (analyzer instanceof RubyGemspecAnalyzer) {
                     ((RubyGemspecAnalyzer) analyzer).setEnabled(false);
                     LOGGER.info("Disabled " + className + " to avoid noisy duplicate results.");
                     failed = false;
@@ -236,10 +259,11 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             throw new AnalysisException("bundle-audit process interrupted", ie);
         }
         BufferedReader rdr = null;
+        BufferedReader errReader = null;
         try {
-            BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
+            errReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
             while (errReader.ready()) {
-                String error = errReader.readLine();
+                final String error = errReader.readLine();
                 LOGGER.warn(error);
             }
             rdr = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
@@ -247,6 +271,13 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (IOException ioe) {
             LOGGER.warn("bundle-audit failure", ioe);
         } finally {
+            if (errReader != null) {
+                try {
+                    errReader.close();
+                } catch (IOException ioe) {
+                    LOGGER.warn("bundle-audit close failure", ioe);
+                }
+            }
             if (null != rdr) {
                 try {
                     rdr.close();
@@ -258,6 +289,14 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
 
     }
 
+    /**
+     * Processes the bundler audit output.
+     *
+     * @param original the dependency
+     * @param engine the dependency-check engine
+     * @param rdr the reader of the report
+     * @throws IOException thrown if the report cannot be read.
+     */
     private void processBundlerAuditOutput(Dependency original, Engine engine, BufferedReader rdr) throws IOException {
         final String parentName = original.getActualFile().getParentFile().getName();
         final String fileName = original.getFileName();
@@ -280,7 +319,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 dependency = map.get(gem);
                 LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
             } else if (nextLine.startsWith(VERSION)) {
-                vulnerability = createVulnerability(parentName, dependency, vulnerability, gem, nextLine);
+                vulnerability = createVulnerability(parentName, dependency, gem, nextLine);
             } else if (nextLine.startsWith(ADVISORY)) {
                 setVulnerabilityName(parentName, dependency, vulnerability, nextLine);
             } else if (nextLine.startsWith(CRITICALITY)) {
@@ -290,7 +329,9 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             } else if (nextLine.startsWith("Description:")) {
                 appendToDescription = true;
                 if (null != vulnerability) {
-                    vulnerability.setDescription("*** Vulnerability obtained from bundle-audit verbose report. Title link may not work. CPE below is guessed. CVSS score is estimated (-1.0 indicates unknown). See link below for full details. *** ");
+                    vulnerability.setDescription("*** Vulnerability obtained from bundle-audit verbose report. "
+                            + "Title link may not work. CPE below is guessed. CVSS score is estimated (-1.0 "
+                            + " indicates unknown). See link below for full details. *** ");
                 }
             } else if (appendToDescription) {
                 if (null != vulnerability) {
@@ -300,6 +341,14 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
+    /**
+     * Sets the vulnerability name.
+     *
+     * @param parentName the parent name
+     * @param dependency the dependency
+     * @param vulnerability the vulnerability
+     * @param nextLine the line to parse
+     */
     private void setVulnerabilityName(String parentName, Dependency dependency, Vulnerability vulnerability, String nextLine) {
         final String advisory = nextLine.substring((ADVISORY.length()));
         if (null != vulnerability) {
@@ -311,10 +360,17 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
     }
 
+    /**
+     * Adds a reference to the vulnerability.
+     *
+     * @param parentName the parent name
+     * @param vulnerability the vulnerability
+     * @param nextLine the line to parse
+     */
     private void addReferenceToVulnerability(String parentName, Vulnerability vulnerability, String nextLine) {
         final String url = nextLine.substring(("URL: ").length());
         if (null != vulnerability) {
-            Reference ref = new Reference();
+            final Reference ref = new Reference();
             ref.setName(vulnerability.getName());
             ref.setSource("bundle-audit");
             ref.setUrl(url);
@@ -323,6 +379,13 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
     }
 
+    /**
+     * Adds the criticality to the vulnerability
+     *
+     * @param parentName the parent name
+     * @param vulnerability the vulnerability
+     * @param nextLine the line to parse
+     */
     private void addCriticalityToVulnerability(String parentName, Vulnerability vulnerability, String nextLine) {
         if (null != vulnerability) {
             final String criticality = nextLine.substring(CRITICALITY.length()).trim();
@@ -347,7 +410,17 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
     }
 
-    private Vulnerability createVulnerability(String parentName, Dependency dependency, Vulnerability vulnerability, String gem, String nextLine) {
+    /**
+     * Creates a vulnerability.
+     *
+     * @param parentName the parent name
+     * @param dependency the dependency
+     * @param gem the gem name
+     * @param nextLine the line to parse
+     * @return the vulnerability
+     */
+    private Vulnerability createVulnerability(String parentName, Dependency dependency, String gem, String nextLine) {
+        Vulnerability vulnerability = null;
         if (null != dependency) {
             final String version = nextLine.substring(VERSION.length());
             dependency.getVersionEvidence().addEvidence(
@@ -370,6 +443,17 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         return vulnerability;
     }
 
+    /**
+     * Creates the dependency based off of the gem.
+     *
+     * @param engine the engine used for scanning
+     * @param parentName the gem parent
+     * @param fileName the file name
+     * @param filePath the file path
+     * @param gem the gem name
+     * @return the dependency to add
+     * @throws IOException thrown if a temporary gem file could not be written
+     */
     private Dependency createDependencyForGem(Engine engine, String parentName, String fileName, String filePath, String gem) throws IOException {
         final File gemFile = new File(Settings.getTempDirectory(), gem + "_Gemfile.lock");
         gemFile.createNewFile();

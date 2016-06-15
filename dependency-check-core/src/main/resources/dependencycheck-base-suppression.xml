@@ -319,4 +319,98 @@
         <filePath regex="true">.*\.(jar|exe|dll|ear|war|pom)</filePath>
         <cpe>cpe:/a:class:class</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Linux ssh False Positives
+        ]]></notes>
+        <filePath regex="true">.*\.(jar|ear|war|pom)</filePath>
+        <cpe>cpe:/a:pam:pam</cpe>
+        <cpe>cpe:/a:pam_ssh:pam_ssh</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        elastic search false postivies
+        ]]></notes>
+        <gav regex="true">org\.elasticsearch:securesm:.*</gav>
+        <cpe>cpe:/a:elasticsearch:elasticsearch</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Glassfish false positives.
+        ]]></notes>
+        <gav regex="true">org\.glassfish:javax.el:.*</gav>
+        <cpe>cpe:/a:oracle:glassfish</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Struts false positives.
+        ]]></notes>
+        <gav regex="true">sslext:sslext:.*</gav>
+        <cpe>cpe:/a:apache:struts</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        ACtiveMQ false positives.
+        ]]></notes>
+        <gav regex="true">org\.apache\.activemq:activemq-pool.*</gav>
+        <cpe>cpe:/a:apache:activemq</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        ACtiveMQ false positives.
+        ]]></notes>
+        <gav regex="true">org\.apache\.activemq:artemis.*</gav>
+        <cpe>cpe:/a:apache:activemq</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Spring data mongodb false positives.
+        ]]></notes>
+        <gav regex="true">org\.springframework\.data:spring-data-mongodb.*</gav>
+        <cpe>cpe:/a:mongodb:mongodb</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Spring data neo4j false positives.
+        ]]></notes>
+        <gav regex="true">org\.springframework\.data:spring-data-neo4j:.*</gav>
+        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:neo4j:neo4j</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Spring data solr false positives.
+        ]]></notes>
+        <gav regex="true">org\.springframework\.data:spring-data-solr:.*</gav>
+        <cpe>cpe:/a:apache:solr</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Spring social facebook false positive.
+        ]]></notes>
+        <gav regex="true">org\.springframework\.social:spring-social-facebook:.*</gav>
+        <cpe>cpe:/a:facebook:facebook</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Spring Security JWT false positive.
+        ]]></notes>
+        <gav regex="true">org\.springframework\.security:spring-security-jwt.*</gav>
+        <cpe>cpe:/a:vmware:springsource_spring_security</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Aether false positive.
+        ]]></notes>
+        <gav regex="true">org.eclipse.aether:aether.*</gav>
+        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        Drupal services false positive.
+        ]]></notes>
+        <filePath regex="true">.*\.(jar|ear|war|pom)</filePath>
+        <cpe>cpe:/a:services_project:services</cpe>
+    </suppress>
 </suppressions>

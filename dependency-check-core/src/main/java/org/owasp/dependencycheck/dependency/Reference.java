@@ -20,7 +20,8 @@ package org.owasp.dependencycheck.dependency;
 import java.io.Serializable;
 
 /**
- * An external reference for a vulnerability. This contains a name, URL, and a source.
+ * An external reference for a vulnerability. This contains a name, URL, and a
+ * source.
  *
  * @author Jeremy Long
  */
@@ -95,6 +96,11 @@ public class Reference implements Serializable, Comparable<Reference> {
      */
     public void setSource(String source) {
         this.source = source;
+    }
+
+    @Override
+    public String toString() {
+        return "Reference: { name='" + this.name + "', url='" + this.url + "', source='" + this.source + "' }";
     }
 
     @Override

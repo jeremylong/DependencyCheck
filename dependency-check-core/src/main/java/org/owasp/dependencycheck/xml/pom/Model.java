@@ -260,7 +260,7 @@ public class Model {
     public void addLicense(License license) {
         licenses.add(license);
     }
-    
+
     /**
      * The project URL.
      */
@@ -272,17 +272,17 @@ public class Model {
      * @return the value of projectURL
      */
     public String getProjectURL() {
-		return projectURL;
-	}
+        return projectURL;
+    }
 
     /**
      * Set the value of projectURL.
      *
-     * @param parentVersion new value of projectURL
+     * @param projectURL new value of projectURL
      */
-	public void setProjectURL(String projectURL) {
-		this.projectURL = projectURL;
-	}
+    public void setProjectURL(String projectURL) {
+        this.projectURL = projectURL;
+    }
 
     /**
      * Process the Maven properties file and interpolate all properties.
@@ -308,11 +308,14 @@ public class Model {
 
     /**
      * <p>
-     * A utility function that will interpolate strings based on values given in the properties file. It will also interpolate the
-     * strings contained within the properties file so that properties can reference other properties.</p>
+     * A utility function that will interpolate strings based on values given in
+     * the properties file. It will also interpolate the strings contained
+     * within the properties file so that properties can reference other
+     * properties.</p>
      * <p>
-     * <b>Note:</b> if there is no property found the reference will be removed. In other words, if the interpolated string will
-     * be replaced with an empty string.
+     * <b>Note:</b> if there is no property found the reference will be removed.
+     * In other words, if the interpolated string will be replaced with an empty
+     * string.
      * </p>
      * <p>
      * Example:</p>
@@ -329,7 +332,8 @@ public class Model {
      * </code>
      *
      * @param text the string that contains references to properties.
-     * @param properties a collection of properties that may be referenced within the text.
+     * @param properties a collection of properties that may be referenced
+     * within the text.
      * @return the interpolated text.
      */
     public static String interpolateString(String text, Properties properties) {
@@ -340,8 +344,9 @@ public class Model {
         return substitutor.replace(text);
     }
 
-	/**
-     * Utility class that can provide values from a Properties object to a StrSubstitutor.
+    /**
+     * Utility class that can provide values from a Properties object to a
+     * StrSubstitutor.
      */
     private static class PropertyLookup extends StrLookup {
 

@@ -35,11 +35,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p>
- * This analyzer ensures dependencies that should be grouped together, to remove excess noise from the report, are grouped. An
- * example would be Spring, Spring Beans, Spring MVC, etc. If they are all for the same version and have the same relative path
- * then these should be grouped into a single dependency under the core/main library.</p>
+ * This analyzer ensures dependencies that should be grouped together, to remove
+ * excess noise from the report, are grouped. An example would be Spring, Spring
+ * Beans, Spring MVC, etc. If they are all for the same version and have the
+ * same relative path then these should be grouped into a single dependency
+ * under the core/main library.</p>
  * <p>
- * Note, this grouping only works on dependencies with identified CVE entries</p>
+ * Note, this grouping only works on dependencies with identified CVE
+ * entries</p>
  *
  * @author Jeremy Long
  */
@@ -92,12 +95,14 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     //</editor-fold>
 
     /**
-     * Analyzes a set of dependencies. If they have been found to have the same base path and the same set of identifiers they are
-     * likely related. The related dependencies are bundled into a single reportable item.
+     * Analyzes a set of dependencies. If they have been found to have the same
+     * base path and the same set of identifiers they are likely related. The
+     * related dependencies are bundled into a single reportable item.
      *
      * @param ignore this analyzer ignores the dependency being analyzed
      * @param engine the engine that is scanning the dependencies
-     * @throws AnalysisException is thrown if there is an error reading the JAR file.
+     * @throws AnalysisException is thrown if there is an error reading the JAR
+     * file.
      */
     @Override
     public void analyze(Dependency ignore, Engine engine) throws AnalysisException {
@@ -167,10 +172,11 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
      * Adds the relatedDependency to the dependency's related dependencies.
      *
      * @param dependency the main dependency
-     * @param relatedDependency a collection of dependencies to be removed from the main analysis loop, this is the source of
-     * dependencies to remove
-     * @param dependenciesToRemove a collection of dependencies that will be removed from the main analysis loop, this function
-     * adds to this collection
+     * @param relatedDependency a collection of dependencies to be removed from
+     * the main analysis loop, this is the source of dependencies to remove
+     * @param dependenciesToRemove a collection of dependencies that will be
+     * removed from the main analysis loop, this function adds to this
+     * collection
      */
     private void mergeDependencies(final Dependency dependency, final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove) {
         dependency.addRelatedDependency(relatedDependency);
@@ -186,7 +192,8 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     }
 
     /**
-     * Attempts to trim a maven repo to a common base path. This is typically [drive]\[repo_location]\repository\[path1]\[path2].
+     * Attempts to trim a maven repo to a common base path. This is typically
+     * [drive]\[repo_location]\repository\[path1]\[path2].
      *
      * @param path the path to trim
      * @return a string representing the base path.
@@ -211,11 +218,13 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     }
 
     /**
-     * Returns true if the file names (and version if it exists) of the two dependencies are sufficiently similar.
+     * Returns true if the file names (and version if it exists) of the two
+     * dependencies are sufficiently similar.
      *
      * @param dependency1 a dependency2 to compare
      * @param dependency2 a dependency2 to compare
-     * @return true if the identifiers in the two supplied dependencies are equal
+     * @return true if the identifiers in the two supplied dependencies are
+     * equal
      */
     private boolean fileNameMatch(Dependency dependency1, Dependency dependency2) {
         if (dependency1 == null || dependency1.getFileName() == null
@@ -243,11 +252,13 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     }
 
     /**
-     * Returns true if the CPE identifiers in the two supplied dependencies are equal.
+     * Returns true if the CPE identifiers in the two supplied dependencies are
+     * equal.
      *
      * @param dependency1 a dependency2 to compare
      * @param dependency2 a dependency2 to compare
-     * @return true if the identifiers in the two supplied dependencies are equal
+     * @return true if the identifiers in the two supplied dependencies are
+     * equal
      */
     private boolean cpeIdentifiersMatch(Dependency dependency1, Dependency dependency2) {
         if (dependency1 == null || dependency1.getIdentifiers() == null
@@ -317,37 +328,53 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
         }
         return false;
     }
-    
+
     /**
-     * Bundling Ruby gems that are identified from different .gemspec files but denote the same package path.
-     * This happens when Ruby bundler installs an app's dependencies by running "bundle install".
+     * Bundling Ruby gems that are identified from different .gemspec files but
+     * denote the same package path. This happens when Ruby bundler installs an
+     * application's dependencies by running "bundle install".
+     *
+     * @param dependency1 dependency to compare
+     * @param dependency2 dependency to compare
+     * @return true if the the dependencies being analyzed appear to be the
+     * same; otherwise false
      */
     private boolean isSameRubyGem(Dependency dependency1, Dependency dependency2) {
-    	if (dependency1 == null || dependency2 == null ||
-    		!dependency1.getFileName().endsWith(".gemspec") ||
-    		!dependency2.getFileName().endsWith(".gemspec") ||
-    		dependency1.getPackagePath() == null ||
-    		dependency2.getPackagePath() == null) {
+        if (dependency1 == null || dependency2 == null
+                || !dependency1.getFileName().endsWith(".gemspec")
+                || !dependency2.getFileName().endsWith(".gemspec")
+                || dependency1.getPackagePath() == null
+                || dependency2.getPackagePath() == null) {
             return false;
         }
-        if (dependency1.getPackagePath().equalsIgnoreCase(dependency2.getPackagePath()))
-        	return true;
+        if (dependency1.getPackagePath().equalsIgnoreCase(dependency2.getPackagePath())) {
+            return true;
+        }
 
-       	return false;
+        return false;
     }
-    
+
     /**
-     * Ruby gems installed by "bundle install" can have zero or more *.gemspec files, all of which have the same packagePath and should be grouped.
-     * If one of these gemspec is from <parent>/specifications/*.gemspec, because it is a stub with fully resolved gem meta-data
-     * created by Ruby bundler, this dependency should be the main one.  Otherwise, use dependency2 as main.
-     * 
-     * This method returns null if any dependency is not from *.gemspec, or the two do not have the same packagePath.
-     * In this case, they should not be grouped.
+     * Ruby gems installed by "bundle install" can have zero or more *.gemspec
+     * files, all of which have the same packagePath and should be grouped. If
+     * one of these gemspec is from <parent>/specifications/*.gemspec, because
+     * it is a stub with fully resolved gem meta-data created by Ruby bundler,
+     * this dependency should be the main one. Otherwise, use dependency2 as
+     * main.
+     *
+     * This method returns null if any dependency is not from *.gemspec, or the
+     * two do not have the same packagePath. In this case, they should not be
+     * grouped.
+     *
+     * @param dependency1 dependency to compare
+     * @param dependency2 dependency to compare
+     * @return the main dependency; or null if a gemspec is not included in the
+     * analysis
      */
     private Dependency getMainGemspecDependency(Dependency dependency1, Dependency dependency2) {
-    	if (isSameRubyGem(dependency1, dependency2)) {
-        	final File lFile = dependency1.getActualFile();
-            File left = lFile.getParentFile();
+        if (isSameRubyGem(dependency1, dependency2)) {
+            final File lFile = dependency1.getActualFile();
+            final File left = lFile.getParentFile();
             if (left != null && left.getName().equalsIgnoreCase("specifications")) {
                 return dependency1;
             }
@@ -384,12 +411,13 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     }
 
     /**
-     * This is likely a very broken attempt at determining if the 'left' dependency is the 'core' library in comparison to the
-     * 'right' library.
+     * This is likely a very broken attempt at determining if the 'left'
+     * dependency is the 'core' library in comparison to the 'right' library.
      *
      * @param left the dependency to test
      * @param right the dependency to test against
-     * @return a boolean indicating whether or not the left dependency should be considered the "core" version.
+     * @return a boolean indicating whether or not the left dependency should be
+     * considered the "core" version.
      */
     boolean isCore(Dependency left, Dependency right) {
         final String leftName = left.getFileName().toLowerCase();
@@ -425,11 +453,13 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     }
 
     /**
-     * Compares the SHA1 hashes of two dependencies to determine if they are equal.
+     * Compares the SHA1 hashes of two dependencies to determine if they are
+     * equal.
      *
      * @param dependency1 a dependency object to compare
      * @param dependency2 a dependency object to compare
-     * @return true if the sha1 hashes of the two dependencies match; otherwise false
+     * @return true if the sha1 hashes of the two dependencies match; otherwise
+     * false
      */
     private boolean hashesMatch(Dependency dependency1, Dependency dependency2) {
         if (dependency1 == null || dependency2 == null || dependency1.getSha1sum() == null || dependency2.getSha1sum() == null) {
@@ -439,12 +469,13 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     }
 
     /**
-     * Determines if the jar is shaded and the created pom.xml identified the same CPE as the jar - if so, the pom.xml dependency
-     * should be removed.
+     * Determines if the jar is shaded and the created pom.xml identified the
+     * same CPE as the jar - if so, the pom.xml dependency should be removed.
      *
      * @param dependency a dependency to check
      * @param nextDependency another dependency to check
-     * @return true if on of the dependencies is a pom.xml and the identifiers between the two collections match; otherwise false
+     * @return true if on of the dependencies is a pom.xml and the identifiers
+     * between the two collections match; otherwise false
      */
     private boolean isShadedJar(Dependency dependency, Dependency nextDependency) {
         final String mainName = dependency.getFileName().toLowerCase();
@@ -458,12 +489,13 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
     }
 
     /**
-     * Determines which path is shortest; if path lengths are equal then we use compareTo of the string method to determine if the
-     * first path is smaller.
+     * Determines which path is shortest; if path lengths are equal then we use
+     * compareTo of the string method to determine if the first path is smaller.
      *
      * @param left the first path to compare
      * @param right the second path to compare
-     * @return <code>true</code> if the leftPath is the shortest; otherwise <code>false</code>
+     * @return <code>true</code> if the leftPath is the shortest; otherwise
+     * <code>false</code>
      */
     protected boolean firstPathIsShortest(String left, String right) {
         final String leftPath = left.replace('\\', '/');

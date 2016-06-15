@@ -34,15 +34,23 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Used to analyze Ruby Gem specifications and collect information that can be used to determine the associated CPE. Regular
- * expressions are used to parse the well-defined Ruby syntax that forms the specification.
+ * Used to analyze Ruby Gem specifications and collect information that can be
+ * used to determine the associated CPE. Regular expressions are used to parse
+ * the well-defined Ruby syntax that forms the specification.
  *
  * @author Dale Visser
  */
+@Experimental
 public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
 
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(RubyGemspecAnalyzer.class);
     /**
      * The name of the analyzer.
      */
@@ -53,13 +61,22 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
 
+    /**
+     * The gemspec file extension.
+     */
     private static final String GEMSPEC = "gemspec";
 
-    private static final FileFilter FILTER
-            = FileFilterBuilder.newInstance().addExtensions(GEMSPEC).build();
-    		//TODO: support Rakefile
-    		//= FileFilterBuilder.newInstance().addExtensions(GEMSPEC).addFilenames("Rakefile").build();
+    /**
+     * The file filter containing the list of file extensions that can be
+     * analyzed.
+     */
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(GEMSPEC).build();
+    //TODO: support Rakefile
+    //= FileFilterBuilder.newInstance().addExtensions(GEMSPEC).addFilenames("Rakefile").build();
 
+    /**
+     * The name of the version file.
+     */
     private static final String VERSION_FILE_NAME = "VERSION";
 
     /**
@@ -96,7 +113,8 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Returns the key used in the properties file to reference the analyzer's enabled property.
+     * Returns the key used in the properties file to reference the analyzer's
+     * enabled property.
      *
      * @return the analyzer's enabled property setting key
      */
@@ -108,8 +126,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The capture group #1 is the block variable.
      */
-    private static final Pattern GEMSPEC_BLOCK_INIT
-            = Pattern.compile("Gem::Specification\\.new\\s+?do\\s+?\\|(.+?)\\|");
+    private static final Pattern GEMSPEC_BLOCK_INIT = Pattern.compile("Gem::Specification\\.new\\s+?do\\s+?\\|(.+?)\\|");
 
     @Override
     protected void analyzeFileType(Dependency dependency, Engine engine)
@@ -125,7 +142,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
         if (matcher.find()) {
             contents = contents.substring(matcher.end());
             final String blockVariable = matcher.group(1);
-            
+
             final EvidenceCollection vendor = dependency.getVendorEvidence();
             final EvidenceCollection product = dependency.getProductEvidence();
             final String name = addStringEvidence(product, contents, blockVariable, "name", "name", Confidence.HIGHEST);
@@ -138,71 +155,90 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
             addStringEvidence(vendor, contents, blockVariable, "email", "emails?", Confidence.MEDIUM);
             addStringEvidence(vendor, contents, blockVariable, "homepage", "homepage", Confidence.HIGHEST);
             addStringEvidence(vendor, contents, blockVariable, "license", "licen[cs]es?", Confidence.HIGHEST);
-            
-            String value = addStringEvidence(dependency.getVersionEvidence(), contents, blockVariable, "version", "version", Confidence.HIGHEST);
-            if(value.length() < 1) 
-            	addEvidenceFromVersionFile(dependency.getActualFile(), dependency.getVersionEvidence());
+
+            final String value = addStringEvidence(dependency.getVersionEvidence(), contents,
+                    blockVariable, "version", "version", Confidence.HIGHEST);
+            if (value.length() < 1) {
+                addEvidenceFromVersionFile(dependency.getActualFile(), dependency.getVersionEvidence());
+            }
         }
-        
+
         setPackagePath(dependency);
     }
 
+    /**
+     * Adds the specified evidence to the given evidence collection.
+     *
+     * @param evidences the collection to add the evidence to
+     * @param contents the evidence contents
+     * @param blockVariable the variable
+     * @param field the field
+     * @param fieldPattern the field pattern
+     * @param confidence the confidence of the evidence
+     * @return the evidence string value added
+     */
     private String addStringEvidence(EvidenceCollection evidences, String contents,
             String blockVariable, String field, String fieldPattern, Confidence confidence) {
         String value = "";
-        
-    	//capture array value between [ ]
-    	final Matcher arrayMatcher = Pattern.compile(
+
+        //capture array value between [ ]
+        final Matcher arrayMatcher = Pattern.compile(
                 String.format("\\s*?%s\\.%s\\s*?=\\s*?\\[(.*?)\\]", blockVariable, fieldPattern), Pattern.CASE_INSENSITIVE).matcher(contents);
-    	if(arrayMatcher.find()) {
-    		String arrayValue = arrayMatcher.group(1);
-    		value = arrayValue.replaceAll("['\"]", "").trim(); //strip quotes
-    	}
-    	//capture single value between quotes
-    	else {
-	        final Matcher matcher = Pattern.compile(
-	                String.format("\\s*?%s\\.%s\\s*?=\\s*?(['\"])(.*?)\\1", blockVariable, fieldPattern), Pattern.CASE_INSENSITIVE).matcher(contents);
-	        if (matcher.find()) {
-	            value = matcher.group(2);
-	        }
-    	}
-    	if(value.length() > 0)
-    		evidences.addEvidence(GEMSPEC, field, value, confidence);
-    	
+        if (arrayMatcher.find()) {
+            final String arrayValue = arrayMatcher.group(1);
+            value = arrayValue.replaceAll("['\"]", "").trim(); //strip quotes
+        } else { //capture single value between quotes
+            final Matcher matcher = Pattern.compile(
+                    String.format("\\s*?%s\\.%s\\s*?=\\s*?(['\"])(.*?)\\1", blockVariable, fieldPattern), Pattern.CASE_INSENSITIVE).matcher(contents);
+            if (matcher.find()) {
+                value = matcher.group(2);
+            }
+        }
+        if (value.length() > 0) {
+            evidences.addEvidence(GEMSPEC, field, value, confidence);
+        }
+
         return value;
     }
-    
-    private String addEvidenceFromVersionFile(File dependencyFile, EvidenceCollection versionEvidences) {
-    	String value = null;
-    	File parentDir = dependencyFile.getParentFile();
-    	if(parentDir != null) {
-    		File[] matchingFiles = parentDir.listFiles(new FilenameFilter() {
-    		    public boolean accept(File dir, String name) {
-    		        return name.contains(VERSION_FILE_NAME);
-    		    }
-    		});
-    		
-    		for(int i = 0; i < matchingFiles.length; i++) {
-    			try {
-					List<String> lines = FileUtils.readLines(matchingFiles[i]);
-					if(lines.size() == 1) { //TODO other checking?
-						value = lines.get(0).trim();
-						versionEvidences.addEvidence(GEMSPEC, "version", value, Confidence.HIGH);
-					}
-					
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-    		}
-    	}
-    	
-    	return value;
+
+    /**
+     * Adds evidence from the version file.
+     *
+     * @param dependencyFile the dependency being analyzed
+     * @param versionEvidences the version evidence
+     */
+    private void addEvidenceFromVersionFile(File dependencyFile, EvidenceCollection versionEvidences) {
+        final File parentDir = dependencyFile.getParentFile();
+        if (parentDir != null) {
+            final File[] matchingFiles = parentDir.listFiles(new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return name.contains(VERSION_FILE_NAME);
+                }
+            });
+            for (File f : matchingFiles) {
+                try {
+                    final List<String> lines = FileUtils.readLines(f, Charset.defaultCharset());
+                    if (lines.size() == 1) { //TODO other checking?
+                        final String value = lines.get(0).trim();
+                        versionEvidences.addEvidence(GEMSPEC, "version", value, Confidence.HIGH);
+                    }
+                } catch (IOException e) {
+                    LOGGER.debug("Error reading gemspec", e);
+                }
+            }
+        }
     }
-    
+
+    /**
+     * Sets the package path on the dependency.
+     *
+     * @param dep the dependency to alter
+     */
     private void setPackagePath(Dependency dep) {
-    	File file = new File(dep.getFilePath());
-    	String parent = file.getParent();
-    	if(parent != null)
-    		dep.setPackagePath(parent);
+        final File file = new File(dep.getFilePath());
+        final String parent = file.getParent();
+        if (parent != null) {
+            dep.setPackagePath(parent);
+        }
     }
 }

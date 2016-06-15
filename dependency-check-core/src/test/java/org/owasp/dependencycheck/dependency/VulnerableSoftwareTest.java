@@ -20,6 +20,8 @@ package org.owasp.dependencycheck.dependency;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,7 +31,7 @@ import org.owasp.dependencycheck.BaseTest;
  *
  * @author Jeremy Long
  */
-public class VulnerableSoftwareTest extends BaseTest  {
+public class VulnerableSoftwareTest extends BaseTest {
 
     /**
      * Test of equals method, of class VulnerableSoftware.
@@ -40,9 +42,20 @@ public class VulnerableSoftwareTest extends BaseTest  {
         obj.setCpe("cpe:/a:mortbay:jetty:6.1.0");
         VulnerableSoftware instance = new VulnerableSoftware();
         instance.setCpe("cpe:/a:mortbay:jetty:6.1");
-        boolean expResult = false;
-        boolean result = instance.equals(obj);
-        assertEquals(expResult, result);
+        assertFalse(instance.equals(obj));
+    }
+
+    /**
+     * Test of equals method, of class VulnerableSoftware.
+     */
+    @Test
+    public void testEquals2() {
+        VulnerableSoftware obj = new VulnerableSoftware();
+        obj.setCpe("cpe:/a:mortbay:jetty:6.1.0");
+        VulnerableSoftware instance = new VulnerableSoftware();
+        instance.setCpe("cpe:/a:mortbay:jetty:6.1.0");
+        obj.setPreviousVersion("1");
+        assertTrue(instance.equals(obj));
     }
 
     /**
@@ -77,5 +90,65 @@ public class VulnerableSoftwareTest extends BaseTest  {
         expResult = 1;
         result = instance.compareTo(vs);
         assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testCompareToNonNumerical() {
+        VulnerableSoftware vs = new VulnerableSoftware();
+        vs.setCpe("cpe:/a:mysql:mysql:5.1.23a");
+        VulnerableSoftware vs1 = new VulnerableSoftware();
+        vs1.setCpe("cpe:/a:mysql:mysql:5.1.23a");
+        vs1.setPreviousVersion("1");
+        assertEquals(0, vs.compareTo(vs1));
+        assertEquals(0, vs1.compareTo(vs));
+    }
+
+    @Test
+    public void testCompareToComplex() {
+        VulnerableSoftware vs = new VulnerableSoftware();
+        VulnerableSoftware vs1 = new VulnerableSoftware();
+
+        vs.setCpe("2.1");
+        vs1.setCpe("2.1.10");
+        assertTrue(vs.compareTo(vs1) < 0);
+
+        vs.setCpe("cpe:/a:hp:system_management_homepage:2.1.1");
+        vs1.setCpe("cpe:/a:hp:system_management_homepage:2.1.10");
+        assertTrue(vs.compareTo(vs1) < 0);
+
+        vs.setCpe("10");
+        vs1.setCpe("10-186");
+        assertTrue(vs.compareTo(vs1) < 0);
+
+        vs.setCpe("2.1.10");
+        vs1.setCpe("2.1.10-186");
+        assertTrue(vs.compareTo(vs1) < 0);
+        
+        vs.setCpe("cpe:/a:hp:system_management_homepage:2.1.10");
+        vs1.setCpe("cpe:/a:hp:system_management_homepage:2.1.10-186");
+        assertTrue(vs.compareTo(vs1) < 0);
+        //assertTrue(vs1.compareTo(vs)>0);
+    }
+
+    @Test
+    public void testEqualsPreviousVersion() {
+        VulnerableSoftware vs = new VulnerableSoftware();
+        vs.setCpe("cpe:/a:mysql:mysql:5.1.23a");
+        VulnerableSoftware vs1 = new VulnerableSoftware();
+        vs1.setCpe("cpe:/a:mysql:mysql:5.1.23a");
+        vs1.setPreviousVersion("1");
+        assertEquals(vs, vs1);
+        assertEquals(vs1, vs);
+
+    }
+
+    @Test
+    public void testParseCPE() {
+        VulnerableSoftware vs = new VulnerableSoftware();
+        /* Version for test taken from CVE-2008-2079 */
+        vs.setCpe("cpe:/a:mysql:mysql:5.1.23a");
+        assertEquals("mysql", vs.getVendor());
+        assertEquals("mysql", vs.getProduct());
+        assertEquals("5.1.23a", vs.getVersion());
     }
 }

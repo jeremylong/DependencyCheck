@@ -1,6 +1,10 @@
 Ruby Gemspec Analyzer
 =====================
 
+*Experimental*: This analyzer is considered experimental. While this analyzer may 
+be useful and provide valid results more testing must be completed to ensure that
+the false negative/false positive rates are acceptable. 
+
 OWASP dependency-check includes an analyzer that will scan [Ruby Gem](https://rubygems.org/)
 [specifications](http://guides.rubygems.org/specification-reference/). The
 analyzer will collect as much information as it can about the Gem. The
@@ -9,7 +13,7 @@ into vendor, product, and version buckets. Other analyzers later use this
 evidence to identify any Common Platform Enumeration (CPE) identifiers that
 apply.
 
-Note: It is highly recommended that Ruby projects use
+*Note*: It is highly recommended that Ruby projects use
 [bundler-audit](https://github.com/rubysec/bundler-audit#readme).
 
 Files Types Scanned: Rakefile, \*.gemspec

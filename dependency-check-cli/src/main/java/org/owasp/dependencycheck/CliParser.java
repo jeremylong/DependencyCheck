@@ -58,7 +58,8 @@ public final class CliParser {
      * Parses the arguments passed in and captures the results for later use.
      *
      * @param args the command line arguments
-     * @throws FileNotFoundException is thrown when a 'file' argument does not point to a file that exists.
+     * @throws FileNotFoundException is thrown when a 'file' argument does not
+     * point to a file that exists.
      * @throws ParseException is thrown when a Parse Exception occurs.
      */
     public void parse(String[] args) throws FileNotFoundException, ParseException {
@@ -85,9 +86,10 @@ public final class CliParser {
     /**
      * Validates that the command line arguments are valid.
      *
-     * @throws FileNotFoundException if there is a file specified by either the SCAN or CPE command line arguments that does not
-     * exist.
-     * @throws ParseException is thrown if there is an exception parsing the command line.
+     * @throws FileNotFoundException if there is a file specified by either the
+     * SCAN or CPE command line arguments that does not exist.
+     * @throws ParseException is thrown if there is an exception parsing the
+     * command line.
      */
     private void validateArgs() throws FileNotFoundException, ParseException {
         if (isUpdateOnly() || isRunScan()) {
@@ -141,12 +143,14 @@ public final class CliParser {
     }
 
     /**
-     * Validates whether or not the path(s) points at a file that exists; if the path(s) does not point to an existing file a
-     * FileNotFoundException is thrown.
+     * Validates whether or not the path(s) points at a file that exists; if the
+     * path(s) does not point to an existing file a FileNotFoundException is
+     * thrown.
      *
      * @param paths the paths to validate if they exists
      * @param optType the option being validated (e.g. scan, out, etc.)
-     * @throws FileNotFoundException is thrown if one of the paths being validated does not exist.
+     * @throws FileNotFoundException is thrown if one of the paths being
+     * validated does not exist.
      */
     private void validatePathExists(String[] paths, String optType) throws FileNotFoundException {
         for (String path : paths) {
@@ -155,12 +159,14 @@ public final class CliParser {
     }
 
     /**
-     * Validates whether or not the path points at a file that exists; if the path does not point to an existing file a
-     * FileNotFoundException is thrown.
+     * Validates whether or not the path points at a file that exists; if the
+     * path does not point to an existing file a FileNotFoundException is
+     * thrown.
      *
      * @param path the paths to validate if they exists
      * @param argumentName the argument being validated (e.g. scan, out, etc.)
-     * @throws FileNotFoundException is thrown if the path being validated does not exist.
+     * @throws FileNotFoundException is thrown if the path being validated does
+     * not exist.
      */
     private void validatePathExists(String path, String argumentName) throws FileNotFoundException {
         if (path == null) {
@@ -181,12 +187,10 @@ public final class CliParser {
                         throw new FileNotFoundException(msg);
                     }
                 }
-            } else {
-                if (!f.exists()) {
-                    isValid = false;
-                    final String msg = String.format("Invalid '%s' argument: '%s'", argumentName, path);
-                    throw new FileNotFoundException(msg);
-                }
+            } else if (!f.exists()) {
+                isValid = false;
+                final String msg = String.format("Invalid '%s' argument: '%s'", argumentName, path);
+                throw new FileNotFoundException(msg);
             }
         } else if (path.startsWith("//") || path.startsWith("\\\\")) {
             isValid = false;
@@ -196,7 +200,8 @@ public final class CliParser {
     }
 
     /**
-     * Generates an Options collection that is used to parse the command line and to display the help message.
+     * Generates an Options collection that is used to parse the command line
+     * and to display the help message.
      *
      * @return the command line options used for parsing the command line
      */
@@ -272,6 +277,10 @@ public final class CliParser {
                 .desc("The number of hours to wait before checking for new updates from the NVD.")
                 .build();
 
+        final Option experimentalEnabled = Option.builder().longOpt(ARGUMENT.EXPERIMENTAL)
+                .desc("Enables the experimental analzers.")
+                .build();
+
         //This is an option group because it can be specified more then once.
         final OptionGroup og = new OptionGroup();
         og.addOption(path);
@@ -292,12 +301,14 @@ public final class CliParser {
                 .addOption(props)
                 .addOption(verboseLog)
                 .addOption(suppressionFile)
-                .addOption(cveValidForHours);
+                .addOption(cveValidForHours)
+                .addOption(experimentalEnabled);
     }
 
     /**
-     * Adds the advanced command line options to the given options collection. These are split out for purposes of being able to
-     * display two different help messages.
+     * Adds the advanced command line options to the given options collection.
+     * These are split out for purposes of being able to display two different
+     * help messages.
      *
      * @param options a collection of command line arguments
      * @throws IllegalArgumentException thrown if there is an exception
@@ -466,8 +477,10 @@ public final class CliParser {
     }
 
     /**
-     * Adds the deprecated command line options to the given options collection. These are split out for purposes of not including
-     * them in the help message. We need to add the deprecated options so as not to break existing scripts.
+     * Adds the deprecated command line options to the given options collection.
+     * These are split out for purposes of not including them in the help
+     * message. We need to add the deprecated options so as not to break
+     * existing scripts.
      *
      * @param options a collection of command line arguments
      * @throws IllegalArgumentException thrown if there is an exception
@@ -514,7 +527,8 @@ public final class CliParser {
     }
 
     /**
-     * Returns the symbolic link depth (how deeply symbolic links will be followed).
+     * Returns the symbolic link depth (how deeply symbolic links will be
+     * followed).
      *
      * @return the symbolic link depth
      */
@@ -534,7 +548,8 @@ public final class CliParser {
     /**
      * Returns true if the disableJar command line argument was specified.
      *
-     * @return true if the disableJar command line argument was specified; otherwise false
+     * @return true if the disableJar command line argument was specified;
+     * otherwise false
      */
     public boolean isJarDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_JAR);
@@ -543,7 +558,8 @@ public final class CliParser {
     /**
      * Returns true if the disableArchive command line argument was specified.
      *
-     * @return true if the disableArchive command line argument was specified; otherwise false
+     * @return true if the disableArchive command line argument was specified;
+     * otherwise false
      */
     public boolean isArchiveDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_ARCHIVE);
@@ -552,7 +568,8 @@ public final class CliParser {
     /**
      * Returns true if the disableNuspec command line argument was specified.
      *
-     * @return true if the disableNuspec command line argument was specified; otherwise false
+     * @return true if the disableNuspec command line argument was specified;
+     * otherwise false
      */
     public boolean isNuspecDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_NUSPEC);
@@ -561,16 +578,19 @@ public final class CliParser {
     /**
      * Returns true if the disableAssembly command line argument was specified.
      *
-     * @return true if the disableAssembly command line argument was specified; otherwise false
+     * @return true if the disableAssembly command line argument was specified;
+     * otherwise false
      */
     public boolean isAssemblyDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_ASSEMBLY);
     }
 
     /**
-     * Returns true if the disableBundleAudit command line argument was specified.
+     * Returns true if the disableBundleAudit command line argument was
+     * specified.
      *
-     * @return true if the disableBundleAudit command line argument was specified; otherwise false
+     * @return true if the disableBundleAudit command line argument was
+     * specified; otherwise false
      */
     public boolean isBundleAuditDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_BUNDLE_AUDIT);
@@ -579,7 +599,8 @@ public final class CliParser {
     /**
      * Returns true if the disablePyDist command line argument was specified.
      *
-     * @return true if the disablePyDist command line argument was specified; otherwise false
+     * @return true if the disablePyDist command line argument was specified;
+     * otherwise false
      */
     public boolean isPythonDistributionDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_PY_DIST);
@@ -588,7 +609,8 @@ public final class CliParser {
     /**
      * Returns true if the disablePyPkg command line argument was specified.
      *
-     * @return true if the disablePyPkg command line argument was specified; otherwise false
+     * @return true if the disablePyPkg command line argument was specified;
+     * otherwise false
      */
     public boolean isPythonPackageDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_PY_PKG);
@@ -597,7 +619,8 @@ public final class CliParser {
     /**
      * Returns whether the Ruby gemspec analyzer is disabled.
      *
-     * @return true if the {@link ARGUMENT#DISABLE_RUBYGEMS} command line argument was specified; otherwise false
+     * @return true if the {@link ARGUMENT#DISABLE_RUBYGEMS} command line
+     * argument was specified; otherwise false
      */
     public boolean isRubyGemspecDisabled() {
         return (null != line) && line.hasOption(ARGUMENT.DISABLE_RUBYGEMS);
@@ -606,7 +629,8 @@ public final class CliParser {
     /**
      * Returns true if the disableCmake command line argument was specified.
      *
-     * @return true if the disableCmake command line argument was specified; otherwise false
+     * @return true if the disableCmake command line argument was specified;
+     * otherwise false
      */
     public boolean isCmakeDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_CMAKE);
@@ -615,7 +639,8 @@ public final class CliParser {
     /**
      * Returns true if the disableAutoconf command line argument was specified.
      *
-     * @return true if the disableAutoconf command line argument was specified; otherwise false
+     * @return true if the disableAutoconf command line argument was specified;
+     * otherwise false
      */
     public boolean isAutoconfDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_AUTOCONF);
@@ -624,7 +649,8 @@ public final class CliParser {
     /**
      * Returns true if the disableComposer command line argument was specified.
      *
-     * @return true if the disableComposer command line argument was specified; otherwise false
+     * @return true if the disableComposer command line argument was specified;
+     * otherwise false
      */
     public boolean isComposerDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_COMPOSER);
@@ -633,7 +659,8 @@ public final class CliParser {
     /**
      * Returns true if the disableNexus command line argument was specified.
      *
-     * @return true if the disableNexus command line argument was specified; otherwise false
+     * @return true if the disableNexus command line argument was specified;
+     * otherwise false
      */
     public boolean isNexusDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_NEXUS);
@@ -642,7 +669,8 @@ public final class CliParser {
     /**
      * Returns true if the disableOpenSSL command line argument was specified.
      *
-     * @return true if the disableOpenSSL command line argument was specified; otherwise false
+     * @return true if the disableOpenSSL command line argument was specified;
+     * otherwise false
      */
     public boolean isOpenSSLDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_OPENSSL);
@@ -651,7 +679,8 @@ public final class CliParser {
     /**
      * Returns true if the disableNodeJS command line argument was specified.
      *
-     * @return true if the disableNodeJS command line argument was specified; otherwise false
+     * @return true if the disableNodeJS command line argument was specified;
+     * otherwise false
      */
     public boolean isNodeJsDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_NODE_JS);
@@ -660,7 +689,8 @@ public final class CliParser {
     /**
      * Returns true if the disableCentral command line argument was specified.
      *
-     * @return true if the disableCentral command line argument was specified; otherwise false
+     * @return true if the disableCentral command line argument was specified;
+     * otherwise false
      */
     public boolean isCentralDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_CENTRAL);
@@ -669,7 +699,8 @@ public final class CliParser {
     /**
      * Returns the url to the nexus server if one was specified.
      *
-     * @return the url to the nexus server; if none was specified this will return null;
+     * @return the url to the nexus server; if none was specified this will
+     * return null;
      */
     public String getNexusUrl() {
         if (line == null || !line.hasOption(ARGUMENT.NEXUS_URL)) {
@@ -680,9 +711,11 @@ public final class CliParser {
     }
 
     /**
-     * Returns true if the Nexus Analyzer should use the configured proxy to connect to Nexus; otherwise false is returned.
+     * Returns true if the Nexus Analyzer should use the configured proxy to
+     * connect to Nexus; otherwise false is returned.
      *
-     * @return true if the Nexus Analyzer should use the configured proxy to connect to Nexus; otherwise false
+     * @return true if the Nexus Analyzer should use the configured proxy to
+     * connect to Nexus; otherwise false
      */
     public boolean isNexusUsesProxy() {
         // If they didn't specify whether Nexus needs to use the proxy, we should
@@ -722,7 +755,8 @@ public final class CliParser {
     }
 
     /**
-     * Retrieves the file command line parameter(s) specified for the 'scan' argument.
+     * Retrieves the file command line parameter(s) specified for the 'scan'
+     * argument.
      *
      * @return the file paths specified on the command line for scan
      */
@@ -731,7 +765,8 @@ public final class CliParser {
     }
 
     /**
-     * Retrieves the list of excluded file patterns specified by the 'exclude' argument.
+     * Retrieves the list of excluded file patterns specified by the 'exclude'
+     * argument.
      *
      * @return the excluded file patterns
      */
@@ -740,7 +775,8 @@ public final class CliParser {
     }
 
     /**
-     * Returns the directory to write the reports to specified on the command line.
+     * Returns the directory to write the reports to specified on the command
+     * line.
      *
      * @return the path to the reports directory.
      */
@@ -749,7 +785,8 @@ public final class CliParser {
     }
 
     /**
-     * Returns the path to Mono for .NET Assembly analysis on non-windows systems.
+     * Returns the path to Mono for .NET Assembly analysis on non-windows
+     * systems.
      *
      * @return the path to Mono
      */
@@ -767,7 +804,8 @@ public final class CliParser {
     }
 
     /**
-     * Returns the output format specified on the command line. Defaults to HTML if no format was specified.
+     * Returns the output format specified on the command line. Defaults to HTML
+     * if no format was specified.
      *
      * @return the output format name.
      */
@@ -934,9 +972,11 @@ public final class CliParser {
     }
 
     /**
-     * Checks if the auto update feature has been disabled. If it has been disabled via the command line this will return false.
+     * Checks if the auto update feature has been disabled. If it has been
+     * disabled via the command line this will return false.
      *
-     * @return <code>true</code> if auto-update is allowed; otherwise <code>false</code>
+     * @return <code>true</code> if auto-update is allowed; otherwise
+     * <code>false</code>
      */
     public boolean isAutoUpdate() {
         return line != null && !line.hasOption(ARGUMENT.DISABLE_AUTO_UPDATE);
@@ -945,7 +985,8 @@ public final class CliParser {
     /**
      * Checks if the update only flag has been set.
      *
-     * @return <code>true</code> if the update only flag has been set; otherwise <code>false</code>.
+     * @return <code>true</code> if the update only flag has been set; otherwise
+     * <code>false</code>.
      */
     public boolean isUpdateOnly() {
         return line != null && line.hasOption(ARGUMENT.UPDATE_ONLY);
@@ -954,14 +995,16 @@ public final class CliParser {
     /**
      * Checks if the purge NVD flag has been set.
      *
-     * @return <code>true</code> if the purge nvd flag has been set; otherwise <code>false</code>.
+     * @return <code>true</code> if the purge nvd flag has been set; otherwise
+     * <code>false</code>.
      */
     public boolean isPurge() {
         return line != null && line.hasOption(ARGUMENT.PURGE_NVD);
     }
 
     /**
-     * Returns the database driver name if specified; otherwise null is returned.
+     * Returns the database driver name if specified; otherwise null is
+     * returned.
      *
      * @return the database driver name if specified; otherwise null is returned
      */
@@ -970,7 +1013,8 @@ public final class CliParser {
     }
 
     /**
-     * Returns the database driver path if specified; otherwise null is returned.
+     * Returns the database driver path if specified; otherwise null is
+     * returned.
      *
      * @return the database driver name if specified; otherwise null is returned
      */
@@ -979,34 +1023,41 @@ public final class CliParser {
     }
 
     /**
-     * Returns the database connection string if specified; otherwise null is returned.
+     * Returns the database connection string if specified; otherwise null is
+     * returned.
      *
-     * @return the database connection string if specified; otherwise null is returned
+     * @return the database connection string if specified; otherwise null is
+     * returned
      */
     public String getConnectionString() {
         return line.getOptionValue(ARGUMENT.CONNECTION_STRING);
     }
 
     /**
-     * Returns the database database user name if specified; otherwise null is returned.
+     * Returns the database database user name if specified; otherwise null is
+     * returned.
      *
-     * @return the database database user name if specified; otherwise null is returned
+     * @return the database database user name if specified; otherwise null is
+     * returned
      */
     public String getDatabaseUser() {
         return line.getOptionValue(ARGUMENT.DB_NAME);
     }
 
     /**
-     * Returns the database database password if specified; otherwise null is returned.
+     * Returns the database database password if specified; otherwise null is
+     * returned.
      *
-     * @return the database database password if specified; otherwise null is returned
+     * @return the database database password if specified; otherwise null is
+     * returned
      */
     public String getDatabasePassword() {
         return line.getOptionValue(ARGUMENT.DB_PASSWORD);
     }
 
     /**
-     * Returns the additional Extensions if specified; otherwise null is returned.
+     * Returns the additional Extensions if specified; otherwise null is
+     * returned.
      *
      * @return the additional Extensions; otherwise null is returned
      */
@@ -1028,7 +1079,17 @@ public final class CliParser {
     }
 
     /**
-     * A collection of static final strings that represent the possible command line arguments.
+     * Returns true if the experimental analyzers are enabled.
+     *
+     * @return true if the experimental analyzers are enabled; otherwise false
+     */
+    public boolean isExperimentalEnabled() {
+        return line.hasOption(ARGUMENT.EXPERIMENTAL);
+    }
+
+    /**
+     * A collection of static final strings that represent the possible command
+     * line arguments.
      */
     public static class ARGUMENT {
 
@@ -1041,50 +1102,61 @@ public final class CliParser {
          */
         public static final String SCAN_SHORT = "s";
         /**
-         * The long CLI argument name specifying that the CPE/CVE/etc. data should not be automatically updated.
+         * The long CLI argument name specifying that the CPE/CVE/etc. data
+         * should not be automatically updated.
          */
         public static final String DISABLE_AUTO_UPDATE = "noupdate";
         /**
-         * The short CLI argument name specifying that the CPE/CVE/etc. data should not be automatically updated.
+         * The short CLI argument name specifying that the CPE/CVE/etc. data
+         * should not be automatically updated.
          */
         public static final String DISABLE_AUTO_UPDATE_SHORT = "n";
         /**
-         * The long CLI argument name specifying that only the update phase should be executed; no scan should be run.
+         * The long CLI argument name specifying that only the update phase
+         * should be executed; no scan should be run.
          */
         public static final String UPDATE_ONLY = "updateonly";
         /**
-         * The long CLI argument name specifying that only the update phase should be executed; no scan should be run.
+         * The long CLI argument name specifying that only the update phase
+         * should be executed; no scan should be run.
          */
         public static final String PURGE_NVD = "purge";
         /**
-         * The long CLI argument name specifying the directory to write the reports to.
+         * The long CLI argument name specifying the directory to write the
+         * reports to.
          */
         public static final String OUT = "out";
         /**
-         * The short CLI argument name specifying the directory to write the reports to.
+         * The short CLI argument name specifying the directory to write the
+         * reports to.
          */
         public static final String OUT_SHORT = "o";
         /**
-         * The long CLI argument name specifying the output format to write the reports to.
+         * The long CLI argument name specifying the output format to write the
+         * reports to.
          */
         public static final String OUTPUT_FORMAT = "format";
         /**
-         * The short CLI argument name specifying the output format to write the reports to.
+         * The short CLI argument name specifying the output format to write the
+         * reports to.
          */
         public static final String OUTPUT_FORMAT_SHORT = "f";
         /**
-         * The long CLI argument name specifying the name of the project to be scanned.
+         * The long CLI argument name specifying the name of the project to be
+         * scanned.
          */
         public static final String PROJECT = "project";
         /**
-         * The long CLI argument name specifying the name of the application to be scanned.
+         * The long CLI argument name specifying the name of the application to
+         * be scanned.
          *
          * @deprecated project should be used instead
          */
         @Deprecated
         public static final String APP_NAME = "app";
         /**
-         * The short CLI argument name specifying the name of the application to be scanned.
+         * The short CLI argument name specifying the name of the application to
+         * be scanned.
          *
          * @deprecated project should be used instead
          */
@@ -1142,11 +1214,13 @@ public final class CliParser {
          */
         public static final String CONNECTION_TIMEOUT = "connectiontimeout";
         /**
-         * The short CLI argument name for setting the location of an additional properties file.
+         * The short CLI argument name for setting the location of an additional
+         * properties file.
          */
         public static final String PROP_SHORT = "P";
         /**
-         * The CLI argument name for setting the location of an additional properties file.
+         * The CLI argument name for setting the location of an additional
+         * properties file.
          */
         public static final String PROP = "propertyfile";
         /**
@@ -1170,7 +1244,8 @@ public final class CliParser {
          */
         public static final String CVE_BASE_20 = "cveUrl20Base";
         /**
-         * The short CLI argument name for setting the location of the data directory.
+         * The short CLI argument name for setting the location of the data
+         * directory.
          */
         public static final String DATA_DIRECTORY_SHORT = "d";
         /**
@@ -1178,20 +1253,24 @@ public final class CliParser {
          */
         public static final String VERBOSE_LOG = "log";
         /**
-         * The short CLI argument name for setting the location of the data directory.
+         * The short CLI argument name for setting the location of the data
+         * directory.
          */
         public static final String VERBOSE_LOG_SHORT = "l";
 
         /**
-         * The CLI argument name for setting the depth of symbolic links that will be followed.
+         * The CLI argument name for setting the depth of symbolic links that
+         * will be followed.
          */
         public static final String SYM_LINK_DEPTH = "symLink";
         /**
-         * The CLI argument name for setting the location of the suppression file.
+         * The CLI argument name for setting the location of the suppression
+         * file.
          */
         public static final String SUPPRESSION_FILE = "suppression";
         /**
-         * The CLI argument name for setting the location of the suppression file.
+         * The CLI argument name for setting the location of the suppression
+         * file.
          */
         public static final String CVE_VALID_FOR_HOURS = "cveValidForHours";
         /**
@@ -1259,7 +1338,8 @@ public final class CliParser {
          */
         public static final String NEXUS_URL = "nexus";
         /**
-         * Whether or not the defined proxy should be used when connecting to Nexus.
+         * Whether or not the defined proxy should be used when connecting to
+         * Nexus.
          */
         public static final String NEXUS_USES_PROXY = "nexusUsesProxy";
         /**
@@ -1279,11 +1359,13 @@ public final class CliParser {
          */
         public static final String DB_DRIVER = "dbDriverName";
         /**
-         * The CLI argument name for setting the path to the database driver; in case it is not on the class path.
+         * The CLI argument name for setting the path to the database driver; in
+         * case it is not on the class path.
          */
         public static final String DB_DRIVER_PATH = "dbDriverPath";
         /**
-         * The CLI argument name for setting the path to mono for .NET Assembly analysis on non-windows systems.
+         * The CLI argument name for setting the path to mono for .NET Assembly
+         * analysis on non-windows systems.
          */
         public static final String PATH_TO_MONO = "mono";
         /**
@@ -1295,8 +1377,13 @@ public final class CliParser {
          */
         public static final String EXCLUDE = "exclude";
         /**
-         * The CLI argument name for setting the path to bundle-audit for Ruby bundle analysis.
+         * The CLI argument name for setting the path to bundle-audit for Ruby
+         * bundle analysis.
          */
         public static final String PATH_TO_BUNDLE_AUDIT = "bundleAudit";
+        /**
+         * The CLI argument to enable the experimental analyzers.
+         */
+        private static final String EXPERIMENTAL = "enableExperimental";
     }
 }

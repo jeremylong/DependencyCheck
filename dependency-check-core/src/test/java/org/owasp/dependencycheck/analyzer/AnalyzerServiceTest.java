@@ -18,9 +18,12 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.util.Iterator;
+import java.util.List;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseDBTestCase;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
@@ -34,15 +37,42 @@ public class AnalyzerServiceTest extends BaseDBTestCase {
     @Test
     public void testGetAnalyzers() {
         AnalyzerService instance = new AnalyzerService(Thread.currentThread().getContextClassLoader());
-        Iterator<Analyzer> result = instance.getAnalyzers();
+        List<Analyzer> result = instance.getAnalyzers();
 
         boolean found = false;
-        while (result.hasNext()) {
-            Analyzer a = result.next();
+        for (Analyzer a : result) {
             if ("Jar Analyzer".equals(a.getName())) {
                 found = true;
             }
         }
         assertTrue("JarAnalyzer loaded", found);
+    }
+    
+    /**
+     * Test of getAnalyzers method, of class AnalyzerService.
+     */
+    @Test
+    public void testGetExperimentalAnalyzers() {
+        Settings.setBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, false);
+        AnalyzerService instance = new AnalyzerService(Thread.currentThread().getContextClassLoader());
+        List<Analyzer> result = instance.getAnalyzers();
+        String experimental = "CMake Analyzer";
+        boolean found = false;
+        for (Analyzer a : result) {
+            if (experimental.equals(a.getName())) {
+                found = true;
+            }
+        }
+        assertFalse("Experimental analyzer loaded when set to false", found);
+        
+        Settings.setBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, true);
+        result = instance.getAnalyzers();
+        found = false;
+        for (Analyzer a : result) {
+            if (experimental.equals(a.getName())) {
+                found = true;
+            }
+        }
+        assertTrue("Experimental analyzer not loaded when set to true", found);
     }
 }

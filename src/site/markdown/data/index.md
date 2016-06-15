@@ -29,4 +29,7 @@ contained within the JAR file itself, contain evidence that is used to accuratel
 a library. If Central cannot be reached, it is highly recommended to setup a
 Nexus server within your organization and to configure dependency-check to use the local
 Nexus server. **Note**, even with a Nexus server setup I have seen dependency-check be
-re-directed to other repositories on the Internet to download the actual POM file.
+re-directed to other repositories on the Internet to download the actual POM file; this
+happened due to a rare circumstance where the Nexus instance used by dependency-check
+was not the instance of Nexus used to build the application (i.e. the dependencies
+were not actually present in the Nexus used by dependency-check).

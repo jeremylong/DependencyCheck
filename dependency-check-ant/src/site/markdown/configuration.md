@@ -27,7 +27,7 @@ the project's dependencies.
 
 Configuration: dependency-check Task
 --------------------
-The following properties can be set on the dependency-check-update task.
+The following properties can be set on the dependency-check task.
 
 Property              | Description                                                                                                                                                                                        | Default Value
 ----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------
@@ -38,11 +38,12 @@ projectName           | The name of the project being scanned.                  
 reportFormat          | The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true.                   | HTML
 reportOutputDirectory | The location to write the report(s). Note, this is not used if generating the report as part of a `mvn site` build                                                                                 | 'target'
 suppressionFile       | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html)                                                                                       | &nbsp;
-proxyServer           | The Proxy Server.                                                                                                                                                                                  | &nbsp;
+proxyServer           | The Proxy Server; see the [proxy configuration](../data/proxy.html) page for more information.                                                                                                                        | &nbsp;
 proxyPort             | The Proxy Port.                                                                                                                                                                                    | &nbsp;
 proxyUsername         | Defines the proxy user name.                                                                                                                                                                       | &nbsp;
 proxyPassword         | Defines the proxy password.                                                                                                                                                                        | &nbsp;
 connectionTimeout     | The URL Connection Timeout.                                                                                                                                                                        | &nbsp;
+enableExperimental    | Enable the [experimental analyzers](../analyzers/index.html). If not enabled the experimental analyzers (see below) will not be loaded or used.                                                                             | false
 
 Analyzer Configuration
 ====================
@@ -52,26 +53,26 @@ Note, that specific analyzers will automatically disable themselves if no file
 types that they support are detected - so specifically disabling them may not
 be needed.
 
-Property                      | Description                                                               | Default Value
-------------------------------|---------------------------------------------------------------------------|------------------
-archiveAnalyzerEnabled        | Sets whether the Archive Analyzer will be used.                           | true
+Property                      | Description                                                                       | Default Value
+------------------------------|-----------------------------------------------------------------------------------|------------------
+archiveAnalyzerEnabled        | Sets whether the Archive Analyzer will be used.                                   | true
 zipExtensions                 | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
-jarAnalyzer                   | Sets whether the Jar Analyzer will be used.                               | true
+jarAnalyzer                   | Sets whether the Jar Analyzer will be used.                                       | true
 centralAnalyzerEnabled        | Sets whether the Central Analyzer will be used. **Disabling this analyzer is not recommended as it could lead to false negatives (e.g. libraries that have vulnerabilities may not be reported correctly).** If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer (see below).                                  | true
 nexusAnalyzerEnabled          | Sets whether Nexus Analyzer will be used. This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
 nexusUrl                      | Defines the Nexus web service endpoint (example http://domain.enterprise/nexus/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
-nexusUsesProxy                | Whether or not the defined proxy should be used when connecting to Nexus. | true
-pyDistributionAnalyzerEnabled | Sets whether the Python Distribution Analyzer will be used.               | true
-pyPackageAnalyzerEnabled      | Sets whether the Python Package Analyzer will be used.                    | true
-rubygemsAnalyzerEnabled       | Sets whether the Ruby Gemspec Analyzer will be used.                      | true
-opensslAnalyzerEnabled        | Sets whether or not the openssl Analyzer should be used.                  | true
-cmakeAnalyzerEnabled          | Sets whether or not the CMake Analyzer should be used.                    | true
-autoconfAnalyzerEnabled       | Sets whether or not the autoconf Analyzer should be used.                 | true
-composerAnalyzerEnabled       | Sets whether or not the PHP Composer Lock File Analyzer should be used.   | true
-nodeAnalyzerEnabled           | Sets whether or not the Node.js Analyzer should be used.                  | true
-nuspecAnalyzerEnabled         | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.          | true
-assemblyAnalyzerEnabled       | Sets whether or not the .NET Assembly Analyzer should be used.            | true
-pathToMono                    | The path to Mono for .NET assembly analysis on non-windows systems.       | &nbsp;
+nexusUsesProxy                | Whether or not the defined proxy should be used when connecting to Nexus.         | true
+pyDistributionAnalyzerEnabled | Sets whether the [experimental](../analyzers/index.html) Python Distribution Analyzer will be used.        | true
+pyPackageAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) Python Package Analyzer will be used.             | true
+rubygemsAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used.               | true
+opensslAnalyzerEnabled        | Sets whether the openssl Analyzer should be used.                                 | true
+cmakeAnalyzerEnabled          | Sets whether the [experimental](../analyzers/index.html) CMake Analyzer should be used.                    | true
+autoconfAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) autoconf Analyzer should be used.                 | true
+composerAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.   | true
+nodeAnalyzerEnabled           | Sets whether the [experimental](../analyzers/index.html) Node.js Analyzer should be used.                  | true
+nuspecAnalyzerEnabled         | Sets whether the .NET Nuget Nuspec Analyzer will be used.                         | true
+assemblyAnalyzerEnabled       | Sets whether the .NET Assembly Analyzer should be used.                           | true
+pathToMono                    | The path to Mono for .NET assembly analysis on non-windows systems.               | &nbsp;
 
 Advanced Configuration
 ====================

@@ -67,11 +67,13 @@ public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
     }
     //</editor-fold>
 
-    // Python init files
-    private static final NameFileFilter IGNORED_FILES = new NameFileFilter(new String[] {
+    /**
+     * Python init files
+     */
+    private static final NameFileFilter IGNORED_FILES = new NameFileFilter(new String[]{
         "__init__.py",
         "__init__.pyc",
-        "__init__.pyo"
+        "__init__.pyo",
     });
 
     /**
@@ -79,7 +81,8 @@ public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
      *
      * @param dependency the dependency to analyze.
      * @param engine the engine that is scanning the dependencies
-     * @throws AnalysisException is thrown if there is an error reading the JAR file.
+     * @throws AnalysisException is thrown if there is an error reading the JAR
+     * file.
      */
     @Override
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
@@ -105,13 +108,6 @@ public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
                     fileName, Confidence.MEDIUM);
         }
 
-        //add as vendor and product evidence
-//        if (fileName.contains("-")) {
-//            dependency.getProductEvidence().addEvidence("file", "name",
-//                    fileName, Confidence.HIGHEST);
-//            dependency.getVendorEvidence().addEvidence("file", "name",
-//                    fileName, Confidence.HIGHEST);
-//        } else 
         if (!IGNORED_FILES.accept(f)) {
             dependency.getProductEvidence().addEvidence("file", "name",
                     fileName, Confidence.HIGH);

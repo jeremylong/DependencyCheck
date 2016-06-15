@@ -280,6 +280,7 @@ public class App {
         final String cveBase12 = cli.getBaseCve12Url();
         final String cveBase20 = cli.getBaseCve20Url();
         final Integer cveValidForHours = cli.getCveValidForHours();
+        final boolean experimentalEnabled = cli.isExperimentalEnabled();
 
         if (propertiesFile != null) {
             try {
@@ -318,6 +319,7 @@ public class App {
         Settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
 
         //File Type Analyzer Settings
+        Settings.setBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, experimentalEnabled);
         Settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, !cli.isJarDisabled());
         Settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, !cli.isArchiveDisabled());
         Settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, !cli.isPythonDistributionDisabled());

@@ -1,4 +1,4 @@
-[![Build Status](https://dependency-check.ci.cloudbees.com/buildStatus/icon?job=dependency-check)](https://dependency-check.ci.cloudbees.com/job/dependency-check/)
+[![Build Status](https://travis-ci.org/jeremylong/DependencyCheck.svg?branch=master)](https://travis-ci.org/jeremylong/DependencyCheck) [![Apache 2.0 License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.txt)
 Dependency-Check
 ================
 
@@ -22,18 +22,18 @@ The latest CLI can be downloaded from bintray's
 On *nix
 ```
 $ ./bin/dependency-check.sh -h
-$ ./bin/dependency-check.sh --app Testing --out . --scan [path to jar files to be scanned]
+$ ./bin/dependency-check.sh --project Testing --out . --scan [path to jar files to be scanned]
 ```
 On Windows
 ```
 > bin/dependency-check.bat -h
-> bin/dependency-check.bat --app Testing --out . --scan [path to jar files to be scanned]
+> bin/dependency-check.bat --project Testing --out . --scan [path to jar files to be scanned]
 ```
 On Mac with [Homebrew](http://brew.sh)
 ```
 $ brew update && brew install dependency-check
 $ dependency-check -h
-$ dependency-check --app Testing --out . --scan [path to jar files to be scanned]
+$ dependency-check --project Testing --out . --scan [path to jar files to be scanned]
 ```
 
 ### Maven Plugin
@@ -85,13 +85,13 @@ On *nix
 ```
 $ mvn install
 $ ./dependency-check-cli/target/release/bin/dependency-check.sh -h
-$ ./dependency-check-cli/target/release/bin/dependency-check.sh --app Testing --out . --scan ./src/test/resources
+$ ./dependency-check-cli/target/release/bin/dependency-check.sh --project Testing --out . --scan ./src/test/resources
 ```
 On Windows
 ```
 > mvn install
 > dependency-check-cli/target/release/bin/dependency-check.bat -h
-> dependency-check-cli/target/release/bin/dependency-check.bat --app Testing --out . --scan ./src/test/resources
+> dependency-check-cli/target/release/bin/dependency-check.bat --project Testing --out . --scan ./src/test/resources
 ```
 
 Then load the resulting 'DependencyCheck-Report.html' into your favorite browser.

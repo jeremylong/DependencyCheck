@@ -24,7 +24,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.suppression.SuppressionParseException;
 import org.owasp.dependencycheck.suppression.SuppressionParser;
@@ -38,7 +37,8 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 /**
- * Abstract base suppression analyzer that contains methods for parsing the suppression xml file.
+ * Abstract base suppression analyzer that contains methods for parsing the
+ * suppression xml file.
  *
  * @author Jeremy Long
  */
@@ -173,7 +173,8 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      *
      * @param message the exception message
      * @param exception the cause of the exception
-     * @throws SuppressionParseException throws the generated SuppressionParseException
+     * @throws SuppressionParseException throws the generated
+     * SuppressionParseException
      */
     private void throwSuppressionParseException(String message, Exception exception) throws SuppressionParseException {
         LOGGER.warn(message);

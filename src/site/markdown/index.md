@@ -2,11 +2,14 @@ About
 ====================
 OWASP dependency-check is an open source solution the OWASP Top 10 2013 entry:
 [A9 - Using Components with Known Vulnerabilities](https://www.owasp.org/index.php/Top_10_2013-A9-Using_Components_with_Known_Vulnerabilities).
-Dependency-check can currently be used to scan Java, .NET, Python, Ruby (gemspec), PHP (composer), and
-Node.js applications (and their dependent libraries) to identify known
-vulnerable components. In addition, Dependency-check can be used to scan some
-source code, including OpenSSL source code and projects that use
-[Autoconf](https://www.gnu.org/software/autoconf/) or
+Dependency-check can currently be used to scan Java and .NET applications to 
+identify the use of known vulnerable components. Experimental analyzers for 
+Python, Ruby, PHP (composer), and Node.js applications; these are experimental
+due to the possible false positive and false negative rates. To use the experimental
+analyzers they must be specifically enabled via the appropriate _experimental_
+configuration. In addition, dependency-check has experimental analyzers that can 
+be used to scan some C/C++ source code, including OpenSSL source code and projects
+that use [Autoconf](https://www.gnu.org/software/autoconf/) or
 [CMake](http://www.cmake.org/overview/).
 
 The problem with using known vulnerable components was covered in a paper by
@@ -30,3 +33,10 @@ OWASP dependency-check's core analysis engine can be used as:
 - [Ant Task](dependency-check-ant/index.html)
 - [Gradle Plugin](dependency-check-gradle/index.html)
 - [Jenkins Plugin](dependency-check-jenkins/index.html)
+
+For help with dependency-check the following resource can be used:
+
+- Post to the [google group](https://groups.google.com/forum/#!forum/dependency-check): 
+[subscribe](mailto://dependency-check+subscribe@googlegroups.com), 
+[post](mailto://dependency-check@googlegroups.com), 
+- Open a [github issue](https://github.com/jeremylong/DependencyCheck/issues)

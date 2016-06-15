@@ -41,6 +41,7 @@ import java.security.MessageDigest;
  *
  * @author colezlaw
  */
+@Experimental
 public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**

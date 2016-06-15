@@ -94,24 +94,32 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(defaultValue = "${project.build.directory}", required = true)
     private File outputDirectory;
     /**
-     * Specifies the destination directory for the generated Dependency-Check report. This generally maps to "target/site".
+     * Specifies the destination directory for the generated Dependency-Check
+     * report. This generally maps to "target/site".
      */
     @Parameter(property = "project.reporting.outputDirectory", required = true)
     private File reportOutputDirectory;
     /**
-     * Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11 which
-     * means since the CVSS scores are 0-10, by default the build will never fail.
+     * Specifies if the build should be failed if a CVSS score above a specified
+     * level is identified. The default is 11 which means since the CVSS scores
+     * are 0-10, by default the build will never fail.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "failBuildOnCVSS", defaultValue = "11", required = true)
     private float failBuildOnCVSS = 11;
     /**
-     * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. Default
-     * is true.
+     * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not
+     * recommended that this be turned to false. Default is true.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "autoUpdate")
     private Boolean autoUpdate;
+    /**
+     * Sets whether Experimental analyzers are enabled. Default is false.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "enableExperimental")
+    private Boolean enableExperimental;
     /**
      * Generate aggregate reports in multi-module projects.
      *
@@ -121,8 +129,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Deprecated
     private Boolean aggregate;
     /**
-     * The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this within the
-     * Site plug-in unless the externalReport is set to true. Default is HTML.
+     * The report format to be generated (HTML, XML, VULN, ALL). This
+     * configuration option has no affect if using this within the Site plug-in
+     * unless the externalReport is set to true. Default is HTML.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "format", defaultValue = "HTML", required = true)
@@ -234,7 +243,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private Boolean nexusAnalyzerEnabled;
 
     /**
-     * The URL of a Nexus server's REST API end point (http://domain/nexus/service/local).
+     * The URL of a Nexus server's REST API end point
+     * (http://domain/nexus/service/local).
      */
     @Parameter(property = "nexusUrl", required = false)
     private String nexusUrl;
@@ -268,7 +278,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "databaseDriverPath", defaultValue = "", required = false)
     private String databaseDriverPath;
     /**
-     * The server id in the settings.xml; used to retrieve encrypted passwords from the settings.xml.
+     * The server id in the settings.xml; used to retrieve encrypted passwords
+     * from the settings.xml.
      */
     @Parameter(property = "serverId", defaultValue = "", required = false)
     private String serverId;
@@ -293,7 +304,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "databasePassword", defaultValue = "", required = false)
     private String databasePassword;
     /**
-     * A comma-separated list of file extensions to add to analysis next to jar, zip, ....
+     * A comma-separated list of file extensions to add to analysis next to jar,
+     * zip, ....
      */
     @Parameter(property = "zipExtensions", required = false)
     private String zipExtensions;
@@ -347,7 +359,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "cveUrl20Base", defaultValue = "", required = false)
     private String cveUrl20Base;
     /**
-     * Optionally skip excessive CVE update checks for a designated duration in hours.
+     * Optionally skip excessive CVE update checks for a designated duration in
+     * hours.
      */
     @Parameter(property = "cveValidForHours", defaultValue = "", required = false)
     private Integer cveValidForHours;
@@ -382,7 +395,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Executes dependency-check.
      *
-     * @throws MojoExecutionException thrown if there is an exception executing the mojo
+     * @throws MojoExecutionException thrown if there is an exception executing
+     * the mojo
      * @throws MojoFailureException thrown if dependency-check failed the build
      */
     @Override
@@ -398,8 +412,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Checks if the aggregate configuration parameter has been set to true. If it has a MojoExecutionException is thrown because
-     * the aggregate configuration parameter is no longer supported.
+     * Checks if the aggregate configuration parameter has been set to true. If
+     * it has a MojoExecutionException is thrown because the aggregate
+     * configuration parameter is no longer supported.
      *
      * @throws MojoExecutionException thrown if aggregate is set to true
      */
@@ -417,7 +432,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @param sink the sink to write the report to
      * @param locale the locale to use when generating the report
      * @throws MavenReportException if a maven report exception occurs
-     * @deprecated use {@link #generate(org.apache.maven.doxia.sink.Sink, java.util.Locale)} instead.
+     * @deprecated use
+     * {@link #generate(org.apache.maven.doxia.sink.Sink, java.util.Locale)}
+     * instead.
      */
     @Override
     @Deprecated
@@ -464,17 +481,20 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Returns the correct output directory depending on if a site is being executed or not.
+     * Returns the correct output directory depending on if a site is being
+     * executed or not.
      *
      * @return the directory to write the report(s)
-     * @throws MojoExecutionException thrown if there is an error loading the file path
+     * @throws MojoExecutionException thrown if there is an error loading the
+     * file path
      */
     protected File getCorrectOutputDirectory() throws MojoExecutionException {
         return getCorrectOutputDirectory(this.project);
     }
 
     /**
-     * Returns the correct output directory depending on if a site is being executed or not.
+     * Returns the correct output directory depending on if a site is being
+     * executed or not.
      *
      * @param current the Maven project to get the output directory from
      * @return the directory to write the report(s)
@@ -492,7 +512,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Returns the correct output directory depending on if a site is being executed or not.
+     * Returns the correct output directory depending on if a site is being
+     * executed or not.
      *
      * @param current the Maven project to get the output directory from
      * @return the directory to write the report(s)
@@ -507,16 +528,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 final File f = new File((String) obj);
                 return f;
             }
-        } else {
-            if (getLog().isDebugEnabled()) {
-                getLog().debug("Context value not found");
-            }
+        } else if (getLog().isDebugEnabled()) {
+            getLog().debug("Context value not found");
         }
         return null;
     }
 
     /**
-     * Scans the project's artifacts and adds them to the engine's dependency list.
+     * Scans the project's artifacts and adds them to the engine's dependency
+     * list.
      *
      * @param project the project to scan the dependencies of
      * @param engine the engine to use to scan the dependencies
@@ -539,12 +559,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                                     d.getDisplayFileName()));
                         }
                     }
-                } else {
-                    if (getLog().isDebugEnabled()) {
-                        final String msg = String.format("More then 1 dependency was identified in first pass scan of '%s:%s:%s'",
-                                a.getGroupId(), a.getArtifactId(), a.getVersion());
-                        getLog().debug(msg);
-                    }
+                } else if (getLog().isDebugEnabled()) {
+                    final String msg = String.format("More then 1 dependency was identified in first pass scan of '%s:%s:%s'",
+                            a.getGroupId(), a.getArtifactId(), a.getVersion());
+                    getLog().debug(msg);
                 }
             }
         }
@@ -553,8 +571,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Executes the dependency-check scan and generates the necassary report.
      *
-     * @throws MojoExecutionException thrown if there is an exception running the scan
-     * @throws MojoFailureException thrown if dependency-check is configured to fail the build
+     * @throws MojoExecutionException thrown if there is an exception running
+     * the scan
+     * @throws MojoFailureException thrown if dependency-check is configured to
+     * fail the build
      */
     public abstract void runCheck() throws MojoExecutionException, MojoFailureException;
 
@@ -588,7 +608,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Returns whether this is an external report. This method always returns true.
+     * Returns whether this is an external report. This method always returns
+     * true.
      *
      * @return <code>true</code>
      */
@@ -640,8 +661,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system properties
-     * required to change the proxy url, port, and connection timeout.
+     * Takes the properties supplied and updates the dependency-check settings.
+     * Additionally, this sets the system properties required to change the
+     * proxy url, port, and connection timeout.
      */
     protected void populateSettings() {
         Settings.initialize();
@@ -666,6 +688,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
         }
         Settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
+
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, enableExperimental);
 
         if (externalReport != null) {
             getLog().warn("The 'externalReport' option was set; this configuration option has been removed. "
@@ -795,10 +819,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Tests is the artifact should be included in the scan (i.e. is the dependency in a scope that is being scanned).
+     * Tests is the artifact should be included in the scan (i.e. is the
+     * dependency in a scope that is being scanned).
      *
      * @param a the Artifact to test
-     * @return <code>true</code> if the artifact is in an excluded scope; otherwise <code>false</code>
+     * @return <code>true</code> if the artifact is in an excluded scope;
+     * otherwise <code>false</code>
      */
     protected boolean excludeFromScan(Artifact a) {
         if (skipTestScope && Artifact.SCOPE_TEST.equals(a.getScope())) {
@@ -814,10 +840,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Returns a reference to the current project. This method is used instead of auto-binding the project via component
-     * annotation in concrete implementations of this. If the child has a <code>@Component MavenProject project;</code> defined
-     * then the abstract class (i.e. this class) will not have access to the current project (just the way Maven works with the
-     * binding).
+     * Returns a reference to the current project. This method is used instead
+     * of auto-binding the project via component annotation in concrete
+     * implementations of this. If the child has a
+     * <code>@Component MavenProject project;</code> defined then the abstract
+     * class (i.e. this class) will not have access to the current project (just
+     * the way Maven works with the binding).
      *
      * @return returns a reference to the current project
      */
@@ -886,11 +914,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
     //<editor-fold defaultstate="collapsed" desc="Methods to fail build or show summary">
     /**
-     * Checks to see if a vulnerability has been identified with a CVSS score that is above the threshold set in the
-     * configuration.
+     * Checks to see if a vulnerability has been identified with a CVSS score
+     * that is above the threshold set in the configuration.
      *
      * @param dependencies the list of dependency objects
-     * @throws MojoFailureException thrown if a CVSS score is found that is higher then the threshold set
+     * @throws MojoFailureException thrown if a CVSS score is found that is
+     * higher then the threshold set
      */
     protected void checkForFailure(List<Dependency> dependencies) throws MojoFailureException {
         if (failBuildOnCVSS <= 10) {
@@ -919,7 +948,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Generates a warning message listing a summary of dependencies and their associated CPE and CVE entries.
+     * Generates a warning message listing a summary of dependencies and their
+     * associated CPE and CVE entries.
      *
      * @param mp the Maven project for which the summary is shown
      * @param dependencies a list of dependency objects
@@ -963,8 +993,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Methods to read/write the serialized data file">
     /**
-     * Returns the key used to store the path to the data file that is saved by <code>writeDataFile()</code>. This key is used in
-     * the <code>MavenProject.(set|get)ContextValue</code>.
+     * Returns the key used to store the path to the data file that is saved by
+     * <code>writeDataFile()</code>. This key is used in the
+     * <code>MavenProject.(set|get)ContextValue</code>.
      *
      * @return the key used to store the path to the data file
      */
@@ -973,8 +1004,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Returns the key used to store the path to the output directory. When generating the report in the
-     * <code>executeAggregateReport()</code> the output directory should be obtained by using this key.
+     * Returns the key used to store the path to the output directory. When
+     * generating the report in the <code>executeAggregateReport()</code> the
+     * output directory should be obtained by using this key.
      *
      * @return the key used to store the path to the output directory
      */
@@ -983,7 +1015,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Writes the scan data to disk. This is used to serialize the scan data between the "check" and "aggregate" phase.
+     * Writes the scan data to disk. This is used to serialize the scan data
+     * between the "check" and "aggregate" phase.
      *
      * @param mp the mMven project for which the data file was created
      * @param writeTo the directory to write the data file
@@ -1000,7 +1033,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 file = new File(writeTo, dataFileName);
             }
             final File parent = file.getParentFile();
-            if (!parent.isDirectory() && parent.mkdirs()) {
+            if (!parent.isDirectory() && !parent.mkdirs()) {
                 getLog().error(String.format("Directory '%s' does not exist and cannot be created; unable to write data file.",
                         parent.getAbsolutePath()));
             }
@@ -1037,12 +1070,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Reads the serialized scan data from disk. This is used to serialize the scan data between the "check" and "aggregate"
-     * phase.
+     * Reads the serialized scan data from disk. This is used to serialize the
+     * scan data between the "check" and "aggregate" phase.
      *
      * @param project the Maven project to read the data file from
-     * @return a <code>Engine</code> object populated with dependencies if the serialized data file exists; otherwise
-     * <code>null</code> is returned
+     * @return a <code>Engine</code> object populated with dependencies if the
+     * serialized data file exists; otherwise <code>null</code> is returned
      */
     protected List<Dependency> readDataFile(MavenProject project) {
         final Object oPath = project.getContextValue(this.getDataFileContextKey());

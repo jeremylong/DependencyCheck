@@ -39,10 +39,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Used to analyze a Python package, and collect information that can be used to determine the associated CPE.
+ * Used to analyze a Python package, and collect information that can be used to
+ * determine the associated CPE.
  *
  * @author Dale Visser
  */
+@Experimental
 public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
@@ -166,7 +168,8 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @param dependency the dependency being analyzed
      * @param engine the engine being used to perform the scan
-     * @throws AnalysisException thrown if there is an unrecoverable error analyzing the dependency
+     * @throws AnalysisException thrown if there is an unrecoverable error
+     * analyzing the dependency
      */
     @Override
     protected void analyzeFileType(Dependency dependency, Engine engine)
@@ -175,21 +178,20 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
         final File parent = file.getParentFile();
         final String parentName = parent.getName();
         if (INIT_PY_FILTER.accept(file)) {
-        	//by definition, the containing folder of __init__.py is considered the package, even the file is empty:
-        	//"The __init__.py files are required to make Python treat the directories as containing packages"
-        	//see section "6.4 Packages" from https://docs.python.org/2/tutorial/modules.html;
+            //by definition, the containing folder of __init__.py is considered the package, even the file is empty:
+            //"The __init__.py files are required to make Python treat the directories as containing packages"
+            //see section "6.4 Packages" from https://docs.python.org/2/tutorial/modules.html;
             dependency.setDisplayFileName(parentName + "/__init__.py");
             dependency.getProductEvidence().addEvidence(file.getName(),
                     "PackageName", parentName, Confidence.HIGHEST);
-            
+
             final File[] fileList = parent.listFiles(PY_FILTER);
             if (fileList != null) {
                 for (final File sourceFile : fileList) {
                     analyzeFileContents(dependency, sourceFile);
                 }
             }
-        }
-        else {
+        } else {
             // copy, alter and set in case some other thread is iterating over
             final List<Dependency> dependencies = new ArrayList<Dependency>(
                     engine.getDependencies());
@@ -199,8 +201,9 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * This should gather information from leading docstrings, file comments, and assignments to __version__, __title__,
-     * __summary__, __uri__, __url__, __home*page__, __author__, and their all caps equivalents.
+     * This should gather information from leading docstrings, file comments,
+     * and assignments to __version__, __title__, __summary__, __uri__, __url__,
+     * __home*page__, __author__, and their all caps equivalents.
      *
      * @param dependency the dependency being analyzed
      * @param file the file name to analyze
@@ -291,7 +294,8 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Gather evidence from a Python source file using the given string assignment regex pattern.
+     * Gather evidence from a Python source file using the given string
+     * assignment regex pattern.
      *
      * @param pattern to scan contents with
      * @param contents of Python source file

@@ -138,7 +138,7 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
             return false;
         }
         final VulnerableSoftware other = (VulnerableSoftware) obj;
-        if ((this.getName() == null) ? (other.getName() != null) : !this.getName().equals(other.getName())) {
+        if ((this.name == null) ? (other.getName() != null) : !this.name.equals(other.getName())) {
             return false;
         }
         return true;
@@ -152,7 +152,7 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 83 * hash + (this.getName() != null ? this.getName().hashCode() : 0);
+        hash = 83 * hash + (this.name != null ? this.name.hashCode() : 0);
         return hash;
     }
 
@@ -163,7 +163,7 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
      */
     @Override
     public String toString() {
-        return "VulnerableSoftware{ name=" + name + ", previousVersion=" + previousVersion + '}';
+        return "VulnerableSoftware{" + name + "[" + previousVersion + "]}";
     }
 
     /**
@@ -175,28 +175,19 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     @Override
     public int compareTo(VulnerableSoftware vs) {
         int result = 0;
-        final String[] left = this.getName().split(":");
+        final String[] left = this.name.split(":");
         final String[] right = vs.getName().split(":");
         final int max = (left.length <= right.length) ? left.length : right.length;
         if (max > 0) {
             for (int i = 0; result == 0 && i < max; i++) {
-                final String[] subLeft = left[i].split("\\.");
-                final String[] subRight = right[i].split("\\.");
+                final String[] subLeft = left[i].split("(\\.|-)");
+                final String[] subRight = right[i].split("(\\.|-)");
                 final int subMax = (subLeft.length <= subRight.length) ? subLeft.length : subRight.length;
                 if (subMax > 0) {
                     for (int x = 0; result == 0 && x < subMax; x++) {
                         if (isPositiveInteger(subLeft[x]) && isPositiveInteger(subRight[x])) {
                             try {
                                 result = Long.valueOf(subLeft[x]).compareTo(Long.valueOf(subRight[x]));
-//                                final long iLeft = Long.parseLong(subLeft[x]);
-//                                final long iRight = Long.parseLong(subRight[x]);
-//                                if (iLeft != iRight) {
-//                                    if (iLeft > iRight) {
-//                                        result = 2;
-//                                    } else {
-//                                        result = -2;
-//                                    }
-//                                }
                             } catch (NumberFormatException ex) {
                                 //ignore the exception - they obviously aren't numbers
                                 if (!subLeft[x].equalsIgnoreCase(subRight[x])) {

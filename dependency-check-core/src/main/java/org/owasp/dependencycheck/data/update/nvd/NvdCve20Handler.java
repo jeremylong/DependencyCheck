@@ -254,17 +254,16 @@ public class NvdCve20Handler extends DefaultHandler {
      * @throws IOException thrown if there is an IOException with the CPE Index
      */
     private void saveEntry(Vulnerability vuln) throws DatabaseException, CorruptIndexException, IOException {
-        if (cveDB == null) {
-            return;
-        }
         final String cveName = vuln.getName();
-        if (prevVersionVulnMap.containsKey(cveName)) {
+        if (prevVersionVulnMap != null && prevVersionVulnMap.containsKey(cveName)) {
             final List<VulnerableSoftware> vulnSoftware = prevVersionVulnMap.get(cveName);
             for (VulnerableSoftware vs : vulnSoftware) {
                 vuln.updateVulnerableSoftware(vs);
             }
         }
-        cveDB.updateVulnerability(vuln);
+        if (cveDB != null) {
+            cveDB.updateVulnerability(vuln);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="The Element Class that maintains state information about the current node">

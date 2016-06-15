@@ -21,10 +21,11 @@ format               | The report format to be generated (HTML, XML, VULN, ALL).
 name                 | The name of the report in the site | dependency-check or dependency-check:aggregate
 outputDirectory      | The location to write the report(s). Note, this is not used if generating the report as part of a `mvn site` build | 'target'
 skip                 | Skips the dependency-check analysis                       | false
-skipTestScope        | Should be skip analysis for artifacts with Test Scope     | true
-skipProvidedScope    | Should be skip analysis for artifacts with Provided Scope | false
-skipRuntimeScope     | Should be skip analysis for artifacts with Runtime Scope  | false
+skipTestScope        | Skip analysis for artifacts with Test Scope               | true
+skipProvidedScope    | Skip analysis for artifacts with Provided Scope           | false
+skipRuntimeScope     | Skip analysis for artifacts with Runtime Scope            | false
 suppressionFile      | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html) | &nbsp;
+enableExperimental   | Enable the [experimental analyzers](../analyzers/index.html). If not enabled the experimental analyzers (see below) will not be loaded or used. | false
 
 Analyzer Configuration
 ====================
@@ -43,16 +44,16 @@ centralAnalyzerEnabled        | Sets whether Central Analyzer will be used. If t
 nexusAnalyzerEnabled          | Sets whether Nexus Analyzer will be used. This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
 nexusUrl                      | Defines the Nexus Server's web service end point (example http://domain.enterprise/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
 nexusUsesProxy                | Whether or not the defined proxy should be used when connecting to Nexus. | true
-pyDistributionAnalyzerEnabled | Sets whether the Python Distribution Analyzer will be used.               | true
-pyPackageAnalyzerEnabled      | Sets whether the Python Package Analyzer will be used.                    | true
-rubygemsAnalyzerEnabled       | Sets whether the Ruby Gemspec Analyzer will be used.                      | true
-opensslAnalyzerEnabled        | Sets whether or not the openssl Analyzer should be used.                  | true
-cmakeAnalyzerEnabled          | Sets whether or not the CMake Analyzer should be used.                    | true
-autoconfAnalyzerEnabled       | Sets whether or not the autoconf Analyzer should be used.                 | true
-composerAnalyzerEnabled       | Sets whether or not the PHP Composer Lock File Analyzer should be used.   | true
-nodeAnalyzerEnabled           | Sets whether or not the Node.js Analyzer should be used.                  | true
-nuspecAnalyzerEnabled         | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.          | true
-assemblyAnalyzerEnabled       | Sets whether or not the .NET Assembly Analyzer should be used.            | true
+pyDistributionAnalyzerEnabled | Sets whether the [experimental](../analyzers/index.html) Python Distribution Analyzer will be used.               | true
+pyPackageAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) Python Package Analyzer will be used.                    | true
+rubygemsAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used.                      | true
+opensslAnalyzerEnabled        | Sets whether the openssl Analyzer should be used.                  | true
+cmakeAnalyzerEnabled          | Sets whether the [experimental](../analyzers/index.html) CMake Analyzer should be used.                    | true
+autoconfAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) autoconf Analyzer should be used.                 | true
+composerAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.   | true
+nodeAnalyzerEnabled           | Sets whether the [experimental](../analyzers/index.html) Node.js Analyzer should be used.                  | true
+nuspecAnalyzerEnabled         | Sets whether the .NET Nuget Nuspec Analyzer will be used.          | true
+assemblyAnalyzerEnabled       | Sets whether the .NET Assembly Analyzer should be used.            | true
 pathToMono                    | The path to Mono for .NET assembly analysis on non-windows systems.       | &nbsp;
 
 Advanced Configuration
@@ -78,7 +79,8 @@ metaFileName         | Sets the name of the file to use for storing the metadata
 
 Proxy Configuration
 ====================
-Use [Maven's settings](https://maven.apache.org/settings.html#Proxies) to configure a proxy server. If multiple proxies
+Use [Maven's settings](https://maven.apache.org/settings.html#Proxies) to configure a proxy server. Please see the
+dependency-check [proxy configuration](../data/proxy.html) page for additional problem solving techniques. If multiple proxies
 are configured in the Maven settings file you must tell dependency-check which proxy to use with the following property:
 
 Property             | Description                                                                          | Default Value

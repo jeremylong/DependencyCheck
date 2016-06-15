@@ -51,8 +51,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * CPEAnalyzer is a utility class that takes a project dependency and attempts to discern if there is an associated CPE. It uses
- * the evidence contained within the dependency to search the Lucene index.
+ * CPEAnalyzer is a utility class that takes a project dependency and attempts
+ * to discern if there is an associated CPE. It uses the evidence contained
+ * within the dependency to search the Lucene index.
  *
  * @author Jeremy Long
  */
@@ -71,15 +72,18 @@ public class CPEAnalyzer implements Analyzer {
      */
     static final String WEIGHTING_BOOST = "^5";
     /**
-     * A string representation of a regular expression defining characters utilized within the CPE Names.
+     * A string representation of a regular expression defining characters
+     * utilized within the CPE Names.
      */
     static final String CLEANSE_CHARACTER_RX = "[^A-Za-z0-9 ._-]";
     /**
-     * A string representation of a regular expression used to remove all but alpha characters.
+     * A string representation of a regular expression used to remove all but
+     * alpha characters.
      */
     static final String CLEANSE_NONALPHA_RX = "[^A-Za-z]*";
     /**
-     * The additional size to add to a new StringBuilder to account for extra data that will be written into the string.
+     * The additional size to add to a new StringBuilder to account for extra
+     * data that will be written into the string.
      */
     static final int STRING_BUILDER_BUFFER = 20;
     /**
@@ -129,9 +133,10 @@ public class CPEAnalyzer implements Analyzer {
     /**
      * Opens the data source.
      *
-     * @throws IOException when the Lucene directory to be queried does not exist or is corrupt.
-     * @throws DatabaseException when the database throws an exception. This usually occurs when the database is in use by another
-     * process.
+     * @throws IOException when the Lucene directory to be queried does not
+     * exist or is corrupt.
+     * @throws DatabaseException when the database throws an exception. This
+     * usually occurs when the database is in use by another process.
      */
     public void open() throws IOException, DatabaseException {
         if (!isOpen()) {
@@ -170,8 +175,9 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * Searches the data store of CPE entries, trying to identify the CPE for the given dependency based on the evidence contained
-     * within. The dependency passed in is updated with any identified CPE values.
+     * Searches the data store of CPE entries, trying to identify the CPE for
+     * the given dependency based on the evidence contained within. The
+     * dependency passed in is updated with any identified CPE values.
      *
      * @param dependency the dependency to search for CPE entries on.
      * @throws CorruptIndexException is thrown when the Lucene index is corrupt.
@@ -192,8 +198,8 @@ public class CPEAnalyzer implements Analyzer {
                 LOGGER.debug("product search: {}", products);
             }
             if (!vendors.isEmpty() && !products.isEmpty()) {
-                final List<IndexEntry> entries = searchCPE(vendors, products, dependency.getProductEvidence().getWeighting(),
-                        dependency.getVendorEvidence().getWeighting());
+                final List<IndexEntry> entries = searchCPE(vendors, products, dependency.getVendorEvidence().getWeighting(),
+                        dependency.getProductEvidence().getWeighting());
                 if (entries == null) {
                     continue;
                 }
@@ -215,9 +221,10 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * Returns the text created by concatenating the text and the values from the EvidenceCollection (filtered for a specific
-     * confidence). This attempts to prevent duplicate terms from being added.<br/<br/> Note, if the evidence is longer then 200
-     * characters it will be truncated.
+     * Returns the text created by concatenating the text and the values from
+     * the EvidenceCollection (filtered for a specific confidence). This
+     * attempts to prevent duplicate terms from being added.<br/<br/> Note, if
+     * the evidence is longer then 200 characters it will be truncated.
      *
      * @param text the base text.
      * @param ec an EvidenceCollection
@@ -248,17 +255,19 @@ public class CPEAnalyzer implements Analyzer {
 
     /**
      * <p>
-     * Searches the Lucene CPE index to identify possible CPE entries associated with the supplied vendor, product, and
-     * version.</p>
+     * Searches the Lucene CPE index to identify possible CPE entries associated
+     * with the supplied vendor, product, and version.</p>
      *
      * <p>
-     * If either the vendorWeightings or productWeightings lists have been populated this data is used to add weighting factors to
-     * the search.</p>
+     * If either the vendorWeightings or productWeightings lists have been
+     * populated this data is used to add weighting factors to the search.</p>
      *
      * @param vendor the text used to search the vendor field
      * @param product the text used to search the product field
-     * @param vendorWeightings a list of strings to use to add weighting factors to the vendor field
-     * @param productWeightings Adds a list of strings that will be used to add weighting factors to the product search
+     * @param vendorWeightings a list of strings to use to add weighting factors
+     * to the vendor field
+     * @param productWeightings Adds a list of strings that will be used to add
+     * weighting factors to the product search
      * @return a list of possible CPE values
      */
     protected List<IndexEntry> searchCPE(String vendor, String product,
@@ -297,16 +306,20 @@ public class CPEAnalyzer implements Analyzer {
 
     /**
      * <p>
-     * Builds a Lucene search string by properly escaping data and constructing a valid search query.</p>
+     * Builds a Lucene search string by properly escaping data and constructing
+     * a valid search query.</p>
      *
      * <p>
-     * If either the possibleVendor or possibleProducts lists have been populated this data is used to add weighting factors to
-     * the search string generated.</p>
+     * If either the possibleVendor or possibleProducts lists have been
+     * populated this data is used to add weighting factors to the search string
+     * generated.</p>
      *
      * @param vendor text to search the vendor field
      * @param product text to search the product field
-     * @param vendorWeighting a list of strings to apply to the vendor to boost the terms weight
-     * @param productWeightings a list of strings to apply to the product to boost the terms weight
+     * @param vendorWeighting a list of strings to apply to the vendor to boost
+     * the terms weight
+     * @param productWeightings a list of strings to apply to the product to
+     * boost the terms weight
      * @return the Lucene query
      */
     protected String buildSearch(String vendor, String product,
@@ -327,13 +340,17 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * This method constructs a Lucene query for a given field. The searchText is split into separate words and if the word is
-     * within the list of weighted words then an additional weighting is applied to the term as it is appended into the query.
+     * This method constructs a Lucene query for a given field. The searchText
+     * is split into separate words and if the word is within the list of
+     * weighted words then an additional weighting is applied to the term as it
+     * is appended into the query.
      *
      * @param sb a StringBuilder that the query text will be appended to.
-     * @param field the field within the Lucene index that the query is searching.
+     * @param field the field within the Lucene index that the query is
+     * searching.
      * @param searchText text used to construct the query.
-     * @param weightedText a list of terms that will be considered higher importance when searching.
+     * @param weightedText a list of terms that will be considered higher
+     * importance when searching.
      * @return if the append was successful.
      */
     private boolean appendWeightedSearch(StringBuilder sb, String field, String searchText, Set<String> weightedText) {
@@ -379,7 +396,8 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * Removes characters from the input text that are not used within the CPE index.
+     * Removes characters from the input text that are not used within the CPE
+     * index.
      *
      * @param text is the text to remove the characters from.
      * @return the text having removed some characters.
@@ -389,7 +407,8 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * Compares two strings after lower casing them and removing the non-alpha characters.
+     * Compares two strings after lower casing them and removing the non-alpha
+     * characters.
      *
      * @param l string one to compare.
      * @param r string two to compare.
@@ -406,8 +425,9 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * Ensures that the CPE Identified matches the dependency. This validates that the product, vendor, and version information
-     * for the CPE are contained within the dependencies evidence.
+     * Ensures that the CPE Identified matches the dependency. This validates
+     * that the product, vendor, and version information for the CPE are
+     * contained within the dependencies evidence.
      *
      * @param entry a CPE entry.
      * @param dependency the dependency that the CPE entries could be for.
@@ -474,11 +494,13 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * Analyzes a dependency and attempts to determine if there are any CPE identifiers for this dependency.
+     * Analyzes a dependency and attempts to determine if there are any CPE
+     * identifiers for this dependency.
      *
      * @param dependency The Dependency to analyze.
      * @param engine The analysis engine
-     * @throws AnalysisException is thrown if there is an issue analyzing the dependency.
+     * @throws AnalysisException is thrown if there is an issue analyzing the
+     * dependency.
      */
     @Override
     public synchronized void analyze(Dependency dependency, Engine engine) throws AnalysisException {
@@ -494,15 +516,19 @@ public class CPEAnalyzer implements Analyzer {
     }
 
     /**
-     * Retrieves a list of CPE values from the CveDB based on the vendor and product passed in. The list is then validated to find
-     * only CPEs that are valid for the given dependency. It is possible that the CPE identified is a best effort "guess" based on
-     * the vendor, product, and version information.
+     * Retrieves a list of CPE values from the CveDB based on the vendor and
+     * product passed in. The list is then validated to find only CPEs that are
+     * valid for the given dependency. It is possible that the CPE identified is
+     * a best effort "guess" based on the vendor, product, and version
+     * information.
      *
      * @param dependency the Dependency being analyzed
      * @param vendor the vendor for the CPE being analyzed
      * @param product the product for the CPE being analyzed
-     * @param currentConfidence the current confidence being used during analysis
-     * @return <code>true</code> if an identifier was added to the dependency; otherwise <code>false</code>
+     * @param currentConfidence the current confidence being used during
+     * analysis
+     * @return <code>true</code> if an identifier was added to the dependency;
+     * otherwise <code>false</code>
      * @throws UnsupportedEncodingException is thrown if UTF-8 is not supported
      */
     protected boolean determineIdentifiers(Dependency dependency, String vendor, String product,
@@ -512,10 +538,11 @@ public class CPEAnalyzer implements Analyzer {
         Confidence bestGuessConf = null;
         boolean hasBroadMatch = false;
         final List<IdentifierMatch> collected = new ArrayList<IdentifierMatch>();
+
+        //TODO the following algorithm incorrectly identifies things as a lower version
+        // if there lower confidence evidence when the current (highest) version number 
+        // is newer then anything in the NVD.
         for (Confidence conf : Confidence.values()) {
-//            if (conf.compareTo(currentConfidence) > 0) {
-//                break;
-//            }
             for (Evidence evidence : dependency.getVersionEvidence().iterator(conf)) {
                 final DependencyVersion evVer = DependencyVersionUtil.parseVersion(evidence.getValue());
                 if (evVer == null) {
@@ -537,15 +564,13 @@ public class CPEAnalyzer implements Analyzer {
                         final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getName(), "UTF-8"));
                         final IdentifierMatch match = new IdentifierMatch("cpe", vs.getName(), url, IdentifierConfidence.EXACT_MATCH, conf);
                         collected.add(match);
-                    } else {
-                        //TODO the following isn't quite right is it? need to think about this guessing game a bit more.
-                        if (evVer.getVersionParts().size() <= dbVer.getVersionParts().size()
-                                && evVer.matchesAtLeastThreeLevels(dbVer)) {
-                            if (bestGuessConf == null || bestGuessConf.compareTo(conf) > 0) {
-                                if (bestGuess.getVersionParts().size() < dbVer.getVersionParts().size()) {
-                                    bestGuess = dbVer;
-                                    bestGuessConf = conf;
-                                }
+                    } else //TODO the following isn't quite right is it? need to think about this guessing game a bit more.
+                    if (evVer.getVersionParts().size() <= dbVer.getVersionParts().size()
+                            && evVer.matchesAtLeastThreeLevels(dbVer)) {
+                        if (bestGuessConf == null || bestGuessConf.compareTo(conf) > 0) {
+                            if (bestGuess.getVersionParts().size() < dbVer.getVersionParts().size()) {
+                                bestGuess = dbVer;
+                                bestGuessConf = conf;
                             }
                         }
                     }
@@ -604,14 +629,16 @@ public class CPEAnalyzer implements Analyzer {
          */
         BEST_GUESS,
         /**
-         * The entire vendor/product group must be added (without a guess at version) because there is a CVE with a VS that only
-         * specifies vendor/product.
+         * The entire vendor/product group must be added (without a guess at
+         * version) because there is a CVE with a VS that only specifies
+         * vendor/product.
          */
         BROAD_MATCH
     }
 
     /**
-     * A simple object to hold an identifier and carry information about the confidence in the identifier.
+     * A simple object to hold an identifier and carry information about the
+     * confidence in the identifier.
      */
     private static class IdentifierMatch implements Comparable<IdentifierMatch> {
 
@@ -621,8 +648,10 @@ public class CPEAnalyzer implements Analyzer {
          * @param type the type of identifier (such as CPE)
          * @param value the value of the identifier
          * @param url the URL of the identifier
-         * @param identifierConfidence the confidence in the identifier: best guess or exact match
-         * @param evidenceConfidence the confidence of the evidence used to find the identifier
+         * @param identifierConfidence the confidence in the identifier: best
+         * guess or exact match
+         * @param evidenceConfidence the confidence of the evidence used to find
+         * the identifier
          */
         IdentifierMatch(String type, String value, String url, IdentifierConfidence identifierConfidence, Confidence evidenceConfidence) {
             this.identifier = new Identifier(type, value, url);
@@ -753,7 +782,8 @@ public class CPEAnalyzer implements Analyzer {
         //</editor-fold>
 
         /**
-         * Standard implementation of compareTo that compares identifier confidence, evidence confidence, and then the identifier.
+         * Standard implementation of compareTo that compares identifier
+         * confidence, evidence confidence, and then the identifier.
          *
          * @param o the IdentifierMatch to compare to
          * @return the natural ordering of IdentifierMatch
