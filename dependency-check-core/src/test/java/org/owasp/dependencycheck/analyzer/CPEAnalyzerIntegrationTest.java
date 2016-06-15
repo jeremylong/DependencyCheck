@@ -240,7 +240,7 @@ public class CPEAnalyzerIntegrationTest extends BaseDBTestCase {
 
         Set<String> vendorWeightings = Collections.singleton("apache");
 
-        List<IndexEntry> result = instance.searchCPE(vendor, product, productWeightings, vendorWeightings);
+        List<IndexEntry> result = instance.searchCPE(vendor, product, vendorWeightings, productWeightings);
         instance.close();
 
         boolean found = false;
