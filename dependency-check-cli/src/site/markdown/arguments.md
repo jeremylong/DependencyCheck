@@ -50,7 +50,7 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Paramete
        | \-\-disableAssembly   |                 | Sets whether or not the .NET Assembly Analyzer should be used.                   | false
        | \-\-mono              | \<path\>        | The path to Mono for .NET Assembly analysis on non-windows systems.              | &nbsp;
        | \-\-bundleAudit       |                 | The path to the bundle-audit executable. | &nbsp;
-       | \-\-proxyserver       | \<server\>      | The proxy server to use when downloading resources.                              | &nbsp;
+       | \-\-proxyserver       | \<server\>      | The proxy server to use when downloading resources; see the [proxy configuration](../data/proxy.html) page for more information. | &nbsp;
        | \-\-proxyport         | \<port\>        | The proxy port to use when downloading resources.                                | &nbsp;
        | \-\-connectiontimeout | \<timeout\>     | The connection timeout (in milliseconds) to use when downloading resources.      | &nbsp;
        | \-\-proxypass         | \<pass\>        | The proxy password to use when downloading resources.                            | &nbsp;
