@@ -16,8 +16,11 @@ Installation
     <property name="dependency-check.home" value="C:/tools/dependency-check-ant"/>
     <path id="dependency-check.path">
        <pathelement location="${dependency-check.home}/dependency-check-ant.jar"/>
+        <fileset dir="${dependency-check.home}/lib">
+            <include name="*.jar"/>
+        </fileset>
     </path>
-       <taskdef resource="dependency-check-taskdefs.properties">
+    <taskdef resource="dependency-check-taskdefs.properties">
        <classpath refid="dependency-check.path" />
     </taskdef>
     ```
