@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.owasp.dependencycheck.data.update.NvdCveUpdater;
 import org.owasp.dependencycheck.data.update.exception.InvalidDataException;
+import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -39,6 +40,10 @@ public class CPEHandler extends DefaultHandler {
      * The current CPE schema.
      */
     private static final String CURRENT_SCHEMA_VERSION = "2.3";
+    /**
+     * The Starts with expression to filter CVE entries by CPE.
+     */
+    private static final String CPE_STARTS_WITH = Settings.getString(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER,"cpe:/a:");
     /**
      * The text content of the node being processed. This can be used during the end element event.
      */
@@ -82,7 +87,7 @@ public class CPEHandler extends DefaultHandler {
             final String temp = attributes.getValue("deprecated");
             final String value = attributes.getValue("name");
             final boolean delete = "true".equalsIgnoreCase(temp);
-            if (!delete && value.startsWith("cpe:/a:") && value.length() > 7) {
+            if (!delete && value.startsWith(CPE_STARTS_WITH) && value.length() > 7) {
                 try {
                     final Cpe cpe = new Cpe(value);
                     data.add(cpe);

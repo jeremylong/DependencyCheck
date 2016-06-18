@@ -100,6 +100,13 @@ public final class Settings {
          */
         public static final String DB_VERSION = "data.version";
         /**
+         * The starts with filter used to exclude CVE entries from the database.
+         * By default this is set to 'cpe:/a:' which limits the CVEs imported to 
+         * just those that are related to applications. If this were set to just 
+         * 'cpe:' the OS, hardware, and application related CVEs would be imported.
+         */
+        public static final String CVE_CPE_STARTS_WITH_FILTER = "cve.cpe.startswith.filter";
+        /**
          * The properties key for the URL to retrieve the "meta" data from about the CVE entries.
          */
         public static final String CVE_META_URL = "cve.url.meta";
