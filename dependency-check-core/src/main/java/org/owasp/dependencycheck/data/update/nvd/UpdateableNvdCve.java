@@ -25,6 +25,8 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Contains a collection of updateable NvdCveInfo objects. This is used to determine which files need to be downloaded and
@@ -34,6 +36,7 @@ import org.owasp.dependencycheck.utils.Downloader;
  */
 public class UpdateableNvdCve implements Iterable<NvdCveInfo>, Iterator<NvdCveInfo> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UpdateableNvdCve.class);
     /**
      * A collection of sources of data.
      */
@@ -91,6 +94,7 @@ public class UpdateableNvdCve implements Iterable<NvdCveInfo>, Iterator<NvdCveIn
         item.setId(id);
         item.setUrl(url);
         item.setOldSchemaVersionUrl(oldUrl);
+        LOGGER.debug("Checking for updates from: {}", url);
         item.setTimestamp(Downloader.getLastModified(new URL(url)));
         collection.put(id, item);
     }
