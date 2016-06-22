@@ -666,7 +666,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                                 #end
                             #end
                             #if ($dependency.projectReferences.size()>1)
-                                <br/><b>Referenced In Projects:</b><ul>
+                                <br/><b>Referenced In Projects/Scopes:</b><ul>
                                 #foreach($ref in $dependency.projectReferences)
                                     <li>$enc.html($ref)</li>
                                 #end
