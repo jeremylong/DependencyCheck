@@ -660,7 +660,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                             <b>MD5:</b>&nbsp;$enc.html($dependency.Md5sum)<br/>
                             <b>SHA1:</b>&nbsp;$enc.html($dependency.Sha1sum)
                             #if ($dependency.projectReferences.size()==1)
-                                <br/><b>Referenced In Project:</b>
+                                <br/><b>Referenced In Project/Scope:</b>
                                 #foreach($ref in $dependency.projectReferences)
                                     $enc.html($ref)
                                 #end
