@@ -31,6 +31,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.collections.buffer.CircularFifoBuffer;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -58,8 +59,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p>
- * An analyzer that extracts files from archives and ensures any supported files contained within the archive are added to the
- * dependency list.</p>
+ * An analyzer that extracts files from archives and ensures any supported files
+ * contained within the archive are added to the dependency list.</p>
  *
  * @author Jeremy Long
  */
@@ -70,7 +71,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ArchiveAnalyzer.class);
     /**
-     * The count of directories created during analysis. This is used for creating temporary directories.
+     * The count of directories created during analysis. This is used for
+     * creating temporary directories.
      */
     private static int dirCount = 0;
     /**
@@ -78,7 +80,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private File tempFileLocation = null;
     /**
-     * The max scan depth that the analyzer will recursively extract nested archives.
+     * The max scan depth that the analyzer will recursively extract nested
+     * archives.
      */
     private static final int MAX_SCAN_DEPTH = Settings.getInt("archive.scan.depth", 3);
     /**
@@ -100,13 +103,15 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final Set<String> ZIPPABLES = newHashSet("zip", "ear", "war", "jar", "sar", "apk", "nupkg");
     /**
-     * The set of file extensions supported by this analyzer. Note for developers, any additions to this list will need to be
-     * explicitly handled in {@link #extractFiles(File, File, Engine)}.
+     * The set of file extensions supported by this analyzer. Note for
+     * developers, any additions to this list will need to be explicitly handled
+     * in {@link #extractFiles(File, File, Engine)}.
      */
     private static final Set<String> EXTENSIONS = newHashSet("tar", "gz", "tgz", "bz2", "tbz2");
 
     /**
-     * Detects files with extensions to remove from the engine's collection of dependencies.
+     * Detects files with extensions to remove from the engine's collection of
+     * dependencies.
      */
     private static final FileFilter REMOVE_FROM_ANALYSIS = FileFilterBuilder.newInstance().addExtensions("zip", "tar", "gz", "tgz", "bz2", "tbz2")
             .build();
@@ -157,7 +162,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     //</editor-fold>
 
     /**
-     * Returns the key used in the properties file to reference the analyzer's enabled property.
+     * Returns the key used in the properties file to reference the analyzer's
+     * enabled property.
      *
      * @return the analyzer's enabled property setting key
      */
@@ -169,7 +175,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The initialize method does nothing for this Analyzer.
      *
-     * @throws Exception is thrown if there is an exception deleting or creating temporary files
+     * @throws Exception is thrown if there is an exception deleting or creating
+     * temporary files
      */
     @Override
     public void initializeFileTypeAnalyzer() throws Exception {
@@ -186,9 +193,11 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * The close method deletes any temporary files and directories created during analysis.
+     * The close method deletes any temporary files and directories created
+     * during analysis.
      *
-     * @throws Exception thrown if there is an exception deleting temporary files
+     * @throws Exception thrown if there is an exception deleting temporary
+     * files
      */
     @Override
     public void close() throws Exception {
@@ -205,8 +214,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Analyzes a given dependency. If the dependency is an archive, such as a WAR or EAR, the contents are extracted, scanned,
-     * and added to the list of dependencies within the engine.
+     * Analyzes a given dependency. If the dependency is an archive, such as a
+     * WAR or EAR, the contents are extracted, scanned, and added to the list of
+     * dependencies within the engine.
      *
      * @param dependency the dependency to analyze
      * @param engine the engine scanning
@@ -249,7 +259,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * If a zip file was identified as a possible JAR, this method will add the zip to the list of dependencies.
+     * If a zip file was identified as a possible JAR, this method will add the
+     * zip to the list of dependencies.
      *
      * @param dependency the zip file
      * @param engine the engine
@@ -349,7 +360,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             final String archiveExt = FileUtils.getFileExtension(archive.getName()).toLowerCase();
             try {
                 if (ZIPPABLES.contains(archiveExt)) {
-                    extractArchive(new ZipArchiveInputStream(new BufferedInputStream(fis)), destination, engine);
+                    BufferedInputStream in = new BufferedInputStream(fis);
+                    ensureReadableJar(archiveExt, in);
+                    extractArchive(new ZipArchiveInputStream(in), destination, engine);
                 } else if ("tar".equals(archiveExt)) {
                     extractArchive(new TarArchiveInputStream(new BufferedInputStream(fis)), destination, engine);
                 } else if ("gz".equals(archiveExt) || "tgz".equals(archiveExt)) {
@@ -378,12 +391,64 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
+     * Checks if the file being scanned is a JAR that begins with '#!/bin' which
+     * indicates it is a fully executable jar. If a fully executable JAR is identified
+     * the input stream will be advanced to the start of the actual JAR file (
+     * skipping the script).
+     *
+     * @see
+     * <a href="http://docs.spring.io/spring-boot/docs/1.3.0.BUILD-SNAPSHOT/reference/htmlsingle/#deployment-install">Installing
+     * Spring Boot Applications</a>
+     * @param archiveExt the file extension
+     * @param in the input stream
+     * @throws IOException thrown if there is an error reading the stream
+     */
+    private void ensureReadableJar(final String archiveExt, BufferedInputStream in) throws IOException {
+        if ("jar".equals(archiveExt) && in.markSupported()) {
+            in.mark(7);
+            byte[] b = new byte[7];
+            in.read(b);
+            if (b[0] == '#'
+                    && b[1] == '!'
+                    && b[2] == '/'
+                    && b[3] == 'b'
+                    && b[4] == 'i'
+                    && b[5] == 'n'
+                    && b[6] == '/') {
+                boolean stillLooking = true;
+                int chr;
+                CircularFifoBuffer buf = new CircularFifoBuffer(6);
+                while (stillLooking && (chr = in.read()) != -1) {
+                    if (chr == '\n' || chr == '\r') {
+                        if ('e' == (Integer) buf.remove()
+                                && 'x' == (Integer) buf.remove()
+                                && 'i' == (Integer) buf.remove()
+                                && 't' == (Integer) buf.remove()
+                                && ' ' == (Integer) buf.remove()
+                                && '0' == (Integer) buf.remove()) {
+                            in.mark(2);
+                            if (in.read() == 'P' && in.read() == 'K') {
+                                stillLooking = false;
+                                in.reset();
+                            }
+                        }
+                    }
+                    buf.add(chr);
+                }
+            } else {
+                in.reset();
+            }
+        }
+    }
+
+    /**
      * Extracts files from an archive.
      *
      * @param input the archive to extract files from
      * @param destination the location to write the files too
      * @param engine the dependency-check engine
-     * @throws ArchiveExtractionException thrown if there is an exception extracting files from the archive
+     * @throws ArchiveExtractionException thrown if there is an exception
+     * extracting files from the archive
      */
     private void extractArchive(ArchiveInputStream input, File destination, Engine engine) throws ArchiveExtractionException {
         ArchiveEntry entry;
@@ -442,7 +507,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @param inputStream the compressed file
      * @param outputFile the location to write the decompressed file
-     * @throws ArchiveExtractionException thrown if there is an exception decompressing the file
+     * @throws ArchiveExtractionException thrown if there is an exception
+     * decompressing the file
      */
     private void decompressFile(CompressorInputStream inputStream, File outputFile) throws ArchiveExtractionException {
         LOGGER.debug("Decompressing '{}'", outputFile.getPath());
@@ -462,7 +528,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Close the given {@link Closeable} instance, ignoring nulls, and logging any thrown {@link IOException}.
+     * Close the given {@link Closeable} instance, ignoring nulls, and logging
+     * any thrown {@link IOException}.
      *
      * @param closeable to be closed
      */
