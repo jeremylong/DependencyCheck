@@ -116,7 +116,6 @@ public class ArchiveAnalyzerIntegrationTest extends BaseDBTestCase {
         try {
             instance.initialize();
             File file = BaseTest.getResourceAsFile(this, "daytrader-ear-2.1.7.ear");
-            //File file = new File(this.getClass().getClassLoader().getResource("daytrader-ear-2.1.7.ear").getPath());
             Dependency dependency = new Dependency(file);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
@@ -136,6 +135,36 @@ public class ArchiveAnalyzerIntegrationTest extends BaseDBTestCase {
         }
     }
 
+    /**
+     * Test of analyze method, of class ArchiveAnalyzer, with an executable jar.
+     */
+    @Test
+    public void testAnalyzeExecutableJar() throws Exception {
+        ArchiveAnalyzer instance = new ArchiveAnalyzer();
+        //trick the analyzer into thinking it is active.
+        instance.accept(new File("test.ear"));
+        try {
+            instance.initialize();
+            File file = BaseTest.getResourceAsFile(this, "bootable-0.1.0.jar");
+            Dependency dependency = new Dependency(file);
+            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
+            Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
+            Engine engine = new Engine();
+
+            int initial_size = engine.getDependencies().size();
+            instance.analyze(dependency, engine);
+            int ending_size = engine.getDependencies().size();
+
+            engine.cleanup();
+
+            assertTrue(initial_size < ending_size);
+
+        } finally {
+            instance.close();
+        }
+    }
+    
     /**
      * Test of analyze method, of class ArchiveAnalyzer.
      */
