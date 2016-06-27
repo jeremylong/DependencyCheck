@@ -392,9 +392,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
      * Checks if the file being scanned is a JAR that begins with '#!/bin' which
-     * indicates it is a fully executable jar. If a fully executable JAR is identified
-     * the input stream will be advanced to the start of the actual JAR file (
-     * skipping the script).
+     * indicates it is a fully executable jar. If a fully executable JAR is
+     * identified the input stream will be advanced to the start of the actual
+     * JAR file ( skipping the script).
      *
      * @see
      * <a href="http://docs.spring.io/spring-boot/docs/1.3.0.BUILD-SNAPSHOT/reference/htmlsingle/#deployment-install">Installing
@@ -416,27 +416,24 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                     && b[5] == 'n'
                     && b[6] == '/') {
                 boolean stillLooking = true;
-                int chr;
-                CircularFifoBuffer buf = new CircularFifoBuffer(6);
+                int chr, nxtChr;
                 while (stillLooking && (chr = in.read()) != -1) {
                     if (chr == '\n' || chr == '\r') {
-                        if ('e' == (Integer) buf.remove()
-                                && 'x' == (Integer) buf.remove()
-                                && 'i' == (Integer) buf.remove()
-                                && 't' == (Integer) buf.remove()
-                                && ' ' == (Integer) buf.remove()
-                                && '0' == (Integer) buf.remove()) {
-                            in.mark(2);
-                            if (in.read() == 'P' && in.read() == 'K') {
-                                stillLooking = false;
-                                in.reset();
+                        in.mark(4);
+                        if ((chr = in.read()) != -1) {
+                            if (chr == 'P' && (chr = in.read()) != -1) {
+                                if (chr == 'K' && (chr = in.read()) != -1) {
+                                    if ((chr == 3 || chr == 5 || chr == 7) && (nxtChr = in.read()) != -1) {
+                                        if (nxtChr == chr + 1) {
+                                            stillLooking = false;
+                                            in.reset();
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
-                    buf.add(chr);
                 }
-            } else {
-                in.reset();
             }
         }
     }
