@@ -64,7 +64,7 @@ public class AssemblyAnalyzerTest extends BaseTest {
             if (e.getMessage().contains("Could not execute .NET AssemblyAnalyzer")) {
                 LOGGER.warn("Exception setting up AssemblyAnalyzer. Tests will be incomplete");
             } else {
-                LOGGER.warn("Exception setting up AssemblyAnalyzer. Tests will be incomplete", e);
+                LOGGER.warn("Exception setting up AssemblyAnalyzer. Tests will be incomplete");
             }
             Assume.assumeNoException("Is mono installed? TESTS WILL BE INCOMPLETE", e);
         }
