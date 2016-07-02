@@ -108,6 +108,7 @@ public class RubyBundlerAnalyzer extends RubyGemspecAnalyzer {
                 final File gemsDir = new File(parentDir, GEMS);
                 if (gemsDir.exists()) {
                     final File[] matchingFiles = gemsDir.listFiles(new FilenameFilter() {
+                        @Override
                         public boolean accept(File dir, String name) {
                             return name.equals(gemName);
                         }

@@ -63,6 +63,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
      *
      * @throws Exception thrown if there is a problem
      */
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
