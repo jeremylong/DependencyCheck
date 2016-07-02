@@ -18,15 +18,12 @@
 package org.owasp.dependencycheck.dependency;
 
 import java.io.File;
-import java.util.List;
 import java.util.Set;
-import org.junit.After;
-import org.junit.AfterClass;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.BeforeClass;
+
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;

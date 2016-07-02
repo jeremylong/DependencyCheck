@@ -25,11 +25,9 @@ import java.io.Reader;
 import java.util.List;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.junit.After;
-import org.junit.AfterClass;
+
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.BeforeClass;
+
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.xml.sax.InputSource;
