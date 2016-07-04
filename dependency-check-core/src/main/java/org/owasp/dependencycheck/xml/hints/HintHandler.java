@@ -60,7 +60,7 @@ public class HintHandler extends DefaultHandler {
     /**
      * Attribute name.
      */
-    private static final String DUPLIACE = "dupliace";
+    private static final String DUPLICATE = "duplicate";
     /**
      * Attribute name.
      */
@@ -194,7 +194,7 @@ public class HintHandler extends DefaultHandler {
             }
             rule.addFilename(pt);
         } else if (VENDOR_DUPLICATING_RULE.equals(qName)) {
-            vendorDuplicatingHintRules.add(new VendorDuplicatingHintRule(attr.getValue(VALUE), attr.getValue(DUPLIACE)));
+            vendorDuplicatingHintRules.add(new VendorDuplicatingHintRule(attr.getValue(VALUE), attr.getValue(DUPLICATE)));
         }
     }
     
