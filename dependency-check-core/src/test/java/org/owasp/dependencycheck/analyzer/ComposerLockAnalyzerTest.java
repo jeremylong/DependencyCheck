@@ -23,16 +23,11 @@ import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.Evidence;
 
 import java.io.File;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import org.owasp.dependencycheck.BaseDBTestCase;
 
@@ -53,6 +48,7 @@ public class ComposerLockAnalyzerTest extends BaseDBTestCase {
      *
      * @throws Exception thrown if there is a problem
      */
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

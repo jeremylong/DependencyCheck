@@ -20,13 +20,11 @@ package org.owasp.dependencycheck.data.update.nvd;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import org.junit.After;
-import org.junit.AfterClass;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.BeforeClass;
+
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
