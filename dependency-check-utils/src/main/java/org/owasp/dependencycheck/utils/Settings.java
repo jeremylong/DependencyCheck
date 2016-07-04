@@ -189,9 +189,13 @@ public final class Settings {
          */
         public static final String MAX_DOWNLOAD_THREAD_POOL_SIZE = "max.download.threads";
         /**
-         * The key for a list of suppression files.
+         * The key for the suppression file.
          */
         public static final String SUPPRESSION_FILE = "suppression.file";
+        /**
+         * The key for the hint file.
+         */
+        public static final String HINTS_FILE = "hints.file";
         /**
          * The properties key for whether the Jar Analyzer is enabled.
          */
