@@ -65,5 +65,9 @@ public class HintParserTest extends BaseTest {
         assertEquals("file name 1 should not be a regex", false, results.getHintRules().get(1).getFilenames().get(0).isRegex());
         assertEquals("file name 2 should be case sensitive", true, results.getHintRules().get(1).getFilenames().get(1).isCaseSensitive());
         assertEquals("file name 2 should be a regex", true, results.getHintRules().get(1).getFilenames().get(1).isRegex());
+        
+        
+        assertEquals("sun duplicating vendor", "sun", results.getVendorDuplicatingHintRules().get(0).getValue());
+        assertEquals("sun duplicates vendor oracle", "oracle", results.getVendorDuplicatingHintRules().get(0).getDuplicate());
     }
 }
