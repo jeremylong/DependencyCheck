@@ -29,6 +29,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.BaseDBTestCase;
+import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.cpe.IndexEntry;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -82,6 +83,10 @@ public class CPEAnalyzerIntegrationTest extends BaseDBTestCase {
      */
     @Test
     public void testDetermineCPE_full() throws Exception {
+        //update needs to be performed so that xtream can be tested
+        Engine e = new Engine();
+        e.doUpdates();
+
         CPEAnalyzer cpeAnalyzer = new CPEAnalyzer();
         try {
             cpeAnalyzer.initialize();
@@ -94,14 +99,15 @@ public class CPEAnalyzerIntegrationTest extends BaseDBTestCase {
             hAnalyzer.initialize();
             FalsePositiveAnalyzer fp = new FalsePositiveAnalyzer();
             fp.initialize();
-                        
-            //callDetermineCPE_full("struts2-core-2.3.16.3.jar", "cpe:/a:apache:struts:2.3.16.3", instance, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
+
             callDetermineCPE_full("hazelcast-2.5.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
             callDetermineCPE_full("spring-context-support-2.5.5.jar", "cpe:/a:springsource:spring_framework:2.5.5", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
             callDetermineCPE_full("spring-core-3.0.0.RELEASE.jar", "cpe:/a:vmware:springsource_spring_framework:3.0.0", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
             callDetermineCPE_full("org.mortbay.jetty.jar", "cpe:/a:mortbay_jetty:jetty:4.2.27", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
             callDetermineCPE_full("jaxb-xercesImpl-1.5.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
             callDetermineCPE_full("ehcache-core-2.2.0.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
+            callDetermineCPE_full("xstream-1.4.8.jar", "cpe:/a:x-stream:xstream:1.4.8", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
+
         } finally {
             cpeAnalyzer.close();
         }
