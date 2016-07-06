@@ -272,8 +272,8 @@ public final class Downloader {
                 }
                 try {
                     //retry
-                    if (!isRetry && !Settings.getBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP)) {
-                        Settings.setBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP, true);
+                    if (!isRetry && Settings.getBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP)) {
+                        Settings.setBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP, false);
                         return getLastModified(url, true);
                     }
                 } catch (InvalidSettingException ex1) {
