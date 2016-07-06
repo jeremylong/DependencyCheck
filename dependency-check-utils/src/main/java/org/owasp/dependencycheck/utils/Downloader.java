@@ -33,6 +33,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
 import static java.lang.String.format;
+import static java.lang.String.format;
 
 /**
  * A utility to download files from the Internet.
@@ -172,7 +173,7 @@ public final class Downloader {
                 }
                 LOGGER.debug("Download of {} complete", url.toString());
             } catch (IOException ex) {
-                analyzeException(ex);
+                checkException(ex);
                 final String msg = format("Error saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
                         url.toString(), outputPath.getAbsolutePath(), conn.getConnectTimeout(), encoding);
                 throw new DownloadFailedException(msg, ex);
@@ -203,8 +204,7 @@ public final class Downloader {
             }
         }
     }
-
-    /**
+/**
      * Makes an HTTP Head request to retrieve the last modified date of the given URL. If the file:// protocol is specified, then
      * the lastTimestamp of the file is returned.
      *
@@ -213,6 +213,18 @@ public final class Downloader {
      * @throws DownloadFailedException is thrown if an exception occurs making the HTTP request
      */
     public static long getLastModified(URL url) throws DownloadFailedException {
+        return getLastModified(url, false);
+    }
+    /**
+     * Makes an HTTP Head request to retrieve the last modified date of the given URL. If the file:// protocol is specified, then
+     * the lastTimestamp of the file is returned.
+     *
+     * @param url the URL to retrieve the timestamp from
+     * @param isRetry indicates if this is a retry - to prevent endless loop and stack overflow
+     * @return an epoch timestamp
+     * @throws DownloadFailedException is thrown if an exception occurs making the HTTP request
+     */
+    private static long getLastModified(URL url, boolean isRetry) throws DownloadFailedException {
         long timestamp = 0;
         //TODO add the FTP protocol?
         if ("file".equalsIgnoreCase(url.getProtocol())) {
@@ -240,17 +252,16 @@ public final class Downloader {
             } catch (URLConnectionFailureException ex) {
                 throw new DownloadFailedException(format("Error creating URL Connection for HTTP %s request.", httpMethod), ex);
             } catch (IOException ex) {
-                analyzeException(ex);
+                checkException(ex);
                 try {
                     //retry
-                    if (!Settings.getBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP)) {
+                    if (!isRetry && !Settings.getBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP)) {
                         Settings.setBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP, true);
-                        return getLastModified(url);
+                        return getLastModified(url, true);
                     }
                 } catch (InvalidSettingException ex1) {
                     LOGGER.debug("invalid setting?", ex);
                 }
-
                 throw new DownloadFailedException(format("Error making HTTP %s request.", httpMethod), ex);
             } finally {
                 if (conn != null) {
@@ -272,7 +283,7 @@ public final class Downloader {
      * @param ex the original exception
      * @throws DownloadFailedException a wrapper exception that contains the original exception as the cause
      */
-    protected static void analyzeException(IOException ex) throws DownloadFailedException {
+    protected static void checkException(IOException ex) throws DownloadFailedException {
         Throwable cause = ex;
         while (cause != null) {
             if (cause instanceof InvalidAlgorithmParameterException) {
