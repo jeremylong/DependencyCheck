@@ -34,6 +34,8 @@ import java.util.zip.InflaterInputStream;
 
 import static java.lang.String.format;
 import static java.lang.String.format;
+import static java.lang.String.format;
+import static java.lang.String.format;
 
 /**
  * A utility to download files from the Internet.
@@ -47,7 +49,8 @@ public final class Downloader {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Downloader.class);
     /**
-     * The maximum number of redirects that will be followed when attempting to download a file.
+     * The maximum number of redirects that will be followed when attempting to
+     * download a file.
      */
     private static final int MAX_REDIRECT_ATTEMPTS = 5;
 
@@ -72,7 +75,8 @@ public final class Downloader {
      *
      * @param url the URL of the file to download
      * @param outputPath the path to the save the file to
-     * @throws DownloadFailedException is thrown if there is an error downloading the file
+     * @throws DownloadFailedException is thrown if there is an error
+     * downloading the file
      */
     public static void fetchFile(URL url, File outputPath) throws DownloadFailedException {
         fetchFile(url, outputPath, true);
@@ -83,8 +87,10 @@ public final class Downloader {
      *
      * @param url the URL of the file to download
      * @param outputPath the path to the save the file to
-     * @param useProxy whether to use the configured proxy when downloading files
-     * @throws DownloadFailedException is thrown if there is an error downloading the file
+     * @param useProxy whether to use the configured proxy when downloading
+     * files
+     * @throws DownloadFailedException is thrown if there is an error
+     * downloading the file
      */
     public static void fetchFile(URL url, File outputPath, boolean useProxy) throws DownloadFailedException {
         if ("file".equalsIgnoreCase(url.getProtocol())) {
@@ -173,7 +179,7 @@ public final class Downloader {
                 }
                 LOGGER.debug("Download of {} complete", url.toString());
             } catch (IOException ex) {
-                checkException(ex);
+                checkForSslExceptionn(ex);
                 final String msg = format("Error saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
                         url.toString(), outputPath.getAbsolutePath(), conn.getConnectTimeout(), encoding);
                 throw new DownloadFailedException(msg, ex);
@@ -204,25 +210,32 @@ public final class Downloader {
             }
         }
     }
-/**
-     * Makes an HTTP Head request to retrieve the last modified date of the given URL. If the file:// protocol is specified, then
-     * the lastTimestamp of the file is returned.
+
+    /**
+     * Makes an HTTP Head request to retrieve the last modified date of the
+     * given URL. If the file:// protocol is specified, then the lastTimestamp
+     * of the file is returned.
      *
      * @param url the URL to retrieve the timestamp from
      * @return an epoch timestamp
-     * @throws DownloadFailedException is thrown if an exception occurs making the HTTP request
+     * @throws DownloadFailedException is thrown if an exception occurs making
+     * the HTTP request
      */
     public static long getLastModified(URL url) throws DownloadFailedException {
         return getLastModified(url, false);
     }
+
     /**
-     * Makes an HTTP Head request to retrieve the last modified date of the given URL. If the file:// protocol is specified, then
-     * the lastTimestamp of the file is returned.
+     * Makes an HTTP Head request to retrieve the last modified date of the
+     * given URL. If the file:// protocol is specified, then the lastTimestamp
+     * of the file is returned.
      *
      * @param url the URL to retrieve the timestamp from
-     * @param isRetry indicates if this is a retry - to prevent endless loop and stack overflow
+     * @param isRetry indicates if this is a retry - to prevent endless loop and
+     * stack overflow
      * @return an epoch timestamp
-     * @throws DownloadFailedException is thrown if an exception occurs making the HTTP request
+     * @throws DownloadFailedException is thrown if an exception occurs making
+     * the HTTP request
      */
     private static long getLastModified(URL url, boolean isRetry) throws DownloadFailedException {
         long timestamp = 0;
@@ -252,7 +265,11 @@ public final class Downloader {
             } catch (URLConnectionFailureException ex) {
                 throw new DownloadFailedException(format("Error creating URL Connection for HTTP %s request.", httpMethod), ex);
             } catch (IOException ex) {
-                checkException(ex);
+                checkForSslExceptionn(ex);
+                LOGGER.debug("IO Exception: " + ex.getMessage(), ex);
+                if (ex.getCause() != null) {
+                    LOGGER.debug("IO Exception cause: " + ex.getCause().getMessage(), ex.getCause());
+                }
                 try {
                     //retry
                     if (!isRetry && !Settings.getBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP)) {
@@ -277,13 +294,15 @@ public final class Downloader {
     }
 
     /**
-     * Analyzes the IOException, logs the appropriate information for debugging purposes, and then throws a
-     * DownloadFailedException that wraps the IO Exception.
+     * Analyzes the IOException, logs the appropriate information for debugging
+     * purposes, and then throws a DownloadFailedException that wraps the IO
+     * Exception.
      *
      * @param ex the original exception
-     * @throws DownloadFailedException a wrapper exception that contains the original exception as the cause
+     * @throws DownloadFailedException a wrapper exception that contains the
+     * original exception as the cause
      */
-    protected static void checkException(IOException ex) throws DownloadFailedException {
+    protected static void checkForSslExceptionn(IOException ex) throws DownloadFailedException {
         Throwable cause = ex;
         while (cause != null) {
             if (cause instanceof InvalidAlgorithmParameterException) {
@@ -311,7 +330,8 @@ public final class Downloader {
     }
 
     /**
-     * Determines if the HTTP method GET or HEAD should be used to check the timestamp on external resources.
+     * Determines if the HTTP method GET or HEAD should be used to check the
+     * timestamp on external resources.
      *
      * @return true if configured to use HEAD requests
      */
