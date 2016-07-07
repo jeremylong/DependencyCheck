@@ -20,7 +20,7 @@ package org.owasp.dependencycheck.analyzer;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.suppression.SuppressionRule;
+import org.owasp.dependencycheck.xml.suppression.SuppressionRule;
 
 /**
  * The suppression analyzer processes an externally defined XML document that complies with the suppressions.xsd schema.

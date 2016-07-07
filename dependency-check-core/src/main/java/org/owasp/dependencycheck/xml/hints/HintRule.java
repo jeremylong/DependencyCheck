@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Evidence;
-import org.owasp.dependencycheck.suppression.PropertyType;
+import org.owasp.dependencycheck.xml.suppression.PropertyType;
 
 /**
  * A collection of product and vendor evidence to match; if any evidence is

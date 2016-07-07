@@ -15,7 +15,7 @@
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.suppression;
+package org.owasp.dependencycheck.xml.suppression;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

@@ -15,7 +15,7 @@
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.suppression;
+package org.owasp.dependencycheck.xml.suppression;
 
 import java.io.File;
 import java.util.List;

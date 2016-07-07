@@ -23,8 +23,8 @@ import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.suppression.SuppressionParseException;
-import org.owasp.dependencycheck.suppression.SuppressionRule;
+import org.owasp.dependencycheck.xml.suppression.SuppressionParseException;
+import org.owasp.dependencycheck.xml.suppression.SuppressionRule;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.LoggerFactory;
 

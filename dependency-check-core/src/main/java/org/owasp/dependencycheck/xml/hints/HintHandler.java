@@ -20,7 +20,7 @@ package org.owasp.dependencycheck.xml.hints;
 import java.util.ArrayList;
 import java.util.List;
 import org.owasp.dependencycheck.dependency.Confidence;
-import org.owasp.dependencycheck.suppression.PropertyType;
+import org.owasp.dependencycheck.xml.suppression.PropertyType;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
