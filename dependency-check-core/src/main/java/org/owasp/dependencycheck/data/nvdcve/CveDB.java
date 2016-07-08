@@ -19,7 +19,6 @@ package org.owasp.dependencycheck.data.nvdcve;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -813,14 +812,14 @@ public class CveDB {
      * Deletes unused dictionary entries from the database.
      */
     public void deleteUnusedCpe() {
-        CallableStatement cs = null;
+        PreparedStatement ps = null;
         try {
-            cs = getConnection().prepareCall(statementBundle.getString("DELETE_UNUSED_DICT_CPE"));
-            cs.executeUpdate();
+            ps = getConnection().prepareStatement(statementBundle.getString("DELETE_UNUSED_DICT_CPE"));
+            ps.executeUpdate();
         } catch (SQLException ex) {
             LOGGER.error("Unable to delete CPE dictionary entries", ex);
         } finally {
-            DBUtils.closeStatement(cs);
+            DBUtils.closeStatement(ps);
         }
     }
 
@@ -837,7 +836,7 @@ public class CveDB {
     public void addCpe(String cpe, String vendor, String product) {
         PreparedStatement ps = null;
         try {
-            ps = getConnection().prepareCall(statementBundle.getString("ADD_DICT_CPE"));
+            ps = getConnection().prepareStatement(statementBundle.getString("ADD_DICT_CPE"));
             ps.setString(1, cpe);
             ps.setString(2, vendor);
             ps.setString(3, product);
