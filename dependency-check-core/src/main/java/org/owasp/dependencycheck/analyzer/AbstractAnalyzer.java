@@ -17,7 +17,11 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import org.owasp.dependencycheck.exception.InitializationException;
+
 /**
+ * Base class for analyzers to avoid code duplication of initialize and close
+ * as most analyzers do not need these methods.
  *
  * @author Jeremy Long
  */
@@ -26,10 +30,10 @@ public abstract class AbstractAnalyzer implements Analyzer {
     /**
      * The initialize method does nothing for this Analyzer.
      *
-     * @throws Exception thrown if there is an exception
+     * @throws InitializationException thrown if there is an exception
      */
     @Override
-    public void initialize() throws Exception {
+    public void initialize() throws InitializationException {
         //do nothing
     }
 

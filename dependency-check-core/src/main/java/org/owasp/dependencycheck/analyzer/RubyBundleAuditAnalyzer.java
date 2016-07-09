@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +41,7 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
  * Used to analyze Ruby Bundler Gemspec.lock files utilizing the 3rd party
@@ -126,10 +128,10 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      * Initialize the analyzer. In this case, extract GrokAssembly.exe to a
      * temporary location.
      *
-     * @throws Exception if anything goes wrong
+     * @throws InitializationException if anything goes wrong
      */
     @Override
-    public void initializeFileTypeAnalyzer() throws Exception {
+    public void initializeFileTypeAnalyzer() throws InitializationException {
         try {
             cvedb = new CveDB();
             cvedb.open();
@@ -137,25 +139,36 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.warn("Exception opening the database");
             LOGGER.debug("error", ex);
             setEnabled(false);
-            throw ex;
+            throw new InitializationException("Error connecting to the database", ex);
         }
         // Now, need to see if bundle-audit actually runs from this location.
         Process process = null;
         try {
             process = launchBundleAudit(Settings.getTempDirectory());
         } catch (AnalysisException ae) {
-            LOGGER.warn("Exception from bundle-audit process: {}. Disabling {}", ae.getCause(), ANALYZER_NAME);
+
             setEnabled(false);
             cvedb.close();
             cvedb = null;
-            throw ae;
+            String msg = String.format("Exception from bundle-audit process: %s. Disabling %s", ae.getCause(), ANALYZER_NAME);
+            throw new InitializationException(msg, ae);
+        } catch (IOException ex) {
+            setEnabled(false);
+            throw new InitializationException("Unable to create temporary file, the Ruby Bundle Audit Analyzer will be disabled", ex);
         }
 
-        final int exitValue = process.waitFor();
-        if (0 == exitValue) {
-            LOGGER.warn("Unexpected exit code from bundle-audit process. Disabling {}: {}", ANALYZER_NAME, exitValue);
+        final int exitValue;
+        try {
+            exitValue = process.waitFor();
+        } catch (InterruptedException ex) {
             setEnabled(false);
-            throw new AnalysisException("Unexpected exit code from bundle-audit process.");
+            String msg = String.format("Bundle-audit process was interupted. Disabling %s", ANALYZER_NAME);
+            throw new InitializationException(msg);
+        }
+        if (0 == exitValue) {
+            setEnabled(false);
+            String msg = String.format("Unexpected exit code from bundle-audit process. Disabling %s: %s", ANALYZER_NAME, exitValue);
+            throw new InitializationException(msg);
         } else {
             BufferedReader reader = null;
             try {
@@ -163,18 +176,28 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                 if (!reader.ready()) {
                     LOGGER.warn("Bundle-audit error stream unexpectedly not ready. Disabling " + ANALYZER_NAME);
                     setEnabled(false);
-                    throw new AnalysisException("Bundle-audit error stream unexpectedly not ready.");
+                    throw new InitializationException("Bundle-audit error stream unexpectedly not ready.");
                 } else {
                     final String line = reader.readLine();
                     if (line == null || !line.contains("Errno::ENOENT")) {
                         LOGGER.warn("Unexpected bundle-audit output. Disabling {}: {}", ANALYZER_NAME, line);
                         setEnabled(false);
-                        throw new AnalysisException("Unexpected bundle-audit output.");
+                        throw new InitializationException("Unexpected bundle-audit output.");
                     }
                 }
+            } catch (UnsupportedEncodingException ex) {
+                setEnabled(false);
+                throw new InitializationException("Unexpected bundle-audit encoding.", ex);
+            } catch (IOException ex) {
+                setEnabled(false);
+                throw new InitializationException("Unable to read bundle-audit output.", ex);
             } finally {
                 if (null != reader) {
-                    reader.close();
+                    try {
+                        reader.close();
+                    } catch (IOException ex) {
+                        LOGGER.debug("Error closing reader", ex);
+                    }
                 }
             }
         }

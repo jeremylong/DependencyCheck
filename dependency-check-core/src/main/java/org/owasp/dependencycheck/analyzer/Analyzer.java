@@ -20,24 +20,28 @@ package org.owasp.dependencycheck.analyzer;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
- * An interface that defines an Analyzer that is used to identify Dependencies. An analyzer will collect information
- * about the dependency in the form of Evidence.
+ * An interface that defines an Analyzer that is used to identify Dependencies.
+ * An analyzer will collect information about the dependency in the form of
+ * Evidence.
  *
  * @author Jeremy Long
  */
 public interface Analyzer {
 
     /**
-     * Analyzes the given dependency. The analysis could be anything from identifying an Identifier for the dependency,
-     * to finding vulnerabilities, etc. Additionally, if the analyzer collects enough information to add a description
-     * or license information for the dependency it should be added.
+     * Analyzes the given dependency. The analysis could be anything from
+     * identifying an Identifier for the dependency, to finding vulnerabilities,
+     * etc. Additionally, if the analyzer collects enough information to add a
+     * description or license information for the dependency it should be added.
      *
      * @param dependency a dependency to analyze.
-     * @param engine the engine that is scanning the dependencies - this is useful if we need to check other
-     * dependencies
-     * @throws AnalysisException is thrown if there is an error analyzing the dependency file
+     * @param engine the engine that is scanning the dependencies - this is
+     * useful if we need to check other dependencies
+     * @throws AnalysisException is thrown if there is an error analyzing the
+     * dependency file
      */
     void analyze(Dependency dependency, Engine engine) throws AnalysisException;
 
@@ -56,14 +60,17 @@ public interface Analyzer {
     AnalysisPhase getAnalysisPhase();
 
     /**
-     * The initialize method is called (once) prior to the analyze method being called on all of the dependencies.
+     * The initialize method is called (once) prior to the analyze method being
+     * called on all of the dependencies.
      *
-     * @throws Exception is thrown if an exception occurs initializing the analyzer.
+     * @throws InitializationException is thrown if an exception occurs
+     * initializing the analyzer.
      */
-    void initialize() throws Exception;
+    void initialize() throws InitializationException;
 
     /**
-     * The close method is called after all of the dependencies have been analyzed.
+     * The close method is called after all of the dependencies have been
+     * analyzed.
      *
      * @throws Exception is thrown if an exception occurs closing the analyzer.
      */

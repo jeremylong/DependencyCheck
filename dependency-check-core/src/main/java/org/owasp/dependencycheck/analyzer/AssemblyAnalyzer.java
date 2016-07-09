@@ -43,9 +43,12 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.parsers.ParserConfigurationException;
+import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
- * Analyzer for getting company, product, and version information from a .NET assembly.
+ * Analyzer for getting company, product, and version information from a .NET
+ * assembly.
  *
  * @author colezlaw
  *
@@ -178,13 +181,20 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Initialize the analyzer. In this case, extract GrokAssembly.exe to a temporary location.
+     * Initialize the analyzer. In this case, extract GrokAssembly.exe to a
+     * temporary location.
      *
-     * @throws Exception if anything goes wrong
+     * @throws InitializationException thrown if anything goes wrong
      */
     @Override
-    public void initializeFileTypeAnalyzer() throws Exception {
-        final File tempFile = File.createTempFile("GKA", ".exe", Settings.getTempDirectory());
+    public void initializeFileTypeAnalyzer() throws InitializationException {
+        final File tempFile;
+        try {
+            tempFile = File.createTempFile("GKA", ".exe", Settings.getTempDirectory());
+        } catch (IOException ex) {
+            setEnabled(false);
+            throw new InitializationException("Unable to create temporary file for the assembly analyzerr", ex);
+        }
         FileOutputStream fos = null;
         InputStream is = null;
         try {
@@ -199,7 +209,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (IOException ioe) {
             this.setEnabled(false);
             LOGGER.warn("Could not extract GrokAssembly.exe: {}", ioe.getMessage());
-            throw new AnalysisException("Could not extract GrokAssembly.exe", ioe);
+            throw new InitializationException("Could not extract GrokAssembly.exe", ioe);
         } finally {
             if (fos != null) {
                 try {
@@ -232,19 +242,24 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.warn("An error occurred with the .NET AssemblyAnalyzer, please see the log for more details.");
                 LOGGER.debug("GrokAssembly.exe is not working properly");
                 grokAssemblyExe = null;
-                this.setEnabled(false);
-                throw new AnalysisException("Could not execute .NET AssemblyAnalyzer");
+                setEnabled(false);
+                throw new InitializationException("Could not execute .NET AssemblyAnalyzer");
             }
-        } catch (AnalysisException e) {
+        } catch (InitializationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.warn("An error occurred with the .NET AssemblyAnalyzer;\n"
                     + "this can be ignored unless you are scanning .NET DLLs. Please see the log for more details.");
             LOGGER.debug("Could not execute GrokAssembly {}", e.getMessage());
-            this.setEnabled(false);
-            throw new AnalysisException("An error occurred with the .NET AssemblyAnalyzer", e);
+            setEnabled(false);
+            throw new InitializationException("An error occurred with the .NET AssemblyAnalyzer", e);
         }
-        builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        try {
+            builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        } catch (ParserConfigurationException ex) {
+            setEnabled(false);
+            throw new InitializationException("Error initializing the assembly analyzer", ex);
+        }
     }
 
     /**
@@ -296,7 +311,8 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Returns the key used in the properties file to reference the analyzer's enabled property.
+     * Returns the key used in the properties file to reference the analyzer's
+     * enabled property.
      *
      * @return the analyzer's enabled property setting key
      */

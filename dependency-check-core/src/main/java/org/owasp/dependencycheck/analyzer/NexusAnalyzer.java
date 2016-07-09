@@ -35,6 +35,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
@@ -42,15 +43,18 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * Analyzer which will attempt to locate a dependency on a Nexus service by SHA-1 digest of the dependency.
+ * Analyzer which will attempt to locate a dependency on a Nexus service by
+ * SHA-1 digest of the dependency.
  *
  * There are two settings which govern this behavior:
  *
  * <ul>
- * <li>{@link org.owasp.dependencycheck.utils.Settings.KEYS#ANALYZER_NEXUS_ENABLED} determines whether this analyzer is even
- * enabled. This can be overridden by setting the system property.</li>
- * <li>{@link org.owasp.dependencycheck.utils.Settings.KEYS#ANALYZER_NEXUS_URL} the URL to a Nexus service to search by SHA-1.
- * There is an expected <code>%s</code> in this where the SHA-1 will get entered.</li>
+ * <li>{@link org.owasp.dependencycheck.utils.Settings.KEYS#ANALYZER_NEXUS_ENABLED}
+ * determines whether this analyzer is even enabled. This can be overridden by
+ * setting the system property.</li>
+ * <li>{@link org.owasp.dependencycheck.utils.Settings.KEYS#ANALYZER_NEXUS_URL}
+ * the URL to a Nexus service to search by SHA-1. There is an expected
+ * <code>%s</code> in this where the SHA-1 will get entered.</li>
  * </ul>
  *
  * @author colezlaw
@@ -58,7 +62,8 @@ import org.owasp.dependencycheck.utils.Settings;
 public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
-     * The default URL - this will be used by the CentralAnalyzer to determine whether to enable this.
+     * The default URL - this will be used by the CentralAnalyzer to determine
+     * whether to enable this.
      */
     public static final String DEFAULT_URL = "https://repository.sonatype.org/service/local/";
 
@@ -95,7 +100,8 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Determines if this analyzer is enabled
      *
-     * @return <code>true</code> if the analyzer is enabled; otherwise <code>false</code>
+     * @return <code>true</code> if the analyzer is enabled; otherwise
+     * <code>false</code>
      */
     private boolean checkEnabled() {
         /* Enable this analyzer ONLY if the Nexus URL has been set to something
@@ -131,10 +137,10 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Initializes the analyzer once before any analysis is performed.
      *
-     * @throws Exception if there's an error during initialization
+     * @throws InitializationException if there's an error during initialization
      */
     @Override
-    public void initializeFileTypeAnalyzer() throws Exception {
+    public void initializeFileTypeAnalyzer() throws InitializationException {
         LOGGER.debug("Initializing Nexus Analyzer");
         LOGGER.debug("Nexus Analyzer enabled: {}", isEnabled());
         if (isEnabled()) {
@@ -143,14 +149,12 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
             try {
                 searcher = new NexusSearch(new URL(searchUrl));
                 if (!searcher.preflightRequest()) {
-                    LOGGER.warn("There was an issue getting Nexus status. Disabling analyzer.");
                     setEnabled(false);
+                    throw new InitializationException("There was an issue getting Nexus status. Disabling analyzer.");
                 }
             } catch (MalformedURLException mue) {
-                // I know that initialize can throw an exception, but we'll
-                // just disable the analyzer if the URL isn't valid
-                LOGGER.warn("Property {} not a valid URL. Nexus Analyzer disabled", searchUrl);
                 setEnabled(false);
+                throw new InitializationException("Malformed URL to Nexus: " + searchUrl, mue);
             }
         }
     }
@@ -166,7 +170,8 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Returns the key used in the properties file to reference the analyzer's enabled property.
+     * Returns the key used in the properties file to reference the analyzer's
+     * enabled property.
      *
      * @return the analyzer's enabled property setting key
      */

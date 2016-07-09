@@ -49,6 +49,7 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
@@ -174,20 +175,27 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The initialize method does nothing for this Analyzer.
      *
-     * @throws Exception is thrown if there is an exception deleting or creating
-     * temporary files
+     * @throws InitializationException is thrown if there is an exception
+     * deleting or creating temporary files
      */
     @Override
-    public void initializeFileTypeAnalyzer() throws Exception {
-        final File baseDir = Settings.getTempDirectory();
-        tempFileLocation = File.createTempFile("check", "tmp", baseDir);
-        if (!tempFileLocation.delete()) {
-            final String msg = String.format("Unable to delete temporary file '%s'.", tempFileLocation.getAbsolutePath());
-            throw new AnalysisException(msg);
-        }
-        if (!tempFileLocation.mkdirs()) {
-            final String msg = String.format("Unable to create directory '%s'.", tempFileLocation.getAbsolutePath());
-            throw new AnalysisException(msg);
+    public void initializeFileTypeAnalyzer() throws InitializationException {
+        try {
+            final File baseDir = Settings.getTempDirectory();
+            tempFileLocation = File.createTempFile("check", "tmp", baseDir);
+            if (!tempFileLocation.delete()) {
+                setEnabled(false);
+                final String msg = String.format("Unable to delete temporary file '%s'.", tempFileLocation.getAbsolutePath());
+                throw new InitializationException(msg);
+            }
+            if (!tempFileLocation.mkdirs()) {
+                setEnabled(false);
+                final String msg = String.format("Unable to create directory '%s'.", tempFileLocation.getAbsolutePath());
+                throw new InitializationException(msg);
+            }
+        } catch (IOException ex) {
+            setEnabled(false);
+            throw new InitializationException("Unable to create a temporary file", ex);
         }
     }
 

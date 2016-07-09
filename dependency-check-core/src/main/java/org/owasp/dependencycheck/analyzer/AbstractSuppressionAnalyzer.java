@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.xml.suppression.SuppressionParseException;
 import org.owasp.dependencycheck.xml.suppression.SuppressionParser;
 import org.owasp.dependencycheck.xml.suppression.SuppressionRule;
@@ -63,12 +64,16 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     /**
      * The initialize method loads the suppression XML file.
      *
-     * @throws Exception thrown if there is an exception
+     * @throws InitializationException thrown if there is an exception
      */
     @Override
-    public void initialize() throws Exception {
+    public void initialize() throws InitializationException {
         super.initialize();
-        loadSuppressionData();
+        try {
+            loadSuppressionData();
+        } catch (SuppressionParseException ex) {
+            throw new InitializationException("Error initializing the suppression analyzer", ex);
+        }
     }
 
     /**
@@ -104,12 +109,8 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         File file = null;
         try {
             rules = parser.parseSuppressionRules(this.getClass().getClassLoader().getResourceAsStream("dependencycheck-base-suppression.xml"));
-        } catch (SuppressionParseException ex) {
-            LOGGER.error("Unable to parse the base suppression data file");
-            LOGGER.debug("Unable to parse the base suppression data file", ex);
         } catch (SAXException ex) {
-            LOGGER.error("Unable to parse the base suppression data file");
-            LOGGER.debug("Unable to parse the base suppression data file", ex);
+            throw new SuppressionParseException("Unable to parse the base suppression data file", ex);
         }
         final String suppressionFilePath = Settings.getString(Settings.KEYS.SUPPRESSION_FILE);
         if (suppressionFilePath == null) {
@@ -142,16 +143,13 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                     }
                 }
             }
-
             if (file != null) {
                 try {
-                    //rules = parser.parseSuppressionRules(file);
                     rules.addAll(parser.parseSuppressionRules(file));
                     LOGGER.debug("{} suppression rules were loaded.", rules.size());
                 } catch (SuppressionParseException ex) {
                     LOGGER.warn("Unable to parse suppression xml file '{}'", file.getPath());
                     LOGGER.warn(ex.getMessage());
-                    LOGGER.debug("", ex);
                     throw ex;
                 }
             }

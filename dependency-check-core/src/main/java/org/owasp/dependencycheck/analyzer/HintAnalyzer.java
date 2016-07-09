@@ -25,16 +25,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.xml.suppression.PropertyType;
 import org.owasp.dependencycheck.xml.suppression.SuppressionParseException;
-import org.owasp.dependencycheck.xml.suppression.SuppressionParser;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.FileUtils;
@@ -49,6 +47,8 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 /**
+ * This analyzer adds evidence to dependencies to enhance the accuracy of
+ * library identification.
  *
  * @author Jeremy Long
  */
@@ -87,12 +87,17 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
     /**
      * The initialize method does nothing for this Analyzer.
      *
-     * @throws Exception thrown if there is an exception
+     * @throws InitializationException thrown if there is an exception
      */
     @Override
-    public void initialize() throws Exception {
-        super.initialize();
-        loadHintRules();
+    public void initialize() throws InitializationException {
+        try {
+            super.initialize();
+            loadHintRules();
+        } catch (HintParseException ex) {
+            LOGGER.debug("Unable to parse hint file", ex);
+            throw new InitializationException("Unable to parse the hint file", ex);
+        }
     }
     //</editor-fold>
 
