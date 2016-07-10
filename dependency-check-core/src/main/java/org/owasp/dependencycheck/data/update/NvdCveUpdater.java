@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
 
     /**
-     * The logger
+     * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(NvdCveUpdater.class);
     /**
@@ -59,9 +59,8 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
     public static final int MAX_THREAD_POOL_SIZE = Settings.getInt(Settings.KEYS.MAX_DOWNLOAD_THREAD_POOL_SIZE, 3);
 
     /**
-     * <p>
      * Downloads the latest NVD CVE XML file from the web and imports it into
-     * the current CVE Database.</p>
+     * the current CVE Database.
      *
      * @throws UpdateException is thrown if there is an error updating the
      * database
@@ -84,9 +83,7 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
                 }
             }
         } catch (MalformedURLException ex) {
-            LOGGER.warn(
-                    "NVD CVE properties files contain an invalid URL, unable to update the data to use the most current data.");
-            LOGGER.debug("", ex);
+            throw new UpdateException("NVD CVE properties files contain an invalid URL, unable to update the data to use the most current data.", ex);
         } catch (DownloadFailedException ex) {
             LOGGER.warn(
                     "Unable to download the NVD CVE data; the results may not include the most recent CPE/CVEs from the NVD.");
@@ -94,7 +91,7 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
                 LOGGER.info(
                         "If you are behind a proxy you may need to configure dependency-check to use the proxy.");
             }
-            LOGGER.debug("", ex);
+            throw new UpdateException("Unable to download the NVD CVE data.", ex);
         } finally {
             closeDataStores();
         }
@@ -107,9 +104,9 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
      * checking again. A database property stores the timestamp of the last
      * check.
      *
-     * @return true to proceed with the check, or false to skip.
+     * @return true to proceed with the check, or false to skip
      * @throws UpdateException thrown when there is an issue checking for
-     * updates.
+     * updates
      */
     private boolean checkUpdate() throws UpdateException {
         boolean proceed = true;
@@ -171,8 +168,7 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
                 return;
             }
             if (maxUpdates > 3) {
-                LOGGER.info(
-                        "NVD CVE requires several updates; this could take a couple of minutes.");
+                LOGGER.info("NVD CVE requires several updates; this could take a couple of minutes.");
             }
             if (maxUpdates > 0) {
                 openDataStores();
