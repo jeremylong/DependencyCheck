@@ -17,14 +17,12 @@
  */
 package org.owasp.dependencycheck.data.update.exception;
 
-import java.io.IOException;
-
 /**
  * An exception used when an error occurs reading a setting.
  *
  * @author Jeremy Long
  */
-public class UpdateException extends IOException {
+public class UpdateException extends Exception {
 
     /**
      * The serial version uid.
