@@ -36,6 +36,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Checks the gh-pages dependency-check site to determine the current released
+ * version number. If the released version number is greater then the running
+ * version number a warning is printed recommending that an upgrade be
+ * performed.
  *
  * @author Jeremy Long
  */
@@ -59,12 +63,14 @@ public class EngineVersionCheck implements CachedWebDataSource {
     private CveDB cveDB = null;
 
     /**
-     * The version retrieved from the database properties or web to check against.
+     * The version retrieved from the database properties or web to check
+     * against.
      */
     private String updateToVersion;
 
     /**
-     * Getter for updateToVersion - only used for testing. Represents the version retrieved from the database.
+     * Getter for updateToVersion - only used for testing. Represents the
+     * version retrieved from the database.
      *
      * @return the version to test
      */
@@ -73,7 +79,8 @@ public class EngineVersionCheck implements CachedWebDataSource {
     }
 
     /**
-     * Setter for updateToVersion - only used for testing. Represents the version retrieved from the database.
+     * Setter for updateToVersion - only used for testing. Represents the
+     * version retrieved from the database.
      *
      * @param version the version to test
      */
@@ -81,9 +88,16 @@ public class EngineVersionCheck implements CachedWebDataSource {
         updateToVersion = version;
     }
 
+    /**
+     * Downloads the current released version number and compares it to the
+     * running engine's version number. If the released version number is newer
+     * a warning is printed recommending an upgrade.
+     *
+     * @throws UpdateException thrown if the local database properties could not
+     * be updated
+     */
     @Override
     public void update() throws UpdateException {
-
         try {
             if (Settings.getBoolean(Settings.KEYS.AUTO_UPDATE)) {
                 openDatabase();
@@ -109,20 +123,21 @@ public class EngineVersionCheck implements CachedWebDataSource {
             LOGGER.debug("Unable to determine if autoupdate is enabled", ex);
         } finally {
             closeDatabase();
-
         }
     }
 
     /**
-     * Determines if a new version of the dependency-check engine has been released.
+     * Determines if a new version of the dependency-check engine has been
+     * released.
      *
      * @param lastChecked the epoch time of the last version check
      * @param now the current epoch time
      * @param properties the database properties object
      * @param currentVersion the current version of dependency-check
-     * @return <code>true</code> if a newer version of the database has been released; otherwise <code>false</code>
-     * @throws UpdateException thrown if there is an error connecting to the github documentation site or accessing the local
-     * database.
+     * @return <code>true</code> if a newer version of the database has been
+     * released; otherwise <code>false</code>
+     * @throws UpdateException thrown if there is an error connecting to the
+     * github documentation site or accessing the local database.
      */
     protected boolean shouldUpdate(final long lastChecked, final long now, final DatabaseProperties properties,
             String currentVersion) throws UpdateException {
@@ -185,7 +200,8 @@ public class EngineVersionCheck implements CachedWebDataSource {
     }
 
     /**
-     * Retrieves the current released version number from the github documentation site.
+     * Retrieves the current released version number from the github
+     * documentation site.
      *
      * @return the current released version number
      */
@@ -204,11 +220,11 @@ public class EngineVersionCheck implements CachedWebDataSource {
                 return releaseVersion.trim();
             }
         } catch (MalformedURLException ex) {
-            LOGGER.debug("unable to retrieve current release version of dependency-check", ex);
+            LOGGER.debug("Unable to retrieve current release version of dependency-check", ex);
         } catch (URLConnectionFailureException ex) {
-            LOGGER.debug("unable to retrieve current release version of dependency-check", ex);
+            LOGGER.debug("Unable to retrieve current release version of dependency-check", ex);
         } catch (IOException ex) {
-            LOGGER.debug("unable to retrieve current release version of dependency-check", ex);
+            LOGGER.debug("Unable to retrieve current release version of dependency-check", ex);
         } finally {
             if (conn != null) {
                 conn.disconnect();
