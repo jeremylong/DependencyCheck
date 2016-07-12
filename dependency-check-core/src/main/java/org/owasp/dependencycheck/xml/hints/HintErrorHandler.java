@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2016 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.suppression;
+package org.owasp.dependencycheck.xml.hints;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,12 +28,12 @@ import org.xml.sax.SAXParseException;
  *
  * @author Jeremy Long
  */
-public class SuppressionErrorHandler implements ErrorHandler {
+public class HintErrorHandler implements ErrorHandler {
 
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(SuppressionErrorHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HintErrorHandler.class);
 
     /**
      * Builds a prettier exception message.

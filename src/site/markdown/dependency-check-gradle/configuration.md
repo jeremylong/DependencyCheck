@@ -26,7 +26,7 @@ suppressionFile      | The file path to the XML suppression file \- used to supp
 dependencyCheck {
     autoUpdate=false
     cveValidForHours=1
-    format=ALL
+    format='ALL'
 }
 ```
 

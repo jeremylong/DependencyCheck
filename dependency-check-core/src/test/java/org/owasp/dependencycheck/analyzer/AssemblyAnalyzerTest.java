@@ -31,6 +31,7 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +65,7 @@ public class AssemblyAnalyzerTest extends BaseTest {
             if (e.getMessage().contains("Could not execute .NET AssemblyAnalyzer")) {
                 LOGGER.warn("Exception setting up AssemblyAnalyzer. Tests will be incomplete");
             } else {
-                LOGGER.warn("Exception setting up AssemblyAnalyzer. Tests will be incomplete", e);
+                LOGGER.warn("Exception setting up AssemblyAnalyzer. Tests will be incomplete");
             }
             Assume.assumeNoException("Is mono installed? TESTS WILL BE INCOMPLETE", e);
         }
@@ -157,8 +158,8 @@ public class AssemblyAnalyzerTest extends BaseTest {
             AssemblyAnalyzer aanalyzer = new AssemblyAnalyzer();
             aanalyzer.accept(new File("test.dll")); // trick into "thinking it is active"
             aanalyzer.initialize();
-            fail("Expected an AnalysisException");
-        } catch (AnalysisException ae) {
+            fail("Expected an InitializationException");
+        } catch (InitializationException ae) {
             assertEquals("An error occurred with the .NET AssemblyAnalyzer", ae.getMessage());
         } finally {
             System.setProperty(LOG_KEY, oldProp);

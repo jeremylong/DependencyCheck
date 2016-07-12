@@ -58,6 +58,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        Supresses false positives on jersey-apache-client4
+        ]]></notes>
+        <gav regex="true">com\.sun\.jersey\.contribs:jersey-apache-client.*</gav>
+        <cpe>cpe:/a:apache:httpclient</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         Suppresses false positives on glassfish
         ]]></notes>
         <gav regex="true">org\.glassfish:.*(json|faces).*</gav>

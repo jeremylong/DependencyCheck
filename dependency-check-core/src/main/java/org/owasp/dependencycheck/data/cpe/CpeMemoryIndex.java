@@ -101,11 +101,11 @@ public final class CpeMemoryIndex {
     /**
      * The search field analyzer for the product field.
      */
-    private SearchFieldAnalyzer productSearchFieldAnalyzer;
+    private SearchFieldAnalyzer productFieldAnalyzer;
     /**
      * The search field analyzer for the vendor field.
      */
-    private SearchFieldAnalyzer vendorSearchFieldAnalyzer;
+    private SearchFieldAnalyzer vendorFieldAnalyzer;
 
     /**
      * Creates and loads data into an in memory index.
@@ -148,7 +148,9 @@ public final class CpeMemoryIndex {
      * Creates the indexing analyzer for the CPE Index.
      *
      * @return the CPE Analyzer.
+     * @deprecated the search field analyzer must be used to include the token concatenating filter.
      */
+    @Deprecated
     private Analyzer createIndexingAnalyzer() {
         final Map<String, Analyzer> fieldAnalyzers = new HashMap<String, Analyzer>();
         fieldAnalyzers.put(Fields.DOCUMENT_KEY, new KeywordAnalyzer());
@@ -163,12 +165,12 @@ public final class CpeMemoryIndex {
     private Analyzer createSearchingAnalyzer() {
         final Map<String, Analyzer> fieldAnalyzers = new HashMap<String, Analyzer>();
         fieldAnalyzers.put(Fields.DOCUMENT_KEY, new KeywordAnalyzer());
-        productSearchFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
-        vendorSearchFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
-        fieldAnalyzers.put(Fields.PRODUCT, productSearchFieldAnalyzer);
-        fieldAnalyzers.put(Fields.VENDOR, vendorSearchFieldAnalyzer);
+        productFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
+        vendorFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
+        fieldAnalyzers.put(Fields.PRODUCT, productFieldAnalyzer);
+        fieldAnalyzers.put(Fields.VENDOR, vendorFieldAnalyzer);
 
-        return new PerFieldAnalyzerWrapper(new FieldAnalyzer(LuceneUtils.CURRENT_VERSION), fieldAnalyzers);
+        return new PerFieldAnalyzerWrapper(new KeywordAnalyzer(), fieldAnalyzers);
     }
 
     /**
@@ -206,7 +208,7 @@ public final class CpeMemoryIndex {
         Analyzer analyzer = null;
         IndexWriter indexWriter = null;
         try {
-            analyzer = createIndexingAnalyzer();
+            analyzer = createSearchingAnalyzer();
             final IndexWriterConfig conf = new IndexWriterConfig(LuceneUtils.CURRENT_VERSION, analyzer);
             indexWriter = new IndexWriter(index, conf);
             try {
@@ -224,6 +226,7 @@ public final class CpeMemoryIndex {
                     v.setStringValue(pair.getLeft());
                     p.setStringValue(pair.getRight());
                     indexWriter.addDocument(doc);
+                    resetFieldAnalyzer();
                 }
             } catch (DatabaseException ex) {
                 LOGGER.debug("", ex);
@@ -254,14 +257,14 @@ public final class CpeMemoryIndex {
     }
 
     /**
-     * Resets the searching analyzers
+     * Resets the product and vendor field analyzers.
      */
-    private void resetSearchingAnalyzer() {
-        if (productSearchFieldAnalyzer != null) {
-            productSearchFieldAnalyzer.clear();
+    private void resetFieldAnalyzer() {
+        if (productFieldAnalyzer != null) {
+            productFieldAnalyzer.clear();
         }
-        if (vendorSearchFieldAnalyzer != null) {
-            vendorSearchFieldAnalyzer.clear();
+        if (vendorFieldAnalyzer != null) {
+            vendorFieldAnalyzer.clear();
         }
     }
 
@@ -293,7 +296,7 @@ public final class CpeMemoryIndex {
      * @throws IOException thrown if there is an IOException
      */
     public TopDocs search(Query query, int maxQueryResults) throws CorruptIndexException, IOException {
-        resetSearchingAnalyzer();
+        resetFieldAnalyzer();
         return indexSearcher.search(query, maxQueryResults);
     }
 

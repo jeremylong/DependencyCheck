@@ -20,7 +20,7 @@ package org.owasp.dependencycheck.data.nvdcve;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -352,11 +352,11 @@ public final class ConnectionFactory {
      */
     private static void ensureSchemaVersion(Connection conn) throws DatabaseException {
         ResultSet rs = null;
-        CallableStatement cs = null;
+        PreparedStatement ps = null;
         try {
             //TODO convert this to use DatabaseProperties
-            cs = conn.prepareCall("SELECT value FROM properties WHERE id = 'version'");
-            rs = cs.executeQuery();
+            ps = conn.prepareStatement("SELECT value FROM properties WHERE id = 'version'");
+            rs = ps.executeQuery();
             if (rs.next()) {
                 final DependencyVersion appDbVersion = DependencyVersionUtil.parseVersion(DB_SCHEMA_VERSION);
                 final DependencyVersion db = DependencyVersionUtil.parseVersion(rs.getString(1));
@@ -376,7 +376,7 @@ public final class ConnectionFactory {
             throw new DatabaseException("Unable to check the database schema version");
         } finally {
             DBUtils.closeResultSet(rs);
-            DBUtils.closeStatement(cs);
+            DBUtils.closeStatement(ps);
         }
     }
 }

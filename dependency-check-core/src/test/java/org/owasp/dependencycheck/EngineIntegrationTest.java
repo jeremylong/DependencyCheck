@@ -17,9 +17,8 @@
  */
 package org.owasp.dependencycheck;
 
-import org.junit.After;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
+
 import org.junit.Test;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;

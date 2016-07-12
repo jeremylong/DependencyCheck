@@ -35,6 +35,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
  * Used to analyze a composer.lock file for a composer PHP app.
@@ -77,15 +79,22 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Initializes the analyzer.
      *
-     * @throws Exception thrown if an exception occurs getting an instance of SHA1
+     * @throws InitializationException thrown if an exception occurs getting an
+     * instance of SHA1
      */
     @Override
-    protected void initializeFileTypeAnalyzer() throws Exception {
-        sha1 = MessageDigest.getInstance("SHA1");
+    protected void initializeFileTypeAnalyzer() throws InitializationException {
+        try {
+            sha1 = MessageDigest.getInstance("SHA1");
+        } catch (NoSuchAlgorithmException ex) {
+            setEnabled(false);
+            throw new InitializationException("Unable to create SHA1 MmessageDigest", ex);
+        }
     }
 
     /**
-     * The MessageDigest for calculating a new digest for the new dependencies added.
+     * The MessageDigest for calculating a new digest for the new dependencies
+     * added.
      */
     private MessageDigest sha1 = null;
 

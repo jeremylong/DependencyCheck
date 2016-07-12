@@ -136,7 +136,6 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
             if (!skipProject(p)) {
                 return p;
             }
-
         }
         return null;
     }
@@ -240,7 +239,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
     }
 
     /**
-     * Initilizes the engine, runs a scan, and writes the serialized dependencies to disk.
+     * Initializes the engine, runs a scan, and writes the serialized dependencies to disk.
      *
      * @return the Engine used to execute dependency-check
      * @throws MojoExecutionException thrown if there is an exception running the mojo

@@ -23,6 +23,7 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.input.AutoCloseInputStream;
@@ -37,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
+import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.ExtractionException;
 import org.owasp.dependencycheck.utils.ExtractionUtil;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
@@ -45,8 +47,9 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.UrlStringUtils;
 
 /**
- * Used to analyze a Wheel or egg distribution files, or their contents in unzipped form, and collect information that can be used
- * to determine the associated CPE.
+ * Used to analyze a Wheel or egg distribution files, or their contents in
+ * unzipped form, and collect information that can be used to determine the
+ * associated CPE.
  *
  * @author Dale Visser
  */
@@ -70,7 +73,8 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
             .getLogger(PythonDistributionAnalyzer.class);
 
     /**
-     * The count of directories created during analysis. This is used for creating temporary directories.
+     * The count of directories created during analysis. This is used for
+     * creating temporary directories.
      */
     private static int dirCount = 0;
 
@@ -104,7 +108,8 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     private File tempFileLocation;
 
     /**
-     * Filter that detects *.dist-info files (but doesn't verify they are directories.
+     * Filter that detects *.dist-info files (but doesn't verify they are
+     * directories.
      */
     private static final FilenameFilter DIST_INFO_FILTER = new SuffixFileFilter(
             ".dist-info");
@@ -164,7 +169,8 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Returns the key used in the properties file to reference the analyzer's enabled property.
+     * Returns the key used in the properties file to reference the analyzer's
+     * enabled property.
      *
      * @return the analyzer's enabled property setting key
      */
@@ -206,7 +212,8 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
      * @param dependency the archive being scanned
      * @param folderFilter the filter to apply to the folder
      * @param metadataFilter the filter to apply to the meta data
-     * @throws AnalysisException thrown when there is a problem analyzing the dependency
+     * @throws AnalysisException thrown when there is a problem analyzing the
+     * dependency
      */
     private void collectMetadataFromArchiveFormat(Dependency dependency,
             FilenameFilter folderFilter, FilenameFilter metadataFilter)
@@ -230,23 +237,31 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Makes sure a usable temporary directory is available.
      *
-     * @throws Exception an AnalyzeException is thrown when the temp directory cannot be created
+     * @throws InitializationException an AnalyzeException is thrown when the
+     * temp directory cannot be created
      */
     @Override
-    protected void initializeFileTypeAnalyzer() throws Exception {
-        final File baseDir = Settings.getTempDirectory();
-        tempFileLocation = File.createTempFile("check", "tmp", baseDir);
-        if (!tempFileLocation.delete()) {
-            final String msg = String.format(
-                    "Unable to delete temporary file '%s'.",
-                    tempFileLocation.getAbsolutePath());
-            throw new AnalysisException(msg);
-        }
-        if (!tempFileLocation.mkdirs()) {
-            final String msg = String.format(
-                    "Unable to create directory '%s'.",
-                    tempFileLocation.getAbsolutePath());
-            throw new AnalysisException(msg);
+    protected void initializeFileTypeAnalyzer() throws InitializationException {
+        try {
+            final File baseDir = Settings.getTempDirectory();
+            tempFileLocation = File.createTempFile("check", "tmp", baseDir);
+            if (!tempFileLocation.delete()) {
+                setEnabled(false);
+                final String msg = String.format(
+                        "Unable to delete temporary file '%s'.",
+                        tempFileLocation.getAbsolutePath());
+                throw new InitializationException(msg);
+            }
+            if (!tempFileLocation.mkdirs()) {
+                setEnabled(false);
+                final String msg = String.format(
+                        "Unable to create directory '%s'.",
+                        tempFileLocation.getAbsolutePath());
+                throw new InitializationException(msg);
+            }
+        } catch (IOException ex) {
+            setEnabled(false);
+            throw new InitializationException("Unable to create a temporary file", ex);
         }
     }
 
@@ -312,7 +327,8 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Returns a list of files that match the given filter, this does not recursively scan the directory.
+     * Returns a list of files that match the given filter, this does not
+     * recursively scan the directory.
      *
      * @param folder the folder to filter
      * @param filter the filter to apply to the files in the directory
@@ -351,7 +367,8 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Retrieves the next temporary destination directory for extracting an archive.
+     * Retrieves the next temporary destination directory for extracting an
+     * archive.
      *
      * @return a directory
      * @throws AnalysisException thrown if unable to create temporary directory

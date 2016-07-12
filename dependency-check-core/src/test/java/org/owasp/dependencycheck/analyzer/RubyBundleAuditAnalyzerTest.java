@@ -63,6 +63,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
      *
      * @throws Exception thrown if there is a problem
      */
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -145,7 +146,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
             assertEquals(vulnerability.getCvssScore(), 5.0f, 0.0);
 
         } catch (Exception e) {
-            LOGGER.warn("Exception setting up RubyBundleAuditAnalyzer. Make sure Ruby gem bundle-audit is installed. You may also need to set property \"analyzer.bundle.audit.path\".", e);
+            LOGGER.warn("Exception setting up RubyBundleAuditAnalyzer. Make sure Ruby gem bundle-audit is installed. You may also need to set property \"analyzer.bundle.audit.path\".");
             Assume.assumeNoException("Exception setting up RubyBundleAuditAnalyzer; bundle audit may not be installed, or property \"analyzer.bundle.audit.path\" may not be set.", e);
         }
     }

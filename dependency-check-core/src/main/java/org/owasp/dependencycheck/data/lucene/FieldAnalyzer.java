@@ -29,11 +29,15 @@ import org.apache.lucene.util.Version;
 
 /**
  * <p>
- * A Lucene Analyzer that utilizes the WhitespaceTokenizer, WordDelimiterFilter, LowerCaseFilter, and StopFilter. The intended
- * purpose of this Analyzer is to index the CPE fields vendor and product.</p>
+ * A Lucene Analyzer that utilizes the WhitespaceTokenizer, WordDelimiterFilter,
+ * LowerCaseFilter, and StopFilter. The intended purpose of this Analyzer is to
+ * index the CPE fields vendor and product.</p>
  *
  * @author Jeremy Long
+ * @Deprecated the field analyzer should not be used, instead use the
+ * SearchFieldAnalyzer so that the token analyzing filter is used.
  */
+@Deprecated
 public class FieldAnalyzer extends Analyzer {
 
     /**

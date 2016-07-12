@@ -20,17 +20,12 @@ package org.owasp.dependencycheck.data.lucene;
 import java.io.IOException;
 import java.io.StringReader;
 import org.apache.lucene.analysis.BaseTokenStreamTestCase;
-import static org.apache.lucene.analysis.BaseTokenStreamTestCase.assertTokenStreamContents;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
 import org.junit.After;
-import org.junit.AfterClass;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**

@@ -29,6 +29,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.BaseDBTestCase;
+import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.cpe.IndexEntry;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -82,23 +83,33 @@ public class CPEAnalyzerIntegrationTest extends BaseDBTestCase {
      */
     @Test
     public void testDetermineCPE_full() throws Exception {
-        CPEAnalyzer instance = new CPEAnalyzer();
-        instance.open();
-        FileNameAnalyzer fnAnalyzer = new FileNameAnalyzer();
-        JarAnalyzer jarAnalyzer = new JarAnalyzer();
-        HintAnalyzer hAnalyzer = new HintAnalyzer();
-        FalsePositiveAnalyzer fp = new FalsePositiveAnalyzer();
+        //update needs to be performed so that xtream can be tested
+        Engine e = new Engine();
+        e.doUpdates();
 
+        CPEAnalyzer cpeAnalyzer = new CPEAnalyzer();
         try {
-            //callDetermineCPE_full("struts2-core-2.3.16.3.jar", "cpe:/a:apache:struts:2.3.16.3", instance, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
-            callDetermineCPE_full("hazelcast-2.5.jar", null, instance, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
-            callDetermineCPE_full("spring-context-support-2.5.5.jar", "cpe:/a:springsource:spring_framework:2.5.5", instance, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
-            callDetermineCPE_full("spring-core-3.0.0.RELEASE.jar", "cpe:/a:vmware:springsource_spring_framework:3.0.0", instance, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
-            callDetermineCPE_full("org.mortbay.jetty.jar", "cpe:/a:mortbay_jetty:jetty:4.2.27", instance, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
-            callDetermineCPE_full("jaxb-xercesImpl-1.5.jar", null, instance, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
-            callDetermineCPE_full("ehcache-core-2.2.0.jar", null, instance, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
+            cpeAnalyzer.initialize();
+            FileNameAnalyzer fnAnalyzer = new FileNameAnalyzer();
+            fnAnalyzer.initialize();
+            JarAnalyzer jarAnalyzer = new JarAnalyzer();
+            jarAnalyzer.accept(new File("test.jar"));//trick analyzer into "thinking it is active"
+            jarAnalyzer.initialize();
+            HintAnalyzer hAnalyzer = new HintAnalyzer();
+            hAnalyzer.initialize();
+            FalsePositiveAnalyzer fp = new FalsePositiveAnalyzer();
+            fp.initialize();
+
+            callDetermineCPE_full("hazelcast-2.5.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
+            callDetermineCPE_full("spring-context-support-2.5.5.jar", "cpe:/a:springsource:spring_framework:2.5.5", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
+            callDetermineCPE_full("spring-core-3.0.0.RELEASE.jar", "cpe:/a:vmware:springsource_spring_framework:3.0.0", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
+            callDetermineCPE_full("org.mortbay.jetty.jar", "cpe:/a:mortbay_jetty:jetty:4.2.27", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
+            callDetermineCPE_full("jaxb-xercesImpl-1.5.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
+            callDetermineCPE_full("ehcache-core-2.2.0.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
+            callDetermineCPE_full("xstream-1.4.8.jar", "cpe:/a:x-stream:xstream:1.4.8", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
+
         } finally {
-            instance.close();
+            cpeAnalyzer.close();
         }
     }
 
@@ -107,7 +118,7 @@ public class CPEAnalyzerIntegrationTest extends BaseDBTestCase {
      *
      * @throws Exception is thrown when an exception occurs
      */
-    public void callDetermineCPE_full(String depName, String expResult, CPEAnalyzer instance, FileNameAnalyzer fnAnalyzer, JarAnalyzer jarAnalyzer, HintAnalyzer hAnalyzer, FalsePositiveAnalyzer fp) throws Exception {
+    public void callDetermineCPE_full(String depName, String expResult, CPEAnalyzer cpeAnalyzer, FileNameAnalyzer fnAnalyzer, JarAnalyzer jarAnalyzer, HintAnalyzer hAnalyzer, FalsePositiveAnalyzer fp) throws Exception {
 
         //File file = new File(this.getClass().getClassLoader().getResource(depName).getPath());
         File file = BaseTest.getResourceAsFile(this, depName);
@@ -117,7 +128,7 @@ public class CPEAnalyzerIntegrationTest extends BaseDBTestCase {
         fnAnalyzer.analyze(dep, null);
         jarAnalyzer.analyze(dep, null);
         hAnalyzer.analyze(dep, null);
-        instance.analyze(dep, null);
+        cpeAnalyzer.analyze(dep, null);
         fp.analyze(dep, null);
 
         if (expResult != null) {
@@ -146,8 +157,10 @@ public class CPEAnalyzerIntegrationTest extends BaseDBTestCase {
         fnAnalyzer.analyze(struts, null);
 
         HintAnalyzer hintAnalyzer = new HintAnalyzer();
+        hintAnalyzer.initialize();
         JarAnalyzer jarAnalyzer = new JarAnalyzer();
         jarAnalyzer.accept(new File("test.jar"));//trick analyzer into "thinking it is active"
+        jarAnalyzer.initialize();
 
         jarAnalyzer.analyze(struts, null);
         hintAnalyzer.analyze(struts, null);

@@ -20,7 +20,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>1.4.0-SNAPSHOT</version>
+        <version>1.4.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>dependency-check-core</artifactId>
@@ -459,6 +459,13 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <scope>test</scope>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.4.8</version>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
@@ -584,13 +591,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <groupId>org.apache.xmlgraphics</groupId>
                     <artifactId>batik-util</artifactId>
                     <version>1.7</version>
-                    <scope>test</scope>
-                    <optional>true</optional>
-                </dependency>
-                <dependency>
-                    <groupId>com.thoughtworks.xstream</groupId>
-                    <artifactId>xstream</artifactId>
-                    <version>1.4.2</version>
                     <scope>test</scope>
                     <optional>true</optional>
                 </dependency>

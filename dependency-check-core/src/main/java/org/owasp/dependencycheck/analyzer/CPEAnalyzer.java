@@ -45,6 +45,7 @@ import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
+import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 import org.slf4j.Logger;
@@ -123,11 +124,20 @@ public class CPEAnalyzer implements Analyzer {
     /**
      * Creates the CPE Lucene Index.
      *
-     * @throws Exception is thrown if there is an issue opening the index.
+     * @throws InitializationException is thrown if there is an issue opening
+     * the index.
      */
     @Override
-    public void initialize() throws Exception {
-        this.open();
+    public void initialize() throws InitializationException {
+        try {
+            this.open();
+        } catch (IOException ex) {
+            LOGGER.debug("Exception initializing the Lucene Index", ex);
+            throw new InitializationException("An exception occurred initializing the Lucene Index", ex);
+        } catch (DatabaseException ex) {
+            LOGGER.debug("Exception accessing the database", ex);
+            throw new InitializationException("An exception occurred accessing the database", ex);
+        }
     }
 
     /**
@@ -565,12 +575,14 @@ public class CPEAnalyzer implements Analyzer {
                         final IdentifierMatch match = new IdentifierMatch("cpe", vs.getName(), url, IdentifierConfidence.EXACT_MATCH, conf);
                         collected.add(match);
                     } else //TODO the following isn't quite right is it? need to think about this guessing game a bit more.
-                    if (evVer.getVersionParts().size() <= dbVer.getVersionParts().size()
-                            && evVer.matchesAtLeastThreeLevels(dbVer)) {
-                        if (bestGuessConf == null || bestGuessConf.compareTo(conf) > 0) {
-                            if (bestGuess.getVersionParts().size() < dbVer.getVersionParts().size()) {
-                                bestGuess = dbVer;
-                                bestGuessConf = conf;
+                    {
+                        if (evVer.getVersionParts().size() <= dbVer.getVersionParts().size()
+                                && evVer.matchesAtLeastThreeLevels(dbVer)) {
+                            if (bestGuessConf == null || bestGuessConf.compareTo(conf) > 0) {
+                                if (bestGuess.getVersionParts().size() < dbVer.getVersionParts().size()) {
+                                    bestGuess = dbVer;
+                                    bestGuessConf = conf;
+                                }
                             }
                         }
                     }

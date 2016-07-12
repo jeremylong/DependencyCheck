@@ -15,15 +15,13 @@
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.suppression;
+package org.owasp.dependencycheck.xml.suppression;
 
 import java.io.File;
 import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
+
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.BeforeClass;
+
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 

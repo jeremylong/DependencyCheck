@@ -15,7 +15,7 @@
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.suppression;
+package org.owasp.dependencycheck.xml.suppression;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -61,14 +61,22 @@ public class SuppressionParser {
      * http://docs.oracle.com/javase/tutorial/jaxp/sax/validation.html
      */
     public static final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
+    /**
+     * The suppression schema file location.
+     */
+    private static final String SUPPRESSION_SCHEMA = "schema/dependency-suppression.1.1.xsd";
+    /**
+     * The old suppression schema file location.
+     */
+    private static final String OLD_SUPPRESSION_SCHEMA = "schema/suppression.xsd";
 
     /**
-     * Parses the given xml file and returns a list of the suppression rules
+     * Parses the given XML file and returns a list of the suppression rules
      * contained.
      *
-     * @param file an xml file containing suppression rules
+     * @param file an XML file containing suppression rules
      * @return a list of suppression rules
-     * @throws SuppressionParseException thrown if the xml file cannot be parsed
+     * @throws SuppressionParseException thrown if the XML file cannot be parsed
      */
     public List<SuppressionRule> parseSuppressionRules(File file) throws SuppressionParseException {
         FileInputStream fis = null;
@@ -104,17 +112,17 @@ public class SuppressionParser {
     }
 
     /**
-     * Parses the given xml stream and returns a list of the suppression rules
+     * Parses the given XML stream and returns a list of the suppression rules
      * contained.
      *
-     * @param inputStream an InputStream containing suppression rues
+     * @param inputStream an InputStream containing suppression rules
      * @return a list of suppression rules
-     * @throws SuppressionParseException thrown if the xml cannot be parsed
-     * @throws SAXException thrown if the xml cannot be parsed
+     * @throws SuppressionParseException thrown if the XML cannot be parsed
+     * @throws SAXException thrown if the XML cannot be parsed
      */
     public List<SuppressionRule> parseSuppressionRules(InputStream inputStream) throws SuppressionParseException, SAXException {
         try {
-            final InputStream schemaStream = this.getClass().getClassLoader().getResourceAsStream("schema/dependency-suppression.1.1.xsd");
+            final InputStream schemaStream = this.getClass().getClassLoader().getResourceAsStream(SUPPRESSION_SCHEMA);
             final SuppressionHandler handler = new SuppressionHandler();
             final SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -153,16 +161,16 @@ public class SuppressionParser {
     }
 
     /**
-     * Parses the given xml stream and returns a list of the suppression rules
+     * Parses the given XML stream and returns a list of the suppression rules
      * contained.
      *
      * @param inputStream an InputStream containing suppression rues
      * @return a list of suppression rules
-     * @throws SuppressionParseException if the xml cannot be parsed
+     * @throws SuppressionParseException if the XML cannot be parsed
      */
     private List<SuppressionRule> parseOldSuppressionRules(InputStream inputStream) throws SuppressionParseException {
         try {
-            final InputStream schemaStream = this.getClass().getClassLoader().getResourceAsStream("schema/suppression.xsd");
+            final InputStream schemaStream = this.getClass().getClassLoader().getResourceAsStream(OLD_SUPPRESSION_SCHEMA);
             final SuppressionHandler handler = new SuppressionHandler();
             final SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -176,7 +184,6 @@ public class SuppressionParser {
 
             final Reader reader = new InputStreamReader(inputStream, "UTF-8");
             final InputSource in = new InputSource(reader);
-            //in.setEncoding("UTF-8");
 
             xmlReader.parse(in);
 

@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2016 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.suppression;
+package org.owasp.dependencycheck.xml.hints;
 
 import java.io.IOException;
 
@@ -24,7 +24,7 @@ import java.io.IOException;
  *
  * @author Jeremy Long
  */
-public class SuppressionParseException extends IOException {
+public class HintParseException extends IOException {
 
     /**
      * The serial version UID for serialization.
@@ -34,7 +34,7 @@ public class SuppressionParseException extends IOException {
     /**
      * Creates a new SuppressionParseException.
      */
-    public SuppressionParseException() {
+    public HintParseException() {
         super();
     }
 
@@ -43,7 +43,7 @@ public class SuppressionParseException extends IOException {
      *
      * @param msg a message for the exception.
      */
-    public SuppressionParseException(String msg) {
+    public HintParseException(String msg) {
         super(msg);
     }
 
@@ -52,7 +52,7 @@ public class SuppressionParseException extends IOException {
      *
      * @param ex the cause of the parse exception
      */
-    public SuppressionParseException(Throwable ex) {
+    public HintParseException(Throwable ex) {
         super(ex);
     }
 
@@ -62,7 +62,7 @@ public class SuppressionParseException extends IOException {
      * @param msg a message for the exception.
      * @param ex the cause of the parse exception
      */
-    public SuppressionParseException(String msg, Throwable ex) {
+    public HintParseException(String msg, Throwable ex) {
         super(msg, ex);
     }
 }

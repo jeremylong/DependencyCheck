@@ -36,12 +36,10 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
-import org.junit.After;
-import org.junit.AfterClass;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import org.junit.Before;
-import org.junit.BeforeClass;
+
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 
@@ -63,7 +61,12 @@ public class FieldAnalyzerTest extends BaseTest {
         String field2 = "vendor";
         String text2 = "springsource";
 
-        createIndex(analyzer, index, field1, text1, field2, text2);
+        IndexWriter w = createIndex(analyzer, index);
+        addDoc(w, field1, text1, field2, text2);
+        text1 = "x-stream";
+        text2 = "xstream";
+        addDoc(w, field1, text1, field2, text2);
+        w.close();
 
         //Analyzer searchingAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
         String querystr = "product:\"(Spring Framework Core)\" vendor:(SpringSource)";
@@ -77,7 +80,6 @@ public class FieldAnalyzerTest extends BaseTest {
         QueryParser parser = new QueryParser(LuceneUtils.CURRENT_VERSION, field1, wrapper);
 
         Query q = parser.parse(querystr);
-        //System.out.println(q.toString());
 
         int hitsPerPage = 10;
 
@@ -88,20 +90,27 @@ public class FieldAnalyzerTest extends BaseTest {
         ScoreDoc[] hits = collector.topDocs().scoreDocs;
 
         assertEquals("Did not find 1 document?", 1, hits.length);
+        assertEquals("springframework", searcher.doc(hits[0].doc).get(field1));
+        assertEquals("springsource", searcher.doc(hits[0].doc).get(field2));
 
         searchAnalyzerProduct.clear(); //ensure we don't have anything left over from the previous search.
         searchAnalyzerVendor.clear();
         querystr = "product:(Apache Struts) vendor:(Apache)";
         Query q2 = parser.parse(querystr);
-        //System.out.println(q2.toString());
         assertFalse("second parsing contains previousWord from the TokenPairConcatenatingFilter", q2.toString().contains("core"));
+        
+        querystr = "product:(  x-stream^5 )  AND  vendor:(  thoughtworks.xstream )";
+        Query q3 = parser.parse(querystr);
+        collector = TopScoreDocCollector.create(hitsPerPage, true);
+        searcher.search(q3, collector);
+        hits = collector.topDocs().scoreDocs;
+        assertEquals("x-stream", searcher.doc(hits[0].doc).get(field1));
+        assertEquals("xstream", searcher.doc(hits[0].doc).get(field2));
     }
 
-    private void createIndex(Analyzer analyzer, Directory index, String field1, String text1, String field2, String text2) throws IOException {
+    private IndexWriter createIndex(Analyzer analyzer, Directory index) throws IOException {
         IndexWriterConfig config = new IndexWriterConfig(LuceneUtils.CURRENT_VERSION, analyzer);
-        IndexWriter w = new IndexWriter(index, config);
-        addDoc(w, field1, text1, field2, text2);
-        w.close();
+        return new IndexWriter(index, config);
     }
 
     private static void addDoc(IndexWriter w, String field1, String text1, String field2, String text2) throws IOException {

@@ -30,9 +30,11 @@ import java.io.FileFilter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
- * The base FileTypeAnalyzer that all analyzers that have specific file types they analyze should extend.
+ * The base FileTypeAnalyzer that all analyzers that have specific file types
+ * they analyze should extend.
  *
  * @author Jeremy Long
  */
@@ -40,7 +42,8 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
 
     //<editor-fold defaultstate="collapsed" desc="Constructor">
     /**
-     * Base constructor that all children must call. This checks the configuration to determine if the analyzer is enabled.
+     * Base constructor that all children must call. This checks the
+     * configuration to determine if the analyzer is enabled.
      */
     public AbstractFileTypeAnalyzer() {
         reset();
@@ -58,7 +61,8 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     private boolean filesMatched = false;
 
     /**
-     * Get the value of filesMatched. A flag indicating whether the scan included any file types this analyzer supports.
+     * Get the value of filesMatched. A flag indicating whether the scan
+     * included any file types this analyzer supports.
      *
      * @return the value of filesMatched
      */
@@ -67,7 +71,8 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     }
 
     /**
-     * Set the value of filesMatched. A flag indicating whether the scan included any file types this analyzer supports.
+     * Set the value of filesMatched. A flag indicating whether the scan
+     * included any file types this analyzer supports.
      *
      * @param filesMatched new value of filesMatched
      */
@@ -102,11 +107,13 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     //<editor-fold defaultstate="collapsed" desc="Abstract methods children must implement">
     /**
      * <p>
-     * Returns the {@link java.io.FileFilter} used to determine which files are to be analyzed. An example would be an analyzer
-     * that inspected Java jar files. Implementors may use {@link org.owasp.dependencycheck.utils.FileFilterBuilder}.</p>
+     * Returns the {@link java.io.FileFilter} used to determine which files are
+     * to be analyzed. An example would be an analyzer that inspected Java jar
+     * files. Implementors may use
+     * {@link org.owasp.dependencycheck.utils.FileFilterBuilder}.</p>
      * <p>
-     * If the analyzer returns null it will not cause additional files to be analyzed, but will be executed against every file
-     * loaded.</p>
+     * If the analyzer returns null it will not cause additional files to be
+     * analyzed, but will be executed against every file loaded.</p>
      *
      * @return the file filter used to determine which files are to be analyzed
      */
@@ -115,13 +122,15 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     /**
      * Initializes the file type analyzer.
      *
-     * @throws Exception thrown if there is an exception during initialization
+     * @throws InitializationException thrown if there is an exception during
+     * initialization
      */
-    protected abstract void initializeFileTypeAnalyzer() throws Exception;
+    protected abstract void initializeFileTypeAnalyzer() throws InitializationException;
 
     /**
-     * Analyzes a given dependency. If the dependency is an archive, such as a WAR or EAR, the contents are extracted, scanned,
-     * and added to the list of dependencies within the engine.
+     * Analyzes a given dependency. If the dependency is an archive, such as a
+     * WAR or EAR, the contents are extracted, scanned, and added to the list of
+     * dependencies within the engine.
      *
      * @param dependency the dependency to analyze
      * @param engine the engine scanning
@@ -142,10 +151,11 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     /**
      * Initializes the analyzer.
      *
-     * @throws Exception thrown if there is an exception during initialization
+     * @throws InitializationException thrown if there is an exception during
+     * initialization
      */
     @Override
-    public final void initialize() throws Exception {
+    public final void initialize() throws InitializationException {
         if (filesMatched) {
             initializeFileTypeAnalyzer();
         } else {
@@ -169,8 +179,9 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     }
 
     /**
-     * Analyzes a given dependency. If the dependency is an archive, such as a WAR or EAR, the contents are extracted, scanned,
-     * and added to the list of dependencies within the engine.
+     * Analyzes a given dependency. If the dependency is an archive, such as a
+     * WAR or EAR, the contents are extracted, scanned, and added to the list of
+     * dependencies within the engine.
      *
      * @param dependency the dependency to analyze
      * @param engine the engine scanning
@@ -202,8 +213,8 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     //<editor-fold defaultstate="collapsed" desc="Static utility methods">
     /**
      * <p>
-     * Utility method to help in the creation of the extensions set. This constructs a new Set that can be used in a final static
-     * declaration.</p>
+     * Utility method to help in the creation of the extensions set. This
+     * constructs a new Set that can be used in a final static declaration.</p>
      * <p>
      * This implementation was copied from
      * http://stackoverflow.com/questions/2041778/initialize-java-hashset-values-by-construction</p>
