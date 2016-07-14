@@ -23,13 +23,16 @@ import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.CPEAnalyzer;
 import org.owasp.dependencycheck.analyzer.FileTypeAnalyzer;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.exception.ExceptionCollection;
+import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A modified version of the core engine specifically designed to persist some data between multiple executions of a multi-module
- * Maven project.
+ * A modified version of the core engine specifically designed to persist some
+ * data between multiple executions of a multi-module Maven project.
  *
  * @author Jeremy Long
  */
@@ -52,16 +55,19 @@ public class Engine extends org.owasp.dependencycheck.Engine {
      */
     private List<MavenProject> reactorProjects;
     /**
-     * Key used in the MavenProject context values to note whether or not an update has been executed.
+     * Key used in the MavenProject context values to note whether or not an
+     * update has been executed.
      */
     public static final String UPDATE_EXECUTED_FLAG = "dependency-check-update-executed";
 
     /**
-     * Creates a new Engine to perform anyalsis on dependencies.
+     * Creates a new Engine to perform analysis on dependencies.
      *
      * @param project the current Maven project
-     * @param reactorProjects the reactor projects for the current Maven execution
-     * @throws DatabaseException thrown if there is an issue connecting to the database
+     * @param reactorProjects the reactor projects for the current Maven
+     * execution
+     * @throws DatabaseException thrown if there is an issue connecting to the
+     * database
      */
     public Engine(MavenProject project, List<MavenProject> reactorProjects) throws DatabaseException {
         this.currentProject = project;
@@ -71,9 +77,12 @@ public class Engine extends org.owasp.dependencycheck.Engine {
 
     /**
      * Runs the analyzers against all of the dependencies.
+     *
+     * @throws ExceptionCollection thrown if an exception occurred; contains a
+     * collection of exceptions that occurred during analysis.
      */
     @Override
-    public void analyzeDependencies() {
+    public void analyzeDependencies() throws ExceptionCollection {
         final MavenProject root = getExecutionRoot();
         if (root != null) {
             LOGGER.debug("Checking root project, {}, if updates have already been completed", root.getArtifactId());
@@ -91,8 +100,10 @@ public class Engine extends org.owasp.dependencycheck.Engine {
 
     /**
      * Runs the update steps of dependency-check.
+     *
+     * @throws UpdateException thrown if there is an exception
      */
-    public void update() {
+    public void update() throws UpdateException {
         final MavenProject root = getExecutionRoot();
         if (root != null && root.getContextValue(UPDATE_EXECUTED_FLAG) != null) {
             System.setProperty(Settings.KEYS.AUTO_UPDATE, Boolean.FALSE.toString());
@@ -103,20 +114,21 @@ public class Engine extends org.owasp.dependencycheck.Engine {
     /**
      * This constructor should not be called. Use Engine(MavenProject) instead.
      *
-     * @throws DatabaseException thrown if there is an issue connecting to the database
+     * @throws DatabaseException thrown if there is an issue connecting to the
+     * database
      */
     private Engine() throws DatabaseException {
     }
 
     /**
-     * Initializes the given analyzer. This skips the initialization of the CPEAnalyzer if it has been initialized by a previous
-     * execution.
+     * Initializes the given analyzer. This skips the initialization of the
+     * CPEAnalyzer if it has been initialized by a previous execution.
      *
      * @param analyzer the analyzer to initialize
      * @return the initialized analyzer
      */
     @Override
-    protected Analyzer initializeAnalyzer(Analyzer analyzer) {
+    protected Analyzer initializeAnalyzer(Analyzer analyzer) throws InitializationException {
         if (analyzer instanceof CPEAnalyzer) {
             CPEAnalyzer cpe = getPreviouslyLoadedCPEAnalyzer();
             if (cpe != null && cpe.isOpen()) {
@@ -129,7 +141,8 @@ public class Engine extends org.owasp.dependencycheck.Engine {
     }
 
     /**
-     * Releases resources used by the analyzers by calling close() on each analyzer.
+     * Releases resources used by the analyzers by calling close() on each
+     * analyzer.
      */
     @Override
     public void cleanup() {
@@ -216,8 +229,10 @@ public class Engine extends org.owasp.dependencycheck.Engine {
     }
 
     /**
-     * Resets the file type analyzers so that they can be re-used to scan additional directories. Without the reset the analyzer
-     * might be disabled because the first scan/analyze did not identify any files that could be processed by the analyzer.
+     * Resets the file type analyzers so that they can be re-used to scan
+     * additional directories. Without the reset the analyzer might be disabled
+     * because the first scan/analyze did not identify any files that could be
+     * processed by the analyzer.
      */
     public void resetFileTypeAnalyzers() {
         for (FileTypeAnalyzer a : getFileTypeAnalyzers()) {

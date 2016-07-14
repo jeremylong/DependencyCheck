@@ -26,6 +26,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.junit.After;
 import org.junit.Assume;
@@ -40,6 +41,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,6 +178,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
      * Test Ruby dependencies and their paths.
      *
      * @throws AnalysisException is thrown when an exception occurs.
+     * @throws DatabaseException thrown when an exception occurs
      */
     @Test
     public void testDependenciesPath() throws AnalysisException, DatabaseException {
@@ -187,6 +190,8 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
         } catch (NullPointerException ex) {
             LOGGER.error("NPE", ex);
             throw ex;
+        } catch (ExceptionCollection ex) {
+            Assume.assumeNoException("Exception setting up RubyBundleAuditAnalyzer; bundle audit may not be installed, or property \"analyzer.bundle.audit.path\" may not be set.", ex);
         }
         List<Dependency> dependencies = engine.getDependencies();
         LOGGER.info(dependencies.size() + " dependencies found.");
