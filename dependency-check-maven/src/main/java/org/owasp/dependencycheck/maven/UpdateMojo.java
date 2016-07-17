@@ -24,10 +24,12 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * Maven Plugin that checks the project dependencies to see if they have any known published vulnerabilities.
+ * Maven Plugin that checks the project dependencies to see if they have any
+ * known published vulnerabilities.
  *
  * @author Jeremy Long
  */
@@ -51,14 +53,17 @@ public class UpdateMojo extends BaseDependencyCheckMojo {
     }
 
     /**
-     * Executes the dependency-check engine on the project's dependencies and generates the report.
+     * Executes the dependency-check engine on the project's dependencies and
+     * generates the report.
      *
-     * @throws MojoExecutionException thrown if there is an exception executing the goal
-     * @throws MojoFailureException thrown if dependency-check is configured to fail the build
+     * @throws MojoExecutionException thrown if there is an exception executing
+     * the goal
+     * @throws MojoFailureException thrown if dependency-check is configured to
+     * fail the build
      */
     @Override
     public void runCheck() throws MojoExecutionException, MojoFailureException {
-        final Engine engine;
+        MavenEngine engine = null;
         try {
             engine = initializeEngine();
             engine.update();
@@ -66,9 +71,21 @@ public class UpdateMojo extends BaseDependencyCheckMojo {
             if (getLog().isDebugEnabled()) {
                 getLog().debug("Database connection error", ex);
             }
-            throw new MojoExecutionException("An exception occured connecting to the local database. Please see the log file for more details.", ex);
+            final String msg = "An exception occured connecting to the local database. Please see the log file for more details.";
+            if (this.isFailOnError()) {
+                throw new MojoExecutionException(msg, ex);
+            }
+            getLog().error(msg);
+        } catch (UpdateException ex) {
+            final String msg = "An exception occured while downloading updates. Please see the log file for more details.";
+            if (this.isFailOnError()) {
+                throw new MojoExecutionException(msg, ex);
+            }
+            getLog().error(msg);
         }
-        engine.cleanup();
+        if (engine != null) {
+            engine.cleanup();
+        }
         Settings.cleanup();
     }
 
@@ -84,7 +101,8 @@ public class UpdateMojo extends BaseDependencyCheckMojo {
     }
 
     /**
-     * Gets the description of the Dependency-Check report to be displayed in the Maven Generated Reports page.
+     * Gets the description of the Dependency-Check report to be displayed in
+     * the Maven Generated Reports page.
      *
      * @param locale The Locale to get the description for
      * @return the description
@@ -93,5 +111,5 @@ public class UpdateMojo extends BaseDependencyCheckMojo {
     public String getDescription(Locale locale) {
         return "Updates the local cache of the NVD data from NIST.";
     }
-
+    
 }

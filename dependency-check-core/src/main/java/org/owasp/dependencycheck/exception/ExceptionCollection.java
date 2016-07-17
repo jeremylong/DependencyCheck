@@ -17,6 +17,8 @@
  */
 package org.owasp.dependencycheck.exception;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +38,18 @@ public class ExceptionCollection extends Exception {
         super();
         this.exceptions = exceptions;
     }
+
+    /**
+     * Instantiates a new exception collection.
+     *
+     * @param msg the exception message
+     * @param exceptions a list of exceptions
+     */
+    public ExceptionCollection(String msg, List<Throwable> exceptions) {
+        super(msg);
+        this.exceptions = exceptions;
+    }
+
     /**
      * Instantiates a new exception collection.
      *
@@ -48,7 +62,22 @@ public class ExceptionCollection extends Exception {
         this.exceptions = exceptions;
         this.fatal = fatal;
     }
-        /**
+
+    /**
+     * Instantiates a new exception collection.
+     *
+     * @param msg the exception message
+     * @param exceptions a list of exceptions
+     * @param fatal indicates if the exception that occurred is fatal - meaning
+     * that no analysis was performed.
+     */
+    public ExceptionCollection(String msg, List<Throwable> exceptions, boolean fatal) {
+        super(msg);
+        this.exceptions = exceptions;
+        this.fatal = fatal;
+    }
+
+    /**
      * Instantiates a new exception collection.
      *
      * @param exceptions a list of exceptions
@@ -60,6 +89,18 @@ public class ExceptionCollection extends Exception {
         this.exceptions.add(exceptions);
         this.fatal = fatal;
     }
+        /**
+     * Instantiates a new exception collection.
+     *
+     * @param msg the exception message
+     * @param exception a list of exceptions
+     */
+    public ExceptionCollection(String msg, Throwable exception) {
+        super(msg);
+        this.exceptions.add(exception);
+        this.fatal = false;
+    }
+
     /**
      * Instantiates a new exception collection.
      */
@@ -94,7 +135,8 @@ public class ExceptionCollection extends Exception {
     public void addException(Throwable ex) {
         this.exceptions.add(ex);
     }
-        /**
+
+    /**
      * Adds an exception to the collection.
      *
      * @param ex the exception to add
@@ -105,8 +147,8 @@ public class ExceptionCollection extends Exception {
     }
 
     /**
-     * Flag indicating if a fatal exception occurred that would prevent the attempt
-     * at completing the analysis even if exceptions occurred.
+     * Flag indicating if a fatal exception occurred that would prevent the
+     * attempt at completing the analysis even if exceptions occurred.
      */
     private boolean fatal = false;
 
@@ -126,6 +168,44 @@ public class ExceptionCollection extends Exception {
      */
     public void setFatal(boolean fatal) {
         this.fatal = fatal;
+    }
+
+    /**
+     * Prints the stack trace.
+     *
+     * @param s the writer to print to
+     */
+    @Override
+    public void printStackTrace(PrintWriter s) {
+        s.println("Multiple Exceptions Occured");
+        super.printStackTrace(s);
+        for (Throwable t : this.exceptions) {
+            s.println("Next Exception:");
+            t.printStackTrace(s);
+        }
+    }
+
+    /**
+     * Prints the stack trace.
+     *
+     * @param s the stream to write the stack trace to
+     */
+    @Override
+    public void printStackTrace(PrintStream s) {
+        s.println("Multiple Exceptions Occured");
+        super.printStackTrace(s);
+        for (Throwable t : this.exceptions) {
+            s.println("Next Exception:");
+            t.printStackTrace(s);
+        }
+    }
+
+    /**
+     * Prints the stack trace to standard error.
+     */
+    @Override
+    public void printStackTrace() {
+        this.printStackTrace(System.err);
     }
 
 }

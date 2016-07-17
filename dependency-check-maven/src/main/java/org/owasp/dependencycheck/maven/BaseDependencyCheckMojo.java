@@ -47,6 +47,7 @@ import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.ExpectedOjectInputStream;
 import org.owasp.dependencycheck.utils.Settings;
@@ -69,14 +70,27 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * System specific new line character.
      */
     private static final String NEW_LINE = System.getProperty("line.separator", "\n").intern();
+    //</editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Maven bound parameters and components">
     /**
      * Sets whether or not the external report format should be used.
      */
     @Parameter(property = "metaFileName", defaultValue = "dependency-check.ser", required = true)
     private String dataFileName;
+    /**
+     * Sets whether or not the external report format should be used.
+     */
+    @Parameter(property = "failOnError", defaultValue = "true", required = true)
+    private boolean failOnError;
 
-    //</editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="Maven bound parameters and components">
+    /**
+     * Returns if the mojo should fail the build if an exception occurs.
+     * @return whether or not the mojo should fail the build
+     */
+    protected boolean isFailOnError() {
+        return failOnError;
+    }
+    
     /**
      * The Maven Project Object.
      */
@@ -111,13 +125,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not
      * recommended that this be turned to false. Default is true.
      */
-    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "autoUpdate")
     private Boolean autoUpdate;
     /**
      * Sets whether Experimental analyzers are enabled. Default is false.
      */
-    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "enableExperimental")
     private Boolean enableExperimental;
     /**
@@ -145,7 +157,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * The maven settings proxy id.
      */
-    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "mavenSettingsProxyId", required = false)
     private String mavenSettingsProxyId;
 
@@ -162,6 +173,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Flag indicating whether or not to show a summary in the output.
      */
+    @SuppressWarnings("CanBeFinal")
     @Parameter(property = "showSummary", defaultValue = "true", required = false)
     private boolean showSummary = true;
 
@@ -541,7 +553,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @param project the project to scan the dependencies of
      * @param engine the engine to use to scan the dependencies
      */
-    protected void scanArtifacts(MavenProject project, Engine engine) {
+    protected void scanArtifacts(MavenProject project, MavenEngine engine) {
         for (Artifact a : project.getArtifacts()) {
             if (excludeFromScan(a)) {
                 continue;
@@ -649,14 +661,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     //</editor-fold>
 
     /**
-     * Initializes a new <code>Engine</code> that can be used for scanning.
+     * Initializes a new <code>MavenEngine</code> that can be used for scanning.
      *
-     * @return a newly instantiated <code>Engine</code>
+     * @return a newly instantiated <code>MavenEngine</code>
      * @throws DatabaseException thrown if there is a database exception
      */
-    protected Engine initializeEngine() throws DatabaseException {
+    protected MavenEngine initializeEngine() throws DatabaseException {
         populateSettings();
-        return new Engine(this.project,
+        return new MavenEngine(this.project,
                 this.reactorProjects);
     }
 
@@ -875,10 +887,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Generates the reports for a given dependency-check engine.
      *
      * @param engine a dependency-check engine
-     * @param p the maven project
-     * @param outputDir the directory path to write the report(s).
+     * @param p the Maven project
+     * @param outputDir the directory path to write the report(s)
+     * @throws ReportException thrown if there is an error writing the report
      */
-    protected void writeReports(Engine engine, MavenProject p, File outputDir) {
+    protected void writeReports(MavenEngine engine, MavenProject p, File outputDir) throws ReportException {
         DatabaseProperties prop = null;
         CveDB cve = null;
         try {
@@ -897,19 +910,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         final ReportGenerator r = new ReportGenerator(p.getName(), engine.getDependencies(), engine.getAnalyzers(), prop);
         try {
             r.generateReports(outputDir.getAbsolutePath(), format);
-        } catch (IOException ex) {
-            getLog().error(
-                    "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
-            if (getLog().isDebugEnabled()) {
-                getLog().debug("", ex);
-            }
-        } catch (Throwable ex) {
-            getLog().error(
-                    "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
-            if (getLog().isDebugEnabled()) {
-                getLog().debug("", ex);
-            }
+        } catch (ReportException ex) {
+            final String msg = String.format("Error generating the report for %s", p.getName());
+            throw new ReportException(msg, ex);
         }
+
     }
 
     //<editor-fold defaultstate="collapsed" desc="Methods to fail build or show summary">
@@ -1074,7 +1079,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * scan data between the "check" and "aggregate" phase.
      *
      * @param project the Maven project to read the data file from
-     * @return a <code>Engine</code> object populated with dependencies if the
+     * @return a <code>MavenEngine</code> object populated with dependencies if the
      * serialized data file exists; otherwise <code>null</code> is returned
      */
     protected List<Dependency> readDataFile(MavenProject project) {

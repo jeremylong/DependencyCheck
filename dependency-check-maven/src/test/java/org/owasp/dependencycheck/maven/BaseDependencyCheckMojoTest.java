@@ -90,7 +90,7 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
 
             boolean autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
-            Engine engine = new Engine(null, null);
+            MavenEngine engine = new MavenEngine(null, null);
             Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
 
             assertTrue(engine.getDependencies().isEmpty());

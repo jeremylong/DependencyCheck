@@ -36,12 +36,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
-public class Engine extends org.owasp.dependencycheck.Engine {
+public class MavenEngine extends org.owasp.dependencycheck.Engine {
 
     /**
      * The logger.
      */
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(Engine.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(MavenEngine.class);
     /**
      * A key used to persist an object in the MavenProject.
      */
@@ -69,7 +69,7 @@ public class Engine extends org.owasp.dependencycheck.Engine {
      * @throws DatabaseException thrown if there is an issue connecting to the
      * database
      */
-    public Engine(MavenProject project, List<MavenProject> reactorProjects) throws DatabaseException {
+    public MavenEngine(MavenProject project, List<MavenProject> reactorProjects) throws DatabaseException {
         this.currentProject = project;
         this.reactorProjects = reactorProjects;
         initializeEngine();
@@ -117,7 +117,7 @@ public class Engine extends org.owasp.dependencycheck.Engine {
      * @throws DatabaseException thrown if there is an issue connecting to the
      * database
      */
-    private Engine() throws DatabaseException {
+    private MavenEngine() throws DatabaseException {
     }
 
     /**
@@ -208,7 +208,7 @@ public class Engine extends org.owasp.dependencycheck.Engine {
      *
      * @return the root Maven Project
      */
-    private MavenProject getExecutionRoot() {
+    MavenProject getExecutionRoot() {
         if (reactorProjects == null) {
             return null;
         }

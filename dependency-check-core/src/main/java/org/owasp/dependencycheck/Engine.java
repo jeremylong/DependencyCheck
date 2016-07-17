@@ -359,12 +359,12 @@ public class Engine implements FileFilter {
             LOGGER.error("{}\n\nUnable to continue dependency-check analysis.", ex.getMessage());
             LOGGER.debug("", ex);
             exceptions.add(ex);
-            throw new ExceptionCollection(exceptions, true);
+            throw new ExceptionCollection("Unable to continue dependency-check analysis.",exceptions, true);
         } catch (DatabaseException ex) {
             LOGGER.error("{}\n\nUnable to continue dependency-check analysis.", ex.getMessage());
             LOGGER.debug("", ex);
             exceptions.add(ex);
-            throw new ExceptionCollection(exceptions, true);
+            throw new ExceptionCollection("Unable to connect to the dependency-check database", exceptions, true);
         }
 
         LOGGER.debug("\n----------------------------------------------------\nBEGIN ANALYSIS\n----------------------------------------------------");
@@ -424,7 +424,7 @@ public class Engine implements FileFilter {
         LOGGER.debug("\n----------------------------------------------------\nEND ANALYSIS\n----------------------------------------------------");
         LOGGER.info("Analysis Complete ({} ms)", System.currentTimeMillis() - analysisStart);
         if (exceptions.size() > 0) {
-            throw new ExceptionCollection(exceptions);
+            throw new ExceptionCollection("One or more exceptions occured during dependency-check analysis", exceptions);
         }
     }
 
