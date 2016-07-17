@@ -262,9 +262,9 @@ public final class Downloader {
                 throw new DownloadFailedException(format("Error creating URL Connection for HTTP %s request.", httpMethod), ex);
             } catch (IOException ex) {
                 checkForSslExceptionn(ex);
-                LOGGER.debug("IO Exception: " + ex.getMessage(), ex);
+                LOGGER.error("IO Exception: " + ex.getMessage(), ex);
                 if (ex.getCause() != null) {
-                    LOGGER.debug("IO Exception cause: " + ex.getCause().getMessage(), ex.getCause());
+                    LOGGER.error("IO Exception cause: " + ex.getCause().getMessage(), ex.getCause());
                 }
                 try {
                     //retry
