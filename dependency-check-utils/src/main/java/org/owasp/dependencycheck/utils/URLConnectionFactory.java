@@ -107,6 +107,7 @@ public final class URLConnectionFactory {
             }
             throw new URLConnectionFailureException("Error getting connection.", ex);
         }
+        ConfigureTLS(url, conn);
         return conn;
     }
 
