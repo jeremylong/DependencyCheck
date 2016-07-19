@@ -28,14 +28,25 @@ import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.SocketAddress;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import javax.net.ssl.HttpsURLConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * A URLConnection Factory to create new connections. This encapsulates several configuration checks to ensure that the connection
- * uses the correct proxy settings.
+ * A URLConnection Factory to create new connections. This encapsulates several
+ * configuration checks to ensure that the connection uses the correct proxy
+ * settings.
  *
  * @author Jeremy Long
  */
 public final class URLConnectionFactory {
+
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(URLConnectionFactory.class);
 
     /**
      * Private constructor for this factory.
@@ -44,8 +55,9 @@ public final class URLConnectionFactory {
     }
 
     /**
-     * Utility method to create an HttpURLConnection. If the application is configured to use a proxy this method will retrieve
-     * the proxy settings and use them when setting up the connection.
+     * Utility method to create an HttpURLConnection. If the application is
+     * configured to use a proxy this method will retrieve the proxy settings
+     * and use them when setting up the connection.
      *
      * @param url the url to connect to
      * @return an HttpURLConnection
@@ -140,8 +152,10 @@ public final class URLConnectionFactory {
     }
 
     /**
-     * Utility method to create an HttpURLConnection. The use of a proxy here is optional as there may be cases where a proxy is
-     * configured but we don't want to use it (for example, if there's an internal repository configured)
+     * Utility method to create an HttpURLConnection. The use of a proxy here is
+     * optional as there may be cases where a proxy is configured but we don't
+     * want to use it (for example, if there's an internal repository
+     * configured)
      *
      * @param url the URL to connect to
      * @param proxy whether to use the proxy (if configured)
@@ -161,6 +175,21 @@ public final class URLConnectionFactory {
         } catch (IOException ioe) {
             throw new URLConnectionFailureException("Error getting connection.", ioe);
         }
+        ConfigureTLS(url, conn);
         return conn;
+    }
+
+    private static void ConfigureTLS(URL url, HttpURLConnection conn) {
+        if ("https".equals(url.getProtocol())) {
+            try {
+                HttpsURLConnection secCon = (HttpsURLConnection) conn;
+                SSLSocketFactoryEx factory = new SSLSocketFactoryEx();
+                secCon.setSSLSocketFactory(factory);
+            } catch (NoSuchAlgorithmException ex) {
+                LOGGER.debug("Unsupported algorithm in SSLSocketFactoryEx", ex);
+            } catch (KeyManagementException ex) {
+                LOGGER.debug("Key mnagement eception in SSLSocketFactoryEx", ex);
+            }
+        }
     }
 }
