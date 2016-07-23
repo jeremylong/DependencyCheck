@@ -14,14 +14,24 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
+ * This class is used to enable additional ciphers used by the SSL Socket. This 
+ * is specifically because the NVD stopped supporting TLS 1.0 and Java 6 and 7
+ * clients by default were unable to connect to download the NVD data feeds.
+ * 
  * The following code was copied from
  * http://stackoverflow.com/questions/1037590/which-cipher-suites-to-enable-for-ssl-socket/23365536#23365536
  *
  */
 class SSLSocketFactoryEx extends SSLSocketFactory {
-
+    /**
+     * The Logger for use throughout the class.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(SSLSocketFactoryEx.class);
+    
     public SSLSocketFactoryEx() throws NoSuchAlgorithmException, KeyManagementException {
         initSSLSocketFactoryEx(null, null, null);
     }
@@ -52,6 +62,7 @@ class SSLSocketFactoryEx extends SSLSocketFactory {
         return m_protocols;
     }
 
+    @Override
     public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
         SSLSocketFactory factory = m_ctx.getSocketFactory();
         SSLSocket ss = (SSLSocket) factory.createSocket(s, host, port, autoClose);
@@ -142,7 +153,7 @@ class SSLSocketFactoryEx extends SSLSocketFactory {
                 try {
                     socket.close();
                 } catch (IOException ex) {
-                    //ignore
+                    LOGGER.trace("Error closing socket", ex);
                 }
             }
         }
@@ -203,13 +214,14 @@ class SSLSocketFactoryEx extends SSLSocketFactory {
             "TLS_RSA_WITH_AES_128_CBC_SHA"
         };
 
-        String[] availableCiphers = null;
+        String[] availableCiphers;
 
         try {
             SSLSocketFactory factory = m_ctx.getSocketFactory();
             availableCiphers = factory.getSupportedCipherSuites();
             Arrays.sort(availableCiphers);
         } catch (Exception e) {
+            LOGGER.debug("Error retrieving ciphers", e);
             return new String[]{
                 "TLS_DHE_DSS_WITH_AES_128_CBC_SHA",
                 "TLS_DHE_DSS_WITH_AES_256_CBC_SHA",
