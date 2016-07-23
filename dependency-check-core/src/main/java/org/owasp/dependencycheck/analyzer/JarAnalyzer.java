@@ -39,7 +39,6 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import org.apache.commons.compress.utils.IOUtils;
@@ -646,9 +645,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @return whether evidence was identified parsing the manifest
      * @throws IOException if there is an issue reading the JAR file
      */
-    protected boolean parseManifest(Dependency dependency,
-            List<ClassNameInformation> classInformation)
-            throws IOException {
+    protected boolean parseManifest(Dependency dependency, List<ClassNameInformation> classInformation) throws IOException {
         boolean foundSomething = false;
         JarFile jar = null;
         try {
@@ -667,7 +664,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             final EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
             final EvidenceCollection productEvidence = dependency.getProductEvidence();
             final EvidenceCollection versionEvidence = dependency.getVersionEvidence();
-
             String source = "Manifest";
             String specificationVersion = null;
             boolean hasImplementationVersion = false;
@@ -784,7 +780,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     }
                 }
             }
-
             for (Map.Entry<String, Attributes> item : manifest.getEntries().entrySet()) {
                 final String name = item.getKey();
                 source = "manifest: " + name;

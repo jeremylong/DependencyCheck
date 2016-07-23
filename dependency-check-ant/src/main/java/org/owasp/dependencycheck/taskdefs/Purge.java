@@ -78,7 +78,7 @@ public class Purge extends Task {
     private boolean failOnError = true;
 
     /**
-     * Get the value of failOnError
+     * Get the value of failOnError.
      *
      * @return the value of failOnError
      */
@@ -87,7 +87,7 @@ public class Purge extends Task {
     }
 
     /**
-     * Set the value of failOnError
+     * Set the value of failOnError.
      *
      * @param failOnError new value of failOnError
      */

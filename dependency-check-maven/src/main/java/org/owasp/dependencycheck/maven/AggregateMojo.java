@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import org.apache.maven.MavenExecutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -130,9 +129,9 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                 try {
                     writeReports(engine, current, outputDir);
                 } catch (ReportException ex) {
-                    ExceptionCollection exCol =  (ExceptionCollection) engine.getExecutionRoot().getContextValue(AGGREGATE_EXCEPTIONS);
+                    ExceptionCollection exCol = (ExceptionCollection) engine.getExecutionRoot().getContextValue(AGGREGATE_EXCEPTIONS);
                     if (exCol == null) {
-                        exCol = new ExceptionCollection("Error writing aggregate report",ex);
+                        exCol = new ExceptionCollection("Error writing aggregate report", ex);
                     } else {
                         exCol.addException(ex);
                     }

@@ -37,7 +37,6 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ch.qos.logback.core.FileAppender;
-import java.util.logging.Level;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
@@ -77,6 +76,7 @@ public class App {
      * Main CLI entry-point into the application.
      *
      * @param args the command line arguments
+     * @return the exit code to return
      */
     public int run(String[] args) {
         int exitCode = 0;
@@ -170,13 +170,13 @@ public class App {
                 exitCode = -12;
             } catch (ExceptionCollection ex) {
                 if (ex.isFatal()) {
-                    exitCode =-13;
+                    exitCode = -13;
                     LOGGER.error("One or more fatal errors occured");
                 } else {
-                    exitCode =-14;
-                }                
+                    exitCode = -14;
+                }
                 for (Throwable e : ex.getExceptions()) {
-                    LOGGER.error(e.getMessage());    
+                    LOGGER.error(e.getMessage());
                 }
             }
         } else {
@@ -301,6 +301,10 @@ public class App {
 
     /**
      * Only executes the update phase of dependency-check.
+     *
+     * @throws UpdateException thrown if there is an error updating
+     * @throws DatabaseException thrown if a fatal error occurred and a
+     * connection to the database could not be established
      */
     private void runUpdateOnly() throws UpdateException, DatabaseException {
         Engine engine = null;

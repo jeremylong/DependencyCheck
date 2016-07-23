@@ -106,7 +106,7 @@ public class CheckMojo extends BaseDependencyCheckMojo {
                         writeReports(engine, getProject(), getCorrectOutputDirectory());
                     } catch (ReportException ex) {
                         if (this.isFailOnError()) {
-                            if (exCol!= null) {
+                            if (exCol != null) {
                                 exCol.addException(ex);
                             } else {
                                 exCol = new ExceptionCollection("Unable to write the dependency-check report", ex);

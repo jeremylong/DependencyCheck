@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.taskdefs;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;

@@ -845,8 +845,8 @@ public class DependencyCheckScanAgent {
      * Executes the Dependency-Check on the dependent libraries.
      *
      * @return the Engine used to scan the dependencies.
-     * @throws org.owasp.dependencycheck.data.nvdcve.DatabaseException thrown if
-     * there is an exception connecting to the database
+     * @throws ExceptionCollection a collection of one or more exceptions that
+     * occurred during analysis.
      */
     private Engine executeDependencyCheck() throws ExceptionCollection {
         populateSettings();

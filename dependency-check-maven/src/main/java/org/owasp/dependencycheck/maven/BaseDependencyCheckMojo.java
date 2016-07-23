@@ -85,12 +85,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
     /**
      * Returns if the mojo should fail the build if an exception occurs.
+     *
      * @return whether or not the mojo should fail the build
      */
     protected boolean isFailOnError() {
         return failOnError;
     }
-    
+
     /**
      * The Maven Project Object.
      */
@@ -1079,8 +1080,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * scan data between the "check" and "aggregate" phase.
      *
      * @param project the Maven project to read the data file from
-     * @return a <code>MavenEngine</code> object populated with dependencies if the
-     * serialized data file exists; otherwise <code>null</code> is returned
+     * @return a <code>MavenEngine</code> object populated with dependencies if
+     * the serialized data file exists; otherwise <code>null</code> is returned
      */
     protected List<Dependency> readDataFile(MavenProject project) {
         final Object oPath = project.getContextValue(this.getDataFileContextKey());

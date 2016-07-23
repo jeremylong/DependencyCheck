@@ -111,5 +111,4 @@ public class UpdateMojo extends BaseDependencyCheckMojo {
     public String getDescription(Locale locale) {
         return "Updates the local cache of the NVD data from NIST.";
     }
-    
 }

@@ -48,8 +48,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An in memory lucene index that contains the vendor/product combinations from the CPE (application) identifiers within the NVD
- * CVE data.
+ * An in memory lucene index that contains the vendor/product combinations from
+ * the CPE (application) identifiers within the NVD CVE data.
  *
  * @author Jeremy Long
  */
@@ -142,19 +142,6 @@ public final class CpeMemoryIndex {
      */
     public boolean isOpen() {
         return openState;
-    }
-
-    /**
-     * Creates the indexing analyzer for the CPE Index.
-     *
-     * @return the CPE Analyzer.
-     * @deprecated the search field analyzer must be used to include the token concatenating filter.
-     */
-    @Deprecated
-    private Analyzer createIndexingAnalyzer() {
-        final Map<String, Analyzer> fieldAnalyzers = new HashMap<String, Analyzer>();
-        fieldAnalyzers.put(Fields.DOCUMENT_KEY, new KeywordAnalyzer());
-        return new PerFieldAnalyzerWrapper(new FieldAnalyzer(LuceneUtils.CURRENT_VERSION), fieldAnalyzers);
     }
 
     /**
@@ -275,7 +262,8 @@ public final class CpeMemoryIndex {
      * @param maxQueryResults the maximum number of documents to return
      * @return the TopDocs found by the search
      * @throws ParseException thrown when the searchString is invalid
-     * @throws IOException is thrown if there is an issue with the underlying Index
+     * @throws IOException is thrown if there is an issue with the underlying
+     * Index
      */
     public TopDocs search(String searchString, int maxQueryResults) throws ParseException, IOException {
         if (searchString == null || searchString.trim().isEmpty()) {

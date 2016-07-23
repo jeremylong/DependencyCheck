@@ -333,7 +333,7 @@ public class Engine implements FileFilter {
      * during analysis
      */
     public void analyzeDependencies() throws ExceptionCollection {
-        List<Throwable> exceptions = new ArrayList<Throwable>();
+        final List<Throwable> exceptions = new ArrayList<Throwable>();
         boolean autoUpdate = true;
         try {
             autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
@@ -359,7 +359,7 @@ public class Engine implements FileFilter {
             LOGGER.error("{}\n\nUnable to continue dependency-check analysis.", ex.getMessage());
             LOGGER.debug("", ex);
             exceptions.add(ex);
-            throw new ExceptionCollection("Unable to continue dependency-check analysis.",exceptions, true);
+            throw new ExceptionCollection("Unable to continue dependency-check analysis.", exceptions, true);
         } catch (DatabaseException ex) {
             LOGGER.error("{}\n\nUnable to continue dependency-check analysis.", ex.getMessage());
             LOGGER.debug("", ex);
@@ -480,7 +480,7 @@ public class Engine implements FileFilter {
      * Cycles through the cached web data sources and calls update on all of
      * them.
      *
-     * @throws UpdateException
+     * @throws UpdateException thrown if the operation fails
      */
     public void doUpdates() throws UpdateException {
         LOGGER.info("Checking for updates");

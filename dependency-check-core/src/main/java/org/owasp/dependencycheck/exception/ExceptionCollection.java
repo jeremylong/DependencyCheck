@@ -140,6 +140,7 @@ public class ExceptionCollection extends Exception {
      * Adds an exception to the collection.
      *
      * @param ex the exception to add
+     * @param fatal flag indicating if this is a fatal error
      */
     public void addException(Throwable ex, boolean fatal) {
         addException(ex);
@@ -153,7 +154,7 @@ public class ExceptionCollection extends Exception {
     private boolean fatal = false;
 
     /**
-     * Get the value of fatal
+     * Get the value of fatal.
      *
      * @return the value of fatal
      */
@@ -162,7 +163,7 @@ public class ExceptionCollection extends Exception {
     }
 
     /**
-     * Set the value of fatal
+     * Set the value of fatal.
      *
      * @param fatal new value of fatal
      */

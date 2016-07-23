@@ -52,6 +52,9 @@ import org.owasp.dependencycheck.exception.InitializationException;
 @Experimental
 public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
 
+    /**
+     * The logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(RubyBundleAuditAnalyzer.class);
 
     /**
@@ -150,7 +153,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             setEnabled(false);
             cvedb.close();
             cvedb = null;
-            String msg = String.format("Exception from bundle-audit process: %s. Disabling %s", ae.getCause(), ANALYZER_NAME);
+            final String msg = String.format("Exception from bundle-audit process: %s. Disabling %s", ae.getCause(), ANALYZER_NAME);
             throw new InitializationException(msg, ae);
         } catch (IOException ex) {
             setEnabled(false);
@@ -162,12 +165,12 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             exitValue = process.waitFor();
         } catch (InterruptedException ex) {
             setEnabled(false);
-            String msg = String.format("Bundle-audit process was interupted. Disabling %s", ANALYZER_NAME);
+            final String msg = String.format("Bundle-audit process was interupted. Disabling %s", ANALYZER_NAME);
             throw new InitializationException(msg);
         }
         if (0 == exitValue) {
             setEnabled(false);
-            String msg = String.format("Unexpected exit code from bundle-audit process. Disabling %s: %s", ANALYZER_NAME, exitValue);
+            final String msg = String.format("Unexpected exit code from bundle-audit process. Disabling %s: %s", ANALYZER_NAME, exitValue);
             throw new InitializationException(msg);
         } else {
             BufferedReader reader = null;
