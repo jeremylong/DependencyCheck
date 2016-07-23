@@ -46,7 +46,8 @@ public final class Settings {
     public static final class KEYS {
 
         /**
-         * private constructor because this is a "utility" class containing constants
+         * private constructor because this is a "utility" class containing
+         * constants
          */
         private KEYS() {
             //do nothing
@@ -60,23 +61,28 @@ public final class Settings {
          */
         public static final String APPLICATION_VERSION = "application.version";
         /**
-         * The key to obtain the URL to retrieve the current release version from.
+         * The key to obtain the URL to retrieve the current release version
+         * from.
          */
         public static final String ENGINE_VERSION_CHECK_URL = "engine.version.url";
         /**
-         * The properties key indicating whether or not the cached data sources should be updated.
+         * The properties key indicating whether or not the cached data sources
+         * should be updated.
          */
         public static final String AUTO_UPDATE = "autoupdate";
         /**
-         * The database driver class name. If this is not in the properties file the embedded database is used.
+         * The database driver class name. If this is not in the properties file
+         * the embedded database is used.
          */
         public static final String DB_DRIVER_NAME = "data.driver_name";
         /**
-         * The database driver class name. If this is not in the properties file the embedded database is used.
+         * The database driver class name. If this is not in the properties file
+         * the embedded database is used.
          */
         public static final String DB_DRIVER_PATH = "data.driver_path";
         /**
-         * The database connection string. If this is not in the properties file the embedded database is used.
+         * The database connection string. If this is not in the properties file
+         * the embedded database is used.
          */
         public static final String DB_CONNECTION_STRING = "data.connection_string";
         /**
@@ -101,36 +107,41 @@ public final class Settings {
         public static final String DB_VERSION = "data.version";
         /**
          * The starts with filter used to exclude CVE entries from the database.
-         * By default this is set to 'cpe:/a:' which limits the CVEs imported to 
-         * just those that are related to applications. If this were set to just 
-         * 'cpe:' the OS, hardware, and application related CVEs would be imported.
+         * By default this is set to 'cpe:/a:' which limits the CVEs imported to
+         * just those that are related to applications. If this were set to just
+         * 'cpe:' the OS, hardware, and application related CVEs would be
+         * imported.
          */
         public static final String CVE_CPE_STARTS_WITH_FILTER = "cve.cpe.startswith.filter";
         /**
-         * The properties key for the URL to retrieve the "meta" data from about the CVE entries.
+         * The properties key for the URL to retrieve the "meta" data from about
+         * the CVE entries.
          */
         public static final String CVE_META_URL = "cve.url.meta";
         /**
-         * The properties key for the URL to retrieve the recently modified and added CVE entries (last 8 days) using the 2.0
-         * schema.
+         * The properties key for the URL to retrieve the recently modified and
+         * added CVE entries (last 8 days) using the 2.0 schema.
          */
         public static final String CVE_MODIFIED_20_URL = "cve.url-2.0.modified";
         /**
-         * The properties key for the URL to retrieve the recently modified and added CVE entries (last 8 days) using the 1.2
-         * schema.
+         * The properties key for the URL to retrieve the recently modified and
+         * added CVE entries (last 8 days) using the 1.2 schema.
          */
         public static final String CVE_MODIFIED_12_URL = "cve.url-1.2.modified";
         /**
-         * The properties key for the URL to retrieve the recently modified and added CVE entries (last 8 days).
+         * The properties key for the URL to retrieve the recently modified and
+         * added CVE entries (last 8 days).
          */
         public static final String CVE_MODIFIED_VALID_FOR_DAYS = "cve.url.modified.validfordays";
         /**
-         * The properties key to control the skipping of the check for CVE updates.
+         * The properties key to control the skipping of the check for CVE
+         * updates.
          */
         public static final String CVE_CHECK_VALID_FOR_HOURS = "cve.check.validforhours";
         /**
-         * The properties key for the telling us how many cve.url.* URLs exists. This is used in combination with CVE_BASE_URL to
-         * be able to retrieve the URLs for all of the files that make up the NVD CVE listing.
+         * The properties key for the telling us how many cve.url.* URLs exists.
+         * This is used in combination with CVE_BASE_URL to be able to retrieve
+         * the URLs for all of the files that make up the NVD CVE listing.
          */
         public static final String CVE_START_YEAR = "cve.startyear";
         /**
@@ -142,7 +153,8 @@ public final class Settings {
          */
         public static final String CVE_SCHEMA_2_0 = "cve.url-2.0.base";
         /**
-         * The properties key that indicates how often the CPE data needs to be updated.
+         * The properties key that indicates how often the CPE data needs to be
+         * updated.
          */
         public static final String CPE_MODIFIED_VALID_FOR_DAYS = "cpe.validfordays";
         /**
@@ -152,7 +164,9 @@ public final class Settings {
         /**
          * The properties key for the proxy server.
          *
-         * @deprecated use {@link org.owasp.dependencycheck.utils.Settings.KEYS#PROXY_SERVER} instead.
+         * @deprecated use
+         * {@link org.owasp.dependencycheck.utils.Settings.KEYS#PROXY_SERVER}
+         * instead.
          */
         @Deprecated
         public static final String PROXY_URL = "proxy.server";
@@ -161,7 +175,8 @@ public final class Settings {
          */
         public static final String PROXY_SERVER = "proxy.server";
         /**
-         * The properties key for the proxy port - this must be an integer value.
+         * The properties key for the proxy port - this must be an integer
+         * value.
          */
         public static final String PROXY_PORT = "proxy.port";
         /**
@@ -209,19 +224,23 @@ public final class Settings {
          */
         public static final String ANALYZER_ARCHIVE_ENABLED = "analyzer.archive.enabled";
         /**
-         * The properties key for whether the node.js package analyzer is enabled.
+         * The properties key for whether the node.js package analyzer is
+         * enabled.
          */
         public static final String ANALYZER_NODE_PACKAGE_ENABLED = "analyzer.node.package.enabled";
         /**
-         * The properties key for whether the composer lock file analyzer is enabled.
+         * The properties key for whether the composer lock file analyzer is
+         * enabled.
          */
         public static final String ANALYZER_COMPOSER_LOCK_ENABLED = "analyzer.composer.lock.enabled";
         /**
-         * The properties key for whether the Python Distribution analyzer is enabled.
+         * The properties key for whether the Python Distribution analyzer is
+         * enabled.
          */
         public static final String ANALYZER_PYTHON_DISTRIBUTION_ENABLED = "analyzer.python.distribution.enabled";
         /**
-         * The properties key for whether the Python Package analyzer is enabled.
+         * The properties key for whether the Python Package analyzer is
+         * enabled.
          */
         public static final String ANALYZER_PYTHON_PACKAGE_ENABLED = "analyzer.python.package.enabled";
         /**
@@ -237,7 +256,8 @@ public final class Settings {
          */
         public static final String ANALYZER_CMAKE_ENABLED = "analyzer.cmake.enabled";
         /**
-         * The properties key for whether the Ruby Bundler Audit analyzer is enabled.
+         * The properties key for whether the Ruby Bundler Audit analyzer is
+         * enabled.
          */
         public static final String ANALYZER_BUNDLE_AUDIT_ENABLED = "analyzer.bundle.audit.enabled";
         /**
@@ -331,7 +351,8 @@ public final class Settings {
     private Properties props = null;
 
     /**
-     * Private constructor for the Settings class. This class loads the properties files.
+     * Private constructor for the Settings class. This class loads the
+     * properties files.
      *
      * @param propertiesFilePath the path to the base properties file to load
      */
@@ -357,16 +378,18 @@ public final class Settings {
     }
 
     /**
-     * Initializes the thread local settings object. Note, to use the settings object you must call this method. However, you must
-     * also call Settings.cleanup() to properly release resources.
+     * Initializes the thread local settings object. Note, to use the settings
+     * object you must call this method. However, you must also call
+     * Settings.cleanup() to properly release resources.
      */
     public static void initialize() {
         LOCAL_SETTINGS.set(new Settings(PROPERTIES_FILE));
     }
 
     /**
-     * Initializes the thread local settings object. Note, to use the settings object you must call this method. However, you must
-     * also call Settings.cleanup() to properly release resources.
+     * Initializes the thread local settings object. Note, to use the settings
+     * object you must call this method. However, you must also call
+     * Settings.cleanup() to properly release resources.
      *
      * @param propertiesFilePath the path to the base properties file to load
      */
@@ -385,7 +408,8 @@ public final class Settings {
     /**
      * Cleans up resources to prevent memory leaks.
      *
-     * @param deleteTemporary flag indicating whether any temporary directories generated should be removed
+     * @param deleteTemporary flag indicating whether any temporary directories
+     * generated should be removed
      */
     public static void cleanup(boolean deleteTemporary) {
         if (deleteTemporary && tempDirectory != null && tempDirectory.exists()) {
@@ -425,7 +449,8 @@ public final class Settings {
     }
 
     /**
-     * Logs the properties. This will not log any properties that contain 'password' in the key.
+     * Logs the properties. This will not log any properties that contain
+     * 'password' in the key.
      *
      * @param header the header to print with the log message
      * @param properties the properties to log
@@ -541,13 +566,16 @@ public final class Settings {
     }
 
     /**
-     * Merges a new properties file into the current properties. This method allows for the loading of a user provided properties
-     * file.<br><br>
-     * <b>Note</b>: even if using this method - system properties will be loaded before properties loaded from files.
+     * Merges a new properties file into the current properties. This method
+     * allows for the loading of a user provided properties file.<br><br>
+     * <b>Note</b>: even if using this method - system properties will be loaded
+     * before properties loaded from files.
      *
      * @param filePath the path to the properties file to merge.
-     * @throws FileNotFoundException is thrown when the filePath points to a non-existent file
-     * @throws IOException is thrown when there is an exception loading/merging the properties
+     * @throws FileNotFoundException is thrown when the filePath points to a
+     * non-existent file
+     * @throws IOException is thrown when there is an exception loading/merging
+     * the properties
      */
     public static void mergeProperties(File filePath) throws FileNotFoundException, IOException {
         FileInputStream fis = null;
@@ -566,13 +594,16 @@ public final class Settings {
     }
 
     /**
-     * Merges a new properties file into the current properties. This method allows for the loading of a user provided properties
-     * file.<br><br>
-     * Note: even if using this method - system properties will be loaded before properties loaded from files.
+     * Merges a new properties file into the current properties. This method
+     * allows for the loading of a user provided properties file.<br><br>
+     * Note: even if using this method - system properties will be loaded before
+     * properties loaded from files.
      *
      * @param filePath the path to the properties file to merge.
-     * @throws FileNotFoundException is thrown when the filePath points to a non-existent file
-     * @throws IOException is thrown when there is an exception loading/merging the properties
+     * @throws FileNotFoundException is thrown when the filePath points to a
+     * non-existent file
+     * @throws IOException is thrown when there is an exception loading/merging
+     * the properties
      */
     public static void mergeProperties(String filePath) throws FileNotFoundException, IOException {
         FileInputStream fis = null;
@@ -591,12 +622,14 @@ public final class Settings {
     }
 
     /**
-     * Merges a new properties file into the current properties. This method allows for the loading of a user provided properties
-     * file.<br><br>
-     * <b>Note</b>: even if using this method - system properties will be loaded before properties loaded from files.
+     * Merges a new properties file into the current properties. This method
+     * allows for the loading of a user provided properties file.<br><br>
+     * <b>Note</b>: even if using this method - system properties will be loaded
+     * before properties loaded from files.
      *
      * @param stream an Input Stream pointing at a properties file to merge
-     * @throws IOException is thrown when there is an exception loading/merging the properties
+     * @throws IOException is thrown when there is an exception loading/merging
+     * the properties
      */
     public static void mergeProperties(InputStream stream) throws IOException {
         LOCAL_SETTINGS.get().props.load(stream);
@@ -604,9 +637,10 @@ public final class Settings {
     }
 
     /**
-     * Returns a value from the properties file as a File object. If the value was specified as a system property or passed in via
-     * the -Dprop=value argument - this method will return the value from the system properties before the values in the contained
-     * configuration file.
+     * Returns a value from the properties file as a File object. If the value
+     * was specified as a system property or passed in via the -Dprop=value
+     * argument - this method will return the value from the system properties
+     * before the values in the contained configuration file.
      *
      * @param key the key to lookup within the properties file
      * @return the property from the properties file converted to a File object
@@ -620,13 +654,15 @@ public final class Settings {
     }
 
     /**
-     * Returns a value from the properties file as a File object. If the value was specified as a system property or passed in via
-     * the -Dprop=value argument - this method will return the value from the system properties before the values in the contained
-     * configuration file.
+     * Returns a value from the properties file as a File object. If the value
+     * was specified as a system property or passed in via the -Dprop=value
+     * argument - this method will return the value from the system properties
+     * before the values in the contained configuration file.
      *
-     * This method will check the configured base directory and will use this as the base of the file path. Additionally, if the
-     * base directory begins with a leading "[JAR]\" sequence with the path to the folder containing the JAR file containing this
-     * class.
+     * This method will check the configured base directory and will use this as
+     * the base of the file path. Additionally, if the base directory begins
+     * with a leading "[JAR]\" sequence with the path to the folder containing
+     * the JAR file containing this class.
      *
      * @param key the key to lookup within the properties file
      * @return the property from the properties file converted to a File object
@@ -649,7 +685,8 @@ public final class Settings {
     }
 
     /**
-     * Attempts to retrieve the folder containing the Jar file containing the Settings class.
+     * Attempts to retrieve the folder containing the Jar file containing the
+     * Settings class.
      *
      * @return a File object
      */
@@ -671,9 +708,10 @@ public final class Settings {
     }
 
     /**
-     * Returns a value from the properties file. If the value was specified as a system property or passed in via the -Dprop=value
-     * argument - this method will return the value from the system properties before the values in the contained configuration
-     * file.
+     * Returns a value from the properties file. If the value was specified as a
+     * system property or passed in via the -Dprop=value argument - this method
+     * will return the value from the system properties before the values in the
+     * contained configuration file.
      *
      * @param key the key to lookup within the properties file
      * @param defaultValue the default value for the requested property
@@ -685,7 +723,8 @@ public final class Settings {
     }
 
     /**
-     * A reference to the temporary directory; used incase it needs to be deleted during cleanup.
+     * A reference to the temporary directory; used incase it needs to be
+     * deleted during cleanup.
      */
     private static File tempDirectory = null;
 
@@ -693,7 +732,8 @@ public final class Settings {
      * Returns the temporary directory.
      *
      * @return the temporary directory
-     * @throws java.io.IOException thrown if the temporary directory does not exist and cannot be created
+     * @throws java.io.IOException thrown if the temporary directory does not
+     * exist and cannot be created
      */
     public static File getTempDirectory() throws IOException {
         final File tmpDir = new File(Settings.getString(Settings.KEYS.TEMP_DIRECTORY, System.getProperty("java.io.tmpdir")), "dctemp");
@@ -706,9 +746,10 @@ public final class Settings {
     }
 
     /**
-     * Returns a value from the properties file. If the value was specified as a system property or passed in via the -Dprop=value
-     * argument - this method will return the value from the system properties before the values in the contained configuration
-     * file.
+     * Returns a value from the properties file. If the value was specified as a
+     * system property or passed in via the -Dprop=value argument - this method
+     * will return the value from the system properties before the values in the
+     * contained configuration file.
      *
      * @param key the key to lookup within the properties file
      * @return the property from the properties file
@@ -718,7 +759,8 @@ public final class Settings {
     }
 
     /**
-     * Removes a property from the local properties collection. This is mainly used in test cases.
+     * Removes a property from the local properties collection. This is mainly
+     * used in test cases.
      *
      * @param key the property key to remove
      */
@@ -727,13 +769,15 @@ public final class Settings {
     }
 
     /**
-     * Returns an int value from the properties file. If the value was specified as a system property or passed in via the
-     * -Dprop=value argument - this method will return the value from the system properties before the values in the contained
-     * configuration file.
+     * Returns an int value from the properties file. If the value was specified
+     * as a system property or passed in via the -Dprop=value argument - this
+     * method will return the value from the system properties before the values
+     * in the contained configuration file.
      *
      * @param key the key to lookup within the properties file
      * @return the property from the properties file
-     * @throws InvalidSettingException is thrown if there is an error retrieving the setting
+     * @throws InvalidSettingException is thrown if there is an error retrieving
+     * the setting
      */
     public static int getInt(String key) throws InvalidSettingException {
         try {
@@ -744,14 +788,15 @@ public final class Settings {
     }
 
     /**
-     * Returns an int value from the properties file. If the value was specified as a system property or passed in via the
-     * -Dprop=value argument - this method will return the value from the system properties before the values in the contained
-     * configuration file.
+     * Returns an int value from the properties file. If the value was specified
+     * as a system property or passed in via the -Dprop=value argument - this
+     * method will return the value from the system properties before the values
+     * in the contained configuration file.
      *
      * @param key the key to lookup within the properties file
      * @param defaultValue the default value to return
-     * @return the property from the properties file or the defaultValue if the property does not exist or cannot be converted to
-     * an integer
+     * @return the property from the properties file or the defaultValue if the
+     * property does not exist or cannot be converted to an integer
      */
     public static int getInt(String key, int defaultValue) {
         int value;
@@ -767,13 +812,15 @@ public final class Settings {
     }
 
     /**
-     * Returns a long value from the properties file. If the value was specified as a system property or passed in via the
-     * -Dprop=value argument - this method will return the value from the system properties before the values in the contained
-     * configuration file.
+     * Returns a long value from the properties file. If the value was specified
+     * as a system property or passed in via the -Dprop=value argument - this
+     * method will return the value from the system properties before the values
+     * in the contained configuration file.
      *
      * @param key the key to lookup within the properties file
      * @return the property from the properties file
-     * @throws InvalidSettingException is thrown if there is an error retrieving the setting
+     * @throws InvalidSettingException is thrown if there is an error retrieving
+     * the setting
      */
     public static long getLong(String key) throws InvalidSettingException {
         try {
@@ -784,38 +831,47 @@ public final class Settings {
     }
 
     /**
-     * Returns a boolean value from the properties file. If the value was specified as a system property or passed in via the
-     * <code>-Dprop=value</code> argument this method will return the value from the system properties before the values in the
-     * contained configuration file.
+     * Returns a boolean value from the properties file. If the value was
+     * specified as a system property or passed in via the
+     * <code>-Dprop=value</code> argument this method will return the value from
+     * the system properties before the values in the contained configuration
+     * file.
      *
      * @param key the key to lookup within the properties file
      * @return the property from the properties file
-     * @throws InvalidSettingException is thrown if there is an error retrieving the setting
+     * @throws InvalidSettingException is thrown if there is an error retrieving
+     * the setting
      */
     public static boolean getBoolean(String key) throws InvalidSettingException {
         return Boolean.parseBoolean(Settings.getString(key));
     }
 
     /**
-     * Returns a boolean value from the properties file. If the value was specified as a system property or passed in via the
-     * <code>-Dprop=value</code> argument this method will return the value from the system properties before the values in the
-     * contained configuration file.
+     * Returns a boolean value from the properties file. If the value was
+     * specified as a system property or passed in via the
+     * <code>-Dprop=value</code> argument this method will return the value from
+     * the system properties before the values in the contained configuration
+     * file.
      *
      * @param key the key to lookup within the properties file
-     * @param defaultValue the default value to return if the setting does not exist
+     * @param defaultValue the default value to return if the setting does not
+     * exist
      * @return the property from the properties file
-     * @throws InvalidSettingException is thrown if there is an error retrieving the setting
+     * @throws InvalidSettingException is thrown if there is an error retrieving
+     * the setting
      */
     public static boolean getBoolean(String key, boolean defaultValue) throws InvalidSettingException {
         return Boolean.parseBoolean(Settings.getString(key, Boolean.toString(defaultValue)));
     }
 
     /**
-     * Returns a connection string from the configured properties. If the connection string contains a %s, this method will
-     * determine the 'data' directory and replace the %s with the path to the data directory. If the data directory does not
-     * exists it will be created.
+     * Returns a connection string from the configured properties. If the
+     * connection string contains a %s, this method will determine the 'data'
+     * directory and replace the %s with the path to the data directory. If the
+     * data directory does not exists it will be created.
      *
-     * @param connectionStringKey the property file key for the connection string
+     * @param connectionStringKey the property file key for the connection
+     * string
      * @param dbFileNameKey the settings key for the db filename
      * @return the connection string
      * @throws IOException thrown the data directory cannot be created
@@ -852,8 +908,9 @@ public final class Settings {
     }
 
     /**
-     * Retrieves the directory that the JAR file exists in so that we can ensure we always use a common data directory for the
-     * embedded H2 database. This is public solely for some unit tests; otherwise this should be private.
+     * Retrieves the directory that the JAR file exists in so that we can ensure
+     * we always use a common data directory for the embedded H2 database. This
+     * is public solely for some unit tests; otherwise this should be private.
      *
      * @return the data directory to store data files
      * @throws IOException is thrown if an IOException occurs of course...

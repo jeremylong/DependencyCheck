@@ -107,7 +107,7 @@ public final class URLConnectionFactory {
             }
             throw new URLConnectionFailureException("Error getting connection.", ex);
         }
-        ConfigureTLS(url, conn);
+        configureTLS(url, conn);
         return conn;
     }
 
@@ -176,15 +176,23 @@ public final class URLConnectionFactory {
         } catch (IOException ioe) {
             throw new URLConnectionFailureException("Error getting connection.", ioe);
         }
-        ConfigureTLS(url, conn);
+        configureTLS(url, conn);
         return conn;
     }
 
-    private static void ConfigureTLS(URL url, HttpURLConnection conn) {
+    /**
+     * If the protocol is HTTPS, this will configure the cipher suites so that
+     * connections can be made to the NVD, and others, using older versions of
+     * Java.
+     *
+     * @param url the URL
+     * @param conn the connection
+     */
+    private static void configureTLS(URL url, HttpURLConnection conn) {
         if ("https".equals(url.getProtocol())) {
             try {
-                HttpsURLConnection secCon = (HttpsURLConnection) conn;
-                SSLSocketFactoryEx factory = new SSLSocketFactoryEx();
+                final HttpsURLConnection secCon = (HttpsURLConnection) conn;
+                final SSLSocketFactoryEx factory = new SSLSocketFactoryEx();
                 secCon.setSSLSocketFactory(factory);
             } catch (NoSuchAlgorithmException ex) {
                 LOGGER.debug("Unsupported algorithm in SSLSocketFactoryEx", ex);

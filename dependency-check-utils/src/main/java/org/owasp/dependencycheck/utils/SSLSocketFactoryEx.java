@@ -18,50 +18,106 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is used to enable additional ciphers used by the SSL Socket. This 
+ * This class is used to enable additional ciphers used by the SSL Socket. This
  * is specifically because the NVD stopped supporting TLS 1.0 and Java 6 and 7
  * clients by default were unable to connect to download the NVD data feeds.
- * 
+ *
  * The following code was copied from
  * http://stackoverflow.com/questions/1037590/which-cipher-suites-to-enable-for-ssl-socket/23365536#23365536
  *
  */
-class SSLSocketFactoryEx extends SSLSocketFactory {
+public class SSLSocketFactoryEx extends SSLSocketFactory {
+
     /**
      * The Logger for use throughout the class.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(SSLSocketFactoryEx.class);
-    
+
+    /**
+     * Constructs a new SSLSocketFactory.
+     *
+     * @throws NoSuchAlgorithmException thrown when an algorithm is not
+     * supported
+     * @throws KeyManagementException thrown if initialization fails
+     */
     public SSLSocketFactoryEx() throws NoSuchAlgorithmException, KeyManagementException {
         initSSLSocketFactoryEx(null, null, null);
     }
 
+    /**
+     * Constructs a new SSLSocketFactory.
+     *
+     * @param km the key manager
+     * @param tm the trust manager
+     * @param random secure random
+     * @throws NoSuchAlgorithmException thrown when an algorithm is not
+     * supported
+     * @throws KeyManagementException thrown if initialization fails
+     */
     public SSLSocketFactoryEx(KeyManager[] km, TrustManager[] tm, SecureRandom random) throws NoSuchAlgorithmException, KeyManagementException {
         initSSLSocketFactoryEx(km, tm, random);
     }
 
+    /**
+     * Constructs a new SSLSocketFactory.
+     *
+     * @param ctx the SSL context
+     * @throws NoSuchAlgorithmException thrown when an algorithm is not
+     * supported
+     * @throws KeyManagementException thrown if initialization fails
+     */
     public SSLSocketFactoryEx(SSLContext ctx) throws NoSuchAlgorithmException, KeyManagementException {
         initSSLSocketFactoryEx(ctx);
     }
 
+    /**
+     * Returns the default cipher suites.
+     *
+     * @return the default cipher suites
+     */
     @Override
     public String[] getDefaultCipherSuites() {
         return m_ciphers;
     }
 
+    /**
+     * Returns the supported cipher suites.
+     *
+     * @return the supported cipher suites
+     */
     @Override
     public String[] getSupportedCipherSuites() {
         return m_ciphers;
     }
 
+    /**
+     * Returns the default protocols.
+     *
+     * @return the default protocols
+     */
     public String[] getDefaultProtocols() {
         return m_protocols;
     }
 
+    /**
+     * Returns the supported protocols.
+     *
+     * @return the supported protocols
+     */
     public String[] getSupportedProtocols() {
         return m_protocols;
     }
 
+    /**
+     * Creates an SSL Socket.
+     *
+     * @param s the base socket
+     * @param host the host
+     * @param port the port
+     * @param autoClose if the socket should auto-close
+     * @return the SSL Socket
+     * @throws IOException thrown if the creation fails
+     */
     @Override
     public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
         SSLSocketFactory factory = m_ctx.getSocketFactory();
@@ -73,6 +129,16 @@ class SSLSocketFactoryEx extends SSLSocketFactory {
         return ss;
     }
 
+    /**
+     * Creates a new SSL Socket.
+     *
+     * @param address the address to connect to
+     * @param port the port number
+     * @param localAddress the local address
+     * @param localPort the local port
+     * @return the SSL Socket
+     * @throws IOException thrown if the creation fails
+     */
     @Override
     public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort) throws IOException {
         SSLSocketFactory factory = m_ctx.getSocketFactory();
@@ -84,6 +150,16 @@ class SSLSocketFactoryEx extends SSLSocketFactory {
         return ss;
     }
 
+    /**
+     * Creates a new SSL Socket.
+     *
+     * @param host the host to connect to
+     * @param port the port to connect to
+     * @param localHost the local host
+     * @param localPort the local port
+     * @return the SSL Socket
+     * @throws IOException thrown if the creation fails
+     */
     @Override
     public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException {
         SSLSocketFactory factory = m_ctx.getSocketFactory();
@@ -95,6 +171,14 @@ class SSLSocketFactoryEx extends SSLSocketFactory {
         return ss;
     }
 
+    /**
+     * Creates a new SSL Socket.
+     *
+     * @param host the host to connect to
+     * @param port the port to connect to
+     * @return the SSL Socket
+     * @throws IOException thrown if the creation fails
+     */
     @Override
     public Socket createSocket(InetAddress host, int port) throws IOException {
         SSLSocketFactory factory = m_ctx.getSocketFactory();
@@ -106,6 +190,14 @@ class SSLSocketFactoryEx extends SSLSocketFactory {
         return ss;
     }
 
+    /**
+     * Creates a new SSL Socket.
+     *
+     * @param host the host to connect to
+     * @param port the port to connect to
+     * @return the SSL Socket
+     * @throws IOException thrown if the creation fails
+     */
     @Override
     public Socket createSocket(String host, int port) throws IOException {
         SSLSocketFactory factory = m_ctx.getSocketFactory();
@@ -117,24 +209,47 @@ class SSLSocketFactoryEx extends SSLSocketFactory {
         return ss;
     }
 
+    /**
+     * Initializes the SSL Socket Factory Extension.
+     *
+     * @param km the key managers
+     * @param tm the trust managers
+     * @param random the secure random number generator
+     * @throws NoSuchAlgorithmException thrown when an algorithm is not
+     * supported
+     * @throws KeyManagementException thrown if initialization fails
+     */
     private void initSSLSocketFactoryEx(KeyManager[] km, TrustManager[] tm, SecureRandom random)
             throws NoSuchAlgorithmException, KeyManagementException {
         m_ctx = SSLContext.getInstance("TLS");
         m_ctx.init(km, tm, random);
 
-        m_protocols = GetProtocolList();
-        m_ciphers = GetCipherList();
+        m_protocols = getProtocolList();
+        m_ciphers = getCipherList();
     }
 
+    /**
+     * Initializes the SSL Socket Factory Extension.
+     *
+     * @param ctx the SSL context
+     * @throws NoSuchAlgorithmException thrown when an algorithm is not
+     * supported
+     * @throws KeyManagementException thrown if initialization fails
+     */
     private void initSSLSocketFactoryEx(SSLContext ctx)
             throws NoSuchAlgorithmException, KeyManagementException {
         m_ctx = ctx;
 
-        m_protocols = GetProtocolList();
-        m_ciphers = GetCipherList();
+        m_protocols = getProtocolList();
+        m_ciphers = getCipherList();
     }
 
-    protected String[] GetProtocolList() {
+    /**
+     * Returns the protocol list.
+     *
+     * @return the protocol list
+     */
+    protected String[] getProtocolList() {
         String[] preferredProtocols = {"TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3"};
         String[] availableProtocols = null;
 
@@ -146,7 +261,8 @@ class SSLSocketFactoryEx extends SSLSocketFactory {
 
             availableProtocols = socket.getSupportedProtocols();
             Arrays.sort(availableProtocols);
-        } catch (Exception e) {
+        } catch (Exception ex) {
+            LOGGER.debug("Error getting protocol list, using TLSv1", ex);
             return new String[]{"TLSv1"};
         } finally {
             if (socket != null) {
@@ -169,7 +285,12 @@ class SSLSocketFactoryEx extends SSLSocketFactory {
         return aa.toArray(new String[0]);
     }
 
-    protected String[] GetCipherList() {
+    /**
+     * Returns the cipher list.
+     *
+     * @return the cipher list
+     */
+    protected String[] getCipherList() {
         String[] preferredCiphers = {
             // *_CHACHA20_POLY1305 are 3x to 4x faster than existing cipher suites.
             //   http://googleonlinesecurity.blogspot.com/2014/04/speeding-up-and-strengthening-https.html
@@ -248,8 +369,16 @@ class SSLSocketFactoryEx extends SSLSocketFactory {
         return aa.toArray(new String[0]);
     }
 
+    /**
+     * The SSL context.
+     */
     private SSLContext m_ctx;
-
+    /**
+     * The cipher suites.
+     */
     private String[] m_ciphers;
+    /**
+     * The protocols.
+     */
     private String[] m_protocols;
 }
