@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
  * The following code was copied from
  * http://stackoverflow.com/questions/1037590/which-cipher-suites-to-enable-for-ssl-socket/23365536#23365536
  *
+ * @author <a href="http://stackoverflow.com/users/608639/jww">jww</a>
  */
 public class SSLSocketFactoryEx extends SSLSocketFactory {
 
@@ -77,7 +78,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      */
     @Override
     public String[] getDefaultCipherSuites() {
-        return m_ciphers;
+        return Arrays.copyOf(ciphers, ciphers.length);
     }
 
     /**
@@ -87,7 +88,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      */
     @Override
     public String[] getSupportedCipherSuites() {
-        return m_ciphers;
+        return Arrays.copyOf(ciphers, ciphers.length);
     }
 
     /**
@@ -96,7 +97,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      * @return the default protocols
      */
     public String[] getDefaultProtocols() {
-        return m_protocols;
+        return Arrays.copyOf(protocols, protocols.length);
     }
 
     /**
@@ -105,7 +106,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      * @return the supported protocols
      */
     public String[] getSupportedProtocols() {
-        return m_protocols;
+        return Arrays.copyOf(protocols, protocols.length);
     }
 
     /**
@@ -120,11 +121,11 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      */
     @Override
     public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
-        SSLSocketFactory factory = m_ctx.getSocketFactory();
-        SSLSocket ss = (SSLSocket) factory.createSocket(s, host, port, autoClose);
+        final SSLSocketFactory factory = sslCtxt.getSocketFactory();
+        final SSLSocket ss = (SSLSocket) factory.createSocket(s, host, port, autoClose);
 
-        ss.setEnabledProtocols(m_protocols);
-        ss.setEnabledCipherSuites(m_ciphers);
+        ss.setEnabledProtocols(protocols);
+        ss.setEnabledCipherSuites(ciphers);
 
         return ss;
     }
@@ -141,11 +142,11 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      */
     @Override
     public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort) throws IOException {
-        SSLSocketFactory factory = m_ctx.getSocketFactory();
-        SSLSocket ss = (SSLSocket) factory.createSocket(address, port, localAddress, localPort);
+        final SSLSocketFactory factory = sslCtxt.getSocketFactory();
+        final SSLSocket ss = (SSLSocket) factory.createSocket(address, port, localAddress, localPort);
 
-        ss.setEnabledProtocols(m_protocols);
-        ss.setEnabledCipherSuites(m_ciphers);
+        ss.setEnabledProtocols(protocols);
+        ss.setEnabledCipherSuites(ciphers);
 
         return ss;
     }
@@ -162,11 +163,11 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      */
     @Override
     public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException {
-        SSLSocketFactory factory = m_ctx.getSocketFactory();
-        SSLSocket ss = (SSLSocket) factory.createSocket(host, port, localHost, localPort);
+        final SSLSocketFactory factory = sslCtxt.getSocketFactory();
+        final SSLSocket ss = (SSLSocket) factory.createSocket(host, port, localHost, localPort);
 
-        ss.setEnabledProtocols(m_protocols);
-        ss.setEnabledCipherSuites(m_ciphers);
+        ss.setEnabledProtocols(protocols);
+        ss.setEnabledCipherSuites(ciphers);
 
         return ss;
     }
@@ -181,11 +182,11 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      */
     @Override
     public Socket createSocket(InetAddress host, int port) throws IOException {
-        SSLSocketFactory factory = m_ctx.getSocketFactory();
-        SSLSocket ss = (SSLSocket) factory.createSocket(host, port);
+        final SSLSocketFactory factory = sslCtxt.getSocketFactory();
+        final SSLSocket ss = (SSLSocket) factory.createSocket(host, port);
 
-        ss.setEnabledProtocols(m_protocols);
-        ss.setEnabledCipherSuites(m_ciphers);
+        ss.setEnabledProtocols(protocols);
+        ss.setEnabledCipherSuites(ciphers);
 
         return ss;
     }
@@ -200,11 +201,11 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      */
     @Override
     public Socket createSocket(String host, int port) throws IOException {
-        SSLSocketFactory factory = m_ctx.getSocketFactory();
-        SSLSocket ss = (SSLSocket) factory.createSocket(host, port);
+        final SSLSocketFactory factory = sslCtxt.getSocketFactory();
+        final SSLSocket ss = (SSLSocket) factory.createSocket(host, port);
 
-        ss.setEnabledProtocols(m_protocols);
-        ss.setEnabledCipherSuites(m_ciphers);
+        ss.setEnabledProtocols(protocols);
+        ss.setEnabledCipherSuites(ciphers);
 
         return ss;
     }
@@ -221,11 +222,11 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      */
     private void initSSLSocketFactoryEx(KeyManager[] km, TrustManager[] tm, SecureRandom random)
             throws NoSuchAlgorithmException, KeyManagementException {
-        m_ctx = SSLContext.getInstance("TLS");
-        m_ctx.init(km, tm, random);
+        sslCtxt = SSLContext.getInstance("TLS");
+        sslCtxt.init(km, tm, random);
 
-        m_protocols = getProtocolList();
-        m_ciphers = getCipherList();
+        protocols = getProtocolList();
+        ciphers = getCipherList();
     }
 
     /**
@@ -238,10 +239,10 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      */
     private void initSSLSocketFactoryEx(SSLContext ctx)
             throws NoSuchAlgorithmException, KeyManagementException {
-        m_ctx = ctx;
+        sslCtxt = ctx;
 
-        m_protocols = getProtocolList();
-        m_ciphers = getCipherList();
+        protocols = getProtocolList();
+        ciphers = getCipherList();
     }
 
     /**
@@ -250,13 +251,13 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      * @return the protocol list
      */
     protected String[] getProtocolList() {
-        String[] preferredProtocols = {"TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3"};
+        final String[] preferredProtocols = {"TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3"};
         String[] availableProtocols = null;
 
         SSLSocket socket = null;
 
         try {
-            SSLSocketFactory factory = m_ctx.getSocketFactory();
+            final SSLSocketFactory factory = sslCtxt.getSocketFactory();
             socket = (SSLSocket) factory.createSocket();
 
             availableProtocols = socket.getSupportedProtocols();
@@ -274,9 +275,9 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
             }
         }
 
-        List<String> aa = new ArrayList<String>();
+        final List<String> aa = new ArrayList<String>();
         for (String preferredProtocol : preferredProtocols) {
-            int idx = Arrays.binarySearch(availableProtocols, preferredProtocol);
+            final int idx = Arrays.binarySearch(availableProtocols, preferredProtocol);
             if (idx >= 0) {
                 aa.add(preferredProtocol);
             }
@@ -291,7 +292,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      * @return the cipher list
      */
     protected String[] getCipherList() {
-        String[] preferredCiphers = {
+        final String[] preferredCiphers = {
             // *_CHACHA20_POLY1305 are 3x to 4x faster than existing cipher suites.
             //   http://googleonlinesecurity.blogspot.com/2014/04/speeding-up-and-strengthening-https.html
             // Use them if available. Normative names can be found at (TLS spec depends on IPSec spec):
@@ -332,13 +333,12 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
             "TLS_RSA_WITH_AES_256_CBC_SHA256",
             "TLS_RSA_WITH_AES_256_CBC_SHA",
             "TLS_RSA_WITH_AES_128_CBC_SHA256",
-            "TLS_RSA_WITH_AES_128_CBC_SHA"
-        };
+            "TLS_RSA_WITH_AES_128_CBC_SHA",};
 
         String[] availableCiphers;
 
         try {
-            SSLSocketFactory factory = m_ctx.getSocketFactory();
+            final SSLSocketFactory factory = sslCtxt.getSocketFactory();
             availableCiphers = factory.getSupportedCipherSuites();
             Arrays.sort(availableCiphers);
         } catch (Exception e) {
@@ -352,13 +352,12 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
                 "TLS_RSA_WITH_AES_256_CBC_SHA",
                 "TLS_RSA_WITH_AES_128_CBC_SHA256",
                 "TLS_RSA_WITH_AES_128_CBC_SHA",
-                "TLS_EMPTY_RENEGOTIATION_INFO_SCSV"
-            };
+                "TLS_EMPTY_RENEGOTIATION_INFO_SCSV",};
         }
 
-        List<String> aa = new ArrayList<String>();
+        final List<String> aa = new ArrayList<String>();
         for (String preferredCipher : preferredCiphers) {
-            int idx = Arrays.binarySearch(availableCiphers, preferredCipher);
+            final int idx = Arrays.binarySearch(availableCiphers, preferredCipher);
             if (idx >= 0) {
                 aa.add(preferredCipher);
             }
@@ -372,13 +371,13 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
     /**
      * The SSL context.
      */
-    private SSLContext m_ctx;
+    private SSLContext sslCtxt;
     /**
      * The cipher suites.
      */
-    private String[] m_ciphers;
+    private String[] ciphers;
     /**
      * The protocols.
      */
-    private String[] m_protocols;
+    private String[] protocols;
 }
