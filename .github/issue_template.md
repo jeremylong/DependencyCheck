@@ -7,8 +7,8 @@ When reporting a false positive please include:
 - The CPE that is believed to be false positive
   - Please report the CPE not the CVE
 
-##### Example
-False positive on library foo.jar - reported as CPE:/a:apache:tomcat:7.0
+#### Example
+False positive on library foo.jar - reported as cpe:/a:apache:tomcat:7.0
 ```xml
 <dependency>
    <groupId>org.sample</groupId>
