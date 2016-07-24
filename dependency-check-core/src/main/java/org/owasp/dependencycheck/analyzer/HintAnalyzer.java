@@ -254,7 +254,7 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
         if (product.contains(zendframeworkProduct)) {
             dependency.getProductEvidence().addEvidence("hint analyzer", "vendor", "zend_framework", Confidence.HIGHEST);
         }
-        
+
         //sun/oracle problem
         final Iterator<Evidence> itr = dependency.getVendorEvidence().iterator();
         final List<Evidence> newEntries = new ArrayList<Evidence>();

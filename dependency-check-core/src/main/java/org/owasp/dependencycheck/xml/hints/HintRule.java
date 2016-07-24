@@ -72,9 +72,9 @@ public class HintRule {
     }
 
     /**
-     * Get the value of givenProduct
+     * Get the value of givenProduct.
      *
-     * @return the value of givenProduct.
+     * @return the value of givenProduct
      */
     public List<Evidence> getGivenProduct() {
         return givenProduct;
