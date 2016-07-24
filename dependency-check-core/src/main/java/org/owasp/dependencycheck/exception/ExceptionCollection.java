@@ -86,6 +86,7 @@ public class ExceptionCollection extends Exception {
      */
     public ExceptionCollection(Throwable exceptions, boolean fatal) {
         super();
+        this.exceptions = new ArrayList<Throwable>();
         this.exceptions.add(exceptions);
         this.fatal = fatal;
     }
@@ -97,6 +98,7 @@ public class ExceptionCollection extends Exception {
      */
     public ExceptionCollection(String msg, Throwable exception) {
         super(msg);
+        this.exceptions = new ArrayList<Throwable>();
         this.exceptions.add(exception);
         this.fatal = false;
     }
