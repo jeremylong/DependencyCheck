@@ -66,6 +66,7 @@ public class App {
             Settings.initialize();
             final App app = new App();
             exitCode = app.run(args);
+            LOGGER.debug("Exit code: " + exitCode);
         } finally {
             Settings.cleanup(true);
         }
@@ -292,11 +293,15 @@ public class App {
                     throw ex;
                 }
             }
+            if (exCol != null && exCol.getExceptions().size()>0) {
+                throw exCol;
+            }
         } finally {
             if (engine != null) {
                 engine.cleanup();
             }
         }
+        
     }
 
     /**
