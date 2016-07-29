@@ -333,7 +333,8 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
             "TLS_RSA_WITH_AES_256_CBC_SHA256",
             "TLS_RSA_WITH_AES_256_CBC_SHA",
             "TLS_RSA_WITH_AES_128_CBC_SHA256",
-            "TLS_RSA_WITH_AES_128_CBC_SHA",};
+            "TLS_RSA_WITH_AES_128_CBC_SHA",
+        };
 
         String[] availableCiphers;
 
@@ -352,7 +353,8 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
                 "TLS_RSA_WITH_AES_256_CBC_SHA",
                 "TLS_RSA_WITH_AES_128_CBC_SHA256",
                 "TLS_RSA_WITH_AES_128_CBC_SHA",
-                "TLS_EMPTY_RENEGOTIATION_INFO_SCSV",};
+                "TLS_EMPTY_RENEGOTIATION_INFO_SCSV",
+            };
         }
 
         final List<String> aa = new ArrayList<String>();

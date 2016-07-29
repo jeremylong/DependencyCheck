@@ -32,7 +32,6 @@ import java.security.InvalidAlgorithmParameterException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 import static java.lang.String.format;
-import static java.lang.String.format;
 
 /**
  * A utility to download files from the Internet.
@@ -323,7 +322,6 @@ public final class Downloader {
             cause = cause.getCause();
         }
     }
-    
 
     /**
      * Returns the HEAD or GET HTTP method. HEAD is the default.
