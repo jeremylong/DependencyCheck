@@ -292,7 +292,7 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
             LOGGER.error("Unable to parse the base hint data file");
             LOGGER.debug("Unable to parse the base hint data file", ex);
         }
-        final String filePath = Settings.getString(Settings.KEYS.SUPPRESSION_FILE);
+        final String filePath = Settings.getString(Settings.KEYS.HINTS_FILE);
         if (filePath == null) {
             return;
         }
