@@ -39,6 +39,11 @@ public final class DependencyVersionUtil {
      * are missing a version number using the previous regex.
      */
     private static final Pattern RX_SINGLE_VERSION = Pattern.compile("\\d+(\\.?([_-](release|beta|alpha)|[a-zA-Z_-]{1,3}\\d{1,8}))?");
+    
+    /**
+     * Regular expression to extract the part before the version numbers if there are any based on RX_VERSION. In most cases, this part represents a more accurate name.
+     */
+    private static final Pattern RX_PRE_VERSION = Pattern.compile("^(.+)[_-](\\d+\\.\\d{1,6})+");
 
     /**
      * Private constructor for utility class.
@@ -94,5 +99,28 @@ public final class DependencyVersionUtil {
             version = version.substring(0, version.length() - 4);
         }
         return new DependencyVersion(version);
+    }
+
+    /**
+     * <p>
+     * A utility class to extract the part before version numbers from file names (or other strings containing version numbers. 
+     * In most cases, this part represents a more accurate name than the full file name.</p>
+     * <pre>
+     * Example:
+     * Give the file name: library-name-1.4.1r2-release.jar
+     * This function would return: library-name</pre>
+     *
+     * @param text the text being analyzed
+     * @return the part before the version numbers if any, otherwise return the text itself.
+     */
+    public static String parsePreVersion(String text) {
+    	if(parseVersion(text) == null)
+    		return text;
+    	
+    	Matcher matcher = RX_PRE_VERSION.matcher(text);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return text;
     }
 }

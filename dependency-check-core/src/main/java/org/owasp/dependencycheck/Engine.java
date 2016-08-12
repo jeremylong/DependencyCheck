@@ -30,6 +30,8 @@ import org.owasp.dependencycheck.data.update.UpdateService;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.exception.NoDataException;
+import org.owasp.dependencycheck.exception.ExceptionCollection;
+import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -47,8 +49,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Scans files, directories, etc. for Dependencies. Analyzers are loaded and used to process the files found by the scan, if a
- * file is encountered and an Analyzer is associated with the file type then the file is turned into a dependency.
+ * Scans files, directories, etc. for Dependencies. Analyzers are loaded and
+ * used to process the files found by the scan, if a file is encountered and an
+ * Analyzer is associated with the file type then the file is turned into a
+ * dependency.
  *
  * @author Jeremy Long
  */
@@ -69,7 +73,8 @@ public class Engine implements FileFilter {
     private final Set<FileTypeAnalyzer> fileTypeAnalyzers = new HashSet<FileTypeAnalyzer>();
 
     /**
-     * The ClassLoader to use when dynamically loading Analyzer and Update services.
+     * The ClassLoader to use when dynamically loading Analyzer and Update
+     * services.
      */
     private ClassLoader serviceClassLoader = Thread.currentThread().getContextClassLoader();
     /**
@@ -80,7 +85,8 @@ public class Engine implements FileFilter {
     /**
      * Creates a new Engine.
      *
-     * @throws DatabaseException thrown if there is an error connecting to the database
+     * @throws DatabaseException thrown if there is an error connecting to the
+     * database
      */
     public Engine() throws DatabaseException {
         initializeEngine();
@@ -90,7 +96,8 @@ public class Engine implements FileFilter {
      * Creates a new Engine.
      *
      * @param serviceClassLoader a reference the class loader being used
-     * @throws DatabaseException thrown if there is an error connecting to the database
+     * @throws DatabaseException thrown if there is an error connecting to the
+     * database
      */
     public Engine(ClassLoader serviceClassLoader) throws DatabaseException {
         this.serviceClassLoader = serviceClassLoader;
@@ -98,9 +105,11 @@ public class Engine implements FileFilter {
     }
 
     /**
-     * Creates a new Engine using the specified classloader to dynamically load Analyzer and Update services.
+     * Creates a new Engine using the specified classloader to dynamically load
+     * Analyzer and Update services.
      *
-     * @throws DatabaseException thrown if there is an error connecting to the database
+     * @throws DatabaseException thrown if there is an error connecting to the
+     * database
      */
     protected final void initializeEngine() throws DatabaseException {
         ConnectionFactory.initialize();
@@ -115,7 +124,8 @@ public class Engine implements FileFilter {
     }
 
     /**
-     * Loads the analyzers specified in the configuration file (or system properties).
+     * Loads the analyzers specified in the configuration file (or system
+     * properties).
      */
     private void loadAnalyzers() {
         if (!analyzers.isEmpty()) {
@@ -164,8 +174,9 @@ public class Engine implements FileFilter {
     }
 
     /**
-     * Scans an array of files or directories. If a directory is specified, it will be scanned recursively. Any dependencies
-     * identified are added to the dependency collection.
+     * Scans an array of files or directories. If a directory is specified, it
+     * will be scanned recursively. Any dependencies identified are added to the
+     * dependency collection.
      *
      * @param paths an array of paths to files or directories to be analyzed
      * @return the list of dependencies scanned
@@ -183,8 +194,9 @@ public class Engine implements FileFilter {
     }
 
     /**
-     * Scans a given file or directory. If a directory is specified, it will be scanned recursively. Any dependencies identified
-     * are added to the dependency collection.
+     * Scans a given file or directory. If a directory is specified, it will be
+     * scanned recursively. Any dependencies identified are added to the
+     * dependency collection.
      *
      * @param path the path to a file or directory to be analyzed
      * @return the list of dependencies scanned
@@ -195,8 +207,9 @@ public class Engine implements FileFilter {
     }
 
     /**
-     * Scans an array of files or directories. If a directory is specified, it will be scanned recursively. Any dependencies
-     * identified are added to the dependency collection.
+     * Scans an array of files or directories. If a directory is specified, it
+     * will be scanned recursively. Any dependencies identified are added to the
+     * dependency collection.
      *
      * @param files an array of paths to files or directories to be analyzed.
      * @return the list of dependencies
@@ -214,8 +227,9 @@ public class Engine implements FileFilter {
     }
 
     /**
-     * Scans a collection of files or directories. If a directory is specified, it will be scanned recursively. Any dependencies
-     * identified are added to the dependency collection.
+     * Scans a collection of files or directories. If a directory is specified,
+     * it will be scanned recursively. Any dependencies identified are added to
+     * the dependency collection.
      *
      * @param files a set of paths to files or directories to be analyzed
      * @return the list of dependencies scanned
@@ -233,8 +247,9 @@ public class Engine implements FileFilter {
     }
 
     /**
-     * Scans a given file or directory. If a directory is specified, it will be scanned recursively. Any dependencies identified
-     * are added to the dependency collection.
+     * Scans a given file or directory. If a directory is specified, it will be
+     * scanned recursively. Any dependencies identified are added to the
+     * dependency collection.
      *
      * @param file the path to a file or directory to be analyzed
      * @return the list of dependencies scanned
@@ -257,7 +272,8 @@ public class Engine implements FileFilter {
     }
 
     /**
-     * Recursively scans files and directories. Any dependencies identified are added to the dependency collection.
+     * Recursively scans files and directories. Any dependencies identified are
+     * added to the dependency collection.
      *
      * @param dir the directory to scan
      * @return the list of Dependency objects scanned
@@ -282,7 +298,8 @@ public class Engine implements FileFilter {
     }
 
     /**
-     * Scans a specified file. If a dependency is identified it is added to the dependency collection.
+     * Scans a specified file. If a dependency is identified it is added to the
+     * dependency collection.
      *
      * @param file The file to scan
      * @return the scanned dependency
@@ -301,20 +318,38 @@ public class Engine implements FileFilter {
     }
 
     /**
-     * Runs the analyzers against all of the dependencies. Since the mutable dependencies list is exposed via
-     * {@link #getDependencies()}, this method iterates over a copy of the dependencies list. Thus, the potential for
-     * {@link java.util.ConcurrentModificationException}s is avoided, and analyzers may safely add or remove entries from the
-     * dependencies list.
+     * Runs the analyzers against all of the dependencies. Since the mutable
+     * dependencies list is exposed via {@link #getDependencies()}, this method
+     * iterates over a copy of the dependencies list. Thus, the potential for
+     * {@link java.util.ConcurrentModificationException}s is avoided, and
+     * analyzers may safely add or remove entries from the dependencies list.
+     *
+     * Every effort is made to complete analysis on the dependencies. In some
+     * cases an exception will occur with part of the analysis being performed
+     * which may not affect the entire analysis. If an exception occurs it will
+     * be included in the thrown exception collection.
+     *
+     * @throws ExceptionCollection a collections of any exceptions that occurred
+     * during analysis
      */
-    public void analyzeDependencies() {
+    public void analyzeDependencies() throws ExceptionCollection {
+        final List<Throwable> exceptions = new ArrayList<Throwable>();
         boolean autoUpdate = true;
         try {
             autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
         } catch (InvalidSettingException ex) {
             LOGGER.debug("Invalid setting for auto-update; using true.");
+            exceptions.add(ex);
         }
         if (autoUpdate) {
-            doUpdates();
+            try {
+                doUpdates();
+            } catch (UpdateException ex) {
+                exceptions.add(ex);
+                LOGGER.warn("Unable to update Cached Web DataSource, using local "
+                        + "data instead. Results may not include recent vulnerabilities.");
+                LOGGER.debug("Update Error", ex);
+            }
         }
 
         //need to ensure that data exists
@@ -323,12 +358,13 @@ public class Engine implements FileFilter {
         } catch (NoDataException ex) {
             LOGGER.error("{}\n\nUnable to continue dependency-check analysis.", ex.getMessage());
             LOGGER.debug("", ex);
-            return;
+            exceptions.add(ex);
+            throw new ExceptionCollection("Unable to continue dependency-check analysis.", exceptions, true);
         } catch (DatabaseException ex) {
             LOGGER.error("{}\n\nUnable to continue dependency-check analysis.", ex.getMessage());
             LOGGER.debug("", ex);
-            return;
-
+            exceptions.add(ex);
+            throw new ExceptionCollection("Unable to connect to the dependency-check database", exceptions, true);
         }
 
         LOGGER.debug("\n----------------------------------------------------\nBEGIN ANALYSIS\n----------------------------------------------------");
@@ -340,7 +376,12 @@ public class Engine implements FileFilter {
             final List<Analyzer> analyzerList = analyzers.get(phase);
 
             for (Analyzer a : analyzerList) {
-                a = initializeAnalyzer(a);
+                try {
+                    a = initializeAnalyzer(a);
+                } catch (InitializationException ex) {
+                    exceptions.add(ex);
+                    continue;
+                }
 
                 /* need to create a copy of the collection because some of the
                  * analyzers may modify it. This prevents ConcurrentModificationExceptions.
@@ -361,10 +402,12 @@ public class Engine implements FileFilter {
                         } catch (AnalysisException ex) {
                             LOGGER.warn("An error occurred while analyzing '{}'.", d.getActualFilePath());
                             LOGGER.debug("", ex);
+                            exceptions.add(ex);
                         } catch (Throwable ex) {
                             //final AnalysisException ax = new AnalysisException(axMsg, ex);
                             LOGGER.warn("An unexpected error occurred during analysis of '{}'", d.getActualFilePath());
                             LOGGER.debug("", ex);
+                            exceptions.add(ex);
                         }
                     }
                 }
@@ -380,6 +423,9 @@ public class Engine implements FileFilter {
 
         LOGGER.debug("\n----------------------------------------------------\nEND ANALYSIS\n----------------------------------------------------");
         LOGGER.info("Analysis Complete ({} ms)", System.currentTimeMillis() - analysisStart);
+        if (exceptions.size() > 0) {
+            throw new ExceptionCollection("One or more exceptions occured during dependency-check analysis", exceptions);
+        }
     }
 
     /**
@@ -387,12 +433,14 @@ public class Engine implements FileFilter {
      *
      * @param analyzer the analyzer to initialize
      * @return the initialized analyzer
+     * @throws InitializationException thrown when there is a problem
+     * initializing the analyzer
      */
-    protected Analyzer initializeAnalyzer(Analyzer analyzer) {
+    protected Analyzer initializeAnalyzer(Analyzer analyzer) throws InitializationException {
         try {
             LOGGER.debug("Initializing {}", analyzer.getName());
             analyzer.initialize();
-        } catch (Throwable ex) {
+        } catch (InitializationException ex) {
             LOGGER.error("Exception occurred initializing {}.", analyzer.getName());
             LOGGER.debug("", ex);
             try {
@@ -400,6 +448,16 @@ public class Engine implements FileFilter {
             } catch (Throwable ex1) {
                 LOGGER.trace("", ex1);
             }
+            throw ex;
+        } catch (Throwable ex) {
+            LOGGER.error("Unexpected exception occurred initializing {}.", analyzer.getName());
+            LOGGER.debug("", ex);
+            try {
+                analyzer.close();
+            } catch (Throwable ex1) {
+                LOGGER.trace("", ex1);
+            }
+            throw new InitializationException("Unexpected Exception", ex);
         }
         return analyzer;
     }
@@ -419,28 +477,26 @@ public class Engine implements FileFilter {
     }
 
     /**
-     * Cycles through the cached web data sources and calls update on all of them.
+     * Cycles through the cached web data sources and calls update on all of
+     * them.
+     *
+     * @throws UpdateException thrown if the operation fails
      */
-    public void doUpdates() {
+    public void doUpdates() throws UpdateException {
         LOGGER.info("Checking for updates");
         final long updateStart = System.currentTimeMillis();
         final UpdateService service = new UpdateService(serviceClassLoader);
         final Iterator<CachedWebDataSource> iterator = service.getDataSources();
         while (iterator.hasNext()) {
             final CachedWebDataSource source = iterator.next();
-            try {
-                source.update();
-            } catch (UpdateException ex) {
-                LOGGER.warn(
-                        "Unable to update Cached Web DataSource, using local data instead. Results may not include recent vulnerabilities.");
-                LOGGER.debug("Unable to update details for {}", source.getClass().getName(), ex);
-            }
+            source.update();
         }
         LOGGER.info("Check for updates complete ({} ms)", System.currentTimeMillis() - updateStart);
     }
 
     /**
-     * Returns a full list of all of the analyzers. This is useful for reporting which analyzers where used.
+     * Returns a full list of all of the analyzers. This is useful for reporting
+     * which analyzers where used.
      *
      * @return a list of Analyzers
      */
@@ -457,7 +513,8 @@ public class Engine implements FileFilter {
      * Checks all analyzers to see if an extension is supported.
      *
      * @param file a file extension
-     * @return true or false depending on whether or not the file extension is supported
+     * @return true or false depending on whether or not the file extension is
+     * supported
      */
     @Override
     public boolean accept(File file) {
@@ -483,10 +540,12 @@ public class Engine implements FileFilter {
     }
 
     /**
-     * Checks the CPE Index to ensure documents exists. If none exist a NoDataException is thrown.
+     * Checks the CPE Index to ensure documents exists. If none exist a
+     * NoDataException is thrown.
      *
      * @throws NoDataException thrown if no data exists in the CPE Index
-     * @throws DatabaseException thrown if there is an exception opening the database
+     * @throws DatabaseException thrown if there is an exception opening the
+     * database
      */
     private void ensureDataExists() throws NoDataException, DatabaseException {
         final CveDB cve = new CveDB();

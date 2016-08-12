@@ -70,7 +70,7 @@ public class SuppressionErrorHandler implements ErrorHandler {
      */
     @Override
     public void warning(SAXParseException ex) throws SAXException {
-        LOGGER.debug("", ex);
+        //LOGGER.debug("", ex);
     }
 
     /**

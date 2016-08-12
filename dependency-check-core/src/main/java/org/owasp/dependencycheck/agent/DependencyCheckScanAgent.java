@@ -27,6 +27,7 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ScanAgentException;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.Settings;
@@ -34,10 +35,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class provides a way to easily conduct a scan solely based on existing evidence metadata rather than collecting evidence
- * from the files themselves. This class is based on the Ant task and Maven plugin with the exception that it takes a list of
- * dependencies that can be programmatically added from data in a spreadsheet, database or some other datasource and conduct a
- * scan based on this pre-defined evidence.
+ * This class provides a way to easily conduct a scan solely based on existing
+ * evidence metadata rather than collecting evidence from the files themselves.
+ * This class is based on the Ant task and Maven plugin with the exception that
+ * it takes a list of dependencies that can be programmatically added from data
+ * in a spreadsheet, database or some other datasource and conduct a scan based
+ * on this pre-defined evidence.
  *
  * <h2>Example:</h2>
  * <pre>
@@ -138,7 +141,8 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * Specifies the destination directory for the generated Dependency-Check report.
+     * Specifies the destination directory for the generated Dependency-Check
+     * report.
      */
     private String reportOutputDirectory;
 
@@ -161,9 +165,11 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11 which
-     * means since the CVSS scores are 0-10, by default the build will never fail and the CVSS score is set to 11. The valid range
-     * for the fail build on CVSS is 0 to 11, where anything above 10 will not cause the build to fail.
+     * Specifies if the build should be failed if a CVSS score above a specified
+     * level is identified. The default is 11 which means since the CVSS scores
+     * are 0-10, by default the build will never fail and the CVSS score is set
+     * to 11. The valid range for the fail build on CVSS is 0 to 11, where
+     * anything above 10 will not cause the build to fail.
      */
     private float failBuildOnCVSS = 11;
 
@@ -186,8 +192,8 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false. Default
-     * is true.
+     * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not
+     * recommended that this be turned to false. Default is true.
      */
     private boolean autoUpdate = true;
 
@@ -233,8 +239,9 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this within the
-     * Site plugin unless the externalReport is set to true. Default is HTML.
+     * The report format to be generated (HTML, XML, VULN, ALL). This
+     * configuration option has no affect if using this within the Site plugin
+     * unless the externalReport is set to true. Default is HTML.
      */
     private ReportGenerator.Format reportFormat = ReportGenerator.Format.HTML;
 
@@ -283,7 +290,9 @@ public class DependencyCheckScanAgent {
      * Get the value of proxyServer.
      *
      * @return the value of proxyServer
-     * @deprecated use {@link org.owasp.dependencycheck.agent.DependencyCheckScanAgent#getProxyServer()} instead
+     * @deprecated use
+     * {@link org.owasp.dependencycheck.agent.DependencyCheckScanAgent#getProxyServer()}
+     * instead
      */
     @Deprecated
     public String getProxyUrl() {
@@ -694,8 +703,8 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * Additional ZIP File extensions to add analyze. This should be a comma-separated list of file extensions to treat like ZIP
-     * files.
+     * Additional ZIP File extensions to add analyze. This should be a
+     * comma-separated list of file extensions to treat like ZIP files.
      */
     private String zipExtensions;
 
@@ -836,11 +845,17 @@ public class DependencyCheckScanAgent {
      * Executes the Dependency-Check on the dependent libraries.
      *
      * @return the Engine used to scan the dependencies.
-     * @throws org.owasp.dependencycheck.data.nvdcve.DatabaseException thrown if there is an exception connecting to the database
+     * @throws ExceptionCollection a collection of one or more exceptions that
+     * occurred during analysis.
      */
-    private Engine executeDependencyCheck() throws DatabaseException {
+    private Engine executeDependencyCheck() throws ExceptionCollection {
         populateSettings();
-        final Engine engine = new Engine();
+        final Engine engine;
+        try {
+            engine = new Engine();
+        } catch (DatabaseException ex) {
+            throw new ExceptionCollection(ex, true);
+        }
         engine.setDependencies(this.dependencies);
         engine.analyzeDependencies();
         return engine;
@@ -881,8 +896,9 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system properties
-     * required to change the proxy server, port, and connection timeout.
+     * Takes the properties supplied and updates the dependency-check settings.
+     * Additionally, this sets the system properties required to change the
+     * proxy server, port, and connection timeout.
      */
     private void populateSettings() {
         Settings.initialize();
@@ -925,7 +941,8 @@ public class DependencyCheckScanAgent {
      * Executes the dependency-check and generates the report.
      *
      * @return a reference to the engine used to perform the scan.
-     * @throws org.owasp.dependencycheck.exception.ScanAgentException thrown if there is an exception executing the scan.
+     * @throws org.owasp.dependencycheck.exception.ScanAgentException thrown if
+     * there is an exception executing the scan.
      */
     public Engine execute() throws ScanAgentException {
         Engine engine = null;
@@ -940,10 +957,12 @@ public class DependencyCheckScanAgent {
             if (this.failBuildOnCVSS <= 10) {
                 checkForFailure(engine.getDependencies());
             }
-        } catch (DatabaseException ex) {
-            LOGGER.error(
-                    "Unable to connect to the dependency-check database; analysis has stopped");
-            LOGGER.debug("", ex);
+        } catch (ExceptionCollection ex) {
+            if (ex.isFatal()) {
+                LOGGER.error("A fatal exception occurred during analysis; analysis has stopped. Please see the debug log for more details.");
+                LOGGER.debug("", ex);
+            }
+            throw new ScanAgentException("One or more exceptions occurred during analysis; please see the debug log for more details.", ex);
         } finally {
             Settings.cleanup(true);
             if (engine != null) {
@@ -954,11 +973,12 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * Checks to see if a vulnerability has been identified with a CVSS score that is above the threshold set in the
-     * configuration.
+     * Checks to see if a vulnerability has been identified with a CVSS score
+     * that is above the threshold set in the configuration.
      *
      * @param dependencies the list of dependency objects
-     * @throws org.owasp.dependencycheck.exception.ScanAgentException thrown if there is an exception executing the scan.
+     * @throws org.owasp.dependencycheck.exception.ScanAgentException thrown if
+     * there is an exception executing the scan.
      */
     private void checkForFailure(List<Dependency> dependencies) throws ScanAgentException {
         final StringBuilder ids = new StringBuilder();
@@ -986,7 +1006,8 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * Generates a warning message listing a summary of dependencies and their associated CPE and CVE entries.
+     * Generates a warning message listing a summary of dependencies and their
+     * associated CPE and CVE entries.
      *
      * @param dependencies a list of dependency objects
      */

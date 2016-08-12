@@ -197,11 +197,11 @@ public class HintHandler extends DefaultHandler {
             vendorDuplicatingHintRules.add(new VendorDuplicatingHintRule(attr.getValue(VALUE), attr.getValue(DUPLICATE)));
         }
     }
-    
+
     /**
      * Handles the end element event.
      *
-     * @param uri the element's uri
+     * @param uri the element's URI
      * @param localName the local name
      * @param qName the qualified name
      * @throws SAXException thrown if there is an exception processing the

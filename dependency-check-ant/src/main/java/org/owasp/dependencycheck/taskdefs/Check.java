@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.taskdefs;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -32,9 +31,12 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.exception.ExceptionCollection;
+import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.reporting.ReportGenerator.Format;
 import org.owasp.dependencycheck.utils.Settings;
@@ -806,52 +808,67 @@ public class Check extends Update {
             engine = new Engine(Check.class.getClassLoader());
             if (isUpdateOnly()) {
                 log("Deprecated 'UpdateOnly' property set; please use the UpdateTask instead", Project.MSG_WARN);
-                engine.doUpdates();
-            } else {
                 try {
-                    for (Resource resource : path) {
-                        final FileProvider provider = resource.as(FileProvider.class);
-                        if (provider != null) {
-                            final File file = provider.getFile();
-                            if (file != null && file.exists()) {
-                                engine.scan(file);
-                            }
+                    engine.doUpdates();
+                } catch (UpdateException ex) {
+                    if (this.isFailOnError()) {
+                        throw new BuildException(ex);
+                    }
+                    log(ex.getMessage(), Project.MSG_ERR);
+                }
+            } else {
+                for (Resource resource : path) {
+                    final FileProvider provider = resource.as(FileProvider.class);
+                    if (provider != null) {
+                        final File file = provider.getFile();
+                        if (file != null && file.exists()) {
+                            engine.scan(file);
                         }
                     }
+                }
 
+                try {
                     engine.analyzeDependencies();
-                    DatabaseProperties prop = null;
-                    CveDB cve = null;
-                    try {
-                        cve = new CveDB();
-                        cve.open();
-                        prop = cve.getDatabaseProperties();
-                    } catch (DatabaseException ex) {
-                        log("Unable to retrieve DB Properties", ex, Project.MSG_DEBUG);
-                    } finally {
-                        if (cve != null) {
-                            cve.close();
-                        }
+                } catch (ExceptionCollection ex) {
+                    if (this.isFailOnError()) {
+                        throw new BuildException(ex);
                     }
-                    final ReportGenerator reporter = new ReportGenerator(getProjectName(), engine.getDependencies(), engine.getAnalyzers(), prop);
-                    reporter.generateReports(reportOutputDirectory, reportFormat);
+                }
+                DatabaseProperties prop = null;
+                CveDB cve = null;
+                try {
+                    cve = new CveDB();
+                    cve.open();
+                    prop = cve.getDatabaseProperties();
+                } catch (DatabaseException ex) {
+                    log("Unable to retrieve DB Properties", ex, Project.MSG_DEBUG);
+                } finally {
+                    if (cve != null) {
+                        cve.close();
+                    }
+                }
+                final ReportGenerator reporter = new ReportGenerator(getProjectName(), engine.getDependencies(), engine.getAnalyzers(), prop);
+                reporter.generateReports(reportOutputDirectory, reportFormat);
 
-                    if (this.failBuildOnCVSS <= 10) {
-                        checkForFailure(engine.getDependencies());
-                    }
-                    if (this.showSummary) {
-                        showSummary(engine.getDependencies());
-                    }
-                } catch (IOException ex) {
-                    log("Unable to generate dependency-check report", ex, Project.MSG_DEBUG);
-                    throw new BuildException("Unable to generate dependency-check report", ex);
-                } catch (Exception ex) {
-                    log("An exception occurred; unable to continue task", ex, Project.MSG_DEBUG);
-                    throw new BuildException("An exception occurred; unable to continue task", ex);
+                if (this.failBuildOnCVSS <= 10) {
+                    checkForFailure(engine.getDependencies());
+                }
+                if (this.showSummary) {
+                    showSummary(engine.getDependencies());
                 }
             }
         } catch (DatabaseException ex) {
-            log("Unable to connect to the dependency-check database; analysis has stopped", ex, Project.MSG_ERR);
+            final String msg = "Unable to connect to the dependency-check database; analysis has stopped";
+            if (this.isFailOnError()) {
+                throw new BuildException(msg, ex);
+            }
+            log(msg, ex, Project.MSG_ERR);
+        } catch (ReportException ex) {
+            final String msg = "Unable to generate the dependency-check report";
+            if (this.isFailOnError()) {
+                throw new BuildException(msg, ex);
+            }
+            log(msg, ex, Project.MSG_ERR);
         } finally {
             Settings.cleanup(true);
             if (engine != null) {

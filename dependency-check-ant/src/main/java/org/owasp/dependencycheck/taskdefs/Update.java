@@ -18,14 +18,17 @@
 package org.owasp.dependencycheck.taskdefs;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.impl.StaticLoggerBinder;
 
 /**
- * An Ant task definition to execute dependency-check update. This will download the latest data from the National Vulnerability
- * Database (NVD) and store a copy in the local database.
+ * An Ant task definition to execute dependency-check update. This will download
+ * the latest data from the National Vulnerability Database (NVD) and store a
+ * copy in the local database.
  *
  * @author Jeremy Long
  */
@@ -381,10 +384,11 @@ public class Update extends Purge {
     }
 
     /**
-     * Executes the update by initializing the settings, downloads the NVD XML data, and then processes the data storing it in the
-     * local database.
+     * Executes the update by initializing the settings, downloads the NVD XML
+     * data, and then processes the data storing it in the local database.
      *
-     * @throws BuildException thrown if a connection to the local database cannot be made.
+     * @throws BuildException thrown if a connection to the local database
+     * cannot be made.
      */
     @Override
     public void execute() throws BuildException {
@@ -392,9 +396,20 @@ public class Update extends Purge {
         Engine engine = null;
         try {
             engine = new Engine(Update.class.getClassLoader());
-            engine.doUpdates();
+            try {
+                engine.doUpdates();
+            } catch (UpdateException ex) {
+                if (this.isFailOnError()) {
+                    throw new BuildException(ex);
+                }
+                log(ex.getMessage(), Project.MSG_ERR);
+            }
         } catch (DatabaseException ex) {
-            throw new BuildException("Unable to connect to the dependency-check database; unable to update the NVD data", ex);
+            final String msg = "Unable to connect to the dependency-check database; unable to update the NVD data";
+            if (this.isFailOnError()) {
+                throw new BuildException(msg, ex);
+            }
+            log(msg, Project.MSG_ERR);
         } finally {
             Settings.cleanup(true);
             if (engine != null) {
@@ -404,8 +419,9 @@ public class Update extends Purge {
     }
 
     /**
-     * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system properties
-     * required to change the proxy server, port, and connection timeout.
+     * Takes the properties supplied and updates the dependency-check settings.
+     * Additionally, this sets the system properties required to change the
+     * proxy server, port, and connection timeout.
      *
      * @throws BuildException thrown when an invalid setting is configured.
      */

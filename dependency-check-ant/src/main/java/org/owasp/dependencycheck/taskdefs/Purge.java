@@ -71,6 +71,30 @@ public class Purge extends Task {
         this.dataDirectory = dataDirectory;
     }
 
+    /**
+     * Indicates if dependency-check should fail the build if an exception
+     * occurs.
+     */
+    private boolean failOnError = true;
+
+    /**
+     * Get the value of failOnError.
+     *
+     * @return the value of failOnError
+     */
+    public boolean isFailOnError() {
+        return failOnError;
+    }
+
+    /**
+     * Set the value of failOnError.
+     *
+     * @param failOnError new value of failOnError
+     */
+    public void setFailOnError(boolean failOnError) {
+        this.failOnError = failOnError;
+    }
+
     @Override
     public void execute() throws BuildException {
         populateSettings();
@@ -81,30 +105,49 @@ public class Purge extends Task {
                 if (db.delete()) {
                     log("Database file purged; local copy of the NVD has been removed", Project.MSG_INFO);
                 } else {
-                    log(String.format("Unable to delete '%s'; please delete the file manually", db.getAbsolutePath()), Project.MSG_ERR);
+                    final String msg = String.format("Unable to delete '%s'; please delete the file manually", db.getAbsolutePath());
+                    if (this.failOnError) {
+                        throw new BuildException(msg);
+                    }
+                    log(msg, Project.MSG_ERR);
                 }
             } else {
-                log(String.format("Unable to purge database; the database file does not exists: %s", db.getAbsolutePath()), Project.MSG_ERR);
+                final String msg = String.format("Unable to purge database; the database file does not exists: %s", db.getAbsolutePath());
+                if (this.failOnError) {
+                    throw new BuildException(msg);
+                }
+                log(msg, Project.MSG_ERR);
             }
         } catch (IOException ex) {
-            log("Unable to delete the database", Project.MSG_ERR);
+            final String msg = "Unable to delete the database";
+            if (this.failOnError) {
+                throw new BuildException(msg);
+            }
+            log(msg, Project.MSG_ERR);
         } finally {
             Settings.cleanup(true);
         }
     }
 
     /**
-     * Takes the properties supplied and updates the dependency-check settings. Additionally, this sets the system properties
-     * required to change the proxy server, port, and connection timeout.
+     * Takes the properties supplied and updates the dependency-check settings.
+     * Additionally, this sets the system properties required to change the
+     * proxy server, port, and connection timeout.
+     *
+     * @throws BuildException thrown if the properties file cannot be read.
      */
-    protected void populateSettings() {
+    protected void populateSettings() throws BuildException {
         Settings.initialize();
         InputStream taskProperties = null;
         try {
             taskProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);
             Settings.mergeProperties(taskProperties);
         } catch (IOException ex) {
-            log("Unable to load the dependency-check ant task.properties file.", ex, Project.MSG_WARN);
+            final String msg = "Unable to load the dependency-check ant task.properties file.";
+            if (this.failOnError) {
+                throw new BuildException(msg, ex);
+            }
+            log(msg, ex, Project.MSG_WARN);
         } finally {
             if (taskProperties != null) {
                 try {

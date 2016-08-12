@@ -54,14 +54,20 @@ public class PurgeMojo extends BaseDependencyCheckMojo {
     /**
      * Purges the local copy of the NVD.
      *
-     * @throws MojoExecutionException thrown if there is an exception executing the goal
-     * @throws MojoFailureException thrown if dependency-check is configured to fail the build
+     * @throws MojoExecutionException thrown if there is an exception executing
+     * the goal
+     * @throws MojoFailureException thrown if dependency-check is configured to
+     * fail the build
      */
     @Override
     public void runCheck() throws MojoExecutionException, MojoFailureException {
 
         if (getConnectionString() != null && !getConnectionString().isEmpty()) {
-            getLog().error("Unable to purge the local NVD when using a non-default connection string");
+            final String msg = "Unable to purge the local NVD when using a non-default connection string";
+            if (this.isFailOnError()) {
+                throw new MojoFailureException(msg);
+            }
+            getLog().error(msg);
         } else {
             populateSettings();
             File db;
@@ -71,13 +77,25 @@ public class PurgeMojo extends BaseDependencyCheckMojo {
                     if (db.delete()) {
                         getLog().info("Database file purged; local copy of the NVD has been removed");
                     } else {
-                        getLog().error(String.format("Unable to delete '%s'; please delete the file manually", db.getAbsolutePath()));
+                        final String msg = String.format("Unable to delete '%s'; please delete the file manually", db.getAbsolutePath());
+                        if (this.isFailOnError()) {
+                            throw new MojoFailureException(msg);
+                        }
+                        getLog().error(msg);
                     }
                 } else {
-                    getLog().error(String.format("Unable to purge database; the database file does not exists: %s", db.getAbsolutePath()));
+                    final String msg = String.format("Unable to purge database; the database file does not exists: %s", db.getAbsolutePath());
+                    if (this.isFailOnError()) {
+                        throw new MojoFailureException(msg);
+                    }
+                    getLog().error(msg);
                 }
             } catch (IOException ex) {
-                getLog().error("Unable to delete the database");
+                final String msg = "Unable to delete the database";
+                if (this.isFailOnError()) {
+                    throw new MojoExecutionException(msg, ex);
+                }
+                getLog().error(msg);
             }
             Settings.cleanup();
         }
@@ -95,7 +113,8 @@ public class PurgeMojo extends BaseDependencyCheckMojo {
     }
 
     /**
-     * Gets the description of the Dependency-Check report to be displayed in the Maven Generated Reports page.
+     * Gets the description of the Dependency-Check report to be displayed in
+     * the Maven Generated Reports page.
      *
      * @param locale The Locale to get the description for
      * @return the description

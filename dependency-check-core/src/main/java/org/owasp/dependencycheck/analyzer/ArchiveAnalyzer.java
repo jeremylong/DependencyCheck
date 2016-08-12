@@ -367,7 +367,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             final String archiveExt = FileUtils.getFileExtension(archive.getName()).toLowerCase();
             try {
                 if (ZIPPABLES.contains(archiveExt)) {
-                    BufferedInputStream in = new BufferedInputStream(fis);
+                    final BufferedInputStream in = new BufferedInputStream(fis);
                     ensureReadableJar(archiveExt, in);
                     extractArchive(new ZipArchiveInputStream(in), destination, engine);
                 } else if ("tar".equals(archiveExt)) {
@@ -413,7 +413,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     private void ensureReadableJar(final String archiveExt, BufferedInputStream in) throws IOException {
         if ("jar".equals(archiveExt) && in.markSupported()) {
             in.mark(7);
-            byte[] b = new byte[7];
+            final byte[] b = new byte[7];
             in.read(b);
             if (b[0] == '#'
                     && b[1] == '!'
@@ -441,6 +441,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                         }
                     }
                 }
+            } else {
+                in.reset();
             }
         }
     }

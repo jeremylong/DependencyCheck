@@ -32,7 +32,6 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.xml.suppression.PropertyType;
-import org.owasp.dependencycheck.xml.suppression.SuppressionParseException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.FileUtils;
@@ -255,7 +254,7 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
         if (product.contains(zendframeworkProduct)) {
             dependency.getProductEvidence().addEvidence("hint analyzer", "vendor", "zend_framework", Confidence.HIGHEST);
         }
-        
+
         //sun/oracle problem
         final Iterator<Evidence> itr = dependency.getVendorEvidence().iterator();
         final List<Evidence> newEntries = new ArrayList<Evidence>();
@@ -279,7 +278,7 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
     /**
      * Loads the hint rules file.
      *
-     * @throws SuppressionParseException thrown if the XML cannot be parsed.
+     * @throws HintParseException thrown if the XML cannot be parsed.
      */
     private void loadHintRules() throws HintParseException {
         final HintParser parser = new HintParser();
@@ -293,7 +292,7 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
             LOGGER.error("Unable to parse the base hint data file");
             LOGGER.debug("Unable to parse the base hint data file", ex);
         }
-        final String filePath = Settings.getString(Settings.KEYS.SUPPRESSION_FILE);
+        final String filePath = Settings.getString(Settings.KEYS.HINTS_FILE);
         if (filePath == null) {
             return;
         }
@@ -327,7 +326,7 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
 
             if (file != null) {
                 try {
-                    Hints newHints = parser.parseHints(file);
+                    final Hints newHints = parser.parseHints(file);
                     hints.getHintRules().addAll(newHints.getHintRules());
                     hints.getVendorDuplicatingHintRules().addAll(newHints.getVendorDuplicatingHintRules());
                     LOGGER.debug("{} hint rules were loaded.", hints.getHintRules().size());

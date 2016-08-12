@@ -37,6 +37,10 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ch.qos.logback.core.FileAppender;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.exception.ExceptionCollection;
+import org.owasp.dependencycheck.exception.ReportException;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.slf4j.impl.StaticLoggerBinder;
 
 /**
@@ -57,21 +61,26 @@ public class App {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        int exitCode = 0;
         try {
             Settings.initialize();
             final App app = new App();
-            app.run(args);
+            exitCode = app.run(args);
+            LOGGER.debug("Exit code: " + exitCode);
         } finally {
             Settings.cleanup(true);
         }
+        System.exit(exitCode);
     }
 
     /**
      * Main CLI entry-point into the application.
      *
      * @param args the command line arguments
+     * @return the exit code to return
      */
-    public void run(String[] args) {
+    public int run(String[] args) {
+        int exitCode = 0;
         final CliParser cli = new CliParser();
 
         try {
@@ -79,11 +88,11 @@ public class App {
         } catch (FileNotFoundException ex) {
             System.err.println(ex.getMessage());
             cli.printHelp();
-            return;
+            return -1;
         } catch (ParseException ex) {
             System.err.println(ex.getMessage());
             cli.printHelp();
-            return;
+            return -2;
         }
 
         if (cli.getVerboseLog() != null) {
@@ -93,8 +102,15 @@ public class App {
         if (cli.isPurge()) {
             if (cli.getConnectionString() != null) {
                 LOGGER.error("Unable to purge the database when using a non-default connection string");
+                exitCode = -3;
             } else {
-                populateSettings(cli);
+                try {
+                    populateSettings(cli);
+                } catch (InvalidSettingException ex) {
+                    LOGGER.error(ex.getMessage());
+                    LOGGER.debug("Error loading properties file", ex);
+                    exitCode = -4;
+                }
                 File db;
                 try {
                     db = new File(Settings.getDataDirectory(), "dc.h2.db");
@@ -103,46 +119,96 @@ public class App {
                             LOGGER.info("Database file purged; local copy of the NVD has been removed");
                         } else {
                             LOGGER.error("Unable to delete '{}'; please delete the file manually", db.getAbsolutePath());
+                            exitCode = -5;
                         }
                     } else {
                         LOGGER.error("Unable to purge database; the database file does not exists: {}", db.getAbsolutePath());
+                        exitCode = -6;
                     }
                 } catch (IOException ex) {
                     LOGGER.error("Unable to delete the database");
+                    exitCode = -7;
                 }
             }
         } else if (cli.isGetVersion()) {
             cli.printVersionInfo();
         } else if (cli.isUpdateOnly()) {
-            populateSettings(cli);
-            runUpdateOnly();
+            try {
+                populateSettings(cli);
+            } catch (InvalidSettingException ex) {
+                LOGGER.error(ex.getMessage());
+                LOGGER.debug("Error loading properties file", ex);
+                exitCode = -4;
+            }
+            try {
+                runUpdateOnly();
+            } catch (UpdateException ex) {
+                LOGGER.error(ex.getMessage());
+                exitCode = -8;
+            } catch (DatabaseException ex) {
+                LOGGER.error(ex.getMessage());
+                exitCode = -9;
+            }
         } else if (cli.isRunScan()) {
-            populateSettings(cli);
+            try {
+                populateSettings(cli);
+            } catch (InvalidSettingException ex) {
+                LOGGER.error(ex.getMessage());
+                LOGGER.debug("Error loading properties file", ex);
+                exitCode = -4;
+            }
             try {
                 runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getProjectName(), cli.getScanFiles(),
                         cli.getExcludeList(), cli.getSymLinkDepth());
             } catch (InvalidScanPathException ex) {
                 LOGGER.error("An invalid scan path was detected; unable to scan '//*' paths");
+                exitCode = -10;
+            } catch (DatabaseException ex) {
+                LOGGER.error(ex.getMessage());
+                exitCode = -11;
+            } catch (ReportException ex) {
+                LOGGER.error(ex.getMessage());
+                exitCode = -12;
+            } catch (ExceptionCollection ex) {
+                if (ex.isFatal()) {
+                    exitCode = -13;
+                    LOGGER.error("One or more fatal errors occured");
+                } else {
+                    exitCode = -14;
+                }
+                for (Throwable e : ex.getExceptions()) {
+                    LOGGER.error(e.getMessage());
+                }
             }
         } else {
             cli.printHelp();
         }
+        return exitCode;
     }
 
     /**
-     * Scans the specified directories and writes the dependency reports to the reportDirectory.
+     * Scans the specified directories and writes the dependency reports to the
+     * reportDirectory.
      *
-     * @param reportDirectory the path to the directory where the reports will be written
+     * @param reportDirectory the path to the directory where the reports will
+     * be written
      * @param outputFormat the output format of the report
      * @param applicationName the application name for the report
      * @param files the files/directories to scan
      * @param excludes the patterns for files/directories to exclude
      * @param symLinkDepth the depth that symbolic links will be followed
      *
-     * @throws InvalidScanPathException thrown if the path to scan starts with "//"
+     * @throws InvalidScanPathException thrown if the path to scan starts with
+     * "//"
+     * @throws ReportException thrown when the report cannot be generated
+     * @throws DatabaseException thrown when there is an error connecting to the
+     * database
+     * @throws ExceptionCollection thrown when an exception occurs during
+     * analysis; there may be multiple exceptions contained within the
+     * collection.
      */
     private void runScan(String reportDirectory, String outputFormat, String applicationName, String[] files,
-            String[] excludes, int symLinkDepth) throws InvalidScanPathException {
+            String[] excludes, int symLinkDepth) throws InvalidScanPathException, DatabaseException, ExceptionCollection, ReportException {
         Engine engine = null;
         try {
             engine = new Engine();
@@ -174,8 +240,6 @@ public class App {
                         include = "**/*";
                     }
                 }
-                //LOGGER.debug("baseDir: {}", baseDir);
-                //LOGGER.debug("include: {}", include);
                 scanner.setBasedir(baseDir);
                 final String[] includes = {include};
                 scanner.setIncludes(includes);
@@ -197,7 +261,15 @@ public class App {
             }
             engine.scan(paths);
 
-            engine.analyzeDependencies();
+            ExceptionCollection exCol = null;
+            try {
+                engine.analyzeDependencies();
+            } catch (ExceptionCollection ex) {
+                if (ex.isFatal()) {
+                    throw ex;
+                }
+                exCol = ex;
+            }
             final List<Dependency> dependencies = engine.getDependencies();
             DatabaseProperties prop = null;
             CveDB cve = null;
@@ -205,8 +277,6 @@ public class App {
                 cve = new CveDB();
                 cve.open();
                 prop = cve.getDatabaseProperties();
-            } catch (DatabaseException ex) {
-                LOGGER.debug("Unable to retrieve DB Properties", ex);
             } finally {
                 if (cve != null) {
                     cve.close();
@@ -215,34 +285,37 @@ public class App {
             final ReportGenerator report = new ReportGenerator(applicationName, dependencies, engine.getAnalyzers(), prop);
             try {
                 report.generateReports(reportDirectory, outputFormat);
-            } catch (IOException ex) {
-                LOGGER.error("There was an IO error while attempting to generate the report.");
-                LOGGER.debug("", ex);
-            } catch (Throwable ex) {
-                LOGGER.error("There was an error while attempting to generate the report.");
-                LOGGER.debug("", ex);
+            } catch (ReportException ex) {
+                if (exCol != null) {
+                    exCol.addException(ex);
+                    throw exCol;
+                } else {
+                    throw ex;
+                }
             }
-        } catch (DatabaseException ex) {
-            LOGGER.error("Unable to connect to the dependency-check database; analysis has stopped");
-            LOGGER.debug("", ex);
+            if (exCol != null && exCol.getExceptions().size()>0) {
+                throw exCol;
+            }
         } finally {
             if (engine != null) {
                 engine.cleanup();
             }
         }
+        
     }
 
     /**
      * Only executes the update phase of dependency-check.
+     *
+     * @throws UpdateException thrown if there is an error updating
+     * @throws DatabaseException thrown if a fatal error occurred and a
+     * connection to the database could not be established
      */
-    private void runUpdateOnly() {
+    private void runUpdateOnly() throws UpdateException, DatabaseException {
         Engine engine = null;
         try {
             engine = new Engine();
             engine.doUpdates();
-        } catch (DatabaseException ex) {
-            LOGGER.error("Unable to connect to the dependency-check database; analysis has stopped");
-            LOGGER.debug("", ex);
         } finally {
             if (engine != null) {
                 engine.cleanup();
@@ -253,11 +326,13 @@ public class App {
     /**
      * Updates the global Settings.
      *
-     * @param cli a reference to the CLI Parser that contains the command line arguments used to set the corresponding settings in
-     * the core engine.
+     * @param cli a reference to the CLI Parser that contains the command line
+     * arguments used to set the corresponding settings in the core engine.
+     *
+     * @throws InvalidSettingException thrown when a user defined properties
+     * file is unable to be loaded.
      */
-    private void populateSettings(CliParser cli) {
-
+    private void populateSettings(CliParser cli) throws InvalidSettingException {
         final boolean autoUpdate = cli.isAutoUpdate();
         final String connectionTimeout = cli.getConnectionTimeout();
         final String proxyServer = cli.getProxyServer();
@@ -286,11 +361,9 @@ public class App {
             try {
                 Settings.mergeProperties(propertiesFile);
             } catch (FileNotFoundException ex) {
-                LOGGER.error("Unable to load properties file '{}'", propertiesFile.getPath());
-                LOGGER.debug("", ex);
+                throw new InvalidSettingException("Unable to find properties file '" + propertiesFile.getPath() + "'", ex);
             } catch (IOException ex) {
-                LOGGER.error("Unable to find properties file '{}'", propertiesFile.getPath());
-                LOGGER.debug("", ex);
+                throw new InvalidSettingException("Error reading properties file '" + propertiesFile.getPath() + "'", ex);
             }
         }
         // We have to wait until we've merged the properties before attempting to set whether we use
@@ -385,15 +458,16 @@ public class App {
     }
 
     /**
-     * Takes a path and resolves it to be a canonical &amp; absolute path. The caveats are that this method will take an Ant style
-     * file selector path (../someDir/**\/*.jar) and convert it to an absolute/canonical path (at least to the left of the first *
-     * or ?).
+     * Takes a path and resolves it to be a canonical &amp; absolute path. The
+     * caveats are that this method will take an Ant style file selector path
+     * (../someDir/**\/*.jar) and convert it to an absolute/canonical path (at
+     * least to the left of the first * or ?).
      *
      * @param path the path to canonicalize
      * @return the canonical path
      */
     protected String ensureCanonicalPath(String path) {
-        String basePath = null;
+        String basePath;
         String wildCards = null;
         final String file = path.replace('\\', '/');
         if (file.contains("*") || file.contains("?")) {

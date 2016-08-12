@@ -574,15 +574,14 @@ public class CPEAnalyzer implements Analyzer {
                         final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getName(), "UTF-8"));
                         final IdentifierMatch match = new IdentifierMatch("cpe", vs.getName(), url, IdentifierConfidence.EXACT_MATCH, conf);
                         collected.add(match);
-                    } else //TODO the following isn't quite right is it? need to think about this guessing game a bit more.
-                    {
-                        if (evVer.getVersionParts().size() <= dbVer.getVersionParts().size()
-                                && evVer.matchesAtLeastThreeLevels(dbVer)) {
-                            if (bestGuessConf == null || bestGuessConf.compareTo(conf) > 0) {
-                                if (bestGuess.getVersionParts().size() < dbVer.getVersionParts().size()) {
-                                    bestGuess = dbVer;
-                                    bestGuessConf = conf;
-                                }
+
+                        //TODO the following isn't quite right is it? need to think about this guessing game a bit more.
+                    } else if (evVer.getVersionParts().size() <= dbVer.getVersionParts().size()
+                            && evVer.matchesAtLeastThreeLevels(dbVer)) {
+                        if (bestGuessConf == null || bestGuessConf.compareTo(conf) > 0) {
+                            if (bestGuess.getVersionParts().size() < dbVer.getVersionParts().size()) {
+                                bestGuess = dbVer;
+                                bestGuessConf = conf;
                             }
                         }
                     }

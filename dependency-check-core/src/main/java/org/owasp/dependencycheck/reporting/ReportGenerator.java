@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,13 +38,16 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The ReportGenerator is used to, as the name implies, generate reports. Internally the generator uses the Velocity
- * Templating Engine. The ReportGenerator exposes a list of Dependencies to the template when generating the report.
+ * The ReportGenerator is used to, as the name implies, generate reports.
+ * Internally the generator uses the Velocity Templating Engine. The
+ * ReportGenerator exposes a list of Dependencies to the template when
+ * generating the report.
  *
  * @author Jeremy Long
  */
@@ -79,7 +83,7 @@ public class ReportGenerator {
     /**
      * The Velocity Engine.
      */
-    private final VelocityEngine engine;
+    private final VelocityEngine velocityEngine;
     /**
      * The Velocity Engine Context.
      */
@@ -91,13 +95,14 @@ public class ReportGenerator {
      * @param applicationName the application name being analyzed
      * @param dependencies the list of dependencies
      * @param analyzers the list of analyzers used
-     * @param properties the database properties (containing timestamps of the NVD CVE data)
+     * @param properties the database properties (containing timestamps of the
+     * NVD CVE data)
      */
     public ReportGenerator(String applicationName, List<Dependency> dependencies, List<Analyzer> analyzers, DatabaseProperties properties) {
-        engine = createVelocityEngine();
+        velocityEngine = createVelocityEngine();
         context = createContext();
 
-        engine.init();
+        velocityEngine.init();
 
         final DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy 'at' HH:mm:ss z");
         final DateFormat dateFormatXML = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -119,19 +124,19 @@ public class ReportGenerator {
     /**
      * Creates a new Velocity Engine.
      *
-     * @return a velocity engine.
+     * @return a velocity engine
      */
     private VelocityEngine createVelocityEngine() {
-        final VelocityEngine engine = new VelocityEngine();
+        final VelocityEngine velocity = new VelocityEngine();
         // Logging redirection for Velocity - Required by Jenkins and other server applications
-        engine.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, VelocityLoggerRedirect.class.getName());
-        return engine;
+        velocity.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, VelocityLoggerRedirect.class.getName());
+        return velocity;
     }
 
     /**
      * Creates a new Velocity Context.
      *
-     * @return a Velocity Context.
+     * @return a Velocity Context
      */
     private Context createContext() {
         return new VelocityContext();
@@ -143,7 +148,7 @@ public class ReportGenerator {
      * @param outputStream the OutputStream to send the generated report to
      * @param format the format the report should be written in
      * @throws IOException is thrown when the template file does not exist
-     * @throws Exception is thrown if there is an error writing out the reports.
+     * @throws Exception is thrown if there is an error writing out the reports
      */
     public void generateReports(OutputStream outputStream, Format format) throws IOException, Exception {
         if (format == Format.XML || format == Format.ALL) {
@@ -162,10 +167,9 @@ public class ReportGenerator {
      *
      * @param outputDir the path where the reports should be written
      * @param format the format the report should be written in
-     * @throws IOException is thrown when the template file does not exist
-     * @throws Exception is thrown if there is an error writing out the reports.
+     * @throws ReportException is thrown if there is an error writing out the reports
      */
-    public void generateReports(String outputDir, Format format) throws IOException, Exception {
+    public void generateReports(String outputDir, Format format) throws ReportException {
         if (format == Format.XML || format == Format.ALL) {
             generateReport("XmlReport", outputDir + File.separator + "dependency-check-report.xml");
         }
@@ -181,11 +185,12 @@ public class ReportGenerator {
      * Generates the Dependency Reports for the identified dependencies.
      *
      * @param outputDir the path where the reports should be written
-     * @param outputFormat the format the report should be written in (XML, HTML, ALL)
-     * @throws IOException is thrown when the template file does not exist
-     * @throws Exception is thrown if there is an error writing out the reports.
+     * @param outputFormat the format the report should be written in (XML,
+     * HTML, ALL)
+     * @throws ReportException is thrown if there is an error creating out the
+     * reports
      */
-    public void generateReports(String outputDir, String outputFormat) throws IOException, Exception {
+    public void generateReports(String outputDir, String outputFormat) throws ReportException {
         final String format = outputFormat.toUpperCase();
         final String pathToCheck = outputDir.toLowerCase();
         if (format.matches("^(XML|HTML|VULN|ALL)$")) {
@@ -217,16 +222,16 @@ public class ReportGenerator {
     }
 
     /**
-     * Generates a report from a given Velocity Template. The template name provided can be the name of a template
-     * contained in the jar file, such as 'XmlReport' or 'HtmlReport', or the template name can be the path to a
+     * Generates a report from a given Velocity Template. The template name
+     * provided can be the name of a template contained in the jar file, such as
+     * 'XmlReport' or 'HtmlReport', or the template name can be the path to a
      * template file.
      *
-     * @param templateName the name of the template to load.
-     * @param outputStream the OutputStream to write the report to.
-     * @throws IOException is thrown when the template file does not exist.
-     * @throws Exception is thrown when an exception occurs.
+     * @param templateName the name of the template to load
+     * @param outputStream the OutputStream to write the report to
+     * @throws ReportException is thrown when an exception occurs
      */
-    protected void generateReport(String templateName, OutputStream outputStream) throws IOException, Exception {
+    protected void generateReport(String templateName, OutputStream outputStream) throws ReportException {
         InputStream input = null;
         String templatePath = null;
         final File f = new File(templateName);
@@ -235,27 +240,30 @@ public class ReportGenerator {
                 templatePath = templateName;
                 input = new FileInputStream(f);
             } catch (FileNotFoundException ex) {
-                LOGGER.error("Unable to generate the report, the report template file could not be found.");
-                LOGGER.debug("", ex);
+                throw new ReportException("Unable to locate template file: " + templateName, ex);
             }
         } else {
             templatePath = "templates/" + templateName + ".vsl";
             input = this.getClass().getClassLoader().getResourceAsStream(templatePath);
         }
         if (input == null) {
-            throw new IOException("Template file doesn't exist");
+            throw new ReportException("Template file doesn't exist: " + templatePath);
         }
 
-        final InputStreamReader reader = new InputStreamReader(input, "UTF-8");
+        InputStreamReader reader = null;
         OutputStreamWriter writer = null;
 
         try {
+            reader = new InputStreamReader(input, "UTF-8");
             writer = new OutputStreamWriter(outputStream, "UTF-8");
-
-            if (!engine.evaluate(context, writer, templatePath, reader)) {
-                throw new Exception("Failed to convert the template into html.");
+            if (!velocityEngine.evaluate(context, writer, templatePath, reader)) {
+                throw new ReportException("Failed to convert the template into html.");
             }
             writer.flush();
+        } catch (UnsupportedEncodingException ex) {
+            throw new ReportException("Unable to generate the report using UTF-8", ex);
+        } catch (IOException ex) {
+            throw new ReportException("Unable to write the report", ex);
         } finally {
             if (writer != null) {
                 try {
@@ -271,25 +279,27 @@ public class ReportGenerator {
                     LOGGER.trace("", ex);
                 }
             }
-            try {
-                reader.close();
-            } catch (IOException ex) {
-                LOGGER.trace("", ex);
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException ex) {
+                    LOGGER.trace("", ex);
+                }
             }
         }
     }
 
     /**
-     * Generates a report from a given Velocity Template. The template name provided can be the name of a template
-     * contained in the jar file, such as 'XmlReport' or 'HtmlReport', or the template name can be the path to a
+     * Generates a report from a given Velocity Template. The template name
+     * provided can be the name of a template contained in the jar file, such as
+     * 'XmlReport' or 'HtmlReport', or the template name can be the path to a
      * template file.
      *
-     * @param templateName the name of the template to load.
-     * @param outFileName the filename and path to write the report to.
-     * @throws IOException is thrown when the template file does not exist.
-     * @throws Exception is thrown when an exception occurs.
+     * @param templateName the name of the template to load
+     * @param outFileName the filename and path to write the report to
+     * @throws ReportException is thrown when the report cannot be generated
      */
-    protected void generateReport(String templateName, String outFileName) throws Exception {
+    protected void generateReport(String templateName, String outFileName) throws ReportException {
         File outFile = new File(outFileName);
         if (outFile.getParentFile() == null) {
             outFile = new File(".", outFileName);
@@ -297,7 +307,7 @@ public class ReportGenerator {
         if (!outFile.getParentFile().exists()) {
             final boolean created = outFile.getParentFile().mkdirs();
             if (!created) {
-                throw new Exception("Unable to create directory '" + outFile.getParentFile().getAbsolutePath() + "'.");
+                throw new ReportException("Unable to create directory '" + outFile.getParentFile().getAbsolutePath() + "'.");
             }
         }
 
@@ -305,6 +315,8 @@ public class ReportGenerator {
         try {
             outputSteam = new FileOutputStream(outFile);
             generateReport(templateName, outputSteam);
+        } catch (FileNotFoundException ex) {
+            throw new ReportException("Unable to write to file: " + outFile, ex);
         } finally {
             if (outputSteam != null) {
                 try {
