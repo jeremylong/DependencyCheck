@@ -966,7 +966,7 @@ public final class CliParser {
      */
     public void printVersionInfo() {
         final String version = String.format("%s version %s",
-                Settings.getString(Settings.KEYS.APPLICATION_VAME, "dependency-check"),
+                Settings.getString(Settings.KEYS.APPLICATION_NAME, "dependency-check"),
                 Settings.getString(Settings.KEYS.APPLICATION_VERSION, "Unknown"));
         System.out.println(version);
     }
