@@ -441,6 +441,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                         }
                     }
                 }
+            } else {
+                in.reset();
             }
         }
     }
