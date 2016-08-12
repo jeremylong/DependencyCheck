@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2015 Bianca Jiang. All Rights Reserved.
+ * © Copyright IBM Corporation 2016.
  */
 package org.owasp.dependencycheck.analyzer;
 
@@ -34,9 +34,12 @@ import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * @author Bianca Xue Jiang
+ * This analyzer is used to analyze the SWIFT Package Manager (https://swift.org/package-manager/).
+ * It collects information about a package from Package.swift files.
  *
+ * @author Bianca Jiang (https://twitter.com/biancajiang)
  */
+@Experimental
 public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**

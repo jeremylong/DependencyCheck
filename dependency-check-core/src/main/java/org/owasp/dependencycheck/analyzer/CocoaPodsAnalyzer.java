@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2015 Bianca Jiang. All Rights Reserved.
+ * © Copyright IBM Corporation 2016.
  */
 package org.owasp.dependencycheck.analyzer;
 
@@ -34,9 +34,12 @@ import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * @author Bianca Xue Jiang
+ * This analyzer is used to analyze SWIFT and Objective-C packages by collecting
+ *  information from .podspec files. CocoaPods dependency manager see https://cocoapods.org/.
  *
+ * @author Bianca Jiang (https://twitter.com/biancajiang)
  */
+@Experimental
 public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
