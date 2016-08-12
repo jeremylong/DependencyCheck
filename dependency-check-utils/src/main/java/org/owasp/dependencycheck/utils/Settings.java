@@ -55,7 +55,7 @@ public final class Settings {
         /**
          * The key to obtain the application name.
          */
-        public static final String APPLICATION_VAME = "application.name";
+        public static final String APPLICATION_NAME = "application.name";
         /**
          * The key to obtain the application version.
          */

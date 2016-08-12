@@ -658,7 +658,7 @@ public class CveDB {
                     + "If the problem persist try deleting the files in '{}' and running {} again. If the problem continues, please "
                     + "create a log file (see documentation at http://jeremylong.github.io/DependencyCheck/) and open a ticket at "
                     + "https://github.com/jeremylong/DependencyCheck/issues and include the log file.\n\n",
-                    dd, dd, Settings.getString(Settings.KEYS.APPLICATION_VAME));
+                    dd, dd, Settings.getString(Settings.KEYS.APPLICATION_NAME));
             LOGGER.debug("", ex);
         } finally {
             DBUtils.closeResultSet(rs);
