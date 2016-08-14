@@ -20,6 +20,8 @@ format               | The report format to be generated (HTML, XML, VULN, ALL).
 outputDirectory      | The location to write the report(s). This directory will be located in the build directory.                        | build/reports
 skipTestGroups       | When set to true (the default) all dependency groups that being with 'test' will be skipped.                       | true
 suppressionFile      | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html)       | &nbsp;
+skipConfigurations   | A list of configurations that will be skipped. This is mutually exclusive with the scanConfigurations property.    | `[]` which means no configuration is skipped.
+scanConfigurations   | A list of configurations that will be scanned, all other configurations are skipped. This is mutually exclusive with the skipConfigurations property.    | `[]` which implicitly means all configurations get scanned.
 
 #### Example
 ```groovy
