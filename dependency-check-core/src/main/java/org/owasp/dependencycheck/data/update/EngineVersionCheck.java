@@ -220,11 +220,11 @@ public class EngineVersionCheck implements CachedWebDataSource {
                 return releaseVersion.trim();
             }
         } catch (MalformedURLException ex) {
-            LOGGER.debug("Unable to retrieve current release version of dependency-check", ex);
+            LOGGER.debug("Unable to retrieve current release version of dependency-check - malformed url?");
         } catch (URLConnectionFailureException ex) {
-            LOGGER.debug("Unable to retrieve current release version of dependency-check", ex);
+            LOGGER.debug("Unable to retrieve current release version of dependency-check - connection failed");
         } catch (IOException ex) {
-            LOGGER.debug("Unable to retrieve current release version of dependency-check", ex);
+            LOGGER.debug("Unable to retrieve current release version of dependency-check - i/o exception");
         } finally {
             if (conn != null) {
                 conn.disconnect();
