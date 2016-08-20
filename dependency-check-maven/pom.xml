@@ -209,6 +209,10 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             <artifactId>plexus-sec-dispatcher</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-dependency-tree</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jmockit</groupId>
             <artifactId>jmockit</artifactId>
             <scope>test</scope>

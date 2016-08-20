@@ -25,9 +25,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import org.apache.maven.artifact.Artifact;
+//import org.apache.maven.artifact.Artifact;
+import org.eclipse.aether.artifact.Artifact;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -39,6 +41,16 @@ import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.resolution.ArtifactResult;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -47,6 +59,7 @@ import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.ExpectedOjectInputStream;
@@ -102,6 +115,30 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @Parameter(readonly = true, required = true, property = "reactorProjects")
     private List<MavenProject> reactorProjects;
+    /**
+     * The entry point to Aether, i.e. the component doing all the work.
+     */
+    @Component
+    private RepositorySystem repoSystem;
+
+    /**
+     * The current repository/network configuration of Maven.
+     */
+    @Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
+    private RepositorySystemSession repoSession;
+
+    /**
+     * The project's remote repositories to use for the resolution of plug-ins
+     * and their dependencies.
+     */
+    @Parameter(defaultValue = "${project.remotePluginRepositories}", readonly = true)
+    private List<RemoteRepository> remoteRepos;
+
+    /**
+     * Component within Maven to build the dependency graph.
+     */
+    @Component
+    private DependencyGraphBuilder dependencyGraphBuilder;
 
     /**
      * The output directory. This generally maps to "target".
@@ -553,32 +590,121 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      *
      * @param project the project to scan the dependencies of
      * @param engine the engine to use to scan the dependencies
+     * @return a collection of exceptions that may have occurred while resolving
+     * and scanning the dependencies
      */
-    protected void scanArtifacts(MavenProject project, MavenEngine engine) {
-        for (Artifact a : project.getArtifacts()) {
+    protected ExceptionCollection scanArtifacts(MavenProject project, MavenEngine engine) {
+        // <editor-fold defaultstate="collapsed" desc="old implementation">
+        /*
+            for (Artifact a : project.getArtifacts()) {
             if (excludeFromScan(a)) {
-                continue;
+            continue;
             }
             final List<Dependency> deps = engine.scan(a.getFile().getAbsoluteFile());
             if (deps != null) {
-                if (deps.size() == 1) {
-                    final Dependency d = deps.get(0);
-                    if (d != null) {
-                        final MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
-                        d.addAsEvidence("pom", ma, Confidence.HIGHEST);
-                        d.addProjectReference(project.getName());
-                        if (getLog().isDebugEnabled()) {
-                            getLog().debug(String.format("Adding project reference %s on dependency %s", project.getName(),
-                                    d.getDisplayFileName()));
+            if (deps.size() == 1) {
+            final Dependency d = deps.get(0);
+            if (d != null) {
+            final MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
+            d.addAsEvidence("pom", ma, Confidence.HIGHEST);
+            d.addProjectReference(project.getName());
+            if (getLog().isDebugEnabled()) {
+            getLog().debug(String.format("Adding project reference %s on dependency %s", project.getName(),
+            d.getDisplayFileName()));
+            }
+            }
+            } else if (getLog().isDebugEnabled()) {
+            final String msg = String.format("More then 1 dependency was identified in first pass scan of '%s:%s:%s'",
+            a.getGroupId(), a.getArtifactId(), a.getVersion());
+            getLog().debug(msg);
+            }
+            }
+            }
+         */
+        // </editor-fold>
+        try {
+            DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(project, null, reactorProjects);
+            return collectDependencies(engine, project, dn.getChildren());
+        } catch (DependencyGraphBuilderException ex) {
+            final String msg = String.format("Unable to build dependency graph on project %s", project.getName());
+            getLog().debug(msg, ex);
+            return new ExceptionCollection(msg, ex);
+        }
+    }
+
+    /**
+     * Resolves the projects artifacts using Aether and scans the resulting
+     * dependencies.
+     *
+     * @param engine the core dependency-check engine
+     * @param project the project being scanned
+     * @param nodes the list of dependency nodes, generally obtained via the
+     * DependencyGraphBuilder
+     * @return a collection of exceptions that may have occurred while resolving
+     * and scanning the dependencies
+     */
+    private ExceptionCollection collectDependencies(MavenEngine engine, MavenProject project, List<DependencyNode> nodes) {
+        ExceptionCollection exCol = null;
+        for (DependencyNode dependencyNode : nodes) {
+            exCol = collectDependencies(engine, project, dependencyNode.getChildren());
+            if (excludeFromScan(dependencyNode.getArtifact().getScope())) {
+                continue;
+            }
+            ArtifactRequest request = new ArtifactRequest();
+            request.setArtifact(new DefaultArtifact(dependencyNode.getArtifact().getId()));
+            request.setRepositories(remoteRepos);
+            try {
+                ArtifactResult result = repoSystem.resolveArtifact(repoSession, request);
+                if (result.isResolved() && result.getArtifact() != null && result.getArtifact().getFile() != null) {
+                    final List<Dependency> deps = engine.scan(result.getArtifact().getFile().getAbsoluteFile());
+                    if (deps != null) {
+                        if (deps.size() == 1) {
+                            final Dependency d = deps.get(0);
+                            if (d != null) {
+                                Artifact a = result.getArtifact();
+                                final MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
+                                d.addAsEvidence("pom", ma, Confidence.HIGHEST);
+                                d.addProjectReference(project.getName() + ":" + dependencyNode.getArtifact().getScope());
+                                if (getLog().isDebugEnabled()) {
+                                    getLog().debug(String.format("Adding project reference %s on dependency %s",
+                                            project.getName(), d.getDisplayFileName()));
+                                }
+                            }
+                        } else if (getLog().isDebugEnabled()) {
+                            final String msg = String.format("More then 1 dependency was identified in first pass scan of '%s' in project %s",
+                                    dependencyNode.getArtifact().getId(), project.getName());
+                            getLog().debug(msg);
+                        }
+                    } else {
+                        final String msg = String.format("Error resolving '%s' in project %s",
+                                dependencyNode.getArtifact().getId(), project.getName());
+                        if (exCol == null) {
+                            exCol = new ExceptionCollection();
+                        }
+                        getLog().error(msg);
+                        for (Exception ex : result.getExceptions()) {
+                            exCol.addException(ex);
                         }
                     }
-                } else if (getLog().isDebugEnabled()) {
-                    final String msg = String.format("More then 1 dependency was identified in first pass scan of '%s:%s:%s'",
-                            a.getGroupId(), a.getArtifactId(), a.getVersion());
+                } else {
+                    final String msg = String.format("Unable to resolve '%s' in project %s",
+                            dependencyNode.getArtifact().getId(), project.getName());
                     getLog().debug(msg);
+                    if (exCol == null) {
+                        exCol = new ExceptionCollection();
+                    }
+                    for (Exception ex : result.getExceptions()) {
+                        exCol.addException(ex);
+                    }
                 }
+            } catch (ArtifactResolutionException ex) {
+                if (exCol == null) {
+                    exCol = new ExceptionCollection();
+                }
+                exCol.addException(ex);
             }
         }
+        return exCol;
     }
 
     /**
@@ -669,8 +795,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     protected MavenEngine initializeEngine() throws DatabaseException {
         populateSettings();
-        return new MavenEngine(this.project,
-                this.reactorProjects);
+        return new MavenEngine(this.project, this.reactorProjects);
     }
 
     /**
@@ -835,18 +960,18 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Tests is the artifact should be included in the scan (i.e. is the
      * dependency in a scope that is being scanned).
      *
-     * @param a the Artifact to test
+     * @param scope the scope of the artifact to test
      * @return <code>true</code> if the artifact is in an excluded scope;
      * otherwise <code>false</code>
      */
-    protected boolean excludeFromScan(Artifact a) {
-        if (skipTestScope && Artifact.SCOPE_TEST.equals(a.getScope())) {
+    protected boolean excludeFromScan(String scope) {
+        if (skipTestScope && org.apache.maven.artifact.Artifact.SCOPE_TEST.equals(scope)) {
             return true;
         }
-        if (skipProvidedScope && Artifact.SCOPE_PROVIDED.equals(a.getScope())) {
+        if (skipProvidedScope && org.apache.maven.artifact.Artifact.SCOPE_PROVIDED.equals(scope)) {
             return true;
         }
-        if (skipRuntimeScope && !Artifact.SCOPE_RUNTIME.equals(a.getScope())) {
+        if (skipRuntimeScope && !org.apache.maven.artifact.Artifact.SCOPE_RUNTIME.equals(scope)) {
             return true;
         }
         return false;
@@ -1133,4 +1258,5 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         return ret;
     }
     //</editor-fold>
+
 }

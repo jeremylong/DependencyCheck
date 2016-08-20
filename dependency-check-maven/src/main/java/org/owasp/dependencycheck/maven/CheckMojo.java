@@ -55,7 +55,7 @@ public class CheckMojo extends BaseDependencyCheckMojo {
     public boolean canGenerateReport() {
         boolean isCapable = false;
         for (Artifact a : getProject().getArtifacts()) {
-            if (!excludeFromScan(a)) {
+            if (!excludeFromScan(a.getScope())) {
                 isCapable = true;
                 break;
             }
@@ -88,11 +88,10 @@ public class CheckMojo extends BaseDependencyCheckMojo {
             getLog().error(msg);
         }
         if (engine != null) {
-            scanArtifacts(getProject(), engine);
+            ExceptionCollection exCol = scanArtifacts(getProject(), engine);
             if (engine.getDependencies().isEmpty()) {
                 getLog().info("No dependencies were identified that could be analyzed by dependency-check");
             } else {
-                ExceptionCollection exCol = null;
                 try {
                     engine.analyzeDependencies();
                 } catch (ExceptionCollection ex) {

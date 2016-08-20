@@ -19,10 +19,8 @@ package org.owasp.dependencycheck.maven;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -32,10 +30,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.owasp.dependencycheck.analyzer.DependencyBundlingAnalyzer;
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
-import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.utils.Settings;
@@ -49,7 +44,7 @@ import org.owasp.dependencycheck.utils.Settings;
 @Mojo(
         name = "aggregate",
         defaultPhase = LifecyclePhase.VERIFY,
-        /*aggregator = true,*/
+        aggregator = true,
         threadSafe = false,
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
         requiresOnline = true
@@ -72,95 +67,76 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
      */
     @Override
     public void runCheck() throws MojoExecutionException, MojoFailureException {
-        final MavenEngine engine = generateDataFile();
+        final MavenEngine engine = loadEngine();
         if (engine == null) {
             return;
         }
 
-        if (getProject() == getLastProject()) {
-            //ensure that the .ser file was created for each.
-            for (MavenProject current : getReactorProjects()) {
-                final File dataFile = getDataFile(current);
-                if (dataFile == null && !skipProject(current)) { //dc was never run on this project. write the ser to the target.
-                    getLog().error(String.format("Module '%s' did not execute dependency-check; an attempt will be made to perform "
-                            + "the check but dependencies may be missed resulting in false negatives.", current.getName()));
-                    generateDataFile(engine, current);
-                }
-            }
-            for (MavenProject current : getReactorProjects()) {
-                List<Dependency> dependencies = readDataFile(current);
-                if (dependencies == null) {
-                    dependencies = new ArrayList<Dependency>();
-                }
-                final Set<MavenProject> childProjects = getDescendants(current);
-                for (MavenProject reportOn : childProjects) {
-                    final List<Dependency> childDeps = readDataFile(reportOn);
-                    if (childDeps != null && !childDeps.isEmpty()) {
-                        if (getLog().isDebugEnabled()) {
-                            getLog().debug(String.format("Adding %d dependencies from %s", childDeps.size(), reportOn.getName()));
-                        }
-                        dependencies.addAll(childDeps);
-                    } else if (getLog().isDebugEnabled()) {
-                        getLog().debug(String.format("No dependencies read for %s", reportOn.getName()));
-                    }
-                }
-                engine.getDependencies().clear();
-                engine.getDependencies().addAll(dependencies);
-                final DependencyBundlingAnalyzer bundler = new DependencyBundlingAnalyzer();
-                try {
-                    if (getLog().isDebugEnabled()) {
-                        getLog().debug(String.format("Dependency count pre-bundler: %s", engine.getDependencies().size()));
-                    }
-                    bundler.analyze(null, engine);
-                    if (getLog().isDebugEnabled()) {
-                        getLog().debug(String.format("Dependency count post-bundler: %s", engine.getDependencies().size()));
-                    }
-                } catch (AnalysisException ex) {
-                    getLog().warn("An error occurred grouping the dependencies; duplicate entries may exist in the report", ex);
-                    getLog().debug("Bundling Exception", ex);
-                }
+        ExceptionCollection exCol = scanArtifacts(getProject(), engine);
 
-                File outputDir = getCorrectOutputDirectory(current);
-                if (outputDir == null) {
-                    //in some regards we shouldn't be writting this, but we are anyway.
-                    //we shouldn't write this because nothing is configured to generate this report.
-                    outputDir = new File(current.getBuild().getDirectory());
+        for (MavenProject childProject : getDescendants(this.getProject())) {
+            ExceptionCollection ex = scanArtifacts(childProject, engine);
+            if (ex != null) {
+                if (exCol == null) {
+                    exCol = ex;
                 }
-                try {
-                    writeReports(engine, current, outputDir);
-                } catch (ReportException ex) {
-                    ExceptionCollection exCol = (ExceptionCollection) engine.getExecutionRoot().getContextValue(AGGREGATE_EXCEPTIONS);
-                    if (exCol == null) {
-                        exCol = new ExceptionCollection("Error writing aggregate report", ex);
-                    } else {
-                        exCol.addException(ex);
-                    }
-                    if (this.isFailOnError()) {
-                        throw new MojoExecutionException("One or more exceptions occured during dependency-check analysis", exCol);
-                    } else {
-                        getLog().debug("One or more exceptions occured during dependency-check analysis", exCol);
-                    }
+                exCol.getExceptions().addAll(ex.getExceptions());
+                if (ex.isFatal()) {
+                    exCol.setFatal(true);
                 }
             }
         }
+
+        try {
+            engine.analyzeDependencies();
+        } catch (ExceptionCollection ex) {
+            if (exCol == null) {
+                exCol = ex;
+            } else if (ex.isFatal()) {
+                exCol.setFatal(true);
+                exCol.getExceptions().addAll(ex.getExceptions());
+            }
+            if (exCol.isFatal()) {
+                final String msg = String.format("Fatal exception(s) analyzing %s", getProject().getName());
+                if (this.isFailOnError()) {
+                    throw new MojoExecutionException(msg, exCol);
+                }
+                getLog().error(msg);
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug(exCol);
+                }
+                return;
+            } else {
+                final String msg = String.format("Exception(s) analyzing %s", getProject().getName());
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug(msg, exCol);
+                }
+            }
+        }
+        File outputDir = getCorrectOutputDirectory(this.getProject());
+        if (outputDir == null) {
+            //in some regards we shouldn't be writting this, but we are anyway.
+            //we shouldn't write this because nothing is configured to generate this report.
+            outputDir = new File(this.getProject().getBuild().getDirectory());
+        }
+        try {
+            writeReports(engine, this.getProject(), outputDir);
+        } catch (ReportException ex) {
+            if (exCol == null) {
+                exCol = new ExceptionCollection("Error writing aggregate report", ex);
+            } else {
+                exCol.addException(ex);
+            }
+            if (this.isFailOnError()) {
+                throw new MojoExecutionException("One or more exceptions occured during dependency-check analysis", exCol);
+            } else {
+                getLog().debug("One or more exceptions occured during dependency-check analysis", exCol);
+            }
+        }
+        showSummary(this.getProject(), engine.getDependencies());
+        checkForFailure(engine.getDependencies());
         engine.cleanup();
         Settings.cleanup();
-    }
-
-    /**
-     * Gets the last project in the reactor - taking into account skipped
-     * projects.
-     *
-     * @return the last project in the reactor
-     */
-    private MavenProject getLastProject() {
-        for (int x = getReactorProjects().size() - 1; x >= 0; x--) {
-            final MavenProject p = getReactorProjects().get(x);
-            if (!skipProject(p)) {
-                return p;
-            }
-        }
-        return null;
     }
 
     /**
@@ -168,7 +144,10 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
      *
      * @param project a project in the reactor
      * @return true if the project is skipped; otherwise false
+     * @deprecated this function is no longer used, keeping this code around for
+     * a little bit longer in case this needs to be used
      */
+    @Deprecated
     private boolean skipProject(MavenProject project) {
         final String skip = (String) project.getProperties().get("maven.site.skip");
         return "true".equalsIgnoreCase(skip) && isGeneratingSite();
@@ -264,16 +243,15 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
     }
 
     /**
-     * Initializes the engine, runs a scan, and writes the serialized
-     * dependencies to disk.
+     * Initializes the engine.
      *
      * @return the MavenEngine used to execute dependency-check
      * @throws MojoExecutionException thrown if there is an exception running
-     * the mojo
+     * the Mojo
      * @throws MojoFailureException thrown if dependency-check is configured to
      * fail the build if severe CVEs are identified.
      */
-    protected MavenEngine generateDataFile() throws MojoExecutionException, MojoFailureException {
+    protected MavenEngine loadEngine() throws MojoExecutionException, MojoFailureException {
         MavenEngine engine = null;
         try {
             engine = initializeEngine();
@@ -286,59 +264,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                 throw new MojoExecutionException(msg, ex);
             }
             getLog().error(msg, ex);
-            return null;
         }
-        return generateDataFile(engine, getProject());
-    }
-
-    /**
-     * Runs dependency-check's MavenEngine and writes the serialized
-     * dependencies to disk.
-     *
-     * @param engine the MavenEngine to use when scanning.
-     * @param project the project to scan and generate the data file for
-     * @return the MavenEngine used to execute dependency-check
-     * @throws MojoExecutionException thrown if there is an exception running
-     * the mojo
-     * @throws MojoFailureException thrown if dependency-check is configured to
-     * fail the build if severe CVEs are identified.
-     */
-    protected MavenEngine generateDataFile(MavenEngine engine, MavenProject project) throws MojoExecutionException, MojoFailureException {
-        if (getLog().isDebugEnabled()) {
-            getLog().debug(String.format("Begin Scanning: %s", project.getName()));
-        }
-        engine.getDependencies().clear();
-        engine.resetFileTypeAnalyzers();
-        scanArtifacts(project, engine);
-        try {
-            engine.analyzeDependencies();
-        } catch (ExceptionCollection ex) {
-            ExceptionCollection col = (ExceptionCollection) engine.getExecutionRoot().getContextValue(AGGREGATE_EXCEPTIONS);
-            if (col == null) {
-                col = ex;
-            } else if (ex.isFatal()) {
-                col.setFatal(true);
-                col.getExceptions().addAll(ex.getExceptions());
-            }
-            if (col.isFatal()) {
-                final String msg = String.format("Fatal exception(s) analyzing %s", project.getName());
-                if (this.isFailOnError()) {
-                    throw new MojoExecutionException(msg, ex);
-                }
-                getLog().error(msg, col);
-                return null;
-            } else {
-                final String msg = String.format("Exception(s) analyzing %s", project.getName());
-                if (getLog().isDebugEnabled()) {
-                    getLog().debug(msg, ex);
-                }
-                engine.getExecutionRoot().setContextValue(AGGREGATE_EXCEPTIONS, col);
-            }
-        }
-        final File target = new File(project.getBuild().getDirectory());
-        writeDataFile(project, target, engine.getDependencies());
-        showSummary(project, engine.getDependencies());
-        checkForFailure(engine.getDependencies());
         return engine;
     }
 
