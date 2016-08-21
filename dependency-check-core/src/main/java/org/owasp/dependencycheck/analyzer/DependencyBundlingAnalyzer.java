@@ -144,17 +144,17 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
                                 mergeDependencies(nextDependency, dependency, dependenciesToRemove);
                                 break; //since we merged into the next dependency - skip forward to the next in mainIterator
                             }
-                        } else if ( (main = getMainGemspecDependency(dependency, nextDependency)) != null ) {
-                        	if (main == dependency) {
-                        		mergeDependencies(dependency, nextDependency, dependenciesToRemove);
-                        	} else {
+                        } else if ((main = getMainGemspecDependency(dependency, nextDependency)) != null) {
+                            if (main == dependency) {
+                                mergeDependencies(dependency, nextDependency, dependenciesToRemove);
+                            } else {
                                 mergeDependencies(nextDependency, dependency, dependenciesToRemove);
                                 break; //since we merged into the next dependency - skip forward to the next in mainIterator
                             }
-                        } else if ( (main = getMainSwiftDependency(dependency, nextDependency)) != null) {
-                        	if (main == dependency) {
-                        		mergeDependencies(dependency, nextDependency, dependenciesToRemove);
-                        	} else {
+                        } else if ((main = getMainSwiftDependency(dependency, nextDependency)) != null) {
+                            if (main == dependency) {
+                                mergeDependencies(dependency, nextDependency, dependenciesToRemove);
+                            } else {
                                 mergeDependencies(nextDependency, dependency, dependenciesToRemove);
                                 break; //since we merged into the next dependency - skip forward to the next in mainIterator
                             }
@@ -382,29 +382,37 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
         }
         return null;
     }
-    
+
     /**
-     * Bundling same swift dependencies with the same packagePath but identified by different analyzers.
+     * Bundling same swift dependencies with the same packagePath but identified
+     * by different analyzers.
+     *
+     * @param dependency1 dependency to test
+     * @param dependency2 dependency to test
+     * @return <code>true</code> if the dependencies appear to be the same;
+     * otherwise <code>false</code>
      */
     private boolean isSameSwiftPackage(Dependency dependency1, Dependency dependency2) {
-    	if (dependency1 == null || dependency2 == null ||
-    		(!dependency1.getFileName().endsWith(".podspec") &&
-    		!dependency1.getFileName().equals("Package.swift")) ||
-    		(!dependency2.getFileName().endsWith(".podspec") &&
-    		!dependency2.getFileName().equals("Package.swift")) ||
-    		dependency1.getPackagePath() == null ||
-    		dependency2.getPackagePath() == null) {
+        if (dependency1 == null || dependency2 == null
+                || (!dependency1.getFileName().endsWith(".podspec")
+                && !dependency1.getFileName().equals("Package.swift"))
+                || (!dependency2.getFileName().endsWith(".podspec")
+                && !dependency2.getFileName().equals("Package.swift"))
+                || dependency1.getPackagePath() == null
+                || dependency2.getPackagePath() == null) {
             return false;
         }
-        if (dependency1.getPackagePath().equalsIgnoreCase(dependency2.getPackagePath()))
-        	return true;
-
-       	return false;
+        if (dependency1.getPackagePath().equalsIgnoreCase(dependency2.getPackagePath())) {
+            return true;
+        }
+        return false;
     }
+
     private Dependency getMainSwiftDependency(Dependency dependency1, Dependency dependency2) {
-    	if (isSameSwiftPackage(dependency1, dependency2)) {
-    		if(dependency1.getFileName().endsWith(".podspec"))
-    			return dependency1;
+        if (isSameSwiftPackage(dependency1, dependency2)) {
+            if (dependency1.getFileName().endsWith(".podspec")) {
+                return dependency1;
+            }
             return dependency2;
         }
         return null;

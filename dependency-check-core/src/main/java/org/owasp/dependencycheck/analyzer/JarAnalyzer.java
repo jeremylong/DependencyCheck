@@ -704,17 +704,12 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     addMatchingValues(classInformation, value, productEvidence);
 //                //the following caused false positives.
 //                } else if (key.equalsIgnoreCase(BUNDLE_VENDOR)) {
-//                    foundSomething = true;
-//                    vendorEvidence.addEvidence(source, key, value, Confidence.HIGH);
-//                    addMatchingValues(classInformation, value, vendorEvidence);
                 } else if (key.equalsIgnoreCase(BUNDLE_VERSION)) {
                     foundSomething = true;
                     versionEvidence.addEvidence(source, key, value, Confidence.HIGH);
                 } else if (key.equalsIgnoreCase(Attributes.Name.MAIN_CLASS.toString())) {
                     continue;
-                    //skipping main class as if this has important information to add
-                    // it will be added during class name analysis...  if other fields
-                    // have the information from the class name then they will get added...
+                    //skipping main class as if this has important information to add it will be added during class name analysis...
                 } else {
                     key = key.toLowerCase();
                     if (!IGNORE_KEYS.contains(key)

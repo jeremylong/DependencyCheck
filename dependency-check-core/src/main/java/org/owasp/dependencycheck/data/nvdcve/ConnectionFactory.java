@@ -95,7 +95,7 @@ public final class ConnectionFactory {
      * @throws DatabaseException thrown if we are unable to connect to the
      * database
      */
-    public static synchronized void initialize() throws DatabaseException {
+    public static void initialize() throws DatabaseException {
         //this only needs to be called once.
         if (connectionString != null) {
             return;
@@ -196,7 +196,7 @@ public final class ConnectionFactory {
      * finalize method being called as during shutdown the class loader used to
      * load the driver may be unloaded prior to the driver being de-registered.
      */
-    public static synchronized void cleanup() {
+    public static void cleanup() {
         if (driver != null) {
             try {
                 DriverManager.deregisterDriver(driver);

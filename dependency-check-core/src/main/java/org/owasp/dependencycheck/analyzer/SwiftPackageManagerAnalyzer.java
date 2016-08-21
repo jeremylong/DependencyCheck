@@ -70,8 +70,7 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
      *     name: "Gloss"
      *     )"
      */
-    private static final Pattern SPM_BLOCK_PATTERN
-            = Pattern.compile("let[^=]+=\\s*Package\\s*\\(\\s*([^)]*)\\s*\\)", Pattern.DOTALL);
+    private static final Pattern SPM_BLOCK_PATTERN = Pattern.compile("let[^=]+=\\s*Package\\s*\\(\\s*([^)]*)\\s*\\)", Pattern.DOTALL);
     
     /**
      * Returns the FileFilter
