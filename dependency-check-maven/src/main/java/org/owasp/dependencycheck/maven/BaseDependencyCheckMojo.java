@@ -25,10 +25,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-//import org.apache.maven.artifact.Artifact;
 import org.eclipse.aether.artifact.Artifact;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.AbstractMojo;
@@ -623,7 +621,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
          */
         // </editor-fold>
         try {
-            DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(project, null, reactorProjects);
+            final DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(project, null, reactorProjects);
             return collectDependencies(engine, project, dn.getChildren());
         } catch (DependencyGraphBuilderException ex) {
             final String msg = String.format("Unable to build dependency graph on project %s", project.getName());
@@ -650,18 +648,18 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             if (excludeFromScan(dependencyNode.getArtifact().getScope())) {
                 continue;
             }
-            ArtifactRequest request = new ArtifactRequest();
+            final ArtifactRequest request = new ArtifactRequest();
             request.setArtifact(new DefaultArtifact(dependencyNode.getArtifact().getId()));
             request.setRepositories(remoteRepos);
             try {
-                ArtifactResult result = repoSystem.resolveArtifact(repoSession, request);
+                final ArtifactResult result = repoSystem.resolveArtifact(repoSession, request);
                 if (result.isResolved() && result.getArtifact() != null && result.getArtifact().getFile() != null) {
                     final List<Dependency> deps = engine.scan(result.getArtifact().getFile().getAbsoluteFile());
                     if (deps != null) {
                         if (deps.size() == 1) {
                             final Dependency d = deps.get(0);
                             if (d != null) {
-                                Artifact a = result.getArtifact();
+                                final Artifact a = result.getArtifact();
                                 final MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
                                 d.addAsEvidence("pom", ma, Confidence.HIGHEST);
                                 d.addProjectReference(project.getName() + ":" + dependencyNode.getArtifact().getScope());
