@@ -90,7 +90,9 @@ public final class PomUtils {
             try {
                 final PomParser parser = new PomParser();
                 model = parser.parse(jar.getInputStream(entry));
-                LOGGER.debug("Read POM {}", path);
+                if (model == null) {
+                    throw new AnalysisException(String.format("Unable to parse pom '%s/%s'", jar.getName(), path));
+                }
             } catch (SecurityException ex) {
                 LOGGER.warn("Unable to parse pom '{}' in jar '{}'; invalid signature", path, jar.getName());
                 LOGGER.debug("", ex);

@@ -140,7 +140,7 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
             //SPM is currently under development for SWIFT 3. Its current metadata includes package name and dependencies.
             //Future interesting metadata: version, license, homepage, author, summary, etc.
             final String name = addStringEvidence(product, packageDescription, "name", "name", Confidence.HIGHEST);
-            if (!name.isEmpty()) {
+            if (name != null && !name.isEmpty()) {
                 vendor.addEvidence(SPM_FILE_NAME, "name_project", name, Confidence.HIGHEST);
             }
         }

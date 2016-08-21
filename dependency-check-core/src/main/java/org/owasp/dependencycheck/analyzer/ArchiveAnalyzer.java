@@ -357,10 +357,12 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private void extractFiles(File archive, File destination, Engine engine) throws AnalysisException {
         if (archive != null && destination != null) {
-            final String archiveExt = FileUtils.getFileExtension(archive.getName()).toLowerCase();
+            String archiveExt = FileUtils.getFileExtension(archive.getName());
             if (archiveExt == null) {
                 return;
             }
+            archiveExt = archiveExt.toLowerCase();
+
             FileInputStream fis;
             try {
                 fis = new FileInputStream(archive);
