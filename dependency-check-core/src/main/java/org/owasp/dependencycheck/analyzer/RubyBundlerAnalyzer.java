@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2016 Bianca Jiang. All Rights Reserved.
+ * © Copyright IBM Corporation 2016.
  */
 package org.owasp.dependencycheck.analyzer;
 
@@ -43,7 +43,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
  * {@link RubyGemspecAnalyzer}, so it will enabled/disabled with
  * {@link RubyGemspecAnalyzer}.
  *
- * @author Bianca Jiang (biancajiang@gmail.com)
+ * @author Bianca Jiang (https://twitter.com/biancajiang)
  */
 @Experimental
 public class RubyBundlerAnalyzer extends RubyGemspecAnalyzer {

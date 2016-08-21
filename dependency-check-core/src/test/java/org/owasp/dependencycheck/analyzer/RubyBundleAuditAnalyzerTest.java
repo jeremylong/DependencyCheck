@@ -117,7 +117,6 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
             final Engine engine = new Engine();
             analyzer.analyze(result, engine);
             int size = engine.getDependencies().size();
-
             assertTrue(size >= 1);
 
             Dependency dependency = engine.getDependencies().get(0);
