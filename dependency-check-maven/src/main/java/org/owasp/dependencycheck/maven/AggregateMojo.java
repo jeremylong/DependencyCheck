@@ -52,11 +52,6 @@ import org.owasp.dependencycheck.utils.Settings;
 public class AggregateMojo extends BaseDependencyCheckMojo {
 
     /**
-     * The key to store aggregate exception in the root Maven execution context.
-     */
-    private static final String AGGREGATE_EXCEPTIONS = "AggregateExceptions";
-
-    /**
      * Executes the aggregate dependency-check goal. This runs dependency-check
      * and generates the subsequent reports.
      *
@@ -75,7 +70,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         ExceptionCollection exCol = scanArtifacts(getProject(), engine);
 
         for (MavenProject childProject : getDescendants(this.getProject())) {
-            ExceptionCollection ex = scanArtifacts(childProject, engine);
+            final ExceptionCollection ex = scanArtifacts(childProject, engine);
             if (ex != null) {
                 if (exCol == null) {
                     exCol = ex;
@@ -137,20 +132,6 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         checkForFailure(engine.getDependencies());
         engine.cleanup();
         Settings.cleanup();
-    }
-
-    /**
-     * Tests if the project is being skipped in the Maven site report.
-     *
-     * @param project a project in the reactor
-     * @return true if the project is skipped; otherwise false
-     * @deprecated this function is no longer used, keeping this code around for
-     * a little bit longer in case this needs to be used
-     */
-    @Deprecated
-    private boolean skipProject(MavenProject project) {
-        final String skip = (String) project.getProperties().get("maven.site.skip");
-        return "true".equalsIgnoreCase(skip) && isGeneratingSite();
     }
 
     /**
