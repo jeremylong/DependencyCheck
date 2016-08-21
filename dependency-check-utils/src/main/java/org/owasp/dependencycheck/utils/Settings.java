@@ -289,6 +289,14 @@ public final class Settings {
          */
         public static final String ANALYZER_OPENSSL_ENABLED = "analyzer.openssl.enabled";
         /**
+         * The properties key for whether the cocoapods analyzer is enabled.
+         */
+        public static final String ANALYZER_COCOAPODS_ENABLED = "analyzer.cocoapods.enabled";
+        /**
+         * The properties key for whether the SWIFT package manager analyzer is enabled.
+         */
+        public static final String ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED = "analyzer.swift.package.manager.enabled";
+        /**
          * The properties key for the Central search URL.
          */
         public static final String ANALYZER_CENTRAL_URL = "analyzer.central.url";

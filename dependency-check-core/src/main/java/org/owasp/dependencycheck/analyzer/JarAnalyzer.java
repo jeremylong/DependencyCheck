@@ -685,7 +685,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     foundSomething = true;
                     versionEvidence.addEvidence(source, key, value, Confidence.HIGH);
                 } else if ("specification-version".equalsIgnoreCase(key)) {
-                    specificationVersion = key;
+                    specificationVersion = value;
                 } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VENDOR.toString())) {
                     foundSomething = true;
                     vendorEvidence.addEvidence(source, key, value, Confidence.HIGH);
