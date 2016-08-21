@@ -409,6 +409,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         final File file = new File(tmpDir, "pom.xml");
         try {
             final ZipEntry entry = jar.getEntry(path);
+            if (entry == null) {
+                throw new AnalysisException(String.format("Pom (%s)does not exist in %s", path, jar.getName()));
+            }
             input = jar.getInputStream(entry);
             fos = new FileOutputStream(file);
             IOUtils.copy(input, fos);

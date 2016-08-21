@@ -61,8 +61,8 @@ public class CentralSearch {
     /**
      * Creates a NexusSearch for the given repository URL.
      *
-     * @param rootURL the URL of the repository on which searches should execute. Only parameters are added to this (so it should
-     * end in /select)
+     * @param rootURL the URL of the repository on which searches should
+     * execute. Only parameters are added to this (so it should end in /select)
      */
     public CentralSearch(URL rootURL) {
         this.rootURL = rootURL;
@@ -76,18 +76,20 @@ public class CentralSearch {
     }
 
     /**
-     * Searches the configured Central URL for the given sha1 hash. If the artifact is found, a <code>MavenArtifact</code> is
-     * populated with the GAV.
+     * Searches the configured Central URL for the given sha1 hash. If the
+     * artifact is found, a <code>MavenArtifact</code> is populated with the
+     * GAV.
      *
      * @param sha1 the SHA-1 hash string for which to search
      * @return the populated Maven GAV.
-     * @throws IOException if it's unable to connect to the specified repository or if the specified artifact is not found.
+     * @throws IOException if it's unable to connect to the specified repository
+     * or if the specified artifact is not found.
      */
     public List<MavenArtifact> searchSha1(String sha1) throws IOException {
         if (null == sha1 || !sha1.matches("^[0-9A-Fa-f]{40}$")) {
             throw new IllegalArgumentException("Invalid SHA1 format");
         }
-
+        List<MavenArtifact> result = null;
         final URL url = new URL(rootURL + String.format("?q=1:\"%s\"&wt=xml", sha1));
 
         LOGGER.debug("Searching Central url {}", url);
@@ -116,7 +118,7 @@ public class CentralSearch {
                 if ("0".equals(numFound)) {
                     missing = true;
                 } else {
-                    final List<MavenArtifact> result = new ArrayList<MavenArtifact>();
+                    result = new ArrayList<MavenArtifact>();
                     final NodeList docs = (NodeList) xpath.evaluate("/response/result/doc", doc, XPathConstants.NODESET);
                     for (int i = 0; i < docs.getLength(); i++) {
                         final String g = xpath.evaluate("./str[@name='g']", docs.item(i));
@@ -144,16 +146,12 @@ public class CentralSearch {
                                 useHTTPS = true;
                             }
                         }
-
                         LOGGER.trace("Version: {}", v);
                         result.add(new MavenArtifact(g, a, v, jarAvailable, pomAvailable, useHTTPS));
                     }
-
-                    return result;
                 }
             } catch (Throwable e) {
-                // Anything else is jacked up XML stuff that we really can't recover
-                // from well
+                // Anything else is jacked up XML stuff that we really can't recover from well
                 throw new IOException(e.getMessage(), e);
             }
 
@@ -162,10 +160,9 @@ public class CentralSearch {
             }
         } else {
             LOGGER.debug("Could not connect to Central received response code: {} {}",
-                conn.getResponseCode(), conn.getResponseMessage());
+                    conn.getResponseCode(), conn.getResponseMessage());
             throw new IOException("Could not connect to Central");
         }
-
-        return null;
+        return result;
     }
 }

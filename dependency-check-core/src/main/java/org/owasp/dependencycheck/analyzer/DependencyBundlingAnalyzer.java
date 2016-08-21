@@ -309,10 +309,13 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
         String right = rFile.getParent();
         if (left == null) {
             return right == null;
+        } else if (right == null) {
+            return false;
         }
         if (left.equalsIgnoreCase(right)) {
             return true;
         }
+
         if (left.matches(".*[/\\\\]repository[/\\\\].*") && right.matches(".*[/\\\\]repository[/\\\\].*")) {
             left = getBaseRepoPath(left);
             right = getBaseRepoPath(right);
