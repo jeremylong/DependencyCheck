@@ -36,8 +36,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Loads the configured database driver and returns the database connection. If the embedded H2 database is used obtaining a
- * connection will ensure the database file exists and that the appropriate table structure has been created.
+ * Loads the configured database driver and returns the database connection. If
+ * the embedded H2 database is used obtaining a connection will ensure the
+ * database file exists and that the appropriate table structure has been
+ * created.
  *
  * @author Jeremy Long
  */
@@ -87,10 +89,11 @@ public final class ConnectionFactory {
     }
 
     /**
-     * Initializes the connection factory. Ensuring that the appropriate drivers are loaded and that a connection can be made
-     * successfully.
+     * Initializes the connection factory. Ensuring that the appropriate drivers
+     * are loaded and that a connection can be made successfully.
      *
-     * @throws DatabaseException thrown if we are unable to connect to the database
+     * @throws DatabaseException thrown if we are unable to connect to the
+     * database
      */
     public static synchronized void initialize() throws DatabaseException {
         //this only needs to be called once.
@@ -188,9 +191,10 @@ public final class ConnectionFactory {
     }
 
     /**
-     * Cleans up resources and unloads any registered database drivers. This needs to be called to ensure the driver is
-     * unregistered prior to the finalize method being called as during shutdown the class loader used to load the driver may be
-     * unloaded prior to the driver being de-registered.
+     * Cleans up resources and unloads any registered database drivers. This
+     * needs to be called to ensure the driver is unregistered prior to the
+     * finalize method being called as during shutdown the class loader used to
+     * load the driver may be unloaded prior to the driver being de-registered.
      */
     public static synchronized void cleanup() {
         if (driver != null) {
@@ -210,10 +214,12 @@ public final class ConnectionFactory {
     }
 
     /**
-     * Constructs a new database connection object per the database configuration.
+     * Constructs a new database connection object per the database
+     * configuration.
      *
      * @return a database connection object
-     * @throws DatabaseException thrown if there is an exception loading the database connection
+     * @throws DatabaseException thrown if there is an exception loading the
+     * database connection
      */
     public static Connection getConnection() throws DatabaseException {
         initialize();
@@ -228,10 +234,12 @@ public final class ConnectionFactory {
     }
 
     /**
-     * Determines if the H2 database file exists. If it does not exist then the data structure will need to be created.
+     * Determines if the H2 database file exists. If it does not exist then the
+     * data structure will need to be created.
      *
      * @return true if the H2 database file does not exist; otherwise false
-     * @throws IOException thrown if the data directory does not exist and cannot be created
+     * @throws IOException thrown if the data directory does not exist and
+     * cannot be created
      */
     private static boolean h2DataFileExists() throws IOException {
         final File dir = Settings.getDataDirectory();
@@ -241,7 +249,8 @@ public final class ConnectionFactory {
     }
 
     /**
-     * Creates the database structure (tables and indexes) to store the CVE data.
+     * Creates the database structure (tables and indexes) to store the CVE
+     * data.
      *
      * @param conn the database connection
      * @throws DatabaseException thrown if there is a Database Exception
@@ -271,14 +280,17 @@ public final class ConnectionFactory {
     }
 
     /**
-     * Updates the database schema by loading the upgrade script for the version specified. The intended use is that if the
-     * current schema version is 2.9 then we would call updateSchema(conn, "2.9"). This would load the upgrade_2.9.sql file and
-     * execute it against the database. The upgrade script must update the 'version' in the properties table.
+     * Updates the database schema by loading the upgrade script for the version
+     * specified. The intended use is that if the current schema version is 2.9
+     * then we would call updateSchema(conn, "2.9"). This would load the
+     * upgrade_2.9.sql file and execute it against the database. The upgrade
+     * script must update the 'version' in the properties table.
      *
      * @param conn the database connection object
      * @param appExpectedVersion the schema version that the application expects
      * @param currentDbVersion the current schema version of the database
-     * @throws DatabaseException thrown if there is an exception upgrading the database schema
+     * @throws DatabaseException thrown if there is an exception upgrading the
+     * database schema
      */
     private static void updateSchema(Connection conn, DependencyVersion appExpectedVersion, DependencyVersion currentDbVersion)
             throws DatabaseException {
@@ -340,15 +352,18 @@ public final class ConnectionFactory {
     }
 
     /**
-     * Counter to ensure that calls to ensureSchemaVersion does not end up in an endless loop.
+     * Counter to ensure that calls to ensureSchemaVersion does not end up in an
+     * endless loop.
      */
     private static int callDepth = 0;
 
     /**
-     * Uses the provided connection to check the specified schema version within the database.
+     * Uses the provided connection to check the specified schema version within
+     * the database.
      *
      * @param conn the database connection object
-     * @throws DatabaseException thrown if the schema version is not compatible with this version of dependency-check
+     * @throws DatabaseException thrown if the schema version is not compatible
+     * with this version of dependency-check
      */
     private static void ensureSchemaVersion(Connection conn) throws DatabaseException {
         ResultSet rs = null;
@@ -359,7 +374,13 @@ public final class ConnectionFactory {
             rs = ps.executeQuery();
             if (rs.next()) {
                 final DependencyVersion appDbVersion = DependencyVersionUtil.parseVersion(DB_SCHEMA_VERSION);
+                if (appDbVersion == null) {
+                    throw new DatabaseException("Invalid application database schema");
+                }
                 final DependencyVersion db = DependencyVersionUtil.parseVersion(rs.getString(1));
+                if (db == null) {
+                    throw new DatabaseException("Invalid database schema");
+                }
                 if (appDbVersion.compareTo(db) > 0) {
                     LOGGER.debug("Current Schema: {}", DB_SCHEMA_VERSION);
                     LOGGER.debug("DB Schema: {}", rs.getString(1));

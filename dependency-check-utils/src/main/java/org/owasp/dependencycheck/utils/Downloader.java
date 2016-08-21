@@ -300,7 +300,7 @@ public final class Downloader {
      * @throws DownloadFailedException a wrapper exception that contains the
      * original exception as the cause
      */
-    protected static void checkForCommonExceptionTypes(IOException ex) throws DownloadFailedException {
+    protected static synchronized void checkForCommonExceptionTypes(IOException ex) throws DownloadFailedException {
         Throwable cause = ex;
         while (cause != null) {
             if (cause instanceof java.net.UnknownHostException) {

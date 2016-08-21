@@ -311,14 +311,21 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
             } else {
                 file = new File(filePath);
                 if (!file.exists()) {
-                    final InputStream fromClasspath = this.getClass().getClassLoader().getResourceAsStream(filePath);
-                    if (fromClasspath != null) {
-                        deleteTempFile = true;
-                        file = FileUtils.getTempFile("hint", "xml");
-                        try {
-                            org.apache.commons.io.FileUtils.copyInputStreamToFile(fromClasspath, file);
-                        } catch (IOException ex) {
-                            throw new HintParseException("Unable to locate suppressions file in classpath", ex);
+                    InputStream fromClasspath = null;
+                    try {
+                        fromClasspath = this.getClass().getClassLoader().getResourceAsStream(filePath);
+                        if (fromClasspath != null) {
+                            deleteTempFile = true;
+                            file = FileUtils.getTempFile("hint", "xml");
+                            try {
+                                org.apache.commons.io.FileUtils.copyInputStreamToFile(fromClasspath, file);
+                            } catch (IOException ex) {
+                                throw new HintParseException("Unable to locate suppressions file in classpath", ex);
+                            }
+                        }
+                    } finally {
+                        if (fromClasspath != null) {
+                            fromClasspath.close();
                         }
                     }
                 }

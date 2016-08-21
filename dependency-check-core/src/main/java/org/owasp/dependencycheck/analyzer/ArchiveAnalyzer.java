@@ -357,6 +357,10 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private void extractFiles(File archive, File destination, Engine engine) throws AnalysisException {
         if (archive != null && destination != null) {
+            final String archiveExt = FileUtils.getFileExtension(archive.getName()).toLowerCase();
+            if (archiveExt == null) {
+                return;
+            }
             FileInputStream fis;
             try {
                 fis = new FileInputStream(archive);
@@ -364,7 +368,6 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.debug("", ex);
                 throw new AnalysisException("Archive file was not found.", ex);
             }
-            final String archiveExt = FileUtils.getFileExtension(archive.getName()).toLowerCase();
             try {
                 if (ZIPPABLES.contains(archiveExt)) {
                     final BufferedInputStream in = new BufferedInputStream(fis);
@@ -414,8 +417,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         if ("jar".equals(archiveExt) && in.markSupported()) {
             in.mark(7);
             final byte[] b = new byte[7];
-            in.read(b);
-            if (b[0] == '#'
+            final int read = in.read(b);
+            if (read == 7
+                    && b[0] == '#'
                     && b[1] == '!'
                     && b[2] == '/'
                     && b[3] == 'b'

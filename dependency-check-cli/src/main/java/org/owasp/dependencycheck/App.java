@@ -158,8 +158,13 @@ public class App {
                 exitCode = -4;
             }
             try {
-                runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getProjectName(), cli.getScanFiles(),
-                        cli.getExcludeList(), cli.getSymLinkDepth());
+                String[] scanFiles = cli.getScanFiles();
+                if (scanFiles != null) {
+                    runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getProjectName(), scanFiles,
+                            cli.getExcludeList(), cli.getSymLinkDepth());
+                } else {
+                    LOGGER.error("No scan files configured");
+                }
             } catch (InvalidScanPathException ex) {
                 LOGGER.error("An invalid scan path was detected; unable to scan '//*' paths");
                 exitCode = -10;
@@ -293,7 +298,7 @@ public class App {
                     throw ex;
                 }
             }
-            if (exCol != null && exCol.getExceptions().size()>0) {
+            if (exCol != null && exCol.getExceptions().size() > 0) {
                 throw exCol;
             }
         } finally {
@@ -301,7 +306,7 @@ public class App {
                 engine.cleanup();
             }
         }
-        
+
     }
 
     /**

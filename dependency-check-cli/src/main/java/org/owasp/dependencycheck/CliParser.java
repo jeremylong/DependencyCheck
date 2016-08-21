@@ -196,6 +196,10 @@ public final class CliParser {
             isValid = false;
             final String msg = String.format("Invalid '%s' argument: '%s'%nUnable to scan paths that start with '//'.", argumentName, path);
             throw new FileNotFoundException(msg);
+        } else if ((path.endsWith("/*") && !path.endsWith("**/*")) || (path.endsWith("\\*") && path.endsWith("**\\*"))) {
+            final String msg = String.format("Possibly incorrect path '%s' from argument '%s' because it ends with a slash star; "
+                    + "dependency-check uses ant-style paths", path, argumentName);
+            LOGGER.warn(msg);
         }
     }
 

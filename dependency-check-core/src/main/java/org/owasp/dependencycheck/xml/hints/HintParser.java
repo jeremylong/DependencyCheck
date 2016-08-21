@@ -104,8 +104,9 @@ public class HintParser {
      * @throws SAXException thrown if the XML cannot be parsed
      */
     public Hints parseHints(InputStream inputStream) throws HintParseException, SAXException {
+        InputStream schemaStream = null;
         try {
-            final InputStream schemaStream = this.getClass().getClassLoader().getResourceAsStream(HINT_SCHEMA);
+            schemaStream = this.getClass().getClassLoader().getResourceAsStream(HINT_SCHEMA);
             final HintHandler handler = new HintHandler();
             final SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -141,6 +142,14 @@ public class HintParser {
         } catch (IOException ex) {
             LOGGER.debug("", ex);
             throw new HintParseException(ex);
+        } finally {
+            if (schemaStream != null) {
+                try {
+                    schemaStream.close();
+                } catch (IOException ex) {
+                    LOGGER.debug("Error closing hint file stream", ex);
+                }
+            }
         }
     }
 }

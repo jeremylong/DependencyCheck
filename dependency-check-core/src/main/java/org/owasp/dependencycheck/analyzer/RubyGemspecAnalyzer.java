@@ -217,6 +217,9 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
                     return name.contains(VERSION_FILE_NAME);
                 }
             });
+            if (matchingFiles == null) {
+                return;
+            }
             for (File f : matchingFiles) {
                 try {
                     final List<String> lines = FileUtils.readLines(f, Charset.defaultCharset());
