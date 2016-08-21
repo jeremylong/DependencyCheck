@@ -158,7 +158,7 @@ public class App {
                 exitCode = -4;
             }
             try {
-                String[] scanFiles = cli.getScanFiles();
+                final String[] scanFiles = cli.getScanFiles();
                 if (scanFiles != null) {
                     runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getProjectName(), scanFiles,
                             cli.getExcludeList(), cli.getSymLinkDepth());
