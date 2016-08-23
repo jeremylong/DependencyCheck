@@ -325,8 +325,10 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     } else {
                         pom = PomUtils.readPom(externalPom);
                     }
-                    pom.processProperties(pomProperties);
-                    foundSomething |= setPomEvidence(dependency, pom, classes);
+                    if (pom != null) {
+                        pom.processProperties(pomProperties);
+                        foundSomething |= setPomEvidence(dependency, pom, classes);
+                    }
                 }
             } catch (AnalysisException ex) {
                 LOGGER.warn("An error occurred while analyzing '{}'.", dependency.getActualFilePath());
