@@ -90,7 +90,8 @@ public class ExceptionCollection extends Exception {
         this.exceptions.add(exceptions);
         this.fatal = fatal;
     }
-        /**
+
+    /**
      * Instantiates a new exception collection.
      *
      * @param msg the exception message
@@ -195,7 +196,7 @@ public class ExceptionCollection extends Exception {
      */
     @Override
     public void printStackTrace(PrintStream s) {
-        s.println("Multiple Exceptions Occured");
+        s.println("Multiple Exceptions Occurred");
         super.printStackTrace(s);
         for (Throwable t : this.exceptions) {
             s.println("Next Exception:");
@@ -204,11 +205,23 @@ public class ExceptionCollection extends Exception {
     }
 
     /**
-     * Prints the stack trace to standard error.
+     * Returns the error message, including the message from all contained
+     * exceptions.
+     *
+     * @return the error message
      */
     @Override
-    public void printStackTrace() {
-        this.printStackTrace(System.err);
+    public String getMessage() {
+        StringBuilder sb = new StringBuilder();
+        final String msg = super.getMessage();
+        if (msg == null || msg.isEmpty()) {
+            sb.append("One or more exceptions occured during analysis:");
+        } else {
+            sb.append(msg);
+        }
+        for (Throwable t : this.exceptions) {
+            sb.append("\n\t").append(t.getMessage());
+        }
+        return sb.toString();
     }
-
 }
