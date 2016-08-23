@@ -128,7 +128,6 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
         }
         final Matcher matcher = SPM_BLOCK_PATTERN.matcher(contents);
         if (matcher.find()) {
-            contents = contents.substring(matcher.end());
             final String packageDescription = matcher.group(1);
             if (packageDescription.isEmpty()) {
                 return;
