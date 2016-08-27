@@ -28,6 +28,7 @@ import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.SocketAddress;
 import java.net.URL;
+import java.net.URLConnection;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import javax.net.ssl.HttpsURLConnection;
@@ -188,15 +189,17 @@ public final class URLConnectionFactory {
      * @param url the URL
      * @param conn the connection
      */
-    private static void configureTLS(URL url, HttpURLConnection conn) {
-        try {
-            final HttpsURLConnection secCon = (HttpsURLConnection) conn;
-            final SSLSocketFactoryEx factory = new SSLSocketFactoryEx();
-            secCon.setSSLSocketFactory(factory);
-        } catch (NoSuchAlgorithmException ex) {
-            LOGGER.debug("Unsupported algorithm in SSLSocketFactoryEx", ex);
-        } catch (KeyManagementException ex) {
-            LOGGER.debug("Key mnagement eception in SSLSocketFactoryEx", ex);
+    private static void configureTLS(URL url, URLConnection conn) {
+        if ("https".equals(url.getProtocol())) {
+            try {
+                final HttpsURLConnection secCon = (HttpsURLConnection) conn;
+                final SSLSocketFactoryEx factory = new SSLSocketFactoryEx();
+                secCon.setSSLSocketFactory(factory);
+            } catch (NoSuchAlgorithmException ex) {
+                LOGGER.debug("Unsupported algorithm in SSLSocketFactoryEx", ex);
+            } catch (KeyManagementException ex) {
+                LOGGER.debug("Key mnagement eception in SSLSocketFactoryEx", ex);
+            }
         }
     }
 }
