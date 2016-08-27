@@ -31,8 +31,6 @@ import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import javax.net.ssl.HttpsURLConnection;
-import org.apache.commons.lang3.JavaVersion;
-import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -191,16 +189,14 @@ public final class URLConnectionFactory {
      * @param conn the connection
      */
     private static void configureTLS(URL url, HttpURLConnection conn) {
-        if ("https".equals(url.getProtocol()) && !SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_1_8)) {
-            try {
-                final HttpsURLConnection secCon = (HttpsURLConnection) conn;
-                final SSLSocketFactoryEx factory = new SSLSocketFactoryEx();
-                secCon.setSSLSocketFactory(factory);
-            } catch (NoSuchAlgorithmException ex) {
-                LOGGER.debug("Unsupported algorithm in SSLSocketFactoryEx", ex);
-            } catch (KeyManagementException ex) {
-                LOGGER.debug("Key mnagement eception in SSLSocketFactoryEx", ex);
-            }
+        try {
+            final HttpsURLConnection secCon = (HttpsURLConnection) conn;
+            final SSLSocketFactoryEx factory = new SSLSocketFactoryEx();
+            secCon.setSSLSocketFactory(factory);
+        } catch (NoSuchAlgorithmException ex) {
+            LOGGER.debug("Unsupported algorithm in SSLSocketFactoryEx", ex);
+        } catch (KeyManagementException ex) {
+            LOGGER.debug("Key mnagement eception in SSLSocketFactoryEx", ex);
         }
     }
 }
