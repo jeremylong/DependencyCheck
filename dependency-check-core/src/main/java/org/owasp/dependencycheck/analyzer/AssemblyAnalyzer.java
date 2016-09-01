@@ -86,7 +86,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @return the list of arguments to begin populating the ProcessBuilder
      */
-    private List<String> buildArgumentList() {
+    protected List<String> buildArgumentList() {
         // Use file.separator as a wild guess as to whether this is Windows
         final List<String> args = new ArrayList<String>();
         if (!SystemUtils.IS_OS_WINDOWS) {
