@@ -212,7 +212,7 @@ public class ExceptionCollection extends Exception {
      */
     @Override
     public String getMessage() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         final String msg = super.getMessage();
         if (msg == null || msg.isEmpty()) {
             sb.append("One or more exceptions occured during analysis:");

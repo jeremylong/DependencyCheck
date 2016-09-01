@@ -411,6 +411,14 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
         return false;
     }
 
+    /**
+     * Determines which of the swift dependencies should be considered the
+     * primary.
+     *
+     * @param dependency1 the first swift dependency to compare
+     * @param dependency2 the second swift dependency to compare
+     * @return the primary swift dependency
+     */
     private Dependency getMainSwiftDependency(Dependency dependency1, Dependency dependency2) {
         if (isSameSwiftPackage(dependency1, dependency2)) {
             if (dependency1.getFileName().endsWith(".podspec")) {

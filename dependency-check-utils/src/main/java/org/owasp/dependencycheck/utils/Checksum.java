@@ -58,11 +58,11 @@ public final class Checksum {
      * @throws NoSuchAlgorithmException when an algorithm is specified that does not exist
      */
     public static byte[] getChecksum(String algorithm, File file) throws NoSuchAlgorithmException, IOException {
-        MessageDigest digest = MessageDigest.getInstance(algorithm);
+        final MessageDigest digest = MessageDigest.getInstance(algorithm);
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(file);
-            FileChannel ch = fis.getChannel();
+            final FileChannel ch = fis.getChannel();
             long remainingToRead = file.length();
             long start = 0;
             while (remainingToRead > 0) {
@@ -74,7 +74,7 @@ public final class Checksum {
                     amountToRead = remainingToRead;
                     remainingToRead = 0;
                 }
-                MappedByteBuffer byteBuffer = ch.map(FileChannel.MapMode.READ_ONLY, start, amountToRead);
+                final MappedByteBuffer byteBuffer = ch.map(FileChannel.MapMode.READ_ONLY, start, amountToRead);
                 digest.update(byteBuffer);
                 start += amountToRead;
             }
@@ -99,7 +99,7 @@ public final class Checksum {
      * @throws NoSuchAlgorithmException when the MD5 algorithm is not available
      */
     public static String getMD5Checksum(File file) throws IOException, NoSuchAlgorithmException {
-        byte[] b = getChecksum("MD5", file);
+        final byte[] b = getChecksum("MD5", file);
         return getHex(b);
     }
 
@@ -112,7 +112,7 @@ public final class Checksum {
      * @throws NoSuchAlgorithmException when the SHA1 algorithm is not available
      */
     public static String getSHA1Checksum(File file) throws IOException, NoSuchAlgorithmException {
-        byte[] b = getChecksum("SHA1", file);
+        final byte[] b = getChecksum("SHA1", file);
         return getHex(b);
     }
     /**

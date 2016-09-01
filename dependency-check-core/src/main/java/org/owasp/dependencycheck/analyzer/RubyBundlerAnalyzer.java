@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * © Copyright IBM Corporation 2016.
+ * Copyright (c) 2016 IBM Corporation. All Rights Reserved.
  */
 package org.owasp.dependencycheck.analyzer;
 

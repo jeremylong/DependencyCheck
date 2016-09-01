@@ -178,7 +178,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     protected String getAnalyzerEnabledSettingKey() {
         return Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED;
     }
-    
+
     @Override
     protected void analyzeFileType(Dependency dependency, Engine engine)
             throws AnalysisException {
@@ -227,11 +227,14 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (ExtractionException ex) {
             throw new AnalysisException(ex);
         }
-        
-        collectWheelMetadata(
-                dependency,
-                getMatchingFile(getMatchingFile(temp, folderFilter),
-                        metadataFilter));
+
+        File matchingFile = getMatchingFile(temp, folderFilter);
+        if (matchingFile != null) {
+            matchingFile = getMatchingFile(matchingFile, metadataFilter);
+            if (matchingFile != null) {
+                collectWheelMetadata(dependency, matchingFile);
+            }
+        }
     }
 
     /**

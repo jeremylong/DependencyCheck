@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
@@ -36,9 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-import java.io.InputStreamReader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -122,6 +118,10 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         final List<String> args = buildArgumentList();
+        if (args == null) {
+            LOGGER.warn("Assembly Analyzer was unable to execute");
+            return;
+        }
         args.add(dependency.getActualFilePath());
         final ProcessBuilder pb = new ProcessBuilder(args);
         Document doc = null;
@@ -237,7 +237,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         final List<String> args = buildArgumentList();
         //TODO this creaes an "unreported" error - if someone doesn't look
         // at the command output this could easily be missed (especially in an
-        // Ant or Mmaven build. 
+        // Ant or Mmaven build.
         //
         // We need to create a non-fatal warning error type that will
         // get added to the report.
@@ -249,6 +249,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                     + "'exe' or 'dll' was scanned. The 'mono' executale could not be found on "
                     + "the path; either disable the Assembly Analyzer or configure the path mono.");
             LOGGER.error("----------------------------------------------------");
+            return;
         }
         try {
             final ProcessBuilder pb = new ProcessBuilder(args);
@@ -353,10 +354,10 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      * <code>false</code>
      */
     private boolean isInPath(String file) {
-        ProcessBuilder pb = new ProcessBuilder("which", file);
+        final ProcessBuilder pb = new ProcessBuilder("which", file);
         try {
-            Process proc = pb.start();
-            int retCode = proc.waitFor();
+            final Process proc = pb.start();
+            final int retCode = proc.waitFor();
             if (retCode == 0) {
                 return true;
             }

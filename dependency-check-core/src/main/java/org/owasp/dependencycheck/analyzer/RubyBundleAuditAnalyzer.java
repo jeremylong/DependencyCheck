@@ -280,10 +280,15 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         }
         final File parentFile = dependency.getActualFile().getParentFile();
         final Process process = launchBundleAudit(parentFile);
+        final int exitValue;
         try {
-            process.waitFor();
+            exitValue = process.waitFor();
         } catch (InterruptedException ie) {
             throw new AnalysisException("bundle-audit process interrupted", ie);
+        }
+        if (exitValue != 0) {
+            final String msg = String.format("Unexpected exit code from bundle-audit process; exit code: %s", exitValue);
+            throw new AnalysisException(msg);
         }
         BufferedReader rdr = null;
         BufferedReader errReader = null;

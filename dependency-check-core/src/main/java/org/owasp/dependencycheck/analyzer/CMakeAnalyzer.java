@@ -196,6 +196,9 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * @param engine the dependency-check engine
      * @param contents the version information
      */
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+            value = "DM_DEFAULT_ENCODING",
+            justification = "Default encoding is only used if UTF-8 is not available")
     private void analyzeSetVersionCommand(Dependency dependency, Engine engine, String contents) {
         Dependency currentDep = dependency;
 

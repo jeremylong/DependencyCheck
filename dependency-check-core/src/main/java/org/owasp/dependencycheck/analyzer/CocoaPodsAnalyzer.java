@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * © Copyright IBM Corporation 2016.
+ * Copyright (c) 2016 IBM Corporation. All Rights Reserved.
  */
 package org.owasp.dependencycheck.analyzer;
 
@@ -154,19 +154,32 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
         setPackagePath(dependency);
     }
 
+    /**
+     * Extracts evidence from the contents and adds it to the given evidence
+     * collection.
+     *
+     * @param evidences the evidence collection to update
+     * @param contents the text to extract evidence from
+     * @param blockVariable the block variable within the content to search for
+     * @param field the name of the field being searched for
+     * @param fieldPattern the field pattern within the contents to search for
+     * @param confidence the confidence level of the evidence if found
+     * @return the string that was added as evidence
+     */
     private String addStringEvidence(EvidenceCollection evidences, String contents,
             String blockVariable, String field, String fieldPattern, Confidence confidence) {
         String value = "";
 
         //capture array value between [ ]
         final Matcher arrayMatcher = Pattern.compile(
-                String.format("\\s*?%s\\.%s\\s*?=\\s*?\\{\\s*?(.*?)\\s*?\\}", blockVariable, fieldPattern), Pattern.CASE_INSENSITIVE).matcher(contents);
+                String.format("\\s*?%s\\.%s\\s*?=\\s*?\\{\\s*?(.*?)\\s*?\\}", blockVariable, fieldPattern),
+                Pattern.CASE_INSENSITIVE).matcher(contents);
         if (arrayMatcher.find()) {
             value = arrayMatcher.group(1);
-        } //capture single value between quotes
-        else {
+        } else { //capture single value between quotes
             final Matcher matcher = Pattern.compile(
-                    String.format("\\s*?%s\\.%s\\s*?=\\s*?(['\"])(.*?)\\1", blockVariable, fieldPattern), Pattern.CASE_INSENSITIVE).matcher(contents);
+                    String.format("\\s*?%s\\.%s\\s*?=\\s*?(['\"])(.*?)\\1", blockVariable, fieldPattern),
+                    Pattern.CASE_INSENSITIVE).matcher(contents);
             if (matcher.find()) {
                 value = matcher.group(2);
             }
@@ -177,9 +190,14 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
         return value;
     }
 
+    /**
+     * Sets the package path on the given dependency.
+     *
+     * @param dep the dependency to update
+     */
     private void setPackagePath(Dependency dep) {
-        File file = new File(dep.getFilePath());
-        String parent = file.getParent();
+        final File file = new File(dep.getFilePath());
+        final String parent = file.getParent();
         if (parent != null) {
             dep.setPackagePath(parent);
         }

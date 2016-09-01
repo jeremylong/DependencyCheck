@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * © Copyright IBM Corporation 2016.
+ * Copyright (c) 2016 IBM Corporation. All Rights Reserved.
  */
 package org.owasp.dependencycheck.analyzer;
 
@@ -146,6 +146,17 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
         setPackagePath(dependency);
     }
 
+    /**
+     * Extracts evidence from the package description and adds it to the given
+     * evidence collection.
+     *
+     * @param evidences the evidence collection to update
+     * @param packageDescription the text to extract evidence from
+     * @param field the name of the field being searched for
+     * @param fieldPattern the field pattern within the contents to search for
+     * @param confidence the confidence level of the evidence if found
+     * @return the string that was added as evidence
+     */
     private String addStringEvidence(EvidenceCollection evidences,
             String packageDescription, String field, String fieldPattern, Confidence confidence) {
         String value = "";
@@ -166,6 +177,11 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
         return value;
     }
 
+    /**
+     * Sets the package path on the given dependency.
+     *
+     * @param dep the dependency to update
+     */
     private void setPackagePath(Dependency dep) {
         final File file = new File(dep.getFilePath());
         final String parent = file.getParent();

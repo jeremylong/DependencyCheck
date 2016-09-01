@@ -70,10 +70,12 @@ public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
     /**
      * Python init files
      */
+    //CSOFF: WhitespaceAfter
     private static final NameFileFilter IGNORED_FILES = new NameFileFilter(new String[]{
         "__init__.py",
         "__init__.pyc",
         "__init__.pyo",});
+    //CSON: WhitespaceAfter
 
     /**
      * Collects information about the file name.
