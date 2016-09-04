@@ -40,12 +40,11 @@ public class NvdCveUpdaterIntegrationTest extends BaseTest {
 //    /**
 //     * Test of update method, of class StandardUpdate.
 //     */
-//    @Test
-//    public void testUpdate() throws Exception {
-//        StandardUpdate instance = getStandardUpdateTask();
-//        instance.update();
-//        //TODO make this an actual test
-//    }
+    @Test
+    public void testUpdate() throws Exception {
+        NvdCveUpdater instance = getUpdater();
+        instance.update();
+    }
     /**
      * Test of updatesNeeded method, of class StandardUpdate.
      */

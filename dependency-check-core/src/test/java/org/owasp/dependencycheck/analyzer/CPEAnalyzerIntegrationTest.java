@@ -183,12 +183,17 @@ public class CPEAnalyzerIntegrationTest extends BaseDBTestCase {
         hintAnalyzer.analyze(spring3, null);
 
         CPEAnalyzer instance = new CPEAnalyzer();
+        try {
         instance.open();
         instance.determineCPE(commonValidator);
         instance.determineCPE(struts);
         instance.determineCPE(spring);
         instance.determineCPE(spring3);
         instance.close();
+        } catch (Throwable ex) {
+            ex.printStackTrace();
+        }
+                
 
         String expResult = "cpe:/a:apache:struts:2.1.2";
         Identifier expIdentifier = new Identifier("cpe", expResult, expResult);

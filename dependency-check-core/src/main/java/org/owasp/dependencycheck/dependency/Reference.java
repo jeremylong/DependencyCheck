@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.dependency;
 
 import java.io.Serializable;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 
 /**
  * An external reference for a vulnerability. This contains a name, URL, and a
@@ -141,18 +142,10 @@ public class Reference implements Serializable, Comparable<Reference> {
      */
     @Override
     public int compareTo(Reference o) {
-        if (source.equals(o.source)) {
-            if (name.equals(o.name)) {
-                if (url.equals(o.url)) {
-                    return 0; //they are equal
-                } else {
-                    return url.compareTo(o.url);
-                }
-            } else {
-                return name.compareTo(o.name);
-            }
-        } else {
-            return source.compareTo(o.source);
-        }
+        return new CompareToBuilder()
+                .append(source, o.source)
+                .append(name, o.name)
+                .append(url, o.url)
+                .toComparison();
     }
 }
