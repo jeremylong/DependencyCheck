@@ -360,7 +360,7 @@ Copyright (c) 2012 - Jeremy Long
                             <target name="copy xsd to site">
                                 <copy file="dependency-check-core/src/main/resources/schema/dependency-check.1.3.xsd" todir="target/site/"/>
                                 <copy file="dependency-check-core/src/main/resources/schema/dependency-suppression.1.1.xsd" todir="target/site/"/>
-                                <copy file="dependency-check-core/src/main/resources/schema/dependency-hint.1.0.xsd" todir="target/site/"/>
+                                <copy file="dependency-check-core/src/main/resources/schema/dependency-hint.1.1.xsd" todir="target/site/"/>
                             </target>
                         </configuration>
                     </execution>

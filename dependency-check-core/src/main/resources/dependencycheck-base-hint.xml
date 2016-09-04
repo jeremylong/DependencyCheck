@@ -1,75 +1,120 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<hints xmlns="https://jeremylong.github.io/DependencyCheck/dependency-hint.1.0.xsd">
-	<hint>
-		<given>
-			<evidence type="product" source="Manifest" name="Implementation-Title" value="Spring Framework" confidence="HIGH"/>
-			<evidence type="product" source="Manifest" name="Implementation-Title" value="org.springframework.core" confidence="HIGH"/>
-			<evidence type="product" source="Manifest" name="Implementation-Title" value="spring-core" confidence="HIGH"/>
-		</given>
-		<add>
-			<evidence type="product" source="hint analyzer" name="product" value="springsource_spring_framework" confidence="HIGH"/>
-			<evidence type="vendor" source="hint analyzer" name="vendor" value="SpringSource" confidence="HIGH"/>
-			<evidence type="vendor" source="hint analyzer" name="vendor" value="vmware" confidence="HIGH"/>
-			<evidence type="vendor" source="hint analyzer" name="vendor" value="pivotal" confidence="HIGH"/>
-		</add>
-	</hint>
-	<hint>
-		<given>
-			<evidence type="product" source="jar" name="package name" value="springframework" confidence="LOW"/>
-			<fileName contains="spring"/>	
-		</given>
-		<add>
-			<evidence type="product" source="hint analyzer" name="product" value="springsource_spring_framework" confidence="HIGH"/>
-			<evidence type="vendor" source="hint analyzer" name="vendor" value="SpringSource" confidence="HIGH"/>
-			<evidence type="vendor" source="hint analyzer" name="vendor" value="vmware" confidence="HIGH"/>
-			<evidence type="vendor" source="hint analyzer" name="vendor" value="pivotal" confidence="HIGH"/>
-		</add>
-	</hint>
-	<hint>
-		<given>
-			<evidence type="product" source="jar" name="package name" value="springframework" confidence="LOW"/>
-		</given>
-		<add>
-			<evidence type="product" source="hint analyzer" name="product" value="springsource_spring_framework" confidence="HIGH"/>
-			<evidence type="vendor" source="hint analyzer" name="vendor" value="vmware" confidence="HIGH"/>
-			<evidence type="vendor" source="hint analyzer" name="vendor" value="pivotal" confidence="HIGH"/>
-		</add>
-	</hint>
-	<hint>
-		<given>
-			<evidence type="product" source="Manifest" name="Bundle-Name" value="Spring Security Core" confidence="MEDIUM"/>
-			<evidence type="product" source="pom" name="artifactid" value="spring-security-core" confidence="HIGH"/>	
-		</given>
-		<add>
-			<evidence type="product" source="hint analyzer" name="product" value="springsource_spring_framework" confidence="HIGH"/>
-			<evidence type="vendor" source="hint analyzer" name="vendor" value="SpringSource" confidence="HIGH"/>
-			<evidence type="vendor" source="hint analyzer" name="vendor" value="vmware" confidence="HIGH"/>
-		</add>
-	</hint>
-	<hint>
-		<given>
-			<evidence type="vendor" source="composer.lock" name="vendor" value="symfony" confidence="HIGHEST"/>
-		</given>
-		<add>
-			<evidence type="vendor" source="hint analyzer" name="vendor" value="sensiolabs" confidence="HIGHEST"/>
-		</add>
-	</hint>		
-	<hint>
-		<given>
-			<evidence type="vendor" source="composer.lock" name="vendor" value="zendframework" confidence="HIGHEST"/>
-		</given>
-		<add>
-			<evidence type="vendor" source="hint analyzer" name="vendor" value="zend" confidence="HIGHEST"/>
-		</add>
-	</hint>	
-	<hint>
-		<given>
-			<evidence type="product" source="composer.lock" name="product" value="zendframework" confidence="HIGHEST"/>
-		</given>
-		<add>
-			<evidence type="vendor" source="hint analyzer" name="vendor" value="zend_framework" confidence="HIGHEST"/>
-		</add>
-	</hint>	
-	<vendorDuplicatingHint value="sun" duplicate="oracle"/>	
-	<vendorDuplicatingHint value="oracle" duplicate="sun"/>	
+<hints xmlns="https://jeremylong.github.io/DependencyCheck/dependency-hint.1.1.xsd">
+    <hint>
+        <given>
+            <evidence type="product" source="Manifest" name="Implementation-Title" value="Spring Framework" confidence="HIGH"/>
+            <evidence type="product" source="Manifest" name="Implementation-Title" value="org.springframework.core" confidence="HIGH"/>
+            <evidence type="product" source="Manifest" name="Implementation-Title" value="spring-core" confidence="HIGH"/>
+        </given>
+        <add>
+            <evidence type="product" source="hint analyzer" name="product" value="springsource_spring_framework" confidence="HIGH"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="SpringSource" confidence="HIGH"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="vmware" confidence="HIGH"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="pivotal" confidence="HIGH"/>
+        </add>
+    </hint>
+    <hint>
+        <given>
+            <evidence type="product" source="jar" name="package name" value="springframework" confidence="LOW"/>
+            <fileName contains="spring"/>	
+        </given>
+        <add>
+            <evidence type="product" source="hint analyzer" name="product" value="springsource_spring_framework" confidence="HIGH"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="SpringSource" confidence="HIGH"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="vmware" confidence="HIGH"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="pivotal" confidence="HIGH"/>
+        </add>
+    </hint>
+    <hint>
+        <given>
+            <evidence type="product" source="jar" name="package name" value="springframework" confidence="LOW"/>
+        </given>
+        <add>
+            <evidence type="product" source="hint analyzer" name="product" value="springsource_spring_framework" confidence="HIGH"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="vmware" confidence="HIGH"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="pivotal" confidence="HIGH"/>
+        </add>
+    </hint>
+    <hint>
+        <given>
+            <evidence type="product" source="Manifest" name="Bundle-Name" value="Spring Security Core" confidence="MEDIUM"/>
+            <evidence type="product" source="pom" name="artifactid" value="spring-security-core" confidence="HIGH"/>	
+        </given>
+        <add>
+            <evidence type="product" source="hint analyzer" name="product" value="springsource_spring_framework" confidence="HIGH"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="SpringSource" confidence="HIGH"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="vmware" confidence="HIGH"/>
+        </add>
+    </hint>
+    <hint>
+        <given>
+            <evidence type="vendor" source="composer.lock" name="vendor" value="symfony" confidence="HIGHEST"/>
+        </given>
+        <add>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="sensiolabs" confidence="HIGHEST"/>
+        </add>
+    </hint>		
+    <hint>
+        <given>
+            <evidence type="vendor" source="composer.lock" name="vendor" value="zendframework" confidence="HIGHEST"/>
+        </given>
+        <add>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="zend" confidence="HIGHEST"/>
+        </add>
+    </hint>	
+    <hint>
+        <given>
+            <evidence type="product" source="composer.lock" name="product" value="zendframework" confidence="HIGHEST"/>
+        </given>
+        <add>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="zend_framework" confidence="HIGHEST"/>
+        </add>
+    </hint>
+    
+    <!-- begin hack for temporary patch of issue #534-->
+    <hint>
+        <given>
+            <fileName regex="true" contains=".*hibernate-validator-5\.0\..*"/>
+        </given>
+        <add>
+            <evidence type="version" source="hint" name="version" value="5.0" confidence="HIGHEST"/>
+        </add>
+    </hint>
+    <hint>
+        <given>
+            <fileName regex="true" contains=".*hibernate-validator-5\.1\.[01].*"/>
+        </given>
+        <add>
+            <evidence type="version" source="hint" name="version" value="5.1" confidence="HIGHEST"/>
+        </add>
+    </hint>
+    <hint>
+        <given>
+            <fileName regex="true" contains=".*hibernate-validator-4\.1\..*"/>
+        </given>
+        <add>
+            <evidence type="version" source="hint" name="version" value="4.1.0" confidence="HIGHEST"/>
+        </add>
+    </hint>
+    <hint>
+        <given>
+            <fileName regex="true" contains=".*hibernate-validator-4\.2\.0.*"/>
+        </given>
+        <add>
+            <evidence type="version" source="hint" name="version" value="4.2.0" confidence="HIGHEST"/>
+        </add>
+    </hint>
+    <hint>
+        <given>
+            <fileName regex="true" contains=".*hibernate-validator-4\.3\.[01]\..*"/>
+        </given>
+        <add>
+            <evidence type="version" source="hint" name="version" value="4.3.0" confidence="HIGHEST"/>
+        </add>
+    </hint>
+    <!-- end hack for temporary patch of issue #534-->
+    
+    
+    <vendorDuplicatingHint value="sun" duplicate="oracle"/>	
+    <vendorDuplicatingHint value="oracle" duplicate="sun"/>	
 </hints>

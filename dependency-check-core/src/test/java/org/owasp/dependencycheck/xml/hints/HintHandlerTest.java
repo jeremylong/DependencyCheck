@@ -52,7 +52,7 @@ public class HintHandlerTest extends BaseTest {
     @Test
     public void testHandler() throws ParserConfigurationException, SAXNotRecognizedException, SAXNotSupportedException, SAXException, FileNotFoundException, UnsupportedEncodingException, IOException {
         File file = BaseTest.getResourceAsFile(this, "hints.xml");
-        File schema = BaseTest.getResourceAsFile(this, "schema/dependency-hint.1.0.xsd");
+        File schema = BaseTest.getResourceAsFile(this, "schema/dependency-hint.1.1.xsd");
         HintHandler handler = new HintHandler();
 
         SAXParserFactory factory = SAXParserFactory.newInstance();

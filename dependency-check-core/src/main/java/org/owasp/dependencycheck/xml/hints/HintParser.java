@@ -64,7 +64,7 @@ public class HintParser {
     /**
      * The schema for the hint XML files.
      */
-    private static final String HINT_SCHEMA = "schema/dependency-hint.1.0.xsd";
+    private static final String HINT_SCHEMA = "schema/dependency-hint.1.1.xsd";
 
     /**
      * Parses the given XML file and returns a list of the hints contained.

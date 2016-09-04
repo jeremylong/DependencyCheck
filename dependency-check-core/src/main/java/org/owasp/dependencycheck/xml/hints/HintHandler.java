@@ -62,9 +62,17 @@ public class HintHandler extends DefaultHandler {
      */
     private static final String DUPLICATE = "duplicate";
     /**
-     * Attribute name.
+     * Attribute value.
      */
     private static final String VENDOR = "vendor";
+    /**
+     * Attribute value.
+     */
+    private static final String PRODUCT = "product";
+    /**
+     * Attribute value.
+     */
+    private static final String VERSION = "version";
     /**
      * Attribute name.
      */
@@ -168,16 +176,25 @@ public class HintHandler extends DefaultHandler {
                             attr.getValue(VALUE),
                             Confidence.valueOf(attr.getValue(CONFIDENCE)));
                 }
-            } else if (inAddNode) {
-                rule.addAddProduct(attr.getValue(SOURCE),
-                        attr.getValue(NAME),
-                        attr.getValue(VALUE),
-                        Confidence.valueOf(attr.getValue(CONFIDENCE)));
-            } else {
-                rule.addGivenProduct(attr.getValue(SOURCE),
-                        attr.getValue(NAME),
-                        attr.getValue(VALUE),
-                        Confidence.valueOf(attr.getValue(CONFIDENCE)));
+            } else if (PRODUCT.equals(hintType)) {
+                if (inAddNode) {
+                    rule.addAddProduct(attr.getValue(SOURCE),
+                            attr.getValue(NAME),
+                            attr.getValue(VALUE),
+                            Confidence.valueOf(attr.getValue(CONFIDENCE)));
+                } else {
+                    rule.addGivenProduct(attr.getValue(SOURCE),
+                            attr.getValue(NAME),
+                            attr.getValue(VALUE),
+                            Confidence.valueOf(attr.getValue(CONFIDENCE)));
+                }
+            } else if (VERSION.equals(hintType)) {
+                if (inAddNode) {
+                    rule.addAddVersion(attr.getValue(SOURCE),
+                            attr.getValue(NAME),
+                            attr.getValue(VALUE),
+                            Confidence.valueOf(attr.getValue(CONFIDENCE)));
+                }
             }
         } else if (FILE_NAME.equals(qName)) {
             final PropertyType pt = new PropertyType();

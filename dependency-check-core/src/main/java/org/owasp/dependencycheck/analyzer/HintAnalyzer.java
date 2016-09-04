@@ -154,6 +154,9 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
                 for (Evidence e : hint.getAddProduct()) {
                     dependency.getProductEvidence().addEvidence(e);
                 }
+                for (Evidence e : hint.getAddVersion()) {
+                    dependency.getVersionEvidence().addEvidence(e);
+                }
             }
         }
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<hints xmlns="https://jeremylong.github.io/DependencyCheck/dependency-hint.1.0.xsd">
+<hints xmlns="https://jeremylong.github.io/DependencyCheck/dependency-hint.1.1.xsd">
 	<hint>
 		<given>
 			<evidence type="product" source="product source" name="given product name" value="value" confidence="HIGH"/>
