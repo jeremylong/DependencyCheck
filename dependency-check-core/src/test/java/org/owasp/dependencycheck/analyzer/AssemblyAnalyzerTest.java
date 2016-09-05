@@ -62,6 +62,7 @@ public class AssemblyAnalyzerTest extends BaseTest {
             analyzer = new AssemblyAnalyzer();
             analyzer.accept(new File("test.dll")); // trick into "thinking it is active"
             analyzer.initialize();
+            Assume.assumeTrue("Mono is not installed, skipping tests.", analyzer.buildArgumentList() == null);
         } catch (Exception e) {
             if (e.getMessage().contains("Could not execute .NET AssemblyAnalyzer")) {
                 LOGGER.warn("Exception setting up AssemblyAnalyzer. Tests will be incomplete");
@@ -118,7 +119,7 @@ public class AssemblyAnalyzerTest extends BaseTest {
     @Test
     public void testNonexistent() {
         assumeNotNull(analyzer.buildArgumentList());
-        
+
         // Tweak the log level so the warning doesn't show in the console
         String oldProp = System.getProperty(LOG_KEY, "info");
         File f = BaseTest.getResourceAsFile(this, "log4net.dll");
