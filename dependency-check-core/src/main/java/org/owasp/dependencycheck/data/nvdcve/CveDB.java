@@ -87,10 +87,12 @@ public class CveDB {
             open();
             try {
                 final String databaseProductName = conn.getMetaData().getDatabaseProductName();
-                batchSupported = conn.getMetaData().supportsBatchUpdates();
                 LOGGER.debug("Database dialect: {}", databaseProductName);
                 final Locale dbDialect = new Locale(databaseProductName);
                 statementBundle = ResourceBundle.getBundle("data/dbStatements", dbDialect);
+                if ("mysql".equalsIgnoreCase(databaseProductName)) {
+                    batchSupported = false;
+                }
             } catch (SQLException se) {
                 LOGGER.warn("Problem loading database specific dialect!", se);
                 statementBundle = ResourceBundle.getBundle("data/dbStatements");
