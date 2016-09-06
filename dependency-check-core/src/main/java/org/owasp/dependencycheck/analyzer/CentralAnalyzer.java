@@ -229,7 +229,8 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                         LOGGER.warn("Unable to download pom.xml for {} from Central; "
                                 + "this could result in undetected CPE/CVEs.", dependency.getFileName());
                     } finally {
-                        if (pomFile != null && !FileUtils.deleteQuietly(pomFile)) {
+                        if (pomFile != null && pomFile.exists() && !FileUtils.deleteQuietly(pomFile)) {
+                            LOGGER.debug("Failed to delete temporary pom file {}", pomFile.toString());
                             pomFile.deleteOnExit();
                         }
                     }

@@ -158,6 +158,7 @@ public class CpeUpdater extends BaseUpdater implements CachedWebDataSource {
         final String originalPath = file.getPath();
         final File gzip = new File(originalPath + ".gz");
         if (gzip.isFile() && !gzip.delete()) {
+            LOGGER.debug("Failed to delete intial temporary file {}", gzip.toString());
             gzip.deleteOnExit();
         }
         if (!file.renameTo(gzip)) {
@@ -192,8 +193,9 @@ public class CpeUpdater extends BaseUpdater implements CachedWebDataSource {
                     LOGGER.trace("ignore", ex);
                 }
             }
-            if (gzip.isFile()) {
-                FileUtils.deleteQuietly(gzip);
+            if (gzip.isFile() && !FileUtils.deleteQuietly(gzip)) {
+                LOGGER.debug("Failed to delete temporary file {}", gzip.toString());
+                gzip.deleteOnExit();
             }
         }
     }

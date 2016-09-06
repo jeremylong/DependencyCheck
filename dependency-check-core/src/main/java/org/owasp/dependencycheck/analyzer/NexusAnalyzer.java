@@ -245,7 +245,8 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
                     LOGGER.warn("Unable to download pom.xml for {} from Nexus repository; "
                             + "this could result in undetected CPE/CVEs.", dependency.getFileName());
                 } finally {
-                    if (pomFile != null && !FileUtils.deleteQuietly(pomFile)) {
+                    if (pomFile != null && pomFile.exists() && !FileUtils.deleteQuietly(pomFile)) {
+                        LOGGER.debug("Failed to delete temporary pom file {}", pomFile.toString());
                         pomFile.deleteOnExit();
                     }
                 }

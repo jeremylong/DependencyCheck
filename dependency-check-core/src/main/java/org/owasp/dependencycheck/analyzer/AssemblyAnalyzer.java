@@ -209,8 +209,6 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             IOUtils.copy(is, fos);
 
             grokAssemblyExe = tempFile;
-            // Set the temp file to get deleted when we're done
-            grokAssemblyExe.deleteOnExit();
             LOGGER.debug("Extracted GrokAssembly.exe to {}", grokAssemblyExe.getPath());
         } catch (IOException ioe) {
             this.setEnabled(false);
@@ -295,10 +293,12 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         super.close();
         try {
             if (grokAssemblyExe != null && !grokAssemblyExe.delete()) {
+                LOGGER.debug("Unable to delete temporary GrokAssembly.exe; attempting delete on exit");
                 grokAssemblyExe.deleteOnExit();
             }
         } catch (SecurityException se) {
             LOGGER.debug("Can't delete temporary GrokAssembly.exe");
+            grokAssemblyExe.deleteOnExit();
         }
     }
 
