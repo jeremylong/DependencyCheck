@@ -368,7 +368,7 @@ public class Engine implements FileFilter {
         }
 
         LOGGER.debug("\n----------------------------------------------------\nBEGIN ANALYSIS\n----------------------------------------------------");
-        LOGGER.info("Analysis Starting");
+        LOGGER.info("Analysis Started");
         final long analysisStart = System.currentTimeMillis();
 
         // analysis phases
