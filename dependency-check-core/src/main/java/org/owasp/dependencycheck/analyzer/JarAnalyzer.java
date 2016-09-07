@@ -49,6 +49,7 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
+import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.xml.pom.License;
 import org.owasp.dependencycheck.xml.pom.PomUtils;
@@ -324,8 +325,10 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     } else {
                         pom = PomUtils.readPom(externalPom);
                     }
-                    pom.processProperties(pomProperties);
-                    foundSomething |= setPomEvidence(dependency, pom, classes);
+                    if (pom != null) {
+                        pom.processProperties(pomProperties);
+                        foundSomething |= setPomEvidence(dependency, pom, classes);
+                    }
                 }
             } catch (AnalysisException ex) {
                 LOGGER.warn("An error occurred while analyzing '{}'.", dependency.getActualFilePath());
@@ -408,6 +411,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         final File file = new File(tmpDir, "pom.xml");
         try {
             final ZipEntry entry = jar.getEntry(path);
+            if (entry == null) {
+                throw new AnalysisException(String.format("Pom (%s)does not exist in %s", path, jar.getName()));
+            }
             input = jar.getInputStream(entry);
             fos = new FileOutputStream(file);
             IOUtils.copy(input, fos);
@@ -486,7 +492,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         final String originalGroupID = groupid;
-        if (groupid.startsWith("org.") || groupid.startsWith("com.")) {
+        if (groupid != null && (groupid.startsWith("org.") || groupid.startsWith("com."))) {
             groupid = groupid.substring(4);
         }
 
@@ -495,7 +501,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         final String originalArtifactID = artifactid;
-        if (artifactid.startsWith("org.") || artifactid.startsWith("com.")) {
+        if (artifactid != null && (artifactid.startsWith("org.") || artifactid.startsWith("com."))) {
             artifactid = artifactid.substring(4);
         }
 
@@ -644,9 +650,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @return whether evidence was identified parsing the manifest
      * @throws IOException if there is an issue reading the JAR file
      */
-    protected boolean parseManifest(Dependency dependency,
-            List<ClassNameInformation> classInformation)
-            throws IOException {
+    protected boolean parseManifest(Dependency dependency, List<ClassNameInformation> classInformation) throws IOException {
         boolean foundSomething = false;
         JarFile jar = null;
         try {
@@ -665,7 +669,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             final EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
             final EvidenceCollection productEvidence = dependency.getProductEvidence();
             final EvidenceCollection versionEvidence = dependency.getVersionEvidence();
-
             String source = "Manifest";
             String specificationVersion = null;
             boolean hasImplementationVersion = false;
@@ -687,7 +690,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     foundSomething = true;
                     versionEvidence.addEvidence(source, key, value, Confidence.HIGH);
                 } else if ("specification-version".equalsIgnoreCase(key)) {
-                    specificationVersion = key;
+                    specificationVersion = value;
                 } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VENDOR.toString())) {
                     foundSomething = true;
                     vendorEvidence.addEvidence(source, key, value, Confidence.HIGH);
@@ -706,17 +709,12 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     addMatchingValues(classInformation, value, productEvidence);
 //                //the following caused false positives.
 //                } else if (key.equalsIgnoreCase(BUNDLE_VENDOR)) {
-//                    foundSomething = true;
-//                    vendorEvidence.addEvidence(source, key, value, Confidence.HIGH);
-//                    addMatchingValues(classInformation, value, vendorEvidence);
                 } else if (key.equalsIgnoreCase(BUNDLE_VERSION)) {
                     foundSomething = true;
                     versionEvidence.addEvidence(source, key, value, Confidence.HIGH);
                 } else if (key.equalsIgnoreCase(Attributes.Name.MAIN_CLASS.toString())) {
                     continue;
-                    //skipping main class as if this has important information to add
-                    // it will be added during class name analysis...  if other fields
-                    // have the information from the class name then they will get added...
+                    //skipping main class as if this has important information to add it will be added during class name analysis...
                 } else {
                     key = key.toLowerCase();
                     if (!IGNORE_KEYS.contains(key)
@@ -782,7 +780,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     }
                 }
             }
-
             for (Map.Entry<String, Attributes> item : manifest.getEntries().entrySet()) {
                 final String name = item.getKey();
                 source = "manifest: " + name;
@@ -903,20 +900,27 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Initializes the JarAnalyzer.
      *
-     * @throws Exception is thrown if there is an exception creating a temporary
-     * directory
+     * @throws InitializationException is thrown if there is an exception
+     * creating a temporary directory
      */
     @Override
-    public void initializeFileTypeAnalyzer() throws Exception {
-        final File baseDir = Settings.getTempDirectory();
-        tempFileLocation = File.createTempFile("check", "tmp", baseDir);
-        if (!tempFileLocation.delete()) {
-            final String msg = String.format("Unable to delete temporary file '%s'.", tempFileLocation.getAbsolutePath());
-            throw new AnalysisException(msg);
-        }
-        if (!tempFileLocation.mkdirs()) {
-            final String msg = String.format("Unable to create directory '%s'.", tempFileLocation.getAbsolutePath());
-            throw new AnalysisException(msg);
+    public void initializeFileTypeAnalyzer() throws InitializationException {
+        try {
+            final File baseDir = Settings.getTempDirectory();
+            tempFileLocation = File.createTempFile("check", "tmp", baseDir);
+            if (!tempFileLocation.delete()) {
+                final String msg = String.format("Unable to delete temporary file '%s'.", tempFileLocation.getAbsolutePath());
+                setEnabled(false);
+                throw new InitializationException(msg);
+            }
+            if (!tempFileLocation.mkdirs()) {
+                final String msg = String.format("Unable to create directory '%s'.", tempFileLocation.getAbsolutePath());
+                setEnabled(false);
+                throw new InitializationException(msg);
+            }
+        } catch (IOException ex) {
+            setEnabled(false);
+            throw new InitializationException("Unable to create a temporary file", ex);
         }
     }
 

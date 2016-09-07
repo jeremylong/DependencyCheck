@@ -17,12 +17,19 @@
  */
 package org.owasp.dependencycheck;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
+import org.owasp.dependencycheck.exception.ExceptionCollection;
+import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -34,10 +41,14 @@ public class EngineIntegrationTest extends BaseDBTestCase {
     /**
      * Test running the entire engine.
      *
-     * @throws Exception is thrown when an exception occurs.
+     * @throws java.io.IOException
+     * @throws org.owasp.dependencycheck.utils.InvalidSettingException
+     * @throws org.owasp.dependencycheck.data.nvdcve.DatabaseException
+     * @throws org.owasp.dependencycheck.exception.ReportException
+     * @throws org.owasp.dependencycheck.exception.ExceptionCollection
      */
     @Test
-    public void testEngine() throws Exception {
+    public void testEngine() throws IOException, InvalidSettingException, DatabaseException, ReportException, ExceptionCollection {
         String testClasses = "target/test-classes";
         boolean autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
@@ -45,7 +56,23 @@ public class EngineIntegrationTest extends BaseDBTestCase {
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
         instance.scan(testClasses);
         assertTrue(instance.getDependencies().size() > 0);
-        instance.analyzeDependencies();
+        try {
+            instance.analyzeDependencies();
+        } catch (ExceptionCollection ex) {
+            if (ex.getExceptions().size()==1 &&
+                    (ex.getExceptions().get(0).getMessage().contains("bundle-audit") ||
+                    ex.getExceptions().get(0).getMessage().contains("AssemblyAnalyzer"))) {
+                //this is fine to ignore
+            } else if (ex.getExceptions().size()==2 &&
+                    ((ex.getExceptions().get(0).getMessage().contains("bundle-audit") &&
+                    ex.getExceptions().get(1).getMessage().contains("AssemblyAnalyzer")) ||
+                    (ex.getExceptions().get(1).getMessage().contains("bundle-audit") &&
+                    ex.getExceptions().get(0).getMessage().contains("AssemblyAnalyzer")))) {
+                //this is fine to ignore
+            } else {
+                throw ex;
+            }
+        }
         CveDB cveDB = new CveDB();
         cveDB.open();
         DatabaseProperties dbProp = cveDB.getDatabaseProperties();

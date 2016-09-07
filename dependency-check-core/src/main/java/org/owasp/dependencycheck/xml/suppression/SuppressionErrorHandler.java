@@ -15,10 +15,8 @@
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.suppression;
+package org.owasp.dependencycheck.xml.suppression;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -33,7 +31,7 @@ public class SuppressionErrorHandler implements ErrorHandler {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(SuppressionErrorHandler.class);
+    //private static final Logger LOGGER = LoggerFactory.getLogger(SuppressionErrorHandler.class);
 
     /**
      * Builds a prettier exception message.
@@ -70,7 +68,7 @@ public class SuppressionErrorHandler implements ErrorHandler {
      */
     @Override
     public void warning(SAXParseException ex) throws SAXException {
-        LOGGER.debug("", ex);
+        //LOGGER.debug("", ex);
     }
 
     /**

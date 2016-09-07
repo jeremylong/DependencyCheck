@@ -25,16 +25,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
-import org.owasp.dependencycheck.suppression.PropertyType;
-import org.owasp.dependencycheck.suppression.SuppressionParseException;
-import org.owasp.dependencycheck.suppression.SuppressionParser;
+import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.xml.suppression.PropertyType;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.FileUtils;
@@ -49,6 +46,8 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 /**
+ * This analyzer adds evidence to dependencies to enhance the accuracy of
+ * library identification.
  *
  * @author Jeremy Long
  */
@@ -87,12 +86,17 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
     /**
      * The initialize method does nothing for this Analyzer.
      *
-     * @throws Exception thrown if there is an exception
+     * @throws InitializationException thrown if there is an exception
      */
     @Override
-    public void initialize() throws Exception {
-        super.initialize();
-        loadHintRules();
+    public void initialize() throws InitializationException {
+        try {
+            super.initialize();
+            loadHintRules();
+        } catch (HintParseException ex) {
+            LOGGER.debug("Unable to parse hint file", ex);
+            throw new InitializationException("Unable to parse the hint file", ex);
+        }
     }
     //</editor-fold>
 
@@ -149,6 +153,9 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
                 }
                 for (Evidence e : hint.getAddProduct()) {
                     dependency.getProductEvidence().addEvidence(e);
+                }
+                for (Evidence e : hint.getAddVersion()) {
+                    dependency.getVersionEvidence().addEvidence(e);
                 }
             }
         }
@@ -250,7 +257,7 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
         if (product.contains(zendframeworkProduct)) {
             dependency.getProductEvidence().addEvidence("hint analyzer", "vendor", "zend_framework", Confidence.HIGHEST);
         }
-        
+
         //sun/oracle problem
         final Iterator<Evidence> itr = dependency.getVendorEvidence().iterator();
         final List<Evidence> newEntries = new ArrayList<Evidence>();
@@ -274,7 +281,7 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
     /**
      * Loads the hint rules file.
      *
-     * @throws SuppressionParseException thrown if the XML cannot be parsed.
+     * @throws HintParseException thrown if the XML cannot be parsed.
      */
     private void loadHintRules() throws HintParseException {
         final HintParser parser = new HintParser();
@@ -288,7 +295,7 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
             LOGGER.error("Unable to parse the base hint data file");
             LOGGER.debug("Unable to parse the base hint data file", ex);
         }
-        final String filePath = Settings.getString(Settings.KEYS.SUPPRESSION_FILE);
+        final String filePath = Settings.getString(Settings.KEYS.HINTS_FILE);
         if (filePath == null) {
             return;
         }
@@ -307,14 +314,21 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
             } else {
                 file = new File(filePath);
                 if (!file.exists()) {
-                    final InputStream fromClasspath = this.getClass().getClassLoader().getResourceAsStream(filePath);
-                    if (fromClasspath != null) {
-                        deleteTempFile = true;
-                        file = FileUtils.getTempFile("hint", "xml");
-                        try {
-                            org.apache.commons.io.FileUtils.copyInputStreamToFile(fromClasspath, file);
-                        } catch (IOException ex) {
-                            throw new HintParseException("Unable to locate suppressions file in classpath", ex);
+                    InputStream fromClasspath = null;
+                    try {
+                        fromClasspath = this.getClass().getClassLoader().getResourceAsStream(filePath);
+                        if (fromClasspath != null) {
+                            deleteTempFile = true;
+                            file = FileUtils.getTempFile("hint", "xml");
+                            try {
+                                org.apache.commons.io.FileUtils.copyInputStreamToFile(fromClasspath, file);
+                            } catch (IOException ex) {
+                                throw new HintParseException("Unable to locate suppressions file in classpath", ex);
+                            }
+                        }
+                    } finally {
+                        if (fromClasspath != null) {
+                            fromClasspath.close();
                         }
                     }
                 }
@@ -322,7 +336,7 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
 
             if (file != null) {
                 try {
-                    Hints newHints = parser.parseHints(file);
+                    final Hints newHints = parser.parseHints(file);
                     hints.getHintRules().addAll(newHints.getHintRules());
                     hints.getVendorDuplicatingHintRules().addAll(newHints.getVendorDuplicatingHintRules());
                     LOGGER.debug("{} hint rules were loaded.", hints.getHintRules().size());

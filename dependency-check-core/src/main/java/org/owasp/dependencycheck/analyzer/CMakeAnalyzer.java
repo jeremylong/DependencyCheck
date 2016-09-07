@@ -38,14 +38,18 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
  * <p>
- * Used to analyze CMake build files, and collect information that can be used to determine the associated CPE.</p>
+ * Used to analyze CMake build files, and collect information that can be used
+ * to determine the associated CPE.</p>
  * <p>
- * Note: This analyzer catches straightforward invocations of the project command, plus some other observed patterns of version
- * inclusion in real CMake projects. Many projects make use of older versions of CMake and/or use custom "homebrew" ways to insert
- * version information. Hopefully as the newer CMake call pattern grows in usage, this analyzer allow more CPEs to be
+ * Note: This analyzer catches straightforward invocations of the project
+ * command, plus some other observed patterns of version inclusion in real CMake
+ * projects. Many projects make use of older versions of CMake and/or use custom
+ * "homebrew" ways to insert version information. Hopefully as the newer CMake
+ * call pattern grows in usage, this analyzer allow more CPEs to be
  * identified.</p>
  *
  * @author Dale Visser
@@ -135,10 +139,10 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * No-op initializer implementation.
      *
-     * @throws Exception never thrown
+     * @throws InitializationException never thrown
      */
     @Override
-    protected void initializeFileTypeAnalyzer() throws Exception {
+    protected void initializeFileTypeAnalyzer() throws InitializationException {
         // Nothing to do here.
     }
 
@@ -147,7 +151,8 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @param dependency the dependency being analyzed
      * @param engine the engine being used to perform the scan
-     * @throws AnalysisException thrown if there is an unrecoverable error analyzing the dependency
+     * @throws AnalysisException thrown if there is an unrecoverable error
+     * analyzing the dependency
      */
     @Override
     protected void analyzeFileType(Dependency dependency, Engine engine)
@@ -183,13 +188,17 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Extracts the version information from the contents. If more then one version is found additional dependencies are added to
-     * the dependency list.
+     * Extracts the version information from the contents. If more then one
+     * version is found additional dependencies are added to the dependency
+     * list.
      *
      * @param dependency the dependency being analyzed
      * @param engine the dependency-check engine
      * @param contents the version information
      */
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+            value = "DM_DEFAULT_ENCODING",
+            justification = "Default encoding is only used if UTF-8 is not available")
     private void analyzeSetVersionCommand(Dependency dependency, Engine engine, String contents) {
         Dependency currentDep = dependency;
 

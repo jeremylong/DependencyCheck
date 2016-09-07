@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Evidence;
-import org.owasp.dependencycheck.suppression.PropertyType;
+import org.owasp.dependencycheck.xml.suppression.PropertyType;
 
 /**
  * A collection of product and vendor evidence to match; if any evidence is
@@ -72,9 +72,9 @@ public class HintRule {
     }
 
     /**
-     * Get the value of givenProduct
+     * Get the value of givenProduct.
      *
-     * @return the value of givenProduct.
+     * @return the value of givenProduct
      */
     public List<Evidence> getGivenProduct() {
         return givenProduct;
@@ -84,6 +84,15 @@ public class HintRule {
      * The list of vendor evidence that is being matched.
      */
     private final List<Evidence> givenVendor = new ArrayList<Evidence>();
+
+    /**
+     * The list of product evidence to add.
+     */
+    private final List<Evidence> addProduct = new ArrayList<Evidence>();
+    /**
+     * The list of version evidence to add.
+     */
+    private final List<Evidence> addVersion = new ArrayList<Evidence>();
 
     /**
      * Adds a given vendors to the list of evidence to matched.
@@ -107,11 +116,6 @@ public class HintRule {
     }
 
     /**
-     * The list of product evidence to add.
-     */
-    private final List<Evidence> addProduct = new ArrayList<Evidence>();
-
-    /**
      * Adds a given product to the list of evidence to add when matched.
      *
      * @param source the source of the evidence
@@ -130,6 +134,27 @@ public class HintRule {
      */
     public List<Evidence> getAddProduct() {
         return addProduct;
+    }
+
+    /**
+     * Adds a given version to the list of evidence to add when matched.
+     *
+     * @param source the source of the evidence
+     * @param name the name of the evidence
+     * @param value the value of the evidence
+     * @param confidence the confidence of the evidence
+     */
+    public void addAddVersion(String source, String name, String value, Confidence confidence) {
+        addVersion.add(new Evidence(source, name, value, confidence));
+    }
+
+    /**
+     * Get the value of addVersion.
+     *
+     * @return the value of addVersion
+     */
+    public List<Evidence> getAddVersion() {
+        return addVersion;
     }
 
     /**

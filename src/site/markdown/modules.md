@@ -3,10 +3,12 @@ Modules
 OWASP dependency-check's core analysis engine was designed to fit into an applications normal
 build and reporting process:
 
--  [Maven Plugin](dependency-check-maven/index.html)
--  [Ant Task](dependency-check-ant/index.html)
--  [Gradle Plugin](dependency-check-gradle/index.html)
--  [Jenkins Plugin](dependency-check-jenkins/index.html)
+- [Ant Task](dependency-check-ant/index.html)
+- [Command Line Tool](dependency-check-cli/index.html)
+- [Gradle Plugin](dependency-check-gradle/index.html)
+- [Jenkins Plugin](dependency-check-jenkins/index.html)
+- [Maven Plugin](dependency-check-maven/index.html)
+- [SBT Plugin](https://github.com/albuch/sbt-dependency-check)
 
 In addition, dependency-check can be executed from the [command line](dependency-check-cli/index.html).
 

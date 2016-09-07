@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
+import org.apache.commons.lang3.SystemUtils;
 
 /**
  * A collection of utilities for processing information about files.
@@ -102,7 +103,7 @@ public final class FileUtils {
      * @return a String containing the bit bucket
      */
     public static String getBitBucket() {
-        if (System.getProperty("os.name").startsWith("Windows")) {
+        if (SystemUtils.IS_OS_WINDOWS) {
             return BIT_BUCKET_WIN;
         } else {
             return BIT_BUCKET_UNIX;

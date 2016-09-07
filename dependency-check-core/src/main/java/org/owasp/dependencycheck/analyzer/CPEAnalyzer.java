@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -45,6 +46,7 @@ import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
+import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 import org.slf4j.Logger;
@@ -123,11 +125,20 @@ public class CPEAnalyzer implements Analyzer {
     /**
      * Creates the CPE Lucene Index.
      *
-     * @throws Exception is thrown if there is an issue opening the index.
+     * @throws InitializationException is thrown if there is an issue opening
+     * the index.
      */
     @Override
-    public void initialize() throws Exception {
-        this.open();
+    public void initialize() throws InitializationException {
+        try {
+            this.open();
+        } catch (IOException ex) {
+            LOGGER.debug("Exception initializing the Lucene Index", ex);
+            throw new InitializationException("An exception occurred initializing the Lucene Index", ex);
+        } catch (DatabaseException ex) {
+            LOGGER.debug("Exception accessing the database", ex);
+            throw new InitializationException("An exception occurred accessing the database", ex);
+        }
     }
 
     /**
@@ -540,7 +551,7 @@ public class CPEAnalyzer implements Analyzer {
         final List<IdentifierMatch> collected = new ArrayList<IdentifierMatch>();
 
         //TODO the following algorithm incorrectly identifies things as a lower version
-        // if there lower confidence evidence when the current (highest) version number 
+        // if there lower confidence evidence when the current (highest) version number
         // is newer then anything in the NVD.
         for (Confidence conf : Confidence.values()) {
             for (Evidence evidence : dependency.getVersionEvidence().iterator(conf)) {
@@ -564,8 +575,9 @@ public class CPEAnalyzer implements Analyzer {
                         final String url = String.format(NVD_SEARCH_URL, URLEncoder.encode(vs.getName(), "UTF-8"));
                         final IdentifierMatch match = new IdentifierMatch("cpe", vs.getName(), url, IdentifierConfidence.EXACT_MATCH, conf);
                         collected.add(match);
-                    } else //TODO the following isn't quite right is it? need to think about this guessing game a bit more.
-                    if (evVer.getVersionParts().size() <= dbVer.getVersionParts().size()
+
+                        //TODO the following isn't quite right is it? need to think about this guessing game a bit more.
+                    } else if (evVer.getVersionParts().size() <= dbVer.getVersionParts().size()
                             && evVer.matchesAtLeastThreeLevels(dbVer)) {
                         if (bestGuessConf == null || bestGuessConf.compareTo(conf) > 0) {
                             if (bestGuess.getVersionParts().size() < dbVer.getVersionParts().size()) {
@@ -790,6 +802,12 @@ public class CPEAnalyzer implements Analyzer {
          */
         @Override
         public int compareTo(IdentifierMatch o) {
+            return new CompareToBuilder()
+                    .append(confidence, o.confidence)
+                    .append(evidenceConfidence, o.evidenceConfidence)
+                    .append(identifier, o.identifier)
+                    .toComparison();
+            /*
             int conf = this.confidence.compareTo(o.confidence);
             if (conf == 0) {
                 conf = this.evidenceConfidence.compareTo(o.evidenceConfidence);
@@ -798,6 +816,7 @@ public class CPEAnalyzer implements Analyzer {
                 }
             }
             return conf;
+             */
         }
     }
 }

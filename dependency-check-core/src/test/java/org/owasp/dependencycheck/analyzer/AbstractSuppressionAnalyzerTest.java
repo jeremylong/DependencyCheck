@@ -23,8 +23,7 @@ import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.suppression.SuppressionParseException;
-import org.owasp.dependencycheck.suppression.SuppressionRule;
+import org.owasp.dependencycheck.xml.suppression.SuppressionRule;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +34,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
  * @author Jeremy Long
@@ -49,7 +49,8 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
     }
 
     /**
-     * Test of getSupportedExtensions method, of class AbstractSuppressionAnalyzer.
+     * Test of getSupportedExtensions method, of class
+     * AbstractSuppressionAnalyzer.
      */
     @Test
     public void testGetSupportedExtensions() {
@@ -58,7 +59,8 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
     }
 
     /**
-     * Test of getRules method, of class AbstractSuppressionAnalyzer for suppression file declared as URL.
+     * Test of getRules method, of class AbstractSuppressionAnalyzer for
+     * suppression file declared as URL.
      */
     @Test
     public void testGetRulesFromSuppressionFileFromURL() throws Exception {
@@ -70,7 +72,8 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
     }
 
     /**
-     * Test of getRules method, of class AbstractSuppressionAnalyzer for suppression file declared as URL.
+     * Test of getRules method, of class AbstractSuppressionAnalyzer for
+     * suppression file declared as URL.
      */
     @Test
     public void testGetRulesFromSuppressionFileInClasspath() throws Exception {
@@ -81,7 +84,7 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
         assertTrue(expCount <= currentSize);
     }
 
-    @Test(expected = SuppressionParseException.class)
+    @Test(expected = InitializationException.class)
     public void testFailureToLocateSuppressionFileAnywhere() throws Exception {
         Settings.setString(Settings.KEYS.SUPPRESSION_FILE, "doesnotexist.xml");
         instance.initialize();

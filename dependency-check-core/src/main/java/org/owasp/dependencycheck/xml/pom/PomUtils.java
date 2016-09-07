@@ -48,13 +48,17 @@ public final class PomUtils {
      *
      * @param file the pom.xml file
      * @return returns a
-     * @throws AnalysisException is thrown if there is an exception extracting or parsing the POM {@link Model} object
+     * @throws AnalysisException is thrown if there is an exception extracting
+     * or parsing the POM {@link Model} object
      */
     public static Model readPom(File file) throws AnalysisException {
-        Model model = null;
         try {
             final PomParser parser = new PomParser();
-            model = parser.parse(file);
+            final Model model = parser.parse(file);
+            if (model == null) {
+                throw new AnalysisException(String.format("Unable to parse pom '%s'", file.getPath()));
+            }
+            return model;
         } catch (PomParseException ex) {
             LOGGER.warn("Unable to parse pom '{}'", file.getPath());
             LOGGER.debug("", ex);
@@ -68,7 +72,6 @@ public final class PomUtils {
             LOGGER.debug("", ex);
             throw new AnalysisException(ex);
         }
-        return model;
     }
 
     /**
@@ -77,7 +80,8 @@ public final class PomUtils {
      * @param path the path to the pom.xml file within the jar file
      * @param jar the jar file to extract the pom from
      * @return returns a
-     * @throws AnalysisException is thrown if there is an exception extracting or parsing the POM {@link Model} object
+     * @throws AnalysisException is thrown if there is an exception extracting
+     * or parsing the POM {@link Model} object
      */
     public static Model readPom(String path, JarFile jar) throws AnalysisException {
         final ZipEntry entry = jar.getEntry(path);
@@ -86,7 +90,9 @@ public final class PomUtils {
             try {
                 final PomParser parser = new PomParser();
                 model = parser.parse(jar.getInputStream(entry));
-                LOGGER.debug("Read POM {}", path);
+                if (model == null) {
+                    throw new AnalysisException(String.format("Unable to parse pom '%s/%s'", jar.getName(), path));
+                }
             } catch (SecurityException ex) {
                 LOGGER.warn("Unable to parse pom '{}' in jar '{}'; invalid signature", path, jar.getName());
                 LOGGER.debug("", ex);
@@ -105,11 +111,13 @@ public final class PomUtils {
     }
 
     /**
-     * Reads in the pom file and adds elements as evidence to the given dependency.
+     * Reads in the pom file and adds elements as evidence to the given
+     * dependency.
      *
      * @param dependency the dependency being analyzed
      * @param pomFile the pom file to read
-     * @throws AnalysisException is thrown if there is an exception parsing the pom
+     * @throws AnalysisException is thrown if there is an exception parsing the
+     * pom
      */
     public static void analyzePOM(Dependency dependency, File pomFile) throws AnalysisException {
         final Model pom = PomUtils.readPom(pomFile);

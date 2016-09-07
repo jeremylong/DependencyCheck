@@ -43,9 +43,10 @@ public class CPEHandler extends DefaultHandler {
     /**
      * The Starts with expression to filter CVE entries by CPE.
      */
-    private static final String CPE_STARTS_WITH = Settings.getString(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER,"cpe:/a:");
+    private static final String CPE_STARTS_WITH = Settings.getString(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER, "cpe:/a:");
     /**
-     * The text content of the node being processed. This can be used during the end element event.
+     * The text content of the node being processed. This can be used during the
+     * end element event.
      */
     private StringBuilder nodeText = null;
     /**
@@ -77,7 +78,8 @@ public class CPEHandler extends DefaultHandler {
      * @param localName the local name
      * @param qName the qualified name
      * @param attributes the attributes
-     * @throws SAXException thrown if there is an exception processing the element
+     * @throws SAXException thrown if there is an exception processing the
+     * element
      */
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -128,7 +130,8 @@ public class CPEHandler extends DefaultHandler {
      * @param ch the char array
      * @param start the start position of the data read
      * @param length the length of the data read
-     * @throws SAXException thrown if there is an exception processing the characters
+     * @throws SAXException thrown if there is an exception processing the
+     * characters
      */
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
@@ -138,12 +141,14 @@ public class CPEHandler extends DefaultHandler {
     }
 
     /**
-     * Handles the end element event. Stores the CPE data in the Cve Database if the cpe item node is ending.
+     * Handles the end element event. Stores the CPE data in the Cve Database if
+     * the cpe item node is ending.
      *
      * @param uri the element's uri
      * @param localName the local name
      * @param qName the qualified name
-     * @throws SAXException thrown if there is an exception processing the element
+     * @throws SAXException thrown if there is an exception processing the
+     * element
      */
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
@@ -182,7 +187,8 @@ public class CPEHandler extends DefaultHandler {
 
     // <editor-fold defaultstate="collapsed" desc="The Element Class that maintains state information about the current node">
     /**
-     * A simple class to maintain information about the current element while parsing the CPE XML.
+     * A simple class to maintain information about the current element while
+     * parsing the CPE XML.
      */
     protected static final class Element {
 

@@ -32,7 +32,7 @@ public class Hints {
     private List<HintRule> hintRules;
 
     /**
-     * Get the value of hintRules
+     * Get the value of hintRules.
      *
      * @return the value of hintRules
      */
@@ -41,7 +41,7 @@ public class Hints {
     }
 
     /**
-     * Set the value of hintRules
+     * Set the value of hintRules.
      *
      * @param hintRules new value of hintRules
      */
@@ -55,7 +55,7 @@ public class Hints {
     private List<VendorDuplicatingHintRule> vendorDuplicatingHintRules;
 
     /**
-     * Get the value of vendorDuplicatingHintRules
+     * Get the value of vendorDuplicatingHintRules.
      *
      * @return the value of vendorDuplicatingHintRules
      */
@@ -64,12 +64,11 @@ public class Hints {
     }
 
     /**
-     * Set the value of vendorDuplicatingHintRules
+     * Set the value of vendorDuplicatingHintRules.
      *
      * @param vendorDuplicatingHintRules new value of vendorDuplicatingHintRules
      */
     public void setVendorDuplicatingHintRules(List<VendorDuplicatingHintRule> vendorDuplicatingHintRules) {
         this.vendorDuplicatingHintRules = vendorDuplicatingHintRules;
     }
-
 }

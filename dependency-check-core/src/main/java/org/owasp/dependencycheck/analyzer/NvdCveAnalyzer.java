@@ -27,6 +27,8 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.exception.InitializationException;
+import org.slf4j.LoggerFactory;
 
 /**
  * NvdCveAnalyzer is a utility class that takes a project dependency and attempts to discern if there is an associated
@@ -35,7 +37,10 @@ import org.owasp.dependencycheck.dependency.Vulnerability;
  * @author Jeremy Long
  */
 public class NvdCveAnalyzer implements Analyzer {
-
+    /**
+     * The Logger for use throughout the class
+     */
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(NvdCveAnalyzer.class);
     /**
      * The maximum number of query results to return.
      */
@@ -79,7 +84,7 @@ public class NvdCveAnalyzer implements Analyzer {
     /**
      * Ensures that the CVE Database is closed.
      *
-     * @throws Throwable when a throwable is thrown.
+     * @throws Throwable an exception raised by this method
      */
     @Override
     protected void finalize() throws Throwable {
@@ -94,7 +99,7 @@ public class NvdCveAnalyzer implements Analyzer {
      *
      * @param dependency The Dependency to analyze
      * @param engine The analysis engine
-     * @throws AnalysisException is thrown if there is an issue analyzing the dependency
+     * @throws AnalysisException thrown if there is an issue analyzing the dependency
      */
     @Override
     public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
@@ -145,10 +150,24 @@ public class NvdCveAnalyzer implements Analyzer {
     /**
      * Opens the database used to gather NVD CVE data.
      *
-     * @throws Exception is thrown if there is an issue opening the index.
+     * @throws InitializationException is thrown if there is an issue opening the index.
      */
     @Override
-    public void initialize() throws Exception {
-        this.open();
+    public void initialize() throws InitializationException {
+        try {
+            this.open();
+        } catch (SQLException ex) {
+            LOGGER.debug("SQL Exception initializing NvdCveAnalyzer", ex);
+            throw new InitializationException(ex);
+        } catch (IOException ex) {
+            LOGGER.debug("IO Exception initializing NvdCveAnalyzer", ex);
+            throw new InitializationException(ex);
+        } catch (DatabaseException ex) {
+            LOGGER.debug("Database Exception initializing NvdCveAnalyzer", ex);
+            throw new InitializationException(ex);
+        } catch (ClassNotFoundException ex) {
+            LOGGER.debug("Exception initializing NvdCveAnalyzer", ex);
+            throw new InitializationException(ex);
+        }
     }
 }

@@ -24,6 +24,7 @@ proxyPort             | The Proxy Port.                    | &nbsp;
 proxyUsername         | Defines the proxy user name.       | &nbsp;
 proxyPassword         | Defines the proxy password.        | &nbsp;
 connectionTimeout     | The URL Connection Timeout.        | &nbsp;
+failOnError           | Whether the build should fail if there is an error executing the update | true
 
 Advanced Configuration
 ====================

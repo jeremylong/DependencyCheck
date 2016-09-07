@@ -70,11 +70,12 @@ public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
     /**
      * Python init files
      */
+    //CSOFF: WhitespaceAfter
     private static final NameFileFilter IGNORED_FILES = new NameFileFilter(new String[]{
         "__init__.py",
         "__init__.pyc",
-        "__init__.pyo",
-    });
+        "__init__.pyo",});
+    //CSON: WhitespaceAfter
 
     /**
      * Collects information about the file name.
@@ -93,26 +94,27 @@ public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
 
         //add version evidence
         final DependencyVersion version = DependencyVersionUtil.parseVersion(fileName);
+        final String packageName = DependencyVersionUtil.parsePreVersion(fileName);
         if (version != null) {
             // If the version number is just a number like 2 or 23, reduce the confidence
             // a shade. This should hopefully correct for cases like log4j.jar or
             // struts2-core.jar
             if (version.getVersionParts() == null || version.getVersionParts().size() < 2) {
-                dependency.getVersionEvidence().addEvidence("file", "name",
+                dependency.getVersionEvidence().addEvidence("file", "version",
                         version.toString(), Confidence.MEDIUM);
             } else {
                 dependency.getVersionEvidence().addEvidence("file", "version",
                         version.toString(), Confidence.HIGHEST);
             }
             dependency.getVersionEvidence().addEvidence("file", "name",
-                    fileName, Confidence.MEDIUM);
+                    packageName, Confidence.MEDIUM);
         }
 
         if (!IGNORED_FILES.accept(f)) {
             dependency.getProductEvidence().addEvidence("file", "name",
-                    fileName, Confidence.HIGH);
+                    packageName, Confidence.HIGH);
             dependency.getVendorEvidence().addEvidence("file", "name",
-                    fileName, Confidence.HIGH);
+                    packageName, Confidence.HIGH);
         }
     }
 }

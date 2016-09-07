@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
 
     /**
-     * The logger
+     * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(NvdCveUpdater.class);
     /**
@@ -59,9 +59,8 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
     public static final int MAX_THREAD_POOL_SIZE = Settings.getInt(Settings.KEYS.MAX_DOWNLOAD_THREAD_POOL_SIZE, 3);
 
     /**
-     * <p>
      * Downloads the latest NVD CVE XML file from the web and imports it into
-     * the current CVE Database.</p>
+     * the current CVE Database.
      *
      * @throws UpdateException is thrown if there is an error updating the
      * database
@@ -78,15 +77,13 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
             }
             if (autoUpdate && checkUpdate()) {
                 final UpdateableNvdCve updateable = getUpdatesNeeded();
-                getProperties().save(DatabaseProperties.LAST_CHECKED, Long.toString(System.currentTimeMillis()));
                 if (updateable.isUpdateNeeded()) {
                     performUpdate(updateable);
                 }
+                getProperties().save(DatabaseProperties.LAST_CHECKED, Long.toString(System.currentTimeMillis()));
             }
         } catch (MalformedURLException ex) {
-            LOGGER.warn(
-                    "NVD CVE properties files contain an invalid URL, unable to update the data to use the most current data.");
-            LOGGER.debug("", ex);
+            throw new UpdateException("NVD CVE properties files contain an invalid URL, unable to update the data to use the most current data.", ex);
         } catch (DownloadFailedException ex) {
             LOGGER.warn(
                     "Unable to download the NVD CVE data; the results may not include the most recent CPE/CVEs from the NVD.");
@@ -94,7 +91,7 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
                 LOGGER.info(
                         "If you are behind a proxy you may need to configure dependency-check to use the proxy.");
             }
-            LOGGER.debug("", ex);
+            throw new UpdateException("Unable to download the NVD CVE data.", ex);
         } finally {
             closeDataStores();
         }
@@ -107,9 +104,9 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
      * checking again. A database property stores the timestamp of the last
      * check.
      *
-     * @return true to proceed with the check, or false to skip.
+     * @return true to proceed with the check, or false to skip
      * @throws UpdateException thrown when there is an issue checking for
-     * updates.
+     * updates
      */
     private boolean checkUpdate() throws UpdateException {
         boolean proceed = true;
@@ -159,94 +156,86 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
      * @throws UpdateException is thrown if there is an error updating the
      * database
      */
-    public void performUpdate(UpdateableNvdCve updateable) throws UpdateException {
+    private void performUpdate(UpdateableNvdCve updateable) throws UpdateException {
         int maxUpdates = 0;
-        try {
-            for (NvdCveInfo cve : updateable) {
-                if (cve.getNeedsUpdate()) {
-                    maxUpdates += 1;
+        for (NvdCveInfo cve : updateable) {
+            if (cve.getNeedsUpdate()) {
+                maxUpdates += 1;
+            }
+        }
+        if (maxUpdates <= 0) {
+            return;
+        }
+        if (maxUpdates > 3) {
+            LOGGER.info("NVD CVE requires several updates; this could take a couple of minutes.");
+        }
+
+        final int poolSize = (MAX_THREAD_POOL_SIZE < maxUpdates) ? MAX_THREAD_POOL_SIZE : maxUpdates;
+
+        final ExecutorService downloadExecutors = Executors.newFixedThreadPool(poolSize);
+        final ExecutorService processExecutor = Executors.newSingleThreadExecutor();
+        final Set<Future<Future<ProcessTask>>> downloadFutures = new HashSet<Future<Future<ProcessTask>>>(maxUpdates);
+        for (NvdCveInfo cve : updateable) {
+            if (cve.getNeedsUpdate()) {
+                final DownloadTask call = new DownloadTask(cve, processExecutor, getCveDB(), Settings.getInstance());
+                downloadFutures.add(downloadExecutors.submit(call));
+            }
+        }
+        downloadExecutors.shutdown();
+
+        //next, move the future future processTasks to just future processTasks
+        final Set<Future<ProcessTask>> processFutures = new HashSet<Future<ProcessTask>>(maxUpdates);
+        for (Future<Future<ProcessTask>> future : downloadFutures) {
+            Future<ProcessTask> task = null;
+            try {
+                task = future.get();
+            } catch (InterruptedException ex) {
+                downloadExecutors.shutdownNow();
+                processExecutor.shutdownNow();
+
+                LOGGER.debug("Thread was interrupted during download", ex);
+                throw new UpdateException("The download was interrupted", ex);
+            } catch (ExecutionException ex) {
+                downloadExecutors.shutdownNow();
+                processExecutor.shutdownNow();
+
+                LOGGER.debug("Thread was interrupted during download execution", ex);
+                throw new UpdateException("The execution of the download was interrupted", ex);
+            }
+            if (task == null) {
+                downloadExecutors.shutdownNow();
+                processExecutor.shutdownNow();
+                LOGGER.debug("Thread was interrupted during download");
+                throw new UpdateException("The download was interrupted; unable to complete the update");
+            } else {
+                processFutures.add(task);
+            }
+        }
+
+        for (Future<ProcessTask> future : processFutures) {
+            try {
+                final ProcessTask task = future.get();
+                if (task.getException() != null) {
+                    throw task.getException();
                 }
+            } catch (InterruptedException ex) {
+                processExecutor.shutdownNow();
+                LOGGER.debug("Thread was interrupted during processing", ex);
+                throw new UpdateException(ex);
+            } catch (ExecutionException ex) {
+                processExecutor.shutdownNow();
+                LOGGER.debug("Execution Exception during process", ex);
+                throw new UpdateException(ex);
+            } finally {
+                processExecutor.shutdown();
             }
-            if (maxUpdates <= 0) {
-                return;
-            }
-            if (maxUpdates > 3) {
-                LOGGER.info(
-                        "NVD CVE requires several updates; this could take a couple of minutes.");
-            }
-            if (maxUpdates > 0) {
-                openDataStores();
-            }
+        }
 
-            final int poolSize = (MAX_THREAD_POOL_SIZE < maxUpdates) ? MAX_THREAD_POOL_SIZE : maxUpdates;
-
-            final ExecutorService downloadExecutors = Executors.newFixedThreadPool(poolSize);
-            final ExecutorService processExecutor = Executors.newSingleThreadExecutor();
-            final Set<Future<Future<ProcessTask>>> downloadFutures = new HashSet<Future<Future<ProcessTask>>>(maxUpdates);
-            for (NvdCveInfo cve : updateable) {
-                if (cve.getNeedsUpdate()) {
-                    final DownloadTask call = new DownloadTask(cve, processExecutor, getCveDB(), Settings.getInstance());
-                    downloadFutures.add(downloadExecutors.submit(call));
-                }
-            }
-            downloadExecutors.shutdown();
-
-            //next, move the future future processTasks to just future processTasks
-            final Set<Future<ProcessTask>> processFutures = new HashSet<Future<ProcessTask>>(maxUpdates);
-            for (Future<Future<ProcessTask>> future : downloadFutures) {
-                Future<ProcessTask> task = null;
-                try {
-                    task = future.get();
-                } catch (InterruptedException ex) {
-                    downloadExecutors.shutdownNow();
-                    processExecutor.shutdownNow();
-
-                    LOGGER.debug("Thread was interrupted during download", ex);
-                    throw new UpdateException("The download was interrupted", ex);
-                } catch (ExecutionException ex) {
-                    downloadExecutors.shutdownNow();
-                    processExecutor.shutdownNow();
-
-                    LOGGER.debug("Thread was interrupted during download execution", ex);
-                    throw new UpdateException("The execution of the download was interrupted", ex);
-                }
-                if (task == null) {
-                    downloadExecutors.shutdownNow();
-                    processExecutor.shutdownNow();
-                    LOGGER.debug("Thread was interrupted during download");
-                    throw new UpdateException("The download was interrupted; unable to complete the update");
-                } else {
-                    processFutures.add(task);
-                }
-            }
-
-            for (Future<ProcessTask> future : processFutures) {
-                try {
-                    final ProcessTask task = future.get();
-                    if (task.getException() != null) {
-                        throw task.getException();
-                    }
-                } catch (InterruptedException ex) {
-                    processExecutor.shutdownNow();
-                    LOGGER.debug("Thread was interrupted during processing", ex);
-                    throw new UpdateException(ex);
-                } catch (ExecutionException ex) {
-                    processExecutor.shutdownNow();
-                    LOGGER.debug("Execution Exception during process", ex);
-                    throw new UpdateException(ex);
-                } finally {
-                    processExecutor.shutdown();
-                }
-            }
-
-            if (maxUpdates >= 1) { //ensure the modified file date gets written (we may not have actually updated it)
-                getProperties().save(updateable.get(MODIFIED));
-                LOGGER.info("Begin database maintenance.");
-                getCveDB().cleanupDatabase();
-                LOGGER.info("End database maintenance.");
-            }
-        } finally {
-            closeDataStores();
+        if (maxUpdates >= 1) { //ensure the modified file date gets written (we may not have actually updated it)
+            getProperties().save(updateable.get(MODIFIED));
+            LOGGER.info("Begin database maintenance.");
+            getCveDB().cleanupDatabase();
+            LOGGER.info("End database maintenance.");
         }
     }
 

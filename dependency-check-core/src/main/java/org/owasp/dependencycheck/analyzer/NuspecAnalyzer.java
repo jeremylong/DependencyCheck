@@ -34,6 +34,7 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
  * Analyzer which will parse a Nuspec file to gather module information.
@@ -65,10 +66,10 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Initializes the analyzer once before any analysis is performed.
      *
-     * @throws Exception if there's an error during initialization
+     * @throws InitializationException if there's an error during initialization
      */
     @Override
-    public void initializeFileTypeAnalyzer() throws Exception {
+    public void initializeFileTypeAnalyzer() throws InitializationException {
     }
 
     /**
@@ -82,7 +83,8 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Returns the key used in the properties file to reference the analyzer's enabled property.
+     * Returns the key used in the properties file to reference the analyzer's
+     * enabled property.
      *
      * @return the analyzer's enabled property setting key
      */

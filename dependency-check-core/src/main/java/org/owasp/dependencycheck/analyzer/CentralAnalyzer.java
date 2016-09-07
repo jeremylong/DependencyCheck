@@ -33,8 +33,10 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
@@ -42,8 +44,8 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- * Analyzer which will attempt to locate a dependency, and the GAV information, by querying Central for the dependency's SHA-1
- * digest.
+ * Analyzer which will attempt to locate a dependency, and the GAV information,
+ * by querying Central for the dependency's SHA-1 digest.
  *
  * @author colezlaw
  */
@@ -70,7 +72,8 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     private static final String SUPPORTED_EXTENSIONS = "jar";
 
     /**
-     * The analyzer should be disabled if there are errors, so this is a flag to determine if such an error has occurred.
+     * The analyzer should be disabled if there are errors, so this is a flag to
+     * determine if such an error has occurred.
      */
     private boolean errorFlag = false;
 
@@ -96,7 +99,8 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Determines if this analyzer is enabled.
      *
-     * @return <code>true</code> if the analyzer is enabled; otherwise <code>false</code>
+     * @return <code>true</code> if the analyzer is enabled; otherwise
+     * <code>false</code>
      */
     private boolean checkEnabled() {
         boolean retval = false;
@@ -122,16 +126,21 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Initializes the analyzer once before any analysis is performed.
      *
-     * @throws Exception if there's an error during initialization
+     * @throws InitializationException if there's an error during initialization
      */
     @Override
-    public void initializeFileTypeAnalyzer() throws Exception {
+    public void initializeFileTypeAnalyzer() throws InitializationException {
         LOGGER.debug("Initializing Central analyzer");
         LOGGER.debug("Central analyzer enabled: {}", isEnabled());
         if (isEnabled()) {
             final String searchUrl = Settings.getString(Settings.KEYS.ANALYZER_CENTRAL_URL);
             LOGGER.debug("Central Analyzer URL: {}", searchUrl);
-            searcher = new CentralSearch(new URL(searchUrl));
+            try {
+                searcher = new CentralSearch(new URL(searchUrl));
+            } catch (MalformedURLException ex) {
+                setEnabled(false);
+                throw new InitializationException("The configured URL to Maven Central is malformed: " + searchUrl, ex);
+            }
         }
     }
 
@@ -146,7 +155,8 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Returns the key used in the properties file to to reference the analyzer's enabled property.
+     * Returns the key used in the properties file to to reference the
+     * analyzer's enabled property.
      *
      * @return the analyzer's enabled property setting key.
      */
@@ -219,7 +229,8 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                         LOGGER.warn("Unable to download pom.xml for {} from Central; "
                                 + "this could result in undetected CPE/CVEs.", dependency.getFileName());
                     } finally {
-                        if (pomFile != null && !FileUtils.deleteQuietly(pomFile)) {
+                        if (pomFile != null && pomFile.exists() && !FileUtils.deleteQuietly(pomFile)) {
+                            LOGGER.debug("Failed to delete temporary pom file {}", pomFile.toString());
                             pomFile.deleteOnExit();
                         }
                     }

@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
  * Used to analyze a Python package, and collect information that can be used to
@@ -144,10 +145,10 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * No-op initializer implementation.
      *
-     * @throws Exception never thrown
+     * @throws InitializationException never thrown
      */
     @Override
-    protected void initializeFileTypeAnalyzer() throws Exception {
+    protected void initializeFileTypeAnalyzer() throws InitializationException {
         // Nothing to do here.
     }
 

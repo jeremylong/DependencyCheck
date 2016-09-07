@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
  * Used to analyze OpenSSL source code present in the file system.
@@ -145,10 +146,10 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * No-op initializer implementation.
      *
-     * @throws Exception never thrown
+     * @throws InitializationException never thrown
      */
     @Override
-    protected void initializeFileTypeAnalyzer() throws Exception {
+    protected void initializeFileTypeAnalyzer() throws InitializationException {
         // Nothing to do here.
     }
 

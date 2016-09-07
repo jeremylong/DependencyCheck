@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Assume;
 import static org.junit.Assume.assumeFalse;
+import static org.junit.Assume.assumeNotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
@@ -31,6 +32,7 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +62,7 @@ public class AssemblyAnalyzerTest extends BaseTest {
             analyzer = new AssemblyAnalyzer();
             analyzer.accept(new File("test.dll")); // trick into "thinking it is active"
             analyzer.initialize();
+            Assume.assumeTrue("Mono is not installed, skipping tests.", analyzer.buildArgumentList() == null);
         } catch (Exception e) {
             if (e.getMessage().contains("Could not execute .NET AssemblyAnalyzer")) {
                 LOGGER.warn("Exception setting up AssemblyAnalyzer. Tests will be incomplete");
@@ -80,7 +83,7 @@ public class AssemblyAnalyzerTest extends BaseTest {
 
     @Test
     public void testAnalysis() throws Exception {
-        //File f = new File(AssemblyAnalyzerTest.class.getClassLoader().getResource("GrokAssembly.exe").getPath());
+        assumeNotNull(analyzer.buildArgumentList());
         File f = BaseTest.getResourceAsFile(this, "GrokAssembly.exe");
         Dependency d = new Dependency(f);
         analyzer.analyze(d, null);
@@ -103,7 +106,7 @@ public class AssemblyAnalyzerTest extends BaseTest {
 
     @Test
     public void testLog4Net() throws Exception {
-        //File f = new File(AssemblyAnalyzerTest.class.getClassLoader().getResource("log4net.dll").getPath());
+        assumeNotNull(analyzer.buildArgumentList());
         File f = BaseTest.getResourceAsFile(this, "log4net.dll");
 
         Dependency d = new Dependency(f);
@@ -115,9 +118,10 @@ public class AssemblyAnalyzerTest extends BaseTest {
 
     @Test
     public void testNonexistent() {
+        assumeNotNull(analyzer.buildArgumentList());
+
         // Tweak the log level so the warning doesn't show in the console
         String oldProp = System.getProperty(LOG_KEY, "info");
-        //File f = new File(AssemblyAnalyzerTest.class.getClassLoader().getResource("log4net.dll").getPath());
         File f = BaseTest.getResourceAsFile(this, "log4net.dll");
         File test = new File(f.getParent(), "nonexistent.dll");
         Dependency d = new Dependency(test);
@@ -157,8 +161,8 @@ public class AssemblyAnalyzerTest extends BaseTest {
             AssemblyAnalyzer aanalyzer = new AssemblyAnalyzer();
             aanalyzer.accept(new File("test.dll")); // trick into "thinking it is active"
             aanalyzer.initialize();
-            fail("Expected an AnalysisException");
-        } catch (AnalysisException ae) {
+            fail("Expected an InitializationException");
+        } catch (InitializationException ae) {
             assertEquals("An error occurred with the .NET AssemblyAnalyzer", ae.getMessage());
         } finally {
             System.setProperty(LOG_KEY, oldProp);

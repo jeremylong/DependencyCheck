@@ -17,7 +17,10 @@
  */
 package org.owasp.dependencycheck.maven;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.owasp.dependencycheck.utils.Settings;
@@ -36,8 +39,20 @@ public class BaseTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         Settings.initialize();
-        InputStream mojoProperties = BaseTest.class.getClassLoader().getResourceAsStream(BaseTest.PROPERTIES_FILE);
-        Settings.mergeProperties(mojoProperties);
+        InputStream mojoProperties = null;
+        try {
+            mojoProperties = BaseTest.class.getClassLoader().getResourceAsStream(BaseTest.PROPERTIES_FILE);
+            Settings.mergeProperties(mojoProperties);
+        } finally {
+            if (mojoProperties != null) {
+                try {
+                    mojoProperties.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(BaseTest.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+
     }
 
     @AfterClass

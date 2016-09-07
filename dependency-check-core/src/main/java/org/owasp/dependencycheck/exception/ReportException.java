@@ -13,56 +13,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2016 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.suppression;
-
-import java.io.IOException;
+package org.owasp.dependencycheck.exception;
 
 /**
- * An exception used when parsing a suppression rule file fails.
+ * An exception used when generating reports.
  *
  * @author Jeremy Long
  */
-public class SuppressionParseException extends IOException {
+public class ReportException extends Exception {
 
     /**
-     * The serial version UID for serialization.
+     * The serial version uid.
      */
     private static final long serialVersionUID = 1L;
 
     /**
-     * Creates a new SuppressionParseException.
+     * Creates a new ReportException.
      */
-    public SuppressionParseException() {
+    public ReportException() {
         super();
     }
 
     /**
-     * Creates a new SuppressionParseException.
+     * Creates a new ReportException.
      *
      * @param msg a message for the exception.
      */
-    public SuppressionParseException(String msg) {
+    public ReportException(String msg) {
         super(msg);
     }
 
     /**
-     * Creates a new SuppressionParseException.
+     * Creates a new ReportException.
      *
-     * @param ex the cause of the parse exception
+     * @param ex the cause of the exception.
      */
-    public SuppressionParseException(Throwable ex) {
+    public ReportException(Throwable ex) {
         super(ex);
     }
 
     /**
-     * Creates a new SuppressionParseException.
+     * Creates a new ReportException.
      *
      * @param msg a message for the exception.
-     * @param ex the cause of the parse exception
+     * @param ex the cause of the exception.
      */
-    public SuppressionParseException(String msg, Throwable ex) {
+    public ReportException(String msg, Throwable ex) {
         super(msg, ex);
     }
 }

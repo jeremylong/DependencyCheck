@@ -34,7 +34,7 @@ import org.apache.lucene.util.Version;
  * index the CPE fields vendor and product.</p>
  *
  * @author Jeremy Long
- * @Deprecated the field analyzer should not be used, instead use the
+ * @deprecated the field analyzer should not be used, instead use the
  * SearchFieldAnalyzer so that the token analyzing filter is used.
  */
 @Deprecated

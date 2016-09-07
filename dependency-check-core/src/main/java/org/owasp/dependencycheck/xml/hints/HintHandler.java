@@ -20,7 +20,7 @@ package org.owasp.dependencycheck.xml.hints;
 import java.util.ArrayList;
 import java.util.List;
 import org.owasp.dependencycheck.dependency.Confidence;
-import org.owasp.dependencycheck.suppression.PropertyType;
+import org.owasp.dependencycheck.xml.suppression.PropertyType;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -62,9 +62,17 @@ public class HintHandler extends DefaultHandler {
      */
     private static final String DUPLICATE = "duplicate";
     /**
-     * Attribute name.
+     * Attribute value.
      */
     private static final String VENDOR = "vendor";
+    /**
+     * Attribute value.
+     */
+    private static final String PRODUCT = "product";
+    /**
+     * Attribute value.
+     */
+    private static final String VERSION = "version";
     /**
      * Attribute name.
      */
@@ -168,16 +176,25 @@ public class HintHandler extends DefaultHandler {
                             attr.getValue(VALUE),
                             Confidence.valueOf(attr.getValue(CONFIDENCE)));
                 }
-            } else if (inAddNode) {
-                rule.addAddProduct(attr.getValue(SOURCE),
-                        attr.getValue(NAME),
-                        attr.getValue(VALUE),
-                        Confidence.valueOf(attr.getValue(CONFIDENCE)));
-            } else {
-                rule.addGivenProduct(attr.getValue(SOURCE),
-                        attr.getValue(NAME),
-                        attr.getValue(VALUE),
-                        Confidence.valueOf(attr.getValue(CONFIDENCE)));
+            } else if (PRODUCT.equals(hintType)) {
+                if (inAddNode) {
+                    rule.addAddProduct(attr.getValue(SOURCE),
+                            attr.getValue(NAME),
+                            attr.getValue(VALUE),
+                            Confidence.valueOf(attr.getValue(CONFIDENCE)));
+                } else {
+                    rule.addGivenProduct(attr.getValue(SOURCE),
+                            attr.getValue(NAME),
+                            attr.getValue(VALUE),
+                            Confidence.valueOf(attr.getValue(CONFIDENCE)));
+                }
+            } else if (VERSION.equals(hintType)) {
+                if (inAddNode) {
+                    rule.addAddVersion(attr.getValue(SOURCE),
+                            attr.getValue(NAME),
+                            attr.getValue(VALUE),
+                            Confidence.valueOf(attr.getValue(CONFIDENCE)));
+                }
             }
         } else if (FILE_NAME.equals(qName)) {
             final PropertyType pt = new PropertyType();
@@ -197,11 +214,11 @@ public class HintHandler extends DefaultHandler {
             vendorDuplicatingHintRules.add(new VendorDuplicatingHintRule(attr.getValue(VALUE), attr.getValue(DUPLICATE)));
         }
     }
-    
+
     /**
      * Handles the end element event.
      *
-     * @param uri the element's uri
+     * @param uri the element's URI
      * @param localName the local name
      * @param qName the qualified name
      * @throws SAXException thrown if there is an exception processing the

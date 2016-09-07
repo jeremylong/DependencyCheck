@@ -27,3 +27,4 @@ _site/**
 #coverity
 /cov-int/
 /dependency-check-core/nbproject/
+cov-scan.bat

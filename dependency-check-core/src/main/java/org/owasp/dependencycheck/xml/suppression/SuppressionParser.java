@@ -15,7 +15,7 @@
  *
  * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
  */
-package org.owasp.dependencycheck.suppression;
+package org.owasp.dependencycheck.xml.suppression;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -121,8 +121,9 @@ public class SuppressionParser {
      * @throws SAXException thrown if the XML cannot be parsed
      */
     public List<SuppressionRule> parseSuppressionRules(InputStream inputStream) throws SuppressionParseException, SAXException {
+        InputStream schemaStream = null;
         try {
-            final InputStream schemaStream = this.getClass().getClassLoader().getResourceAsStream(SUPPRESSION_SCHEMA);
+            schemaStream = this.getClass().getClassLoader().getResourceAsStream(SUPPRESSION_SCHEMA);
             final SuppressionHandler handler = new SuppressionHandler();
             final SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -157,6 +158,14 @@ public class SuppressionParser {
         } catch (IOException ex) {
             LOGGER.debug("", ex);
             throw new SuppressionParseException(ex);
+        } finally {
+            if (schemaStream != null) {
+                try {
+                    schemaStream.close();
+                } catch (IOException ex) {
+                    LOGGER.debug("Error closing suppression file stream", ex);
+                }
+            }
         }
     }
 
@@ -169,8 +178,9 @@ public class SuppressionParser {
      * @throws SuppressionParseException if the XML cannot be parsed
      */
     private List<SuppressionRule> parseOldSuppressionRules(InputStream inputStream) throws SuppressionParseException {
+        InputStream schemaStream = null;
         try {
-            final InputStream schemaStream = this.getClass().getClassLoader().getResourceAsStream(OLD_SUPPRESSION_SCHEMA);
+            schemaStream = this.getClass().getClassLoader().getResourceAsStream(OLD_SUPPRESSION_SCHEMA);
             final SuppressionHandler handler = new SuppressionHandler();
             final SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -200,6 +210,14 @@ public class SuppressionParser {
         } catch (IOException ex) {
             LOGGER.debug("", ex);
             throw new SuppressionParseException(ex);
+        } finally {
+            if (schemaStream != null) {
+                try {
+                    schemaStream.close();
+                } catch (IOException ex) {
+                    LOGGER.debug("Error closing old suppression file stream", ex);
+                }
+            }
         }
     }
 }

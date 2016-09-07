@@ -36,6 +36,9 @@ import org.slf4j.LoggerFactory;
  */
 public class UpdateableNvdCve implements Iterable<NvdCveInfo>, Iterator<NvdCveInfo> {
 
+    /**
+     * A reference to the logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdateableNvdCve.class);
     /**
      * A collection of sources of data.

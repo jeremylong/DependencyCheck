@@ -32,6 +32,7 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
+import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -88,7 +89,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     @Override
-    protected void initializeFileTypeAnalyzer() throws Exception {
+    protected void initializeFileTypeAnalyzer() throws InitializationException {
         // NO-OP
     }
 
@@ -216,6 +217,9 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
                     return name.contains(VERSION_FILE_NAME);
                 }
             });
+            if (matchingFiles == null) {
+                return;
+            }
             for (File f : matchingFiles) {
                 try {
                     final List<String> lines = FileUtils.readLines(f, Charset.defaultCharset());

@@ -410,7 +410,7 @@
         <notes><![CDATA[
         Aether false positive.
         ]]></notes>
-        <gav regex="true">org.eclipse.aether:aether.*</gav>
+        <gav regex="true">org\.eclipse\.aether:aether.*</gav>
         <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
     </suppress>
     <suppress base="true">
@@ -419,5 +419,12 @@
         ]]></notes>
         <filePath regex="true">.*\.(jar|ear|war|pom)</filePath>
         <cpe>cpe:/a:services_project:services</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        jenkins-client false positives
+        ]]></notes>
+        <gav regex="true">com\.offbytwo\.jenkins:jenkins-client:.*</gav>
+        <cpe>cpe:/a:jenkins:jenkins</cpe>
     </suppress>
 </suppressions>

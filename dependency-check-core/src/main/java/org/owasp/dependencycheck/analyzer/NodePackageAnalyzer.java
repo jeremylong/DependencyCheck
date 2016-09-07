@@ -38,10 +38,11 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonString;
 import javax.json.JsonValue;
+import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
- * Used to analyze Node Package Manager (npm) package.json files, and collect information that can be used to determine the
- * associated CPE.
+ * Used to analyze Node Package Manager (npm) package.json files, and collect
+ * information that can be used to determine the associated CPE.
  *
  * @author Dale Visser
  */
@@ -84,7 +85,7 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     @Override
-    protected void initializeFileTypeAnalyzer() throws Exception {
+    protected void initializeFileTypeAnalyzer() throws InitializationException {
         // NO-OP
     }
 
@@ -109,7 +110,8 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Returns the key used in the properties file to reference the analyzer's enabled property.
+     * Returns the key used in the properties file to reference the analyzer's
+     * enabled property.
      *
      * @return the analyzer's enabled property setting key
      */
@@ -155,7 +157,8 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Adds information to an evidence collection from the node json configuration.
+     * Adds information to an evidence collection from the node json
+     * configuration.
      *
      * @param json information from node.js
      * @param collection a set of evidence about a dependency

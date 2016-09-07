@@ -64,7 +64,7 @@ public class HintParser {
     /**
      * The schema for the hint XML files.
      */
-    private static final String HINT_SCHEMA = "schema/dependency-hint.1.0.xsd";
+    private static final String HINT_SCHEMA = "schema/dependency-hint.1.1.xsd";
 
     /**
      * Parses the given XML file and returns a list of the hints contained.
@@ -104,8 +104,9 @@ public class HintParser {
      * @throws SAXException thrown if the XML cannot be parsed
      */
     public Hints parseHints(InputStream inputStream) throws HintParseException, SAXException {
+        InputStream schemaStream = null;
         try {
-            final InputStream schemaStream = this.getClass().getClassLoader().getResourceAsStream(HINT_SCHEMA);
+            schemaStream = this.getClass().getClassLoader().getResourceAsStream(HINT_SCHEMA);
             final HintHandler handler = new HintHandler();
             final SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -141,6 +142,14 @@ public class HintParser {
         } catch (IOException ex) {
             LOGGER.debug("", ex);
             throw new HintParseException(ex);
+        } finally {
+            if (schemaStream != null) {
+                try {
+                    schemaStream.close();
+                } catch (IOException ex) {
+                    LOGGER.debug("Error closing hint file stream", ex);
+                }
+            }
         }
     }
 }

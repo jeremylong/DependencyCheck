@@ -31,10 +31,6 @@ import java.net.URL;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
-
-import static java.lang.String.format;
-import static java.lang.String.format;
-import static java.lang.String.format;
 import static java.lang.String.format;
 
 /**
@@ -179,7 +175,7 @@ public final class Downloader {
                 }
                 LOGGER.debug("Download of {} complete", url.toString());
             } catch (IOException ex) {
-                checkForSslExceptionn(ex);
+                checkForCommonExceptionTypes(ex);
                 final String msg = format("Error saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
                         url.toString(), outputPath.getAbsolutePath(), conn.getConnectTimeout(), encoding);
                 throw new DownloadFailedException(msg, ex);
@@ -265,8 +261,9 @@ public final class Downloader {
             } catch (URLConnectionFailureException ex) {
                 throw new DownloadFailedException(format("Error creating URL Connection for HTTP %s request.", httpMethod), ex);
             } catch (IOException ex) {
-                checkForSslExceptionn(ex);
-                LOGGER.debug("IO Exception: " + ex.getMessage(), ex);
+                checkForCommonExceptionTypes(ex);
+                LOGGER.error("IO Exception: " + ex.getMessage());
+                LOGGER.debug("Exception details", ex);
                 if (ex.getCause() != null) {
                     LOGGER.debug("IO Exception cause: " + ex.getCause().getMessage(), ex.getCause());
                 }
@@ -296,15 +293,21 @@ public final class Downloader {
     /**
      * Analyzes the IOException, logs the appropriate information for debugging
      * purposes, and then throws a DownloadFailedException that wraps the IO
-     * Exception.
+     * Exception for common IO Exceptions. This is to provide additional details
+     * to assist in resolution of the exception.
      *
      * @param ex the original exception
      * @throws DownloadFailedException a wrapper exception that contains the
      * original exception as the cause
      */
-    protected static void checkForSslExceptionn(IOException ex) throws DownloadFailedException {
+    protected static synchronized void checkForCommonExceptionTypes(IOException ex) throws DownloadFailedException {
         Throwable cause = ex;
         while (cause != null) {
+            if (cause instanceof java.net.UnknownHostException) {
+                final String msg = format("Unable to resolve domain '%s'", cause.getMessage());
+                LOGGER.error(msg);
+                throw new DownloadFailedException(msg);
+            }
             if (cause instanceof InvalidAlgorithmParameterException) {
                 final String keystore = System.getProperty("javax.net.ssl.keyStore");
                 final String version = System.getProperty("java.version");

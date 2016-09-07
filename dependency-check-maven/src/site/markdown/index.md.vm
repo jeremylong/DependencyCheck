@@ -53,18 +53,16 @@ Create an aggregated dependency-check report within the site.
         <plugins>
             ...
             <plugin>
-                <plugin>
-                    <groupId>org.owasp</groupId>
-                    <artifactId>dependency-check-maven</artifactId>
-                    <version>${project.version}</version>
-                    <reportSets>
-                        <reportSet>
-                            <reports>
-                                <report>aggregate</report>
-                            </reports>
-                        </reportSet>
-                    </reportSets>
-                </plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${project.version}</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
             ...
         </plugins>

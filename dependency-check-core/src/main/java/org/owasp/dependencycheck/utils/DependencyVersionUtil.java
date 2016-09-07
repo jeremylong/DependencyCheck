@@ -24,7 +24,8 @@ import java.util.regex.Pattern;
 
 /**
  * <p>
- * A utility class to extract version numbers from file names (or other strings containing version numbers.</p>
+ * A utility class to extract version numbers from file names (or other strings
+ * containing version numbers.</p>
  *
  * @author Jeremy Long
  */
@@ -35,10 +36,18 @@ public final class DependencyVersionUtil {
      */
     private static final Pattern RX_VERSION = Pattern.compile("\\d+(\\.\\d{1,6})+(\\.?([_-](release|beta|alpha|\\d+)|[a-zA-Z_-]{1,3}\\d{0,8}))?");
     /**
-     * Regular expression to extract a single version number without periods. This is a last ditch effort just to check in case we
-     * are missing a version number using the previous regex.
+     * Regular expression to extract a single version number without periods.
+     * This is a last ditch effort just to check in case we are missing a
+     * version number using the previous regex.
      */
     private static final Pattern RX_SINGLE_VERSION = Pattern.compile("\\d+(\\.?([_-](release|beta|alpha)|[a-zA-Z_-]{1,3}\\d{1,8}))?");
+
+    /**
+     * Regular expression to extract the part before the version numbers if
+     * there are any based on RX_VERSION. In most cases, this part represents a
+     * more accurate name.
+     */
+    private static final Pattern RX_PRE_VERSION = Pattern.compile("^(.+)[_-](\\d+\\.\\d{1,6})+");
 
     /**
      * Private constructor for utility class.
@@ -48,7 +57,8 @@ public final class DependencyVersionUtil {
 
     /**
      * <p>
-     * A utility class to extract version numbers from file names (or other strings containing version numbers.</p>
+     * A utility class to extract version numbers from file names (or other
+     * strings containing version numbers.</p>
      * <pre>
      * Example:
      * Give the file name: library-name-1.4.1r2-release.jar
@@ -94,5 +104,31 @@ public final class DependencyVersionUtil {
             version = version.substring(0, version.length() - 4);
         }
         return new DependencyVersion(version);
+    }
+
+    /**
+     * <p>
+     * A utility class to extract the part before version numbers from file
+     * names (or other strings containing version numbers. In most cases, this
+     * part represents a more accurate name than the full file name.</p>
+     * <pre>
+     * Example:
+     * Give the file name: library-name-1.4.1r2-release.jar
+     * This function would return: library-name</pre>
+     *
+     * @param text the text being analyzed
+     * @return the part before the version numbers if any, otherwise return the
+     * text itself.
+     */
+    public static String parsePreVersion(String text) {
+        if (parseVersion(text) == null) {
+            return text;
+        }
+
+        final Matcher matcher = RX_PRE_VERSION.matcher(text);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return text;
     }
 }
