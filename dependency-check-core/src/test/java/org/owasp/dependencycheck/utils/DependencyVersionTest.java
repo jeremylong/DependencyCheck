@@ -96,6 +96,19 @@ public class DependencyVersionTest extends BaseTest {
         expResult = true;
         result = instance.equals(obj);
         assertEquals(expResult, result);
+        
+        instance = new DependencyVersion("2.0.0");
+        obj = new DependencyVersion("2");
+        expResult = false;
+        result = instance.equals(obj);
+        assertEquals(expResult, result);
+        
+        obj = new DependencyVersion("2.0");
+        expResult = true;
+        result = instance.equals(obj);
+        assertEquals(expResult, result);
+        
+        
     }
 
     /**
