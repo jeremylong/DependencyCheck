@@ -149,7 +149,7 @@ Copyright (c) 2012 - Jeremy Long
         </site>
     </distributionManagement>
     <prerequisites>
-        <maven>3.0</maven>
+        <maven>3.1</maven>
     </prerequisites>
     <build>
         <pluginManagement>
