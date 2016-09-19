@@ -427,4 +427,11 @@
         <gav regex="true">com\.offbytwo\.jenkins:jenkins-client:.*</gav>
         <cpe>cpe:/a:jenkins:jenkins</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        xstream false positives
+        ]]></notes>
+        <gav regex="true">^(?!com.thoughtworks).*xstream.*$</gav>
+        <cpe>cpe:/a:x-stream:xstream</cpe>
+    </suppress>
 </suppressions>

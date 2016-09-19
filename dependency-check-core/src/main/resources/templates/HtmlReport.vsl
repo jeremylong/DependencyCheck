@@ -83,16 +83,50 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     xml += $("#modal-text").text().replace(/\n/g,'\n   ');
                     xml += '\n</suppressions>';
                     $('#modal-text').text(xml).focus().select();
+                    $('#modal-add-header').toggleClass('active');
                 });
             });
-            function copyText(name, sha1, type, val) {
+            function suppressSwitchTo(switchTo) {
+                $('#modal-suppress-change-to-sha1').toggleClass('active');
+                $('#modal-suppress-change-to-gav').toggleClass('active');
+                setCopyText($('#suppress-name').val(),
+                            switchTo,
+                            $('#suppress-'+switchTo).val(), 
+                            $('#suppress-type').val(), 
+                            $('#suppress-val').val());
+            }
+            function copyText(name, sha1, gav, type, val) {
+                $('#suppress-name').val(name);
+                $('#suppress-type').val(type);
+                $('#suppress-val').val(val);
+                $('#suppress-sha1').val(sha1);
+                $('#suppress-gav').val(gav);
+                if (gav=='') {
+                    if ($('#modal-suppress-change-to-gav').hasClass('active')) {
+                        $('#modal-suppress-change-to-gav').toggleClass('active');
+                    }
+                    if ($('#modal-suppress-change-to-sha1').hasClass('active')) {
+                        $('#modal-suppress-change-to-sha1').toggleClass('active');
+                    }
+                    setCopyText(name, 'sha1', sha1, type, val);
+                } else {
+                    if ($('#modal-suppress-change-to-gav').hasClass('active')) {
+                        $('#modal-suppress-change-to-gav').toggleClass('active');
+                    }
+                    if (!$('#modal-suppress-change-to-sha1').hasClass('active')) {
+                        $('#modal-suppress-change-to-sha1').toggleClass('active');
+                    }
+                    setCopyText(name, 'gav', gav, type, val);
+                }
+            }
+            function setCopyText(name, matchType, matchValue, suppressType, suppressVal) {
                 xml =  '<suppress>\n';
                 xml += '   <notes><!'+'[CDATA[\n   file name: ' + name + '\n   ]]'+'></notes>\n';
-                xml += '   <sha1>' + sha1 + '</sha1>\n';
-                xml += '   <'+type+'>' + val + '</'+type+'>\n';
+                xml += '   <'+matchType+'>' + matchValue + '</'+matchType+'>\n';
+                xml += '   <'+suppressType+'>' + suppressVal + '</'+suppressType+'>\n';
                 xml += '</suppress>';
                 $('#modal-text').text(xml);
-                $('#modal-content,#modal-background').toggleClass('active');
+                $('#modal-content,#modal-background').addClass('active');
                 $('#modal-text').focus();
                 $('#modal-text').select();
             }
@@ -150,6 +184,12 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             #modal-text:focus {
                 outline: none;
             }
+            .suppresstype {
+                display: none;
+            }
+            .suppresstype.active {
+                display: block;
+            }  
             .suppressedLabel {
                 cursor: default;
                 padding:1px;
@@ -504,6 +544,11 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         <div id="modal-background"></div>
         <div id="modal-content">
             <div>Press CTR-C to copy XML&nbsp;<a href="http://jeremylong.github.io/DependencyCheck/general/suppression.html" class="infolink" target="_blank" title="Help with suppressing false positives">[help]</a></div>
+                <button onclick="suppressSwitchTo('gav')" id="modal-suppress-change-to-gav" class="modal-button suppresstype" title="Supress by Maven Group Artifact Version">Suppress By GAV</button>
+                <button onclick="suppressSwitchTo('sha1')" id="modal-suppress-change-to-sha1" class="modal-button suppresstype" title="Supress by SHA1 hash">Suppress By SHA1</button><br/>
+                <input type="hidden" id="suppress-name"/>
+                <input type="hidden" id="suppress-type"/><input type="hidden" id="suppress-val"/>
+                <input type="hidden" id="suppress-sha1"/><input type="hidden" id="suppress-gav"/>
                 <textarea id="modal-text" cols="50" rows="10" readonly></textarea><br/>
                 <button id="modal-add-header" title="Add the parent XML nodes to create the complete XML file that can be used to suppress this finding" class="modal-button">Complete XML Doc</button><button id="modal-close" class="modal-button-right">Close</button>
         </div>
@@ -515,6 +560,10 @@ the reporting provided constitutes acceptance for use in an AS IS condition, and
 implied or otherwise, with regard to the analysis or its use. Any use of the tool and the reporting provided
 is at the user’s risk. In no event shall the copyright holder or OWASP be held liable for any damages whatsoever
 arising out of or in connection with the use of this tool, the analysis performed, or the resulting report.</p>
+<h3><a href="http://jeremylong.github.io/DependencyCheck/general/thereport.html" target="_bank">How&nbsp;to&nbsp;read&nbsp;the&nbsp;report</a> | 
+<a href="http://jeremylong.github.io/DependencyCheck/general/suppression.html" target="_bank">Suppressing false positives</a> |
+Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check" target="_blank">google group</a> | 
+<a href="https://github.com/jeremylong/DependencyCheck/issues" target="_blank">github issues</a></h3>
 ]]#
             <h2 class="">Project:&nbsp;$enc.html($applicationName)</h2>
             <div class="">
@@ -725,6 +774,12 @@ arising out of or in connection with the use of this tool, the analysis performe
                             <ul><li><b>None</b></li></ul>
                         #else ## ($dependency.getIdentifiers().size()>0)
                             <ul>
+                            #set($suppressGav='')    
+                            #foreach($id in $dependency.getIdentifiers())
+                                #if ($id.type=="maven")
+                                    #set($suppressGav=$id.value)    
+                                #end
+                            #end
                             #foreach($id in $dependency.getIdentifiers())
                                 #if( $id.url )
                                     ##yes, we are HTML Encoding the href. this is okay. We can't URL encode as we have to trust the analyzer here...
@@ -737,7 +792,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                                 #end
                                 #if ($id.type=="cpe")
                                     ##yes, we are HTML Encoding into JavaScript... the escape utils don't have a JS Encode and I haven't written one yet
-                                    &nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CPE for this file" onclick="copyText('$enc.html($dependency.FileNameForJavaScript)', '$enc.html($dependency.Sha1sum)', 'cpe', '$enc.html($id.value)')">suppress</button>
+                                    &nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CPE for this file" onclick="copyText('$enc.html($dependency.FileNameForJavaScript)', '$enc.html($dependency.Sha1sum)', '$enc.html($suppressGav)', 'cpe', '$enc.html($id.value)')">suppress</button>
                                 #end
                                 #if ($id.description)
                                     <br/>$enc.html($id.description)
@@ -753,7 +808,7 @@ arising out of or in connection with the use of this tool, the analysis performe
                     <div id="content$cnt" class="subsectioncontent standardsubsection">
                         #foreach($vuln in $dependency.getVulnerabilities())
                             #set($vsctr=$vsctr+1)
-                            <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CCE for this file" onclick="copyText('$enc.html($dependency.FileNameForJavaScript)', '$enc.html($dependency.Sha1sum)', 'cve', '$enc.html($vuln.name)')">suppress</button></p>
+                            <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CCE for this file" onclick="copyText('$enc.html($dependency.FileNameForJavaScript)', '$enc.html($dependency.Sha1sum)', '$enc.html($suppressGav)', 'cve', '$enc.html($vuln.name)')">suppress</button></p>
                             <p>Severity:
                             #if ($vuln.cvssScore<4.0)
                                 Low

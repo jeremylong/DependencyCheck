@@ -26,14 +26,15 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * <p>
- * Simple object to track the parts of a version number. The parts are contained in a List such that version 1.2.3 will
- * be stored as:  <code>versionParts[0] = 1;
+ * Simple object to track the parts of a version number. The parts are contained
+ * in a List such that version 1.2.3 will be stored as:  <code>versionParts[0] = 1;
  * versionParts[1] = 2;
  * versionParts[2] = 3;
  * </code></p>
  * <p>
- * Note, the parser contained in this class expects the version numbers to be separated by periods. If a different
- * separator is used the parser will likely fail.</p>
+ * Note, the parser contained in this class expects the version numbers to be
+ * separated by periods. If a different separator is used the parser will likely
+ * fail.</p>
  *
  * @author Jeremy Long
  */
@@ -47,8 +48,9 @@ public class DependencyVersion implements Iterable<String>, Comparable<Dependenc
 
     /**
      * Constructor for a DependencyVersion that will parse a version string.
-     * <b>Note</b>, this should only be used when the version passed in is already known to be a well formatted version
-     * number. Otherwise, DependencyVersionUtil.parseVersion() should be used instead.
+     * <b>Note</b>, this should only be used when the version passed in is
+     * already known to be a well formatted version number. Otherwise,
+     * DependencyVersionUtil.parseVersion() should be used instead.
      *
      * @param version the well formatted version number to parse
      */
@@ -57,8 +59,9 @@ public class DependencyVersion implements Iterable<String>, Comparable<Dependenc
     }
 
     /**
-     * Parses a version string into its sub parts: major, minor, revision, build, etc. <b>Note</b>, this should only be
-     * used to parse something that is already known to be a version number.
+     * Parses a version string into its sub parts: major, minor, revision,
+     * build, etc. <b>Note</b>, this should only be used to parse something that
+     * is already known to be a version number.
      *
      * @param version the version string to parse
      */
@@ -133,26 +136,33 @@ public class DependencyVersion implements Iterable<String>, Comparable<Dependenc
             return false;
         }
         final DependencyVersion other = (DependencyVersion) obj;
-        final int max = (this.versionParts.size() < other.versionParts.size())
+        final int minVersionMatchLength = (this.versionParts.size() < other.versionParts.size())
                 ? this.versionParts.size() : other.versionParts.size();
+        final int maxVersionMatchLength = (this.versionParts.size() > other.versionParts.size())
+                ? this.versionParts.size() : other.versionParts.size();
+        
+        if (minVersionMatchLength==1 && maxVersionMatchLength>=3) {
+            return false;
+        }
+        
         //TODO steal better version of code from compareTo
-        for (int i = 0; i < max; i++) {
+        for (int i = 0; i < minVersionMatchLength; i++) {
             final String thisPart = this.versionParts.get(i);
             final String otherPart = other.versionParts.get(i);
             if (!thisPart.equals(otherPart)) {
                 return false;
             }
         }
-        if (this.versionParts.size() > max) {
-            for (int i = max; i < this.versionParts.size(); i++) {
+        if (this.versionParts.size() > minVersionMatchLength) {
+            for (int i = minVersionMatchLength; i < this.versionParts.size(); i++) {
                 if (!"0".equals(this.versionParts.get(i))) {
                     return false;
                 }
             }
         }
 
-        if (other.versionParts.size() > max) {
-            for (int i = max; i < other.versionParts.size(); i++) {
+        if (other.versionParts.size() > minVersionMatchLength) {
+            for (int i = minVersionMatchLength; i < other.versionParts.size(); i++) {
                 if (!"0".equals(other.versionParts.get(i))) {
                     return false;
                 }
@@ -180,8 +190,9 @@ public class DependencyVersion implements Iterable<String>, Comparable<Dependenc
     }
 
     /**
-     * Determines if the three most major major version parts are identical. For instances, if version 1.2.3.4 was
-     * compared to 1.2.3 this function would return true.
+     * Determines if the three most major major version parts are identical. For
+     * instances, if version 1.2.3.4 was compared to 1.2.3 this function would
+     * return true.
      *
      * @param version the version number to compare
      * @return true if the first three major parts of the version are identical
