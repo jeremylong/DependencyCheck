@@ -347,6 +347,7 @@ public class App {
         final String dataDirectory = cli.getDataDirectory();
         final File propertiesFile = cli.getPropertiesFile();
         final String suppressionFile = cli.getSuppressionFile();
+        final String hintsFile = cli.getHintsFile();
         final String nexusUrl = cli.getNexusUrl();
         final String databaseDriverName = cli.getDatabaseDriverName();
         final String databaseDriverPath = cli.getDatabaseDriverPath();
@@ -394,6 +395,7 @@ public class App {
         Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPass);
         Settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
         Settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
+        Settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);
         Settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
 
         //File Type Analyzer Settings
