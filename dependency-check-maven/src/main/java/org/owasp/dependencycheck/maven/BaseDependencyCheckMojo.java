@@ -206,6 +206,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @Parameter(property = "suppressionFile", defaultValue = "", required = false)
     private String suppressionFile;
+
+    /**
+     * The path to the hints file.
+     */
+    @Parameter(property = "hintsFile", defaultValue = "", required = false)
+    private String hintsFile;
+
     /**
      * Flag indicating whether or not to show a summary in the output.
      */
@@ -848,6 +855,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
         Settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
         Settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
+        Settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);
 
         //File Type Analyzer Settings
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
