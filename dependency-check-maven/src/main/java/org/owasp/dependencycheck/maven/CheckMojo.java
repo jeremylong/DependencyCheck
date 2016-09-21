@@ -112,7 +112,7 @@ public class CheckMojo extends BaseDependencyCheckMojo {
                             }
                         }
                     }
-                    writeDataFile(getProject(), null, engine.getDependencies());
+                    //writeDataFile(getProject(), null, engine.getDependencies());
                     showSummary(getProject(), engine.getDependencies());
                     checkForFailure(engine.getDependencies());
                     if (exCol != null && this.isFailOnError()) {
