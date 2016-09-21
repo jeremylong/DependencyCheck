@@ -80,6 +80,9 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 <item name="False Positives" href="./general/suppression.html">
                     <description>Suppressing False Positives</description>
                 </item>
+                <item name="False Negatives" href="./general/hints.html">
+                    <description>Suppressing False Positives</description>
+                </item>
                 <item collapse="true" name="Internet Access Required" href="./data/index.html">
                     <item name="Proxy" href="./data/proxy.html" />
                     <item name="Mirroring NVD" href="./data/mirrornvd.html" />
