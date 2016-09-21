@@ -286,7 +286,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (InterruptedException ie) {
             throw new AnalysisException("bundle-audit process interrupted", ie);
         }
-        if (exitValue != 0) {
+        if (exitValue > 1) {
             final String msg = String.format("Unexpected exit code from bundle-audit process; exit code: %s", exitValue);
             throw new AnalysisException(msg);
         }
