@@ -309,10 +309,22 @@ public class Engine implements FileFilter {
         if (file.isFile()) {
             if (accept(file)) {
                 dependency = new Dependency(file);
-                dependencies.add(dependency);
+                String sha1 = dependency.getSha1sum();
+                boolean found = false;
+                if (sha1 != null) {
+                    for (Dependency existing : dependencies) {
+                        if (sha1.equals(existing.getSha1sum())) {
+                            found = true;
+                            dependency = existing;
+                        }
+                    }
+                }
+                if (!found) {
+                    dependencies.add(dependency);
+                }
+            } else {
+                LOGGER.debug("Path passed to scanFile(File) is not a file: {}. Skipping the file.", file);
             }
-        } else {
-            LOGGER.debug("Path passed to scanFile(File) is not a file: {}. Skipping the file.", file);
         }
         return dependency;
     }
@@ -537,6 +549,16 @@ public class Engine implements FileFilter {
      */
     public Set<FileTypeAnalyzer> getFileTypeAnalyzers() {
         return this.fileTypeAnalyzers;
+    }
+
+    /**
+     * Adds a file type analyzer. This has been added solely to assist in unit
+     * testing the Engine.
+     *
+     * @param fta the file type analyzer to add
+     */
+    protected void addFileTypeAnalyzer(FileTypeAnalyzer fta) {
+        this.fileTypeAnalyzers.add(fta);
     }
 
     /**
