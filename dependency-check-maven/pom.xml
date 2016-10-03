@@ -38,7 +38,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
     </distributionManagement>
     <!-- end copy -->
     <properties>
-        <version.maven-plugin-plugin>3.4</version.maven-plugin-plugin>
+        <version.maven-plugin-plugin>3.5</version.maven-plugin-plugin>
     </properties>
     <prerequisites>
         <maven>3.1</maven>

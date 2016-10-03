@@ -122,8 +122,26 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             function setCopyText(name, matchType, matchValue, suppressType, suppressVal) {
                 xml =  '<suppress>\n';
                 xml += '   <notes><!'+'[CDATA[\n   file name: ' + name + '\n   ]]'+'></notes>\n';
-                xml += '   <'+matchType+'>' + matchValue + '</'+matchType+'>\n';
-                xml += '   <'+suppressType+'>' + suppressVal + '</'+suppressType+'>\n';
+                if (matchType=='gav') {
+                    v = matchValue.match(/^[^:]+:[^:]+:/);
+                    if (v && v[0]) {
+                        xml += '   <'+matchType+' regex="true">^' + v[0].replace(/\./g,'\\.') + '.*$</'+matchType+'>\n';
+                    } else {
+                        xml += '   <'+matchType+'>' + matchValue + '</'+matchType+'>\n';
+                    }
+                } else {
+                    xml += '   <'+matchType+'>' + matchValue + '</'+matchType+'>\n';
+                }
+                if (suppressType=='cpe') {
+                    v = suppressVal.match(/^cpe:\/a:[^:]+:[^:]+/);
+                    if (v && v[0]) {
+                        xml += '   <'+suppressType+'>' + v[0] + '</'+suppressType+'>\n';
+                    } else {
+                        xml += '   <'+suppressType+'>' + suppressVal + '</'+suppressType+'>\n';
+                    }
+                } else {
+                    xml += '   <'+suppressType+'>' + suppressVal + '</'+suppressType+'>\n';
+                }
                 xml += '</suppress>';
                 $('#modal-text').text(xml);
                 $('#modal-content,#modal-background').addClass('active');
