@@ -323,7 +323,7 @@ public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
                             try {
                                 org.apache.commons.io.FileUtils.copyInputStreamToFile(fromClasspath, file);
                             } catch (IOException ex) {
-                                throw new HintParseException("Unable to locate suppressions file in classpath", ex);
+                                throw new HintParseException("Unable to locate hints file in classpath", ex);
                             }
                         }
                     } finally {
