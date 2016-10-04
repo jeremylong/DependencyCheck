@@ -434,4 +434,11 @@
         <gav regex="true">^(?!com.thoughtworks).*xstream.*$</gav>
         <cpe>cpe:/a:x-stream:xstream</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        false positive per issue #582
+        ]]></notes>
+        <gav regex="true">^org\.glassfish\.jersey\.ext:jersey-proxy-client:.*$</gav>
+        <cpe>cpe:/a:oracle:oracle_client</cpe>
+    </suppress>
 </suppressions>
