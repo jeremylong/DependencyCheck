@@ -255,7 +255,10 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             // Try evacuating the error stream
             IOUtils.copy(p.getErrorStream(), NullOutputStream.NULL_OUTPUT_STREAM);
 
-            final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(p.getInputStream());
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        	factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);	
+    		final DocumentBuilder builder = factory.newDocumentBuilder();       
+            final Document doc = builder.parse(p.getInputStream());
             final XPath xpath = XPathFactory.newInstance().newXPath();
             final String error = xpath.evaluate("/assembly/error", doc);
             if (p.waitFor() != 1 || error == null || error.isEmpty()) {

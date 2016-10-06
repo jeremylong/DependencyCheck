@@ -138,6 +138,7 @@ public class ProcessTask implements Callable<ProcessTask> {
             SAXException, IOException, SQLException, DatabaseException, ClassNotFoundException {
 
         final SAXParserFactory factory = SAXParserFactory.newInstance();
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);	
         final SAXParser saxParser = factory.newSAXParser();
 
         final NvdCve12Handler cve12Handler = new NvdCve12Handler();
