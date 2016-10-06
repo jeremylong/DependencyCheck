@@ -2,7 +2,7 @@ FROM java:8
 
 MAINTAINER Timo Pagel <dependencycheckmaintainer@timo-pagel.de>
 
-RUN wget http://dl.bintray.com/jeremy-long/owasp/dependency-check-1.4.3-release.zip && unzip dependency-check-1.4.3-release.zip && mv dependency-check /usr/share/
+RUN wget -O /tmp/current.txt http://jeremylong.github.io/DependencyCheck/current.txt && current=$(cat /tmp/current.txt) && wget https://dl.bintray.com/jeremy-long/owasp/dependency-check-$current-release.zip && unzip dependency-check-$current-release.zip && mv dependency-check /usr/share/
 
 RUN useradd -ms /bin/bash dockeruser && chown -R dockeruser:dockeruser /usr/share/dependency-check && mkdir /report && chown -R dockeruser:dockeruser /report
 USER dockeruser
