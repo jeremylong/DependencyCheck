@@ -370,8 +370,11 @@ public final class Settings {
         try {
             in = this.getClass().getClassLoader().getResourceAsStream(propertiesFilePath);
             props.load(in);
+        } catch (NullPointerException ex) {
+            LOGGER.error("Did not find settings file '{}'.", propertiesFilePath);
+            LOGGER.debug("", ex);
         } catch (IOException ex) {
-            LOGGER.error("Unable to load default settings.");
+            LOGGER.error("Unable to load settings from '{}'.", propertiesFilePath);
             LOGGER.debug("", ex);
         } finally {
             if (in != null) {
