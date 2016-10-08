@@ -10,7 +10,7 @@
             <evidence type="product" source="hint analyzer" name="product" value="springsource_spring_framework" confidence="HIGH"/>
             <evidence type="vendor" source="hint analyzer" name="vendor" value="SpringSource" confidence="HIGH"/>
             <evidence type="vendor" source="hint analyzer" name="vendor" value="vmware" confidence="HIGH"/>
-            <evidence type="vendor" source="hint analyzer" name="vendor" value="pivotal" confidence="HIGH"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="pivotal software" confidence="HIGH"/>
         </add>
     </hint>
     <hint>
@@ -22,7 +22,7 @@
             <evidence type="product" source="hint analyzer" name="product" value="springsource_spring_framework" confidence="HIGH"/>
             <evidence type="vendor" source="hint analyzer" name="vendor" value="SpringSource" confidence="HIGH"/>
             <evidence type="vendor" source="hint analyzer" name="vendor" value="vmware" confidence="HIGH"/>
-            <evidence type="vendor" source="hint analyzer" name="vendor" value="pivotal" confidence="HIGH"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="pivotal software" confidence="HIGH"/>
         </add>
     </hint>
     <hint>
@@ -32,7 +32,7 @@
         <add>
             <evidence type="product" source="hint analyzer" name="product" value="springsource_spring_framework" confidence="HIGH"/>
             <evidence type="vendor" source="hint analyzer" name="vendor" value="vmware" confidence="HIGH"/>
-            <evidence type="vendor" source="hint analyzer" name="vendor" value="pivotal" confidence="HIGH"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="pivotal software" confidence="HIGH"/>
         </add>
     </hint>
     <hint>
