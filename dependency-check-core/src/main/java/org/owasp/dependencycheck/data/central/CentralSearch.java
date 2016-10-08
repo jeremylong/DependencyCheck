@@ -51,7 +51,7 @@ public class CentralSearch {
     /**
      * Whether to use the Proxy when making requests
      */
-    private boolean useProxy;
+    private final boolean useProxy;
 
     /**
      * Used for logging.

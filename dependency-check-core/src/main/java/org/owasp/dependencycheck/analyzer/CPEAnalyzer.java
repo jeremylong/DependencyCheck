@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
-public class CPEAnalyzer implements Analyzer {
+public class CPEAnalyzer extends AbstractAnalyzer {
 
     /**
      * The Logger.

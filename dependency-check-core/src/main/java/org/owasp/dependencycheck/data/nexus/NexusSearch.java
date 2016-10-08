@@ -25,6 +25,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
+
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.URLConnectionFactory;
@@ -47,7 +48,7 @@ public class NexusSearch {
     /**
      * Whether to use the Proxy when making requests.
      */
-    private boolean useProxy;
+    private final boolean useProxy;
     /**
      * Used for logging.
      */
@@ -61,17 +62,17 @@ public class NexusSearch {
      */
     public NexusSearch(URL rootURL) {
         this.rootURL = rootURL;
+        useProxy = useProxy();
+        LOGGER.debug("Using proxy: {}", useProxy);
+    }
+
+    private boolean useProxy() {
         try {
-            if (null != Settings.getString(Settings.KEYS.PROXY_SERVER)
-                    && Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY)) {
-                useProxy = true;
-                LOGGER.debug("Using proxy");
-            } else {
-                useProxy = false;
-                LOGGER.debug("Not using proxy");
-            }
+            return Settings.getString(Settings.KEYS.PROXY_SERVER) != null
+                    && Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY);
         } catch (InvalidSettingException ise) {
-            useProxy = false;
+            LOGGER.warn("Failed to parse proxy settings.", ise);
+            return false;
         }
     }
 

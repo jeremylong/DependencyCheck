@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
-public class NvdCveAnalyzer implements Analyzer {
+public class NvdCveAnalyzer extends AbstractAnalyzer {
     /**
      * The Logger for use throughout the class
      */

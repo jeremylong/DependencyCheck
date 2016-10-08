@@ -17,11 +17,11 @@
  */
 package org.owasp.dependencycheck;
 
+import com.google.common.base.Stopwatch;
 import org.owasp.dependencycheck.analyzer.AnalysisPhase;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.AnalyzerService;
 import org.owasp.dependencycheck.analyzer.FileTypeAnalyzer;
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nvdcve.ConnectionFactory;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -29,9 +29,9 @@ import org.owasp.dependencycheck.data.update.CachedWebDataSource;
 import org.owasp.dependencycheck.data.update.UpdateService;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.exception.NoDataException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.exception.NoDataException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -41,12 +41,18 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Scans files, directories, etc. for Dependencies. Analyzers are loaded and
@@ -61,7 +67,7 @@ public class Engine implements FileFilter {
     /**
      * The list of dependencies.
      */
-    private List<Dependency> dependencies = new ArrayList<Dependency>();
+    private final List<Dependency> dependencies = Collections.synchronizedList(new ArrayList<Dependency>());
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
@@ -157,8 +163,13 @@ public class Engine implements FileFilter {
 
     /**
      * Get the dependencies identified.
+     * The returned list is a reference to the engine's synchronized list. You must synchronize on it, when you modify
+     * and iterate over it from multiple threads. E.g. this holds for analyzers supporting parallel processing during
+     * their analysis phase.
      *
      * @return the dependencies identified
+     * @see Collections#synchronizedList(List)
+     * @see Analyzer#supportsParallelProcessing()
      */
     public List<Dependency> getDependencies() {
         return dependencies;
@@ -170,7 +181,10 @@ public class Engine implements FileFilter {
      * @param dependencies the dependencies
      */
     public void setDependencies(List<Dependency> dependencies) {
-        this.dependencies = dependencies;
+        synchronized (this.dependencies) {
+            this.dependencies.clear();
+            this.dependencies.addAll(dependencies);
+        }
     }
 
     /**
@@ -311,16 +325,18 @@ public class Engine implements FileFilter {
                 dependency = new Dependency(file);
                 String sha1 = dependency.getSha1sum();
                 boolean found = false;
-                if (sha1 != null) {
-                    for (Dependency existing : dependencies) {
-                        if (sha1.equals(existing.getSha1sum())) {
-                            found = true;
-                            dependency = existing;
+                synchronized (dependencies) {
+                    if (sha1 != null) {
+                        for (Dependency existing : dependencies) {
+                            if (sha1.equals(existing.getSha1sum())) {
+                                found = true;
+                                dependency = existing;
+                            }
                         }
                     }
-                }
-                if (!found) {
-                    dependencies.add(dependency);
+                    if (!found) {
+                        dependencies.add(dependency);
+                    }
                 }
             } else {
                 LOGGER.debug("Path passed to scanFile(File) is not a file: {}. Skipping the file.", file);
@@ -345,7 +361,7 @@ public class Engine implements FileFilter {
      * during analysis
      */
     public void analyzeDependencies() throws ExceptionCollection {
-        final List<Throwable> exceptions = new ArrayList<Throwable>();
+        final List<Throwable> exceptions = Collections.synchronizedList(new ArrayList<Throwable>());
         boolean autoUpdate = true;
         try {
             autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
@@ -368,15 +384,9 @@ public class Engine implements FileFilter {
         try {
             ensureDataExists();
         } catch (NoDataException ex) {
-            LOGGER.error("{}\n\nUnable to continue dependency-check analysis.", ex.getMessage());
-            LOGGER.debug("", ex);
-            exceptions.add(ex);
-            throw new ExceptionCollection("Unable to continue dependency-check analysis.", exceptions, true);
+            throwFatalExceptionCollection("Unable to continue dependency-check analysis.", ex, exceptions);
         } catch (DatabaseException ex) {
-            LOGGER.error("{}\n\nUnable to continue dependency-check analysis.", ex.getMessage());
-            LOGGER.debug("", ex);
-            exceptions.add(ex);
-            throw new ExceptionCollection("Unable to connect to the dependency-check database", exceptions, true);
+            throwFatalExceptionCollection("Unable to connect to the dependency-check database.", ex, exceptions);
         }
 
         LOGGER.debug("\n----------------------------------------------------\nBEGIN ANALYSIS\n----------------------------------------------------");
@@ -387,42 +397,17 @@ public class Engine implements FileFilter {
         for (AnalysisPhase phase : AnalysisPhase.values()) {
             final List<Analyzer> analyzerList = analyzers.get(phase);
 
-            for (Analyzer a : analyzerList) {
+            for (final Analyzer a : analyzerList) {
+                Stopwatch watch = Stopwatch.createStarted();
                 try {
-                    a = initializeAnalyzer(a);
+                    initializeAnalyzer(a);
                 } catch (InitializationException ex) {
                     exceptions.add(ex);
                     continue;
                 }
 
-                /* need to create a copy of the collection because some of the
-                 * analyzers may modify it. This prevents ConcurrentModificationExceptions.
-                 * This is okay for adds/deletes because it happens per analyzer.
-                 */
-                LOGGER.debug("Begin Analyzer '{}'", a.getName());
-                final Set<Dependency> dependencySet = new HashSet<Dependency>(dependencies);
-                for (Dependency d : dependencySet) {
-                    boolean shouldAnalyze = true;
-                    if (a instanceof FileTypeAnalyzer) {
-                        final FileTypeAnalyzer fAnalyzer = (FileTypeAnalyzer) a;
-                        shouldAnalyze = fAnalyzer.accept(d.getActualFile());
-                    }
-                    if (shouldAnalyze) {
-                        LOGGER.debug("Begin Analysis of '{}'", d.getActualFilePath());
-                        try {
-                            a.analyze(d, this);
-                        } catch (AnalysisException ex) {
-                            LOGGER.warn("An error occurred while analyzing '{}'.", d.getActualFilePath());
-                            LOGGER.debug("", ex);
-                            exceptions.add(ex);
-                        } catch (Throwable ex) {
-                            //final AnalysisException ax = new AnalysisException(axMsg, ex);
-                            LOGGER.warn("An unexpected error occurred during analysis of '{}'", d.getActualFilePath());
-                            LOGGER.debug("", ex);
-                            exceptions.add(ex);
-                        }
-                    }
-                }
+                executeAnalysisTasks(exceptions, a);
+                LOGGER.info("Finished {}. Took {} secs.", a.getName(), watch.elapsed(TimeUnit.SECONDS));
             }
         }
         for (AnalysisPhase phase : AnalysisPhase.values()) {
@@ -437,6 +422,51 @@ public class Engine implements FileFilter {
         LOGGER.info("Analysis Complete ({} ms)", System.currentTimeMillis() - analysisStart);
         if (exceptions.size() > 0) {
             throw new ExceptionCollection("One or more exceptions occured during dependency-check analysis", exceptions);
+        }
+    }
+
+    private void executeAnalysisTasks(List<Throwable> exceptions, Analyzer analyzer) throws ExceptionCollection {
+        LOGGER.debug("Starting {}", analyzer.getName());
+        final List<AnalysisTask> analysisTasks = getAnalysisTasks(analyzer, exceptions);
+        final ExecutorService executorService = getExecutorService(analyzer);
+
+        try {
+            List<Future<Void>> results = executorService.invokeAll(analysisTasks, 10, TimeUnit.MINUTES);
+
+            // ensure there was no exception during execution
+            for (Future<Void> result : results) {
+                try {
+                    result.get();
+                } catch (ExecutionException e) {
+                    throwFatalExceptionCollection("Analysis task failed with a fatal exception.", e, exceptions);
+                }
+            }
+        } catch (InterruptedException e) {
+            throwFatalExceptionCollection("Analysis has been interrupted.", e, exceptions);
+        }
+    }
+
+    private List<AnalysisTask> getAnalysisTasks(Analyzer analyzer, List<Throwable> exceptions) {
+        final List<AnalysisTask> result = new ArrayList<AnalysisTask>();
+        synchronized (dependencies) {
+            for (final Dependency dependency : dependencies) {
+                AnalysisTask task = new AnalysisTask(analyzer, dependency, this, exceptions);
+                result.add(task);
+            }
+        }
+        return result;
+    }
+
+    private ExecutorService getExecutorService(Analyzer analyzer) {
+        if (analyzer.supportsParallelProcessing()) {
+            // just a fair trade-off that should be reasonable for all analyzer types
+            int maximumNumberOfThreads = 4 * Runtime.getRuntime().availableProcessors();
+
+            LOGGER.debug("Parallel processing with up to {} threads: {}.", maximumNumberOfThreads, analyzer.getName());
+            return Executors.newFixedThreadPool(maximumNumberOfThreads);
+        } else {
+            LOGGER.debug("Parallel processing is not supported: {}.", analyzer.getName());
+            return Executors.newSingleThreadExecutor();
         }
     }
 
@@ -581,5 +611,12 @@ public class Engine implements FileFilter {
         } finally {
             cve.close();
         }
+    }
+
+    private void throwFatalExceptionCollection(String message, Throwable throwable, List<Throwable> exceptions) throws ExceptionCollection {
+        LOGGER.error("{}\n\n{}", throwable.getMessage(), message);
+        LOGGER.debug("", throwable);
+        exceptions.add(throwable);
+        throw new ExceptionCollection(message, exceptions, true);
     }
 }

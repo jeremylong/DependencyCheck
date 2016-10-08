@@ -423,28 +423,30 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
             String parentPath = dependency.getFilePath().toLowerCase();
             if (parentPath.contains(".jar")) {
                 parentPath = parentPath.substring(0, parentPath.indexOf(".jar") + 4);
-                final Dependency parent = findDependency(parentPath, engine.getDependencies());
-                if (parent != null) {
-                    boolean remove = false;
-                    for (Identifier i : dependency.getIdentifiers()) {
-                        if ("cpe".equals(i.getType())) {
-                            final String trimmedCPE = trimCpeToVendor(i.getValue());
-                            for (Identifier parentId : parent.getIdentifiers()) {
-                                if ("cpe".equals(parentId.getType()) && parentId.getValue().startsWith(trimmedCPE)) {
-                                    remove |= true;
+                final List<Dependency> dependencies = engine.getDependencies();
+                synchronized (dependencies) {
+                    final Dependency parent = findDependency(parentPath, dependencies);
+                    if (parent != null) {
+                        boolean remove = false;
+                        for (Identifier i : dependency.getIdentifiers()) {
+                            if ("cpe".equals(i.getType())) {
+                                final String trimmedCPE = trimCpeToVendor(i.getValue());
+                                for (Identifier parentId : parent.getIdentifiers()) {
+                                    if ("cpe".equals(parentId.getType()) && parentId.getValue().startsWith(trimmedCPE)) {
+                                        remove |= true;
+                                    }
                                 }
                             }
+                            if (!remove) { //we can escape early
+                                return;
+                            }
                         }
-                        if (!remove) { //we can escape early
-                            return;
+                        if (remove) {
+                            dependencies.remove(dependency);
                         }
-                    }
-                    if (remove) {
-                        engine.getDependencies().remove(dependency);
                     }
                 }
             }
-
         }
     }
 
