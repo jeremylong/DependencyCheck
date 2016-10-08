@@ -436,7 +436,7 @@ public class Engine implements FileFilter {
         LOGGER.debug("\n----------------------------------------------------\nEND ANALYSIS\n----------------------------------------------------");
         LOGGER.info("Analysis Complete ({} ms)", System.currentTimeMillis() - analysisStart);
         if (exceptions.size() > 0) {
-            throw new ExceptionCollection("One or more exceptions occured during dependency-check analysis", exceptions);
+            throw new ExceptionCollection("One or more exceptions occurred during dependency-check analysis", exceptions);
         }
     }
 
