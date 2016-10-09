@@ -80,6 +80,9 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 <item name="False Positives" href="./general/suppression.html">
                     <description>Suppressing False Positives</description>
                 </item>
+                <item name="False Negatives" href="./general/hints.html">
+                    <description>Resolving False Negatives</description>
+                </item>
                 <item collapse="true" name="Internet Access Required" href="./data/index.html">
                     <item name="Proxy" href="./data/proxy.html" />
                     <item name="Mirroring NVD" href="./data/mirrornvd.html" />
@@ -118,6 +121,9 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 <item name="CMake" href="./analyzers/cmake.html">
                     <description>CMake Analyzer</description>
                 </item>
+                <item name="CocoaPods" href="./analyzers/cocoapods.html">
+                    <description>CocoaPods Analyzer</description>
+                </item>
                 <item name="Jar" href="./analyzers/jar-analyzer.html">
                     <description>Jar Analyzer</description>
                 </item>
@@ -138,6 +144,9 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 </item>
                 <item name="Ruby Gemspec" href="./analyzers/ruby-gemspec.html">
                     <description>Ruby Gemspec Analyzer</description>
+                </item>
+                <item name="Swift" href="./analyzers/swift.html">
+                    <description>Swift Package Manager Analyzer</description>
                 </item>
             </item>
             <item collapse="true" name="Modules" href="./modules.html">

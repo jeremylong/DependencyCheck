@@ -347,6 +347,28 @@ public class Check extends Update {
         this.suppressionFile = suppressionFile;
     }
     /**
+     * The path to the suppression file.
+     */
+    private String hintsFile;
+
+    /**
+     * Get the value of hintsFile.
+     *
+     * @return the value of hintsFile
+     */
+    public String getHintsFile() {
+        return hintsFile;
+    }
+
+    /**
+     * Set the value of hintsFile.
+     *
+     * @param hintsFile new value of hintsFile
+     */
+    public void setHintsFile(String hintsFile) {
+        this.hintsFile = hintsFile;
+    }
+    /**
      * flag indicating whether or not to show a summary of findings.
      */
     private boolean showSummary = true;
@@ -904,6 +926,7 @@ public class Check extends Update {
         super.populateSettings();
         Settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
         Settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
+        Settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, enableExperimental);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, pyDistributionAnalyzerEnabled);
