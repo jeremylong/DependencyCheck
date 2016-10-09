@@ -117,7 +117,8 @@ public class CpeUpdater extends BaseUpdater implements CachedWebDataSource {
     private List<Cpe> processXML(final File xml) throws UpdateException {
         try {
             final SAXParserFactory factory = SAXParserFactory.newInstance();
-            final SAXParser saxParser = factory.newSAXParser();
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);	
+    		final SAXParser saxParser = factory.newSAXParser();
             final CPEHandler handler = new CPEHandler();
             saxParser.parse(xml, handler);
             return handler.getData();

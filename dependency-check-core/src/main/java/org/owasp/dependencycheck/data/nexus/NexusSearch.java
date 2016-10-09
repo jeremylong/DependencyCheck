@@ -108,8 +108,9 @@ public class NexusSearch {
 
         if (conn.getResponseCode() == 200) {
             try {
-                final DocumentBuilder builder = DocumentBuilderFactory
-                        .newInstance().newDocumentBuilder();
+            	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            	factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);	
+        		final DocumentBuilder builder = factory.newDocumentBuilder();
                 final Document doc = builder.parse(conn.getInputStream());
                 final XPath xpath = XPathFactory.newInstance().newXPath();
                 final String groupId = xpath

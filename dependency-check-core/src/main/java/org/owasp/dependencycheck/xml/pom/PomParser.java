@@ -85,6 +85,7 @@ public class PomParser {
             final SAXParserFactory factory = SAXParserFactory.newInstance();
 //            factory.setNamespaceAware(true);
 //            factory.setValidating(true);
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);	
             final SAXParser saxParser = factory.newSAXParser();
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setContentHandler(handler);
