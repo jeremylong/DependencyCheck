@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck;
 
-import com.google.common.base.Stopwatch;
 import org.owasp.dependencycheck.analyzer.AnalysisPhase;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.AnalyzerService;
@@ -398,7 +397,7 @@ public class Engine implements FileFilter {
             final List<Analyzer> analyzerList = analyzers.get(phase);
 
             for (final Analyzer a : analyzerList) {
-                Stopwatch watch = Stopwatch.createStarted();
+                final long analyzerStart = System.currentTimeMillis();
                 try {
                     initializeAnalyzer(a);
                 } catch (InitializationException ex) {
@@ -407,7 +406,10 @@ public class Engine implements FileFilter {
                 }
 
                 executeAnalysisTasks(exceptions, a);
-                LOGGER.info("Finished {}. Took {} secs.", a.getName(), watch.elapsed(TimeUnit.SECONDS));
+
+                final long analyzerDurationMillis = System.currentTimeMillis() - analyzerStart;
+                final long analyzerDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(analyzerDurationMillis);
+                LOGGER.info("Finished {}. Took {} secs.", a.getName(), analyzerDurationSeconds);
             }
         }
         for (AnalysisPhase phase : AnalysisPhase.values()) {
