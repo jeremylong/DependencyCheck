@@ -161,10 +161,10 @@ public class Engine implements FileFilter {
     }
 
     /**
-     * Get the dependencies identified.
-     * The returned list is a reference to the engine's synchronized list. You must synchronize on it, when you modify
-     * and iterate over it from multiple threads. E.g. this holds for analyzers supporting parallel processing during
-     * their analysis phase.
+     * Get the dependencies identified. The returned list is a reference to the
+     * engine's synchronized list. You must synchronize on it, when you modify
+     * and iterate over it from multiple threads. E.g. this holds for analyzers
+     * supporting parallel processing during their analysis phase.
      *
      * @return the dependencies identified
      * @see Collections#synchronizedList(List)
@@ -322,7 +322,7 @@ public class Engine implements FileFilter {
         if (file.isFile()) {
             if (accept(file)) {
                 dependency = new Dependency(file);
-                String sha1 = dependency.getSha1sum();
+                final String sha1 = dependency.getSha1sum();
                 boolean found = false;
                 synchronized (dependencies) {
                     if (sha1 != null) {
@@ -427,13 +427,19 @@ public class Engine implements FileFilter {
         }
     }
 
+    /**
+     * Executes executes the analyzer using multiple threads.
+     * @param exceptions a collection of exceptions that occurred during analysis
+     * @param analyzer the analyzer to execute
+     * @throws ExceptionCollection thrown if exceptions occurred during analysis
+     */
     private void executeAnalysisTasks(List<Throwable> exceptions, Analyzer analyzer) throws ExceptionCollection {
         LOGGER.debug("Starting {}", analyzer.getName());
         final List<AnalysisTask> analysisTasks = getAnalysisTasks(analyzer, exceptions);
         final ExecutorService executorService = getExecutorService(analyzer);
 
         try {
-            List<Future<Void>> results = executorService.invokeAll(analysisTasks, 10, TimeUnit.MINUTES);
+            final List<Future<Void>> results = executorService.invokeAll(analysisTasks, 10, TimeUnit.MINUTES);
 
             // ensure there was no exception during execution
             for (Future<Void> result : results) {
@@ -448,21 +454,32 @@ public class Engine implements FileFilter {
         }
     }
 
+    /**
+     * Returns the analysis tasks for the dependencies.
+     * @param analyzer the analyzer to create tasks for
+     * @param exceptions the collection of exceptions to collect
+     * @return a collection of analysis tasks
+     */
     private List<AnalysisTask> getAnalysisTasks(Analyzer analyzer, List<Throwable> exceptions) {
         final List<AnalysisTask> result = new ArrayList<AnalysisTask>();
         synchronized (dependencies) {
             for (final Dependency dependency : dependencies) {
-                AnalysisTask task = new AnalysisTask(analyzer, dependency, this, exceptions);
+                final AnalysisTask task = new AnalysisTask(analyzer, dependency, this, exceptions);
                 result.add(task);
             }
         }
         return result;
     }
 
+    /**
+     * Returns the executor service for a given analyzer.
+     * @param analyzer the analyzer to obtain an executor
+     * @return the executor service
+     */
     private ExecutorService getExecutorService(Analyzer analyzer) {
         if (analyzer.supportsParallelProcessing()) {
             // just a fair trade-off that should be reasonable for all analyzer types
-            int maximumNumberOfThreads = 4 * Runtime.getRuntime().availableProcessors();
+            final int maximumNumberOfThreads = 4 * Runtime.getRuntime().availableProcessors();
 
             LOGGER.debug("Parallel processing with up to {} threads: {}.", maximumNumberOfThreads, analyzer.getName());
             return Executors.newFixedThreadPool(maximumNumberOfThreads);
@@ -615,6 +632,15 @@ public class Engine implements FileFilter {
         }
     }
 
+    /**
+     * Constructs and throws a fatal exception collection.
+     *
+     * @param message the exception message
+     * @param throwable the cause
+     * @param exceptions a collection of exception to include
+     * @throws ExceptionCollection a collection of exceptions that occurred
+     * during analysis
+     */
     private void throwFatalExceptionCollection(String message, Throwable throwable, List<Throwable> exceptions) throws ExceptionCollection {
         LOGGER.error("{}\n\n{}", throwable.getMessage(), message);
         LOGGER.debug("", throwable);

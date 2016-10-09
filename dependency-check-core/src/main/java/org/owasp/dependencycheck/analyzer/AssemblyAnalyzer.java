@@ -124,7 +124,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         try {
             final Process proc = pb.start();
 
-            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             doc = builder.parse(proc.getInputStream());
 
             // Try evacuating the error stream
@@ -254,9 +254,9 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             // Try evacuating the error stream
             IOUtils.copy(p.getErrorStream(), NullOutputStream.NULL_OUTPUT_STREAM);
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        	factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);	
-    		final DocumentBuilder builder = factory.newDocumentBuilder();       
+            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            final DocumentBuilder builder = factory.newDocumentBuilder();
             final Document doc = builder.parse(p.getInputStream());
             final XPath xpath = XPathFactory.newInstance().newXPath();
             final String error = xpath.evaluate("/assembly/error", doc);

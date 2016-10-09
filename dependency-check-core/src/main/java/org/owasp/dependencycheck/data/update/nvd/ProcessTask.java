@@ -38,7 +38,8 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 /**
- * A callable task that will process a given set of NVD CVE xml files and update the Cve Database accordingly.
+ * A callable task that will process a given set of NVD CVE xml files and update
+ * the Cve Database accordingly.
  *
  * @author Jeremy Long
  */
@@ -91,9 +92,11 @@ public class ProcessTask implements Callable<ProcessTask> {
      * Constructs a new ProcessTask used to process an NVD CVE update.
      *
      * @param cveDB the data store object
-     * @param filePair the download task that contains the URL references to download
-     * @param settings a reference to the global settings object; this is necessary so that when the thread is started the
-     * dependencies have a correct reference to the global settings.
+     * @param filePair the download task that contains the URL references to
+     * download
+     * @param settings a reference to the global settings object; this is
+     * necessary so that when the thread is started the dependencies have a
+     * correct reference to the global settings.
      */
     public ProcessTask(final CveDB cveDB, final DownloadTask filePair, Settings settings) {
         this.cveDB = cveDB;
@@ -106,8 +109,8 @@ public class ProcessTask implements Callable<ProcessTask> {
      * Implements the callable interface.
      *
      * @return this object
-     * @throws Exception thrown if there is an exception; note that any UpdateExceptions are simply added to the tasks exception
-     * collection
+     * @throws Exception thrown if there is an exception; note that any
+     * UpdateExceptions are simply added to the tasks exception collection
      */
     @Override
     public ProcessTask call() throws Exception {
@@ -127,18 +130,20 @@ public class ProcessTask implements Callable<ProcessTask> {
      *
      * @param file the file containing the NVD CVE XML
      * @param oldVersion contains the file containing the NVD CVE XML 1.2
-     * @throws ParserConfigurationException is thrown if there is a parser configuration exception
+     * @throws ParserConfigurationException is thrown if there is a parser
+     * configuration exception
      * @throws SAXException is thrown if there is a SAXException
      * @throws IOException is thrown if there is a IO Exception
      * @throws SQLException is thrown if there is a SQL exception
      * @throws DatabaseException is thrown if there is a database exception
-     * @throws ClassNotFoundException thrown if the h2 database driver cannot be loaded
+     * @throws ClassNotFoundException thrown if the h2 database driver cannot be
+     * loaded
      */
     protected void importXML(File file, File oldVersion) throws ParserConfigurationException,
             SAXException, IOException, SQLException, DatabaseException, ClassNotFoundException {
 
         final SAXParserFactory factory = SAXParserFactory.newInstance();
-        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);	
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         final SAXParser saxParser = factory.newSAXParser();
 
         final NvdCve12Handler cve12Handler = new NvdCve12Handler();
@@ -154,7 +159,8 @@ public class ProcessTask implements Callable<ProcessTask> {
     /**
      * Processes the NVD CVE XML file and imports the data into the DB.
      *
-     * @throws UpdateException thrown if there is an error loading the data into the database
+     * @throws UpdateException thrown if there is an error loading the data into
+     * the database
      */
     private void processFiles() throws UpdateException {
         LOGGER.info("Processing Started for NVD CVE - {}", filePair.getNvdCveInfo().getId());
@@ -181,6 +187,6 @@ public class ProcessTask implements Callable<ProcessTask> {
             filePair.cleanup();
         }
         LOGGER.info("Processing Complete for NVD CVE - {}  ({} ms)", filePair.getNvdCveInfo().getId(),
-            System.currentTimeMillis() - startProcessing);
+                System.currentTimeMillis() - startProcessing);
     }
 }

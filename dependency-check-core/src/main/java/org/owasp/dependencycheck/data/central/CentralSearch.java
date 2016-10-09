@@ -110,9 +110,9 @@ public class CentralSearch {
         if (conn.getResponseCode() == 200) {
             boolean missing = false;
             try {
-            	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            	factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);	
-        		final DocumentBuilder builder = factory.newDocumentBuilder();
+                final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                final DocumentBuilder builder = factory.newDocumentBuilder();
                 final Document doc = builder.parse(conn.getInputStream());
                 final XPath xpath = XPathFactory.newInstance().newXPath();
                 final String numFound = xpath.evaluate("/response/result/@numFound", doc);

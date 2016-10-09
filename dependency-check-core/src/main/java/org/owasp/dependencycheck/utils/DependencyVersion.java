@@ -140,11 +140,11 @@ public class DependencyVersion implements Iterable<String>, Comparable<Dependenc
                 ? this.versionParts.size() : other.versionParts.size();
         final int maxVersionMatchLength = (this.versionParts.size() > other.versionParts.size())
                 ? this.versionParts.size() : other.versionParts.size();
-        
-        if (minVersionMatchLength==1 && maxVersionMatchLength>=3) {
+
+        if (minVersionMatchLength == 1 && maxVersionMatchLength >= 3) {
             return false;
         }
-        
+
         //TODO steal better version of code from compareTo
         for (int i = 0; i < minVersionMatchLength; i++) {
             final String thisPart = this.versionParts.get(i);

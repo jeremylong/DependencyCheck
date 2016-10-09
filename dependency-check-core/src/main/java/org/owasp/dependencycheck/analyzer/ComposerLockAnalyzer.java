@@ -111,7 +111,7 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
                 final Dependency d = new Dependency(dependency.getActualFile());
                 d.setDisplayFileName(String.format("%s:%s/%s", dependency.getDisplayFileName(), dep.getGroup(), dep.getProject()));
                 final String filePath = String.format("%s:%s/%s", dependency.getFilePath(), dep.getGroup(), dep.getProject());
-                MessageDigest sha1 = getSha1MessageDigest();
+                final MessageDigest sha1 = getSha1MessageDigest();
                 d.setFilePath(filePath);
                 d.setSha1sum(Checksum.getHex(sha1.digest(filePath.getBytes(Charset.defaultCharset()))));
                 d.getVendorEvidence().addEvidence(COMPOSER_LOCK, "vendor", dep.getGroup(), Confidence.HIGHEST);
@@ -165,6 +165,11 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
         return AnalysisPhase.INFORMATION_COLLECTION;
     }
 
+    /**
+     * Returns the sha1 message digest.
+     *
+     * @return the sha1 message digest
+     */
     private MessageDigest getSha1MessageDigest() {
         try {
             return MessageDigest.getInstance("SHA1");

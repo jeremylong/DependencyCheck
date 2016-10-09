@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -61,17 +60,17 @@ public final class Checksum {
      * not exist
      */
     public static byte[] getChecksum(String algorithm, File file) throws NoSuchAlgorithmException, IOException {
-        MessageDigest md = MessageDigest.getInstance(algorithm);
+        final MessageDigest md = MessageDigest.getInstance(algorithm);
         FileInputStream fis = null;
         FileChannel ch = null;
         try {
             fis = new FileInputStream(file);
             ch = fis.getChannel();
-            ByteBuffer buf = ByteBuffer.allocateDirect(8192);
+            final ByteBuffer buf = ByteBuffer.allocateDirect(8192);
             int b = ch.read(buf);
             while ((b != -1) && (b != 0)) {
                 buf.flip();
-                byte[] bytes = new byte[b];
+                final byte[] bytes = new byte[b];
                 buf.get(bytes);
                 md.update(bytes, 0, b);
                 buf.clear();
@@ -94,50 +93,6 @@ public final class Checksum {
                 }
             }
         }
-        /*  
-        // while the following is likely faster, it does not work as we need to
-        // be able to delete the file, see
-        // http://stackoverflow.com/questions/24589488/why-does-this-utility-method-leaves-files-locked
-        //
-        final MessageDigest digest = MessageDigest.getInstance(algorithm);
-        FileInputStream fis = null;
-        FileChannel ch = null;
-        try {
-            fis = new FileInputStream(file);
-            ch = fis.getChannel();
-            long remainingToRead = file.length();
-            long start = 0;
-            while (remainingToRead > 0) {
-                long amountToRead;
-                if (remainingToRead > Integer.MAX_VALUE) {
-                    remainingToRead -= Integer.MAX_VALUE;
-                    amountToRead = Integer.MAX_VALUE;
-                } else {
-                    amountToRead = remainingToRead;
-                    remainingToRead = 0;
-                }
-                final MappedByteBuffer byteBuffer = ch.map(FileChannel.MapMode.READ_ONLY, start, amountToRead);
-                digest.update(byteBuffer);
-                start += amountToRead;
-            }
-        } finally {
-            if (ch != null) {
-                try {
-                    ch.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("Error closing channel '{}'.", file.getName(), ex);
-                }
-            }
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("Error closing file '{}'.", file.getName(), ex);
-                }
-            }
-        }
-        return digest.digest();
-        */
     }
 
     /**
