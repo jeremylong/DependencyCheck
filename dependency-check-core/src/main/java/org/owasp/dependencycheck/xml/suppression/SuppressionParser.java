@@ -128,7 +128,7 @@ public class SuppressionParser {
             final SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
             factory.setValidating(true);
-            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);	
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             final SAXParser saxParser = factory.newSAXParser();
             saxParser.setProperty(SuppressionParser.JAXP_SCHEMA_LANGUAGE, SuppressionParser.W3C_XML_SCHEMA);
             saxParser.setProperty(SuppressionParser.JAXP_SCHEMA_SOURCE, new InputSource(schemaStream));

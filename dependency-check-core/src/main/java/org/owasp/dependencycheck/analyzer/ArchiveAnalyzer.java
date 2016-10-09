@@ -221,7 +221,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Does not support parallel processing as it both modifies and iterates over the engine's list of dependencies.
+     * Does not support parallel processing as it both modifies and iterates
+     * over the engine's list of dependencies.
      *
      * @see #analyzeFileType(Dependency, Engine)
      * @see #findMoreDependencies(Engine, File)
@@ -421,7 +422,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.warn("Exception reading archive '{}'.", archive.getName());
                 LOGGER.debug("", ex);
             } finally {
-                //overly verbose and not needed... but keeping it anyway due to 
+                //overly verbose and not needed... but keeping it anyway due to
                 //having issue with file handles being left open
                 close(fis);
                 close(in);

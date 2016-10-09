@@ -119,7 +119,7 @@ public class CveDB {
      * @throws DatabaseException thrown if there is an error opening the
      * database connection
      */
-    public synchronized final void open() throws DatabaseException {
+    public final synchronized void open() throws DatabaseException {
         if (!isOpen()) {
             conn = ConnectionFactory.getConnection();
         }

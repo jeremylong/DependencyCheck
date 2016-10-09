@@ -221,7 +221,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 } catch (UnsupportedEncodingException ex) {
                     path = filePath.getBytes();
                 }
-                MessageDigest sha1 = getSha1MessageDigest();
+                final MessageDigest sha1 = getSha1MessageDigest();
                 currentDep.setSha1sum(Checksum.getHex(sha1.digest(path)));
                 engine.getDependencies().add(currentDep);
             }
@@ -239,6 +239,11 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
         return Settings.KEYS.ANALYZER_CMAKE_ENABLED;
     }
 
+    /**
+     * Returns the sha1 message digest.
+     *
+     * @return the sha1 message digest
+     */
     private MessageDigest getSha1MessageDigest() {
         try {
             return MessageDigest.getInstance("SHA1");

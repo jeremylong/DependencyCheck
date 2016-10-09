@@ -47,10 +47,12 @@ public class PomParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(PomParser.class);
 
     /**
-     * Parses the given xml file and returns a Model object containing only the fields dependency-check requires.
+     * Parses the given xml file and returns a Model object containing only the
+     * fields dependency-check requires.
      *
      * @param file a pom.xml
-     * @return a Model object containing only the fields dependency-check requires
+     * @return a Model object containing only the fields dependency-check
+     * requires
      * @throws PomParseException thrown if the xml file cannot be parsed
      */
     public Model parse(File file) throws PomParseException {
@@ -73,7 +75,8 @@ public class PomParser {
     }
 
     /**
-     * Parses the given XML file and returns a Model object containing only the fields dependency-check requires.
+     * Parses the given XML file and returns a Model object containing only the
+     * fields dependency-check requires.
      *
      * @param inputStream an InputStream containing suppression rues
      * @return a list of suppression rules
@@ -85,7 +88,7 @@ public class PomParser {
             final SAXParserFactory factory = SAXParserFactory.newInstance();
 //            factory.setNamespaceAware(true);
 //            factory.setValidating(true);
-            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);	
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             final SAXParser saxParser = factory.newSAXParser();
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setContentHandler(handler);
