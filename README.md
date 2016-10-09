@@ -97,6 +97,37 @@ On Windows
 
 Then load the resulting 'DependencyCheck-Report.html' into your favorite browser.
 
+### Docker
+
+In the following example it is assumed that the source to be checked is in the actual directory. A persistent data directory and a persistent report directory is used so that the container can be destroyed after running it to make sure that you use the newst version, always.
+```
+# After the first run, feel free to change the owner of the directories to the owner of the creted files and the permissions to 744
+DATA_DIRECTORY=$HOME/OWASP-Dependency-Check/data
+REPORT_DIRECTORY=/$HOME/OWASP-Dependency-Check/reports
+
+if [ ! -d $DATA_DIRECTORY ]; then
+	echo "Initially creating persistent directories"
+        mkdir -p $DATA_DIRECTORY
+        chmod -R 777 $DATA_DIRECTORY
+    
+        mkdir -p $REPORT_DIRECTORY
+        chmod -R 777 $REPORT_DIRECTORY
+fi
+
+docker pull owasp/dependency-check # Make sure it is the actual version
+
+docker run --rm \
+        --volume $(pwd):/src \
+        --volume $DATA_DIRECTORY:/usr/share/dependency-check/data \
+        --volume $REPORT_DIRECTORY:/report \
+        --name dependency-check \
+        dc \
+        --suppression "/src/security/dependency-check-suppression.xml"\
+        --format "ALL" \
+        --project "My OWASP Dependency Check Projekt" \
+```
+
+
 Mailing List
 ------------
 
