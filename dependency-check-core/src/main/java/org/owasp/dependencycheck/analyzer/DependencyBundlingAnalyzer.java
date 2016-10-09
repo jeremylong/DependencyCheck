@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
-public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Analyzer {
+public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
 
     /**
      * The Logger.
@@ -93,6 +93,16 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer implements Anal
         return ANALYSIS_PHASE;
     }
     //</editor-fold>
+
+    /**
+     * Does not support parallel processing as it both modifies and iterates over the engine's list of dependencies.
+     *
+     * @see #analyze(Dependency, Engine)
+     */
+    @Override
+    public boolean supportsParallelProcessing() {
+        return false;
+    }
 
     /**
      * Analyzes a set of dependencies. If they have been found to have the same

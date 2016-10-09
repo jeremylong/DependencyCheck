@@ -75,7 +75,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      * The analyzer should be disabled if there are errors, so this is a flag to
      * determine if such an error has occurred.
      */
-    private boolean errorFlag = false;
+    private volatile boolean errorFlag = false;
 
     /**
      * The searcher itself.

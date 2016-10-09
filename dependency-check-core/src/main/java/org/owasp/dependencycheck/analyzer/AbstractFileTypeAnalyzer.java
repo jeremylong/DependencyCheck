@@ -83,7 +83,7 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     /**
      * A flag indicating whether or not the analyzer is enabled.
      */
-    private boolean enabled = true;
+    private volatile boolean enabled = true;
 
     /**
      * Get the value of enabled.

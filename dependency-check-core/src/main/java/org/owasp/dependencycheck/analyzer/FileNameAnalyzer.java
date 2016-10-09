@@ -34,7 +34,7 @@ import org.owasp.dependencycheck.utils.DependencyVersionUtil;
  *
  * @author Jeremy Long
  */
-public class FileNameAnalyzer extends AbstractAnalyzer implements Analyzer {
+public class FileNameAnalyzer extends AbstractAnalyzer {
 
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**

@@ -24,6 +24,7 @@ import org.owasp.dependencycheck.data.composer.ComposerException;
 import org.owasp.dependencycheck.data.composer.ComposerLockParser;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
@@ -36,7 +37,6 @@ import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
  * Used to analyze a composer.lock file for a composer PHP app.
@@ -85,18 +85,12 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void initializeFileTypeAnalyzer() throws InitializationException {
         try {
-            sha1 = MessageDigest.getInstance("SHA1");
-        } catch (NoSuchAlgorithmException ex) {
+            getSha1MessageDigest();
+        } catch (IllegalStateException ex) {
             setEnabled(false);
-            throw new InitializationException("Unable to create SHA1 MmessageDigest", ex);
+            throw new InitializationException("Unable to create SHA1 MessageDigest", ex);
         }
     }
-
-    /**
-     * The MessageDigest for calculating a new digest for the new dependencies
-     * added.
-     */
-    private MessageDigest sha1 = null;
 
     /**
      * Entry point for the analyzer.
@@ -117,6 +111,7 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
                 final Dependency d = new Dependency(dependency.getActualFile());
                 d.setDisplayFileName(String.format("%s:%s/%s", dependency.getDisplayFileName(), dep.getGroup(), dep.getProject()));
                 final String filePath = String.format("%s:%s/%s", dependency.getFilePath(), dep.getGroup(), dep.getProject());
+                MessageDigest sha1 = getSha1MessageDigest();
                 d.setFilePath(filePath);
                 d.setSha1sum(Checksum.getHex(sha1.digest(filePath.getBytes(Charset.defaultCharset()))));
                 d.getVendorEvidence().addEvidence(COMPOSER_LOCK, "vendor", dep.getGroup(), Confidence.HIGHEST);
@@ -168,5 +163,14 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public AnalysisPhase getAnalysisPhase() {
         return AnalysisPhase.INFORMATION_COLLECTION;
+    }
+
+    private MessageDigest getSha1MessageDigest() {
+        try {
+            return MessageDigest.getInstance("SHA1");
+        } catch (NoSuchAlgorithmException e) {
+            LOGGER.error(e.getMessage());
+            throw new IllegalStateException("Failed to obtain the SHA1 message digest.", e);
+        }
     }
 }
