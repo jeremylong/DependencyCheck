@@ -30,6 +30,7 @@ import java.util.concurrent.Callable;
 
 /**
  * Task to support parallelism of dependency-check analysis.
+ * Analyses a single {@link Dependency} by a specific {@link Analyzer}.
  *
  * @author Stefan Neuhaus
  */
@@ -80,7 +81,7 @@ class AnalysisTask implements Callable<Void> {
      * @throws Exception thrown if unable to execute the analysis task
      */
     @Override
-    public Void call() throws Exception {
+    public Void call() {
         Settings.initialize();
 
         if (shouldAnalyze()) {
@@ -107,10 +108,10 @@ class AnalysisTask implements Callable<Void> {
      *
      * @return whether or not the analyzer can analyze the dependency
      */
-    private boolean shouldAnalyze() {
+    boolean shouldAnalyze() {
         if (analyzer instanceof FileTypeAnalyzer) {
-            final FileTypeAnalyzer fAnalyzer = (FileTypeAnalyzer) analyzer;
-            return fAnalyzer.accept(dependency.getActualFile());
+            final FileTypeAnalyzer fileTypeAnalyzer = (FileTypeAnalyzer) analyzer;
+            return fileTypeAnalyzer.accept(dependency.getActualFile());
         }
 
         return true;

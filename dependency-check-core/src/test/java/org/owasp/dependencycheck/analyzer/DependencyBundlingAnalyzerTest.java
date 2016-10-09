@@ -17,16 +17,24 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import static org.junit.Assert.assertEquals;
+import mockit.Mocked;
+import mockit.Verifications;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 /**
- *
  * @author Jeremy Long
  */
 public class DependencyBundlingAnalyzerTest extends BaseTest {
+
+    @Mocked
+    Engine engineMock;
 
     /**
      * Test of getName method, of class DependencyBundlingAnalyzer.
@@ -52,15 +60,27 @@ public class DependencyBundlingAnalyzerTest extends BaseTest {
 
     /**
      * Test of analyze method, of class DependencyBundlingAnalyzer.
+     * The actually passed dependency does not matter. The analyzer only runs once.
      */
     @Test
     public void testAnalyze() throws Exception {
-//        Dependency ignore = null;
-//        Engine engine = null;
-//        DependencyBundlingAnalyzer instance = new DependencyBundlingAnalyzer();
-//        instance.analyze(ignore, engine);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
+        DependencyBundlingAnalyzer instance = new DependencyBundlingAnalyzer();
+
+        // the actual dependency does not matter
+        assertFalse(instance.analyzed);
+        instance.analyze(null, engineMock);
+
+        // the second runs basically does nothing
+        assertTrue(instance.analyzed);
+        instance.analyze(null, engineMock);
+        instance.analyze(null, engineMock);
+        instance.analyze(null, engineMock);
+        assertTrue(instance.analyzed);
+
+        new Verifications() {{
+            engineMock.getDependencies();
+            times = 2;
+        }};
     }
 
     /**
@@ -119,7 +139,5 @@ public class DependencyBundlingAnalyzerTest extends BaseTest {
         expResult = true;
         result = instance.firstPathIsShortest(left, right);
         assertEquals(expResult, result);
-
     }
-
 }

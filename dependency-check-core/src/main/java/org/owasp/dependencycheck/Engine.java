@@ -47,6 +47,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -350,7 +351,7 @@ public class Engine implements FileFilter {
      * iterates over a copy of the dependencies list. Thus, the potential for
      * {@link java.util.ConcurrentModificationException}s is avoided, and
      * analyzers may safely add or remove entries from the dependencies list.
-     *
+     * <p>
      * Every effort is made to complete analysis on the dependencies. In some
      * cases an exception will occur with part of the analysis being performed
      * which may not affect the entire analysis. If an exception occurs it will
@@ -396,20 +397,20 @@ public class Engine implements FileFilter {
         for (AnalysisPhase phase : AnalysisPhase.values()) {
             final List<Analyzer> analyzerList = analyzers.get(phase);
 
-            for (final Analyzer a : analyzerList) {
+            for (final Analyzer analyzer : analyzerList) {
                 final long analyzerStart = System.currentTimeMillis();
                 try {
-                    initializeAnalyzer(a);
+                    initializeAnalyzer(analyzer);
                 } catch (InitializationException ex) {
                     exceptions.add(ex);
                     continue;
                 }
 
-                executeAnalysisTasks(exceptions, a);
+                executeAnalysisTasks(analyzer, exceptions);
 
                 final long analyzerDurationMillis = System.currentTimeMillis() - analyzerStart;
                 final long analyzerDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(analyzerDurationMillis);
-                LOGGER.info("Finished {}. Took {} secs.", a.getName(), analyzerDurationSeconds);
+                LOGGER.info("Finished {}. Took {} secs.", analyzer.getName(), analyzerDurationSeconds);
             }
         }
         for (AnalysisPhase phase : AnalysisPhase.values()) {
@@ -429,11 +430,12 @@ public class Engine implements FileFilter {
 
     /**
      * Executes executes the analyzer using multiple threads.
+     *
      * @param exceptions a collection of exceptions that occurred during analysis
      * @param analyzer the analyzer to execute
      * @throws ExceptionCollection thrown if exceptions occurred during analysis
      */
-    private void executeAnalysisTasks(List<Throwable> exceptions, Analyzer analyzer) throws ExceptionCollection {
+    void executeAnalysisTasks(Analyzer analyzer, List<Throwable> exceptions) throws ExceptionCollection {
         LOGGER.debug("Starting {}", analyzer.getName());
         final List<AnalysisTask> analysisTasks = getAnalysisTasks(analyzer, exceptions);
         final ExecutorService executorService = getExecutorService(analyzer);
@@ -447,20 +449,25 @@ public class Engine implements FileFilter {
                     result.get();
                 } catch (ExecutionException e) {
                     throwFatalExceptionCollection("Analysis task failed with a fatal exception.", e, exceptions);
+                } catch (CancellationException e) {
+                    throwFatalExceptionCollection("Analysis task timed out.", e, exceptions);
                 }
             }
         } catch (InterruptedException e) {
             throwFatalExceptionCollection("Analysis has been interrupted.", e, exceptions);
+        } finally {
+            executorService.shutdown();
         }
     }
 
     /**
      * Returns the analysis tasks for the dependencies.
+     *
      * @param analyzer the analyzer to create tasks for
      * @param exceptions the collection of exceptions to collect
      * @return a collection of analysis tasks
      */
-    private List<AnalysisTask> getAnalysisTasks(Analyzer analyzer, List<Throwable> exceptions) {
+    List<AnalysisTask> getAnalysisTasks(Analyzer analyzer, List<Throwable> exceptions) {
         final List<AnalysisTask> result = new ArrayList<AnalysisTask>();
         synchronized (dependencies) {
             for (final Dependency dependency : dependencies) {
@@ -473,10 +480,11 @@ public class Engine implements FileFilter {
 
     /**
      * Returns the executor service for a given analyzer.
+     *
      * @param analyzer the analyzer to obtain an executor
      * @return the executor service
      */
-    private ExecutorService getExecutorService(Analyzer analyzer) {
+    ExecutorService getExecutorService(Analyzer analyzer) {
         if (analyzer.supportsParallelProcessing()) {
             // just a fair trade-off that should be reasonable for all analyzer types
             final int maximumNumberOfThreads = 4 * Runtime.getRuntime().availableProcessors();

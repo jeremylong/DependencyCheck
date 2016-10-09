@@ -58,10 +58,11 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
      * A pattern for obtaining the first part of a filename.
      */
     private static final Pattern STARTING_TEXT_PATTERN = Pattern.compile("^[a-zA-Z0-9]*");
+
     /**
      * a flag indicating if this analyzer has run. This analyzer only runs once.
      */
-    private boolean analyzed = false;
+    boolean analyzed = false;
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
@@ -95,7 +96,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
     //</editor-fold>
 
     /**
-     * Does not support parallel processing as it both modifies and iterates over the engine's list of dependencies.
+     * Does not support parallel processing as it only runs once and then operates on <em>all</em> dependencies.
      *
      * @see #analyze(Dependency, Engine)
      */
