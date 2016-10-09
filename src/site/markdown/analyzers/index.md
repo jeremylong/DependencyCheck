@@ -24,7 +24,9 @@ several teams have found them useful in their current state.
 | -------- | ------------------ | --------------- |
 | [Autoconf](./autoconf.html) | Autoconf project configuration files (configure, configure.in, configure.ac) | [Regex](https://en.wikipedia.org/wiki/Regular_expression) scan for AC_INIT metadata, including in generated configuration script. |
 | [CMake](./cmake.html) | CMake project files (CMakeLists.txt) and scripts (\*.cmake) | Regex scan for project initialization and version setting commands. |
+| [CocoaPods](./cocoapods.html) | CocoaPods `.podspec` files | Extracts dependency information from specification file. |
 | [Composer Lock](./composer-lock.html) | PHP [Composer](http://getcomposer.org) Lock files (composer.lock) | Parses PHP [Composer](http://getcomposer.org) lock files for exact versions of dependencies. | 
 | [Node.js](./nodejs.html) | NPM package specification files (package.json) | Parse JSON format for metadata. |
 | [Python](./python.html) | Python source files (\*.py); Package metadata files (PKG-INFO, METADATA); Package Distribution Files (\*.whl, \*.egg, \*.zip) | Regex scan of Python source files for setuptools metadata; Parse RFC822 header format for metadata in all other artifacts. |
 | [Ruby Gemspec](./ruby-gemspec.html) | Ruby makefiles (Rakefile); Ruby Gemspec files (\*.gemspec) | Regex scan Gemspec initialization blocks for metadata. |
+| [SWIFT](./swift.html) | SWIFT Package Manager's `Package.swift` | Extracts dependency information from swift package file. |
