@@ -81,7 +81,7 @@ public class CheckMojo extends BaseDependencyCheckMojo {
             if (getLog().isDebugEnabled()) {
                 getLog().debug("Database connection error", ex);
             }
-            final String msg = "An exception occured connecting to the local database. Please see the log file for more details.";
+            final String msg = "An exception occurred connecting to the local database. Please see the log file for more details.";
             if (this.isFailOnError()) {
                 throw new MojoExecutionException(msg, ex);
             }
@@ -96,7 +96,7 @@ public class CheckMojo extends BaseDependencyCheckMojo {
                     engine.analyzeDependencies();
                 } catch (ExceptionCollection ex) {
                     if (this.isFailOnError() && ex.isFatal()) {
-                        throw new MojoExecutionException("One or more exceptions occured during analysis", ex);
+                        throw new MojoExecutionException("One or more exceptions occurred during analysis", ex);
                     }
                     exCol = ex;
                 }
@@ -116,7 +116,7 @@ public class CheckMojo extends BaseDependencyCheckMojo {
                     showSummary(getProject(), engine.getDependencies());
                     checkForFailure(engine.getDependencies());
                     if (exCol != null && this.isFailOnError()) {
-                        throw new MojoExecutionException("One or more exceptions occured during dependency-check analysis", exCol);
+                        throw new MojoExecutionException("One or more exceptions occurred during dependency-check analysis", exCol);
                     }
                 }
             }

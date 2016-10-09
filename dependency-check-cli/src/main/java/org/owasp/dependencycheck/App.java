@@ -177,7 +177,7 @@ public class App {
             } catch (ExceptionCollection ex) {
                 if (ex.isFatal()) {
                     exitCode = -13;
-                    LOGGER.error("One or more fatal errors occured");
+                    LOGGER.error("One or more fatal errors occurred");
                 } else {
                     exitCode = -14;
                 }
