@@ -73,10 +73,6 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private File grokAssemblyExe = null;
     /**
-     * The DocumentBuilder for parsing the XML
-     */
-    private DocumentBuilder builder;
-    /**
      * Logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(AssemblyAnalyzer.class);
@@ -128,6 +124,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         try {
             final Process proc = pb.start();
 
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             doc = builder.parse(proc.getInputStream());
 
             // Try evacuating the error stream
@@ -176,6 +173,8 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                         product, Confidence.HIGH));
             }
 
+        } catch (ParserConfigurationException pce) {
+            throw new AnalysisException("Error initializing the assembly analyzer", pce);
         } catch (IOException ioe) {
             throw new AnalysisException(ioe);
         } catch (SAXException saxe) {
@@ -233,9 +232,9 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
 
         // Now, need to see if GrokAssembly actually runs from this location.
         final List<String> args = buildArgumentList();
-        //TODO this creaes an "unreported" error - if someone doesn't look
+        //TODO this creates an "unreported" error - if someone doesn't look
         // at the command output this could easily be missed (especially in an
-        // Ant or Mmaven build.
+        // Ant or Maven build.
         //
         // We need to create a non-fatal warning error type that will
         // get added to the report.
@@ -277,12 +276,6 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.debug("Could not execute GrokAssembly {}", e.getMessage());
             setEnabled(false);
             throw new InitializationException("An error occurred with the .NET AssemblyAnalyzer", e);
-        }
-        try {
-            builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        } catch (ParserConfigurationException ex) {
-            setEnabled(false);
-            throw new InitializationException("Error initializing the assembly analyzer", ex);
         }
     }
 

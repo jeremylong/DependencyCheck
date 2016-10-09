@@ -51,7 +51,7 @@ import org.xml.sax.SAXException;
  *
  * @author Jeremy Long
  */
-public class HintAnalyzer extends AbstractAnalyzer implements Analyzer {
+public class HintAnalyzer extends AbstractAnalyzer {
 
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**

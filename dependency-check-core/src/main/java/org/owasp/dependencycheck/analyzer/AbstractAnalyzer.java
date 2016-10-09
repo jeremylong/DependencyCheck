@@ -46,4 +46,12 @@ public abstract class AbstractAnalyzer implements Analyzer {
     public void close() throws Exception {
         //do nothing
     }
+
+    /**
+     * The default is to support parallel processing.
+     */
+    @Override
+    public boolean supportsParallelProcessing() {
+        return true;
+    }
 }

@@ -45,6 +45,7 @@ import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.UrlStringUtils;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Used to analyze a Wheel or egg distribution files, or their contents in
@@ -76,7 +77,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
      * The count of directories created during analysis. This is used for
      * creating temporary directories.
      */
-    private static int dirCount = 0;
+    private static final AtomicInteger DIR_COUNT = new AtomicInteger(0);
 
     /**
      * The name of the analyzer.
@@ -393,7 +394,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
         // getting an exception for some directories not being able to be
         // created; might be because the directory already exists?
         do {
-            dirCount += 1;
+            final int dirCount = DIR_COUNT.incrementAndGet();
             directory = new File(tempFileLocation, String.valueOf(dirCount));
         } while (directory.exists());
         if (!directory.mkdirs()) {

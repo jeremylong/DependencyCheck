@@ -75,4 +75,12 @@ public interface Analyzer {
      * @throws Exception is thrown if an exception occurs closing the analyzer.
      */
     void close() throws Exception;
+
+    /**
+     * Returns whether multiple instances of the same type of analyzer can run in parallel.
+     * Note that running analyzers of different types in parallel is not supported at all.
+     *
+     * @return {@code true} if the analyzer supports parallel processing, {@code false} else
+     */
+    boolean supportsParallelProcessing();
 }

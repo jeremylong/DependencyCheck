@@ -193,11 +193,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         } else {
-            // copy, alter and set in case some other thread is iterating over
-            final List<Dependency> dependencies = new ArrayList<Dependency>(
-                    engine.getDependencies());
-            dependencies.remove(dependency);
-            engine.setDependencies(dependencies);
+            engine.getDependencies().remove(dependency);
         }
     }
 

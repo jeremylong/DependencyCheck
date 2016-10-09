@@ -221,6 +221,17 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
+     * Does not support parallel processing as it both modifies and iterates over the engine's list of dependencies.
+     *
+     * @see #analyzeFileType(Dependency, Engine)
+     * @see #findMoreDependencies(Engine, File)
+     */
+    @Override
+    public boolean supportsParallelProcessing() {
+        return false;
+    }
+
+    /**
      * Analyzes a given dependency. If the dependency is an archive, such as a
      * WAR or EAR, the contents are extracted, scanned, and added to the list of
      * dependencies within the engine.
