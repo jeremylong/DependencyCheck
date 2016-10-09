@@ -1,13 +1,13 @@
 Usage
 ======================
 Dependency-check-maven is very simple to utilize and can be used as a stand-alone
-plugin or as part of the site plugin.
+plug-in or as part of the site plug-in. The plug-in requires Maven 3.1 or higher.
 
 It is important to understand that the first time this task is executed it may
 take 20 minutes or more as it downloads and processes the data from the National
 Vulnerability Database (NVD) hosted by NIST: https://nvd.nist.gov
 
-After the first batch download, as long as the plugin is executed at least once every
+After the first batch download, as long as the plug-in is executed at least once every
 seven days the update will only take a few seconds.
 
 #set( $H = '#' )
