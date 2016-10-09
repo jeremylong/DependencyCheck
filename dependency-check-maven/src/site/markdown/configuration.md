@@ -26,6 +26,7 @@ skipTestScope        | Skip analysis for artifacts with Test Scope              
 skipProvidedScope    | Skip analysis for artifacts with Provided Scope           | false
 skipRuntimeScope     | Skip analysis for artifacts with Runtime Scope            | false
 suppressionFile      | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html) | &nbsp;
+hintsFile            | The file path to the XML hints file \- used to suppress [false negatives](../general/hints.html)       | &nbsp;
 enableExperimental   | Enable the [experimental analyzers](../analyzers/index.html). If not enabled the experimental analyzers (see below) will not be loaded or used. | false
 
 Analyzer Configuration
