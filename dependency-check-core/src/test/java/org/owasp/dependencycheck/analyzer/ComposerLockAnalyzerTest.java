@@ -17,19 +17,25 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import mockit.Mock;
+import mockit.MockUp;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.exception.InitializationException;
 
 import java.io.File;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import org.owasp.dependencycheck.BaseDBTestCase;
 
 /**
  * Unit tests for NodePackageAnalyzer.
@@ -95,5 +101,23 @@ public class ComposerLockAnalyzerTest extends BaseDBTestCase {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                 "composer.lock"));
         analyzer.analyze(result, engine);
+    }
+
+
+    @Test(expected = InitializationException.class)
+    public void analyzerIsDisabledInCaseOfMissingMessageDigest() throws InitializationException {
+        new MockUp<MessageDigest>() {
+            @Mock
+            MessageDigest getInstance(String ignore) throws NoSuchAlgorithmException {
+                throw new NoSuchAlgorithmException();
+            }
+        };
+
+        analyzer = new ComposerLockAnalyzer();
+        analyzer.setFilesMatched(true);
+        assertTrue(analyzer.isEnabled());
+        analyzer.initialize();
+
+        assertFalse(analyzer.isEnabled());
     }
 }

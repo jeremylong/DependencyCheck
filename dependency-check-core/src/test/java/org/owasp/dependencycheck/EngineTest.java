@@ -17,18 +17,35 @@
  */
 package org.owasp.dependencycheck;
 
-import java.io.File;
+import mockit.Expectations;
+import mockit.Mocked;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.JarAnalyzer;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.exception.ExceptionCollection;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
- *
  * @author Jeremy Long
  */
 public class EngineTest extends BaseDBTestCase {
+
+    @Mocked
+    Analyzer analyzer;
+
+    @Mocked
+    AnalysisTask analysisTask;
+
 
     /**
      * Test of scanFile method, of class Engine.
@@ -40,14 +57,40 @@ public class EngineTest extends BaseDBTestCase {
         File file = BaseTest.getResourceAsFile(this, "dwr.jar");
         Dependency dwr = instance.scanFile(file);
         file = BaseTest.getResourceAsFile(this, "org.mortbay.jmx.jar");
-        Dependency jmx = instance.scanFile(file);
+        instance.scanFile(file);
         assertEquals(2, instance.getDependencies().size());
-        
+
         file = BaseTest.getResourceAsFile(this, "dwr.jar");
         Dependency secondDwr = instance.scanFile(file);
-        
+
         assertEquals(2, instance.getDependencies().size());
         assertTrue(dwr == secondDwr);
-        
+    }
+
+    @Test(expected = ExceptionCollection.class)
+    public void exceptionDuringAnalysisTaskExecutionIsFatal() throws DatabaseException, ExceptionCollection {
+        final ExecutorService executorService = Executors.newFixedThreadPool(3);
+        final Engine instance = new Engine();
+        final List<Throwable> exceptions = new ArrayList<Throwable>();
+
+        new Expectations() {{
+            analysisTask.call();
+            result = new IllegalStateException("Analysis task execution threw an exception");
+        }};
+
+        final List<AnalysisTask> failingAnalysisTask = new ArrayList<AnalysisTask>();
+        failingAnalysisTask.add(analysisTask);
+
+        new Expectations(instance) {{
+            instance.getExecutorService(analyzer);
+            result = executorService;
+
+            instance.getAnalysisTasks(analyzer, exceptions);
+            result = failingAnalysisTask;
+        }};
+
+        instance.executeAnalysisTasks(analyzer, exceptions);
+
+        assertTrue(executorService.isShutdown());
     }
 }

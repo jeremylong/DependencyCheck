@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+/**
+ * The task of analyzing a single {@link Dependency} by a specific {@link Analyzer}.
+ */
 class AnalysisTask implements Callable<Void> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalysisTask.class);
@@ -28,7 +31,7 @@ class AnalysisTask implements Callable<Void> {
     }
 
     @Override
-    public Void call() throws Exception {
+    public Void call() {
         Settings.initialize();
 
         if (shouldAnalyze()) {
@@ -50,10 +53,10 @@ class AnalysisTask implements Callable<Void> {
         return null;
     }
 
-    private boolean shouldAnalyze() {
+    boolean shouldAnalyze() {
         if (analyzer instanceof FileTypeAnalyzer) {
-            final FileTypeAnalyzer fAnalyzer = (FileTypeAnalyzer) analyzer;
-            return fAnalyzer.accept(dependency.getActualFile());
+            final FileTypeAnalyzer fileTypeAnalyzer = (FileTypeAnalyzer) analyzer;
+            return fileTypeAnalyzer.accept(dependency.getActualFile());
         }
 
         return true;

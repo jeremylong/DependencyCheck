@@ -17,23 +17,31 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import mockit.Mock;
+import mockit.MockUp;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.exception.InitializationException;
 
 import java.io.File;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import org.owasp.dependencycheck.BaseDBTestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit tests for CmakeAnalyzer.
@@ -149,5 +157,22 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
     private void assertVersionEvidence(Dependency result, String version) {
         assertTrue("Expected version evidence to contain \"" + version + "\".",
                 result.getVersionEvidence().toString().contains(version));
+    }
+
+    @Test(expected = InitializationException.class)
+    public void analyzerIsDisabledInCaseOfMissingMessageDigest() throws InitializationException {
+        new MockUp<MessageDigest>() {
+            @Mock
+            MessageDigest getInstance(String ignore) throws NoSuchAlgorithmException {
+                throw new NoSuchAlgorithmException();
+            }
+        };
+
+        analyzer = new CMakeAnalyzer();
+        analyzer.setFilesMatched(true);
+        assertTrue(analyzer.isEnabled());
+        analyzer.initialize();
+
+        assertFalse(analyzer.isEnabled());
     }
 }
