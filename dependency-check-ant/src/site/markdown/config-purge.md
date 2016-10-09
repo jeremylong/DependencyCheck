@@ -2,7 +2,7 @@ Configuration
 ====================
 The dependency-check-purge task deletes the local copy of the NVD. This task
 should rarely be used, if ever. This is included as a convenience method in
-the rare circumstance that the local H2 database because corrupt.
+the rare circumstance that the local H2 database becomes corrupt.
 
 ```xml
 <target name="dependency-check-purge" description="Dependency-Check purge">

@@ -277,6 +277,10 @@ public final class CliParser {
                 .desc("The file path to the suppression XML file.")
                 .build();
 
+        final Option hintsFile = Option.builder().argName("file").hasArg().longOpt(ARGUMENT.HINTS_FILE)
+                .desc("The file path to the hints XML file.")
+                .build();
+
         final Option cveValidForHours = Option.builder().argName("hours").hasArg().longOpt(ARGUMENT.CVE_VALID_FOR_HOURS)
                 .desc("The number of hours to wait before checking for new updates from the NVD.")
                 .build();
@@ -305,6 +309,7 @@ public final class CliParser {
                 .addOption(props)
                 .addOption(verboseLog)
                 .addOption(suppressionFile)
+                .addOption(hintsFile)
                 .addOption(cveValidForHours)
                 .addOption(experimentalEnabled);
     }
@@ -963,6 +968,15 @@ public final class CliParser {
     }
 
     /**
+     * Returns the path to the hints file.
+     *
+     * @return the path to the hints file
+     */
+    public String getHintsFile() {
+        return line.getOptionValue(ARGUMENT.HINTS_FILE);
+    }
+
+    /**
      * <p>
      * Prints the manifest information to standard output.</p>
      * <ul><li>Implementation-Title: ${pom.name}</li>
@@ -1273,8 +1287,13 @@ public final class CliParser {
          */
         public static final String SUPPRESSION_FILE = "suppression";
         /**
-         * The CLI argument name for setting the location of the suppression
+         * The CLI argument name for setting the location of the hint
          * file.
+         */
+        public static final String HINTS_FILE = "hints";
+        /**
+         * The CLI argument name for setting the number of hours to wait before
+         * checking for new updates from the NVD.
          */
         public static final String CVE_VALID_FOR_HOURS = "cveValidForHours";
         /**
