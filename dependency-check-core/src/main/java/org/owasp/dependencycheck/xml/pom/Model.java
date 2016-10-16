@@ -348,7 +348,7 @@ public class Model {
      * Utility class that can provide values from a Properties object to a
      * StrSubstitutor.
      */
-    private static class PropertyLookup extends StrLookup {
+    private static class PropertyLookup extends StrLookup<String> {
 
         /**
          * Reference to the properties to lookup.
