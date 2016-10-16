@@ -19,6 +19,7 @@ package org.owasp.dependencycheck;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -447,7 +448,7 @@ public class App {
         encoder.setPattern("%d %C:%L%n%-5level - %msg%n");
         encoder.setContext(context);
         encoder.start();
-        final FileAppender fa = new FileAppender();
+        final FileAppender<ILoggingEvent> fa = new FileAppender<ILoggingEvent>();
         fa.setAppend(true);
         fa.setEncoder(encoder);
         fa.setContext(context);
