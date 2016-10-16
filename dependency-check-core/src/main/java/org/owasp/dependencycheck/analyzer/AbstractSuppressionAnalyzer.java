@@ -155,6 +155,11 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                 }
             }
             if (file != null) {
+                if (!file.exists()) {
+                    final String msg = String.format("Suppression file '%s' does not exists", file.getPath());
+                    LOGGER.warn(msg);
+                    throw new SuppressionParseException(msg);
+                }
                 try {
                     rules.addAll(parser.parseSuppressionRules(file));
                     LOGGER.debug("{} suppression rules were loaded.", rules.size());
@@ -168,6 +173,8 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
             throwSuppressionParseException("Unable to fetch the configured suppression file", ex);
         } catch (MalformedURLException ex) {
             throwSuppressionParseException("Configured suppression file has an invalid URL", ex);
+        } catch (SuppressionParseException ex) {
+            throw ex;
         } catch (IOException ex) {
             throwSuppressionParseException("Unable to create temp file for suppressions", ex);
         } finally {
