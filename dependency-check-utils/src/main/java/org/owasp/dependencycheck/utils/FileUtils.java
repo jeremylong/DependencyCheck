@@ -65,7 +65,8 @@ public final class FileUtils {
     }
 
     /**
-     * Deletes a file. If the File is a directory it will recursively delete the contents.
+     * Deletes a file. If the File is a directory it will recursively delete the
+     * contents.
      *
      * @param file the File to delete
      * @return true if the file was deleted successfully, otherwise false
@@ -80,12 +81,32 @@ public final class FileUtils {
     }
 
     /**
+     * Creates a unique temporary directory in the given directory.
+     *
+     * @param base the base directory to create a temporary directory within
+     * @return the temporary directory
+     * @throws IOException thrown when a directory cannot be created within the
+     * base directory
+     */
+    public static File createTempDirectory(File base) throws IOException {
+        final File tempDir = new File(base, "dctemp" + UUID.randomUUID().toString());
+        if (tempDir.exists()) {
+            return createTempDirectory(base);
+        }
+        if (!tempDir.mkdirs()) {
+            throw new IOException("Could not create temp directory `" + tempDir.getAbsolutePath() + "`");
+        }
+        return tempDir;
+    }
+
+    /**
      * Generates a new temporary file name that is guaranteed to be unique.
      *
      * @param prefix the prefix for the file name to generate
      * @param extension the extension of the generated file name
      * @return a temporary File
-     * @throws java.io.IOException thrown if the temporary folder could not be created
+     * @throws java.io.IOException thrown if the temporary folder could not be
+     * created
      */
     public static File getTempFile(String prefix, String extension) throws IOException {
         final File dir = Settings.getTempDirectory();
@@ -98,7 +119,8 @@ public final class FileUtils {
     }
 
     /**
-     * Return the bit bucket for the OS. '/dev/null' for Unix and 'NUL' for Windows
+     * Return the bit bucket for the OS. '/dev/null' for Unix and 'NUL' for
+     * Windows
      *
      * @return a String containing the bit bucket
      */
