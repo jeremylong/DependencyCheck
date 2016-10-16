@@ -24,12 +24,17 @@ import org.slf4j.helpers.MarkerIgnoringBase;
 import org.slf4j.helpers.MessageFormatter;
 
 /**
- * An instance of {@link org.slf4j.Logger} which simply calls the log method on the delegate Ant task.
+ * An instance of {@link org.slf4j.Logger} which simply calls the log method on
+ * the delegate Ant task.
  *
  * @author colezlaw
  */
 public class AntLoggerAdapter extends MarkerIgnoringBase {
 
+    /**
+     * serialization UID.
+     */
+    private static final long serialVersionUID = -1337;
     /**
      * A reference to the Ant task used for logging.
      */
