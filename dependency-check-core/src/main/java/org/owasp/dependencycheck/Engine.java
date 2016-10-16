@@ -410,7 +410,7 @@ public class Engine implements FileFilter {
 
                 final long analyzerDurationMillis = System.currentTimeMillis() - analyzerStart;
                 final long analyzerDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(analyzerDurationMillis);
-                LOGGER.info("Finished {}. Took {} secs.", analyzer.getName(), analyzerDurationSeconds);
+                LOGGER.info("Finished {} ({} seconds)", analyzer.getName(), analyzerDurationSeconds);
             }
         }
         for (AnalysisPhase phase : AnalysisPhase.values()) {
@@ -422,7 +422,8 @@ public class Engine implements FileFilter {
         }
 
         LOGGER.debug("\n----------------------------------------------------\nEND ANALYSIS\n----------------------------------------------------");
-        LOGGER.info("Analysis Complete ({} ms)", System.currentTimeMillis() - analysisStart);
+        final long analysisDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - analysisStart);
+        LOGGER.info("Analysis Complete ({} seconds)", analysisDurationSeconds);
         if (exceptions.size() > 0) {
             throw new ExceptionCollection("One or more exceptions occurred during dependency-check analysis", exceptions);
         }
