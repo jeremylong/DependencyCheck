@@ -53,9 +53,9 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     /**
      * Creates a new Evidence objects.
      *
-     * @param source     the source of the evidence.
-     * @param name       the name of the evidence.
-     * @param value      the value of the evidence.
+     * @param source the source of the evidence.
+     * @param name the name of the evidence.
+     * @param value the value of the evidence.
      * @param confidence the confidence of the evidence.
      */
     public Evidence(String source, String name, String value, Confidence confidence) {
@@ -127,9 +127,11 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     }
 
     /**
-     * Get the value of value. If setUsed is set to false this call to get will not mark the evidence as used.
+     * Get the value of value. If setUsed is set to false this call to get will
+     * not mark the evidence as used.
      *
-     * @param setUsed whether or not this call to getValue should cause the used flag to be updated
+     * @param setUsed whether or not this call to getValue should cause the used
+     * flag to be updated
      * @return the value of value
      */
     public String getValue(Boolean setUsed) {
@@ -200,11 +202,11 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(MAGIC_HASH_INIT_VALUE, MAGIC_HASH_MULTIPLIER)
-            .append(StringUtils.lowerCase(name))
-            .append(StringUtils.lowerCase(source))
-            .append(StringUtils.lowerCase(value))
-            .append(confidence)
-            .toHashCode();
+                .append(StringUtils.lowerCase(name))
+                .append(StringUtils.lowerCase(source))
+                .append(StringUtils.lowerCase(value))
+                .append(confidence)
+                .toHashCode();
     }
 
     /**
@@ -213,6 +215,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
      * @param that an object to check the equality of.
      * @return whether the two objects are equal.
      */
+    @SuppressWarnings("deprecation")
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -223,6 +226,8 @@ public class Evidence implements Serializable, Comparable<Evidence> {
         }
         final Evidence e = (Evidence) that;
 
+        //TODO the call to ObjectUtils.equals needs to be replaced when we
+        //stop supporting Jenkins 1.6 requirement.
         return StringUtils.equalsIgnoreCase(name, e.name)
                 && StringUtils.equalsIgnoreCase(source, e.source)
                 && StringUtils.equalsIgnoreCase(value, e.value)
@@ -235,6 +240,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
      * @param o the evidence being compared
      * @return an integer indicating the ordering of the two objects
      */
+    @SuppressWarnings("deprecation")
     @Override
     public int compareTo(Evidence o) {
         if (o == null) {
@@ -243,6 +249,8 @@ public class Evidence implements Serializable, Comparable<Evidence> {
         if (StringUtils.equalsIgnoreCase(source, o.source)) {
             if (StringUtils.equalsIgnoreCase(name, o.name)) {
                 if (StringUtils.equalsIgnoreCase(value, o.value)) {
+                    //TODO the call to ObjectUtils.equals needs to be replaced when we
+                    //stop supporting Jenkins 1.6 requirement.
                     if (ObjectUtils.equals(confidence, o.confidence)) {
                         return 0; //they are equal
                     } else {
@@ -260,10 +268,11 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     }
 
     /**
-     * Wrapper around {@link java.lang.String#compareToIgnoreCase(java.lang.String) String.compareToIgnoreCase} with an
-     * exhaustive, possibly duplicative, check against nulls.
+     * Wrapper around
+     * {@link java.lang.String#compareToIgnoreCase(java.lang.String) String.compareToIgnoreCase}
+     * with an exhaustive, possibly duplicative, check against nulls.
      *
-     * @param me    the value to be compared
+     * @param me the value to be compared
      * @param other the other value to be compared
      * @return true if the values are equal; otherwise false
      */
