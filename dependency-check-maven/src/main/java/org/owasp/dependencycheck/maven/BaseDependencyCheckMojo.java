@@ -661,7 +661,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             try {
                 final ArtifactResult result = repoSystem.resolveArtifact(repoSession, request);
                 if (result.isResolved() && result.getArtifact() != null && result.getArtifact().getFile() != null) {
-                    final List<Dependency> deps = engine.scan(result.getArtifact().getFile().getAbsoluteFile());
+                    final List<Dependency> deps = engine.scan(result.getArtifact().getFile().getAbsoluteFile(),
+                            project.getName() + ":" + dependencyNode.getArtifact().getScope());
                     if (deps != null) {
                         if (deps.size() == 1) {
                             final Dependency d = deps.get(0);
@@ -669,7 +670,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                                 final Artifact a = result.getArtifact();
                                 final MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
                                 d.addAsEvidence("pom", ma, Confidence.HIGHEST);
-                                d.addProjectReference(project.getName() + ":" + dependencyNode.getArtifact().getScope());
                                 if (getLog().isDebugEnabled()) {
                                     getLog().debug(String.format("Adding project reference %s on dependency %s",
                                             project.getName(), d.getDisplayFileName()));

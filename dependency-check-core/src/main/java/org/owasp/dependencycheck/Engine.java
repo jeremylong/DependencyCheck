@@ -197,9 +197,24 @@ public class Engine implements FileFilter {
      * @since v0.3.2.5
      */
     public List<Dependency> scan(String[] paths) {
+        return scan(paths, null);
+    }
+
+    /**
+     * Scans an array of files or directories. If a directory is specified, it
+     * will be scanned recursively. Any dependencies identified are added to the
+     * dependency collection.
+     *
+     * @param paths an array of paths to files or directories to be analyzed
+     * @param projectReference the name of the project or scope in which the
+     * dependency was identified
+     * @return the list of dependencies scanned
+     * @since v1.4.4
+     */
+    public List<Dependency> scan(String[] paths, String projectReference) {
         final List<Dependency> deps = new ArrayList<Dependency>();
         for (String path : paths) {
-            final List<Dependency> d = scan(path);
+            final List<Dependency> d = scan(path, projectReference);
             if (d != null) {
                 deps.addAll(d);
             }
@@ -216,8 +231,23 @@ public class Engine implements FileFilter {
      * @return the list of dependencies scanned
      */
     public List<Dependency> scan(String path) {
+        return scan(path, null);
+    }
+
+    /**
+     * Scans a given file or directory. If a directory is specified, it will be
+     * scanned recursively. Any dependencies identified are added to the
+     * dependency collection.
+     *
+     * @param path the path to a file or directory to be analyzed
+     * @param projectReference the name of the project or scope in which the
+     * dependency was identified
+     * @return the list of dependencies scanned
+     * @since v1.4.4
+     */
+    public List<Dependency> scan(String path, String projectReference) {
         final File file = new File(path);
-        return scan(file);
+        return scan(file, projectReference);
     }
 
     /**
@@ -230,9 +260,24 @@ public class Engine implements FileFilter {
      * @since v0.3.2.5
      */
     public List<Dependency> scan(File[] files) {
+        return scan(files, null);
+    }
+
+    /**
+     * Scans an array of files or directories. If a directory is specified, it
+     * will be scanned recursively. Any dependencies identified are added to the
+     * dependency collection.
+     *
+     * @param files an array of paths to files or directories to be analyzed.
+     * @param projectReference the name of the project or scope in which the
+     * dependency was identified
+     * @return the list of dependencies
+     * @since v1.4.4
+     */
+    public List<Dependency> scan(File[] files, String projectReference) {
         final List<Dependency> deps = new ArrayList<Dependency>();
         for (File file : files) {
-            final List<Dependency> d = scan(file);
+            final List<Dependency> d = scan(file, projectReference);
             if (d != null) {
                 deps.addAll(d);
             }
@@ -250,9 +295,24 @@ public class Engine implements FileFilter {
      * @since v0.3.2.5
      */
     public List<Dependency> scan(Collection<File> files) {
+        return scan(files, null);
+    }
+
+    /**
+     * Scans a collection of files or directories. If a directory is specified,
+     * it will be scanned recursively. Any dependencies identified are added to
+     * the dependency collection.
+     *
+     * @param files a set of paths to files or directories to be analyzed
+     * @param projectReference the name of the project or scope in which the
+     * dependency was identified
+     * @return the list of dependencies scanned
+     * @since v1.4.4
+     */
+    public List<Dependency> scan(Collection<File> files, String projectReference) {
         final List<Dependency> deps = new ArrayList<Dependency>();
         for (File file : files) {
-            final List<Dependency> d = scan(file);
+            final List<Dependency> d = scan(file, projectReference);
             if (d != null) {
                 deps.addAll(d);
             }
@@ -270,11 +330,26 @@ public class Engine implements FileFilter {
      * @since v0.3.2.4
      */
     public List<Dependency> scan(File file) {
+        return scan(file, null);
+    }
+
+    /**
+     * Scans a given file or directory. If a directory is specified, it will be
+     * scanned recursively. Any dependencies identified are added to the
+     * dependency collection.
+     *
+     * @param file the path to a file or directory to be analyzed
+     * @param projectReference the name of the project or scope in which the
+     * dependency was identified
+     * @return the list of dependencies scanned
+     * @since v1.4.4
+     */
+    public List<Dependency> scan(File file, String projectReference) {
         if (file.exists()) {
             if (file.isDirectory()) {
-                return scanDirectory(file);
+                return scanDirectory(file, projectReference);
             } else {
-                final Dependency d = scanFile(file);
+                final Dependency d = scanFile(file, projectReference);
                 if (d != null) {
                     final List<Dependency> deps = new ArrayList<Dependency>();
                     deps.add(d);
@@ -293,17 +368,31 @@ public class Engine implements FileFilter {
      * @return the list of Dependency objects scanned
      */
     protected List<Dependency> scanDirectory(File dir) {
+        return scanDirectory(dir, null);
+    }
+
+    /**
+     * Recursively scans files and directories. Any dependencies identified are
+     * added to the dependency collection.
+     *
+     * @param dir the directory to scan
+     * @param projectReference the name of the project or scope in which the
+     * dependency was identified
+     * @return the list of Dependency objects scanned
+     * @since v1.4.4
+     */
+    protected List<Dependency> scanDirectory(File dir, String projectReference) {
         final File[] files = dir.listFiles();
         final List<Dependency> deps = new ArrayList<Dependency>();
         if (files != null) {
             for (File f : files) {
                 if (f.isDirectory()) {
-                    final List<Dependency> d = scanDirectory(f);
+                    final List<Dependency> d = scanDirectory(f, projectReference);
                     if (d != null) {
                         deps.addAll(d);
                     }
                 } else {
-                    final Dependency d = scanFile(f);
+                    final Dependency d = scanFile(f, projectReference);
                     deps.add(d);
                 }
             }
@@ -319,10 +408,27 @@ public class Engine implements FileFilter {
      * @return the scanned dependency
      */
     protected Dependency scanFile(File file) {
+        return scanFile(file, null);
+    }
+
+    /**
+     * Scans a specified file. If a dependency is identified it is added to the
+     * dependency collection.
+     *
+     * @param file The file to scan
+     * @param projectReference the name of the project or scope in which the
+     * dependency was identified
+     * @return the scanned dependency
+     * @since v1.4.4
+     */
+    protected Dependency scanFile(File file, String projectReference) {
         Dependency dependency = null;
         if (file.isFile()) {
             if (accept(file)) {
                 dependency = new Dependency(file);
+                if (projectReference != null) {
+                    dependency.addProjectReference(projectReference);
+                }
                 final String sha1 = dependency.getSha1sum();
                 boolean found = false;
                 synchronized (dependencies) {
@@ -330,7 +436,15 @@ public class Engine implements FileFilter {
                         for (Dependency existing : dependencies) {
                             if (sha1.equals(existing.getSha1sum())) {
                                 found = true;
-                                dependency = existing;
+                                if (projectReference != null) {
+                                    existing.addProjectReference(projectReference);
+                                }
+                                if (existing.getActualFilePath() != null && dependency.getActualFilePath() != null
+                                        && !existing.getActualFilePath().equals(dependency.getActualFilePath())) {
+                                    existing.addRelatedDependency(dependency);
+                                } else {
+                                    dependency = existing;
+                                }
                             }
                         }
                     }
@@ -432,7 +546,8 @@ public class Engine implements FileFilter {
     /**
      * Executes executes the analyzer using multiple threads.
      *
-     * @param exceptions a collection of exceptions that occurred during analysis
+     * @param exceptions a collection of exceptions that occurred during
+     * analysis
      * @param analyzer the analyzer to execute
      * @throws ExceptionCollection thrown if exceptions occurred during analysis
      */
