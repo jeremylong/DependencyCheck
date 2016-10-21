@@ -96,8 +96,10 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
     //</editor-fold>
 
     /**
-     * Does not support parallel processing as it only runs once and then operates on <em>all</em> dependencies.
+     * Does not support parallel processing as it only runs once and then
+     * operates on <em>all</em> dependencies.
      *
+     * @return whether or not parallel processing is enabled
      * @see #analyze(Dependency, Engine)
      */
     @Override
@@ -361,11 +363,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
                 || dependency2.getPackagePath() == null) {
             return false;
         }
-        if (dependency1.getPackagePath().equalsIgnoreCase(dependency2.getPackagePath())) {
-            return true;
-        }
-
-        return false;
+        return dependency1.getPackagePath().equalsIgnoreCase(dependency2.getPackagePath());
     }
 
     /**
@@ -416,10 +414,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
                 || dependency2.getPackagePath() == null) {
             return false;
         }
-        if (dependency1.getPackagePath().equalsIgnoreCase(dependency2.getPackagePath())) {
-            return true;
-        }
-        return false;
+        return dependency1.getPackagePath().equalsIgnoreCase(dependency2.getPackagePath());
     }
 
     /**
@@ -528,6 +523,9 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
      * <code>false</code>
      */
     protected boolean firstPathIsShortest(String left, String right) {
+        if (left.contains("dctemp")) {
+            return false;
+        }
         final String leftPath = left.replace('\\', '/');
         final String rightPath = right.replace('\\', '/');
 
