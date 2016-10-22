@@ -1,6 +1,6 @@
 Suppressing False Positives
 ====================
-Due to how dependency-check identifies libraries false positives may occur (a CPE was identified that is incorrect). Suppressing these false positives is fairly easy using the HTML report. In the report next to each CPE identified (and on CVE entries) there is a suppress button. Clicking the suppression button will create a dialogue box which you can simple hit Control-C to copy the XML that you would place into a suppression XML file. If this is the first time you are creating the suppression file you should click the "Complete XML Doc" button on the top of the dialogue box to add the necessary schema elements.
+Due to [how dependency-check identifies libraries](internals.html) false positives may occur (i.e. a CPE was identified that is incorrect). Suppressing these false positives is fairly easy using the HTML report. In the report next to each CPE identified (and on CVE entries) there is a suppress button. Clicking the suppression button will create a dialogue box which you can simple hit Control-C to copy the XML that you would place into a suppression XML file. If this is the first time you are creating the suppression file you should click the "Complete XML Doc" button on the top of the dialogue box to add the necessary schema elements.
 
 A sample suppression file would look like:
 
