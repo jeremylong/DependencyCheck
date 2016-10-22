@@ -243,7 +243,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             setEnabled(false);
             LOGGER.error("----------------------------------------------------");
             LOGGER.error(".NET Assembly Analyzer could not be initialized and at least one "
-                    + "'exe' or 'dll' was scanned. The 'mono' executale could not be found on "
+                    + "'exe' or 'dll' was scanned. The 'mono' executable could not be found on "
                     + "the path; either disable the Assembly Analyzer or configure the path mono.");
             LOGGER.error("----------------------------------------------------");
             return;
