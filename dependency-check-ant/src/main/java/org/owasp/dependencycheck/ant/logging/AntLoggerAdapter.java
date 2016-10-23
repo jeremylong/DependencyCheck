@@ -38,7 +38,7 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
     /**
      * A reference to the Ant task used for logging.
      */
-    private Task task;
+    private transient Task task;
 
     /**
      * Constructs an Ant Logger Adapter.

@@ -423,7 +423,7 @@ public final class Settings {
      * @param deleteTemporary flag indicating whether any temporary directories
      * generated should be removed
      */
-    public static void cleanup(boolean deleteTemporary) {
+    public static synchronized void cleanup(boolean deleteTemporary) {
         if (deleteTemporary && tempDirectory != null && tempDirectory.exists()) {
             FileUtils.delete(tempDirectory);
             tempDirectory = null;

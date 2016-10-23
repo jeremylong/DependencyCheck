@@ -259,7 +259,7 @@ public class CveDB {
      *
      * @return the properties from the database
      */
-    Properties getProperties() {
+    synchronized Properties getProperties() {
         final Properties prop = new Properties();
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -285,7 +285,7 @@ public class CveDB {
      * @param key the property key
      * @param value the property value
      */
-    void saveProperty(String key, String value) {
+    synchronized void saveProperty(String key, String value) {
         try {
             try {
                 final PreparedStatement mergeProperty = getConnection().prepareStatement(statementBundle.getString("MERGE_PROPERTY"));
