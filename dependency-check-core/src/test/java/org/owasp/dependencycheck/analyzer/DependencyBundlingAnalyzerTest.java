@@ -67,15 +67,15 @@ public class DependencyBundlingAnalyzerTest extends BaseTest {
         DependencyBundlingAnalyzer instance = new DependencyBundlingAnalyzer();
 
         // the actual dependency does not matter
-        assertFalse(instance.analyzed);
+        assertFalse(instance.getAnalyzed());
         instance.analyze(null, engineMock);
 
         // the second runs basically does nothing
-        assertTrue(instance.analyzed);
+        assertTrue(instance.getAnalyzed());
         instance.analyze(null, engineMock);
         instance.analyze(null, engineMock);
         instance.analyze(null, engineMock);
-        assertTrue(instance.analyzed);
+        assertTrue(instance.getAnalyzed());
 
         new Verifications() {{
             engineMock.getDependencies();

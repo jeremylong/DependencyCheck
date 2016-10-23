@@ -62,7 +62,19 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
     /**
      * a flag indicating if this analyzer has run. This analyzer only runs once.
      */
-    boolean analyzed = false;
+    private boolean analyzed = false;
+
+    /**
+     * Returns a flag indicating if this analyzer has run. This analyzer only
+     * runs once. Note this is currently only used in the unit tests.
+     *
+     * @return a flag indicating if this analyzer has run. This analyzer only
+     * runs once
+     */
+    protected boolean getAnalyzed() {
+        return analyzed;
+    }
+
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**

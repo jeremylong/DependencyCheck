@@ -44,11 +44,14 @@ import org.xml.sax.SAXException;
 
 /**
  *
- * This class is currently unused and if enabled will likely not work on MySQL as the MERGE statement is used.
+ * This class is currently unused and if enabled will likely not work on MySQL
+ * as the MERGE statement is used.
  *
- * The CpeUpdater is designed to download the CPE data file from NIST and import the data into the database. However, as this
- * currently adds no beneficial data, compared to what is in the CPE data contained in the CVE data files, this class is not
- * currently used. The code is being kept as a future update may utilize more data from the CPE xml files.
+ * The CpeUpdater is designed to download the CPE data file from NIST and import
+ * the data into the database. However, as this currently adds no beneficial
+ * data, compared to what is in the CPE data contained in the CVE data files,
+ * this class is not currently used. The code is being kept as a future update
+ * may utilize more data from the CPE XML files.
  *
  * @author Jeremy Long
  */
@@ -84,7 +87,8 @@ public class CpeUpdater extends BaseUpdater implements CachedWebDataSource {
      * Downloads the CPE XML file.
      *
      * @return the file reference to the CPE.xml file
-     * @throws UpdateException thrown if there is an issue downloading the XML file
+     * @throws UpdateException thrown if there is an issue downloading the XML
+     * file
      */
     private File downloadCpe() throws UpdateException {
         File xml;
@@ -112,13 +116,14 @@ public class CpeUpdater extends BaseUpdater implements CachedWebDataSource {
      *
      * @param xml the CPE data file
      * @return the list of CPE entries
-     * @throws UpdateException thrown if there is an issue with parsing the XML file
+     * @throws UpdateException thrown if there is an issue with parsing the XML
+     * file
      */
     private List<Cpe> processXML(final File xml) throws UpdateException {
         try {
             final SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-    		final SAXParser saxParser = factory.newSAXParser();
+            final SAXParser saxParser = factory.newSAXParser();
             final CPEHandler handler = new CPEHandler();
             saxParser.parse(xml, handler);
             return handler.getData();
@@ -132,7 +137,8 @@ public class CpeUpdater extends BaseUpdater implements CachedWebDataSource {
     }
 
     /**
-     * Checks to find the last time the CPE data was refreshed and if it needs to be updated.
+     * Checks to find the last time the CPE data was refreshed and if it needs
+     * to be updated.
      *
      * @return true if the CPE data should be refreshed
      */
@@ -148,7 +154,8 @@ public class CpeUpdater extends BaseUpdater implements CachedWebDataSource {
     }
 
     /**
-     * Extracts the file contained in a gzip archive. The extracted file is placed in the exact same path as the file specified.
+     * Extracts the file contained in a gzip archive. The extracted file is
+     * placed in the exact same path as the file specified.
      *
      * @param file the archive file
      * @throws FileNotFoundException thrown if the file does not exist
