@@ -151,6 +151,13 @@ public final class Downloader {
                 } finally {
                     conn = null;
                 }
+                if ("Connection reset".equalsIgnoreCase(ex.getMessage())) {
+                    final String msg = format("TLS Connection Reset%nThis is a known issue for somme JRE/JDK; please see " +
+                            "https://github.com/jeremylong/DependencyCheck/issues/561%nUntil this issue is resolved please " +
+                            "consider trying a different JRE/JDK.", url.toString());
+                    LOGGER.error(msg);
+                    throw new DownloadFailedException(msg, ex);
+                }
                 final String msg = format("Error downloading file %s; unable to connect.", url.toString());
                 throw new DownloadFailedException(msg, ex);
             }

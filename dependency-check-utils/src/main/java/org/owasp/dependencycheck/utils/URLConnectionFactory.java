@@ -198,7 +198,7 @@ public final class URLConnectionFactory {
             } catch (NoSuchAlgorithmException ex) {
                 LOGGER.debug("Unsupported algorithm in SSLSocketFactoryEx", ex);
             } catch (KeyManagementException ex) {
-                LOGGER.debug("Key mnagement eception in SSLSocketFactoryEx", ex);
+                LOGGER.debug("Key management exception in SSLSocketFactoryEx", ex);
             }
         }
     }

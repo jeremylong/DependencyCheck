@@ -243,17 +243,24 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      * @return the protocol list
      */
     protected String[] getProtocolList() {
-        final String[] preferredProtocols = {"TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3"};
-        String[] availableProtocols = null;
-
         SSLSocket socket = null;
-
+        String[] availableProtocols = null;
+        final String[] preferredProtocols = Settings.getString(
+                Settings.KEYS.DOWNLOADER_TLS_PROTOCOL_LIST,
+                "TLSv1,TLSv1.1,TLSv1.2,TLSv1.3")
+                .split(",");
         try {
             final SSLSocketFactory factory = sslCtxt.getSocketFactory();
             socket = (SSLSocket) factory.createSocket();
 
             availableProtocols = socket.getSupportedProtocols();
             Arrays.sort(availableProtocols);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Available Protocols:");
+                for (String p : availableProtocols) {
+                    LOGGER.debug(p);
+                }
+            }
         } catch (Exception ex) {
             LOGGER.debug("Error getting protocol list, using TLSv1", ex);
             return new String[]{"TLSv1"};

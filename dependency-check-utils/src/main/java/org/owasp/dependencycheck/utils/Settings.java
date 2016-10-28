@@ -339,6 +339,10 @@ public final class Settings {
          * The HTTP request method for query last modified date.
          */
         public static final String DOWNLOADER_QUICK_QUERY_TIMESTAMP = "downloader.quick.query.timestamp";
+        /**
+         * The HTTP protocol list to use.
+         */
+        public static final String DOWNLOADER_TLS_PROTOCOL_LIST = "downloader.tls.protocols";
     }
     //</editor-fold>
 
