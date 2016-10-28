@@ -6,12 +6,15 @@ constraints.
 
 Local NVD Database
 ----------------------------------
-OWASP dependency-check maintains a local copy of the NVD data hosted by NIST. By default,
+OWASP dependency-check maintains a local copy of the NVD CVE data hosted by NIST. By default,
 a local [H2 database](http://www.h2database.com/html/main.html) instance is used.
 As each instance maintains its own copy of the NVD the machine will need access
 to nvd.nist.gov in order to download the NVD data feeds. While the initial download of the NVD
 data feed is large, if after the initial download the tool is run at least once every seven
 days only two small XML files containing the recent modifications will need to be downloaded.
+
+In some installations OpenJDK may not be able to download the NVD CVE data. Please see the
+[TLS Failures article](./tlsfailure.html) for more information.
 
 If your build servers are using dependency-check and are unable to access the Internet you
 have a few options:
