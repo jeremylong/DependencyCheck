@@ -25,10 +25,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -115,7 +113,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final FileFilter REMOVE_FROM_ANALYSIS = FileFilterBuilder.newInstance().addExtensions("zip", "tar", "gz", "tgz", "bz2", "tbz2")
             .build();
-    
+
     static {
         final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
         if (additionalZipExt != null) {
@@ -129,7 +127,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * The file filter used to filter supported files.
      */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
-    
+
     @Override
     protected FileFilter getFileFilter() {
         return FILTER;
@@ -249,7 +247,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
 
         //make a copy
         final List<Dependency> dependencySet = findMoreDependencies(engine, tmpDir);
-        
+
         if (!dependencySet.isEmpty()) {
             for (Dependency d : dependencySet) {
                 if (d.getFilePath().startsWith(tmpDir.getAbsolutePath())) {
@@ -306,12 +304,12 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         if (ZIP_FILTER.accept(dependency.getActualFile()) && isZipFileActuallyJarFile(dependency)) {
             final File tdir = getNextTempDirectory();
             final String fileName = dependency.getFileName();
-            
+
             LOGGER.info("The zip file '{}' appears to be a JAR file, making a copy and analyzing it as a JAR.", fileName);
             final File tmpLoc = new File(tdir, fileName.substring(0, fileName.length() - 3) + "jar");
             //store the archives sha1 and change it so that the engine doesn't think the zip and jar file are the same
             // and add it is a related dependency.
-            String archiveSha1 = dependency.getSha1sum();
+            final String archiveSha1 = dependency.getSha1sum();
             try {
                 dependency.setSha1sum("");
                 org.apache.commons.io.FileUtils.copyFile(dependency.getActualFile(), tmpLoc);
@@ -348,7 +346,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * @return any dependencies that weren't known to the engine before
      */
     private static List<Dependency> findMoreDependencies(Engine engine, File file) {
-        List<Dependency> added = engine.scan(file);
+        final List<Dependency> added = engine.scan(file);
         return added;
     }
 
@@ -387,7 +385,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 return;
             }
             archiveExt = archiveExt.toLowerCase();
-            
+
             final FileInputStream fis;
             try {
                 fis = new FileInputStream(archive);
@@ -629,7 +627,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         } finally {
             ZipFile.closeQuietly(zip);
         }
-        
+
         return isJar;
     }
 }
