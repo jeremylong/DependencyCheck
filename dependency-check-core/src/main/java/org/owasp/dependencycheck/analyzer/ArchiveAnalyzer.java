@@ -115,7 +115,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final FileFilter REMOVE_FROM_ANALYSIS = FileFilterBuilder.newInstance().addExtensions("zip", "tar", "gz", "tgz", "bz2", "tbz2")
             .build();
-
+    
     static {
         final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
         if (additionalZipExt != null) {
@@ -129,7 +129,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * The file filter used to filter supported files.
      */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
-
+    
     @Override
     protected FileFilter getFileFilter() {
         return FILTER;
@@ -248,27 +248,42 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         extractFiles(f, tmpDir, engine);
 
         //make a copy
-        final Set<Dependency> dependencySet = findMoreDependencies(engine, tmpDir);
-
+        final List<Dependency> dependencySet = findMoreDependencies(engine, tmpDir);
+        
         if (!dependencySet.isEmpty()) {
             for (Dependency d : dependencySet) {
-                //fix the dependency's display name and path
-                final String displayPath = String.format("%s%s",
-                        dependency.getFilePath(),
-                        d.getActualFilePath().substring(tmpDir.getAbsolutePath().length()));
-                final String displayName = String.format("%s: %s",
-                        dependency.getFileName(),
-                        d.getFileName());
-                d.setFilePath(displayPath);
-                d.setFileName(displayName);
-                d.setProjectReferences(dependency.getProjectReferences());
+                if (d.getFilePath().startsWith(tmpDir.getAbsolutePath())) {
+                    //fix the dependency's display name and path
+                    final String displayPath = String.format("%s%s",
+                            dependency.getFilePath(),
+                            d.getActualFilePath().substring(tmpDir.getAbsolutePath().length()));
+                    final String displayName = String.format("%s: %s",
+                            dependency.getFileName(),
+                            d.getFileName());
+                    d.setFilePath(displayPath);
+                    d.setFileName(displayName);
+                    d.setProjectReferences(dependency.getProjectReferences());
 
-                //TODO - can we get more evidence from the parent? EAR contains module name, etc.
-                //analyze the dependency (i.e. extract files) if it is a supported type.
-                if (this.accept(d.getActualFile()) && scanDepth < MAX_SCAN_DEPTH) {
-                    scanDepth += 1;
-                    analyze(d, engine);
-                    scanDepth -= 1;
+                    //TODO - can we get more evidence from the parent? EAR contains module name, etc.
+                    //analyze the dependency (i.e. extract files) if it is a supported type.
+                    if (this.accept(d.getActualFile()) && scanDepth < MAX_SCAN_DEPTH) {
+                        scanDepth += 1;
+                        analyze(d, engine);
+                        scanDepth -= 1;
+                    }
+                } else {
+                    for (Dependency sub : dependencySet) {
+                        if (sub.getFilePath().startsWith(tmpDir.getAbsolutePath())) {
+                            final String displayPath = String.format("%s%s",
+                                    dependency.getFilePath(),
+                                    sub.getActualFilePath().substring(tmpDir.getAbsolutePath().length()));
+                            final String displayName = String.format("%s: %s",
+                                    dependency.getFileName(),
+                                    sub.getFileName());
+                            sub.setFilePath(displayPath);
+                            sub.setFileName(displayName);
+                        }
+                    }
                 }
             }
         }
@@ -291,32 +306,39 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         if (ZIP_FILTER.accept(dependency.getActualFile()) && isZipFileActuallyJarFile(dependency)) {
             final File tdir = getNextTempDirectory();
             final String fileName = dependency.getFileName();
-
+            
             LOGGER.info("The zip file '{}' appears to be a JAR file, making a copy and analyzing it as a JAR.", fileName);
-
             final File tmpLoc = new File(tdir, fileName.substring(0, fileName.length() - 3) + "jar");
+            //store the archives sha1 and change it so that the engine doesn't think the zip and jar file are the same
+            // and add it is a related dependency.
+            String archiveSha1 = dependency.getSha1sum();
             try {
-                org.apache.commons.io.FileUtils.copyFile(tdir, tmpLoc);
-                final Set<Dependency> dependencySet = findMoreDependencies(engine, tmpLoc);
+                dependency.setSha1sum("");
+                org.apache.commons.io.FileUtils.copyFile(dependency.getActualFile(), tmpLoc);
+                final List<Dependency> dependencySet = findMoreDependencies(engine, tmpLoc);
                 if (!dependencySet.isEmpty()) {
-                    if (dependencySet.size() != 1) {
-                        LOGGER.info("Deep copy of ZIP to JAR file resulted in more than one dependency?");
-                    }
                     for (Dependency d : dependencySet) {
                         //fix the dependency's display name and path
-                        d.setFilePath(dependency.getFilePath());
-                        d.setDisplayFileName(dependency.getFileName());
+                        if (d.getActualFile().equals(tmpLoc)) {
+                            d.setFilePath(dependency.getFilePath());
+                            d.setDisplayFileName(dependency.getFileName());
+                        } else {
+                            for (Dependency sub : d.getRelatedDependencies()) {
+                                if (sub.getActualFile().equals(tmpLoc)) {
+                                    sub.setFilePath(dependency.getFilePath());
+                                    sub.setDisplayFileName(dependency.getFileName());
+                                }
+                            }
+                        }
                     }
                 }
             } catch (IOException ex) {
                 LOGGER.debug("Unable to perform deep copy on '{}'", dependency.getActualFile().getPath(), ex);
+            } finally {
+                dependency.setSha1sum(archiveSha1);
             }
         }
     }
-    /**
-     * An empty dependency set.
-     */
-    private static final Set<Dependency> EMPTY_DEPENDENCY_SET = Collections.emptySet();
 
     /**
      * Scan the given file/folder, and return any new dependencies found.
@@ -325,20 +347,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * @param file target of scanning
      * @return any dependencies that weren't known to the engine before
      */
-    private static Set<Dependency> findMoreDependencies(Engine engine, File file) {
-        final List<Dependency> before = new ArrayList<Dependency>(engine.getDependencies());
-        engine.scan(file);
-        final List<Dependency> after = engine.getDependencies();
-        final boolean sizeChanged = before.size() != after.size();
-        final Set<Dependency> newDependencies;
-        if (sizeChanged) {
-            //get the new dependencies
-            newDependencies = new HashSet<Dependency>(after);
-            newDependencies.removeAll(before);
-        } else {
-            newDependencies = EMPTY_DEPENDENCY_SET;
-        }
-        return newDependencies;
+    private static List<Dependency> findMoreDependencies(Engine engine, File file) {
+        List<Dependency> added = engine.scan(file);
+        return added;
     }
 
     /**
@@ -376,7 +387,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 return;
             }
             archiveExt = archiveExt.toLowerCase();
-
+            
             final FileInputStream fis;
             try {
                 fis = new FileInputStream(archive);
@@ -618,7 +629,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         } finally {
             ZipFile.closeQuietly(zip);
         }
-
+        
         return isJar;
     }
 }
