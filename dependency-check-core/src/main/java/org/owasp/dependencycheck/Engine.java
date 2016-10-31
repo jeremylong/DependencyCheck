@@ -445,6 +445,7 @@ public class Engine implements FileFilter {
                                 } else {
                                     dependency = existing;
                                 }
+                                break;
                             }
                         }
                     }
