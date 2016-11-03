@@ -60,26 +60,12 @@ public class NexusSearch {
      * @param rootURL the root URL of the repository on which searches should
      * execute. full URL's are calculated relative to this URL, so it should end
      * with a /
+     * @param useProxy flag indicating if the proxy settings should be used
      */
-    public NexusSearch(URL rootURL) {
+    public NexusSearch(URL rootURL, boolean useProxy) {
         this.rootURL = rootURL;
-        useProxy = useProxy();
+        this.useProxy = useProxy;
         LOGGER.debug("Using proxy: {}", useProxy);
-    }
-
-    /**
-     * Determine if a proxy should be used.
-     *
-     * @return {@code true} if a proxy should be used
-     */
-    private boolean useProxy() {
-        try {
-            return Settings.getString(Settings.KEYS.PROXY_SERVER) != null
-                    && Settings.getBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY);
-        } catch (InvalidSettingException ise) {
-            LOGGER.warn("Failed to parse proxy settings.", ise);
-            return false;
-        }
     }
 
     /**

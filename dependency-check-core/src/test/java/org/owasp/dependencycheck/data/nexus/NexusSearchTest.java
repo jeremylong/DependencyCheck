@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.analyzer.NexusAnalyzer;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ public class NexusSearchTest extends BaseTest {
     public void setUp() throws Exception {
         String nexusUrl = Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL);
         LOGGER.debug(nexusUrl);
-        searcher = new NexusSearch(new URL(nexusUrl));
+        searcher = new NexusSearch(new URL(nexusUrl), NexusAnalyzer.useProxy());
         Assume.assumeTrue(searcher.preflightRequest());
     }
 
