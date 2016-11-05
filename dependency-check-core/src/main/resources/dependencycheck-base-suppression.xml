@@ -446,4 +446,11 @@
         <gav regex="true">^org\.glassfish\.jersey\.ext:jersey-proxy-client:.*$</gav>
         <cpe>cpe:/a:oracle:oracle_client</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: smiley-http-proxy-servlet-1.7.jar
+        ]]></notes>
+        <gav regex="true">^org\.mitre\.dsmiley\.httpproxy:smiley-http-proxy-servlet:.*$</gav>
+        <cpe>cpe:/a:shttp:shttp</cpe>
+    </suppress>
 </suppressions>
