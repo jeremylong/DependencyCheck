@@ -734,11 +734,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                             }
                         } else if ("build-id".equals(key)) {
                             int pos = value.indexOf('(');
-                            if (pos >= 0) {
+                            if (pos > 0) {
                                 value = value.substring(0, pos - 1);
                             }
                             pos = value.indexOf('[');
-                            if (pos >= 0) {
+                            if (pos > 0 ) {
                                 value = value.substring(0, pos - 1);
                             }
                             versionEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
