@@ -178,7 +178,11 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (IOException ioe) {
             throw new AnalysisException(ioe);
         } catch (SAXException saxe) {
-            throw new AnalysisException("Couldn't parse GrokAssembly result", saxe);
+            LOGGER.error("----------------------------------------------------");
+            LOGGER.error("Failed to read the Assembly Analyzer results. "
+                    + "On some systems mono-runtime and mono-devel need to be installed.");
+            LOGGER.error("----------------------------------------------------");
+            throw new AnalysisException("Couldn't parse Assembly Analzyzer results (GrokAssembly)", saxe);
         } catch (XPathExpressionException xpe) {
             // This shouldn't happen
             throw new AnalysisException(xpe);
@@ -244,7 +248,8 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.error("----------------------------------------------------");
             LOGGER.error(".NET Assembly Analyzer could not be initialized and at least one "
                     + "'exe' or 'dll' was scanned. The 'mono' executable could not be found on "
-                    + "the path; either disable the Assembly Analyzer or configure the path mono.");
+                    + "the path; either disable the Assembly Analyzer or configure the path mono. "
+                    + "On some systems mono-runtime and mono-devel need to be installed.");
             LOGGER.error("----------------------------------------------------");
             return;
         }
