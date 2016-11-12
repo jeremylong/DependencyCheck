@@ -7,6 +7,8 @@ The Dependency-Check Jenkins Plugin features the ability to perform a dependency
 
 More information can be found on the [wiki].
 
+Note, not all of the features in the HTML report produced by dependency-check, when viewed from within Jenkins, may not work correctly as [Jenkins set a restrictive CSP header](https://wiki.jenkins-ci.org/display/JENKINS/Configuring+Content+Security+Policy). This does not affect the functionality of the tool or other reporting capabilities within the Jenkins plugin. Two options to re-enable the missing features in the HTML report would be to either download the report and view it locally or modify the CSP header to allow in-line script.
+
 Mailing List
 ------------
 
