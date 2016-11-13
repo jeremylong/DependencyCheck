@@ -125,6 +125,10 @@ public class VulnerableSoftwareTest extends BaseTest {
         vs1.setCpe("cpe:/a:hp:system_management_homepage:2.1.10-186");
         assertTrue(vs.compareTo(vs1) < 0);
         //assertTrue(vs1.compareTo(vs)>0);
+
+        vs.setCpe("cpe:/a:ibm:security_guardium_database_activity_monitor:10.01");
+        vs1.setCpe("cpe:/a:ibm:security_guardium_database_activity_monitor:10.1");
+        assertTrue(vs.compareTo(vs1) < 0);
     }
 
     @Test

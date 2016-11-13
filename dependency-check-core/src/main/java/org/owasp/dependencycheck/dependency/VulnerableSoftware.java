@@ -234,6 +234,13 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
         if (str == null || str.isEmpty()) {
             return false;
         }
+
+        // numbers/versions with leading zeros should not be treated as numbers
+        // (e.g. when comparing "01" <-> "1")
+        if (str.charAt(0) == '0') {
+            return false;
+        }
+
         for (int i = 0; i < str.length(); i++) {
             final char c = str.charAt(i);
             if (c < '0' || c > '9') {
