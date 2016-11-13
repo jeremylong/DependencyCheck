@@ -291,7 +291,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.debug("Reading pom entry: {}", path);
             Properties pomProperties = null;
             try {
-                if (externalPom == null) {
+                if (externalPom == null) { //pom in the local repo doesn't have a properties file
                     pomProperties = retrievePomProperties(path, jar);
                 }
             } catch (IOException ex) {
@@ -1013,13 +1013,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
             if (list.size() == 2) {
                 addEntry(product, list.get(1));
-            }
-            if (list.size() == 3) {
+            } else if (list.size() == 3) {
                 addEntry(vendor, list.get(1));
                 addEntry(product, list.get(1));
                 addEntry(product, list.get(2));
-            }
-            if (list.size() >= 4) {
+            } else if (list.size() >= 4) {
                 addEntry(vendor, list.get(1));
                 addEntry(vendor, list.get(2));
                 addEntry(product, list.get(1));
