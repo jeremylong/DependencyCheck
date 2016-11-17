@@ -309,9 +309,9 @@ public class App {
             //Set the exit code based on whether we found a high enough vulnerability
             for (Dependency dep : dependencies) {
                 if (dep.getVulnerabilities().size() != 0) {
-                    for(Vulnerability vuln : dep.getVulnerabilities()) {
+                    for (Vulnerability vuln : dep.getVulnerabilities()) {
                         LOGGER.debug("VULNERABILITY FOUND " + dep.getDisplayFileName());
-                        if(vuln.getCvssScore() > cvssFailScore)
+                        if (vuln.getCvssScore() > cvssFailScore)
                             retCode = 1;
                     }
                 }
