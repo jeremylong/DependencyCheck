@@ -37,14 +37,15 @@ import org.owasp.dependencycheck.utils.Settings;
         defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
         threadSafe = false,
         requiresDependencyResolution = ResolutionScope.NONE,
-        requiresOnline = true
+        requiresOnline = true,
+        aggregator = true
 )
 public class PurgeMojo extends BaseDependencyCheckMojo {
 
     /**
      * Returns false; this mojo cannot generate a report.
      *
-     * @return <code>false</code>
+     * @return <code>false</code> 
      */
     @Override
     public boolean canGenerateReport() {
