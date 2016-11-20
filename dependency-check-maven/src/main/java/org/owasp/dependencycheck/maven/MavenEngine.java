@@ -136,6 +136,7 @@ public class MavenEngine extends org.owasp.dependencycheck.Engine {
             }
             cpe = (CPEAnalyzer) super.initializeAnalyzer(analyzer);
             storeCPEAnalyzer(cpe);
+            return cpe;
         }
         return super.initializeAnalyzer(analyzer);
     }
