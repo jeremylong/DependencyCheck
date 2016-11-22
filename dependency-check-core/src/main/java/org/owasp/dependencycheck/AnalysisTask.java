@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
- * Task to support parallelism of dependency-check analysis.
- * Analyses a single {@link Dependency} by a specific {@link Analyzer}.
+ * Task to support parallelism of dependency-check analysis. Analyses a single
+ * {@link Dependency} by a specific {@link Analyzer}.
  *
  * @author Stefan Neuhaus
  */
@@ -57,6 +57,10 @@ class AnalysisTask implements Callable<Void> {
      * The list of exceptions that may occur during analysis.
      */
     private final List<Throwable> exceptions;
+    /**
+     * A reference to the global settings object.
+     */
+    private final Settings settings;
 
     /**
      * Creates a new analysis task.
@@ -66,12 +70,16 @@ class AnalysisTask implements Callable<Void> {
      * @param engine the dependency-check engine
      * @param exceptions exceptions that occur during analysis will be added to
      * this collection of exceptions
+     * @param settings a reference to the global settings object; this is
+     * necessary so that when the thread is started the dependencies have a
+     * correct reference to the global settings.
      */
-    AnalysisTask(Analyzer analyzer, Dependency dependency, Engine engine, List<Throwable> exceptions) {
+    AnalysisTask(Analyzer analyzer, Dependency dependency, Engine engine, List<Throwable> exceptions, Settings settings) {
         this.analyzer = analyzer;
         this.dependency = dependency;
         this.engine = engine;
         this.exceptions = exceptions;
+        this.settings = settings;
     }
 
     /**
@@ -82,24 +90,27 @@ class AnalysisTask implements Callable<Void> {
      */
     @Override
     public Void call() {
-        Settings.initialize();
+        try {
+            Settings.setInstance(settings);
 
-        if (shouldAnalyze()) {
-            LOGGER.debug("Begin Analysis of '{}' ({})", dependency.getActualFilePath(), analyzer.getName());
-            try {
-                analyzer.analyze(dependency, engine);
-            } catch (AnalysisException ex) {
-                LOGGER.warn("An error occurred while analyzing '{}' ({}).", dependency.getActualFilePath(), analyzer.getName());
-                LOGGER.debug("", ex);
-                exceptions.add(ex);
-            } catch (Throwable ex) {
-                LOGGER.warn("An unexpected error occurred during analysis of '{}' ({}): {}",
-                        dependency.getActualFilePath(), analyzer.getName(), ex.getMessage());
-                LOGGER.debug("", ex);
-                exceptions.add(ex);
+            if (shouldAnalyze()) {
+                LOGGER.debug("Begin Analysis of '{}' ({})", dependency.getActualFilePath(), analyzer.getName());
+                try {
+                    analyzer.analyze(dependency, engine);
+                } catch (AnalysisException ex) {
+                    LOGGER.warn("An error occurred while analyzing '{}' ({}).", dependency.getActualFilePath(), analyzer.getName());
+                    LOGGER.debug("", ex);
+                    exceptions.add(ex);
+                } catch (Throwable ex) {
+                    LOGGER.warn("An unexpected error occurred during analysis of '{}' ({}): {}",
+                            dependency.getActualFilePath(), analyzer.getName(), ex.getMessage());
+                    LOGGER.debug("", ex);
+                    exceptions.add(ex);
+                }
             }
+        } finally {
+            Settings.cleanup(false);
         }
-
         return null;
     }
 

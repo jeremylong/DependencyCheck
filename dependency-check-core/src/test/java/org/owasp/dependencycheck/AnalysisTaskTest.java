@@ -12,8 +12,9 @@ import java.io.File;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import org.owasp.dependencycheck.utils.Settings;
 
-public class AnalysisTaskTest {
+public class AnalysisTaskTest extends BaseTest {
 
     @Mocked
     FileTypeAnalyzer fileTypeAnalyzer;
@@ -27,7 +28,7 @@ public class AnalysisTaskTest {
 
     @Test
     public void shouldAnalyzeReturnsTrueForNonFileTypeAnalyzers() {
-        AnalysisTask instance = new AnalysisTask(new HintAnalyzer(), null, null, null);
+        AnalysisTask instance = new AnalysisTask(new HintAnalyzer(), null, null, null, null);
         boolean shouldAnalyze = instance.shouldAnalyze();
         assertTrue(shouldAnalyze);
     }
@@ -43,7 +44,7 @@ public class AnalysisTaskTest {
             result = true;
         }};
 
-        AnalysisTask analysisTask = new AnalysisTask(fileTypeAnalyzer, dependency, null, null);
+        AnalysisTask analysisTask = new AnalysisTask(fileTypeAnalyzer, dependency, null, null, Settings.getInstance());
 
         boolean shouldAnalyze = analysisTask.shouldAnalyze();
         assertTrue(shouldAnalyze);
@@ -60,7 +61,7 @@ public class AnalysisTaskTest {
             result = false;
         }};
 
-        AnalysisTask analysisTask = new AnalysisTask(fileTypeAnalyzer, dependency, null, null);
+        AnalysisTask analysisTask = new AnalysisTask(fileTypeAnalyzer, dependency, null, null, Settings.getInstance());
 
         boolean shouldAnalyze = analysisTask.shouldAnalyze();
         assertFalse(shouldAnalyze);
@@ -68,7 +69,7 @@ public class AnalysisTaskTest {
 
     @Test
     public void taskAnalyzes() throws Exception {
-        final AnalysisTask analysisTask = new AnalysisTask(fileTypeAnalyzer, dependency, engine, null);
+        final AnalysisTask analysisTask = new AnalysisTask(fileTypeAnalyzer, dependency, engine, null, Settings.getInstance());
         new Expectations(analysisTask) {{
             analysisTask.shouldAnalyze();
             result = true;
@@ -84,7 +85,7 @@ public class AnalysisTaskTest {
 
     @Test
     public void taskDoesNothingIfItShouldNotAnalyze() throws Exception {
-        final AnalysisTask analysisTask = new AnalysisTask(fileTypeAnalyzer, dependency, engine, null);
+        final AnalysisTask analysisTask = new AnalysisTask(fileTypeAnalyzer, dependency, engine, null, Settings.getInstance());
         new Expectations(analysisTask) {{
             analysisTask.shouldAnalyze();
             result = false;

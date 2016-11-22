@@ -588,7 +588,7 @@ public class Engine implements FileFilter {
         final List<AnalysisTask> result = new ArrayList<AnalysisTask>();
         synchronized (dependencies) {
             for (final Dependency dependency : dependencies) {
-                final AnalysisTask task = new AnalysisTask(analyzer, dependency, this, exceptions);
+                final AnalysisTask task = new AnalysisTask(analyzer, dependency, this, exceptions, Settings.getInstance());
                 result.add(task);
             }
         }
