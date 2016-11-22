@@ -102,7 +102,7 @@ public final class Downloader {
                     org.apache.commons.io.FileUtils.copyFile(file, outputPath);
                 } catch (IOException ex) {
                     final String msg = format("Download failed, unable to copy '%s' to '%s'", url.toString(), outputPath.getAbsolutePath());
-                    throw new DownloadFailedException(msg);
+                    throw new DownloadFailedException(msg, ex);
                 }
             } else {
                 final String msg = format("Download failed, file ('%s') does not exist", url.toString());
@@ -186,7 +186,7 @@ public final class Downloader {
                 final String msg = format("Error saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
                         url.toString(), outputPath.getAbsolutePath(), conn.getConnectTimeout(), encoding);
                 throw new DownloadFailedException(msg, ex);
-            } catch (Throwable ex) {
+            } catch (Exception ex) {
                 final String msg = format("Unexpected exception saving '%s' to file '%s'%nConnection Timeout: %d%nEncoding: %s%n",
                         url.toString(), outputPath.getAbsolutePath(), conn.getConnectTimeout(), encoding);
                 throw new DownloadFailedException(msg, ex);
@@ -249,7 +249,7 @@ public final class Downloader {
                 lastModifiedFile = new File(url.toURI());
             } catch (URISyntaxException ex) {
                 final String msg = format("Unable to locate '%s'", url.toString());
-                throw new DownloadFailedException(msg);
+                throw new DownloadFailedException(msg, ex);
             }
             timestamp = lastModifiedFile.lastModified();
         } else {
@@ -281,7 +281,7 @@ public final class Downloader {
                         return getLastModified(url, true);
                     }
                 } catch (InvalidSettingException ex1) {
-                    LOGGER.debug("invalid setting?", ex);
+                    LOGGER.debug("invalid setting?", ex1);
                 }
                 throw new DownloadFailedException(format("Error making HTTP %s request.", httpMethod), ex);
             } finally {
@@ -351,6 +351,9 @@ public final class Downloader {
         try {
             quickQuery = Settings.getBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP, true);
         } catch (InvalidSettingException e) {
+            if (LOGGER.isTraceEnabled()){
+                LOGGER.trace("Invalid settings : {}", e.getMessage(), e);
+            }
             quickQuery = true;
         }
         return quickQuery;

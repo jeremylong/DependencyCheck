@@ -17,6 +17,8 @@ package org.owasp.dependencycheck;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+
 import org.junit.AfterClass;
 import org.junit.Assume;
 import org.junit.BeforeClass;
@@ -69,8 +71,12 @@ public class BaseTest {
      * @return the resource as an File
      */
     public static File getResourceAsFile(Object o, String resource) {
-        File f = new File(o.getClass().getClassLoader().getResource(resource).getPath());
-        Assume.assumeTrue(String.format("%n%n[SEVERE] Unable to load resource for test case: %s%n%n", resource), f.exists());
-        return f;
+        try{
+            File f = new File(o.getClass().getClassLoader().getResource(resource).toURI().getPath());
+            Assume.assumeTrue(String.format("%n%n[SEVERE] Unable to load resource for test case: %s%n%n", resource), f.exists());
+            return f;
+        }catch (URISyntaxException e){
+            throw new UnsupportedOperationException(e);
+        }
     }
 }

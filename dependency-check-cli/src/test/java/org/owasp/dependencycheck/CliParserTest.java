@@ -196,7 +196,7 @@ public class CliParserTest {
      */
     @Test
     public void testParse_scan_withFileExists() throws Exception {
-        File path = new File(this.getClass().getClassLoader().getResource("checkSumTest.file").getPath());
+        File path = new File(this.getClass().getClassLoader().getResource("checkSumTest.file").toURI().getPath());
         String[] args = {"-scan", path.getCanonicalPath(), "-out", "./", "-app", "test"};
 
         CliParser instance = new CliParser();

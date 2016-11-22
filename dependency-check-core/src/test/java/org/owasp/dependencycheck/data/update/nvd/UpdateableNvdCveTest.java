@@ -42,8 +42,7 @@ public class UpdateableNvdCveTest extends BaseTest {
     public void testIsUpdateNeeded() throws MalformedURLException, DownloadFailedException, IOException {
         String id = "key";
         //use a local file as this test will load the result and check the timestamp
-        File f = new File("target/test-classes/nvdcve-2.0-2012.xml");
-        String url = "file:///" + f.getCanonicalPath();
+        String url = new File("target/test-classes/nvdcve-2.0-2012.xml").toURI().toString();
         UpdateableNvdCve instance = new UpdateableNvdCve();
         instance.add(id, url, url, false);
 
@@ -64,9 +63,8 @@ public class UpdateableNvdCveTest extends BaseTest {
     @Test
     public void testAdd_3args() throws Exception {
         String id = "key";
-        File f = new File("target/test-classes/nvdcve-2.0-2012.xml");
         //use a local file as this test will load the result and check the timestamp
-        String url = "file:///" + f.getCanonicalPath();
+        String url = "file:///" + new File("target/test-classes/nvdcve-2.0-2012.xml").toURI().toString();
         UpdateableNvdCve instance = new UpdateableNvdCve();
         instance.add(id, url, url);
         NvdCveInfo results = instance.get(id);
@@ -82,8 +80,7 @@ public class UpdateableNvdCveTest extends BaseTest {
     public void testAdd_4args() throws Exception {
         String id = "key";
         //use a local file as this test will load the result and check the timestamp
-        File f = new File("target/test-classes/nvdcve-2.0-2012.xml");
-        String url = "file:///" + f.getCanonicalPath();
+        String url = new File("target/test-classes/nvdcve-2.0-2012.xml").toURI().toString();
         UpdateableNvdCve instance = new UpdateableNvdCve();
         instance.add(id, url, url, false);
 
@@ -107,8 +104,7 @@ public class UpdateableNvdCveTest extends BaseTest {
     public void testClear() throws MalformedURLException, DownloadFailedException, IOException {
         String id = "key";
         //use a local file as this test will load the result and check the timestamp
-        File f = new File("target/test-classes/nvdcve-2.0-2012.xml");
-        String url = "file:///" + f.getCanonicalPath();
+        String url = new File("target/test-classes/nvdcve-2.0-2012.xml").toURI().toString();
         UpdateableNvdCve instance = new UpdateableNvdCve();
         instance.add(id, url, url, false);
         assertFalse(instance.getCollection().isEmpty());
@@ -122,8 +118,7 @@ public class UpdateableNvdCveTest extends BaseTest {
     @Test
     public void testIterator() throws IOException {
         //use a local file as this test will load the result and check the timestamp
-        File f = new File("target/test-classes/nvdcve-2.0-2012.xml");
-        String url = "file:///" + f.getCanonicalPath();
+        String url = new File("target/test-classes/nvdcve-2.0-2012.xml").toURI().toString();
         UpdateableNvdCve instance = new UpdateableNvdCve();
         instance.add("one", url, url, false);
         instance.add("two", url, url, false);
