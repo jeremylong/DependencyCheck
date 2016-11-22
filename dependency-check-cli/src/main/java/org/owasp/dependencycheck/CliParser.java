@@ -289,7 +289,7 @@ public final class CliParser {
                 .desc("Enables the experimental analzers.")
                 .build();
 
-        final Option failOnCVSS = Option.builder().hasArg().longOpt(ARGUMENT.FAIL_ON_CVSS)
+        final Option failOnCVSS = Option.builder().argName("score").hasArg().longOpt(ARGUMENT.FAIL_ON_CVSS)
                 .desc("Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11; since the CVSS scores are 0-10, by default the build will never fail.")
                 .build();
 
