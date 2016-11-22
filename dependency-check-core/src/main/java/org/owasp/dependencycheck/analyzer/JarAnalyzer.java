@@ -279,18 +279,32 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             }
             return false;
         }
-        if (pomEntries != null && pomEntries.isEmpty()) {
-            final String pomPath = FilenameUtils.removeExtension(dependency.getActualFilePath()) + ".pom";
-            final File externalPom = new File(pomPath);
-            if (externalPom.isFile()) {
-                Model pom = PomUtils.readPom(externalPom);
+        if (pomEntries != null && pomEntries.size() <= 1) {
+            String path = null;
+            Properties pomProperties = null;
+            File pomFile = null;
+            if (pomEntries.size() == 1) {
+                path = pomEntries.get(0);
+                pomFile = extractPom(path, jar);
+                pomProperties = retrievePomProperties(path, jar);
+            } else {
+                path = FilenameUtils.removeExtension(dependency.getActualFilePath()) + ".pom";
+                pomFile = new File(path);
+            }
+            if (pomFile.isFile()) {
+                Model pom = PomUtils.readPom(pomFile);
+                if (pom != null && pomProperties != null) {
+                    pom.processProperties(pomProperties);
+                }
                 if (pom != null) {
                     return setPomEvidence(dependency, pom, classes);
                 }
+                return false;
             } else {
                 return false;
             }
         }
+        
         //reported possible null dereference on pomEntries is on a non-feasible path
         for (String path : pomEntries) {
             //TODO - one of these is likely the pom for the main JAR we are analyzing
