@@ -47,6 +47,7 @@ public class JarAnalyzerTest extends BaseTest {
         File file = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
         Dependency result = new Dependency(file);
         JarAnalyzer instance = new JarAnalyzer();
+        instance.initializeFileTypeAnalyzer();
         instance.analyze(result, null);
         assertTrue(result.getVendorEvidence().toString().toLowerCase().contains("apache"));
         assertTrue(result.getVendorEvidence().getWeighting().contains("apache"));
