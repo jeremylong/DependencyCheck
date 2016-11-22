@@ -453,4 +453,11 @@
         <gav regex="true">^org\.mitre\.dsmiley\.httpproxy:smiley-http-proxy-servlet:.*$</gav>
         <cpe>cpe:/a:shttp:shttp</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        This CVE is disputed by the vendor and is not considered an issue.
+        ]]></notes>
+        <filePath regex="true">.*</filePath>
+        <cve>CVE-2007-6059</cve>
+    </suppress>
 </suppressions>
