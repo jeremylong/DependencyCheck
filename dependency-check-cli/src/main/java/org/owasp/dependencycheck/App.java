@@ -33,6 +33,7 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.apache.tools.ant.DirectoryScanner;
+import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -161,8 +162,8 @@ public class App {
             try {
                 final String[] scanFiles = cli.getScanFiles();
                 if (scanFiles != null) {
-                    runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getProjectName(), scanFiles,
-                            cli.getExcludeList(), cli.getSymLinkDepth());
+                    exitCode = runScan(cli.getReportDirectory(), cli.getReportFormat(), cli.getProjectName(), scanFiles,
+                            cli.getExcludeList(), cli.getSymLinkDepth(), cli.getFailOnCVSS());
                 } else {
                     LOGGER.error("No scan files configured");
                 }
@@ -203,6 +204,7 @@ public class App {
      * @param files the files/directories to scan
      * @param excludes the patterns for files/directories to exclude
      * @param symLinkDepth the depth that symbolic links will be followed
+     * @param cvssFailScore the score to fail on if a vulnerability is found
      *
      * @throws InvalidScanPathException thrown if the path to scan starts with
      * "//"
@@ -213,9 +215,10 @@ public class App {
      * analysis; there may be multiple exceptions contained within the
      * collection.
      */
-    private void runScan(String reportDirectory, String outputFormat, String applicationName, String[] files,
-            String[] excludes, int symLinkDepth) throws InvalidScanPathException, DatabaseException, ExceptionCollection, ReportException {
+    private int runScan(String reportDirectory, String outputFormat, String applicationName, String[] files,
+            String[] excludes, int symLinkDepth, int cvssFailScore) throws InvalidScanPathException, DatabaseException, ExceptionCollection, ReportException {
         Engine engine = null;
+        int retCode = 0;
         try {
             engine = new Engine();
             final List<String> antStylePaths = new ArrayList<String>();
@@ -302,12 +305,24 @@ public class App {
             if (exCol != null && exCol.getExceptions().size() > 0) {
                 throw exCol;
             }
+
+            //Set the exit code based on whether we found a high enough vulnerability
+            for (Dependency dep : dependencies) {
+                if (dep.getVulnerabilities().size() != 0) {
+                    for (Vulnerability vuln : dep.getVulnerabilities()) {
+                        LOGGER.debug("VULNERABILITY FOUND " + dep.getDisplayFileName());
+                        if (vuln.getCvssScore() > cvssFailScore)
+                            retCode = 1;
+                    }
+                }
+            }
+
+            return retCode;
         } finally {
             if (engine != null) {
                 engine.cleanup();
             }
         }
-
     }
 
     /**

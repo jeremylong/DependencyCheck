@@ -289,6 +289,10 @@ public final class CliParser {
                 .desc("Enables the experimental analzers.")
                 .build();
 
+        final Option failOnCVSS = Option.builder().hasArg().longOpt(ARGUMENT.FAIL_ON_CVSS)
+                .desc("Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11; since the CVSS scores are 0-10, by default the build will never fail.")
+                .build();
+
         //This is an option group because it can be specified more then once.
         final OptionGroup og = new OptionGroup();
         og.addOption(path);
@@ -311,7 +315,8 @@ public final class CliParser {
                 .addOption(suppressionFile)
                 .addOption(hintsFile)
                 .addOption(cveValidForHours)
-                .addOption(experimentalEnabled);
+                .addOption(experimentalEnabled)
+                .addOption(failOnCVSS);
     }
 
     /**
@@ -1106,6 +1111,24 @@ public final class CliParser {
     }
 
     /**
+     * Returns the CVSS value to fail on
+     *
+     * @return 11 if nothing is set. Otherwise it returns the int passed from the command line arg
+     */
+    public int getFailOnCVSS() {
+        if(line.hasOption(ARGUMENT.FAIL_ON_CVSS)) {
+            String value = line.getOptionValue(ARGUMENT.FAIL_ON_CVSS);
+            try {
+                return Integer.parseInt(value);
+            } catch (NumberFormatException nfe) {
+                return 11;
+            }
+        } else {
+            return 11;
+        }
+    }
+
+    /**
      * A collection of static final strings that represent the possible command
      * line arguments.
      */
@@ -1408,5 +1431,9 @@ public final class CliParser {
          * The CLI argument to enable the experimental analyzers.
          */
         private static final String EXPERIMENTAL = "enableExperimental";
+        /**
+         * The CLI argument to enable the experimental analyzers.
+         */
+        private static final String FAIL_ON_CVSS = "failOnCVSS";
     }
 }
