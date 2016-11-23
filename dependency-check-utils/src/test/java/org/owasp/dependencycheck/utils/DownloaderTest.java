@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.utils;
 
 import java.io.File;
-import java.net.URL;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.utils.Downloader;
@@ -31,9 +30,7 @@ public class DownloaderTest {
 
     @Test
     public void testGetLastModified_file() throws Exception {
-        File f = new File("target/test-classes/dependencycheck.properties");
-        URL url = new URL("file:///" + f.getCanonicalPath());
-        long timestamp = Downloader.getLastModified(url);
+        long timestamp = Downloader.getLastModified(new File("target/test-classes/dependencycheck.properties").toURI().toURL());
         assertTrue("timestamp equal to zero?", timestamp > 0);
     }
 }
