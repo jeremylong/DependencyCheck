@@ -25,6 +25,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
@@ -74,7 +75,7 @@ public class CheckMojo extends BaseDependencyCheckMojo {
      */
     @Override
     public void runCheck() throws MojoExecutionException, MojoFailureException {
-        MavenEngine engine = null;
+        Engine engine = null;
         try {
             engine = initializeEngine();
         } catch (DatabaseException ex) {

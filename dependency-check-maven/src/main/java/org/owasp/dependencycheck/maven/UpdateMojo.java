@@ -23,6 +23,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.Settings;
@@ -64,10 +65,10 @@ public class UpdateMojo extends BaseDependencyCheckMojo {
      */
     @Override
     public void runCheck() throws MojoExecutionException, MojoFailureException {
-        MavenEngine engine = null;
+        Engine engine = null;
         try {
             engine = initializeEngine();
-            engine.update();
+            engine.doUpdates();
         } catch (DatabaseException ex) {
             if (getLog().isDebugEnabled()) {
                 getLog().debug("Database connection error", ex);
