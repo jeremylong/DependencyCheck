@@ -575,15 +575,19 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <!-- The following profile adds additional
-            dependencies that are only used during testing.
-            Additionally, these are only added when using "allTests" to
-            make the build slightly faster in most cases. -->
+        <!-- 
+            The following profile adds additional dependencies that are only 
+            used during testing.
+        
+            TODO move the following FP tests to a seperate invoker test in the
+            maven plugin project. Add checks against the XML to validate that
+            these do not report FP.
+        -->
+        <!--profile>
             <id>False Positive Tests</id>
             <activation>
                 <property>
-                    <name>allTests</name>
+                    <name>releaseTesting</name>
                 </property>
             </activation>
             <dependencies>
@@ -665,13 +669,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <optional>true</optional>
                 </dependency>
                 <dependency>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-webmvc</artifactId>
-                    <version>3.2.12.RELEASE</version>
-                    <scope>test</scope>
-                    <optional>true</optional>
-                </dependency>
-                <dependency>
                     <groupId>com.google.code.gson</groupId>
                     <artifactId>gson</artifactId>
                     <version>2.3.1</version>
@@ -728,6 +725,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <optional>true</optional>
                 </dependency>
             </dependencies>
-        </profile>
+        </profile-->
     </profiles>
 </project>
