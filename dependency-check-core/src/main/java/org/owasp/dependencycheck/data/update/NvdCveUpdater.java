@@ -271,12 +271,22 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
         }
         if (!getProperties().isEmpty()) {
             try {
+                final int startYear = Settings.getInt(Settings.KEYS.CVE_START_YEAR, 2002);
+                final int endYear = Calendar.getInstance().get(Calendar.YEAR);
+                boolean needsFullUpdate = false;
+                for (int y = startYear; y <= endYear; y++) {
+                    long val = Long.parseLong(getProperties().getProperty(DatabaseProperties.LAST_UPDATED_BASE + y, "0"));
+                    if (val == 0) {
+                        needsFullUpdate = true;
+                    }
+                }
+
                 final long lastUpdated = Long.parseLong(getProperties().getProperty(DatabaseProperties.LAST_UPDATED, "0"));
                 final long now = System.currentTimeMillis();
                 final int days = Settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS, 7);
-                if (lastUpdated == updates.getTimeStamp(MODIFIED)) {
+                if (!needsFullUpdate && lastUpdated == updates.getTimeStamp(MODIFIED)) {
                     updates.clear(); //we don't need to update anything.
-                } else if (DateUtil.withinDateRange(lastUpdated, now, days)) {
+                } else if (!needsFullUpdate && DateUtil.withinDateRange(lastUpdated, now, days)) {
                     for (NvdCveInfo entry : updates) {
                         if (MODIFIED.equals(entry.getId())) {
                             entry.setNeedsUpdate(true);
