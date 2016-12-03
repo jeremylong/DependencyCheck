@@ -103,14 +103,16 @@ public class ReportGenerator {
         context = createContext();
 
         velocityEngine.init();
-
-        final DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy 'at' HH:mm:ss z");
-        final DateFormat dateFormatXML = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-        final Date d = new Date();
-        final String scanDate = dateFormat.format(d);
-        final String scanDateXML = dateFormatXML.format(d);
         final EscapeTool enc = new EscapeTool();
-
+        final Date d = new Date();
+        String scanDate;
+        String scanDateXML;
+        synchronized (d) {
+            final DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy 'at' HH:mm:ss z");
+            final DateFormat dateFormatXML = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+            scanDate = dateFormat.format(d);
+            scanDateXML = dateFormatXML.format(d);
+        }
         context.put("applicationName", applicationName);
         context.put("dependencies", dependencies);
         context.put("analyzers", analyzers);
@@ -167,7 +169,8 @@ public class ReportGenerator {
      *
      * @param outputDir the path where the reports should be written
      * @param format the format the report should be written in
-     * @throws ReportException is thrown if there is an error writing out the reports
+     * @throws ReportException is thrown if there is an error writing out the
+     * reports
      */
     public void generateReports(String outputDir, Format format) throws ReportException {
         if (format == Format.XML || format == Format.ALL) {
