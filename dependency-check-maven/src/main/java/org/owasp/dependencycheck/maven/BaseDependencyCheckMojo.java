@@ -49,6 +49,7 @@ import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
+import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -598,7 +599,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @return a collection of exceptions that may have occurred while resolving
      * and scanning the dependencies
      */
-    protected ExceptionCollection scanArtifacts(MavenProject project, MavenEngine engine) {
+    protected ExceptionCollection scanArtifacts(MavenProject project, Engine engine) {
         // <editor-fold defaultstate="collapsed" desc="old implementation">
         /*
             for (Artifact a : project.getArtifacts()) {
@@ -648,7 +649,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @return a collection of exceptions that may have occurred while resolving
      * and scanning the dependencies
      */
-    private ExceptionCollection collectDependencies(MavenEngine engine, MavenProject project, List<DependencyNode> nodes) {
+    private ExceptionCollection collectDependencies(Engine engine, MavenProject project, List<DependencyNode> nodes) {
         ExceptionCollection exCol = null;
         for (DependencyNode dependencyNode : nodes) {
             exCol = collectDependencies(engine, project, dependencyNode.getChildren());
@@ -793,14 +794,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     //</editor-fold>
 
     /**
-     * Initializes a new <code>MavenEngine</code> that can be used for scanning.
+     * Initializes a new <code>Engine</code> that can be used for scanning.
      *
-     * @return a newly instantiated <code>MavenEngine</code>
+     * @return a newly instantiated <code>Engine</code>
      * @throws DatabaseException thrown if there is a database exception
      */
-    protected MavenEngine initializeEngine() throws DatabaseException {
+    protected Engine initializeEngine() throws DatabaseException {
         populateSettings();
-        return new MavenEngine(this.project, this.reactorProjects);
+        return new Engine();
     }
 
     /**
@@ -1023,7 +1024,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @param outputDir the directory path to write the report(s)
      * @throws ReportException thrown if there is an error writing the report
      */
-    protected void writeReports(MavenEngine engine, MavenProject p, File outputDir) throws ReportException {
+    protected void writeReports(Engine engine, MavenProject p, File outputDir) throws ReportException {
         DatabaseProperties prop = null;
         CveDB cve = null;
         try {
@@ -1211,7 +1212,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * scan data between the "check" and "aggregate" phase.
      *
      * @param project the Maven project to read the data file from
-     * @return a <code>MavenEngine</code> object populated with dependencies if
+     * @return a <code>Engine</code> object populated with dependencies if
      * the serialized data file exists; otherwise <code>null</code> is returned
      */
     protected List<Dependency> readDataFile(MavenProject project) {
