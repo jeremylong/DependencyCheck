@@ -38,7 +38,8 @@ import org.owasp.dependencycheck.utils.Settings;
         defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
         threadSafe = false,
         requiresDependencyResolution = ResolutionScope.NONE,
-        requiresOnline = true
+        requiresOnline = true,
+        aggregator = true
 )
 public class UpdateMojo extends BaseDependencyCheckMojo {
 

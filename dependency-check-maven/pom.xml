@@ -116,7 +116,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>[3.0,]</version>
+                                    <version>[3.1,]</version>
                                 </requireMavenVersion>
                             </rules>
                             <fail>true</fail>
@@ -226,4 +226,36 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <profiles>
+        <profile>
+            <id>FullIntegrationTesting</id>
+            <activation>
+                <property>
+                    <name>releaseTesting</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <version>2.0.0</version>
+                        <configuration>
+                            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                            <localRepositoryPath>target/local-repo</localRepositoryPath>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <goals>
+                                    <goal>install</goal>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
