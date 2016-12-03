@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -106,6 +107,8 @@ public class NexusSearch {
                 try {
                     final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                     factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                    factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                    factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
                     final DocumentBuilder builder = factory.newDocumentBuilder();
                     final Document doc = builder.parse(conn.getInputStream());
                     final XPath xpath = XPathFactory.newInstance().newXPath();
@@ -167,7 +170,12 @@ public class NexusSearch {
                 LOGGER.warn("Expected 200 result from Nexus, got {}", conn.getResponseCode());
                 return false;
             }
-            final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            final DocumentBuilder builder = factory.newDocumentBuilder();
+
             final Document doc = builder.parse(conn.getInputStream());
             if (!"status".equals(doc.getDocumentElement().getNodeName())) {
                 LOGGER.warn("Expected root node name of status, got {}", doc.getDocumentElement().getNodeName());

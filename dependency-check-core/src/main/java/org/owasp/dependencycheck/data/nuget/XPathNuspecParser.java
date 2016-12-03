@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.data.nuget;
 
 import java.io.InputStream;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -59,6 +60,8 @@ public class XPathNuspecParser implements NuspecParser {
         try {
             final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             final Document d = factory.newDocumentBuilder().parse(stream);
 
             final XPath xpath = XPathFactory.newInstance().newXPath();

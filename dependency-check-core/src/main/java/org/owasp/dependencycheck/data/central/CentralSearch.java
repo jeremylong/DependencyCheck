@@ -23,6 +23,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -112,6 +113,8 @@ public class CentralSearch {
             try {
                 final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
                 final DocumentBuilder builder = factory.newDocumentBuilder();
                 final Document doc = builder.parse(conn.getInputStream());
                 final XPath xpath = XPathFactory.newInstance().newXPath();
