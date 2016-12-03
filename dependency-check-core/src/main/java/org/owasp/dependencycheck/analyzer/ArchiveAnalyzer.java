@@ -248,7 +248,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         //make a copy
         final List<Dependency> dependencySet = findMoreDependencies(engine, tmpDir);
 
-        if (!dependencySet.isEmpty()) {
+        if (dependencySet != null && !dependencySet.isEmpty()) {
             for (Dependency d : dependencySet) {
                 if (d.getFilePath().startsWith(tmpDir.getAbsolutePath())) {
                     //fix the dependency's display name and path
@@ -314,7 +314,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 dependency.setSha1sum("");
                 org.apache.commons.io.FileUtils.copyFile(dependency.getActualFile(), tmpLoc);
                 final List<Dependency> dependencySet = findMoreDependencies(engine, tmpLoc);
-                if (!dependencySet.isEmpty()) {
+                if (dependencySet != null && !dependencySet.isEmpty()) {
                     for (Dependency d : dependencySet) {
                         //fix the dependency's display name and path
                         if (d.getActualFile().equals(tmpLoc)) {
