@@ -41,21 +41,24 @@ public class DatabaseProperties {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseProperties.class);
     /**
-     * Modified key word, used as a key to store information about the modified file (i.e. the containing the last 8 days of
-     * updates)..
+     * Modified key word, used as a key to store information about the modified
+     * file (i.e. the containing the last 8 days of updates)..
      */
     public static final String MODIFIED = "Modified";
     /**
-     * The properties file key for the last checked field - used to store the last check time of the Modified NVD CVE xml file.
+     * The properties file key for the last checked field - used to store the
+     * last check time of the Modified NVD CVE xml file.
      */
     public static final String LAST_CHECKED = "NVD CVE Checked";
     /**
-     * The properties file key for the last updated field - used to store the last updated time of the Modified NVD CVE xml file.
+     * The properties file key for the last updated field - used to store the
+     * last updated time of the Modified NVD CVE xml file.
      */
     public static final String LAST_UPDATED = "NVD CVE Modified";
     /**
-     * Stores the last updated time for each of the NVD CVE files. These timestamps should be updated if we process the modified
-     * file within 7 days of the last update.
+     * Stores the last updated time for each of the NVD CVE files. These
+     * timestamps should be updated if we process the modified file within 7
+     * days of the last update.
      */
     public static final String LAST_UPDATED_BASE = "NVD CVE ";
     /**
@@ -121,7 +124,8 @@ public class DatabaseProperties {
     }
 
     /**
-     * Returns the property value for the given key. If the key is not contained in the underlying properties null is returned.
+     * Returns the property value for the given key. If the key is not contained
+     * in the underlying properties null is returned.
      *
      * @param key the property key
      * @return the value of the property
@@ -131,8 +135,8 @@ public class DatabaseProperties {
     }
 
     /**
-     * Returns the property value for the given key. If the key is not contained in the underlying properties the default value is
-     * returned.
+     * Returns the property value for the given key. If the key is not contained
+     * in the underlying properties the default value is returned.
      *
      * @param key the property key
      * @param defaultValue the default value
@@ -152,8 +156,9 @@ public class DatabaseProperties {
     }
 
     /**
-     * Returns a map of the meta data from the database properties. This primarily contains timestamps of when the NVD CVE
-     * information was last updated.
+     * Returns a map of the meta data from the database properties. This
+     * primarily contains timestamps of when the NVD CVE information was last
+     * updated.
      *
      * @return a map of the database meta data
      */
@@ -166,9 +171,11 @@ public class DatabaseProperties {
                     try {
                         final long epoch = Long.parseLong((String) entry.getValue());
                         final Date date = new Date(epoch);
-                        final DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                        final String formatted = format.format(date);
-                        map.put(key, formatted);
+                        synchronized (date) {
+                            final DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                            final String formatted = format.format(date);
+                            map.put(key, formatted);
+                        }
                     } catch (Throwable ex) { //deliberately being broad in this catch clause
                         LOGGER.debug("Unable to parse timestamp from DB", ex);
                         map.put(key, (String) entry.getValue());
