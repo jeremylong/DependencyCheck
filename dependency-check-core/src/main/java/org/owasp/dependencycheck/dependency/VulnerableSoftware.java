@@ -226,18 +226,21 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
 
     /**
      * Determines if the string passed in is a positive integer.
+     * To be counted as a positive integer, the string must only contain 0-9
+     * and must not have any leading zeros (though "0" is a valid positive
+     * integer).
      *
      * @param str the string to test
      * @return true if the string only contains 0-9, otherwise false.
      */
-    private static boolean isPositiveInteger(final String str) {
+    static boolean isPositiveInteger(final String str) {
         if (str == null || str.isEmpty()) {
             return false;
         }
 
-        // numbers/versions with leading zeros should not be treated as numbers
+        // numbers with leading zeros should not be treated as numbers
         // (e.g. when comparing "01" <-> "1")
-        if (str.charAt(0) == '0') {
+        if (str.charAt(0) == '0' && str.length() > 1) {
             return false;
         }
 
