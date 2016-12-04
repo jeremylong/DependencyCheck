@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import java.io.Closeable;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,6 +130,22 @@ public final class FileUtils {
             return BIT_BUCKET_WIN;
         } else {
             return BIT_BUCKET_UNIX;
+        }
+    }
+
+    /**
+     * Close the given {@link Closeable} instance, ignoring nulls, and logging
+     * any thrown {@link IOException}.
+     *
+     * @param closeable to be closed
+     */
+    public static void close(Closeable closeable) {
+        if (null != closeable) {
+            try {
+                closeable.close();
+            } catch (IOException ex) {
+                LOGGER.trace("", ex);
+            }
         }
     }
 }

@@ -116,7 +116,7 @@ public final class ExtractionUtil {
                             final String msg = String.format("IO Exception while parsing file '%s'.", file.getName());
                             throw new ExtractionException(msg, ex);
                         } finally {
-                            closeStream(fos);
+                            FileUtils.close(fos);
                         }
                     }
                 }
@@ -126,7 +126,7 @@ public final class ExtractionUtil {
             LOGGER.debug("", ex);
             throw new ExtractionException(msg, ex);
         } finally {
-            closeStream(zis);
+            FileUtils.close(zis);
         }
     }
 
@@ -197,7 +197,7 @@ public final class ExtractionUtil {
         } catch (Throwable ex) {
             throw new ArchiveExtractionException(ex);
         } finally {
-            closeStream(input);
+            FileUtils.close(input);
         }
     }
 
@@ -233,22 +233,7 @@ public final class ExtractionUtil {
                                 file.getName());
                 throw new ExtractionException(msg, ex);
             } finally {
-                closeStream(fos);
-            }
-        }
-    }
-
-    /**
-     * Closes the stream.
-     *
-     * @param stream the stream to close
-     */
-    private static void closeStream(Closeable stream) {
-        if (stream != null) {
-            try {
-                stream.close();
-            } catch (IOException ex) {
-                LOGGER.trace("", ex);
+                FileUtils.close(fos);
             }
         }
     }

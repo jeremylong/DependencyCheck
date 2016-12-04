@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.BufferedInputStream;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -434,12 +433,12 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             } finally {
                 //overly verbose and not needed... but keeping it anyway due to
                 //having issue with file handles being left open
-                close(fis);
-                close(in);
-                close(zin);
-                close(tin);
-                close(gin);
-                close(bzin);
+                FileUtils.close(fis);
+                FileUtils.close(in);
+                FileUtils.close(zin);
+                FileUtils.close(tin);
+                FileUtils.close(gin);
+                FileUtils.close(bzin);
             }
         }
     }
@@ -521,7 +520,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (Throwable ex) {
             throw new ArchiveExtractionException(ex);
         } finally {
-            close(input);
+            FileUtils.close(input);
         }
     }
 
@@ -552,7 +551,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             final String msg = String.format("IO Exception while parsing file '%s'.", file.getName());
             throw new AnalysisException(msg, ex);
         } finally {
-            close(fos);
+            FileUtils.close(fos);
         }
     }
 
@@ -577,23 +576,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.debug("", ex);
             throw new ArchiveExtractionException(ex);
         } finally {
-            close(out);
-        }
-    }
-
-    /**
-     * Close the given {@link Closeable} instance, ignoring nulls, and logging
-     * any thrown {@link IOException}.
-     *
-     * @param closeable to be closed
-     */
-    private static void close(Closeable closeable) {
-        if (null != closeable) {
-            try {
-                closeable.close();
-            } catch (IOException ex) {
-                LOGGER.trace("", ex);
-            }
+            FileUtils.close(out);
         }
     }
 
