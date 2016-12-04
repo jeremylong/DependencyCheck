@@ -37,16 +37,15 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.apache.commons.lang3.SystemUtils;
+import org.owasp.dependencycheck.utils.XmlUtils;
 
 /**
  * Analyzer for getting company, product, and version information from a .NET
@@ -124,12 +123,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         Document doc = null;
         try {
             final Process proc = pb.start();
-
-            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            final DocumentBuilder builder = factory.newDocumentBuilder();
+            final DocumentBuilder builder = XmlUtils.buildSecureDocumentBuilder();
 
             doc = builder.parse(proc.getInputStream());
 
@@ -265,11 +259,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             // Try evacuating the error stream
             IOUtils.copy(p.getErrorStream(), NullOutputStream.NULL_OUTPUT_STREAM);
 
-            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            final DocumentBuilder builder = factory.newDocumentBuilder();
+            final DocumentBuilder builder = XmlUtils.buildSecureDocumentBuilder();
             final Document doc = builder.parse(p.getInputStream());
             final XPath xpath = XPathFactory.newInstance().newXPath();
             final String error = xpath.evaluate("/assembly/error", doc);

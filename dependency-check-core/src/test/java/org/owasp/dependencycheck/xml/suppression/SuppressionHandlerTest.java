@@ -28,6 +28,7 @@ import javax.xml.parsers.SAXParserFactory;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.utils.XmlUtils;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -45,15 +46,10 @@ public class SuppressionHandlerTest extends BaseTest {
     @Test
     public void testHandler() throws Exception {
         File file = BaseTest.getResourceAsFile(this, "suppressions.xml");
-        File schema = BaseTest.getResourceAsFile(this, "schema/suppression.xsd");
-        SuppressionHandler handler = new SuppressionHandler();
+        InputStream schemaStream = BaseTest.getResourceAsStream(this, "schema/suppression.xsd");
 
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setValidating(true);
-        SAXParser saxParser = factory.newSAXParser();
-        saxParser.setProperty(SuppressionParser.JAXP_SCHEMA_LANGUAGE, SuppressionParser.W3C_XML_SCHEMA);
-        saxParser.setProperty(SuppressionParser.JAXP_SCHEMA_SOURCE, schema);
+        SuppressionHandler handler = new SuppressionHandler();
+        SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream);
         XMLReader xmlReader = saxParser.getXMLReader();
         xmlReader.setErrorHandler(new SuppressionErrorHandler());
         xmlReader.setContentHandler(handler);

@@ -24,10 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import org.owasp.dependencycheck.utils.XmlUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,22 +85,12 @@ public class PomParser {
     public Model parse(InputStream inputStream) throws PomParseException {
         try {
             final PomHandler handler = new PomHandler();
-            final SAXParserFactory factory = SAXParserFactory.newInstance();
-//            factory.setNamespaceAware(true);
-//            factory.setValidating(true);
-            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            final SAXParser saxParser = factory.newSAXParser();
+            final SAXParser saxParser = XmlUtils.buildSecureSaxParser();
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setContentHandler(handler);
-
             final Reader reader = new InputStreamReader(inputStream, "UTF-8");
             final InputSource in = new InputSource(reader);
-            //in.setEncoding("UTF-8");
-
             xmlReader.parse(in);
-
             return handler.getModel();
         } catch (ParserConfigurationException ex) {
             LOGGER.debug("", ex);

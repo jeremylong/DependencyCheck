@@ -26,10 +26,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
-import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.io.FileUtils;
 import static org.owasp.dependencycheck.data.nvdcve.DatabaseProperties.LAST_CPE_UPDATE;
 import org.owasp.dependencycheck.data.update.cpe.CPEHandler;
@@ -39,6 +37,7 @@ import org.owasp.dependencycheck.utils.DateUtil;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -122,11 +121,7 @@ public class CpeUpdater extends BaseUpdater implements CachedWebDataSource {
      */
     private List<Cpe> processXML(final File xml) throws UpdateException {
         try {
-            final SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            final SAXParser saxParser = factory.newSAXParser();
+            final SAXParser saxParser = XmlUtils.buildSecureSaxParser();
             final CPEHandler handler = new CPEHandler();
             saxParser.parse(xml, handler);
             return handler.getData();

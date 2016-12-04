@@ -25,10 +25,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
-import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import org.owasp.dependencycheck.utils.XmlUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,21 +46,6 @@ public class SuppressionParser {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(SuppressionParser.class);
-    /**
-     * JAXP Schema Language. Source:
-     * http://docs.oracle.com/javase/tutorial/jaxp/sax/validation.html
-     */
-    public static final String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
-    /**
-     * W3C XML Schema. Source:
-     * http://docs.oracle.com/javase/tutorial/jaxp/sax/validation.html
-     */
-    public static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
-    /**
-     * JAXP Schema Source. Source:
-     * http://docs.oracle.com/javase/tutorial/jaxp/sax/validation.html
-     */
-    public static final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
     /**
      * The suppression schema file location.
      */
@@ -126,15 +110,7 @@ public class SuppressionParser {
         try {
             schemaStream = this.getClass().getClassLoader().getResourceAsStream(SUPPRESSION_SCHEMA);
             final SuppressionHandler handler = new SuppressionHandler();
-            final SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            factory.setValidating(true);
-            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            final SAXParser saxParser = factory.newSAXParser();
-            saxParser.setProperty(SuppressionParser.JAXP_SCHEMA_LANGUAGE, SuppressionParser.W3C_XML_SCHEMA);
-            saxParser.setProperty(SuppressionParser.JAXP_SCHEMA_SOURCE, new InputSource(schemaStream));
+            SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream);
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setErrorHandler(new SuppressionErrorHandler());
             xmlReader.setContentHandler(handler);
@@ -173,6 +149,8 @@ public class SuppressionParser {
         }
     }
 
+    
+
     /**
      * Parses the given XML stream and returns a list of the suppression rules
      * contained.
@@ -186,15 +164,7 @@ public class SuppressionParser {
         try {
             schemaStream = this.getClass().getClassLoader().getResourceAsStream(OLD_SUPPRESSION_SCHEMA);
             final SuppressionHandler handler = new SuppressionHandler();
-            final SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            factory.setNamespaceAware(true);
-            factory.setValidating(true);
-            final SAXParser saxParser = factory.newSAXParser();
-            saxParser.setProperty(SuppressionParser.JAXP_SCHEMA_LANGUAGE, SuppressionParser.W3C_XML_SCHEMA);
-            saxParser.setProperty(SuppressionParser.JAXP_SCHEMA_SOURCE, new InputSource(schemaStream));
+            final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream);
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setErrorHandler(new SuppressionErrorHandler());
             xmlReader.setContentHandler(handler);

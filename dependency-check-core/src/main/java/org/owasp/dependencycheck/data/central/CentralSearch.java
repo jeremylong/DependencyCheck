@@ -23,15 +23,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.URLConnectionFactory;
+import org.owasp.dependencycheck.utils.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -111,11 +110,7 @@ public class CentralSearch {
         if (conn.getResponseCode() == 200) {
             boolean missing = false;
             try {
-                final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-                factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-                factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-                final DocumentBuilder builder = factory.newDocumentBuilder();
+                final DocumentBuilder builder = XmlUtils.buildSecureDocumentBuilder();
                 final Document doc = builder.parse(conn.getInputStream());
                 final XPath xpath = XPathFactory.newInstance().newXPath();
                 final String numFound = xpath.evaluate("/response/result/@numFound", doc);

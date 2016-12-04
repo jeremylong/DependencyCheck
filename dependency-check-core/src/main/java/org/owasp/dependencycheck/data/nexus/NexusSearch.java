@@ -21,15 +21,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
-import org.owasp.dependencycheck.utils.InvalidSettingException;
-import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.URLConnectionFactory;
+import org.owasp.dependencycheck.utils.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -105,11 +102,7 @@ public class NexusSearch {
         switch (conn.getResponseCode()) {
             case 200:
                 try {
-                    final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-                    factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-                    factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-                    final DocumentBuilder builder = factory.newDocumentBuilder();
+                    final DocumentBuilder builder = XmlUtils.buildSecureDocumentBuilder();
                     final Document doc = builder.parse(conn.getInputStream());
                     final XPath xpath = XPathFactory.newInstance().newXPath();
                     final String groupId = xpath
@@ -170,11 +163,7 @@ public class NexusSearch {
                 LOGGER.warn("Expected 200 result from Nexus, got {}", conn.getResponseCode());
                 return false;
             }
-            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            final DocumentBuilder builder = factory.newDocumentBuilder();
+            final DocumentBuilder builder = XmlUtils.buildSecureDocumentBuilder();
 
             final Document doc = builder.parse(conn.getInputStream());
             if (!"status".equals(doc.getDocumentElement().getNodeName())) {
