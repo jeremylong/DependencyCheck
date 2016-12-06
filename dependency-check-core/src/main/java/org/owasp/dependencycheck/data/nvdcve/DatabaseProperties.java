@@ -17,13 +17,13 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.owasp.dependencycheck.data.update.nvd.NvdCveInfo;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.slf4j.Logger;
@@ -170,12 +170,13 @@ public class DatabaseProperties {
                 if (key.startsWith("NVD CVE ")) {
                     try {
                         final long epoch = Long.parseLong((String) entry.getValue());
-                        final Date date = new Date(epoch);
-                        synchronized (date) {
-                            final DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                            final String formatted = format.format(date);
-                            map.put(key, formatted);
-                        }
+                        final DateTime date = new DateTime(epoch);
+                        DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+                        String formatted = format.print(date);
+//                        final Date date = new Date(epoch);
+//                        final DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+//                        final String formatted = format.format(date);
+                        map.put(key, formatted);
                     } catch (Throwable ex) { //deliberately being broad in this catch clause
                         LOGGER.debug("Unable to parse timestamp from DB", ex);
                         map.put(key, (String) entry.getValue());

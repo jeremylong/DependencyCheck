@@ -17,8 +17,14 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.owasp.dependencycheck.BaseDBTestCase;
 import java.util.Properties;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -142,5 +148,23 @@ public class DatabasePropertiesIntegrationTest extends BaseDBTestCase {
                 cveDB.close();
             }
         }
+    }
+    
+    @Test
+    public void testTest() {
+        final Date now = new Date();
+        
+        final DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        final String formatted = format.format(now);
+        
+        final DateTime dt = new DateTime(now.getTime());
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        String jodaFormatted = fmt.print(dt);
+        System.out.println(formatted);
+        System.out.println(jodaFormatted);
+        assertTrue(jodaFormatted.equals(formatted));
+        
+        
+        
     }
 }

@@ -35,6 +35,9 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.runtime.RuntimeConstants;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -104,15 +107,18 @@ public class ReportGenerator {
 
         velocityEngine.init();
         final EscapeTool enc = new EscapeTool();
-        final Date d = new Date();
-        String scanDate;
-        String scanDateXML;
-        synchronized (d) {
-            final DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy 'at' HH:mm:ss z");
-            final DateFormat dateFormatXML = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-            scanDate = dateFormat.format(d);
-            scanDateXML = dateFormatXML.format(d);
-        }
+
+        final DateTime dt = DateTime.now();
+        DateTimeFormatter dateFormat = DateTimeFormat.forPattern("MMM d, yyyy 'at' HH:mm:ss z");
+        DateTimeFormatter dateFormatXML = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+                
+//        final Date d = new Date();
+//        final DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy 'at' HH:mm:ss z");
+//        final DateFormat dateFormatXML = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        
+        final String scanDate = dateFormat.print(dt);
+        final String scanDateXML = dateFormatXML.print(dt);
+
         context.put("applicationName", applicationName);
         context.put("dependencies", dependencies);
         context.put("analyzers", analyzers);
