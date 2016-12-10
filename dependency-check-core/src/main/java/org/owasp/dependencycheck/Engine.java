@@ -163,15 +163,16 @@ public class Engine implements FileFilter {
 
     /**
      * Get the dependencies identified. The returned list is a reference to the
-     * engine's synchronized list. You must synchronize on it, when you modify
-     * and iterate over it from multiple threads. E.g. this holds for analyzers
-     * supporting parallel processing during their analysis phase.
+     * engine's synchronized list. <b>You must synchronize on the returned
+     * list</b> when you modify and iterate over it from multiple threads. E.g.
+     * this holds for analyzers supporting parallel processing during their
+     * analysis phase.
      *
      * @return the dependencies identified
      * @see Collections#synchronizedList(List)
      * @see Analyzer#supportsParallelProcessing()
      */
-    public List<Dependency> getDependencies() {
+    public synchronized List<Dependency> getDependencies() {
         return dependencies;
     }
 
