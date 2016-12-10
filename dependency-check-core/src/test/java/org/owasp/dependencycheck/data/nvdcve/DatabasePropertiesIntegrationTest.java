@@ -149,22 +149,4 @@ public class DatabasePropertiesIntegrationTest extends BaseDBTestCase {
             }
         }
     }
-    
-    @Test
-    public void testTest() {
-        final Date now = new Date();
-        
-        final DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-        final String formatted = format.format(now);
-        
-        final DateTime dt = new DateTime(now.getTime());
-        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-        String jodaFormatted = fmt.print(dt);
-        System.out.println(formatted);
-        System.out.println(jodaFormatted);
-        assertTrue(jodaFormatted.equals(formatted));
-        
-        
-        
-    }
 }
