@@ -20,6 +20,9 @@ import java.text.SimpleDateFormat;
 import java.util.Properties;
 import mockit.Mock;
 import mockit.MockUp;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -42,6 +45,10 @@ public class EngineVersionCheckTest extends BaseTest {
 //        EngineVersionCheck instance = new EngineVersionCheck();
 //        instance.update();
 //    }
+    private long getEpoch(String date) {
+        return DateTime.parse(date).toInstant().getMillis() / 1000;
+    }
+
     /**
      * Test of shouldUpdate method, of class EngineVersionCheck.
      */
@@ -62,12 +69,11 @@ public class EngineVersionCheckTest extends BaseTest {
 
         }.getMockInstance();
 
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-
         String updateToVersion = "1.2.6";
         String currentVersion = "1.2.6";
-        long lastChecked = df.parse("2014-12-01").getTime();
-        long now = df.parse("2014-12-01").getTime();
+
+        long lastChecked = getEpoch("2014-12-01");
+        long now = getEpoch("2014-12-01");
 
         EngineVersionCheck instance = new EngineVersionCheck();
         boolean expResult = false;
@@ -77,8 +83,8 @@ public class EngineVersionCheckTest extends BaseTest {
 
         updateToVersion = "1.2.5";
         currentVersion = "1.2.5";
-        lastChecked = df.parse("2014-10-01").getTime();
-        now = df.parse("2014-12-01").getTime();
+        lastChecked = getEpoch("2014-10-01");
+        now = getEpoch("2014-12-01");
         expResult = true;
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, properties, currentVersion);
@@ -87,8 +93,8 @@ public class EngineVersionCheckTest extends BaseTest {
 
         updateToVersion = "1.2.5";
         currentVersion = "1.2.5";
-        lastChecked = df.parse("2014-12-01").getTime();
-        now = df.parse("2014-12-03").getTime();
+        lastChecked = getEpoch("2014-12-01");
+        now = getEpoch("2014-12-03");
         expResult = false;
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, properties, currentVersion);
@@ -96,8 +102,8 @@ public class EngineVersionCheckTest extends BaseTest {
 
         updateToVersion = "1.2.6";
         currentVersion = "1.2.5";
-        lastChecked = df.parse("2014-12-01").getTime();
-        now = df.parse("2014-12-03").getTime();
+        lastChecked = getEpoch("2014-12-01");
+        now = getEpoch("2014-12-03");
         expResult = true;
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, properties, currentVersion);
@@ -105,8 +111,8 @@ public class EngineVersionCheckTest extends BaseTest {
 
         updateToVersion = "1.2.5";
         currentVersion = "1.2.6";
-        lastChecked = df.parse("2014-12-01").getTime();
-        now = df.parse("2014-12-08").getTime();
+        lastChecked = getEpoch("2014-12-01");
+        now = getEpoch("2014-12-08");
         expResult = false;
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, properties, currentVersion);
@@ -114,8 +120,8 @@ public class EngineVersionCheckTest extends BaseTest {
 
         updateToVersion = "";
         currentVersion = "1.2.5";
-        lastChecked = df.parse("2014-12-01").getTime();
-        now = df.parse("2014-12-03").getTime();
+        lastChecked = getEpoch("2014-12-01");
+        now = getEpoch("2014-12-03");
         expResult = false;
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, properties, currentVersion);
@@ -123,8 +129,8 @@ public class EngineVersionCheckTest extends BaseTest {
 
         updateToVersion = "";
         currentVersion = "1.2.5";
-        lastChecked = df.parse("2014-12-01").getTime();
-        now = df.parse("2015-12-08").getTime();
+        lastChecked = getEpoch("2014-12-01");
+        now = getEpoch("2015-12-08");
         expResult = true;
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, properties, currentVersion);
