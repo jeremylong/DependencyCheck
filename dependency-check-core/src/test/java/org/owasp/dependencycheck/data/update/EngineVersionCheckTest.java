@@ -45,8 +45,14 @@ public class EngineVersionCheckTest extends BaseTest {
 //        EngineVersionCheck instance = new EngineVersionCheck();
 //        instance.update();
 //    }
-    private long getEpoch(String date) {
-        return DateTime.parse(date).toInstant().getMillis() / 1000;
+    /**
+     * Converts a date in the form of yyyy-MM-dd into the epoch milliseconds.
+     * @param date a date in the format of yyyy-MM-dd
+     * @return milliseconds
+     */
+    private long dateToMilliseconds(String date) {
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
+        return DateTime.parse(date, dtf).toInstant().getMillis();
     }
 
     /**
@@ -72,8 +78,8 @@ public class EngineVersionCheckTest extends BaseTest {
         String updateToVersion = "1.2.6";
         String currentVersion = "1.2.6";
 
-        long lastChecked = getEpoch("2014-12-01");
-        long now = getEpoch("2014-12-01");
+        long lastChecked = dateToMilliseconds("2014-12-01");
+        long now = dateToMilliseconds("2014-12-01");
 
         EngineVersionCheck instance = new EngineVersionCheck();
         boolean expResult = false;
@@ -83,8 +89,8 @@ public class EngineVersionCheckTest extends BaseTest {
 
         updateToVersion = "1.2.5";
         currentVersion = "1.2.5";
-        lastChecked = getEpoch("2014-10-01");
-        now = getEpoch("2014-12-01");
+        lastChecked = dateToMilliseconds("2014-10-01");
+        now = dateToMilliseconds("2014-12-01");
         expResult = true;
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, properties, currentVersion);
@@ -93,8 +99,8 @@ public class EngineVersionCheckTest extends BaseTest {
 
         updateToVersion = "1.2.5";
         currentVersion = "1.2.5";
-        lastChecked = getEpoch("2014-12-01");
-        now = getEpoch("2014-12-03");
+        lastChecked = dateToMilliseconds("2014-12-01");
+        now = dateToMilliseconds("2014-12-03");
         expResult = false;
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, properties, currentVersion);
@@ -102,8 +108,8 @@ public class EngineVersionCheckTest extends BaseTest {
 
         updateToVersion = "1.2.6";
         currentVersion = "1.2.5";
-        lastChecked = getEpoch("2014-12-01");
-        now = getEpoch("2014-12-03");
+        lastChecked = dateToMilliseconds("2014-12-01");
+        now = dateToMilliseconds("2014-12-03");
         expResult = true;
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, properties, currentVersion);
@@ -111,8 +117,8 @@ public class EngineVersionCheckTest extends BaseTest {
 
         updateToVersion = "1.2.5";
         currentVersion = "1.2.6";
-        lastChecked = getEpoch("2014-12-01");
-        now = getEpoch("2014-12-08");
+        lastChecked = dateToMilliseconds("2014-12-01");
+        now = dateToMilliseconds("2014-12-08");
         expResult = false;
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, properties, currentVersion);
@@ -120,8 +126,8 @@ public class EngineVersionCheckTest extends BaseTest {
 
         updateToVersion = "";
         currentVersion = "1.2.5";
-        lastChecked = getEpoch("2014-12-01");
-        now = getEpoch("2014-12-03");
+        lastChecked = dateToMilliseconds("2014-12-01");
+        now = dateToMilliseconds("2014-12-03");
         expResult = false;
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, properties, currentVersion);
@@ -129,8 +135,8 @@ public class EngineVersionCheckTest extends BaseTest {
 
         updateToVersion = "";
         currentVersion = "1.2.5";
-        lastChecked = getEpoch("2014-12-01");
-        now = getEpoch("2015-12-08");
+        lastChecked = dateToMilliseconds("2014-12-01");
+        now = dateToMilliseconds("2015-12-08");
         expResult = true;
         instance.setUpdateToVersion(updateToVersion);
         result = instance.shouldUpdate(lastChecked, now, properties, currentVersion);
