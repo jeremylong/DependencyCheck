@@ -87,6 +87,9 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final String SUPPORTED_EXTENSIONS = "jar";
 
+    /**
+     * Whether or not the Nexus analyzer should use a proxy if configured.
+     */
     private boolean useProxy;
     /**
      * The Nexus Search to be set up for this analyzer.
@@ -265,7 +268,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.debug("Could not connect to nexus repository", ioe);
         }
     }
-    
+
     /**
      * Determine if a proxy should be used.
      *

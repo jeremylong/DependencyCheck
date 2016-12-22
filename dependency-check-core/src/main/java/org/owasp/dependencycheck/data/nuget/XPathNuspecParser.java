@@ -58,7 +58,7 @@ public class XPathNuspecParser implements NuspecParser {
     @Override
     public NugetPackage parse(InputStream stream) throws NuspecParseException {
         try {
-            DocumentBuilder db = XmlUtils.buildSecureDocumentBuilder();
+            final DocumentBuilder db = XmlUtils.buildSecureDocumentBuilder();
             final Document d = db.parse(stream);
 
             final XPath xpath = XPathFactory.newInstance().newXPath();

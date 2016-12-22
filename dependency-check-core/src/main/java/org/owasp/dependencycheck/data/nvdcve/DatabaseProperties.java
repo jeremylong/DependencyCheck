@@ -171,8 +171,8 @@ public class DatabaseProperties {
                     try {
                         final long epoch = Long.parseLong((String) entry.getValue());
                         final DateTime date = new DateTime(epoch);
-                        DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
-                        String formatted = format.print(date);
+                        final DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+                        final String formatted = format.print(date);
 //                        final Date date = new Date(epoch);
 //                        final DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 //                        final String formatted = format.format(date);

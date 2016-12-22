@@ -119,7 +119,7 @@ public final class XmlUtils {
         factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        DocumentBuilder db = factory.newDocumentBuilder();
+        final DocumentBuilder db = factory.newDocumentBuilder();
         return db;
     }
 }

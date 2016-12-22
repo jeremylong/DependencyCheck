@@ -351,7 +351,7 @@ public final class Downloader {
         try {
             quickQuery = Settings.getBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP, true);
         } catch (InvalidSettingException e) {
-            if (LOGGER.isTraceEnabled()){
+            if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("Invalid settings : {}", e.getMessage(), e);
             }
             quickQuery = true;

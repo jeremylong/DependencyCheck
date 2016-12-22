@@ -290,7 +290,8 @@ public final class CliParser {
                 .build();
 
         final Option failOnCVSS = Option.builder().argName("score").hasArg().longOpt(ARGUMENT.FAIL_ON_CVSS)
-                .desc("Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11; since the CVSS scores are 0-10, by default the build will never fail.")
+                .desc("Specifies if the build should be failed if a CVSS score above a specified level is identified. "
+                        + "The default is 11; since the CVSS scores are 0-10, by default the build will never fail.")
                 .build();
 
         //This is an option group because it can be specified more then once.
@@ -1111,13 +1112,14 @@ public final class CliParser {
     }
 
     /**
-     * Returns the CVSS value to fail on
+     * Returns the CVSS value to fail on.
      *
-     * @return 11 if nothing is set. Otherwise it returns the int passed from the command line arg
+     * @return 11 if nothing is set. Otherwise it returns the int passed from
+     * the command line arg
      */
     public int getFailOnCVSS() {
-        if(line.hasOption(ARGUMENT.FAIL_ON_CVSS)) {
-            String value = line.getOptionValue(ARGUMENT.FAIL_ON_CVSS);
+        if (line.hasOption(ARGUMENT.FAIL_ON_CVSS)) {
+            final String value = line.getOptionValue(ARGUMENT.FAIL_ON_CVSS);
             try {
                 return Integer.parseInt(value);
             } catch (NumberFormatException nfe) {
@@ -1310,8 +1312,7 @@ public final class CliParser {
          */
         public static final String SUPPRESSION_FILE = "suppression";
         /**
-         * The CLI argument name for setting the location of the hint
-         * file.
+         * The CLI argument name for setting the location of the hint file.
          */
         public static final String HINTS_FILE = "hints";
         /**

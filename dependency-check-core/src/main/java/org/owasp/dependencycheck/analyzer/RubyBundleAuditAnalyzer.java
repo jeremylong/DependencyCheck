@@ -114,7 +114,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             throw new AnalysisException(String.format("%s should have been a directory.", folder.getAbsolutePath()));
         }
         final List<String> args = new ArrayList<String>();
-        String bundleAuditPath = Settings.getString(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH);
+        final String bundleAuditPath = Settings.getString(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH);
         File bundleAudit = null;
         if (bundleAuditPath != null) {
             bundleAudit = new File(bundleAuditPath);

@@ -142,7 +142,6 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
                     final ListIterator<Dependency> subIterator = engine.getDependencies().listIterator(mainIterator.nextIndex());
                     while (subIterator.hasNext()) {
                         final Dependency nextDependency = subIterator.next();
-                        Dependency main = null;
                         if (hashesMatch(dependency, nextDependency) && !containedInWar(dependency.getFilePath())
                                 && !containedInWar(nextDependency.getFilePath())) {
                             if (firstPathIsShortest(dependency.getFilePath(), nextDependency.getFilePath())) {

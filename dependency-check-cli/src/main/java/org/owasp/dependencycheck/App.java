@@ -205,6 +205,7 @@ public class App {
      * @param excludes the patterns for files/directories to exclude
      * @param symLinkDepth the depth that symbolic links will be followed
      * @param cvssFailScore the score to fail on if a vulnerability is found
+     * @return the exit code if there was an error
      *
      * @throws InvalidScanPathException thrown if the path to scan starts with
      * "//"
@@ -216,7 +217,8 @@ public class App {
      * collection.
      */
     private int runScan(String reportDirectory, String outputFormat, String applicationName, String[] files,
-            String[] excludes, int symLinkDepth, int cvssFailScore) throws InvalidScanPathException, DatabaseException, ExceptionCollection, ReportException {
+            String[] excludes, int symLinkDepth, int cvssFailScore) throws InvalidScanPathException, DatabaseException,
+            ExceptionCollection, ReportException {
         Engine engine = null;
         int retCode = 0;
         try {
@@ -308,11 +310,12 @@ public class App {
 
             //Set the exit code based on whether we found a high enough vulnerability
             for (Dependency dep : dependencies) {
-                if (dep.getVulnerabilities().size() != 0) {
+                if (!dep.getVulnerabilities().isEmpty()) {
                     for (Vulnerability vuln : dep.getVulnerabilities()) {
                         LOGGER.debug("VULNERABILITY FOUND " + dep.getDisplayFileName());
-                        if (vuln.getCvssScore() > cvssFailScore)
+                        if (vuln.getCvssScore() > cvssFailScore) {
                             retCode = 1;
+                        }
                     }
                 }
             }

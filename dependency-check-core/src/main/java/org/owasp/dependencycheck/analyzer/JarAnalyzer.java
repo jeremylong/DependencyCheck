@@ -260,7 +260,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @return whether or not evidence was added to the dependency
      */
     protected boolean analyzePOM(Dependency dependency, List<ClassNameInformation> classes, Engine engine) throws AnalysisException {
-        boolean foundSomething = false;
         JarFile jar = null;
         List<String> pomEntries = null;
         try {
@@ -292,7 +291,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     pomFile = new File(path);
                 }
                 if (pomFile.isFile()) {
-                    Model pom = PomUtils.readPom(pomFile);
+                    final Model pom = PomUtils.readPom(pomFile);
                     if (pom != null && pomProperties != null) {
                         pom.processProperties(pomProperties);
                     }
@@ -347,7 +346,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (IOException ex) {
             LOGGER.trace("", ex);
         }
-        return foundSomething;
+        return false;
     }
 
     /**

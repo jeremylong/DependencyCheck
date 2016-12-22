@@ -110,7 +110,7 @@ public class SuppressionParser {
         try {
             schemaStream = this.getClass().getClassLoader().getResourceAsStream(SUPPRESSION_SCHEMA);
             final SuppressionHandler handler = new SuppressionHandler();
-            SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream);
+            final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream);
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setErrorHandler(new SuppressionErrorHandler());
             xmlReader.setContentHandler(handler);
@@ -148,8 +148,6 @@ public class SuppressionParser {
             }
         }
     }
-
-    
 
     /**
      * Parses the given XML stream and returns a list of the suppression rules
