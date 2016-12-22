@@ -77,7 +77,9 @@ public final class XmlUtils {
         factory.setValidating(true);
         factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        //setting the following unfortunately breaks reading the old suppression files (version 1).
+        //factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
         final SAXParser saxParser = factory.newSAXParser();
         saxParser.setProperty(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
         saxParser.setProperty(JAXP_SCHEMA_SOURCE, schemaStream);

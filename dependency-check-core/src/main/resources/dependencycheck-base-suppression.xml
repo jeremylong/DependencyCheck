@@ -460,4 +460,18 @@
         <filePath regex="true">.*</filePath>
         <cve>CVE-2007-6059</cve>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+      file name: jackson-core-2.6.5.jar
+      ]]></notes>
+        <gav regex="true">com\.fasterxml\.jackson\.core:jackson.*</gav>
+        <cve>CVE-2016-3720</cve>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+      file name: jackson-core-2.6.5.jar
+      ]]></notes>
+        <gav regex="true">com\.fasterxml\.jackson\.dataformat:jackson(?!\-dataformat\-xml).*</gav>
+        <cve>CVE-2016-3720</cve>
+    </suppress>
 </suppressions>

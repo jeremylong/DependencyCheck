@@ -53,7 +53,7 @@ public class DependencyBundlingAnalyzerTest extends BaseTest {
     @Test
     public void testGetAnalysisPhase() {
         DependencyBundlingAnalyzer instance = new DependencyBundlingAnalyzer();
-        AnalysisPhase expResult = AnalysisPhase.PRE_FINDING_ANALYSIS;
+        AnalysisPhase expResult = AnalysisPhase.FINAL;
         AnalysisPhase result = instance.getAnalysisPhase();
         assertEquals(expResult, result);
     }
