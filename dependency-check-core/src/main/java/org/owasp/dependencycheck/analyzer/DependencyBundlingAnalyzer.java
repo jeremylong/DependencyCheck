@@ -130,7 +130,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
      * file.
      */
     @Override
-    public void analyze(Dependency ignore, Engine engine) throws AnalysisException {
+    public synchronized void analyze(Dependency ignore, Engine engine) throws AnalysisException {
         if (!analyzed) {
             analyzed = true;
             final Set<Dependency> dependenciesToRemove = new HashSet<Dependency>();
