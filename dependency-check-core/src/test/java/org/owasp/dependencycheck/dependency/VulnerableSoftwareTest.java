@@ -109,6 +109,10 @@ public class VulnerableSoftwareTest extends BaseTest {
         vs1.setCpe("2.1.10");
         assertTrue(vs.compareTo(vs1) < 0);
 
+        vs.setCpe("2.1.42");
+        vs1.setCpe("2.3.21");
+        assertTrue(vs.compareTo(vs1) < 0);
+
         vs.setCpe("cpe:/a:hp:system_management_homepage:2.1.1");
         vs1.setCpe("cpe:/a:hp:system_management_homepage:2.1.10");
         assertTrue(vs.compareTo(vs1) < 0);
@@ -125,6 +129,14 @@ public class VulnerableSoftwareTest extends BaseTest {
         vs1.setCpe("cpe:/a:hp:system_management_homepage:2.1.10-186");
         assertTrue(vs.compareTo(vs1) < 0);
         //assertTrue(vs1.compareTo(vs)>0);
+
+        vs.setCpe("cpe:/a:ibm:security_guardium_database_activity_monitor:10.01");
+        vs1.setCpe("cpe:/a:ibm:security_guardium_database_activity_monitor:10.1");
+        assertTrue(vs.compareTo(vs1) < 0);
+
+        vs.setCpe("2.0");
+        vs1.setCpe("2.1");
+        assertTrue(vs.compareTo(vs1) < 0);
     }
 
     @Test
@@ -147,5 +159,19 @@ public class VulnerableSoftwareTest extends BaseTest {
         assertEquals("mysql", vs.getVendor());
         assertEquals("mysql", vs.getProduct());
         assertEquals("5.1.23a", vs.getVersion());
+    }
+
+    @Test
+    public void testIspositiveInteger() {
+        assertTrue(VulnerableSoftware.isPositiveInteger("1"));
+        assertTrue(VulnerableSoftware.isPositiveInteger("10"));
+        assertTrue(VulnerableSoftware.isPositiveInteger("666"));
+        assertTrue(VulnerableSoftware.isPositiveInteger("0"));
+
+        assertFalse(VulnerableSoftware.isPositiveInteger("+1"));
+        assertFalse(VulnerableSoftware.isPositiveInteger("-1"));
+        assertFalse(VulnerableSoftware.isPositiveInteger("2.1"));
+        assertFalse(VulnerableSoftware.isPositiveInteger("01"));
+        assertFalse(VulnerableSoftware.isPositiveInteger("00"));
     }
 }
