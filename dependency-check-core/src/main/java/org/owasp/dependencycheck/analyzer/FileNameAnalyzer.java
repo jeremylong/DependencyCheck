@@ -27,6 +27,7 @@ import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
@@ -65,6 +66,16 @@ public class FileNameAnalyzer extends AbstractAnalyzer {
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
+    /**
+     * <p>
+     * Returns the setting key to determine if the analyzer is enabled.</p>
+     *
+     * @return the key for the analyzer's enabled property
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+        return Settings.KEYS.ANALYZER_FILE_NAME_ENABLED;
+    }
     //</editor-fold>
 
     /**
@@ -86,7 +97,7 @@ public class FileNameAnalyzer extends AbstractAnalyzer {
      * file.
      */
     @Override
-    public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
 
         //strip any path information that may get added by ArchiveAnalyzer, etc.
         final File f = dependency.getActualFile();

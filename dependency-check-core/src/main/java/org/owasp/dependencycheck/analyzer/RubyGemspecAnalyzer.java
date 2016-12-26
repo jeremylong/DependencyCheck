@@ -130,7 +130,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
     private static final Pattern GEMSPEC_BLOCK_INIT = Pattern.compile("Gem::Specification\\.new\\s+?do\\s+?\\|(.+?)\\|");
 
     @Override
-    protected void analyzeFileType(Dependency dependency, Engine engine)
+    protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
         String contents;
         try {

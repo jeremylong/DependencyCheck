@@ -41,7 +41,7 @@ public class ArchiveAnalyzerTest extends BaseTest {
     }
 
     /**
-     * Test of analyzeFileType method, of class ArchiveAnalyzer.
+     * Test of analyzeDependency method, of class ArchiveAnalyzer.
      */
     @Test
     public void testZippableExtensions() throws Exception {

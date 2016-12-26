@@ -252,7 +252,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * If {@link #analyzeFileType(Dependency, Engine)} is called, then we have
+     * If {@link #analyzeDependency(Dependency, Engine)} is called, then we have
      * successfully initialized, and it will be necessary to disable
      * {@link RubyGemspecAnalyzer}.
      */
@@ -266,7 +266,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws AnalysisException thrown if there is an analysis exception.
      */
     @Override
-    protected void analyzeFileType(Dependency dependency, Engine engine)
+    protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
         if (needToDisableGemspecAnalyzer) {
             boolean failed = true;

@@ -100,7 +100,7 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws AnalysisException if there's a failure during analysis
      */
     @Override
-    protected void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException {
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(dependency.getActualFile());

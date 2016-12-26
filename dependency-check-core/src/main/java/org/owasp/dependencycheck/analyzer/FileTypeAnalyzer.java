@@ -26,8 +26,4 @@ import java.io.FileFilter;
  */
 public interface FileTypeAnalyzer extends Analyzer, FileFilter {
 
-    /**
-     * Resets the analyzers state.
-     */
-    void reset();
 }

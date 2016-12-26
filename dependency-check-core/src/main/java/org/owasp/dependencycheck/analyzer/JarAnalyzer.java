@@ -227,7 +227,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * file.
      */
     @Override
-    public void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException {
+    public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         try {
             final List<ClassNameInformation> classNames = collectClassNames(dependency);
             final String fileName = dependency.getFileName().toLowerCase();
@@ -633,7 +633,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @return whether evidence was identified parsing the manifest
      * @throws IOException if there is an issue reading the JAR file
      */
-    protected boolean parseManifest(Dependency dependency, List<ClassNameInformation> classInformation) throws IOException {
+    protected boolean parseManifest(Dependency dependency, List<ClassNameInformation> classInformation)
+            throws IOException {
         boolean foundSomething = false;
         JarFile jar = null;
         try {

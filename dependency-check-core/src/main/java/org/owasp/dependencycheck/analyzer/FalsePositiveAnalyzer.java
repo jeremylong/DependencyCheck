@@ -34,6 +34,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,6 +84,16 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
+    /**
+     * <p>
+     * Returns the setting key to determine if the analyzer is enabled.</p>
+     *
+     * @return the key for the analyzer's enabled property
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+        return Settings.KEYS.ANALYZER_FALSE_POSITIVE_ENABLED;
+    }
     //</editor-fold>
 
     /**
@@ -93,7 +104,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      * @throws AnalysisException is thrown if there is an error reading the JAR file.
      */
     @Override
-    public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         removeJreEntries(dependency);
         removeBadMatches(dependency);
         removeBadSpringMatches(dependency);

@@ -181,7 +181,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     @Override
-    protected void analyzeFileType(Dependency dependency, Engine engine)
+    protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
         final File actualFile = dependency.getActualFile();
         if (WHL_FILTER.accept(actualFile)) {

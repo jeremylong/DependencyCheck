@@ -121,7 +121,7 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     @Override
-    protected void analyzeFileType(Dependency dependency, Engine engine)
+    protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
         final File file = dependency.getActualFile();
         JsonReader jsonReader;

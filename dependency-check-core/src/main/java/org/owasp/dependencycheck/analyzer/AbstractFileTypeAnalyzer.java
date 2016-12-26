@@ -17,11 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.utils.InvalidSettingException;
-import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,17 +35,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
  */
 public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implements FileTypeAnalyzer {
 
-    //<editor-fold defaultstate="collapsed" desc="Constructor">
-    /**
-     * Base constructor that all children must call. This checks the
-     * configuration to determine if the analyzer is enabled.
-     */
-    public AbstractFileTypeAnalyzer() {
-        reset();
-    }
-//</editor-fold>
-
-    //<editor-fold defaultstate="collapsed" desc="Field definitions">
+    //<editor-fold defaultstate="collapsed" desc="Field definitions, getters, and setters ">
     /**
      * The logger.
      */
@@ -80,30 +65,25 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
         this.filesMatched = filesMatched;
     }
 
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="Final implementations for the Analyzer interface">
     /**
-     * A flag indicating whether or not the analyzer is enabled.
-     */
-    private volatile boolean enabled = true;
-
-    /**
-     * Get the value of enabled.
+     * Initializes the analyzer.
      *
-     * @return the value of enabled
+     * @throws InitializationException thrown if there is an exception during
+     * initialization
      */
-    public boolean isEnabled() {
-        return enabled;
+    @Override
+    public final void initialize() throws InitializationException {
+        super.initialize();
+        if (filesMatched) {
+            initializeFileTypeAnalyzer();
+        } else {
+            this.setEnabled(false);
+        }
     }
 
-    /**
-     * Set the value of enabled.
-     *
-     * @param enabled new value of enabled
-     */
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-//</editor-fold>
-
+    //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Abstract methods children must implement">
     /**
      * <p>
@@ -127,80 +107,21 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
      */
     protected abstract void initializeFileTypeAnalyzer() throws InitializationException;
 
+    //</editor-fold>
     /**
-     * Analyzes a given dependency. If the dependency is an archive, such as a
-     * WAR or EAR, the contents are extracted, scanned, and added to the list of
-     * dependencies within the engine.
+     * Determines if the file can be analyzed by the analyzer.
      *
-     * @param dependency the dependency to analyze
-     * @param engine the engine scanning
-     * @throws AnalysisException thrown if there is an analysis exception
+     * @param pathname the path to the file
+     * @return true if the file can be analyzed by the given analyzer; otherwise
+     * false
      */
-    protected abstract void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException;
-
-    /**
-     * <p>
-     * Returns the setting key to determine if the analyzer is enabled.</p>
-     *
-     * @return the key for the analyzer's enabled property
-     */
-    protected abstract String getAnalyzerEnabledSettingKey();
-
-//</editor-fold>
-    //<editor-fold defaultstate="collapsed" desc="Final implementations for the Analyzer interface">
-    /**
-     * Initializes the analyzer.
-     *
-     * @throws InitializationException thrown if there is an exception during
-     * initialization
-     */
-    @Override
-    public final void initialize() throws InitializationException {
-        if (filesMatched) {
-            initializeFileTypeAnalyzer();
-        } else {
-            enabled = false;
-        }
-    }
-
-    /**
-     * Resets the enabled flag on the analyzer.
-     */
-    @Override
-    public final void reset() {
-        final String key = getAnalyzerEnabledSettingKey();
-        try {
-            enabled = Settings.getBoolean(key, true);
-        } catch (InvalidSettingException ex) {
-            LOGGER.warn("Invalid setting for property '{}'", key);
-            LOGGER.debug("", ex);
-            LOGGER.warn("{} has been disabled", getName());
-        }
-    }
-
-    /**
-     * Analyzes a given dependency. If the dependency is an archive, such as a
-     * WAR or EAR, the contents are extracted, scanned, and added to the list of
-     * dependencies within the engine.
-     *
-     * @param dependency the dependency to analyze
-     * @param engine the engine scanning
-     * @throws AnalysisException thrown if there is an analysis exception
-     */
-    @Override
-    public final void analyze(Dependency dependency, Engine engine) throws AnalysisException {
-        if (enabled) {
-            analyzeFileType(dependency, engine);
-        }
-    }
-
     @Override
     public boolean accept(File pathname) {
         final FileFilter filter = getFileFilter();
         boolean accepted = false;
         if (null == filter) {
             LOGGER.error("The '{}' analyzer is misconfigured and does not have a file filter; it will be disabled", getName());
-        } else if (enabled) {
+        } else if (this.isEnabled()) {
             accepted = filter.accept(pathname);
             if (accepted) {
                 filesMatched = true;
@@ -209,8 +130,6 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
         return accepted;
     }
 
-    //</editor-fold>
-    //<editor-fold defaultstate="collapsed" desc="Static utility methods">
     /**
      * <p>
      * Utility method to help in the creation of the extensions set. This
@@ -227,6 +146,4 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
         Collections.addAll(set, strings);
         return set;
     }
-
-//</editor-fold>
 }

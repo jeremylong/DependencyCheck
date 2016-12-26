@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.analyzer;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.xml.suppression.SuppressionRule;
 
 /**
@@ -62,7 +63,7 @@ public class CpeSuppressionAnalyzer extends AbstractSuppressionAnalyzer {
     //</editor-fold>
 
     @Override
-    public void analyze(final Dependency dependency, final Engine engine) throws AnalysisException {
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
 
         if (getRules() == null || getRules().size() <= 0) {
             return;
@@ -71,5 +72,16 @@ public class CpeSuppressionAnalyzer extends AbstractSuppressionAnalyzer {
         for (final SuppressionRule rule : getRules()) {
             rule.process(dependency);
         }
+    }
+
+    /**
+     * <p>
+     * Returns the setting key to determine if the analyzer is enabled.</p>
+     *
+     * @return the key for the analyzer's enabled property
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+        return Settings.KEYS.ANALYZER_CPE_SUPPRESSION_ENABLED;
     }
 }

@@ -50,6 +50,7 @@ import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
+import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,7 +123,14 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     public AnalysisPhase getAnalysisPhase() {
         return AnalysisPhase.IDENTIFIER_ANALYSIS;
     }
-
+    /**
+     * The default is to support parallel processing.
+     * @return false
+     */
+    @Override
+    public boolean supportsParallelProcessing() {
+        return false;
+    }
     /**
      * Creates the CPE Lucene Index.
      *
@@ -131,6 +139,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      */
     @Override
     public void initialize() throws InitializationException {
+        super.initialize();
         try {
             this.open();
         } catch (IOException ex) {
@@ -515,7 +524,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * dependency.
      */
     @Override
-    public synchronized void analyze(Dependency dependency, Engine engine) throws AnalysisException {
+    protected synchronized void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         try {
             determineCPE(dependency);
         } catch (CorruptIndexException ex) {
@@ -626,6 +635,17 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             }
         }
         return identifierAdded;
+    }
+
+    /**
+     * <p>
+     * Returns the setting key to determine if the analyzer is enabled.</p>
+     *
+     * @return the key for the analyzer's enabled property
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+        return Settings.KEYS.ANALYZER_CPE_ENABLED;
     }
 
     /**
@@ -808,16 +828,6 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                     .append(evidenceConfidence, o.evidenceConfidence)
                     .append(identifier, o.identifier)
                     .toComparison();
-            /*
-            int conf = this.confidence.compareTo(o.confidence);
-            if (conf == 0) {
-                conf = this.evidenceConfidence.compareTo(o.evidenceConfidence);
-                if (conf == 0) {
-                    conf = identifier.compareTo(o.identifier);
-                }
-            }
-            return conf;
-             */
         }
     }
 }

@@ -106,7 +106,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws AnalysisException if anything goes sideways
      */
     @Override
-    public void analyzeFileType(Dependency dependency, Engine engine)
+    public void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
         if (grokAssemblyExe == null) {
             LOGGER.warn("GrokAssembly didn't get deployed");

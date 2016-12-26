@@ -104,7 +104,7 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
     public class AbstractSuppressionAnalyzerImpl extends AbstractSuppressionAnalyzer {
 
         @Override
-        public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
+        public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
@@ -115,6 +115,11 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
 
         @Override
         public AnalysisPhase getAnalysisPhase() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        protected String getAnalyzerEnabledSettingKey() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
     }

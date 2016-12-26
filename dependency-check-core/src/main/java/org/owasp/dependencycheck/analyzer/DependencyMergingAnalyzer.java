@@ -25,6 +25,7 @@ import java.util.Set;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,6 +101,17 @@ public class DependencyMergingAnalyzer extends AbstractAnalyzer {
     public boolean supportsParallelProcessing() {
         return false;
     }
+
+    /**
+     * <p>
+     * Returns the setting key to determine if the analyzer is enabled.</p>
+     *
+     * @return the key for the analyzer's enabled property
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+        return Settings.KEYS.ANALYZER_DEPENDENCY_MERGING_ENABLED;
+    }
     //</editor-fold>
 
     /**
@@ -114,7 +126,7 @@ public class DependencyMergingAnalyzer extends AbstractAnalyzer {
      * file.
      */
     @Override
-    public synchronized void analyze(Dependency ignore, Engine engine) throws AnalysisException {
+    protected synchronized void analyzeDependency(Dependency ignore, Engine engine) throws AnalysisException {
         if (!analyzed) {
             analyzed = true;
             final Set<Dependency> dependenciesToRemove = new HashSet<Dependency>();

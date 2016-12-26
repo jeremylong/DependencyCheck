@@ -83,4 +83,10 @@ public interface Analyzer {
      * @return {@code true} if the analyzer supports parallel processing, {@code false} else
      */
     boolean supportsParallelProcessing();
+    /**
+     * Get the value of enabled.
+     *
+     * @return the value of enabled
+     */
+    boolean isEnabled();
 }

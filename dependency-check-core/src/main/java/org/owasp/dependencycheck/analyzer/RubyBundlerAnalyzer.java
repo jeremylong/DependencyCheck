@@ -27,8 +27,9 @@ import org.owasp.dependencycheck.dependency.Dependency;
 /**
  * This analyzer accepts the fully resolved .gemspec created by the Ruby bundler
  * (http://bundler.io) for better evidence results. It also tries to resolve the
- * dependency packagePath to where the gem is actually installed. Then during {@link org.owasp.dependencycheck.analyzer.AnalysisPhase#PRE_FINDING_ANALYSIS}
- * {@link DependencyBundlingAnalyzer} will merge two .gemspec dependencies
+ * dependency packagePath to where the gem is actually installed. Then during
+ * the {@link org.owasp.dependencycheck.analyzer.AnalysisPhase#PRE_FINDING_ANALYSIS}
+ * {@link DependencyMergingAnalyzer} will merge two .gemspec dependencies
  * together if <code>Dependency.getPackagePath()</code> are the same.
  *
  * Ruby bundler creates new .gemspec files under a folder called
@@ -39,8 +40,8 @@ import org.owasp.dependencycheck.dependency.Dependency;
  * can't be used for evidences.
  *
  * Note this analyzer share the same
- * {@link org.owasp.dependencycheck.utils.Settings.KEYS#ANALYZER_RUBY_GEMSPEC_ENABLED} as
- * {@link RubyGemspecAnalyzer}, so it will enabled/disabled with
+ * {@link org.owasp.dependencycheck.utils.Settings.KEYS#ANALYZER_RUBY_GEMSPEC_ENABLED}
+ * as {@link RubyGemspecAnalyzer}, so it will enabled/disabled with
  * {@link RubyGemspecAnalyzer}.
  *
  * @author Bianca Jiang (https://twitter.com/biancajiang)
@@ -93,9 +94,9 @@ public class RubyBundlerAnalyzer extends RubyGemspecAnalyzer {
     }
 
     @Override
-    protected void analyzeFileType(Dependency dependency, Engine engine)
+    protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
-        super.analyzeFileType(dependency, engine);
+        super.analyzeDependency(dependency, engine);
 
         //find the corresponding gem folder for this .gemspec stub by "bundle install --deployment"
         final File gemspecFile = dependency.getActualFile();

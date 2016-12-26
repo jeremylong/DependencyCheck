@@ -221,7 +221,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * Does not support parallel processing as it both modifies and iterates
      * over the engine's list of dependencies.
      *
-     * @see #analyzeFileType(Dependency, Engine)
+     * @see #analyzeDependency(Dependency, Engine)
      * @see #findMoreDependencies(Engine, File)
      */
     @Override
@@ -239,7 +239,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws AnalysisException thrown if there is an analysis exception
      */
     @Override
-    public void analyzeFileType(Dependency dependency, Engine engine) throws AnalysisException {
+    public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         final File f = new File(dependency.getActualFilePath());
         final File tmpDir = getNextTempDirectory();
         extractFiles(f, tmpDir, engine);

@@ -82,6 +82,16 @@ public class HintAnalyzer extends AbstractAnalyzer {
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
+    /**
+     * <p>
+     * Returns the setting key to determine if the analyzer is enabled.</p>
+     *
+     * @return the key for the analyzer's enabled property
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+        return Settings.KEYS.ANALYZER_HINT_ENABLED;
+    }
 
     /**
      * The initialize method does nothing for this Analyzer.
@@ -90,8 +100,8 @@ public class HintAnalyzer extends AbstractAnalyzer {
      */
     @Override
     public void initialize() throws InitializationException {
+        super.initialize();
         try {
-            super.initialize();
             loadHintRules();
         } catch (HintParseException ex) {
             LOGGER.debug("Unable to parse hint file", ex);
@@ -123,7 +133,7 @@ public class HintAnalyzer extends AbstractAnalyzer {
      * the dependency.
      */
     @Override
-    public void analyze(Dependency dependency, Engine engine) throws AnalysisException {
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         for (HintRule hint : hints.getHintRules()) {
             boolean shouldAdd = false;
             for (Evidence given : hint.getGivenVendor()) {

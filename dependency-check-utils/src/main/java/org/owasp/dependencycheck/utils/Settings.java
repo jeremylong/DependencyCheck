@@ -46,13 +46,6 @@ public final class Settings {
     public static final class KEYS {
 
         /**
-         * private constructor because this is a "utility" class containing
-         * constants
-         */
-        private KEYS() {
-            //do nothing
-        }
-        /**
          * The key to obtain the application name.
          */
         public static final String APPLICATION_NAME = "application.name";
@@ -336,13 +329,58 @@ public final class Settings {
         public static final String VFEED_UPDATE_STATUS = "vfeed.update_status";
 
         /**
-         * The HTTP request method for query last modified date.
+         * The key to the HTTP request method for query last modified date.
          */
         public static final String DOWNLOADER_QUICK_QUERY_TIMESTAMP = "downloader.quick.query.timestamp";
         /**
-         * The HTTP protocol list to use.
+         * The key to HTTP protocol list to use.
          */
         public static final String DOWNLOADER_TLS_PROTOCOL_LIST = "downloader.tls.protocols";
+        
+        /**
+         * The key to determine if the CPE analyzer is enabled.
+         */
+        public static String ANALYZER_CPE_ENABLED = "analyzer.cpe.enabled";
+        /**
+         * The key to determine if the CPE Suppression analyzer is enabled.
+         */
+        public static String ANALYZER_CPE_SUPPRESSION_ENABLED = "analyzer.cpesuppression.enabled";
+        /**
+         * The key to determine if the Dependency Bundling analyzer is enabled.
+         */
+        public static String ANALYZER_DEPENDENCY_BUNDLING_ENABLED = "analyzer.dependencybundling.enabled";
+        /**
+         * The key to determine if the Dependency Merging analyzer is enabled.
+         */
+        public static String ANALYZER_DEPENDENCY_MERGING_ENABLED = "analyzer.dependencymerging.enabled";
+        /**
+         * The key to determine if the False Positive analyzer is enabled.
+         */
+        public static String ANALYZER_FALSE_POSITIVE_ENABLED = "analyzer.falsepositive.enabled";
+        /**
+         * The key to determine if the File Name analyzer is enabled.
+         */
+        public static String ANALYZER_FILE_NAME_ENABLED = "analyzer.filename.enabled";
+        /**
+         * The key to determine if the Hint analyzer is enabled.
+         */
+        public static String ANALYZER_HINT_ENABLED = "analyzer.hint.enabled";
+        /**
+         * The key to determine if the NVD CVE analyzer is enabled.
+         */
+        public static String ANALYZER_NVD_CVE_ENABLED = "analyzer.nvdcve.enabled";
+        /**
+         * The key to determine if the Vulnerability Suppression analyzer is enabled.
+         */
+        public static String ANALYZER_VULNERABILITY_SUPPRESSION_ENABLED = "analyzer.vulnerabilitysuppression.enabled";
+
+        /**
+         * private constructor because this is a "utility" class containing
+         * constants
+         */
+        private KEYS() {
+            //do nothing
+        }
     }
     //</editor-fold>
 

@@ -119,7 +119,7 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     @Override
-    protected void analyzeFileType(Dependency dependency, Engine engine)
+    protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
 
         String contents;

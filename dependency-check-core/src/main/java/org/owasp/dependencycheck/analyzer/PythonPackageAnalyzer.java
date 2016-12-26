@@ -171,7 +171,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
      * analyzing the dependency
      */
     @Override
-    protected void analyzeFileType(Dependency dependency, Engine engine)
+    protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
         final File file = dependency.getActualFile();
         final File parent = file.getParentFile();

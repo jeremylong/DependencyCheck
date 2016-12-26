@@ -30,6 +30,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
+import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,6 +121,17 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
     }
 
     /**
+     * <p>
+     * Returns the setting key to determine if the analyzer is enabled.</p>
+     *
+     * @return the key for the analyzer's enabled property
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+        return Settings.KEYS.ANALYZER_DEPENDENCY_BUNDLING_ENABLED;
+    }
+
+    /**
      * Analyzes a set of dependencies. If they have been found to have the same
      * base path and the same set of identifiers they are likely related. The
      * related dependencies are bundled into a single reportable item.
@@ -130,7 +142,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
      * file.
      */
     @Override
-    public synchronized void analyze(Dependency ignore, Engine engine) throws AnalysisException {
+    protected synchronized void analyzeDependency(Dependency ignore, Engine engine) throws AnalysisException {
         if (!analyzed) {
             analyzed = true;
             final Set<Dependency> dependenciesToRemove = new HashSet<Dependency>();
