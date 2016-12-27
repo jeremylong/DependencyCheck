@@ -53,8 +53,10 @@ import org.xml.sax.SAXException;
  * this class is not currently used. The code is being kept as a future update
  * may utilize more data from the CPE XML files.
  *
+ * @deprecated the CPE updater is not currently used.
  * @author Jeremy Long
  */
+@Deprecated
 public class CpeUpdater extends BaseUpdater implements CachedWebDataSource {
 
     /**
@@ -64,6 +66,17 @@ public class CpeUpdater extends BaseUpdater implements CachedWebDataSource {
 
     @Override
     public void update() throws UpdateException {
+        /*
+        //the following could be used if this were ever used.
+        try {
+            if (!Settings.getBoolean(Settings.KEYS.UPDATE_NVDCVE_ENABLED, true)) {
+                return;
+            }
+        } catch (InvalidSettingException ex) {
+            LOGGER.trace("inavlid setting UPDATE_NVDCVE_ENABLED", ex);
+        }
+         */
+
         try {
             openDataStores();
             if (updateNeeded()) {

@@ -109,13 +109,21 @@ public final class Settings {
         /**
          * The properties key for the URL to retrieve the "meta" data from about
          * the CVE entries.
+         *
+         * @deprecated this is not currently used
          */
+        @Deprecated
         public static final String CVE_META_URL = "cve.url.meta";
         /**
          * The properties key for the URL to retrieve the recently modified and
          * added CVE entries (last 8 days) using the 2.0 schema.
          */
         public static final String CVE_MODIFIED_20_URL = "cve.url-2.0.modified";
+        /**
+         * The properties key for the URL to retrieve the recently modified and
+         * added CVE entries (last 8 days) using the 2.0 schema.
+         */
+        public static final String CVE_ORIGINAL_MODIFIED_20_URL = "cve.url-2.0.original";
         /**
          * The properties key for the URL to retrieve the recently modified and
          * added CVE entries (last 8 days) using the 1.2 schema.
@@ -336,7 +344,7 @@ public final class Settings {
          * The key to HTTP protocol list to use.
          */
         public static final String DOWNLOADER_TLS_PROTOCOL_LIST = "downloader.tls.protocols";
-        
+
         /**
          * The key to determine if the CPE analyzer is enabled.
          */
@@ -370,9 +378,19 @@ public final class Settings {
          */
         public static String ANALYZER_NVD_CVE_ENABLED = "analyzer.nvdcve.enabled";
         /**
-         * The key to determine if the Vulnerability Suppression analyzer is enabled.
+         * The key to determine if the Vulnerability Suppression analyzer is
+         * enabled.
          */
         public static String ANALYZER_VULNERABILITY_SUPPRESSION_ENABLED = "analyzer.vulnerabilitysuppression.enabled";
+        /**
+         * The key to determine if the NVD CVE updater should be enabled.
+         */
+        public static String UPDATE_NVDCVE_ENABLED = "updater.nvdcve.enabled";
+        /**
+         * The key to determine if dependency-check should check if there is a
+         * new version available.
+         */
+        public static String UPDATE_VERSION_CHECK_ENABLED = "updater.versioncheck.enabled";
 
         /**
          * private constructor because this is a "utility" class containing

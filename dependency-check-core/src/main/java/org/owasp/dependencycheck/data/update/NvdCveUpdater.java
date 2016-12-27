@@ -68,6 +68,14 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
     @Override
     public void update() throws UpdateException {
         try {
+            if (!Settings.getBoolean(Settings.KEYS.UPDATE_NVDCVE_ENABLED, true)) {
+                return;
+            }
+        } catch (InvalidSettingException ex) {
+            LOGGER.trace("inavlid setting UPDATE_NVDCVE_ENABLED", ex);
+        }
+
+        try {
             openDataStores();
             boolean autoUpdate = true;
             try {
