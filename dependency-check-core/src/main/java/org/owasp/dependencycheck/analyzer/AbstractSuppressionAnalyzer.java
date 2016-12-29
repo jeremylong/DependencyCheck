@@ -67,8 +67,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      * @throws InitializationException thrown if there is an exception
      */
     @Override
-    public void initialize() throws InitializationException {
-        super.initialize();
+    public void initializeAnalyzer() throws InitializationException {
         try {
             loadSuppressionData();
         } catch (SuppressionParseException ex) {

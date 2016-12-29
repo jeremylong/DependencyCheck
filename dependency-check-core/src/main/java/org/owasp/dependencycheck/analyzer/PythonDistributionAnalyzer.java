@@ -273,7 +273,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
      * Deletes any files extracted from the Wheel during analysis.
      */
     @Override
-    public void close() {
+    public void closeAnalyzer() {
         if (tempFileLocation != null && tempFileLocation.exists()) {
             LOGGER.debug("Attempting to delete temporary files");
             final boolean success = FileUtils.delete(tempFileLocation);

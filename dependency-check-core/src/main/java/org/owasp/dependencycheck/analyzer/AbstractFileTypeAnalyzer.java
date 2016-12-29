@@ -74,8 +74,7 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
      * initialization
      */
     @Override
-    public final void initialize() throws InitializationException {
-        super.initialize();
+    protected final void initializeAnalyzer() throws InitializationException {
         if (filesMatched) {
             initializeFileTypeAnalyzer();
         } else {
