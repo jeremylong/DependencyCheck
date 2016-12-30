@@ -29,6 +29,7 @@ Copyright (c) 2012 - Jeremy Long
         <module>dependency-check-ant</module>
         <module>dependency-check-maven</module>
         <module>dependency-check-utils</module>
+        <module>dependency-check-plugin</module>
     </modules>
     <name>Dependency-Check</name>
     <url>https://github.com/jeremylong/DependencyCheck.git</url>
@@ -222,7 +223,7 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>3.0.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
