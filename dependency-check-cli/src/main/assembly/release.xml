@@ -30,6 +30,13 @@
             <directory>${project.build.directory}/release/repo</directory>
         </fileSet>
         <fileSet>
+            <directory>.</directory>
+            <outputDirectory>dependency-check/plugins</outputDirectory>
+            <excludes>
+                <exclude>*/**</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
             <outputDirectory>dependency-check</outputDirectory>
             <includes>
                 <include>LICENSE*</include>
@@ -53,21 +60,4 @@
             </includes>
         </fileSet>
     </fileSets>
-    <!--
-            <fileSets>
-            <fileSet>
-                <outputDirectory>/</outputDirectory>
-                <directory>${project.build.directory}</directory>
-                <includes>
-                    <include>dependency-check*.jar</include>
-                </includes>
-            </fileSet>
-        </fileSets>
-        <dependencySets>
-            <dependencySet>
-                <outputDirectory>/lib</outputDirectory>
-                <scope>runtime</scope>
-            </dependencySet>
-        </dependencySets>
-    -->
 </assembly>
