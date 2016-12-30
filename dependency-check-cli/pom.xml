@@ -140,7 +140,7 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
                     <binFileExtensions>
                         <unix>.sh</unix>
                     </binFileExtensions>
-                    <configurationDirectory>plugins</configurationDirectory>
+                    <configurationDirectory>plugins/*</configurationDirectory>
                     <includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
                 </configuration>
                 <executions>
