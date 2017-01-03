@@ -27,6 +27,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
+import org.xml.sax.SAXParseException;
 
 /**
  * Collection of XML related code.
@@ -121,5 +122,32 @@ public final class XmlUtils {
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         final DocumentBuilder db = factory.newDocumentBuilder();
         return db;
+    }
+
+    /**
+     * Builds a prettier exception message.
+     *
+     * @param ex the SAXParseException
+     * @return an easier to read exception message
+     */
+    public static String getPrettyParseExceptionInfo(SAXParseException ex) {
+
+        final StringBuilder sb = new StringBuilder();
+
+        if (ex.getSystemId() != null) {
+            sb.append("systemId=").append(ex.getSystemId()).append(", ");
+        }
+        if (ex.getPublicId() != null) {
+            sb.append("publicId=").append(ex.getPublicId()).append(", ");
+        }
+        if (ex.getLineNumber() > 0) {
+            sb.append("Line=").append(ex.getLineNumber());
+        }
+        if (ex.getColumnNumber() > 0) {
+            sb.append(", Column=").append(ex.getColumnNumber());
+        }
+        sb.append(": ").append(ex.getMessage());
+
+        return sb.toString();
     }
 }
