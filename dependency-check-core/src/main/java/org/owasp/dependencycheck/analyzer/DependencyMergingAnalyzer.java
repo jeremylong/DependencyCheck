@@ -174,6 +174,7 @@ public class DependencyMergingAnalyzer extends AbstractAnalyzer {
      * collection
      */
     private void mergeDependencies(final Dependency dependency, final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove) {
+        LOGGER.debug("Merging '{}' into '{}'", relatedDependency.getFilePath(), dependency.getFilePath());
         dependency.addRelatedDependency(relatedDependency);
         dependency.getVendorEvidence().getEvidence().addAll(relatedDependency.getVendorEvidence().getEvidence());
         dependency.getProductEvidence().getEvidence().addAll(relatedDependency.getProductEvidence().getEvidence());
