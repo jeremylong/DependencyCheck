@@ -1,0 +1,10 @@
+About
+=====
+OWASP dependency-check-plugin is a maven archetype for generating a maven project for
+a dependency-check plugin (i.e. a project containing one or more analyzers).
+
+Usage
+=====
+```bash
+mvn archetype:generate -DarchetypeGroupId=org.owasp -DarchetypeArtifactId=dependency-check-plugin -DarchetypeVersion=${project.version}
+```
