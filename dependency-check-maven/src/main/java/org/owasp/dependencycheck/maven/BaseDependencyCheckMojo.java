@@ -841,7 +841,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
 
         if (proxyUrl != null && !proxyUrl.isEmpty()) {
-            getLog().warn("Deprecated configuration detected, proxyUrl will be ignored; use the maven settings " + "to configure the proxy instead");
+            getLog().warn("Deprecated configuration detected, proxyUrl will be ignored; use the maven settings to configure the proxy instead");
         }
         final Proxy proxy = getMavenProxy();
         if (proxy != null) {
@@ -1205,64 +1205,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 }
             }
         }
-    }
-
-    /**
-     * Reads the serialized scan data from disk. This is used to serialize the
-     * scan data between the "check" and "aggregate" phase.
-     *
-     * @param project the Maven project to read the data file from
-     * @return a <code>Engine</code> object populated with dependencies if
-     * the serialized data file exists; otherwise <code>null</code> is returned
-     */
-    protected List<Dependency> readDataFile(MavenProject project) {
-        final Object oPath = project.getContextValue(this.getDataFileContextKey());
-        if (oPath == null) {
-            return null;
-        }
-        List<Dependency> ret = null;
-        final String path = (String) oPath;
-        //ObjectInputStream ois = null;
-        ExpectedOjectInputStream ois = null;
-        try {
-            //ois = new ObjectInputStream(new FileInputStream(path));
-            ois = new ExpectedOjectInputStream(new FileInputStream(path),
-                    "java.util.ArrayList",
-                    "java.util.HashSet",
-                    "java.util.TreeSet",
-                    "java.lang.AbstractSet",
-                    "java.lang.AbstractCollection",
-                    "java.lang.Enum",
-                    "org.owasp.dependencycheck.dependency.Confidence",
-                    "org.owasp.dependencycheck.dependency.Dependency",
-                    "org.owasp.dependencycheck.dependency.Evidence",
-                    "org.owasp.dependencycheck.dependency.EvidenceCollection",
-                    "org.owasp.dependencycheck.dependency.Identifier",
-                    "org.owasp.dependencycheck.dependency.Reference",
-                    "org.owasp.dependencycheck.dependency.Vulnerability",
-                    "org.owasp.dependencycheck.dependency.VulnerabilityComparator",
-                    "org.owasp.dependencycheck.dependency.VulnerableSoftware",
-                    "org.owasp.dependencycheck.data.cpe.IndexEntry");
-            @SuppressWarnings("unchecked")
-            final List<Dependency> depList = (List<Dependency>) ois.readObject();
-            ret = depList;
-        } catch (FileNotFoundException ex) {
-            //TODO fix logging
-            getLog().error("", ex);
-        } catch (IOException ex) {
-            getLog().error("", ex);
-        } catch (ClassNotFoundException ex) {
-            getLog().error("", ex);
-        } finally {
-            if (ois != null) {
-                try {
-                    ois.close();
-                } catch (IOException ex) {
-                    getLog().error("", ex);
-                }
-            }
-        }
-        return ret;
     }
     //</editor-fold>
 
