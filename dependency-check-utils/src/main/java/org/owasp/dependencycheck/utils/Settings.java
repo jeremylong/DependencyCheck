@@ -322,7 +322,6 @@ public final class Settings {
          * The key to obtain the VFEED connection string.
          */
         public static final String VFEED_CONNECTION_STRING = "vfeed.connection_string";
-
         /**
          * The key to obtain the base download URL for the VFeed data file.
          */
@@ -335,7 +334,6 @@ public final class Settings {
          * The key to obtain the VFeed update status.
          */
         public static final String VFEED_UPDATE_STATUS = "vfeed.update_status";
-
         /**
          * The key to the HTTP request method for query last modified date.
          */
@@ -344,53 +342,52 @@ public final class Settings {
          * The key to HTTP protocol list to use.
          */
         public static final String DOWNLOADER_TLS_PROTOCOL_LIST = "downloader.tls.protocols";
-
         /**
          * The key to determine if the CPE analyzer is enabled.
          */
-        public static String ANALYZER_CPE_ENABLED = "analyzer.cpe.enabled";
+        public static final String ANALYZER_CPE_ENABLED = "analyzer.cpe.enabled";
         /**
          * The key to determine if the CPE Suppression analyzer is enabled.
          */
-        public static String ANALYZER_CPE_SUPPRESSION_ENABLED = "analyzer.cpesuppression.enabled";
+        public static final String ANALYZER_CPE_SUPPRESSION_ENABLED = "analyzer.cpesuppression.enabled";
         /**
          * The key to determine if the Dependency Bundling analyzer is enabled.
          */
-        public static String ANALYZER_DEPENDENCY_BUNDLING_ENABLED = "analyzer.dependencybundling.enabled";
+        public static final String ANALYZER_DEPENDENCY_BUNDLING_ENABLED = "analyzer.dependencybundling.enabled";
         /**
          * The key to determine if the Dependency Merging analyzer is enabled.
          */
-        public static String ANALYZER_DEPENDENCY_MERGING_ENABLED = "analyzer.dependencymerging.enabled";
+        public static final String ANALYZER_DEPENDENCY_MERGING_ENABLED = "analyzer.dependencymerging.enabled";
         /**
          * The key to determine if the False Positive analyzer is enabled.
          */
-        public static String ANALYZER_FALSE_POSITIVE_ENABLED = "analyzer.falsepositive.enabled";
+        public static final String ANALYZER_FALSE_POSITIVE_ENABLED = "analyzer.falsepositive.enabled";
         /**
          * The key to determine if the File Name analyzer is enabled.
          */
-        public static String ANALYZER_FILE_NAME_ENABLED = "analyzer.filename.enabled";
+        public static final String ANALYZER_FILE_NAME_ENABLED = "analyzer.filename.enabled";
         /**
          * The key to determine if the Hint analyzer is enabled.
          */
-        public static String ANALYZER_HINT_ENABLED = "analyzer.hint.enabled";
+        public static final String ANALYZER_HINT_ENABLED = "analyzer.hint.enabled";
         /**
          * The key to determine if the NVD CVE analyzer is enabled.
          */
-        public static String ANALYZER_NVD_CVE_ENABLED = "analyzer.nvdcve.enabled";
+        public static final String ANALYZER_NVD_CVE_ENABLED = "analyzer.nvdcve.enabled";
         /**
          * The key to determine if the Vulnerability Suppression analyzer is
          * enabled.
          */
-        public static String ANALYZER_VULNERABILITY_SUPPRESSION_ENABLED = "analyzer.vulnerabilitysuppression.enabled";
+        public static final String ANALYZER_VULNERABILITY_SUPPRESSION_ENABLED = "analyzer.vulnerabilitysuppression.enabled";
         /**
          * The key to determine if the NVD CVE updater should be enabled.
          */
-        public static String UPDATE_NVDCVE_ENABLED = "updater.nvdcve.enabled";
+        public static final String UPDATE_NVDCVE_ENABLED = "updater.nvdcve.enabled";
         /**
          * The key to determine if dependency-check should check if there is a
          * new version available.
          */
-        public static String UPDATE_VERSION_CHECK_ENABLED = "updater.versioncheck.enabled";
+        public static final String UPDATE_VERSION_CHECK_ENABLED = "updater.versioncheck.enabled";
 
         /**
          * private constructor because this is a "utility" class containing
