@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -60,20 +61,24 @@ public final class ExtractionUtil {
      *
      * @param archive an archive file such as a WAR or EAR
      * @param extractTo a directory to extract the contents to
-     * @throws ExtractionException thrown if an exception occurs while extracting the files
+     * @throws ExtractionException thrown if an exception occurs while
+     * extracting the files
      */
     public static void extractFiles(File archive, File extractTo) throws ExtractionException {
         extractFiles(archive, extractTo, null);
     }
 
     /**
-     * Extracts the contents of an archive into the specified directory. The files are only extracted if they are supported by the
-     * analyzers loaded into the specified engine. If the engine is specified as null then all files are extracted.
+     * Extracts the contents of an archive into the specified directory. The
+     * files are only extracted if they are supported by the analyzers loaded
+     * into the specified engine. If the engine is specified as null then all
+     * files are extracted.
      *
      * @param archive an archive file such as a WAR or EAR
      * @param extractTo a directory to extract the contents to
      * @param engine the scanning engine
-     * @throws ExtractionException thrown if there is an error extracting the files
+     * @throws ExtractionException thrown if there is an error extracting the
+     * files
      */
     public static void extractFiles(File archive, File extractTo, Engine engine) throws ExtractionException {
         if (archive == null || extractTo == null) {
@@ -171,7 +176,8 @@ public final class ExtractionUtil {
      * @param input the archive to extract files from
      * @param destination the location to write the files too
      * @param filter determines which files get extracted
-     * @throws ArchiveExtractionException thrown if there is an exception extracting files from the archive
+     * @throws ArchiveExtractionException thrown if there is an exception
+     * extracting files from the archive
      */
     private static void extractArchive(ArchiveInputStream input,
             File destination, FilenameFilter filter)
@@ -201,13 +207,15 @@ public final class ExtractionUtil {
     }
 
     /**
-     * Extracts a file from an archive (input stream) and correctly builds the directory structure.
+     * Extracts a file from an archive (input stream) and correctly builds the
+     * directory structure.
      *
      * @param input the archive input stream
      * @param destination where to write the file
      * @param filter the file filter to apply to the files being extracted
      * @param entry the entry from the archive to extract
-     * @throws ExtractionException thrown if there is an error reading from the archive stream
+     * @throws ExtractionException thrown if there is an error reading from the
+     * archive stream
      */
     private static void extractFile(ArchiveInputStream input, File destination,
             FilenameFilter filter, ArchiveEntry entry) throws ExtractionException {
@@ -238,10 +246,12 @@ public final class ExtractionUtil {
     }
 
     /**
-     * Ensures the parent path is correctly created on disk so that the file can be extracted to the correct location.
+     * Ensures the parent path is correctly created on disk so that the file can
+     * be extracted to the correct location.
      *
      * @param file the file path
-     * @throws ExtractionException thrown if the parent paths could not be created
+     * @throws ExtractionException thrown if the parent paths could not be
+     * created
      */
     private static void createParentFile(final File file)
             throws ExtractionException {
@@ -251,6 +261,60 @@ public final class ExtractionUtil {
                     "Unable to build directory '%s'.",
                     parent.getAbsolutePath());
             throw new ExtractionException(msg);
+        }
+    }
+
+    /**
+     * Extracts the file contained in a gzip archive. The extracted file is
+     * placed in the exact same path as the file specified.
+     *
+     * @param file the archive file
+     * @throws FileNotFoundException thrown if the file does not exist
+     * @throws IOException thrown if there is an error extracting the file.
+     */
+    public static void extractGzip(File file) throws FileNotFoundException, IOException {
+        final String originalPath = file.getPath();
+        final File gzip = new File(originalPath + ".gz");
+        if (gzip.isFile() && !gzip.delete()) {
+            LOGGER.debug("Failed to delete initial temporary file when extracting 'gz' {}", gzip.toString());
+            gzip.deleteOnExit();
+        }
+        if (!file.renameTo(gzip)) {
+            throw new IOException("Unable to rename '" + file.getPath() + "'");
+        }
+        final File newfile = new File(originalPath);
+
+        final byte[] buffer = new byte[4096];
+
+        GZIPInputStream cin = null;
+        FileOutputStream out = null;
+        try {
+            cin = new GZIPInputStream(new FileInputStream(gzip));
+            out = new FileOutputStream(newfile);
+
+            int len;
+            while ((len = cin.read(buffer)) > 0) {
+                out.write(buffer, 0, len);
+            }
+        } finally {
+            if (cin != null) {
+                try {
+                    cin.close();
+                } catch (IOException ex) {
+                    LOGGER.trace("ignore", ex);
+                }
+            }
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException ex) {
+                    LOGGER.trace("ignore", ex);
+                }
+            }
+            if (gzip.isFile() && !org.apache.commons.io.FileUtils.deleteQuietly(gzip)) {
+                LOGGER.debug("Failed to delete temporary file when extracting 'gz' {}", gzip.toString());
+                gzip.deleteOnExit();
+            }
         }
     }
 }

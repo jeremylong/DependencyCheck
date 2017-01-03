@@ -36,6 +36,7 @@ import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.DateUtil;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.ExtractionUtil;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.XmlUtils;
 import org.slf4j.Logger;
@@ -111,7 +112,7 @@ public class CpeUpdater extends BaseUpdater implements CachedWebDataSource {
             xml = File.createTempFile("cpe", ".xml", Settings.getTempDirectory());
             Downloader.fetchFile(url, xml);
             if (url.toExternalForm().endsWith(".xml.gz")) {
-                extractGzip(xml);
+                ExtractionUtil.extractGzip(xml);
             }
 
         } catch (MalformedURLException ex) {
@@ -162,60 +163,5 @@ public class CpeUpdater extends BaseUpdater implements CachedWebDataSource {
             timestamp = Long.parseLong(ts);
         }
         return !DateUtil.withinDateRange(timestamp, now, days);
-    }
-
-    /**
-     * Extracts the file contained in a gzip archive. The extracted file is
-     * placed in the exact same path as the file specified.
-     *
-     * @param file the archive file
-     * @throws FileNotFoundException thrown if the file does not exist
-     * @throws IOException thrown if there is an error extracting the file.
-     */
-    private void extractGzip(File file) throws FileNotFoundException, IOException {
-        //TODO - move this to a util class as it is duplicative of (copy of) code in the DownloadTask
-        final String originalPath = file.getPath();
-        final File gzip = new File(originalPath + ".gz");
-        if (gzip.isFile() && !gzip.delete()) {
-            LOGGER.debug("Failed to delete intial temporary file {}", gzip.toString());
-            gzip.deleteOnExit();
-        }
-        if (!file.renameTo(gzip)) {
-            throw new IOException("Unable to rename '" + file.getPath() + "'");
-        }
-        final File newfile = new File(originalPath);
-
-        final byte[] buffer = new byte[4096];
-
-        GZIPInputStream cin = null;
-        FileOutputStream out = null;
-        try {
-            cin = new GZIPInputStream(new FileInputStream(gzip));
-            out = new FileOutputStream(newfile);
-
-            int len;
-            while ((len = cin.read(buffer)) > 0) {
-                out.write(buffer, 0, len);
-            }
-        } finally {
-            if (cin != null) {
-                try {
-                    cin.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("ignore", ex);
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("ignore", ex);
-                }
-            }
-            if (gzip.isFile() && !FileUtils.deleteQuietly(gzip)) {
-                LOGGER.debug("Failed to delete temporary file {}", gzip.toString());
-                gzip.deleteOnExit();
-            }
-        }
     }
 }
