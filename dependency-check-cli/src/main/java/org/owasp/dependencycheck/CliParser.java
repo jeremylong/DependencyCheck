@@ -437,6 +437,11 @@ public final class CliParser {
         final Option disableCmakeAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_CMAKE)
                 .desc("Disable the Cmake Analyzer.").build();
 
+        final Option cocoapodsAnalyzerEnabled = Option.builder().longOpt(ARGUMENT.DISABLE_COCOAPODS)
+                .desc("Disable the CocoaPods Analyzer.").build();
+        final Option swiftPackageManagerAnalyzerEnabled = Option.builder().longOpt(ARGUMENT.DISABLE_SWIFT)
+                .desc("Disable the swift package Analyzer.").build();
+
         final Option disableCentralAnalyzer = Option.builder().longOpt(ARGUMENT.DISABLE_CENTRAL)
                 .desc("Disable the Central Analyzer. If this analyzer is disabled it is likely you also want to disable "
                         + "the Nexus Analyzer.").build();
@@ -481,6 +486,8 @@ public final class CliParser {
                 .addOption(disableNuspecAnalyzer)
                 .addOption(disableCentralAnalyzer)
                 .addOption(disableNexusAnalyzer)
+                .addOption(cocoapodsAnalyzerEnabled)
+                .addOption(swiftPackageManagerAnalyzerEnabled)
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_NODE_JS)
                         .desc("Disable the Node.js Package Analyzer.").build())
                 .addOption(nexusUrl)
@@ -699,6 +706,28 @@ public final class CliParser {
      */
     public boolean isNodeJsDisabled() {
         return (line != null) && line.hasOption(ARGUMENT.DISABLE_NODE_JS);
+    }
+
+    /**
+     * Returns true if the disableCocoapodsAnalyzer command line argument was
+     * specified.
+     *
+     * @return true if the disableCocoapodsAnalyzer command line argument was
+     * specified; otherwise false
+     */
+    public boolean isCocoapodsAnalyzerDisabled() {
+        return (line != null) && line.hasOption(ARGUMENT.DISABLE_COCOAPODS);
+    }
+
+    /**
+     * Returns true if the disableSwiftPackageManagerAnalyzer command line
+     * argument was specified.
+     *
+     * @return true if the disableSwiftPackageManagerAnalyzer command line
+     * argument was specified; otherwise false
+     */
+    public boolean isSwiftPackageAnalyzerDisabled() {
+        return (line != null) && line.hasOption(ARGUMENT.DISABLE_SWIFT);
     }
 
     /**
@@ -1352,6 +1381,14 @@ public final class CliParser {
          * Disables the Cmake Analyzer.
          */
         public static final String DISABLE_CMAKE = "disableCmake";
+        /**
+         * Disables the cocoapods analyzer.
+         */
+        public static final String DISABLE_COCOAPODS = "disableCocoapodsAnalyzer";
+        /**
+         * Disables the swift package manager analyzer.
+         */
+        public static final String DISABLE_SWIFT = "disableSwiftPackageManagerAnalyzer";
         /**
          * Disables the Assembly Analyzer.
          */

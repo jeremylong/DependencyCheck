@@ -305,6 +305,30 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private Boolean nexusAnalyzerEnabled;
 
     /**
+     * Whether or not the Ruby Bundle Audit Analyzer is enabled.
+     */
+    @Parameter(property = "bundleAuditAnalyzerEnabled", required = false)
+    private Boolean bundleAuditAnalyzerEnabled;
+
+    /**
+     * Sets the path for the bundle-audit binary.
+     */
+    @Parameter(property = "bundleAuditPath", defaultValue="", required = false)
+    private String bundleAuditPath;
+
+    /**
+     * Whether or not the CocoaPods Analyzer is enabled.
+     */
+    @Parameter(property = "cocoapodsAnalyzerEnabled", required = false)
+    private Boolean cocoapodsAnalyzerEnabled;
+
+    /**
+     * Whether or not the Swift package Analyzer is enabled.
+     */
+    @Parameter(property = "swiftPackageManagerAnalyzerEnabled", required = false)
+    private Boolean swiftPackageManagerAnalyzerEnabled;
+    
+    /**
      * The URL of a Nexus server's REST API end point
      * (http://domain/nexus/service/local).
      */
@@ -884,6 +908,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, autoconfAnalyzerEnabled);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);
+        Settings.setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, bundleAuditPath);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, cocoapodsAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, swiftPackageManagerAnalyzerEnabled);
 
         //Database configuration
         Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
