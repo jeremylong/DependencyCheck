@@ -71,7 +71,7 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
      * Closes the data source.
      */
     @Override
-    public void close() {
+    public void closeAnalyzer() {
         cveDB.close();
         cveDB = null;
     }
@@ -171,8 +171,7 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
      * the index.
      */
     @Override
-    public void initialize() throws InitializationException {
-        super.initialize();
+    public void initializeAnalyzer() throws InitializationException {
         try {
             this.open();
         } catch (SQLException ex) {

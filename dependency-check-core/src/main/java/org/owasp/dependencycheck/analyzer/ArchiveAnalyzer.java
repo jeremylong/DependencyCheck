@@ -204,7 +204,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * files
      */
     @Override
-    public void close() throws Exception {
+    public void closeAnalyzer() throws Exception {
         if (tempFileLocation != null && tempFileLocation.exists()) {
             LOGGER.debug("Attempting to delete temporary files");
             final boolean success = FileUtils.delete(tempFileLocation);

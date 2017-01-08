@@ -522,11 +522,16 @@ public class Engine implements FileFilter {
                     continue;
                 }
 
-                executeAnalysisTasks(analyzer, exceptions);
+                if (analyzer.isEnabled()) {
+                    executeAnalysisTasks(analyzer, exceptions);
 
-                final long analyzerDurationMillis = System.currentTimeMillis() - analyzerStart;
-                final long analyzerDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(analyzerDurationMillis);
-                LOGGER.info("Finished {} ({} seconds)", analyzer.getName(), analyzerDurationSeconds);
+                    final long analyzerDurationMillis = System.currentTimeMillis() - analyzerStart;
+                    final long analyzerDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(analyzerDurationMillis);
+                    LOGGER.info("Finished {} ({} seconds)", analyzer.getName(), analyzerDurationSeconds);
+                }
+                else {
+                    LOGGER.debug("Skipping {} (not enabled)", analyzer.getName());
+                }
             }
         }
         for (AnalysisPhase phase : AnalysisPhase.values()) {

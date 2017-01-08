@@ -138,8 +138,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * the index.
      */
     @Override
-    public void initialize() throws InitializationException {
-        super.initialize();
+    public void initializeAnalyzer() throws InitializationException {
         try {
             this.open();
         } catch (IOException ex) {
@@ -180,7 +179,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * Closes the data sources.
      */
     @Override
-    public void close() {
+    public void closeAnalyzer() {
         if (cpe != null) {
             cpe.close();
             cpe = null;

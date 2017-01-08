@@ -82,6 +82,23 @@ public abstract class AbstractAnalyzer implements Analyzer {
     protected abstract void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException;
 
     /**
+     * Initializes a given Analyzer. This will be skipped if the analyzer is disabled.
+     *
+     * @throws InitializationException thrown if there is an exception
+     */
+    protected void initializeAnalyzer() throws InitializationException {
+    }
+
+    /**
+     * Closes a given Analyzer. This will be skipped if the analyzer is disabled.
+     *
+     * @throws Exception thrown if there is an exception
+     */
+    protected void closeAnalyzer() throws Exception {
+    }
+
+
+    /**
      * Analyzes a given dependency. If the dependency is an archive, such as a
      * WAR or EAR, the contents are extracted, scanned, and added to the list of
      * dependencies within the engine.
@@ -103,14 +120,19 @@ public abstract class AbstractAnalyzer implements Analyzer {
      * @throws InitializationException thrown if there is an exception
      */
     @Override
-    public void initialize() throws InitializationException {
+    public final void initialize() throws InitializationException {
         final String key = getAnalyzerEnabledSettingKey();
         try {
             this.setEnabled(Settings.getBoolean(key, true));
         } catch (InvalidSettingException ex) {
             LOGGER.warn("Invalid setting for property '{}'", key);
             LOGGER.debug("", ex);
-            LOGGER.warn("{} has been disabled", getName());
+        }
+
+        if (isEnabled()) {
+            initializeAnalyzer();
+        } else {
+            LOGGER.debug("{} has been disabled", getName());
         }
     }
 
@@ -120,9 +142,12 @@ public abstract class AbstractAnalyzer implements Analyzer {
      * @throws Exception thrown if there is an exception
      */
     @Override
-    public void close() throws Exception {
-        //do nothing
+    public final void close() throws Exception {
+        if (isEnabled()) {
+            closeAnalyzer();
+        }
     }
+
 
     /**
      * The default is to support parallel processing.

@@ -288,8 +288,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws Exception thrown if there is a problem closing the analyzer
      */
     @Override
-    public void close() throws Exception {
-        super.close();
+    public void closeAnalyzer() throws Exception {
         try {
             if (grokAssemblyExe != null && !grokAssemblyExe.delete()) {
                 LOGGER.debug("Unable to delete temporary GrokAssembly.exe; attempting delete on exit");

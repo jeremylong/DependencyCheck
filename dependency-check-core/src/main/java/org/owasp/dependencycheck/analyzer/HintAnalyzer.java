@@ -99,8 +99,7 @@ public class HintAnalyzer extends AbstractAnalyzer {
      * @throws InitializationException thrown if there is an exception
      */
     @Override
-    public void initialize() throws InitializationException {
-        super.initialize();
+    public void initializeAnalyzer() throws InitializationException {
         try {
             loadHintRules();
         } catch (HintParseException ex) {
