@@ -305,6 +305,84 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private Boolean nexusAnalyzerEnabled;
 
     /**
+     * Whether or not the Ruby Bundle Audit Analyzer is enabled.
+     */
+    @Parameter(property = "bundleAuditAnalyzerEnabled", required = false)
+    private Boolean bundleAuditAnalyzerEnabled;
+
+    /**
+     * Sets the path for the bundle-audit binary.
+     */
+    @Parameter(property = "bundleAuditPath", defaultValue="", required = false)
+    private String bundleAuditPath;
+
+    /**
+     * Whether or not the CocoaPods Analyzer is enabled.
+     */
+    @Parameter(property = "cocoapodsAnalyzerEnabled", required = false)
+    private Boolean cocoapodsAnalyzerEnabled;
+
+    /**
+     * Whether or not the CPE Analyzer is enabled.
+     */
+    @Parameter(property = "cpeAnalyzerEnabled", required = false)
+    private Boolean cpeAnalyzerEnabled;
+
+    /**
+     * Whether or not the CPE Suppressions Analyzer is enabled.
+     */
+    @Parameter(property = "cpeSuppressionAnalyzerEnabled", required = false)
+    private Boolean cpeSuppressionAnalyzerEnabled;
+
+    /**
+     * Whether or not the Ruby Dependency Bundling Analyzer is enabled.
+     */
+    @Parameter(property = "dependencyBundlingAnalyzerEnabled", required = false)
+    private Boolean dependencyBundlingAnalyzerEnabled;
+
+    /**
+     * Whether or not the Ruby Dependency Merging Analyzer is enabled.
+     */
+    @Parameter(property = "dependencyMergingAnalyzerEnabled", required = false)
+    private Boolean dependencyMergingAnalyzerEnabled;
+
+    /**
+     * Whether or not the False Positives Analyzer is enabled.
+     */
+    @Parameter(property = "falsePositiveAnalyzerEnabled", required = false)
+    private Boolean falsePositiveAnalyzerEnabled;
+
+    /**
+     * Whether or not the File Name Analyzer is enabled.
+     */
+    @Parameter(property = "fileNameAnalyzerEnabled", required = false)
+    private Boolean fileNameAnalyzerEnabled;
+
+    /**
+     * Whether or not the Hint Analyzer is enabled.
+     */
+    @Parameter(property = "hintAnalyzerEnabled", required = false)
+    private Boolean hintAnalyzerEnabled;
+
+    /**
+     * Whether or not the nvd/cve Analyzer is enabled.
+     */
+    @Parameter(property = "nvdCveAnalyzerEnabled", required = false)
+    private Boolean nvdCveAnalyzerEnabled;
+
+    /**
+     * Whether or not the Swift package Analyzer is enabled.
+     */
+    @Parameter(property = "swiftPackageManagerAnalyzerEnabled", required = false)
+    private Boolean swiftPackageManagerAnalyzerEnabled;
+
+    /**
+     * Whether or not the Vulnerability Suppression Analyzer is enabled.
+     */
+    @Parameter(property = "vulnerabilitySuppressionAnalyzerEnabled", required = false)
+    private Boolean vulnerabilitySuppressionAnalyzerEnabled;
+
+    /**
      * The URL of a Nexus server's REST API end point
      * (http://domain/nexus/service/local).
      */
@@ -884,6 +962,21 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, autoconfAnalyzerEnabled);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);
+        Settings.setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, bundleAuditPath);
+
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, cocoapodsAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CPE_ENABLED, cpeAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CPE_SUPPRESSION_ENABLED, cpeSuppressionAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_DEPENDENCY_BUNDLING_ENABLED, dependencyBundlingAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_DEPENDENCY_MERGING_ENABLED, dependencyMergingAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_FALSE_POSITIVE_ENABLED, falsePositiveAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_FILE_NAME_ENABLED, fileNameAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_HINT_ENABLED, hintAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NVD_CVE_ENABLED, nvdCveAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, swiftPackageManagerAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_VULNERABILITY_SUPPRESSION_ENABLED, vulnerabilitySuppressionAnalyzerEnabled);
+
 
         //Database configuration
         Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
