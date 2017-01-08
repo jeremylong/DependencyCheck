@@ -159,6 +159,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "failBuildOnCVSS", defaultValue = "11", required = true)
     private float failBuildOnCVSS = 11;
     /**
+     * Fail the build if any dependency has a vulnerability listed.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property="failBuildOnAnyVulnerability", defaultValue="false", required=true)
+    private boolean failBuildOnAnyVulnerability = false;
+    /**
      * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not
      * recommended that this be turned to false. Default is true.
      */
@@ -1060,28 +1066,32 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * higher then the threshold set
      */
     protected void checkForFailure(List<Dependency> dependencies) throws MojoFailureException {
-        if (failBuildOnCVSS <= 10) {
-            final StringBuilder ids = new StringBuilder();
-            for (Dependency d : dependencies) {
-                boolean addName = true;
-                for (Vulnerability v : d.getVulnerabilities()) {
-                    if (v.getCvssScore() >= failBuildOnCVSS) {
-                        if (addName) {
-                            addName = false;
-                            ids.append(NEW_LINE).append(d.getFileName()).append(": ");
-                            ids.append(v.getName());
-                        } else {
-                            ids.append(", ").append(v.getName());
-                        }
+        final StringBuilder ids = new StringBuilder();
+        for (Dependency d : dependencies) {
+            boolean addName = true;
+            for (Vulnerability v : d.getVulnerabilities()) {
+                if (failBuildOnAnyVulnerability || v.getCvssScore() >= failBuildOnCVSS) {
+                    if (addName) {
+                        addName = false;
+                        ids.append(NEW_LINE).append(d.getFileName()).append(": ");
+                        ids.append(v.getName());
+                    } else {
+                        ids.append(", ").append(v.getName());
                     }
                 }
             }
-            if (ids.length() > 0) {
-                final String msg = String.format("%n%nDependency-Check Failure:%n"
-                        + "One or more dependencies were identified with vulnerabilities that have a CVSS score greater then '%.1f': %s%n"
+        }
+        if (ids.length() > 0) {
+            final String msg;
+            if (failBuildOnAnyVulnerability) {
+                msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities: %n%s%n%n"
+                        + "See the dependency-check report for more details.%n%n", ids.toString());
+            } else {
+                msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater then '%.1f': %n%s%n%n"
                         + "See the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
-                throw new MojoFailureException(msg);
             }
+
+            throw new MojoFailureException(msg);
         }
     }
 
