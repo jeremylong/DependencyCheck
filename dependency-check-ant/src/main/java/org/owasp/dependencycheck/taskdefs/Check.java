@@ -568,6 +568,102 @@ public class Check extends Update {
     public void setCMakeAnalyzerEnabled(Boolean cmakeAnalyzerEnabled) {
         this.cmakeAnalyzerEnabled = cmakeAnalyzerEnabled;
     }
+
+//start changes
+    /**
+     * Whether or not the Ruby Bundle Audit Analyzer is enabled.
+     */
+    private Boolean bundleAuditAnalyzerEnabled;
+
+    /**
+     * Returns if the Bundle Audit Analyzer is enabled.
+     *
+     * @return if the Bundle Audit Analyzer is enabled.
+     */
+    public Boolean isBundleAuditAnalyzerEnabled() {
+        return bundleAuditAnalyzerEnabled;
+    }
+
+    /**
+     * Sets if the Bundle Audit Analyzer is enabled.
+     *
+     * @param bundleAuditAnalyzerEnabled whether or not the analyzer should be
+     * enabled
+     */
+    public void setBundleAuditAnalyzerEnabled(Boolean bundleAuditAnalyzerEnabled) {
+        this.bundleAuditAnalyzerEnabled = bundleAuditAnalyzerEnabled;
+    }
+
+    /**
+     * Sets the path for the bundle-audit binary.
+     */
+    private String bundleAuditPath;
+
+    /**
+     * Returns the path to the bundle audit executable.
+     *
+     * @return the path to the bundle audit executable
+     */
+    public String getBundleAuditPath() {
+        return bundleAuditPath;
+    }
+
+    /**
+     * Sets the path to the bundle audit executable.
+     *
+     * @param bundleAuditPath the path to the bundle audit executable
+     */
+    public void setBundleAuditPath(String bundleAuditPath) {
+        this.bundleAuditPath = bundleAuditPath;
+    }
+    /**
+     * Whether or not the CocoaPods Analyzer is enabled.
+     */
+    private Boolean cocoapodsAnalyzerEnabled;
+
+    /**
+     * Returns if the cocoapods analyyzer is enabled.
+     *
+     * @return if the cocoapods analyyzer is enabled
+     */
+    public boolean isCocoapodsAnalyzerEnabled() {
+        return cocoapodsAnalyzerEnabled;
+    }
+
+    /**
+     * Sets whether or not the cocoapods analyzer is enabled.
+     *
+     * @param cocoapodsAnalyzerEnabled the state of the cocoapods analyzer
+     */
+    public void setCocoapodsAnalyzerEnabled(Boolean cocoapodsAnalyzerEnabled) {
+        this.cocoapodsAnalyzerEnabled = cocoapodsAnalyzerEnabled;
+    }
+
+    /**
+     * Whether or not the Swift package Analyzer is enabled.
+     */
+    private Boolean swiftPackageManagerAnalyzerEnabled;
+
+    /**
+     * Returns whether or not the Swift package Analyzer is enabled.
+     *
+     * @return whether or not the Swift package Analyzer is enabled
+     */
+    public Boolean isSwiftPackageManagerAnalyzerEnabled() {
+        return swiftPackageManagerAnalyzerEnabled;
+    }
+
+    /**
+     * Sets the enabled state of the swift package manager analyzer.
+     *
+     * @param swiftPackageManagerAnalyzerEnabled the enabled state of the swift
+     * package manager
+     */
+    public void setSwiftPackageManagerAnalyzerEnabled(Boolean swiftPackageManagerAnalyzerEnabled) {
+        this.swiftPackageManagerAnalyzerEnabled = swiftPackageManagerAnalyzerEnabled;
+    }
+//end changes
+
     /**
      * Whether or not the openssl analyzer is enabled.
      */
@@ -934,6 +1030,10 @@ public class Check extends Update {
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, rubygemsAnalyzerEnabled);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_OPENSSL_ENABLED, opensslAnalyzerEnabled);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CMAKE_ENABLED, cmakeAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, swiftPackageManagerAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, cocoapodsAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);
+        Settings.setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, bundleAuditPath);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, autoconfAnalyzerEnabled);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
