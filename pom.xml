@@ -586,10 +586,11 @@ Copyright (c) 2012 - Jeremy Long
     </reporting>
     <dependencyManagement>
         <dependencies>
+            <!-- analysis core (used by Jenkins) uses 1.6-->
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.9.7</version>
+                <version>1.6</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>

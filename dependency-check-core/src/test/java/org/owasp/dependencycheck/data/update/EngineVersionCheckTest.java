@@ -47,12 +47,20 @@ public class EngineVersionCheckTest extends BaseTest {
 //    }
     /**
      * Converts a date in the form of yyyy-MM-dd into the epoch milliseconds.
+     *
      * @param date a date in the format of yyyy-MM-dd
      * @return milliseconds
      */
     private long dateToMilliseconds(String date) {
-        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
-        return DateTime.parse(date, dtf).toInstant().getMillis();
+        //removed for compatability with joda-time 1.6
+        //DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
+        //return DateTime.parse(date, dtf).toInstant().getMillis();
+        String[] dp = date.split("-");
+        int y = Integer.parseInt(dp[0]);
+        int m = Integer.parseInt(dp[1]);
+        int d = Integer.parseInt(dp[2]);
+        DateTime dt = new DateTime(y, m, d, 0, 0, 0, 0);
+        return dt.toInstant().getMillis();
     }
 
     /**
