@@ -474,4 +474,20 @@
         <gav regex="true">com\.fasterxml\.jackson\.dataformat:jackson(?!\-dataformat\-xml).*</gav>
         <cve>CVE-2016-3720</cve>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positives per issue #642
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.boot:spring-boot.*$</gav>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+        False positives per issue #642
+        ]]></notes>
+        <gav regex="true">^org\.springframework:spring-context:.*$</gav>
+        <cpe>cpe:/a:context_project:context</cpe>
+    </suppress>
 </suppressions>
