@@ -260,7 +260,7 @@ Copyright (c) 2012 - Jeremy Long
                 <configuration>
                     <compilerArgument>-Xlint</compilerArgument>
                     <showDeprecation>true</showDeprecation>
-                    <source>1.8</source>
+                    <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
             </plugin>
