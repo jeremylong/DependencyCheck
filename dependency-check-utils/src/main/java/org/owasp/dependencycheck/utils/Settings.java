@@ -371,6 +371,10 @@ public final class Settings {
          */
         public static final String ANALYZER_HINT_ENABLED = "analyzer.hint.enabled";
         /**
+         * The key to determine if the Version Filter analyzer is enabled.
+         */
+        public static final String ANALYZER_VERSION_FILTER_ENABLED = "analyzer.versionfilter.enabled";
+        /**
          * The key to determine if the NVD CVE analyzer is enabled.
          */
         public static final String ANALYZER_NVD_CVE_ENABLED = "analyzer.nvdcve.enabled";
