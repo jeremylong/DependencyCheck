@@ -25,3 +25,4 @@ org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer
 org.owasp.dependencycheck.analyzer.ComposerLockAnalyzer
 org.owasp.dependencycheck.analyzer.CocoaPodsAnalyzer
 org.owasp.dependencycheck.analyzer.SwiftPackageManagerAnalyzer
+org.owasp.dependencycheck.analyzer.VersionFilterAnalyzer
