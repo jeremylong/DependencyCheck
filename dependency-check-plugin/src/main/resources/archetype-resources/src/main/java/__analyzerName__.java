@@ -28,12 +28,12 @@ import org.owasp.dependencycheck.exception.InitializationException;
  * An OWASP dependency-check plug-in example. If you are not implementing a
  * FileTypeAnalyzer, simple remove the annotation and the accept() method.
  */
-public class NewPlugin implements Analyzer, FileTypeAnalyzer {
+public class ${analyzerName} implements Analyzer, FileTypeAnalyzer {
 
     /**
-     * The Logger for use throughout the NewPlugin.
+     * The Logger for use throughout the ${analyzerName}.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(NewPlugin.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(${analyzerName}.class);
 
     /**
      * <p>
@@ -48,7 +48,7 @@ public class NewPlugin implements Analyzer, FileTypeAnalyzer {
      */
     @Override
     public boolean accept(File pathname) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return true;
     }
 
     /**
@@ -77,7 +77,7 @@ public class NewPlugin implements Analyzer, FileTypeAnalyzer {
      */
     @Override
     public String getName() {
-        return "New Plugin";
+        return "${analyzerName}";
     }
 
     /**
@@ -115,8 +115,8 @@ public class NewPlugin implements Analyzer, FileTypeAnalyzer {
 
     /**
      * Returns whether multiple instances of the same type of analyzer can run
-     * in parallel. Note that running analyzers of different types in parallel
-     * is not supported at all.
+     * in parallel. If the analyzer does not support parallel processing it is
+	 * generally best to also mark the analyze(Dependency,Engine) as synchronized.
      *
      * @return {@code true} if the analyzer supports parallel processing,
      * {@code false} else
