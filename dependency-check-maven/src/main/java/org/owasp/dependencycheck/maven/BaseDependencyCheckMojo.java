@@ -162,7 +162,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Fail the build if any dependency has a vulnerability listed.
      */
     @SuppressWarnings("CanBeFinal")
-    @Parameter(property="failBuildOnAnyVulnerability", defaultValue="false", required=true)
+    @Parameter(property = "failBuildOnAnyVulnerability", defaultValue = "false", required = true)
     private boolean failBuildOnAnyVulnerability = false;
     /**
      * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not
@@ -313,7 +313,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Sets the path for the bundle-audit binary.
      */
-    @Parameter(property = "bundleAuditPath", defaultValue="", required = false)
+    @Parameter(property = "bundleAuditPath", defaultValue = "", required = false)
     private String bundleAuditPath;
 
     /**
@@ -327,7 +327,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @Parameter(property = "swiftPackageManagerAnalyzerEnabled", required = false)
     private Boolean swiftPackageManagerAnalyzerEnabled;
-    
+
     /**
      * The URL of a Nexus server's REST API end point
      * (http://domain/nexus/service/local).
@@ -630,34 +630,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * and scanning the dependencies
      */
     protected ExceptionCollection scanArtifacts(MavenProject project, Engine engine) {
-        // <editor-fold defaultstate="collapsed" desc="old implementation">
-        /*
-            for (Artifact a : project.getArtifacts()) {
-            if (excludeFromScan(a)) {
-            continue;
-            }
-            final List<Dependency> deps = engine.scan(a.getFile().getAbsoluteFile());
-            if (deps != null) {
-            if (deps.size() == 1) {
-            final Dependency d = deps.get(0);
-            if (d != null) {
-            final MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
-            d.addAsEvidence("pom", ma, Confidence.HIGHEST);
-            d.addProjectReference(project.getName());
-            if (getLog().isDebugEnabled()) {
-            getLog().debug(String.format("Adding project reference %s on dependency %s", project.getName(),
-            d.getDisplayFileName()));
-            }
-            }
-            } else if (getLog().isDebugEnabled()) {
-            final String msg = String.format("More then 1 dependency was identified in first pass scan of '%s:%s:%s'",
-            a.getGroupId(), a.getArtifactId(), a.getVersion());
-            getLog().debug(msg);
-            }
-            }
-            }
-         */
-        // </editor-fold>
         try {
             final DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(project, null, reactorProjects);
             return collectDependencies(engine, project, dn.getChildren());
@@ -686,10 +658,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             if (excludeFromScan(dependencyNode.getArtifact().getScope())) {
                 continue;
             }
-            final ArtifactRequest request = new ArtifactRequest();
-            request.setArtifact(new DefaultArtifact(dependencyNode.getArtifact().getId()));
-            request.setRepositories(remoteRepos);
             try {
+                final ArtifactRequest request = new ArtifactRequest();
+                request.setArtifact(new DefaultArtifact(dependencyNode.getArtifact().getId()));
+                request.setRepositories(remoteRepos);
                 final ArtifactResult result = repoSystem.resolveArtifact(repoSession, request);
                 if (result.isResolved() && result.getArtifact() != null && result.getArtifact().getFile() != null) {
                     final List<Dependency> deps = engine.scan(result.getArtifact().getFile().getAbsoluteFile(),
