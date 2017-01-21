@@ -659,6 +659,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 continue;
             }
             try {
+                //an alternative request method is documented here
+                // https://www.mirkosertic.de/wordpress/2015/12/how-to-download-maven-artifacts-with-maven-3-1-and-eclipse-aether/
                 final ArtifactRequest request = new ArtifactRequest();
                 request.setArtifact(new DefaultArtifact(dependencyNode.getArtifact().getId()));
                 request.setRepositories(remoteRepos);
