@@ -68,7 +68,7 @@ public final class Checksum {
             ch = fis.getChannel();
             final ByteBuffer buf = ByteBuffer.allocateDirect(8192);
             int b = ch.read(buf);
-            while ((b != -1) && (b != 0)) {
+            while (b != -1 && b != 0) {
                 buf.flip();
                 final byte[] bytes = new byte[b];
                 buf.get(bytes);

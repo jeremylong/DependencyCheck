@@ -528,8 +528,7 @@ public class Engine implements FileFilter {
                     final long analyzerDurationMillis = System.currentTimeMillis() - analyzerStart;
                     final long analyzerDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(analyzerDurationMillis);
                     LOGGER.info("Finished {} ({} seconds)", analyzer.getName(), analyzerDurationSeconds);
-                }
-                else {
+                } else {
                     LOGGER.debug("Skipping {} (not enabled)", analyzer.getName());
                 }
             }

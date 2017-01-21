@@ -100,20 +100,21 @@ public class VersionFilterAnalyzer extends AbstractAnalyzer {
         for (Evidence e : dependency.getVersionEvidence()) {
             if ("file".equals(e.getSource()) && "version".equals(e.getName())) {
                 fileVersion = e.getValue(Boolean.FALSE);
-            } else if (("nexus".equals(e.getSource()) || "central".equals(e.getSource()) || "pom".equals(e.getSource())) && "version".equals(e.getName())) {
+            } else if (("nexus".equals(e.getSource()) || "central".equals(e.getSource())
+                    || "pom".equals(e.getSource())) && "version".equals(e.getName())) {
                 pomVersion = e.getValue(Boolean.FALSE);
             }
         }
         if (fileVersion != null && pomVersion != null) {
-            DependencyVersion dvFile = new DependencyVersion(fileVersion);
-            DependencyVersion dvPom = new DependencyVersion(pomVersion);
+            final DependencyVersion dvFile = new DependencyVersion(fileVersion);
+            final DependencyVersion dvPom = new DependencyVersion(pomVersion);
             if (dvPom.equals(dvFile)) {
                 LOGGER.debug("filtering evidence from {}", dependency.getFileName());
-                EvidenceCollection versionEvidence = dependency.getVersionEvidence();
+                final EvidenceCollection versionEvidence = dependency.getVersionEvidence();
                 synchronized (versionEvidence) {
                     final Iterator<Evidence> itr = versionEvidence.iterator();
                     while (itr.hasNext()) {
-                        Evidence e = itr.next();
+                        final Evidence e = itr.next();
                         if (!("version".equals(e.getName())
                                 && ("file".equals(e.getSource())
                                 || "nexus".equals(e.getSource())

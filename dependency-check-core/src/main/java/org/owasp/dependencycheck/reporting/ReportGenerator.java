@@ -105,7 +105,7 @@ public class ReportGenerator {
         velocityEngine.init();
         final EscapeTool enc = new EscapeTool();
 
-        final DateTime dt = new DateTime();//.now();
+        final DateTime dt = new DateTime();
         final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("MMM d, yyyy 'at' HH:mm:ss z");
         final DateTimeFormatter dateFormatXML = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 

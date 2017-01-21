@@ -18,17 +18,12 @@
 package org.owasp.dependencycheck.data.update;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import org.apache.commons.io.FileUtils;
 import static org.owasp.dependencycheck.data.nvdcve.DatabaseProperties.LAST_CPE_UPDATE;
 import org.owasp.dependencycheck.data.update.cpe.CPEHandler;
 import org.owasp.dependencycheck.data.update.cpe.Cpe;

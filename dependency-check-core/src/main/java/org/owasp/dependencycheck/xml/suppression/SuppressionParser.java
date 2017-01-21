@@ -100,7 +100,6 @@ public class SuppressionParser {
         }
     }
 
-    
     /**
      * Parses the given XML stream and returns a list of the suppression rules
      * contained.
@@ -113,7 +112,7 @@ public class SuppressionParser {
     public List<SuppressionRule> parseSuppressionRules(InputStream inputStream) throws SuppressionParseException, SAXException {
         return parseSuppressionRules(inputStream, SUPPRESSION_SCHEMA);
     }
-    
+
     /**
      * Parses the given XML stream and returns a list of the suppression rules
      * contained.
