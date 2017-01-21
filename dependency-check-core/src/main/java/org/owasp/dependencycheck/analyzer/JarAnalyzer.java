@@ -243,7 +243,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             final boolean addPackagesAsEvidence = !(hasManifest && hasPOM);
             analyzePackageNames(classNames, dependency, addPackagesAsEvidence);
         } catch (IOException ex) {
-            throw new AnalysisException("Exception occurred reading the JAR file.", ex);
+            throw new AnalysisException("Exception occurred reading the JAR file (" + dependency.getFileName() +").", ex);
         }
     }
 
