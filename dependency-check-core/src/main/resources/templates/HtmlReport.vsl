@@ -609,7 +609,7 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                         <li><i>dependency-check version</i>: $version</li>
                         <li><i>Report Generated On</i>: $scanDate</li>
                         <li><i>Dependencies Scanned</i>:&nbsp;$depCount ($dependencies.size() unique)</li>
-                        <li><i>Vulnerable Dependencies</i>:&nbsp;$vulnDepCount</li>
+                        <li><i>Vulnerable Dependencies</i>:&nbsp;<span id="vulnerableCount">$vulnDepCount</span></li>
                         <li><i>Vulnerabilities Found</i>:&nbsp;$vulnCount</li>
                         <li><i>Vulnerabilities Suppressed</i>:&nbsp;$vulnSuppressedCount</li>
                         <li class="scaninfo">...</li>
