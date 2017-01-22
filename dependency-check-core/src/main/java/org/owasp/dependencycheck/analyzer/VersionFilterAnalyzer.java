@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.util.Iterator;
+import java.util.Objects;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -38,7 +39,36 @@ import org.slf4j.LoggerFactory;
  */
 public class VersionFilterAnalyzer extends AbstractAnalyzer {
 
-    //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
+    //<editor-fold defaultstate="collapsed" desc="Constaints">
+    /**
+     * Evidence source.
+     */
+    private static final String FILE = "file";
+    /**
+     * Evidence source.
+     */
+    private static final String POM = "pom";
+    /**
+     * Evidence source.
+     */
+    private static final String NEXUS = "nexus";
+    /**
+     * Evidence source.
+     */
+    private static final String CENTRAL = "central";
+    /**
+     * Evidence source.
+     */
+    private static final String MANIFEST = "Manifest";
+    /**
+     * Evidence name.
+     */
+    private static final String VERSION = "version";
+    /**
+     * Evidence name.
+     */
+    private static final String IMPLEMENTATION_VERSION = "Implementation-Version";
+
     /**
      * The name of the analyzer.
      */
@@ -48,6 +78,8 @@ public class VersionFilterAnalyzer extends AbstractAnalyzer {
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.POST_INFORMATION_COLLECTION;
 
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="Standard implementation of Analyzer">
     /**
      * Returns the name of the analyzer.
      *
@@ -97,29 +129,36 @@ public class VersionFilterAnalyzer extends AbstractAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         String fileVersion = null;
         String pomVersion = null;
+        String manifestVersion = null;
         for (Evidence e : dependency.getVersionEvidence()) {
-            if ("file".equals(e.getSource()) && "version".equals(e.getName())) {
+            if (FILE.equals(e.getSource()) && VERSION.equals(e.getName())) {
                 fileVersion = e.getValue(Boolean.FALSE);
-            } else if (("nexus".equals(e.getSource()) || "central".equals(e.getSource())
-                    || "pom".equals(e.getSource())) && "version".equals(e.getName())) {
+            } else if ((NEXUS.equals(e.getSource()) || CENTRAL.equals(e.getSource())
+                    || POM.equals(e.getSource())) && VERSION.equals(e.getName())) {
                 pomVersion = e.getValue(Boolean.FALSE);
+            } else if (MANIFEST.equals(e.getSource()) && IMPLEMENTATION_VERSION.equals(e.getName())) {
+                manifestVersion = e.getValue(Boolean.FALSE);
             }
         }
-        if (fileVersion != null && pomVersion != null) {
+        //ensure we have at least two not null
+        if (((fileVersion == null ? 0 : 1) + (pomVersion == null ? 0 : 1) + (manifestVersion == null ? 0 : 1)) > 1) {
             final DependencyVersion dvFile = new DependencyVersion(fileVersion);
             final DependencyVersion dvPom = new DependencyVersion(pomVersion);
-            if (dvPom.equals(dvFile)) {
+            final DependencyVersion dvManifest = new DependencyVersion(manifestVersion);
+            final boolean fileMatch = Objects.equals(dvFile, dvPom) || Objects.equals(dvFile, dvManifest);
+            final boolean manifestMatch = Objects.equals(dvManifest, dvPom) || Objects.equals(dvManifest, dvFile);
+            final boolean pomMatch = Objects.equals(dvPom, dvFile) || Objects.equals(dvPom, dvManifest);
+            if (fileMatch || manifestMatch || pomMatch) {
                 LOGGER.debug("filtering evidence from {}", dependency.getFileName());
                 final EvidenceCollection versionEvidence = dependency.getVersionEvidence();
                 synchronized (versionEvidence) {
                     final Iterator<Evidence> itr = versionEvidence.iterator();
                     while (itr.hasNext()) {
                         final Evidence e = itr.next();
-                        if (!("version".equals(e.getName())
-                                && ("file".equals(e.getSource())
-                                || "nexus".equals(e.getSource())
-                                || "central".equals(e.getSource())
-                                || "pom".equals(e.getSource())))) {
+                        if (!(pomMatch && VERSION.equals(e.getName())
+                                && (NEXUS.equals(e.getSource()) || CENTRAL.equals(e.getSource()) || POM.equals(e.getSource())))
+                                && !(fileMatch && VERSION.equals(e.getName()) && FILE.equals(e.getSource()))
+                                && !(manifestMatch && MANIFEST.equals(e.getSource()) && IMPLEMENTATION_VERSION.equals(e.getName()))) {
                             itr.remove();
                         }
                     }
