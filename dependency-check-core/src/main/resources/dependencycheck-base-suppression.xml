@@ -483,11 +483,22 @@
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
         <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
     </suppress>
-    <suppress>
+    <suppress base="true">
         <notes><![CDATA[
         False positives per issue #642
         ]]></notes>
         <gav regex="true">^org\.springframework:spring-context:.*$</gav>
         <cpe>cpe:/a:context_project:context</cpe>
+    </suppress>
+    
+    <suppress base="true">
+        <notes><![CDATA[
+        Node.js false positives per issues #512 and #510
+        ]]></notes>
+        <filePath regex="true">.*package\.json$</filePath>
+        <cpe>cpe:/a:file_project:file</cpe>
+        <cpe>cpe:/a:file:file</cpe>
+        <cpe>cpe:/a:shim:shim</cpe>
+        <cpe>cpe:/a:shim_project:shim</cpe>
     </suppress>
 </suppressions>
