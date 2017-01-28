@@ -144,7 +144,8 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                         dependency.getActualFilePath());
                 return;
             } else if (rc != 0) {
-                LOGGER.warn("Return code {} from GrokAssembly", rc);
+                LOGGER.debug("Return code {} from GrokAssembly; dependency-check is unable to analyze the library: {}", rc, dependency.getActualFilePath());
+                return;
             }
 
             final XPath xpath = XPathFactory.newInstance().newXPath();
