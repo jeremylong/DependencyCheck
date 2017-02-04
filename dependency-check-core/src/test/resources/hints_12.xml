@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hints xmlns="https://jeremylong.github.io/DependencyCheck/dependency-hint.1.2.xsd">
+    <hint>
+        <given><!-- NOTE: These are OR conditions -->
+            <evidence type="product" source="product source" name="given product name" value="value" confidence="HIGH"/>
+            <evidence type="vendor" source="vendor source" name="given vendor name" value="value" confidence="HIGH"/>
+            <evidence type="version" source="version source" name="given version name" value="value" confidence="HIGH"/>
+        </given>
+        <add>
+            <evidence type="product" source="hint analyzer" name="add product name" value="product" confidence="HIGH"/>
+            <evidence type="vendor" source="hint analyzer" name="add vendor name" value="vendor" confidence="HIGH"/>
+            <evidence type="version" source="hint analyzer" name="add version name" value="value" confidence="HIGH"/>
+        </add>
+    </hint>
+    <hint>
+        <given>
+            <evidence type="version" source="version source" name="given version name" value="1.2.3" confidence="HIGH"/>
+        </given>
+        <remove>
+            <evidence type="product" source="hint analyzer" name="remove product name" value="product" confidence="HIGH"/>
+            <evidence type="vendor" source="hint analyzer" name="remove vendor name" value="vendor" confidence="HIGH"/>
+            <evidence type="version" source="hint analyzer" name="remove version name" value="value" confidence="HIGH"/>
+        </remove>
+    </hint>
+</hints>

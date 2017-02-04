@@ -48,6 +48,11 @@ public class HintHandler extends DefaultHandler {
     /**
      * Element name.
      */
+    private static final String REMOVE = "remove";
+
+    /**
+     * Element name.
+     */
     private static final String EVIDENCE = "evidence";
     /**
      * Element name.
@@ -139,16 +144,25 @@ public class HintHandler extends DefaultHandler {
      * The current rule being read.
      */
     private HintRule rule;
+
+    /**
+     * Internal type to track the parent node state.
+     */
+    enum ParentType {
+        ADD,
+        GIVEN,
+        REMOVE
+    }
     /**
      * The current state of the parent node (to differentiate between 'add' and
      * 'given').
      */
-    private boolean inAddNode = false;
+    private ParentType nodeType = ParentType.GIVEN;
 
     /**
      * Handles the start element event.
      *
-     * @param uri the uri of the element being processed
+     * @param uri the URI of the element being processed
      * @param localName the local name of the element being processed
      * @param qName the qName of the element being processed
      * @param attr the attributes of the element being processed
@@ -159,41 +173,81 @@ public class HintHandler extends DefaultHandler {
         if (HINT.equals(qName)) {
             rule = new HintRule();
         } else if (ADD.equals(qName)) {
-            inAddNode = true;
+            nodeType = ParentType.ADD;
         } else if (GIVEN.equals(qName)) {
-            inAddNode = false;
+            nodeType = ParentType.GIVEN;
+        } else if (REMOVE.equals(qName)) {
+            nodeType = ParentType.REMOVE;
         } else if (EVIDENCE.equals(qName)) {
             final String hintType = attr.getValue(TYPE);
             if (VENDOR.equals(hintType)) {
-                if (inAddNode) {
-                    rule.addAddVendor(attr.getValue(SOURCE),
-                            attr.getValue(NAME),
-                            attr.getValue(VALUE),
-                            Confidence.valueOf(attr.getValue(CONFIDENCE)));
-                } else {
-                    rule.addGivenVendor(attr.getValue(SOURCE),
-                            attr.getValue(NAME),
-                            attr.getValue(VALUE),
-                            Confidence.valueOf(attr.getValue(CONFIDENCE)));
+                if (null != nodeType) switch (nodeType) {
+                    case ADD:
+                        rule.addAddVendor(attr.getValue(SOURCE),
+                                attr.getValue(NAME),
+                                attr.getValue(VALUE),
+                                Confidence.valueOf(attr.getValue(CONFIDENCE)));
+                        break;
+                    case REMOVE:
+                        rule.addRemoveVendor(attr.getValue(SOURCE),
+                                attr.getValue(NAME),
+                                attr.getValue(VALUE),
+                                Confidence.valueOf(attr.getValue(CONFIDENCE)));
+                        break;
+                    case GIVEN:
+                        rule.addGivenVendor(attr.getValue(SOURCE),
+                                attr.getValue(NAME),
+                                attr.getValue(VALUE),
+                                Confidence.valueOf(attr.getValue(CONFIDENCE)));
+                        break;
+                    default:
+                        break;
                 }
             } else if (PRODUCT.equals(hintType)) {
-                if (inAddNode) {
-                    rule.addAddProduct(attr.getValue(SOURCE),
-                            attr.getValue(NAME),
-                            attr.getValue(VALUE),
-                            Confidence.valueOf(attr.getValue(CONFIDENCE)));
-                } else {
-                    rule.addGivenProduct(attr.getValue(SOURCE),
-                            attr.getValue(NAME),
-                            attr.getValue(VALUE),
-                            Confidence.valueOf(attr.getValue(CONFIDENCE)));
+                if (null != nodeType) switch (nodeType) {
+                    case ADD:
+                        rule.addAddProduct(attr.getValue(SOURCE),
+                                attr.getValue(NAME),
+                                attr.getValue(VALUE),
+                                Confidence.valueOf(attr.getValue(CONFIDENCE)));
+                        break;
+                    case REMOVE:
+                        rule.addRemoveProduct(attr.getValue(SOURCE),
+                                attr.getValue(NAME),
+                                attr.getValue(VALUE),
+                                Confidence.valueOf(attr.getValue(CONFIDENCE)));
+                        break;
+                    case GIVEN:
+                        rule.addGivenProduct(attr.getValue(SOURCE),
+                                attr.getValue(NAME),
+                                attr.getValue(VALUE),
+                                Confidence.valueOf(attr.getValue(CONFIDENCE)));
+                        break;
+                    default:
+                        break;
                 }
             } else if (VERSION.equals(hintType)) {
-                if (inAddNode) {
-                    rule.addAddVersion(attr.getValue(SOURCE),
-                            attr.getValue(NAME),
-                            attr.getValue(VALUE),
-                            Confidence.valueOf(attr.getValue(CONFIDENCE)));
+                if (null != nodeType) switch (nodeType) {
+                    case ADD:
+                        rule.addAddVersion(attr.getValue(SOURCE),
+                                attr.getValue(NAME),
+                                attr.getValue(VALUE),
+                                Confidence.valueOf(attr.getValue(CONFIDENCE)));
+                        break;
+                    case REMOVE:
+                        rule.addRemoveVersion(attr.getValue(SOURCE),
+                                attr.getValue(NAME),
+                                attr.getValue(VALUE),
+                                Confidence.valueOf(attr.getValue(CONFIDENCE)));
+                        break;
+                    case GIVEN:
+                        rule.addGivenVersion(attr.getValue(SOURCE),
+                                attr.getValue(NAME),
+                                attr.getValue(VALUE),
+                                Confidence.valueOf(attr.getValue(CONFIDENCE)));
+                        break;
+                    default:
+                        break;
                 }
             }
         } else if (FILE_NAME.equals(qName)) {

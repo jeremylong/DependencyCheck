@@ -39,18 +39,7 @@ public class HintParserTest extends BaseTest {
         Hints results = instance.parseHints(file);
         assertEquals("Two duplicating hints should have been read", 2, results.getVendorDuplicatingHintRules().size());
         assertEquals("Two hint rules should have been read", 2, results.getHintRules().size());
-    }
 
-    /**
-     * Test of parseHints method, of class HintParser.
-     */
-    @Test
-    public void testParseHints_InputStream() throws Exception {
-        InputStream ins = BaseTest.getResourceAsStream(this, "hints.xml");
-        HintParser instance = new HintParser();
-        Hints results = instance.parseHints(ins);
-        assertEquals("Two duplicating hints should have been read", 2, results.getVendorDuplicatingHintRules().size());
-        assertEquals("Two hint rules should have been read", 2, results.getHintRules().size());
         assertEquals("One add product should have been read", 1, results.getHintRules().get(0).getAddProduct().size());
         assertEquals("One add vendor should have been read", 1, results.getHintRules().get(0).getAddVendor().size());
         assertEquals("Two file name should have been read", 2, results.getHintRules().get(1).getFilenames().size());
@@ -65,9 +54,57 @@ public class HintParserTest extends BaseTest {
         assertEquals("file name 1 should not be a regex", false, results.getHintRules().get(1).getFilenames().get(0).isRegex());
         assertEquals("file name 2 should be case sensitive", true, results.getHintRules().get(1).getFilenames().get(1).isCaseSensitive());
         assertEquals("file name 2 should be a regex", true, results.getHintRules().get(1).getFilenames().get(1).isRegex());
-        
-        
+               
         assertEquals("sun duplicating vendor", "sun", results.getVendorDuplicatingHintRules().get(0).getValue());
         assertEquals("sun duplicates vendor oracle", "oracle", results.getVendorDuplicatingHintRules().get(0).getDuplicate());
+    }
+
+    /**
+     * Test of parseHints method, of class HintParser.
+     */
+    @Test
+    public void testParseHints_InputStream() throws Exception {
+        InputStream ins = BaseTest.getResourceAsStream(this, "hints_12.xml");
+        HintParser instance = new HintParser();
+        Hints results = instance.parseHints(ins);
+        assertEquals("Zero duplicating hints should have been read", 0, results.getVendorDuplicatingHintRules().size());
+        assertEquals("Two hint rules should have been read", 2, results.getHintRules().size());
+
+        assertEquals("One given product should have been read in hint 0", 1, results.getHintRules().get(0).getGivenProduct().size());
+        assertEquals("One given vendor should have been read in hint 0", 1, results.getHintRules().get(0).getGivenVendor().size());
+        assertEquals("One given version should have been read in hint 0", 1, results.getHintRules().get(0).getGivenVersion().size());
+                
+        assertEquals("One add product should have been read in hint 0", 1, results.getHintRules().get(0).getAddProduct().size());
+        assertEquals("One add vendor should have been read in hint 0", 1, results.getHintRules().get(0).getAddVendor().size());
+        assertEquals("One add version should have been read in hint 0", 1, results.getHintRules().get(0).getAddVersion().size());
+        assertEquals("Zero remove product should have been read in hint 0", 0, results.getHintRules().get(0).getRemoveProduct().size());
+        assertEquals("Zero remove vendor should have been read in hint 0", 0, results.getHintRules().get(0).getRemoveVendor().size());
+        assertEquals("Zero remove version should have been read in hint 0", 0, results.getHintRules().get(0).getRemoveVersion().size());
+                
+        assertEquals("Zero given product should have been read in hint 1", 0, results.getHintRules().get(1).getGivenProduct().size());
+        assertEquals("Zero given vendor should have been read in hint 1", 0, results.getHintRules().get(1).getGivenVendor().size());
+        assertEquals("One given version should have been read in hint 1", 1, results.getHintRules().get(1).getGivenVersion().size());
+        
+        assertEquals("One remove product should have been read in hint 1", 1, results.getHintRules().get(1).getRemoveProduct().size());
+        assertEquals("One remove vendor should have been read in hint 1", 1, results.getHintRules().get(1).getRemoveVendor().size());
+        assertEquals("One remove version should have been read in hint 1", 1, results.getHintRules().get(1).getRemoveVersion().size());
+        assertEquals("Zero add product should have been read in hint 1", 0, results.getHintRules().get(1).getAddProduct().size());
+        assertEquals("Zero add vendor should have been read in hint 1", 0, results.getHintRules().get(1).getAddVendor().size());
+        assertEquals("Zero add version should have been read in hint 1", 0, results.getHintRules().get(1).getAddVersion().size());
+
+        assertEquals("add product name not found in hint 0", "add product name", results.getHintRules().get(0).getAddProduct().get(0).getName());
+        assertEquals("add vendor name not found in hint 0", "add vendor name", results.getHintRules().get(0).getAddVendor().get(0).getName());
+        assertEquals("add version name not found in hint 0", "add version name", results.getHintRules().get(0).getAddVersion().get(0).getName());
+        
+        assertEquals("given product name not found in hint 0", "given product name", results.getHintRules().get(0).getGivenProduct().get(0).getName());
+        assertEquals("given vendor name not found in hint 0", "given vendor name", results.getHintRules().get(0).getGivenVendor().get(0).getName());
+        assertEquals("given version name not found in hint 0", "given version name", results.getHintRules().get(0).getGivenVersion().get(0).getName());
+
+        assertEquals("given version name not found in hint 1", "given version name", results.getHintRules().get(1).getGivenVersion().get(0).getName());
+
+        assertEquals("add product name not found in hint 1", "remove product name", results.getHintRules().get(1).getRemoveProduct().get(0).getName());
+        assertEquals("add vendor name not found in hint 1", "remove vendor name", results.getHintRules().get(1).getRemoveVendor().get(0).getName());
+        assertEquals("add version name not found in hint 1", "remove version name", results.getHintRules().get(1).getRemoveVersion().get(0).getName());
+        
     }
 }

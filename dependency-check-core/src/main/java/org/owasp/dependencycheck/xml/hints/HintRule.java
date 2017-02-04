@@ -36,6 +36,43 @@ public class HintRule {
      * The list of file names to match.
      */
     private final List<PropertyType> filenames = new ArrayList<PropertyType>();
+    /**
+     * The list of vendor evidence that is being matched.
+     */
+    private final List<Evidence> givenVendor = new ArrayList<Evidence>();
+    /**
+     * The list of product evidence that is being matched.
+     */
+    private final List<Evidence> givenProduct = new ArrayList<Evidence>();
+    /**
+     * The list of product evidence that is being matched.
+     */
+    private final List<Evidence> givenVersion = new ArrayList<Evidence>();
+    /**
+     * The list of vendor hints to add.
+     */
+    private final List<Evidence> addVendor = new ArrayList<Evidence>();
+    /**
+     * The list of product evidence to add.
+     */
+    private final List<Evidence> addProduct = new ArrayList<Evidence>();
+    /**
+     * The list of version evidence to add.
+     */
+    private final List<Evidence> addVersion = new ArrayList<Evidence>();
+
+    /**
+     * The list of vendor hints to add.
+     */
+    private final List<Evidence> removeVendor = new ArrayList<Evidence>();
+    /**
+     * The list of product evidence to add.
+     */
+    private final List<Evidence> removeProduct = new ArrayList<Evidence>();
+    /**
+     * The list of version evidence to add.
+     */
+    private final List<Evidence> removeVersion = new ArrayList<Evidence>();
 
     /**
      * Adds the filename evidence to the collection.
@@ -54,10 +91,6 @@ public class HintRule {
     public List<PropertyType> getFilenames() {
         return filenames;
     }
-    /**
-     * The list of product evidence that is being matched.
-     */
-    private final List<Evidence> givenProduct = new ArrayList<Evidence>();
 
     /**
      * Adds a given product to the list of evidence to matched.
@@ -79,20 +112,6 @@ public class HintRule {
     public List<Evidence> getGivenProduct() {
         return givenProduct;
     }
-
-    /**
-     * The list of vendor evidence that is being matched.
-     */
-    private final List<Evidence> givenVendor = new ArrayList<Evidence>();
-
-    /**
-     * The list of product evidence to add.
-     */
-    private final List<Evidence> addProduct = new ArrayList<Evidence>();
-    /**
-     * The list of version evidence to add.
-     */
-    private final List<Evidence> addVersion = new ArrayList<Evidence>();
 
     /**
      * Adds a given vendors to the list of evidence to matched.
@@ -158,11 +177,6 @@ public class HintRule {
     }
 
     /**
-     * The list of vendor hints to add.
-     */
-    private final List<Evidence> addVendor = new ArrayList<Evidence>();
-
-    /**
      * Adds a given vendor to the list of evidence to add when matched.
      *
      * @param source the source of the evidence
@@ -181,5 +195,82 @@ public class HintRule {
      */
     public List<Evidence> getAddVendor() {
         return addVendor;
+    }
+
+    /**
+     * Adds a given vendor to the list of evidence to remove when matched.
+     *
+     * @param source the source of the evidence
+     * @param name the name of the evidence
+     * @param value the value of the evidence
+     * @param confidence the confidence of the evidence
+     */
+    public void addRemoveVendor(String source, String name, String value, Confidence confidence) {
+        removeVendor.add(new Evidence(source, name, value, confidence));
+    }
+    /**
+     * Get the value of removeVendor.
+     *
+     * @return the value of removeVendor
+     */
+    public List<Evidence> getRemoveVendor() {
+        return removeVendor;
+    }
+    /**
+     * Adds a given product to the list of evidence to remove when matched.
+     *
+     * @param source the source of the evidence
+     * @param name the name of the evidence
+     * @param value the value of the evidence
+     * @param confidence the confidence of the evidence
+     */
+    public void addRemoveProduct(String source, String name, String value, Confidence confidence) {
+        removeProduct.add(new Evidence(source, name, value, confidence));
+    }
+    /**
+     * Get the value of removeProduct.
+     *
+     * @return the value of removeProduct
+     */
+    public List<Evidence> getRemoveProduct() {
+        return removeProduct;
+    }
+    /**
+     * Adds a given version to the list of evidence to remove when matched.
+     *
+     * @param source the source of the evidence
+     * @param name the name of the evidence
+     * @param value the value of the evidence
+     * @param confidence the confidence of the evidence
+     */
+    public void addRemoveVersion(String source, String name, String value, Confidence confidence) {
+        removeVersion.add(new Evidence(source, name, value, confidence));
+    }
+    /**
+     * Get the value of removeVersion.
+     *
+     * @return the value of removeVersion
+     */
+    public List<Evidence> getRemoveVersion() {
+        return removeVersion;
+    }
+    /**
+     * Adds a given version to the list of evidence to matche.
+     *
+     * @param source the source of the evidence
+     * @param name the name of the evidence
+     * @param value the value of the evidence
+     * @param confidence the confidence of the evidence
+     */
+    public void addGivenVersion(String source, String name, String value, Confidence confidence) {
+        givenVersion.add(new Evidence(source, name, value, confidence));
+    }
+    /**
+     * Get the value of givenVersion.
+     *
+     * @return the value of givenVersion
+     */
+    public List<Evidence> getGivenVersion() {
+        return givenVersion;
     }
 }

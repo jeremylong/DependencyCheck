@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<hints xmlns="https://jeremylong.github.io/DependencyCheck/dependency-hint.1.1.xsd">
+<hints xmlns="https://jeremylong.github.io/DependencyCheck/dependency-hint.1.2.xsd">
     <hint>
-        <given>
+        <given><!-- NOTE: these are OR conditions -->
             <evidence type="product" source="Manifest" name="Implementation-Title" value="Spring Framework" confidence="HIGH"/>
             <evidence type="product" source="Manifest" name="Implementation-Title" value="org.springframework.core" confidence="HIGH"/>
             <evidence type="product" source="Manifest" name="Implementation-Title" value="spring-core" confidence="HIGH"/>
