@@ -154,13 +154,15 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
                     final ListIterator<Dependency> subIterator = engine.getDependencies().listIterator(mainIterator.nextIndex());
                     while (subIterator.hasNext()) {
                         final Dependency nextDependency = subIterator.next();
-                        if (hashesMatch(dependency, nextDependency) && !containedInWar(dependency.getFilePath())
-                                && !containedInWar(nextDependency.getFilePath())) {
-                            if (firstPathIsShortest(dependency.getFilePath(), nextDependency.getFilePath())) {
-                                mergeDependencies(dependency, nextDependency, dependenciesToRemove);
-                            } else {
-                                mergeDependencies(nextDependency, dependency, dependenciesToRemove);
-                                break; //since we merged into the next dependency - skip forward to the next in mainIterator
+                        if (hashesMatch(dependency, nextDependency)) {
+                            if (!containedInWar(dependency.getFilePath())
+                                    && !containedInWar(nextDependency.getFilePath())) {
+                                if (firstPathIsShortest(dependency.getFilePath(), nextDependency.getFilePath())) {
+                                    mergeDependencies(dependency, nextDependency, dependenciesToRemove);
+                                } else {
+                                    mergeDependencies(nextDependency, dependency, dependenciesToRemove);
+                                    break; //since we merged into the next dependency - skip forward to the next in mainIterator
+                                }
                             }
                         } else if (isShadedJar(dependency, nextDependency)) {
                             if (dependency.getFileName().toLowerCase().endsWith("pom.xml")) {
