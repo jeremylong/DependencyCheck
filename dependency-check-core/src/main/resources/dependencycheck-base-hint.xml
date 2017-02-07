@@ -113,8 +113,35 @@
         </add>
     </hint>
     <!-- end hack for temporary patch of issue #534-->
-    
-    
+    <!-- creating a spring boot starter project can cause your app to incorrectly be flagged as spring-->
+    <hint>
+        <given>
+            <evidence type="product" source="pom" name="parent-artifactid" value="spring-boot-starter-parent" confidence="HIGHEST"/>
+            <evidence type="product" source="pom" name="parent-artifactid" value="spring-boot-starter-parent" confidence="HIGH"/>
+            <evidence type="product" source="pom" name="parent-artifactid" value="spring-boot-starter-parent" confidence="MEDIUM"/>
+            <evidence type="product" source="pom" name="parent-artifactid" value="spring-boot-starter-parent" confidence="LOW"/>
+        </given>
+        <remove>
+            <evidence type="product" source="pom" name="parent-artifactid" value="spring-boot-starter-parent" confidence="HIGHEST"/>
+            <evidence type="product" source="pom" name="parent-artifactid" value="spring-boot-starter-parent" confidence="HIGH"/>
+            <evidence type="product" source="pom" name="parent-artifactid" value="spring-boot-starter-parent" confidence="MEDIUM"/>
+            <evidence type="product" source="pom" name="parent-artifactid" value="spring-boot-starter-parent" confidence="LOW"/>
+        </remove>
+    </hint>
+    <hint>
+        <given>
+            <evidence type="vendor" source="pom" name="parent-groupid" value="org.springframework.boot" confidence="HIGHEST"/>
+            <evidence type="vendor" source="pom" name="parent-groupid" value="org.springframework.boot" confidence="HIGH"/>
+            <evidence type="vendor" source="pom" name="parent-groupid" value="org.springframework.boot" confidence="MEDIUM"/>
+            <evidence type="vendor" source="pom" name="parent-groupid" value="org.springframework.boot" confidence="LOW"/>
+        </given>
+        <remove>
+            <evidence type="vendor" source="pom" name="parent-groupid" value="org.springframework.boot" confidence="HIGHEST"/>
+            <evidence type="vendor" source="pom" name="parent-groupid" value="org.springframework.boot" confidence="HIGH"/>
+            <evidence type="vendor" source="pom" name="parent-groupid" value="org.springframework.boot" confidence="MEDIUM"/>
+            <evidence type="vendor" source="pom" name="parent-groupid" value="org.springframework.boot" confidence="LOW"/>
+        </remove>
+    </hint>
     <vendorDuplicatingHint value="sun" duplicate="oracle"/>	
     <vendorDuplicatingHint value="oracle" duplicate="sun"/>	
 </hints>
