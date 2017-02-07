@@ -1054,7 +1054,7 @@ public class Check extends Update {
      *
      * @param dependencies the list of dependency objects
      * @throws BuildException thrown if a CVSS score is found that is higher
-     * then the threshold set
+     * than the threshold set
      */
     private void checkForFailure(List<Dependency> dependencies) throws BuildException {
         final StringBuilder ids = new StringBuilder();
@@ -1071,7 +1071,7 @@ public class Check extends Update {
         }
         if (ids.length() > 0) {
             final String msg = String.format("%n%nDependency-Check Failure:%n"
-                    + "One or more dependencies were identified with vulnerabilities that have a CVSS score greater then '%.1f': %s%n"
+                    + "One or more dependencies were identified with vulnerabilities that have a CVSS score greater than '%.1f': %s%n"
                     + "See the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
             throw new BuildException(msg);
         }

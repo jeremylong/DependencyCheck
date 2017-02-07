@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Checks the gh-pages dependency-check site to determine the current released
- * version number. If the released version number is greater then the running
+ * version number. If the released version number is greater than the running
  * version number a warning is printed recommending that an upgrade be
  * performed.
  *

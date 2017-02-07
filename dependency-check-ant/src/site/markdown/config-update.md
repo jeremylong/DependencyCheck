@@ -3,7 +3,7 @@ Configuration
 The dependency-check-update task downloads and updates the local copy of the NVD.
 There are several reasons that one may want to use this task; primarily, creating
 an update that will be run only once a day or once every few days (but not greater
-then 7 days) and then use the `autoUpdate="false"` setting on individual
+than 7 days) and then use the `autoUpdate="false"` setting on individual
 dependency-check scans. See [Internet Access Required](https://jeremylong.github.io/DependencyCheck/data/index.html)
 for more information on why this task would be used.
 
