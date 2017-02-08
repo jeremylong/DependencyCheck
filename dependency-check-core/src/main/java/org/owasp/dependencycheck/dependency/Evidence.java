@@ -280,9 +280,9 @@ public class Evidence implements Serializable, Comparable<Evidence> {
         if (me == null && other == null) {
             return 0;
         } else if (me == null) {
-            return -1; //the other string is greater then me
+            return -1; //the other string is greater than me
         } else if (other == null) {
-            return 1; //me is greater then the other string
+            return 1; //me is greater than the other string
         }
         return me.compareToIgnoreCase(other);
     }

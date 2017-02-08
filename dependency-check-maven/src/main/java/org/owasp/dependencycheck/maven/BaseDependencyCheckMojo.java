@@ -679,7 +679,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                                 }
                             }
                         } else if (getLog().isDebugEnabled()) {
-                            final String msg = String.format("More then 1 dependency was identified in first pass scan of '%s' in project %s",
+                            final String msg = String.format("More than 1 dependency was identified in first pass scan of '%s' in project %s",
                                     dependencyNode.getArtifact().getId(), project.getName());
                             getLog().debug(msg);
                         }
@@ -1087,7 +1087,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities: %n%s%n%n"
                         + "See the dependency-check report for more details.%n%n", ids.toString());
             } else {
-                msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater then '%.1f': %n%s%n%n"
+                msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater than '%.1f': %n%s%n%n"
                         + "See the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
             }
 
