@@ -357,6 +357,14 @@ public class SuppressionRuleTest extends BaseTest {
         expResult = false;
         result = instance.identifierMatches("cpe", cpe, identifier);
         assertEquals(expResult, result);
+        
+        identifier = new Identifier("cpe", "cpe:/a:apache:tomcat:7.0", "some url not needed for this test");
+        cpe.setValue("cpe:/a:apache:tomcat");
+        cpe.setRegex(false);
+        cpe.setCaseSensitive(false);
+        expResult = true;
+        result = instance.identifierMatches("cpe", cpe, identifier);
+        assertEquals(expResult, result);
 
         identifier = new Identifier("maven", "org.springframework:spring-core:2.5.5", "https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=org.springframework&a=spring-core&v=2.5.5&e=jar");
         cpe.setValue("org.springframework:spring-core:2.5.5");
