@@ -54,9 +54,21 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(NvdCveUpdater.class);
     /**
-     * The max thread pool size to use when downloading files.
+     * The thread pool size to use for CPU-intense tasks.
      */
-    public static final int MAX_THREAD_POOL_SIZE = Settings.getInt(Settings.KEYS.MAX_DOWNLOAD_THREAD_POOL_SIZE, 3);
+    private static final int PROCESSING_THREAD_POOL_SIZE = 1;
+    /**
+     * The thread pool size to use when downloading files.
+     */
+    private static final int DOWNLOAD_THREAD_POOL_SIZE = Settings.getInt(Settings.KEYS.MAX_DOWNLOAD_THREAD_POOL_SIZE, 50);
+    /**
+     * ExecutorService for CPU-intense processing tasks.
+     */
+    private ExecutorService processingExecutorService = null;
+    /**
+     * ExecutorService for tasks that involve blocking activities and are not very CPU-intense, e.g. downloading files.
+     */
+    private ExecutorService downloadExecutorService = null;
 
     /**
      * Downloads the latest NVD CVE XML file from the web and imports it into
@@ -72,10 +84,11 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
                 return;
             }
         } catch (InvalidSettingException ex) {
-            LOGGER.trace("inavlid setting UPDATE_NVDCVE_ENABLED", ex);
+            LOGGER.trace("invalid setting UPDATE_NVDCVE_ENABLED", ex);
         }
 
         try {
+            initializeExecutorServices();
             openDataStores();
             boolean autoUpdate = true;
             try {
@@ -101,7 +114,24 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
             }
             throw new UpdateException("Unable to download the NVD CVE data.", ex);
         } finally {
+            shutdownExecutorServices();
             closeDataStores();
+        }
+    }
+
+    private void initializeExecutorServices() {
+        processingExecutorService = Executors.newFixedThreadPool(PROCESSING_THREAD_POOL_SIZE);
+        downloadExecutorService = Executors.newFixedThreadPool(DOWNLOAD_THREAD_POOL_SIZE);
+        LOGGER.debug("#download   threads: {}", DOWNLOAD_THREAD_POOL_SIZE);
+        LOGGER.debug("#processing threads: {}", PROCESSING_THREAD_POOL_SIZE);
+    }
+
+    private void shutdownExecutorServices() {
+        if (processingExecutorService != null) {
+            processingExecutorService.shutdownNow();
+        }
+        if (downloadExecutorService != null) {
+            downloadExecutorService.shutdownNow();
         }
     }
 
@@ -178,18 +208,13 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
             LOGGER.info("NVD CVE requires several updates; this could take a couple of minutes.");
         }
 
-        final int poolSize = (MAX_THREAD_POOL_SIZE < maxUpdates) ? MAX_THREAD_POOL_SIZE : maxUpdates;
-
-        final ExecutorService downloadExecutors = Executors.newFixedThreadPool(poolSize);
-        final ExecutorService processExecutor = Executors.newSingleThreadExecutor();
         final Set<Future<Future<ProcessTask>>> downloadFutures = new HashSet<Future<Future<ProcessTask>>>(maxUpdates);
         for (NvdCveInfo cve : updateable) {
             if (cve.getNeedsUpdate()) {
-                final DownloadTask call = new DownloadTask(cve, processExecutor, getCveDB(), Settings.getInstance());
-                downloadFutures.add(downloadExecutors.submit(call));
+                final DownloadTask call = new DownloadTask(cve, processingExecutorService, getCveDB(), Settings.getInstance());
+                downloadFutures.add(downloadExecutorService.submit(call));
             }
         }
-        downloadExecutors.shutdown();
 
         //next, move the future future processTasks to just future processTasks
         final Set<Future<ProcessTask>> processFutures = new HashSet<Future<ProcessTask>>(maxUpdates);
@@ -198,21 +223,13 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
             try {
                 task = future.get();
             } catch (InterruptedException ex) {
-                downloadExecutors.shutdownNow();
-                processExecutor.shutdownNow();
-
                 LOGGER.debug("Thread was interrupted during download", ex);
                 throw new UpdateException("The download was interrupted", ex);
             } catch (ExecutionException ex) {
-                downloadExecutors.shutdownNow();
-                processExecutor.shutdownNow();
-
                 LOGGER.debug("Thread was interrupted during download execution", ex);
                 throw new UpdateException("The execution of the download was interrupted", ex);
             }
             if (task == null) {
-                downloadExecutors.shutdownNow();
-                processExecutor.shutdownNow();
                 LOGGER.debug("Thread was interrupted during download");
                 throw new UpdateException("The download was interrupted; unable to complete the update");
             } else {
@@ -227,15 +244,11 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
                     throw task.getException();
                 }
             } catch (InterruptedException ex) {
-                processExecutor.shutdownNow();
                 LOGGER.debug("Thread was interrupted during processing", ex);
                 throw new UpdateException(ex);
             } catch (ExecutionException ex) {
-                processExecutor.shutdownNow();
                 LOGGER.debug("Execution Exception during process", ex);
                 throw new UpdateException(ex);
-            } finally {
-                processExecutor.shutdown();
             }
         }
 
