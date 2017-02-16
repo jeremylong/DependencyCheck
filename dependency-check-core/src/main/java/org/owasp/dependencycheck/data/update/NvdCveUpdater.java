@@ -19,8 +19,11 @@ package org.owasp.dependencycheck.data.update;
 
 import java.net.MalformedURLException;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.net.URL;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,6 +39,7 @@ import org.owasp.dependencycheck.data.update.nvd.NvdCveInfo;
 import org.owasp.dependencycheck.data.update.nvd.ProcessTask;
 import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
 import org.owasp.dependencycheck.utils.DateUtil;
+import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
@@ -357,20 +361,57 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
     private UpdateableNvdCve retrieveCurrentTimestampsFromWeb()
             throws MalformedURLException, DownloadFailedException, InvalidDataException, InvalidSettingException {
 
-        final UpdateableNvdCve updates = new UpdateableNvdCve();
-        updates.add(MODIFIED, Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL),
-                Settings.getString(Settings.KEYS.CVE_MODIFIED_12_URL),
-                false);
 
         final int start = Settings.getInt(Settings.KEYS.CVE_START_YEAR);
         final int end = Calendar.getInstance().get(Calendar.YEAR);
+
+        final Map<String, Long> lastModifiedDates = retrieveLastModifiedDates(start, end);
+
+        final UpdateableNvdCve updates = new UpdateableNvdCve();
+
         final String baseUrl20 = Settings.getString(Settings.KEYS.CVE_SCHEMA_2_0);
         final String baseUrl12 = Settings.getString(Settings.KEYS.CVE_SCHEMA_1_2);
         for (int i = start; i <= end; i++) {
-            updates.add(Integer.toString(i), String.format(baseUrl20, i),
-                    String.format(baseUrl12, i),
-                    true);
+            final String url = String.format(baseUrl20, i);
+            updates.add(Integer.toString(i), url, String.format(baseUrl12, i),
+                    lastModifiedDates.get(url), true);
         }
+
+        final String url = Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL);
+        updates.add(MODIFIED, url, Settings.getString(Settings.KEYS.CVE_MODIFIED_12_URL),
+                lastModifiedDates.get(url), false);
+
         return updates;
+    }
+
+    /**
+     * Retrieves the timestamps from the NVD CVE meta data file.
+     *
+     * @param startYear the first year whose item to check for the timestamp
+     * @param endYear the last year whose item to check for the timestamp
+     * @return the timestamps from the currently published nvdcve downloads page
+     * @throws MalformedURLException thrown if the URL for the NVD CCE Meta data
+     * is incorrect.
+     * @throws DownloadFailedException thrown if there is an error downloading
+     * the nvd cve meta data file
+     */
+    private Map<String, Long> retrieveLastModifiedDates(int startYear, int endYear)
+            throws MalformedURLException, DownloadFailedException {
+
+        final Set<String> urls = new HashSet<String>();
+        final String baseUrl20 = Settings.getString(Settings.KEYS.CVE_SCHEMA_2_0);
+        for (int i = startYear; i <= endYear; i++) {
+            final String url = String.format(baseUrl20, i);
+            urls.add(url);
+        }
+        urls.add(Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL));
+
+        final Map<String, Long> lastModifiedDates = new HashMap<String, Long>();
+        for(String url: urls) {
+            LOGGER.debug("Checking for updates from: {}", url);
+            lastModifiedDates.put(url, Downloader.getLastModified(new URL(url)));
+        }
+
+        return lastModifiedDates;
     }
 }
