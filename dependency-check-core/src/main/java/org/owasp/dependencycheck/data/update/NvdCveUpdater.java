@@ -225,7 +225,7 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
         //next, move the future future processTasks to just future processTasks
         final Set<Future<ProcessTask>> processFutures = new HashSet<Future<ProcessTask>>(maxUpdates);
         for (Future<Future<ProcessTask>> future : downloadFutures) {
-            Future<ProcessTask> task = null;
+            Future<ProcessTask> task;
             try {
                 task = future.get();
             } catch (InterruptedException ex) {
@@ -280,8 +280,9 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
      * @throws UpdateException Is thrown if there is an issue with the last
      * updated properties file
      */
-    protected final UpdateableNvdCve getUpdatesNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
-        UpdateableNvdCve updates = null;
+    final UpdateableNvdCve getUpdatesNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
+        LOGGER.info("starting getUpdatesNeeded() ...");
+        UpdateableNvdCve updates;
         try {
             updates = retrieveCurrentTimestampsFromWeb();
         } catch (InvalidDataException ex) {
