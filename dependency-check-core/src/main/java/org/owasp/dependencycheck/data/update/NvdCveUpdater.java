@@ -24,10 +24,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.net.URL;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
@@ -406,12 +408,48 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
         }
         urls.add(Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL));
 
+        final Map<String, Future<Long>> timestampFutures = new HashMap<String, Future<Long>>();
+        for (String url : urls) {
+            final TimestampRetriever timestampRetriever = new TimestampRetriever(url);
+            final Future<Long> future = downloadExecutorService.submit(timestampRetriever);
+            timestampFutures.put(url, future);
+        }
+
         final Map<String, Long> lastModifiedDates = new HashMap<String, Long>();
-        for(String url: urls) {
-            LOGGER.debug("Checking for updates from: {}", url);
-            lastModifiedDates.put(url, Downloader.getLastModified(new URL(url)));
+        for (String url : urls) {
+            final Future<Long> timestampFuture = timestampFutures.get(url);
+            final long timestamp;
+            try {
+                timestamp = timestampFuture.get(60, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                throw new DownloadFailedException(e);
+            }
+            lastModifiedDates.put(url, timestamp);
         }
 
         return lastModifiedDates;
+    }
+
+    /**
+     * Retrieves the last modified timestamp from a NVD CVE meta data file.
+     */
+    private static class TimestampRetriever implements Callable<Long> {
+
+        private String url;
+
+        TimestampRetriever(String url) {
+            this.url = url;
+        }
+
+        @Override
+        public Long call() throws Exception {
+            LOGGER.debug("Checking for updates from: {}", url);
+            try {
+                Settings.initialize();
+                return Downloader.getLastModified(new URL(url));
+            } finally {
+                Settings.cleanup(false);
+            }
+        }
     }
 }
