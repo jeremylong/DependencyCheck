@@ -125,7 +125,7 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
         }
     }
 
-    private void initializeExecutorServices() {
+    void initializeExecutorServices() {
         processingExecutorService = Executors.newFixedThreadPool(PROCESSING_THREAD_POOL_SIZE);
         downloadExecutorService = Executors.newFixedThreadPool(DOWNLOAD_THREAD_POOL_SIZE);
         LOGGER.debug("#download   threads: {}", DOWNLOAD_THREAD_POOL_SIZE);

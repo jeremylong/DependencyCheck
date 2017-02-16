@@ -33,6 +33,7 @@ public class NvdCveUpdaterIntegrationTest extends BaseTest {
 
     public NvdCveUpdater getUpdater() throws MalformedURLException, DownloadFailedException, UpdateException {
         NvdCveUpdater instance = new NvdCveUpdater();
+        instance.initializeExecutorServices();
         return instance;
     }
 
