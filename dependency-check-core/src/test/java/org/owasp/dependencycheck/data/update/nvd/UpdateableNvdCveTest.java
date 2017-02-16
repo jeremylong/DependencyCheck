@@ -61,23 +61,7 @@ public class UpdateableNvdCveTest extends BaseTest {
      * Test of add method, of class UpdateableNvdCve.
      */
     @Test
-    public void testAdd_3args() throws Exception {
-        String id = "key";
-        //use a local file as this test will load the result and check the timestamp
-        String url = "file:///" + new File("target/test-classes/nvdcve-2.0-2012.xml").toURI().toString();
-        UpdateableNvdCve instance = new UpdateableNvdCve();
-        instance.add(id, url, url);
-        NvdCveInfo results = instance.get(id);
-        assertEquals(id, results.getId());
-        assertEquals(url, results.getUrl());
-        assertEquals(url, results.getOldSchemaVersionUrl());
-    }
-
-    /**
-     * Test of add method, of class UpdateableNvdCve.
-     */
-    @Test
-    public void testAdd_4args() throws Exception {
+    public void testAdd() throws Exception {
         String id = "key";
         //use a local file as this test will load the result and check the timestamp
         String url = new File("target/test-classes/nvdcve-2.0-2012.xml").toURI().toString();
