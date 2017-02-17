@@ -26,6 +26,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
+import org.apache.commons.io.ByteOrderMark;
+import org.apache.commons.io.input.BOMInputStream;
 import org.owasp.dependencycheck.utils.XmlUtils;
 
 import org.slf4j.Logger;
@@ -88,14 +90,15 @@ public class PomParser {
             final SAXParser saxParser = XmlUtils.buildSecureSaxParser();
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setContentHandler(handler);
-            final Reader reader = new InputStreamReader(inputStream, "UTF-8");
+            BOMInputStream bomStream = new BOMInputStream(inputStream);
+            ByteOrderMark bom = bomStream.getBOM();
+            String defaultEncoding = "UTF-8";
+            String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();
+            final Reader reader = new InputStreamReader(bomStream, charsetName);
             final InputSource in = new InputSource(reader);
             xmlReader.parse(in);
             return handler.getModel();
-        } catch (ParserConfigurationException ex) {
-            LOGGER.debug("", ex);
-            throw new PomParseException(ex);
-        } catch (SAXException ex) {
+        } catch (ParserConfigurationException | SAXException ex) {
             LOGGER.debug("", ex);
             throw new PomParseException(ex);
         } catch (FileNotFoundException ex) {
