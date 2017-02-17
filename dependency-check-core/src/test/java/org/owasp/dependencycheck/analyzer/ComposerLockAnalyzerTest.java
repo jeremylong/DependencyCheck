@@ -47,7 +47,7 @@ public class ComposerLockAnalyzerTest extends BaseDBTestCase {
     /**
      * The analyzer to test.
      */
-    ComposerLockAnalyzer analyzer;
+    private ComposerLockAnalyzer analyzer;
 
     /**
      * Correctly setup the analyzer for testing.

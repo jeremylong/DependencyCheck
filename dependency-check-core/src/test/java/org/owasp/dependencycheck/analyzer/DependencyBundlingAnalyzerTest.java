@@ -34,7 +34,7 @@ import static org.junit.Assert.assertTrue;
 public class DependencyBundlingAnalyzerTest extends BaseTest {
 
     @Mocked
-    Engine engineMock;
+    private Engine engineMock;
 
     /**
      * Test of getName method, of class DependencyBundlingAnalyzer.

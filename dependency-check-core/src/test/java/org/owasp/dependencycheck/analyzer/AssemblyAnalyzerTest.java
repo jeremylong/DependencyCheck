@@ -49,7 +49,7 @@ public class AssemblyAnalyzerTest extends BaseTest {
 
     private static final String LOG_KEY = "org.slf4j.simpleLogger.org.owasp.dependencycheck.analyzer.AssemblyAnalyzer";
 
-    AssemblyAnalyzer analyzer;
+    private AssemblyAnalyzer analyzer;
 
     /**
      * Sets up the analyzer.

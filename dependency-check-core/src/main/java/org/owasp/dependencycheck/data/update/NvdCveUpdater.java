@@ -125,7 +125,7 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
         }
     }
 
-    void initializeExecutorServices() {
+    protected void initializeExecutorServices() {
         processingExecutorService = Executors.newFixedThreadPool(PROCESSING_THREAD_POOL_SIZE);
         downloadExecutorService = Executors.newFixedThreadPool(DOWNLOAD_THREAD_POOL_SIZE);
         LOGGER.debug("#download   threads: {}", DOWNLOAD_THREAD_POOL_SIZE);
@@ -280,7 +280,7 @@ public class NvdCveUpdater extends BaseUpdater implements CachedWebDataSource {
      * @throws UpdateException Is thrown if there is an issue with the last
      * updated properties file
      */
-    final UpdateableNvdCve getUpdatesNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
+    protected final UpdateableNvdCve getUpdatesNeeded() throws MalformedURLException, DownloadFailedException, UpdateException {
         LOGGER.info("starting getUpdatesNeeded() ...");
         UpdateableNvdCve updates;
         try {

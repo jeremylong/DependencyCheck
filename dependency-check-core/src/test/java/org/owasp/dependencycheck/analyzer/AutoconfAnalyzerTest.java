@@ -43,7 +43,7 @@ public class AutoconfAnalyzerTest extends BaseTest {
     /**
      * The analyzer to test.
      */
-    AutoconfAnalyzer analyzer;
+    private AutoconfAnalyzer analyzer;
 
     private void assertCommonEvidence(Dependency result, String product,
             String version, String vendor) {

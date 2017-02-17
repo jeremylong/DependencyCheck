@@ -107,6 +107,7 @@ public class VelocityLoggerRedirect implements LogChute {
                 break;
             default:
                 LOGGER.info(message, t);
+                break;
         }
     }
 

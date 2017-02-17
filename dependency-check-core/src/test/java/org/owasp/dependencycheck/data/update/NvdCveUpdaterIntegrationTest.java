@@ -18,8 +18,10 @@
 package org.owasp.dependencycheck.data.update;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
 
 /**
@@ -38,9 +40,13 @@ import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
      * Test of update method.
      */
     @Test
-    public void testUpdate() throws Exception {
-        NvdCveUpdater instance = getUpdater();
-        instance.update();
+    public void testUpdate() {
+        try {
+            NvdCveUpdater instance = getUpdater();
+            instance.update();
+        } catch (UpdateException ex) {
+            fail(ex.getMessage());
+        }
     }
 
     /**

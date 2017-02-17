@@ -557,7 +557,7 @@ public class Engine implements FileFilter {
      * @param analyzer the analyzer to execute
      * @throws ExceptionCollection thrown if exceptions occurred during analysis
      */
-    void executeAnalysisTasks(Analyzer analyzer, List<Throwable> exceptions) throws ExceptionCollection {
+    protected void executeAnalysisTasks(Analyzer analyzer, List<Throwable> exceptions) throws ExceptionCollection {
         LOGGER.debug("Starting {}", analyzer.getName());
         final List<AnalysisTask> analysisTasks = getAnalysisTasks(analyzer, exceptions);
         final ExecutorService executorService = getExecutorService(analyzer);

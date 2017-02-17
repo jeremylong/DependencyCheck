@@ -48,9 +48,10 @@ public class ModelTest extends BaseTest {
      */
     @Test
     public void testSetName() {
-        String name = "";
+        String name = "name";
         Model instance = new Model();
         instance.setName(name);
+        assertEquals("name", instance.getName());
     }
 
     /**
@@ -209,9 +210,10 @@ public class ModelTest extends BaseTest {
      */
     @Test
     public void testSetParentArtifactId() {
-        String parentArtifactId = "";
+        String parentArtifactId = "something";
         Model instance = new Model();
         instance.setParentArtifactId(parentArtifactId);
+        assertNotNull(instance.getParentArtifactId());
     }
 
     /**
@@ -231,9 +233,10 @@ public class ModelTest extends BaseTest {
      */
     @Test
     public void testSetParentVersion() {
-        String parentVersion = "";
+        String parentVersion = "1.0";
         Model instance = new Model();
         instance.setParentVersion(parentVersion);
+        assertNotNull(instance.getParentVersion());
     }
 
     /**
@@ -257,6 +260,7 @@ public class ModelTest extends BaseTest {
         License license = new License("name", "url");
         Model instance = new Model();
         instance.addLicense(license);
+        assertNotNull(instance.getLicenses());
     }
 
     /**

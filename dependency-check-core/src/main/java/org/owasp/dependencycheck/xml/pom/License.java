@@ -117,10 +117,7 @@ public class License {
         if ((this.url == null) ? (other.url != null) : !this.url.equals(other.url)) {
             return false;
         }
-        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
-            return false;
-        }
-        return true;
+        return !((this.name == null) ? (other.name != null) : !this.name.equals(other.name));
     }
 
     /**

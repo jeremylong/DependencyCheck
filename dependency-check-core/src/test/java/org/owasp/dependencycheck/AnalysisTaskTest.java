@@ -17,13 +17,13 @@ import org.owasp.dependencycheck.utils.Settings;
 public class AnalysisTaskTest extends BaseTest {
 
     @Mocked
-    FileTypeAnalyzer fileTypeAnalyzer;
+    private FileTypeAnalyzer fileTypeAnalyzer;
 
     @Mocked
-    Dependency dependency;
+    private Dependency dependency;
 
     @Mocked
-    Engine engine;
+    private Engine engine;
 
 
     @Test

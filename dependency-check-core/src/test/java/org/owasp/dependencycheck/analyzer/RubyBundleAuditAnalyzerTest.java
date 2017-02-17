@@ -57,7 +57,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
     /**
      * The analyzer to test.
      */
-    RubyBundleAuditAnalyzer analyzer;
+    private RubyBundleAuditAnalyzer analyzer;
 
     /**
      * Correctly setup the analyzer for testing.

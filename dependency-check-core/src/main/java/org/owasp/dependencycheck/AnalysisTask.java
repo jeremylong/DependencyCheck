@@ -119,7 +119,7 @@ class AnalysisTask implements Callable<Void> {
      *
      * @return whether or not the analyzer can analyze the dependency
      */
-    boolean shouldAnalyze() {
+    protected boolean shouldAnalyze() {
         if (analyzer instanceof FileTypeAnalyzer) {
             final FileTypeAnalyzer fileTypeAnalyzer = (FileTypeAnalyzer) analyzer;
             return fileTypeAnalyzer.accept(dependency.getActualFile());

@@ -47,7 +47,7 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
     /**
      * The maximum number of query results to return.
      */
-    static final int MAX_QUERY_RESULTS = 100;
+    private static final int MAX_QUERY_RESULTS = 100;
     /**
      * The CVE Index.
      */

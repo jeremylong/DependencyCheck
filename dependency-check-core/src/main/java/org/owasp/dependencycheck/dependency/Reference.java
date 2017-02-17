@@ -119,10 +119,7 @@ public class Reference implements Serializable, Comparable<Reference> {
         if ((this.url == null) ? (other.url != null) : !this.url.equals(other.url)) {
             return false;
         }
-        if ((this.source == null) ? (other.source != null) : !this.source.equals(other.source)) {
-            return false;
-        }
-        return true;
+        return !((this.source == null) ? (other.source != null) : !this.source.equals(other.source));
     }
 
     @Override

@@ -70,26 +70,26 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     /**
      * The maximum number of query results to return.
      */
-    static final int MAX_QUERY_RESULTS = 25;
+    private static final int MAX_QUERY_RESULTS = 25;
     /**
      * The weighting boost to give terms when constructing the Lucene query.
      */
-    static final String WEIGHTING_BOOST = "^5";
+    private static final String WEIGHTING_BOOST = "^5";
     /**
      * A string representation of a regular expression defining characters
      * utilized within the CPE Names.
      */
-    static final String CLEANSE_CHARACTER_RX = "[^A-Za-z0-9 ._-]";
+    private static final String CLEANSE_CHARACTER_RX = "[^A-Za-z0-9 ._-]";
     /**
      * A string representation of a regular expression used to remove all but
      * alpha characters.
      */
-    static final String CLEANSE_NONALPHA_RX = "[^A-Za-z]*";
+    private static final String CLEANSE_NONALPHA_RX = "[^A-Za-z]*";
     /**
      * The additional size to add to a new StringBuilder to account for extra
      * data that will be written into the string.
      */
-    static final int STRING_BUILDER_BUFFER = 20;
+    private static final int STRING_BUILDER_BUFFER = 20;
     /**
      * The CPE in memory index.
      */

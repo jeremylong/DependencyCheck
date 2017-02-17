@@ -384,7 +384,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
      * @return a boolean indicating whether or not the left dependency should be
      * considered the "core" version.
      */
-    boolean isCore(Dependency left, Dependency right) {
+    protected boolean isCore(Dependency left, Dependency right) {
         final String leftName = left.getFileName().toLowerCase();
         final String rightName = right.getFileName().toLowerCase();
 

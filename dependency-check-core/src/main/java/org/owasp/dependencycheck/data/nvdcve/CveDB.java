@@ -259,7 +259,7 @@ public class CveDB {
      *
      * @return the properties from the database
      */
-    synchronized Properties getProperties() {
+    public synchronized Properties getProperties() {
         final Properties prop = new Properties();
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -285,7 +285,7 @@ public class CveDB {
      * @param key the property key
      * @param value the property value
      */
-    synchronized void saveProperty(String key, String value) {
+    public synchronized void saveProperty(String key, String value) {
         try {
             try {
                 final PreparedStatement mergeProperty = getConnection().prepareStatement(statementBundle.getString("MERGE_PROPERTY"));
@@ -703,7 +703,7 @@ public class CveDB {
      * analyzed
      * @return true if the identified version is affected, otherwise false
      */
-    Entry<String, Boolean> getMatchingSoftware(Map<String, Boolean> vulnerableSoftware, String vendor, String product,
+    protected Entry<String, Boolean> getMatchingSoftware(Map<String, Boolean> vulnerableSoftware, String vendor, String product,
             DependencyVersion identifiedVersion) {
 
         final boolean isVersionTwoADifferentProduct = "apache".equals(vendor) && "struts".equals(product);

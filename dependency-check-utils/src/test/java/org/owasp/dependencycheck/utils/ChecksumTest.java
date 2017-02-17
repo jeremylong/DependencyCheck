@@ -26,7 +26,6 @@ import static org.junit.Assert.fail;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.owasp.dependencycheck.utils.Checksum;
 
 /**
  *

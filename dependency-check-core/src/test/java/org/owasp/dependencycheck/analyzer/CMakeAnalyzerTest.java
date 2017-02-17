@@ -53,7 +53,7 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
     /**
      * The package analyzer to test.
      */
-    CMakeAnalyzer analyzer;
+    private CMakeAnalyzer analyzer;
 
     /**
      * Setup the CmakeAnalyzer.

@@ -119,9 +119,6 @@ public class Pair<L, R> {
         if (this.left != other.left && (this.left == null || !this.left.equals(other.left))) {
             return false;
         }
-        if (this.right != other.right && (this.right == null || !this.right.equals(other.right))) {
-            return false;
-        }
-        return true;
+        return !(this.right != other.right && (this.right == null || !this.right.equals(other.right)));
     }
 }

@@ -36,6 +36,38 @@ public class SuppressionRule {
     private PropertyType filePath;
 
     /**
+     * The SHA1 hash.
+     */
+    private String sha1;
+    /**
+     * A list of CPEs to suppression
+     */
+    private List<PropertyType> cpe = new ArrayList<>();
+    /**
+     * The list of cvssBelow scores.
+     */
+    private List<Float> cvssBelow = new ArrayList<>();
+    /**
+     * The list of CWE entries to suppress.
+     */
+    private List<String> cwe = new ArrayList<>();
+    /**
+     * The list of CVE entries to suppress.
+     */
+    private List<String> cve = new ArrayList<>();
+    /**
+     * A Maven GAV to suppression.
+     */
+    private PropertyType gav = null;
+
+    /**
+     * A flag indicating whether or not the suppression rule is a core/base rule
+     * that should not be included in the resulting report in the "suppressed"
+     * section.
+     */
+    private boolean base;
+
+    /**
      * Get the value of filePath.
      *
      * @return the value of filePath
@@ -52,10 +84,6 @@ public class SuppressionRule {
     public void setFilePath(PropertyType filePath) {
         this.filePath = filePath;
     }
-    /**
-     * The sha1 hash.
-     */
-    private String sha1;
 
     /**
      * Get the value of sha1.
@@ -67,40 +95,36 @@ public class SuppressionRule {
     }
 
     /**
-     * Set the value of sha1.
+     * Set the value of SHA1.
      *
-     * @param sha1 new value of sha1
+     * @param sha1 new value of SHA1
      */
     public void setSha1(String sha1) {
         this.sha1 = sha1;
     }
-    /**
-     * A list of CPEs to suppression
-     */
-    private List<PropertyType> cpe = new ArrayList<PropertyType>();
 
     /**
-     * Get the value of cpe.
+     * Get the value of CPE.
      *
-     * @return the value of cpe
+     * @return the value of CPE
      */
     public List<PropertyType> getCpe() {
         return cpe;
     }
 
     /**
-     * Set the value of cpe.
+     * Set the value of CPE.
      *
-     * @param cpe new value of cpe
+     * @param cpe new value of CPE
      */
     public void setCpe(List<PropertyType> cpe) {
         this.cpe = cpe;
     }
 
     /**
-     * Adds the cpe to the cpe list.
+     * Adds the CPE to the CPE list.
      *
-     * @param cpe the cpe to add
+     * @param cpe the CPE to add
      */
     public void addCpe(PropertyType cpe) {
         this.cpe.add(cpe);
@@ -114,10 +138,6 @@ public class SuppressionRule {
     public boolean hasCpe() {
         return !cpe.isEmpty();
     }
-    /**
-     * The list of cvssBelow scores.
-     */
-    private List<Float> cvssBelow = new ArrayList<Float>();
 
     /**
      * Get the value of cvssBelow.
@@ -138,49 +158,45 @@ public class SuppressionRule {
     }
 
     /**
-     * Adds the cvss to the cvssBelow list.
+     * Adds the CVSS to the cvssBelow list.
      *
-     * @param cvss the cvss to add
+     * @param cvss the CVSS to add
      */
     public void addCvssBelow(Float cvss) {
         this.cvssBelow.add(cvss);
     }
 
     /**
-     * Returns whether or not this suppression rule has cvss suppressions.
+     * Returns whether or not this suppression rule has CVSS suppressions.
      *
-     * @return whether or not this suppression rule has cvss suppressions
+     * @return whether or not this suppression rule has CVSS suppressions
      */
     public boolean hasCvssBelow() {
         return !cvssBelow.isEmpty();
     }
-    /**
-     * The list of cwe entries to suppress.
-     */
-    private List<String> cwe = new ArrayList<String>();
 
     /**
-     * Get the value of cwe.
+     * Get the value of CWE.
      *
-     * @return the value of cwe
+     * @return the value of CWE
      */
     public List<String> getCwe() {
         return cwe;
     }
 
     /**
-     * Set the value of cwe.
+     * Set the value of CWE.
      *
-     * @param cwe new value of cwe
+     * @param cwe new value of CWE
      */
     public void setCwe(List<String> cwe) {
         this.cwe = cwe;
     }
 
     /**
-     * Adds the cwe to the cwe list.
+     * Adds the CWE to the CWE list.
      *
-     * @param cwe the cwe to add
+     * @param cwe the CWE to add
      */
     public void addCwe(String cwe) {
         this.cwe.add(cwe);
@@ -194,33 +210,29 @@ public class SuppressionRule {
     public boolean hasCwe() {
         return !cwe.isEmpty();
     }
-    /**
-     * The list of cve entries to suppress.
-     */
-    private List<String> cve = new ArrayList<String>();
 
     /**
-     * Get the value of cve.
+     * Get the value of CVE.
      *
-     * @return the value of cve
+     * @return the value of CVE
      */
     public List<String> getCve() {
         return cve;
     }
 
     /**
-     * Set the value of cve.
+     * Set the value of CVE.
      *
-     * @param cve new value of cve
+     * @param cve new value of CVE
      */
     public void setCve(List<String> cve) {
         this.cve = cve;
     }
 
     /**
-     * Adds the cve to the cve list.
+     * Adds the CVE to the CVE list.
      *
-     * @param cve the cve to add
+     * @param cve the CVE to add
      */
     public void addCve(String cve) {
         this.cve.add(cve);
@@ -234,15 +246,11 @@ public class SuppressionRule {
     public boolean hasCve() {
         return !cve.isEmpty();
     }
-    /**
-     * A Maven GAV to suppression.
-     */
-    private PropertyType gav = null;
 
     /**
      * Get the value of Maven GAV.
      *
-     * @return the value of gav
+     * @return the value of GAV
      */
     public PropertyType getGav() {
         return gav;
@@ -251,7 +259,7 @@ public class SuppressionRule {
     /**
      * Set the value of Maven GAV.
      *
-     * @param gav new value of Maven gav
+     * @param gav new value of Maven GAV
      */
     public void setGav(PropertyType gav) {
         this.gav = gav;
@@ -265,12 +273,6 @@ public class SuppressionRule {
     public boolean hasGav() {
         return gav != null;
     }
-
-    /**
-     * A flag indicating whether or not the suppression rule is a core/base rule that should not be included in the resulting
-     * report in the "suppressed" section.
-     */
-    private boolean base;
 
     /**
      * Get the value of base.
@@ -291,8 +293,9 @@ public class SuppressionRule {
     }
 
     /**
-     * Processes a given dependency to determine if any CPE, CVE, CWE, or CVSS scores should be suppressed. If any should be, they
-     * are removed from the dependency.
+     * Processes a given dependency to determine if any CPE, CVE, CWE, or CVSS
+     * scores should be suppressed. If any should be, they are removed from the
+     * dependency.
      *
      * @param dependency a project dependency to analyze
      */
@@ -375,23 +378,26 @@ public class SuppressionRule {
     }
 
     /**
-     * Identifies if the cpe specified by the cpe suppression rule does not specify a version.
+     * Identifies if the cpe specified by the cpe suppression rule does not
+     * specify a version.
      *
      * @param c a suppression rule identifier
-     * @return true if the property type does not specify a version; otherwise false
+     * @return true if the property type does not specify a version; otherwise
+     * false
      */
-    boolean cpeHasNoVersion(PropertyType c) {
+    protected boolean cpeHasNoVersion(PropertyType c) {
         return !c.isRegex() && countCharacter(c.getValue(), ':') <= 3;
     }
 
     /**
-     * Counts the number of occurrences of the character found within the string.
+     * Counts the number of occurrences of the character found within the
+     * string.
      *
      * @param str the string to check
      * @param c the character to count
      * @return the number of times the character is found in the string
      */
-    int countCharacter(String str, char c) {
+    private int countCharacter(String str, char c) {
         int count = 0;
         int pos = str.indexOf(c) + 1;
         while (pos > 0) {
@@ -402,7 +408,8 @@ public class SuppressionRule {
     }
 
     /**
-     * Determines if the cpeEntry specified as a PropertyType matches the given Identifier.
+     * Determines if the cpeEntry specified as a PropertyType matches the given
+     * Identifier.
      *
      * @param identifierType the type of identifier ("cpe", "maven", etc.)
      * @param suppressionEntry a suppression rule entry

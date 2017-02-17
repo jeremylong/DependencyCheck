@@ -31,7 +31,7 @@ public class IndexEntry implements Serializable {
     /**
      * the serial version uid.
      */
-    static final long serialVersionUID = 8011924485946326934L;
+    private static final long serialVersionUID = 8011924485946326934L;
     /**
      * The vendor name.
      */

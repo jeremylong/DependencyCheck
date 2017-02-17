@@ -191,10 +191,7 @@ public class Identifier implements Serializable, Comparable<Identifier> {
         if ((this.value == null) ? (other.value != null) : !this.value.equals(other.value)) {
             return false;
         }
-        if ((this.type == null) ? (other.type != null) : !this.type.equals(other.type)) {
-            return false;
-        }
-        return true;
+        return !((this.type == null) ? (other.type != null) : !this.type.equals(other.type));
     }
 
     @Override

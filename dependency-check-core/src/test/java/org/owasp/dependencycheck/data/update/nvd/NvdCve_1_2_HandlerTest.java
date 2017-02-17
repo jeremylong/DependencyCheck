@@ -23,9 +23,7 @@ import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
@@ -47,6 +45,6 @@ public class NvdCve_1_2_HandlerTest  extends BaseTest {
         NvdCve12Handler instance = new NvdCve12Handler();
         saxParser.parse(file, instance);
         Map<String, List<VulnerableSoftware>> results = instance.getVulnerabilities();
-        assertTrue("No vulnerable software identified with a previous version in 2012 CVE 1.2?", !results.isEmpty());
+        assertFalse("No vulnerable software identified with a previous version in 2012 CVE 1.2?", results.isEmpty());
     }
 }

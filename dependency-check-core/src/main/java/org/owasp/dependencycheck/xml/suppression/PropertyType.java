@@ -163,10 +163,7 @@ public class PropertyType {
         if (this.regex != other.regex) {
             return false;
         }
-        if (this.caseSensitive != other.caseSensitive) {
-            return false;
-        }
-        return true;
+        return this.caseSensitive == other.caseSensitive;
     }
 
     /**

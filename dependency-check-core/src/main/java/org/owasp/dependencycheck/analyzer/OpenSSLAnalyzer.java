@@ -102,7 +102,7 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
      * @param openSSLVersionConstant The open SSL version
      * @return the version of openssl
      */
-    static String getOpenSSLVersion(long openSSLVersionConstant) {
+    protected static String getOpenSSLVersion(long openSSLVersionConstant) {
         final long major = openSSLVersionConstant >>> MAJOR_OFFSET;
         final long minor = (openSSLVersionConstant & MINOR_MASK) >>> MINOR_OFFSET;
         final long fix = (openSSLVersionConstant & FIX_MASK) >>> FIX_OFFSET;

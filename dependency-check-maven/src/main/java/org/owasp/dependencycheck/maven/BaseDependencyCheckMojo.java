@@ -983,10 +983,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         if (skipProvidedScope && org.apache.maven.artifact.Artifact.SCOPE_PROVIDED.equals(scope)) {
             return true;
         }
-        if (skipRuntimeScope && !org.apache.maven.artifact.Artifact.SCOPE_RUNTIME.equals(scope)) {
-            return true;
-        }
-        return false;
+        return skipRuntimeScope && !org.apache.maven.artifact.Artifact.SCOPE_RUNTIME.equals(scope);
     }
 
     /**

@@ -40,7 +40,7 @@ public class NodePackageAnalyzerTest extends BaseTest {
     /**
      * The analyzer to test.
      */
-    NodePackageAnalyzer analyzer;
+    private NodePackageAnalyzer analyzer;
 
     /**
      * Correctly setup the analyzer for testing.

@@ -40,7 +40,7 @@ public class RubyGemspecAnalyzerTest extends BaseTest {
     /**
      * The analyzer to test.
      */
-    RubyGemspecAnalyzer analyzer;
+    private RubyGemspecAnalyzer analyzer;
 
     /**
      * Correctly setup the analyzer for testing.

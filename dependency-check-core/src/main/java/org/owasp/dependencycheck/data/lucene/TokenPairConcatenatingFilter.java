@@ -156,10 +156,7 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
         if ((this.previousWord == null) ? (other.previousWord != null) : !this.previousWord.equals(other.previousWord)) {
             return false;
         }
-        if (this.words != other.words && (this.words == null || !this.words.equals(other.words))) {
-            return false;
-        }
-        return true;
+        return !(this.words != other.words && (this.words == null || !this.words.equals(other.words)));
     }
 
 }
