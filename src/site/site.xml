@@ -20,7 +20,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
     <skin>
         <groupId>org.apache.maven.skins</groupId>
         <artifactId>maven-fluido-skin</artifactId>
-        <version>1.5</version>
+        <version>1.6</version>
     </skin>
     <custom>
         <fluidoSkin>

@@ -127,8 +127,8 @@ Copyright (c) 2012 - Jeremy Long
         thus, we cannot upgrade beyond 4.7.2 -->
         <apache.lucene.version>4.7.2</apache.lucene.version>
         <apache.ant.version>1.9.8</apache.ant.version>
-        <slf4j.version>1.7.22</slf4j.version>
-        <logback.version>1.1.8</logback.version>
+        <slf4j.version>1.7.23</slf4j.version>
+        <logback.version>1.1.9</logback.version>
         <!-- Note that Maven will use classes from the distro, ignoring declared dependencies for Maven core... -->
         <maven.api.version>3.3.9</maven.api.version>
         <reporting.checkstyle-plugin.version>2.17</reporting.checkstyle-plugin.version>
@@ -169,7 +169,7 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>3.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -179,12 +179,12 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.5.1</version>
+                    <version>3.6.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.10</version>
+                    <version>3.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -229,7 +229,7 @@ Copyright (c) 2012 - Jeremy Long
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.5.1</version>
+                    <version>3.6</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -473,7 +473,7 @@ Copyright (c) 2012 - Jeremy Long
                 <version>2.10.4</version>
                 <configuration>
                     <failOnError>false</failOnError>
-                    <bottom>Copyright� 2012-15 Jeremy Long. All Rights Reserved.</bottom>
+                    <bottom>Copyright© 2012-15 Jeremy Long. All Rights Reserved.</bottom>
                 </configuration>
                 <reportSets>
                     <reportSet>
@@ -723,7 +723,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>org.apache.maven.shared</groupId>
                 <artifactId>maven-dependency-tree</artifactId>
-                <version>2.2</version>
+                <version>3.0</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish</groupId>
@@ -739,13 +739,13 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>org.jmockit</groupId>
                 <artifactId>jmockit</artifactId>
-                <version>1.25</version>
+                <version>1.26</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>
-                <version>1.10.1</version>
+                <version>1.10.2</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
