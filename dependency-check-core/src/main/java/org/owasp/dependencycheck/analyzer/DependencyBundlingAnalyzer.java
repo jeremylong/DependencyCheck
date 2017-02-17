@@ -72,7 +72,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
      * @return a flag indicating if this analyzer has run. This analyzer only
      * runs once
      */
-    protected boolean getAnalyzed() {
+    protected synchronized boolean getAnalyzed() {
         return analyzed;
     }
 
