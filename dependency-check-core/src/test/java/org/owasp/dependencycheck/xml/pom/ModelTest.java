@@ -92,9 +92,11 @@ public class ModelTest extends BaseTest {
      */
     @Test
     public void testSetDescription() {
-        String description = "";
+        String description = "description";
+        String expected = "description";
         Model instance = new Model();
         instance.setDescription(description);
+        assertEquals(expected, instance.getDescription());
     }
 
     /**
@@ -114,9 +116,11 @@ public class ModelTest extends BaseTest {
      */
     @Test
     public void testSetGroupId() {
-        String groupId = "";
+        String groupId = "aaa";
+        String expected = "aaa";
         Model instance = new Model();
         instance.setGroupId(groupId);
+        assertEquals(expected, instance.getGroupId());
     }
 
     /**
@@ -136,9 +140,11 @@ public class ModelTest extends BaseTest {
      */
     @Test
     public void testSetArtifactId() {
-        String artifactId = "";
+        String artifactId = "aaa";
+        String expected = "aaa";
         Model instance = new Model();
         instance.setArtifactId(artifactId);
+        assertEquals(expected, instance.getArtifactId());
     }
 
     /**

@@ -20,9 +20,11 @@ package org.owasp.dependencycheck.data.nvdcve;
 import java.io.File;
 import java.sql.Driver;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
@@ -35,13 +37,18 @@ public class DriverLoaderTest extends BaseTest {
 
     /**
      * Test of load method, of class DriverLoader.
+     *
+     * @throws java.sql.SQLException thrown if there is an error de-registering
+     * the driver
      */
     @Test
-    public void testLoad_String() throws Exception {
+    public void testLoad_String() throws SQLException {
         String className = "org.h2.Driver";
         Driver d = null;
         try {
             d = DriverLoader.load(className);
+        } catch (DriverLoadException ex) {
+            fail(ex.getMessage());
         } finally {
             if (d != null) {
                 DriverManager.deregisterDriver(d);

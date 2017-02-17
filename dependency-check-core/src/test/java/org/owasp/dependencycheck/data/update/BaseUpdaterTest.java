@@ -25,6 +25,7 @@ import org.owasp.dependencycheck.data.update.exception.UpdateException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  *
@@ -45,6 +46,9 @@ public class BaseUpdaterTest extends BaseDBTestCase {
 
     /**
      * Test of getProperties method, of class BaseUpdater.
+     *
+     * @throws org.owasp.dependencycheck.data.update.exception.UpdateException
+     * thrown if there is an error getting the properties
      */
     @Test
     public void testGetProperties() throws UpdateException {
@@ -66,11 +70,13 @@ public class BaseUpdaterTest extends BaseDBTestCase {
      * Test of closeDataStores method, of class BaseUpdater.
      */
     @Test
-    public void testCloseDataStores() throws UpdateException {
+    public void testCloseDataStores() {
         BaseUpdater instance = null;
         try {
             instance = new BaseUpdaterImpl();
             instance.openDataStores();
+        } catch (UpdateException ex) {
+            fail(ex.getMessage());
         } finally {
             if (instance != null) {
                 instance.closeDataStores();
@@ -82,11 +88,13 @@ public class BaseUpdaterTest extends BaseDBTestCase {
      * Test of openDataStores method, of class BaseUpdater.
      */
     @Test
-    public void testOpenDataStores() throws Exception {
+    public void testOpenDataStores() {
         BaseUpdater instance = null;
         try {
             instance = new BaseUpdaterImpl();
             instance.openDataStores();
+        } catch (UpdateException ex) {
+            fail(ex.getMessage());
         } finally {
             if (instance != null) {
                 instance.closeDataStores();

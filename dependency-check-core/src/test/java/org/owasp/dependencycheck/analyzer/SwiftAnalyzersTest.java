@@ -23,8 +23,8 @@ public class SwiftAnalyzersTest extends BaseTest {
     /**
      * The analyzer to test.
      */
-	CocoaPodsAnalyzer podsAnalyzer;
-	SwiftPackageManagerAnalyzer spmAnalyzer;
+    private CocoaPodsAnalyzer podsAnalyzer;
+    private SwiftPackageManagerAnalyzer spmAnalyzer;
 
     /**
      * Correctly setup the analyzer for testing.
@@ -36,7 +36,7 @@ public class SwiftAnalyzersTest extends BaseTest {
         podsAnalyzer = new CocoaPodsAnalyzer();
         podsAnalyzer.setFilesMatched(true);
         podsAnalyzer.initialize();
-        
+
         spmAnalyzer = new SwiftPackageManagerAnalyzer();
         spmAnalyzer.setFilesMatched(true);
         spmAnalyzer.initialize();
@@ -87,7 +87,7 @@ public class SwiftAnalyzersTest extends BaseTest {
     public void testSPMSupportsFiles() {
         assertThat(spmAnalyzer.accept(new File("Package.swift")), is(true));
     }
-    
+
     /**
      * Test of analyze method, of class CocoaPodsAnalyzer.
      *
@@ -99,7 +99,7 @@ public class SwiftAnalyzersTest extends BaseTest {
                 "swift/cocoapods/EasyPeasy.podspec"));
         podsAnalyzer.analyze(result, null);
         final String vendorString = result.getVendorEvidence().toString();
-        
+
         assertThat(vendorString, containsString("Carlos Vidal"));
         assertThat(vendorString, containsString("https://github.com/nakiostudio/EasyPeasy"));
         assertThat(vendorString, containsString("MIT"));

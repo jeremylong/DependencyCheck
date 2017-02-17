@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
@@ -37,14 +38,14 @@ public class CveDBMySQLTest extends BaseTest {
      * Pretty useless tests of open, commit, and close methods, of class CveDB.
      */
     @Test
-    public void testOpen() throws DatabaseException {
+    public void testOpen() {
         try {
             CveDB instance = new CveDB();
             instance.open();
             instance.close();
         } catch (DatabaseException ex) {
             System.out.println("Unable to connect to the My SQL database; verify that the db server is running and that the schema has been generated");
-            throw ex;
+            fail(ex.getMessage());
         }
     }
 

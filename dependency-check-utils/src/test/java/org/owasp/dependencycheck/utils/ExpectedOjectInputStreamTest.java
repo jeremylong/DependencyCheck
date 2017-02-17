@@ -20,11 +20,13 @@ package org.owasp.dependencycheck.utils;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -58,20 +60,31 @@ public class ExpectedOjectInputStreamTest {
      * Test of resolveClass method, of class ExpectedOjectInputStream.
      */
     @Test
-    public void testResolveClass() throws Exception {
-        List<SimplePojo> data = new ArrayList<SimplePojo>();
-        data.add(new SimplePojo());
-
-        ByteArrayOutputStream mem = new ByteArrayOutputStream();
-        ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(mem));
-        out.writeObject(data);
-        out.flush();
-        byte[] buf = mem.toByteArray();
-        out.close();
-        ByteArrayInputStream in = new ByteArrayInputStream(buf);
-
-        ExpectedOjectInputStream instance = new ExpectedOjectInputStream(in, "java.util.ArrayList", "org.owasp.dependencycheck.utils.SimplePojo", "java.lang.Integer", "java.lang.Number");
-        instance.readObject();
+    public void testResolveClass() {
+        ObjectOutputStream out = null;
+        try {
+            List<SimplePojo> data = new ArrayList<>();
+            data.add(new SimplePojo());
+            ByteArrayOutputStream mem = new ByteArrayOutputStream();
+            out = new ObjectOutputStream(new BufferedOutputStream(mem));
+            out.writeObject(data);
+            out.flush();
+            byte[] buf = mem.toByteArray();
+            out.close();
+            ByteArrayInputStream in = new ByteArrayInputStream(buf);
+            ExpectedOjectInputStream instance = new ExpectedOjectInputStream(in, "java.util.ArrayList", "org.owasp.dependencycheck.utils.SimplePojo", "java.lang.Integer", "java.lang.Number");
+            instance.readObject();
+        } catch (IOException | ClassNotFoundException ex) {
+            fail(ex.getMessage());
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     /**

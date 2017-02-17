@@ -183,7 +183,7 @@ public class DependencyVersionTest extends BaseTest {
         expected[4] = new DependencyVersion("2.1.3");
         expected[5] = new DependencyVersion("2.1.3.r1");
         expected[6] = new DependencyVersion("2.1.3.r2");
-        java.util.Arrays.sort(dv);
+        Arrays.sort(dv);
 
         assertArrayEquals(expected, dv);
     }
@@ -209,5 +209,7 @@ public class DependencyVersionTest extends BaseTest {
         List<String> versionParts = Arrays.asList("1", "1", "1");
         DependencyVersion instance = new DependencyVersion();
         instance.setVersionParts(versionParts);
+        List<String> results = instance.getVersionParts();
+        assertEquals(versionParts, results);
     }
 }

@@ -18,20 +18,27 @@
 package org.owasp.dependencycheck.reporting;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
+import org.owasp.dependencycheck.exception.ExceptionCollection;
+import org.owasp.dependencycheck.exception.ReportException;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -107,48 +114,54 @@ public class ReportGeneratorIntegrationTest extends BaseDBTestCase {
      * @throws Exception
      */
     @Test
-    public void testGenerateXMLReport() throws Exception {
-        String templateName = "XmlReport";
-
-        File f = new File("target/test-reports");
-        if (!f.exists()) {
-            f.mkdir();
+    public void testGenerateXMLReport() {
+        try {
+            String templateName = "XmlReport";
+            
+            File f = new File("target/test-reports");
+            if (!f.exists()) {
+                f.mkdir();
+            }
+            String writeTo = "target/test-reports/Report.xml";
+            
+            //File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
+            File struts = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
+            //File axis = new File(this.getClass().getClassLoader().getResource("axis2-adb-1.4.1.jar").getPath());
+            File axis = BaseTest.getResourceAsFile(this, "axis2-adb-1.4.1.jar");
+            //File jetty = new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath());
+            File jetty = BaseTest.getResourceAsFile(this, "org.mortbay.jetty.jar");
+            
+            boolean autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
+            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            Engine engine = new Engine();
+            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
+            
+            engine.scan(struts);
+            engine.scan(axis);
+            engine.scan(jetty);
+            engine.analyzeDependencies();
+            
+            CveDB cveDB = new CveDB();
+            cveDB.open();
+            DatabaseProperties dbProp = cveDB.getDatabaseProperties();
+            cveDB.close();
+            
+            ReportGenerator generator = new ReportGenerator("Test Report", engine.getDependencies(), engine.getAnalyzers(), dbProp);
+            generator.generateReport(templateName, writeTo);
+            
+            engine.cleanup();
+            
+            InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/dependency-check.1.3.xsd");
+            StreamSource xsdSource = new StreamSource(xsdStream);
+            StreamSource xmlSource = new StreamSource(new File(writeTo));
+            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            Schema schema = sf.newSchema(xsdSource);
+            Validator validator = schema.newValidator();
+            validator.validate(xmlSource);
+        } catch (InvalidSettingException ex) {
+            fail(ex.getMessage());
+        } catch (DatabaseException | ExceptionCollection | ReportException | SAXException | IOException ex) {
+            fail(ex.getMessage());
         }
-        String writeTo = "target/test-reports/Report.xml";
-
-        //File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
-        File struts = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
-        //File axis = new File(this.getClass().getClassLoader().getResource("axis2-adb-1.4.1.jar").getPath());
-        File axis = BaseTest.getResourceAsFile(this, "axis2-adb-1.4.1.jar");
-        //File jetty = new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath());
-        File jetty = BaseTest.getResourceAsFile(this, "org.mortbay.jetty.jar");
-
-        boolean autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
-        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
-        Engine engine = new Engine();
-        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
-
-        engine.scan(struts);
-        engine.scan(axis);
-        engine.scan(jetty);
-        engine.analyzeDependencies();
-
-        CveDB cveDB = new CveDB();
-        cveDB.open();
-        DatabaseProperties dbProp = cveDB.getDatabaseProperties();
-        cveDB.close();
-
-        ReportGenerator generator = new ReportGenerator("Test Report", engine.getDependencies(), engine.getAnalyzers(), dbProp);
-        generator.generateReport(templateName, writeTo);
-
-        engine.cleanup();
-
-        InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/dependency-check.1.3.xsd");
-        StreamSource xsdSource = new StreamSource(xsdStream);
-        StreamSource xmlSource = new StreamSource(new File(writeTo));
-        SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = sf.newSchema(xsdSource);
-        Validator validator = schema.newValidator();
-        validator.validate(xmlSource);
     }
 }

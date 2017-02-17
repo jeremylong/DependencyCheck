@@ -24,7 +24,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;

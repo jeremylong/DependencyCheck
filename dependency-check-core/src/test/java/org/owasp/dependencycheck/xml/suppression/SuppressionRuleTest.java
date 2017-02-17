@@ -144,6 +144,7 @@ public class SuppressionRuleTest extends BaseTest {
     @Test
     public void testGetFilePath() {
         //already tested, this is just left so the IDE doesn't recreate it.
+        assertTrue(true);
     }
 
     /**
@@ -152,6 +153,7 @@ public class SuppressionRuleTest extends BaseTest {
     @Test
     public void testSetFilePath() {
         //already tested, this is just left so the IDE doesn't recreate it.
+        assertTrue(true);
     }
 
     /**
@@ -160,6 +162,7 @@ public class SuppressionRuleTest extends BaseTest {
     @Test
     public void testGetSha1() {
         //already tested, this is just left so the IDE doesn't recreate it.
+        assertTrue(true);
     }
 
     /**
@@ -168,6 +171,7 @@ public class SuppressionRuleTest extends BaseTest {
     @Test
     public void testSetSha1() {
         //already tested, this is just left so the IDE doesn't recreate it.
+        assertTrue(true);
     }
 
     /**
@@ -176,6 +180,7 @@ public class SuppressionRuleTest extends BaseTest {
     @Test
     public void testGetCpe() {
         //already tested, this is just left so the IDE doesn't recreate it.
+        assertTrue(true);
     }
 
     /**
@@ -184,6 +189,7 @@ public class SuppressionRuleTest extends BaseTest {
     @Test
     public void testSetCpe() {
         //already tested, this is just left so the IDE doesn't recreate it.
+        assertTrue(true);
     }
 
     /**
@@ -192,6 +198,7 @@ public class SuppressionRuleTest extends BaseTest {
     @Test
     public void testAddCpe() {
         //already tested, this is just left so the IDE doesn't recreate it.
+        assertTrue(true);
     }
 
     /**
@@ -200,6 +207,7 @@ public class SuppressionRuleTest extends BaseTest {
     @Test
     public void testHasCpe() {
         //already tested, this is just left so the IDE doesn't recreate it.
+        assertTrue(true);
     }
 
     /**
@@ -208,6 +216,7 @@ public class SuppressionRuleTest extends BaseTest {
     @Test
     public void testSetCvssBelow() {
         //already tested, this is just left so the IDE doesn't recreate it.
+        assertTrue(true);
     }
 
     /**
@@ -216,6 +225,7 @@ public class SuppressionRuleTest extends BaseTest {
     @Test
     public void testAddCvssBelow() {
         //already tested, this is just left so the IDE doesn't recreate it.
+        assertTrue(true);
     }
 
     /**
@@ -224,6 +234,7 @@ public class SuppressionRuleTest extends BaseTest {
     @Test
     public void testHasCvssBelow() {
         //already tested, this is just left so the IDE doesn't recreate it.
+        assertTrue(true);
     }
 
     /**
@@ -232,6 +243,7 @@ public class SuppressionRuleTest extends BaseTest {
     @Test
     public void testGetCwe() {
         //already tested, this is just left so the IDE doesn't recreate it.
+        assertTrue(true);
     }
 
     /**
@@ -240,6 +252,7 @@ public class SuppressionRuleTest extends BaseTest {
     @Test
     public void testSetCwe() {
         //already tested, this is just left so the IDE doesn't recreate it.
+        assertTrue(true);
     }
 
     /**
@@ -248,6 +261,7 @@ public class SuppressionRuleTest extends BaseTest {
     @Test
     public void testAddCwe() {
         //already tested, this is just left so the IDE doesn't recreate it.
+        assertTrue(true);
     }
 
     /**
@@ -256,6 +270,7 @@ public class SuppressionRuleTest extends BaseTest {
     @Test
     public void testHasCwe() {
         //already tested, this is just left so the IDE doesn't recreate it.
+        assertTrue(true);
     }
 
     /**
@@ -264,6 +279,7 @@ public class SuppressionRuleTest extends BaseTest {
     @Test
     public void testGetCve() {
         //already tested, this is just left so the IDE doesn't recreate it.
+        assertTrue(true);
     }
 
     /**
@@ -272,6 +288,7 @@ public class SuppressionRuleTest extends BaseTest {
     @Test
     public void testSetCve() {
         //already tested, this is just left so the IDE doesn't recreate it.
+        assertTrue(true);
     }
 
     /**

@@ -15,14 +15,10 @@
  */
 package org.owasp.dependencycheck.data.update;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Properties;
 import mockit.Mock;
 import mockit.MockUp;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;

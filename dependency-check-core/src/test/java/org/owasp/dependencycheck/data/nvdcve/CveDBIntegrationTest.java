@@ -18,19 +18,19 @@
 package org.owasp.dependencycheck.data.nvdcve;
 
 import org.owasp.dependencycheck.BaseDBTestCase;
+import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.dependency.VulnerableSoftware;
+import org.owasp.dependencycheck.utils.DependencyVersion;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.junit.Assert;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import org.owasp.dependencycheck.dependency.Vulnerability;
-import org.owasp.dependencycheck.dependency.VulnerableSoftware;
-import org.owasp.dependencycheck.utils.DependencyVersion;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -150,15 +150,15 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
         try {
             instance = new CveDB();
             Entry<String, Boolean> results = instance.getMatchingSoftware(versions, "openssl", "openssl", identifiedVersion);
-            Assert.assertNull(results);
+            assertNull(results);
             versions.put("cpe:/a:openssl:openssl:1.0.1p", Boolean.FALSE);
             results = instance.getMatchingSoftware(versions, "openssl", "openssl", identifiedVersion);
-            Assert.assertNull(results);
+            assertNull(results);
 
             versions.put("cpe:/a:openssl:openssl:1.0.1q", Boolean.TRUE);
             results = instance.getMatchingSoftware(versions, "openssl", "openssl", identifiedVersion);
-            Assert.assertNotNull(results);
-            Assert.assertEquals("cpe:/a:openssl:openssl:1.0.1q", results.getKey());
+            assertNotNull(results);
+            assertEquals("cpe:/a:openssl:openssl:1.0.1q", results.getKey());
 
             versions.clear();
 
@@ -173,26 +173,26 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
 
             identifiedVersion = new DependencyVersion("3.2.2");
             results = instance.getMatchingSoftware(versions, "springsource", "spring_framework", identifiedVersion);
-            Assert.assertEquals("cpe:/a:springsource:spring_framework:3.2.7", results.getKey());
-            Assert.assertTrue(results.getValue());
+            assertEquals("cpe:/a:springsource:spring_framework:3.2.7", results.getKey());
+            assertTrue(results.getValue());
             identifiedVersion = new DependencyVersion("3.2.12");
             results = instance.getMatchingSoftware(versions, "springsource", "spring_framework", identifiedVersion);
-            Assert.assertNull(results);
+            assertNull(results);
 
             identifiedVersion = new DependencyVersion("4.0.0");
             results = instance.getMatchingSoftware(versions, "springsource", "spring_framework", identifiedVersion);
-            Assert.assertEquals("cpe:/a:springsource:spring_framework:4.0.1", results.getKey());
-            Assert.assertTrue(results.getValue());
+            assertEquals("cpe:/a:springsource:spring_framework:4.0.1", results.getKey());
+            assertTrue(results.getValue());
             identifiedVersion = new DependencyVersion("4.1.0");
             results = instance.getMatchingSoftware(versions, "springsource", "spring_framework", identifiedVersion);
-            Assert.assertNull(results);
+            assertNull(results);
 
             versions.clear();
 
             versions.put("cpe:/a:jruby:jruby:-", Boolean.FALSE);
             identifiedVersion = new DependencyVersion("1.6.3");
             results = instance.getMatchingSoftware(versions, "springsource", "spring_framework", identifiedVersion);
-            Assert.assertNotNull(results);
+            assertNotNull(results);
         } finally {
             if (instance != null) {
                 instance.close();

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 import org.junit.Assert;
+import static org.junit.Assert.fail;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -70,6 +71,7 @@ public class ChecksumTest {
 
         expectedException.expect(IOException.class);
         Checksum.getChecksum(algorithm, file);
+        fail("exception should be thrown");
     }
 
     /**

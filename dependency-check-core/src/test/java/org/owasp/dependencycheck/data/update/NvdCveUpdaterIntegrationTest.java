@@ -29,7 +29,7 @@ import org.owasp.dependencycheck.utils.DownloadFailedException;
  *
  * @author Jeremy Long
  */
-public class NvdCveUpdaterIntegrationTest extends BaseTest {
+    public class NvdCveUpdaterIntegrationTest extends BaseTest {
 
     public NvdCveUpdater getUpdater() throws MalformedURLException, DownloadFailedException, UpdateException {
         NvdCveUpdater instance = new NvdCveUpdater();
@@ -40,11 +40,11 @@ public class NvdCveUpdaterIntegrationTest extends BaseTest {
 //    /**
 //     * Test of update method, of class StandardUpdate.
 //     */
-    @Test
-    public void testUpdate() throws Exception {
-        NvdCveUpdater instance = getUpdater();
-        instance.update();
-    }
+//    @Test
+//    public void testUpdate() throws Exception {
+//        NvdCveUpdater instance = getUpdater();
+//        instance.update();
+//    }
     /**
      * Test of updatesNeeded method, of class StandardUpdate.
      */

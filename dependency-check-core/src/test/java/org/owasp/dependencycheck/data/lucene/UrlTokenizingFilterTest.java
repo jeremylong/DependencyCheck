@@ -60,8 +60,12 @@ public class UrlTokenizingFilterTest extends BaseTokenStreamTestCase {
      * http://svn.apache.org/repos/asf/lucene/dev/trunk/lucene/analysis/common/src/test/org/apache/lucene/analysis/en/TestEnglishMinimalStemFilter.java
      * blast some random strings through the analyzer
      */
-    public void testRandomStrings() throws Exception {
-        checkRandomData(random(), analyzer, 1000 * RANDOM_MULTIPLIER);
+    public void testRandomStrings() {
+        try {
+            checkRandomData(random(), analyzer, 1000 * RANDOM_MULTIPLIER);
+        } catch (IOException ex) {
+            fail("Failed test random strings: " + ex.getMessage());
+        }
     }
 
     /**
