@@ -589,8 +589,8 @@ public class Engine implements FileFilter {
      * @param exceptions the collection of exceptions to collect
      * @return a collection of analysis tasks
      */
-    List<AnalysisTask> getAnalysisTasks(Analyzer analyzer, List<Throwable> exceptions) {
-        final List<AnalysisTask> result = new ArrayList<AnalysisTask>();
+    protected List<AnalysisTask> getAnalysisTasks(Analyzer analyzer, List<Throwable> exceptions) {
+        final List<AnalysisTask> result = new ArrayList<>();
         synchronized (dependencies) {
             for (final Dependency dependency : dependencies) {
                 final AnalysisTask task = new AnalysisTask(analyzer, dependency, this, exceptions, Settings.getInstance());

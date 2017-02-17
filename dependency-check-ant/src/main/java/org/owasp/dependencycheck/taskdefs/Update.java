@@ -35,6 +35,67 @@ import org.slf4j.impl.StaticLoggerBinder;
 public class Update extends Purge {
 
     /**
+     * The Proxy Server.
+     */
+    private String proxyServer;
+    /**
+     * The Proxy Port.
+     */
+    private String proxyPort;
+    /**
+     * The Proxy username.
+     */
+    private String proxyUsername;
+    /**
+     * The Proxy password.
+     */
+    private String proxyPassword;
+    /**
+     * The Connection Timeout.
+     */
+    private String connectionTimeout;
+    /**
+     * The database driver name; such as org.h2.Driver.
+     */
+    private String databaseDriverName;
+    /**
+     * The path to the database driver JAR file if it is not on the class path.
+     */
+    private String databaseDriverPath;
+    /**
+     * The database connection string.
+     */
+    private String connectionString;
+    /**
+     * The user name for connecting to the database.
+     */
+    private String databaseUser;
+    /**
+     * The password to use when connecting to the database.
+     */
+    private String databasePassword;
+    /**
+     * The url for the modified NVD CVE (1.2 schema).
+     */
+    private String cveUrl12Modified;
+    /**
+     * Base Data Mirror URL for CVE 1.2.
+     */
+    private String cveUrl12Base;
+    /**
+     * Data Mirror URL for CVE 2.0.
+     */
+    private String cveUrl20Base;
+    /**
+     * The number of hours to wait before re-checking for updates.
+     */
+    private Integer cveValidForHours;
+    /**
+     * The url for the modified NVD CVE (2.0 schema).
+     */
+    private String cveUrl20Modified;
+
+    /**
      * Construct a new UpdateTask.
      */
     public Update() {
@@ -43,11 +104,6 @@ public class Update extends Purge {
         // core end up coming through this tasks logger
         StaticLoggerBinder.getSingleton().setTask(this);
     }
-
-    /**
-     * The Proxy Server.
-     */
-    private String proxyServer;
 
     /**
      * Get the value of proxyServer.
@@ -68,11 +124,6 @@ public class Update extends Purge {
     }
 
     /**
-     * The Proxy Port.
-     */
-    private String proxyPort;
-
-    /**
      * Get the value of proxyPort.
      *
      * @return the value of proxyPort
@@ -89,10 +140,6 @@ public class Update extends Purge {
     public void setProxyPort(String proxyPort) {
         this.proxyPort = proxyPort;
     }
-    /**
-     * The Proxy username.
-     */
-    private String proxyUsername;
 
     /**
      * Get the value of proxyUsername.
@@ -111,10 +158,6 @@ public class Update extends Purge {
     public void setProxyUsername(String proxyUsername) {
         this.proxyUsername = proxyUsername;
     }
-    /**
-     * The Proxy password.
-     */
-    private String proxyPassword;
 
     /**
      * Get the value of proxyPassword.
@@ -133,10 +176,6 @@ public class Update extends Purge {
     public void setProxyPassword(String proxyPassword) {
         this.proxyPassword = proxyPassword;
     }
-    /**
-     * The Connection Timeout.
-     */
-    private String connectionTimeout;
 
     /**
      * Get the value of connectionTimeout.
@@ -155,10 +194,6 @@ public class Update extends Purge {
     public void setConnectionTimeout(String connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
-    /**
-     * The database driver name; such as org.h2.Driver.
-     */
-    private String databaseDriverName;
 
     /**
      * Get the value of databaseDriverName.
@@ -179,11 +214,6 @@ public class Update extends Purge {
     }
 
     /**
-     * The path to the database driver JAR file if it is not on the class path.
-     */
-    private String databaseDriverPath;
-
-    /**
      * Get the value of databaseDriverPath.
      *
      * @return the value of databaseDriverPath
@@ -200,10 +230,6 @@ public class Update extends Purge {
     public void setDatabaseDriverPath(String databaseDriverPath) {
         this.databaseDriverPath = databaseDriverPath;
     }
-    /**
-     * The database connection string.
-     */
-    private String connectionString;
 
     /**
      * Get the value of connectionString.
@@ -222,10 +248,6 @@ public class Update extends Purge {
     public void setConnectionString(String connectionString) {
         this.connectionString = connectionString;
     }
-    /**
-     * The user name for connecting to the database.
-     */
-    private String databaseUser;
 
     /**
      * Get the value of databaseUser.
@@ -246,11 +268,6 @@ public class Update extends Purge {
     }
 
     /**
-     * The password to use when connecting to the database.
-     */
-    private String databasePassword;
-
-    /**
      * Get the value of databasePassword.
      *
      * @return the value of databasePassword
@@ -267,11 +284,6 @@ public class Update extends Purge {
     public void setDatabasePassword(String databasePassword) {
         this.databasePassword = databasePassword;
     }
-
-    /**
-     * The url for the modified NVD CVE (1.2 schema).
-     */
-    private String cveUrl12Modified;
 
     /**
      * Get the value of cveUrl12Modified.
@@ -292,11 +304,6 @@ public class Update extends Purge {
     }
 
     /**
-     * The url for the modified NVD CVE (2.0 schema).
-     */
-    private String cveUrl20Modified;
-
-    /**
      * Get the value of cveUrl20Modified.
      *
      * @return the value of cveUrl20Modified
@@ -313,11 +320,6 @@ public class Update extends Purge {
     public void setCveUrl20Modified(String cveUrl20Modified) {
         this.cveUrl20Modified = cveUrl20Modified;
     }
-
-    /**
-     * Base Data Mirror URL for CVE 1.2.
-     */
-    private String cveUrl12Base;
 
     /**
      * Get the value of cveUrl12Base.
@@ -338,11 +340,6 @@ public class Update extends Purge {
     }
 
     /**
-     * Data Mirror URL for CVE 2.0.
-     */
-    private String cveUrl20Base;
-
-    /**
      * Get the value of cveUrl20Base.
      *
      * @return the value of cveUrl20Base
@@ -359,11 +356,6 @@ public class Update extends Purge {
     public void setCveUrl20Base(String cveUrl20Base) {
         this.cveUrl20Base = cveUrl20Base;
     }
-
-    /**
-     * The number of hours to wait before re-checking for updates.
-     */
-    private Integer cveValidForHours;
 
     /**
      * Get the value of cveValidForHours.

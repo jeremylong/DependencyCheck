@@ -123,14 +123,17 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     public AnalysisPhase getAnalysisPhase() {
         return AnalysisPhase.IDENTIFIER_ANALYSIS;
     }
+
     /**
      * The default is to support parallel processing.
+     *
      * @return false
      */
     @Override
     public boolean supportsParallelProcessing() {
         return false;
     }
+
     /**
      * Creates the CPE Lucene Index.
      *
@@ -675,6 +678,19 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     private static class IdentifierMatch implements Comparable<IdentifierMatch> {
 
         /**
+         * The confidence in the evidence used to identify this match.
+         */
+        private Confidence evidenceConfidence;
+        /**
+         * The confidence whether this is an exact match, or a best guess.
+         */
+        private IdentifierConfidence confidence;
+        /**
+         * The CPE identifier.
+         */
+        private Identifier identifier;
+
+        /**
          * Constructs an IdentifierMatch.
          *
          * @param type the type of identifier (such as CPE)
@@ -690,12 +706,8 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             this.confidence = identifierConfidence;
             this.evidenceConfidence = evidenceConfidence;
         }
-        //<editor-fold defaultstate="collapsed" desc="Property implementations: evidenceConfidence, confidence, identifier">
-        /**
-         * The confidence in the evidence used to identify this match.
-         */
-        private Confidence evidenceConfidence;
 
+        //<editor-fold defaultstate="collapsed" desc="Property implementations: evidenceConfidence, confidence, identifier">
         /**
          * Get the value of evidenceConfidence
          *
@@ -713,10 +725,6 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         public void setEvidenceConfidence(Confidence evidenceConfidence) {
             this.evidenceConfidence = evidenceConfidence;
         }
-        /**
-         * The confidence whether this is an exact match, or a best guess.
-         */
-        private IdentifierConfidence confidence;
 
         /**
          * Get the value of confidence.
@@ -735,10 +743,6 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         public void setConfidence(IdentifierConfidence confidence) {
             this.confidence = confidence;
         }
-        /**
-         * The CPE identifier.
-         */
-        private Identifier identifier;
 
         /**
          * Get the value of identifier.

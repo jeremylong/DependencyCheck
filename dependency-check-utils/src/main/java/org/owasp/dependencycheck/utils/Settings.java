@@ -38,6 +38,28 @@ import java.util.Properties;
  * @author Jeremy Long
  */
 public final class Settings {
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(Settings.class);
+    /**
+     * The properties file location.
+     */
+    private static final String PROPERTIES_FILE = "dependencycheck.properties";
+    /**
+     * Thread local settings.
+     */
+    private static final ThreadLocal<Settings> LOCAL_SETTINGS = new ThreadLocal<Settings>();
+    /**
+     * The properties.
+     */
+    private Properties props = null;
+
+    /**
+     * A reference to the temporary directory; used incase it needs to be
+     * deleted during cleanup.
+     */
+    private static File tempDirectory = null;
 
     //<editor-fold defaultstate="collapsed" desc="KEYS used to access settings">
     /**
@@ -403,22 +425,6 @@ public final class Settings {
     }
     //</editor-fold>
 
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Settings.class);
-    /**
-     * The properties file location.
-     */
-    private static final String PROPERTIES_FILE = "dependencycheck.properties";
-    /**
-     * Thread local settings.
-     */
-    private static final ThreadLocal<Settings> LOCAL_SETTINGS = new ThreadLocal<Settings>();
-    /**
-     * The properties.
-     */
-    private Properties props = null;
 
     /**
      * Private constructor for the Settings class. This class loads the
@@ -787,12 +793,6 @@ public final class Settings {
         final String str = System.getProperty(key, LOCAL_SETTINGS.get().props.getProperty(key, defaultValue));
         return str;
     }
-
-    /**
-     * A reference to the temporary directory; used incase it needs to be
-     * deleted during cleanup.
-     */
-    private static File tempDirectory = null;
 
     /**
      * Returns the temporary directory.

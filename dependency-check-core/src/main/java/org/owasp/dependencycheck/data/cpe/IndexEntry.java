@@ -172,10 +172,7 @@ public class IndexEntry implements Serializable {
         if ((this.vendor == null) ? (other.vendor != null) : !this.vendor.equals(other.vendor)) {
             return false;
         }
-        if ((this.product == null) ? (other.product != null) : !this.product.equals(other.product)) {
-            return false;
-        }
-        return true;
+        return !((this.product == null) ? (other.product != null) : !this.product.equals(other.product));
     }
 
     /**

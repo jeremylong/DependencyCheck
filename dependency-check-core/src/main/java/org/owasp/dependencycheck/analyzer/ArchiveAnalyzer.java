@@ -470,7 +470,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                     && b[5] == 'n'
                     && b[6] == '/') {
                 boolean stillLooking = true;
-                int chr, nxtChr;
+                int chr;
+                int nxtChr;
                 while (stillLooking && (chr = in.read()) != -1) {
                     if (chr == '\n' || chr == '\r') {
                         in.mark(4);

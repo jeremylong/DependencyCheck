@@ -40,7 +40,7 @@ public class RubyBundlerAnalyzerTest extends BaseTest {
     /**
      * The analyzer to test.
      */
-    RubyBundlerAnalyzer analyzer;
+    private RubyBundlerAnalyzer analyzer;
 
     /**
      * Correctly setup the analyzer for testing.

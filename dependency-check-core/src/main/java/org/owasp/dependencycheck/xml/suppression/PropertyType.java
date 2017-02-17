@@ -32,6 +32,14 @@ public class PropertyType {
      * The value.
      */
     private String value;
+    /**
+     * Whether or not the expression is a regex.
+     */
+    private boolean regex = false;
+    /**
+     * Indicates case sensitivity.
+     */
+    private boolean caseSensitive = false;
 
     /**
      * Gets the value of the value property.
@@ -51,10 +59,6 @@ public class PropertyType {
     public void setValue(String value) {
         this.value = value;
     }
-    /**
-     * Whether or not the expression is a regex.
-     */
-    private boolean regex = false;
 
     /**
      * Returns whether or not the value is a regex.
@@ -75,11 +79,6 @@ public class PropertyType {
     public void setRegex(boolean value) {
         this.regex = value;
     }
-    /**
-     * Indicates case sensitivity.
-     */
-    private boolean caseSensitive = false;
-
     /**
      * Gets the value of the caseSensitive property.
      *

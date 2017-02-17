@@ -78,6 +78,6 @@ public class XPathNuspecParserTest extends BaseTest {
         NuspecParser parser = new XPathNuspecParser();
         //InputStream is = XPathNuspecParserTest.class.getClassLoader().getResourceAsStream("suppressions.xml");
         InputStream is = BaseTest.getResourceAsStream(this, "suppressions.xml");
-        NugetPackage np = parser.parse(is);
+        parser.parse(is);
     }
 }

@@ -35,6 +35,46 @@ public class Model {
      * The name of the project.
      */
     private String name;
+    /**
+     * The organization name.
+     */
+    private String organization;
+    /**
+     * The description.
+     */
+    private String description;
+    /**
+     * The group id.
+     */
+    private String groupId;
+    /**
+     * The artifact id.
+     */
+    private String artifactId;
+    /**
+     * The version number.
+     */
+    private String version;
+    /**
+     * The parent group id.
+     */
+    private String parentGroupId;
+    /**
+     * The parent artifact id.
+     */
+    private String parentArtifactId;
+    /**
+     * The parent version number.
+     */
+    private String parentVersion;
+    /**
+     * The list of licenses.
+     */
+    private final List<License> licenses = new ArrayList<License>();
+    /**
+     * The project URL.
+     */
+    private String projectURL;
 
     /**
      * Get the value of name.
@@ -55,11 +95,6 @@ public class Model {
     }
 
     /**
-     * The organization name.
-     */
-    private String organization;
-
-    /**
      * Get the value of organization.
      *
      * @return the value of organization
@@ -76,11 +111,6 @@ public class Model {
     public void setOrganization(String organization) {
         this.organization = organization;
     }
-
-    /**
-     * The description.
-     */
-    private String description;
 
     /**
      * Get the value of description.
@@ -101,11 +131,6 @@ public class Model {
     }
 
     /**
-     * The group id.
-     */
-    private String groupId;
-
-    /**
      * Get the value of groupId.
      *
      * @return the value of groupId
@@ -122,11 +147,6 @@ public class Model {
     public void setGroupId(String groupId) {
         this.groupId = groupId;
     }
-
-    /**
-     * The artifact id.
-     */
-    private String artifactId;
 
     /**
      * Get the value of artifactId.
@@ -147,11 +167,6 @@ public class Model {
     }
 
     /**
-     * The version number.
-     */
-    private String version;
-
-    /**
      * Get the value of version.
      *
      * @return the value of version
@@ -168,11 +183,6 @@ public class Model {
     public void setVersion(String version) {
         this.version = version;
     }
-
-    /**
-     * The parent group id.
-     */
-    private String parentGroupId;
 
     /**
      * Get the value of parentGroupId.
@@ -193,11 +203,6 @@ public class Model {
     }
 
     /**
-     * The parent artifact id.
-     */
-    private String parentArtifactId;
-
-    /**
      * Get the value of parentArtifactId.
      *
      * @return the value of parentArtifactId
@@ -214,11 +219,6 @@ public class Model {
     public void setParentArtifactId(String parentArtifactId) {
         this.parentArtifactId = parentArtifactId;
     }
-
-    /**
-     * The parent version number.
-     */
-    private String parentVersion;
 
     /**
      * Get the value of parentVersion.
@@ -239,11 +239,6 @@ public class Model {
     }
 
     /**
-     * The list of licenses.
-     */
-    private final List<License> licenses = new ArrayList<License>();
-
-    /**
      * Returns the list of licenses.
      *
      * @return the list of licenses
@@ -260,11 +255,6 @@ public class Model {
     public void addLicense(License license) {
         licenses.add(license);
     }
-
-    /**
-     * The project URL.
-     */
-    private String projectURL;
 
     /**
      * Get the value of projectURL.

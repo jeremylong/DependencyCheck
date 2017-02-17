@@ -129,10 +129,10 @@ public class Dependency implements Serializable, Comparable<Dependency> {
         vendorEvidence = new EvidenceCollection();
         productEvidence = new EvidenceCollection();
         versionEvidence = new EvidenceCollection();
-        identifiers = new TreeSet<Identifier>();
-        vulnerabilities = new TreeSet<Vulnerability>(new VulnerabilityComparator());
-        suppressedIdentifiers = new TreeSet<Identifier>();
-        suppressedVulnerabilities = new TreeSet<Vulnerability>(new VulnerabilityComparator());
+        identifiers = new TreeSet<>();
+        vulnerabilities = new TreeSet<>(new VulnerabilityComparator());
+        suppressedIdentifiers = new TreeSet<>();
+        suppressedVulnerabilities = new TreeSet<>(new VulnerabilityComparator());
     }
 
     /**

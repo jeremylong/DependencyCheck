@@ -53,16 +53,159 @@ public class Check extends Update {
      * System specific new line character.
      */
     private static final String NEW_LINE = System.getProperty("line.separator", "\n").intern();
+    /**
+     * Whether the ruby gemspec analyzer should be enabled.
+     */
+    private Boolean rubygemsAnalyzerEnabled;
+    /**
+     * Whether or not the Node.js Analyzer is enabled.
+     */
+    private Boolean nodeAnalyzerEnabled;
+    /**
+     * Whether or not the Ruby Bundle Audit Analyzer is enabled.
+     */
+    private Boolean bundleAuditAnalyzerEnabled;
+    /**
+     * Whether the CMake analyzer should be enabled.
+     */
+    private Boolean cmakeAnalyzerEnabled;
 
     /**
-     * Construct a new DependencyCheckTask.
+     * Whether or not the openssl analyzer is enabled.
      */
-    public Check() {
-        super();
-        // Call this before Dependency Check Core starts logging anything - this way, all SLF4J messages from
-        // core end up coming through this tasks logger
-        StaticLoggerBinder.getSingleton().setTask(this);
-    }
+    private Boolean opensslAnalyzerEnabled;
+    /**
+     * Whether the python package analyzer should be enabled.
+     */
+    private Boolean pyPackageAnalyzerEnabled;
+    /**
+     * Whether the python distribution analyzer should be enabled.
+     */
+    private Boolean pyDistributionAnalyzerEnabled;
+    /**
+     * Whether or not the central analyzer is enabled.
+     */
+    private Boolean centralAnalyzerEnabled;
+    /**
+     * Whether or not the nexus analyzer is enabled.
+     */
+    private Boolean nexusAnalyzerEnabled;
+
+    /**
+     * The URL of a Nexus server's REST API end point
+     * (http://domain/nexus/service/local).
+     */
+    private String nexusUrl;
+    /**
+     * Whether or not the defined proxy should be used when connecting to Nexus.
+     */
+    private Boolean nexusUsesProxy;
+    /**
+     * Additional ZIP File extensions to add analyze. This should be a
+     * comma-separated list of file extensions to treat like ZIP files.
+     */
+    private String zipExtensions;
+    /**
+     * The path to Mono for .NET assembly analysis on non-windows systems.
+     */
+    private String pathToMono;
+    
+    /**
+     * The application name for the report.
+     *
+     * @deprecated use projectName instead.
+     */
+    @Deprecated
+    private String applicationName = null;
+    /**
+     * The name of the project being analyzed.
+     */
+    private String projectName = "dependency-check";
+
+    /**
+     * Specifies the destination directory for the generated Dependency-Check
+     * report.
+     */
+    private String reportOutputDirectory = ".";
+    /**
+     * Specifies if the build should be failed if a CVSS score above a specified
+     * level is identified. The default is 11 which means since the CVSS scores
+     * are 0-10, by default the build will never fail and the CVSS score is set
+     * to 11. The valid range for the fail build on CVSS is 0 to 11, where
+     * anything above 10 will not cause the build to fail.
+     */
+    private float failBuildOnCVSS = 11;
+    /**
+     * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not
+     * recommended that this be turned to false. Default is true.
+     */
+    private Boolean autoUpdate;
+    /**
+     * Whether only the update phase should be executed.
+     *
+     * @deprecated Use the update task instead
+     */
+    @Deprecated
+    private boolean updateOnly = false;
+
+    /**
+     * The report format to be generated (HTML, XML, VULN, ALL). Default is
+     * HTML.
+     */
+    private String reportFormat = "HTML";
+    /**
+     * The path to the suppression file.
+     */
+    private String suppressionFile;
+    /**
+     * The path to the suppression file.
+     */
+    private String hintsFile;
+    /**
+     * flag indicating whether or not to show a summary of findings.
+     */
+    private boolean showSummary = true;
+    /**
+     * Whether experimental analyzers are enabled.
+     */
+    private Boolean enableExperimental;
+    /**
+     * Whether or not the Jar Analyzer is enabled.
+     */
+    private Boolean jarAnalyzerEnabled;
+    /**
+     * Whether or not the Archive Analyzer is enabled.
+     */
+    private Boolean archiveAnalyzerEnabled;
+    /**
+     * Whether or not the .NET Nuspec Analyzer is enabled.
+     */
+    private Boolean nuspecAnalyzerEnabled;
+    /**
+     * Whether or not the PHP Composer Analyzer is enabled.
+     */
+    private Boolean composerAnalyzerEnabled;
+
+    /**
+     * Whether or not the .NET Assembly Analyzer is enabled.
+     */
+    private Boolean assemblyAnalyzerEnabled;    /**
+     * Whether the autoconf analyzer should be enabled.
+     */
+    private Boolean autoconfAnalyzerEnabled;
+    /**
+     * Sets the path for the bundle-audit binary.
+     */
+    private String bundleAuditPath;
+    /**
+     * Whether or not the CocoaPods Analyzer is enabled.
+     */
+    private Boolean cocoapodsAnalyzerEnabled;
+
+    /**
+     * Whether or not the Swift package Analyzer is enabled.
+     */
+    private Boolean swiftPackageManagerAnalyzerEnabled;
     //The following code was copied Apache Ant PathConvert
     //BEGIN COPY from org.apache.tools.ant.taskdefs.PathConvert
     /**
@@ -140,13 +283,17 @@ public class Check extends Update {
         }
     }
     // END COPY from org.apache.tools.ant.taskdefs
+
+    
     /**
-     * The application name for the report.
-     *
-     * @deprecated use projectName instead.
+     * Construct a new DependencyCheckTask.
      */
-    @Deprecated
-    private String applicationName = null;
+    public Check() {
+        super();
+        // Call this before Dependency Check Core starts logging anything - this way, all SLF4J messages from
+        // core end up coming through this tasks logger
+        StaticLoggerBinder.getSingleton().setTask(this);
+    }
 
     /**
      * Get the value of applicationName.
@@ -170,11 +317,6 @@ public class Check extends Update {
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
     }
-    /**
-     * The name of the project being analyzed.
-     */
-    private String projectName = "dependency-check";
-
     /**
      * Get the value of projectName.
      *
@@ -200,12 +342,6 @@ public class Check extends Update {
     }
 
     /**
-     * Specifies the destination directory for the generated Dependency-Check
-     * report.
-     */
-    private String reportOutputDirectory = ".";
-
-    /**
      * Get the value of reportOutputDirectory.
      *
      * @return the value of reportOutputDirectory
@@ -222,14 +358,6 @@ public class Check extends Update {
     public void setReportOutputDirectory(String reportOutputDirectory) {
         this.reportOutputDirectory = reportOutputDirectory;
     }
-    /**
-     * Specifies if the build should be failed if a CVSS score above a specified
-     * level is identified. The default is 11 which means since the CVSS scores
-     * are 0-10, by default the build will never fail and the CVSS score is set
-     * to 11. The valid range for the fail build on CVSS is 0 to 11, where
-     * anything above 10 will not cause the build to fail.
-     */
-    private float failBuildOnCVSS = 11;
 
     /**
      * Get the value of failBuildOnCVSS.
@@ -248,11 +376,6 @@ public class Check extends Update {
     public void setFailBuildOnCVSS(float failBuildOnCVSS) {
         this.failBuildOnCVSS = failBuildOnCVSS;
     }
-    /**
-     * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not
-     * recommended that this be turned to false. Default is true.
-     */
-    private Boolean autoUpdate;
 
     /**
      * Get the value of autoUpdate.
@@ -271,13 +394,6 @@ public class Check extends Update {
     public void setAutoUpdate(Boolean autoUpdate) {
         this.autoUpdate = autoUpdate;
     }
-    /**
-     * Whether only the update phase should be executed.
-     *
-     * @deprecated Use the update task instead
-     */
-    @Deprecated
-    private boolean updateOnly = false;
 
     /**
      * Get the value of updateOnly.
@@ -302,12 +418,6 @@ public class Check extends Update {
     }
 
     /**
-     * The report format to be generated (HTML, XML, VULN, ALL). Default is
-     * HTML.
-     */
-    private String reportFormat = "HTML";
-
-    /**
      * Get the value of reportFormat.
      *
      * @return the value of reportFormat
@@ -324,10 +434,6 @@ public class Check extends Update {
     public void setReportFormat(ReportFormats reportFormat) {
         this.reportFormat = reportFormat.getValue();
     }
-    /**
-     * The path to the suppression file.
-     */
-    private String suppressionFile;
 
     /**
      * Get the value of suppressionFile.
@@ -346,10 +452,6 @@ public class Check extends Update {
     public void setSuppressionFile(String suppressionFile) {
         this.suppressionFile = suppressionFile;
     }
-    /**
-     * The path to the suppression file.
-     */
-    private String hintsFile;
 
     /**
      * Get the value of hintsFile.
@@ -369,11 +471,6 @@ public class Check extends Update {
         this.hintsFile = hintsFile;
     }
     /**
-     * flag indicating whether or not to show a summary of findings.
-     */
-    private boolean showSummary = true;
-
-    /**
      * Get the value of showSummary.
      *
      * @return the value of showSummary
@@ -390,11 +487,6 @@ public class Check extends Update {
     public void setShowSummary(boolean showSummary) {
         this.showSummary = showSummary;
     }
-
-    /**
-     * Whether experimental analyzers are enabled.
-     */
-    private Boolean enableExperimental;
 
     /**
      * Get the value of enableExperimental.
@@ -415,11 +507,6 @@ public class Check extends Update {
     }
 
     /**
-     * Whether or not the Jar Analyzer is enabled.
-     */
-    private Boolean jarAnalyzerEnabled;
-
-    /**
      * Returns whether or not the analyzer is enabled.
      *
      * @return true if the analyzer is enabled
@@ -436,10 +523,6 @@ public class Check extends Update {
     public void setJarAnalyzerEnabled(Boolean jarAnalyzerEnabled) {
         this.jarAnalyzerEnabled = jarAnalyzerEnabled;
     }
-    /**
-     * Whether or not the Archive Analyzer is enabled.
-     */
-    private Boolean archiveAnalyzerEnabled;
 
     /**
      * Returns whether or not the analyzer is enabled.
@@ -449,10 +532,6 @@ public class Check extends Update {
     public Boolean isArchiveAnalyzerEnabled() {
         return archiveAnalyzerEnabled;
     }
-    /**
-     * Whether or not the .NET Assembly Analyzer is enabled.
-     */
-    private Boolean assemblyAnalyzerEnabled;
 
     /**
      * Sets whether or not the analyzer is enabled.
@@ -480,10 +559,6 @@ public class Check extends Update {
     public void setAssemblyAnalyzerEnabled(Boolean assemblyAnalyzerEnabled) {
         this.assemblyAnalyzerEnabled = assemblyAnalyzerEnabled;
     }
-    /**
-     * Whether or not the .NET Nuspec Analyzer is enabled.
-     */
-    private Boolean nuspecAnalyzerEnabled;
 
     /**
      * Returns whether or not the analyzer is enabled.
@@ -502,10 +577,6 @@ public class Check extends Update {
     public void setNuspecAnalyzerEnabled(Boolean nuspecAnalyzerEnabled) {
         this.nuspecAnalyzerEnabled = nuspecAnalyzerEnabled;
     }
-    /**
-     * Whether or not the PHP Composer Analyzer is enabled.
-     */
-    private Boolean composerAnalyzerEnabled;
 
     /**
      * Get the value of composerAnalyzerEnabled.
@@ -524,10 +595,6 @@ public class Check extends Update {
     public void setComposerAnalyzerEnabled(Boolean composerAnalyzerEnabled) {
         this.composerAnalyzerEnabled = composerAnalyzerEnabled;
     }
-    /**
-     * Whether the autoconf analyzer should be enabled.
-     */
-    private Boolean autoconfAnalyzerEnabled;
 
     /**
      * Get the value of autoconfAnalyzerEnabled.
@@ -546,10 +613,6 @@ public class Check extends Update {
     public void setAutoconfAnalyzerEnabled(Boolean autoconfAnalyzerEnabled) {
         this.autoconfAnalyzerEnabled = autoconfAnalyzerEnabled;
     }
-    /**
-     * Whether the CMake analyzer should be enabled.
-     */
-    private Boolean cmakeAnalyzerEnabled;
 
     /**
      * Get the value of cmakeAnalyzerEnabled.
@@ -568,12 +631,6 @@ public class Check extends Update {
     public void setCMakeAnalyzerEnabled(Boolean cmakeAnalyzerEnabled) {
         this.cmakeAnalyzerEnabled = cmakeAnalyzerEnabled;
     }
-
-//start changes
-    /**
-     * Whether or not the Ruby Bundle Audit Analyzer is enabled.
-     */
-    private Boolean bundleAuditAnalyzerEnabled;
 
     /**
      * Returns if the Bundle Audit Analyzer is enabled.
@@ -595,11 +652,6 @@ public class Check extends Update {
     }
 
     /**
-     * Sets the path for the bundle-audit binary.
-     */
-    private String bundleAuditPath;
-
-    /**
      * Returns the path to the bundle audit executable.
      *
      * @return the path to the bundle audit executable
@@ -616,10 +668,6 @@ public class Check extends Update {
     public void setBundleAuditPath(String bundleAuditPath) {
         this.bundleAuditPath = bundleAuditPath;
     }
-    /**
-     * Whether or not the CocoaPods Analyzer is enabled.
-     */
-    private Boolean cocoapodsAnalyzerEnabled;
 
     /**
      * Returns if the cocoapods analyyzer is enabled.
@@ -640,11 +688,6 @@ public class Check extends Update {
     }
 
     /**
-     * Whether or not the Swift package Analyzer is enabled.
-     */
-    private Boolean swiftPackageManagerAnalyzerEnabled;
-
-    /**
      * Returns whether or not the Swift package Analyzer is enabled.
      *
      * @return whether or not the Swift package Analyzer is enabled
@@ -662,12 +705,6 @@ public class Check extends Update {
     public void setSwiftPackageManagerAnalyzerEnabled(Boolean swiftPackageManagerAnalyzerEnabled) {
         this.swiftPackageManagerAnalyzerEnabled = swiftPackageManagerAnalyzerEnabled;
     }
-//end changes
-
-    /**
-     * Whether or not the openssl analyzer is enabled.
-     */
-    private Boolean opensslAnalyzerEnabled;
 
     /**
      * Get the value of opensslAnalyzerEnabled.
@@ -686,10 +723,6 @@ public class Check extends Update {
     public void setOpensslAnalyzerEnabled(Boolean opensslAnalyzerEnabled) {
         this.opensslAnalyzerEnabled = opensslAnalyzerEnabled;
     }
-    /**
-     * Whether or not the Node.js Analyzer is enabled.
-     */
-    private Boolean nodeAnalyzerEnabled;
 
     /**
      * Get the value of nodeAnalyzerEnabled.
@@ -708,10 +741,6 @@ public class Check extends Update {
     public void setNodeAnalyzerEnabled(Boolean nodeAnalyzerEnabled) {
         this.nodeAnalyzerEnabled = nodeAnalyzerEnabled;
     }
-    /**
-     * Whether the ruby gemspec analyzer should be enabled.
-     */
-    private Boolean rubygemsAnalyzerEnabled;
 
     /**
      * Get the value of rubygemsAnalyzerEnabled.
@@ -730,10 +759,6 @@ public class Check extends Update {
     public void setRubygemsAnalyzerEnabled(Boolean rubygemsAnalyzerEnabled) {
         this.rubygemsAnalyzerEnabled = rubygemsAnalyzerEnabled;
     }
-    /**
-     * Whether the python package analyzer should be enabled.
-     */
-    private Boolean pyPackageAnalyzerEnabled;
 
     /**
      * Get the value of pyPackageAnalyzerEnabled.
@@ -752,11 +777,6 @@ public class Check extends Update {
     public void setPyPackageAnalyzerEnabled(Boolean pyPackageAnalyzerEnabled) {
         this.pyPackageAnalyzerEnabled = pyPackageAnalyzerEnabled;
     }
-
-    /**
-     * Whether the python distribution analyzer should be enabled.
-     */
-    private Boolean pyDistributionAnalyzerEnabled;
 
     /**
      * Get the value of pyDistributionAnalyzerEnabled.
@@ -778,11 +798,6 @@ public class Check extends Update {
     }
 
     /**
-     * Whether or not the central analyzer is enabled.
-     */
-    private Boolean centralAnalyzerEnabled;
-
-    /**
      * Get the value of centralAnalyzerEnabled.
      *
      * @return the value of centralAnalyzerEnabled
@@ -799,11 +814,6 @@ public class Check extends Update {
     public void setCentralAnalyzerEnabled(Boolean centralAnalyzerEnabled) {
         this.centralAnalyzerEnabled = centralAnalyzerEnabled;
     }
-
-    /**
-     * Whether or not the nexus analyzer is enabled.
-     */
-    private Boolean nexusAnalyzerEnabled;
 
     /**
      * Get the value of nexusAnalyzerEnabled.
@@ -824,12 +834,6 @@ public class Check extends Update {
     }
 
     /**
-     * The URL of a Nexus server's REST API end point
-     * (http://domain/nexus/service/local).
-     */
-    private String nexusUrl;
-
-    /**
      * Get the value of nexusUrl.
      *
      * @return the value of nexusUrl
@@ -846,10 +850,6 @@ public class Check extends Update {
     public void setNexusUrl(String nexusUrl) {
         this.nexusUrl = nexusUrl;
     }
-    /**
-     * Whether or not the defined proxy should be used when connecting to Nexus.
-     */
-    private Boolean nexusUsesProxy;
 
     /**
      * Get the value of nexusUsesProxy.
@@ -870,12 +870,6 @@ public class Check extends Update {
     }
 
     /**
-     * Additional ZIP File extensions to add analyze. This should be a
-     * comma-separated list of file extensions to treat like ZIP files.
-     */
-    private String zipExtensions;
-
-    /**
      * Get the value of zipExtensions.
      *
      * @return the value of zipExtensions
@@ -892,11 +886,6 @@ public class Check extends Update {
     public void setZipExtensions(String zipExtensions) {
         this.zipExtensions = zipExtensions;
     }
-
-    /**
-     * The path to Mono for .NET assembly analysis on non-windows systems.
-     */
-    private String pathToMono;
 
     /**
      * Get the value of pathToMono.

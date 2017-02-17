@@ -167,6 +167,7 @@ public class ModelTest extends BaseTest {
         String version = "";
         Model instance = new Model();
         instance.setVersion(version);
+        assertNotNull(instance.getVersion());
     }
 
     /**

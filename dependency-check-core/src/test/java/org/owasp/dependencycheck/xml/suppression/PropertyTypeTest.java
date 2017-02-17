@@ -49,7 +49,6 @@ public class PropertyTypeTest extends BaseTest {
     @Test
     public void testIsRegex() {
         PropertyType instance = new PropertyType();
-        boolean result = instance.isRegex();
         assertFalse(instance.isRegex());
         instance.setRegex(true);
         assertTrue(instance.isRegex());

@@ -409,7 +409,7 @@ public class SuppressionRule {
      * @param identifier a CPE identifier to check
      * @return true if the entry matches; otherwise false
      */
-    boolean identifierMatches(String identifierType, PropertyType suppressionEntry, Identifier identifier) {
+    protected boolean identifierMatches(String identifierType, PropertyType suppressionEntry, Identifier identifier) {
         if (identifierType.equals(identifier.getType())) {
             if (suppressionEntry.matches(identifier.getValue())) {
                 return true;

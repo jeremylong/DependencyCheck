@@ -111,6 +111,6 @@ public class RubyGemspecAnalyzerTest extends BaseTest {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                 "ruby/vulnerable/gems/rails-4.1.15/vendor/bundle/ruby/2.2.0/gems/pg-0.18.4/Rakefile"));
         analyzer.analyze(result, null);
-        //TODO add verification
+        assertTrue(result.getEvidence().size()>0);
     }
 }

@@ -18,10 +18,12 @@
 package org.owasp.dependencycheck.dependency;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -165,7 +167,7 @@ public class DependencyTest extends BaseTest {
         Dependency instance = new Dependency();
         Set<Identifier> result = instance.getIdentifiers();
 
-        assertTrue(true); //this is just a getter setter pair.
+        assertNotNull(result);
     }
 
     /**
@@ -173,10 +175,10 @@ public class DependencyTest extends BaseTest {
      */
     @Test
     public void testSetIdentifiers() {
-        Set<Identifier> identifiers = null;
+        Set<Identifier> identifiers = new HashSet<>();
         Dependency instance = new Dependency();
         instance.setIdentifiers(identifiers);
-        assertTrue(true); //this is just a getter setter pair.
+        assertNotNull(instance.getIdentifiers());
     }
 
     /**
@@ -201,9 +203,8 @@ public class DependencyTest extends BaseTest {
     @Test
     public void testGetEvidence() {
         Dependency instance = new Dependency();
-        EvidenceCollection expResult = null;
         EvidenceCollection result = instance.getEvidence();
-        assertTrue(true); //this is just a getter setter pair.
+        assertNotNull(result);
     }
 
     /**
@@ -232,9 +233,8 @@ public class DependencyTest extends BaseTest {
     @Test
     public void testGetVendorEvidence() {
         Dependency instance = new Dependency();
-        EvidenceCollection expResult = null;
         EvidenceCollection result = instance.getVendorEvidence();
-        assertTrue(true); //this is just a getter setter pair.
+        assertNotNull(result);
     }
 
     /**
@@ -243,9 +243,8 @@ public class DependencyTest extends BaseTest {
     @Test
     public void testGetProductEvidence() {
         Dependency instance = new Dependency();
-        EvidenceCollection expResult = null;
         EvidenceCollection result = instance.getProductEvidence();
-        assertTrue(true); //this is just a getter setter pair.
+        assertNotNull(result);
     }
 
     /**
@@ -254,9 +253,8 @@ public class DependencyTest extends BaseTest {
     @Test
     public void testGetVersionEvidence() {
         Dependency instance = new Dependency();
-        EvidenceCollection expResult = null;
         EvidenceCollection result = instance.getVersionEvidence();
-        assertTrue(true); //this is just a getter setter pair.
+        assertNotNull(result);
     }
 
     /**

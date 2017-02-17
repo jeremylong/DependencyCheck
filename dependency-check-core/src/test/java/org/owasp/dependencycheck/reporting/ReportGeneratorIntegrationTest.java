@@ -53,7 +53,7 @@ public class ReportGeneratorIntegrationTest extends BaseDBTestCase {
      */
     @Test
     public void testGenerateReport() throws Exception {
-        String templateName = "HtmlReport";
+//        String templateName = "HtmlReport";
 //        File f = new File("target/test-reports");
 //        if (!f.exists()) {
 //            f.mkdir();

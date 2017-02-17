@@ -52,6 +52,18 @@ import org.xml.sax.SAXException;
  * @author Jeremy Long
  */
 public class HintAnalyzer extends AbstractAnalyzer {
+ /**
+     * The Logger for use throughout the class
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(HintAnalyzer.class);
+    /**
+     * The name of the hint rule file
+     */
+    private static final String HINT_RULE_FILE_NAME = "dependencycheck-base-hint.xml";
+    /**
+     * The collection of hints.
+     */
+    private Hints hints;
 
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
@@ -109,20 +121,7 @@ public class HintAnalyzer extends AbstractAnalyzer {
         }
     }
     //</editor-fold>
-
-    /**
-     * The Logger for use throughout the class
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(HintAnalyzer.class);
-    /**
-     * The name of the hint rule file
-     */
-    private static final String HINT_RULE_FILE_NAME = "dependencycheck-base-hint.xml";
-    /**
-     * The collection of hints.
-     */
-    private Hints hints;
-
+   
     /**
      * The HintAnalyzer uses knowledge about a dependency to add additional
      * information to help in identification of identifiers or vulnerabilities.
@@ -195,7 +194,7 @@ public class HintAnalyzer extends AbstractAnalyzer {
         }
 
         final Iterator<Evidence> itr = dependency.getVendorEvidence().iterator();
-        final List<Evidence> newEntries = new ArrayList<Evidence>();
+        final List<Evidence> newEntries = new ArrayList<>();
         while (itr.hasNext()) {
             final Evidence e = itr.next();
             for (VendorDuplicatingHintRule dhr : hints.getVendorDuplicatingHintRules()) {
@@ -220,10 +219,7 @@ public class HintAnalyzer extends AbstractAnalyzer {
         File file = null;
         try {
             hints = parser.parseHints(this.getClass().getClassLoader().getResourceAsStream(HINT_RULE_FILE_NAME));
-        } catch (HintParseException ex) {
-            LOGGER.error("Unable to parse the base hint data file");
-            LOGGER.debug("Unable to parse the base hint data file", ex);
-        } catch (SAXException ex) {
+        } catch (HintParseException | SAXException ex) {
             LOGGER.error("Unable to parse the base hint data file");
             LOGGER.debug("Unable to parse the base hint data file", ex);
         }
@@ -246,9 +242,7 @@ public class HintAnalyzer extends AbstractAnalyzer {
             } else {
                 file = new File(filePath);
                 if (!file.exists()) {
-                    InputStream fromClasspath = null;
-                    try {
-                        fromClasspath = this.getClass().getClassLoader().getResourceAsStream(filePath);
+                    try (InputStream fromClasspath = this.getClass().getClassLoader().getResourceAsStream(filePath)) {
                         if (fromClasspath != null) {
                             deleteTempFile = true;
                             file = FileUtils.getTempFile("hint", "xml");
@@ -257,10 +251,6 @@ public class HintAnalyzer extends AbstractAnalyzer {
                             } catch (IOException ex) {
                                 throw new HintParseException("Unable to locate hints file in classpath", ex);
                             }
-                        }
-                    } finally {
-                        if (fromClasspath != null) {
-                            fromClasspath.close();
                         }
                     }
                 }

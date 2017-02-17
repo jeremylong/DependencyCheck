@@ -233,7 +233,7 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
      * @param str the string to test
      * @return true if the string only contains 0-9, otherwise false.
      */
-    static boolean isPositiveInteger(final String str) {
+    protected static boolean isPositiveInteger(final String str) {
         if (str == null || str.isEmpty()) {
             return false;
         }

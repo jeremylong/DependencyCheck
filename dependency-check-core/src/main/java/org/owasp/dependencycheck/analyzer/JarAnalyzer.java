@@ -148,15 +148,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * A pattern to detect HTML within text.
      */
     private static final Pattern HTML_DETECTION_PATTERN = Pattern.compile("\\<[a-z]+.*/?\\>", Pattern.CASE_INSENSITIVE);
-
-    //</editor-fold>
-    /**
-     * Constructs a new JarAnalyzer.
-     */
-    public JarAnalyzer() {
-    }
-
-    //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
     /**
      * The name of the analyzer.
      */
@@ -175,6 +166,15 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
 
+
+    //</editor-fold>
+    /**
+     * Constructs a new JarAnalyzer.
+     */
+    public JarAnalyzer() {
+    }
+
+    //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
     /**
      * Returns the FileFilter.
      *
@@ -396,7 +396,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws IOException thrown if there is an exception reading a JarEntry
      */
     private List<String> retrievePomListing(final JarFile jar) throws IOException {
-        final List<String> pomEntries = new ArrayList<String>();
+        final List<String> pomEntries = new ArrayList<>();
         final Enumeration<JarEntry> entries = jar.entries();
         while (entries.hasMoreElements()) {
             final JarEntry entry = entries.nextElement();
@@ -588,8 +588,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     protected void analyzePackageNames(List<ClassNameInformation> classNames,
             Dependency dependency, boolean addPackagesAsEvidence) {
-        final Map<String, Integer> vendorIdentifiers = new HashMap<String, Integer>();
-        final Map<String, Integer> productIdentifiers = new HashMap<String, Integer>();
+        final Map<String, Integer> vendorIdentifiers = new HashMap<>();
+        final Map<String, Integer> productIdentifiers = new HashMap<>();
         analyzeFullyQualifiedClassNames(classNames, vendorIdentifiers, productIdentifiers);
 
         final int classCount = classNames.size();
@@ -949,7 +949,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @return an list of fully qualified class names
      */
     private List<ClassNameInformation> collectClassNames(Dependency dependency) {
-        final List<ClassNameInformation> classNames = new ArrayList<ClassNameInformation>();
+        final List<ClassNameInformation> classNames = new ArrayList<>();
         JarFile jar = null;
         try {
             jar = new JarFile(dependency.getActualFilePath());
@@ -1115,6 +1115,15 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * Stores information about a class name.
      */
     protected static class ClassNameInformation {
+        /**
+         * The fully qualified class name.
+         */
+        private String name;
+        /**
+         * Up to the first four levels of the package structure, excluding a
+         * leading "org" or "com".
+         */
+        private final ArrayList<String> packageStructure = new ArrayList<String>();
 
         /**
          * <p>
@@ -1158,10 +1167,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 packageStructure.add(name);
             }
         }
-        /**
-         * The fully qualified class name.
-         */
-        private String name;
 
         /**
          * Get the value of name
@@ -1180,12 +1185,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         public void setName(String name) {
             this.name = name;
         }
-        /**
-         * Up to the first four levels of the package structure, excluding a
-         * leading "org" or "com".
-         */
-        private final ArrayList<String> packageStructure = new ArrayList<String>();
-
         /**
          * Get the value of packageStructure
          *

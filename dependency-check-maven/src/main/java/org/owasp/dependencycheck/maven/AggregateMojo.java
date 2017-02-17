@@ -53,6 +53,13 @@ import org.owasp.dependencycheck.utils.Settings;
 public class AggregateMojo extends BaseDependencyCheckMojo {
 
     /**
+     * The name of the report in the site.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "name", defaultValue = "dependency-check:aggregate", required = true)
+    private String name = "dependency-check:aggregate";
+
+    /**
      * Executes the aggregate dependency-check goal. This runs dependency-check
      * and generates the subsequent reports.
      *
@@ -254,13 +261,6 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
     public boolean canGenerateReport() {
         return true; //aggregate always returns true for now - we can look at a more complicated/acurate solution later
     }
-
-    /**
-     * The name of the report in the site.
-     */
-    @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "name", defaultValue = "dependency-check:aggregate", required = true)
-    private String name = "dependency-check:aggregate";
 
     /**
      * Returns the report name.

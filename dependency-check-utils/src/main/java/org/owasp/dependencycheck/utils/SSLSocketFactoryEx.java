@@ -35,6 +35,15 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(SSLSocketFactoryEx.class);
 
     /**
+     * The SSL context.
+     */
+    private SSLContext sslCtxt;
+    /**
+     * The protocols.
+     */
+    private String[] protocols;
+
+    /**
      * Constructs a new SSLSocketFactory.
      *
      * @throws NoSuchAlgorithmException thrown when an algorithm is not
@@ -284,13 +293,4 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
 
         return aa.toArray(new String[0]);
     }
-
-    /**
-     * The SSL context.
-     */
-    private SSLContext sslCtxt;
-    /**
-     * The protocols.
-     */
-    private String[] protocols;
 }

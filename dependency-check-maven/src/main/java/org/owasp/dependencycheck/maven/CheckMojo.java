@@ -47,6 +47,13 @@ import org.owasp.dependencycheck.utils.Settings;
 public class CheckMojo extends BaseDependencyCheckMojo {
 
     /**
+     * The name of the report in the site.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "name", defaultValue = "dependency-check", required = true)
+    private String name = "dependency-check";
+
+    /**
      * Returns whether or not a the report can be generated.
      *
      * @return <code>true</code> if the report can be generated; otherwise
@@ -125,13 +132,6 @@ public class CheckMojo extends BaseDependencyCheckMojo {
         }
         Settings.cleanup();
     }
-
-    /**
-     * The name of the report in the site.
-     */
-    @SuppressWarnings("CanBeFinal")
-    @Parameter(property = "name", defaultValue = "dependency-check", required = true)
-    private String name = "dependency-check";
 
     /**
      * Returns the report name.

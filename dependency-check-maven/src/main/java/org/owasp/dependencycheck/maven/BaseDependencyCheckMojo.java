@@ -80,6 +80,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * System specific new line character.
      */
     private static final String NEW_LINE = System.getProperty("line.separator", "\n").intern();
+    /**
+     * A flag indicating whether or not the Maven site is being generated.
+     */
+    private boolean generatingSite = false;
     //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Maven bound parameters and components">
     /**
@@ -92,15 +96,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @Parameter(property = "failOnError", defaultValue = "true", required = true)
     private boolean failOnError;
-
-    /**
-     * Returns if the mojo should fail the build if an exception occurs.
-     *
-     * @return whether or not the mojo should fail the build
-     */
-    protected boolean isFailOnError() {
-        return failOnError;
-    }
 
     /**
      * The Maven Project Object.
@@ -344,14 +339,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private String connectionString;
 
     /**
-     * Returns the connection string.
-     *
-     * @return the connection string
-     */
-    protected String getConnectionString() {
-        return connectionString;
-    }
-    /**
      * The database driver name. An example would be org.h2.Driver.
      */
     @Parameter(property = "databaseDriverName", defaultValue = "", required = false)
@@ -473,9 +460,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "externalReport")
     @Deprecated
     private String externalReport = null;
+    
     // </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Base Maven implementation">
-
     /**
      * Executes dependency-check.
      *
@@ -527,17 +514,29 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * A flag indicating whether or not the maven site is being generated.
-     */
-    private boolean generatingSite = false;
-
-    /**
      * Returns true if the Maven site is being generated.
      *
      * @return true if the Maven site is being generated
      */
     protected boolean isGeneratingSite() {
         return generatingSite;
+    }
+
+    /**
+     * Returns the connection string.
+     *
+     * @return the connection string
+     */
+    protected String getConnectionString() {
+        return connectionString;
+    }
+    /**
+     * Returns if the mojo should fail the build if an exception occurs.
+     *
+     * @return whether or not the mojo should fail the build
+     */
+    protected boolean isFailOnError() {
+        return failOnError;
     }
 
     /**

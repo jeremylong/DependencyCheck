@@ -41,10 +41,10 @@ import static org.junit.Assert.assertTrue;
 public class EngineTest extends BaseDBTestCase {
 
     @Mocked
-    Analyzer analyzer;
+    private Analyzer analyzer;
 
     @Mocked
-    AnalysisTask analysisTask;
+    private AnalysisTask analysisTask;
 
 
     /**
