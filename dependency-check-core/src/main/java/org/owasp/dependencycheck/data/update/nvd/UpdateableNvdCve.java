@@ -17,16 +17,10 @@
  */
 package org.owasp.dependencycheck.data.update.nvd;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import org.owasp.dependencycheck.utils.DownloadFailedException;
-import org.owasp.dependencycheck.utils.Downloader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Contains a collection of updateable NvdCveInfo objects. This is used to determine which files need to be downloaded and
@@ -36,10 +30,6 @@ import org.slf4j.LoggerFactory;
  */
 public class UpdateableNvdCve implements Iterable<NvdCveInfo>, Iterator<NvdCveInfo> {
 
-    /**
-     * A reference to the logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(UpdateableNvdCve.class);
     /**
      * A collection of sources of data.
      */
@@ -74,31 +64,16 @@ public class UpdateableNvdCve implements Iterable<NvdCveInfo>, Iterator<NvdCveIn
      * @param id the key for the item to be added
      * @param url the URL to download the item
      * @param oldUrl the URL for the old version of the item (the NVD CVE old schema still contains useful data we need).
-     * @throws MalformedURLException thrown if the URL provided is invalid
-     * @throws DownloadFailedException thrown if the download fails.
-     */
-    public void add(String id, String url, String oldUrl) throws MalformedURLException, DownloadFailedException {
-        add(id, url, oldUrl, false);
-    }
-
-    /**
-     * Adds a new entry of updateable information to the contained collection.
-     *
-     * @param id the key for the item to be added
-     * @param url the URL to download the item
-     * @param oldUrl the URL for the old version of the item (the NVD CVE old schema still contains useful data we need).
+     * @param timestamp the last modified date of the downloaded item
      * @param needsUpdate whether or not the data needs to be updated
-     * @throws MalformedURLException thrown if the URL provided is invalid
-     * @throws DownloadFailedException thrown if the download fails.
      */
-    public void add(String id, String url, String oldUrl, boolean needsUpdate) throws MalformedURLException, DownloadFailedException {
+    public void add(String id, String url, String oldUrl, long timestamp, boolean needsUpdate) {
         final NvdCveInfo item = new NvdCveInfo();
         item.setNeedsUpdate(needsUpdate); //the others default to true, to make life easier later this should default to false.
         item.setId(id);
         item.setUrl(url);
         item.setOldSchemaVersionUrl(oldUrl);
-        LOGGER.debug("Checking for updates from: {}", url);
-        item.setTimestamp(Downloader.getLastModified(new URL(url)));
+        item.setTimestamp(timestamp);
         collection.put(id, item);
     }
 

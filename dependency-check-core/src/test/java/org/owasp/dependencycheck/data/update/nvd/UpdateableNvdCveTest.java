@@ -17,17 +17,12 @@
  */
 package org.owasp.dependencycheck.data.update.nvd;
 
-import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
-import org.owasp.dependencycheck.data.update.nvd.NvdCveInfo;
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
-import org.owasp.dependencycheck.utils.DownloadFailedException;
 
 /**
  *
@@ -39,18 +34,18 @@ public class UpdateableNvdCveTest extends BaseTest {
      * Test of isUpdateNeeded method, of class UpdateableNvdCve.
      */
     @Test
-    public void testIsUpdateNeeded() throws MalformedURLException, DownloadFailedException, IOException {
+    public void testIsUpdateNeeded() {
         String id = "key";
-        //use a local file as this test will load the result and check the timestamp
         String url = new File("target/test-classes/nvdcve-2.0-2012.xml").toURI().toString();
+        long timestamp = 42;
         UpdateableNvdCve instance = new UpdateableNvdCve();
-        instance.add(id, url, url, false);
+        instance.add(id, url, url, timestamp, false);
 
         boolean expResult = false;
         boolean result = instance.isUpdateNeeded();
         assertEquals(expResult, result);
 
-        instance.add("nextId", url, url, true);
+        instance.add("nextId", url, url, 23, true);
 
         expResult = true;
         result = instance.isUpdateNeeded();
@@ -61,52 +56,36 @@ public class UpdateableNvdCveTest extends BaseTest {
      * Test of add method, of class UpdateableNvdCve.
      */
     @Test
-    public void testAdd_3args() throws Exception {
+    public void testAdd() throws Exception {
         String id = "key";
-        //use a local file as this test will load the result and check the timestamp
-        String url = "file:///" + new File("target/test-classes/nvdcve-2.0-2012.xml").toURI().toString();
-        UpdateableNvdCve instance = new UpdateableNvdCve();
-        instance.add(id, url, url);
-        NvdCveInfo results = instance.get(id);
-        assertEquals(id, results.getId());
-        assertEquals(url, results.getUrl());
-        assertEquals(url, results.getOldSchemaVersionUrl());
-    }
-
-    /**
-     * Test of add method, of class UpdateableNvdCve.
-     */
-    @Test
-    public void testAdd_4args() throws Exception {
-        String id = "key";
-        //use a local file as this test will load the result and check the timestamp
         String url = new File("target/test-classes/nvdcve-2.0-2012.xml").toURI().toString();
+        long timestamp = 42;
         UpdateableNvdCve instance = new UpdateableNvdCve();
-        instance.add(id, url, url, false);
+        instance.add(id, url, url, timestamp, false);
 
         boolean expResult = false;
         boolean result = instance.isUpdateNeeded();
         assertEquals(expResult, result);
 
-        instance.add("nextId", url, url, false);
+        instance.add("nextId", url, url, 23, false);
         NvdCveInfo results = instance.get(id);
 
         assertEquals(id, results.getId());
         assertEquals(url, results.getUrl());
         assertEquals(url, results.getOldSchemaVersionUrl());
-
+        assertEquals(timestamp, results.getTimestamp());
     }
 
     /**
      * Test of clear method, of class UpdateableNvdCve.
      */
     @Test
-    public void testClear() throws MalformedURLException, DownloadFailedException, IOException {
+    public void testClear() {
         String id = "key";
-        //use a local file as this test will load the result and check the timestamp
         String url = new File("target/test-classes/nvdcve-2.0-2012.xml").toURI().toString();
+        long timestamp = 42;
         UpdateableNvdCve instance = new UpdateableNvdCve();
-        instance.add(id, url, url, false);
+        instance.add(id, url, url, timestamp, false);
         assertFalse(instance.getCollection().isEmpty());
         instance.clear();
         assertTrue(instance.getCollection().isEmpty());
@@ -116,13 +95,12 @@ public class UpdateableNvdCveTest extends BaseTest {
      * Test of iterator method, of class UpdatableNvdCve.
      */
     @Test
-    public void testIterator() throws IOException {
-        //use a local file as this test will load the result and check the timestamp
+    public void testIterator() {
         String url = new File("target/test-classes/nvdcve-2.0-2012.xml").toURI().toString();
         UpdateableNvdCve instance = new UpdateableNvdCve();
-        instance.add("one", url, url, false);
-        instance.add("two", url, url, false);
-        instance.add("three", url, url, false);
+        instance.add("one", url, url, 42, false);
+        instance.add("two", url, url, 23, false);
+        instance.add("three", url, url, 17, false);
         int itemsProcessed = 0;
         for (NvdCveInfo item : instance) {
             if ("one".equals(item.getId())) {
