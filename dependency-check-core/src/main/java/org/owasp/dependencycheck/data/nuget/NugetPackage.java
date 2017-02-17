@@ -54,12 +54,6 @@ public class NugetPackage {
     private String licenseUrl;
 
     /**
-     * Creates an empty NugetPackage.
-     */
-    public NugetPackage() {
-    }
-
-    /**
      * Sets the id.
      * @param id the id
      */

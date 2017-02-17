@@ -26,6 +26,7 @@ import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -94,15 +95,21 @@ public class ArchiveAnalyzerIntegrationTest extends BaseDBTestCase {
      * Test of initialize and close methods, of class ArchiveAnalyzer.
      */
     @Test
-    public void testInitialize() throws Exception {
+    public void testInitialize() {
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
-        instance.setEnabled(true);
-        instance.setFilesMatched(true);
-        instance.initialize();
-
-        instance.close();
-
-        //no exception means things worked.
+        try {
+            instance.setEnabled(true);
+            instance.setFilesMatched(true);
+            instance.initialize();
+        } catch (InitializationException ex) {
+            fail(ex.getMessage());
+        } finally {
+            try {
+                instance.close();
+            } catch (Exception ex) {
+                fail(ex.getMessage());
+            }
+        }
     }
 
     /**

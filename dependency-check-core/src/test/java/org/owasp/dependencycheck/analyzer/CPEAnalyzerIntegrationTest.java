@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.junit.Assert;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
@@ -61,19 +61,19 @@ public class CPEAnalyzerIntegrationTest extends BaseDBTestCase {
 
         String queryText = instance.buildSearch(vendor, product, null, null);
         String expResult = " product:( struts 2 core )  AND  vendor:( apache software foundation ) ";
-        Assert.assertTrue(expResult.equals(queryText));
+        assertTrue(expResult.equals(queryText));
 
         queryText = instance.buildSearch(vendor, product, null, productWeightings);
         expResult = " product:(  struts^5 struts2^5 2 core )  AND  vendor:( apache software foundation ) ";
-        Assert.assertTrue(expResult.equals(queryText));
+        assertTrue(expResult.equals(queryText));
 
         queryText = instance.buildSearch(vendor, product, vendorWeightings, null);
         expResult = " product:( struts 2 core )  AND  vendor:(  apache^5 software foundation ) ";
-        Assert.assertTrue(expResult.equals(queryText));
+        assertTrue(expResult.equals(queryText));
 
         queryText = instance.buildSearch(vendor, product, vendorWeightings, productWeightings);
         expResult = " product:(  struts^5 struts2^5 2 core )  AND  vendor:(  apache^5 software foundation ) ";
-        Assert.assertTrue(expResult.equals(queryText));
+        assertTrue(expResult.equals(queryText));
     }
 
     /**
@@ -133,10 +133,10 @@ public class CPEAnalyzerIntegrationTest extends BaseDBTestCase {
 
         if (expResult != null) {
             Identifier expIdentifier = new Identifier("cpe", expResult, expResult);
-            Assert.assertTrue("Incorrect match: { dep:'" + dep.getFileName() + "' }", dep.getIdentifiers().contains(expIdentifier));
+            assertTrue("Incorrect match: { dep:'" + dep.getFileName() + "' }", dep.getIdentifiers().contains(expIdentifier));
         } else {
             for (Identifier i : dep.getIdentifiers()) {
-                Assert.assertFalse(String.format("%s - found a CPE identifier when should have been none (found '%s')", dep.getFileName(), i.getValue()), "cpe".equals(i.getType()));
+                assertFalse(String.format("%s - found a CPE identifier when should have been none (found '%s')", dep.getFileName(), i.getValue()), "cpe".equals(i.getType()));
             }
         }
     }
@@ -189,24 +189,18 @@ public class CPEAnalyzerIntegrationTest extends BaseDBTestCase {
         instance.determineCPE(spring);
         instance.determineCPE(spring3);
         instance.close();
-                
 
         String expResult = "cpe:/a:apache:struts:2.1.2";
         Identifier expIdentifier = new Identifier("cpe", expResult, expResult);
-        String expResultSpring = "cpe:/a:springsource:spring_framework:2.5.5";
-        String expResultSpring3 = "cpe:/a:vmware:springsource_spring_framework:3.0.0";
 
         for (Identifier i : commonValidator.getIdentifiers()) {
-            Assert.assertFalse("Apache Common Validator - found a CPE identifier?", "cpe".equals(i.getType()));
+            assertFalse("Apache Common Validator - found a CPE identifier?", "cpe".equals(i.getType()));
         }
 
-        Assert.assertTrue("Incorrect match size - struts", struts.getIdentifiers().size() >= 1);
-        Assert.assertTrue("Incorrect match - struts", struts.getIdentifiers().contains(expIdentifier));
-        Assert.assertTrue("Incorrect match size - spring3 - " + spring3.getIdentifiers().size(), spring3.getIdentifiers().size() >= 1);
+        assertTrue("Incorrect match size - struts", struts.getIdentifiers().size() >= 1);
+        assertTrue("Incorrect match - struts", struts.getIdentifiers().contains(expIdentifier));
+        assertTrue("Incorrect match size - spring3 - " + spring3.getIdentifiers().size(), spring3.getIdentifiers().size() >= 1);
 
-        //the following two only work if the HintAnalyzer is used.
-        //Assert.assertTrue("Incorrect match size - spring", spring.getIdentifiers().size() == 1);
-        //Assert.assertTrue("Incorrect match - spring", spring.getIdentifiers().get(0).getValue().equals(expResultSpring));
         jarAnalyzer.close();
     }
 
@@ -243,7 +237,6 @@ public class CPEAnalyzerIntegrationTest extends BaseDBTestCase {
     public void testSearchCPE() throws Exception {
         String vendor = "apache software foundation";
         String product = "struts 2 core";
-        String version = "2.1.2";
         String expVendor = "apache";
         String expProduct = "struts";
 
@@ -251,9 +244,7 @@ public class CPEAnalyzerIntegrationTest extends BaseDBTestCase {
         instance.open();
 
         Set<String> productWeightings = Collections.singleton("struts2");
-
         Set<String> vendorWeightings = Collections.singleton("apache");
-
         List<IndexEntry> result = instance.searchCPE(vendor, product, vendorWeightings, productWeightings);
         instance.close();
 
@@ -265,6 +256,5 @@ public class CPEAnalyzerIntegrationTest extends BaseDBTestCase {
             }
         }
         assertTrue("apache:struts was not identified", found);
-
     }
 }

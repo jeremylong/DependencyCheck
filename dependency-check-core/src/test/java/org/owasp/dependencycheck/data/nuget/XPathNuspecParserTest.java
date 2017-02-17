@@ -65,7 +65,7 @@ public class XPathNuspecParserTest extends BaseTest {
         final ByteArrayOutputStream myOut = new ByteArrayOutputStream();
         System.setErr(new PrintStream(myOut));
 
-        NugetPackage np = parser.parse(is);
+        parser.parse(is);
     }
 
     /**

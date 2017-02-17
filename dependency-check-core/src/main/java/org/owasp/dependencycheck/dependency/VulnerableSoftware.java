@@ -138,10 +138,7 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
             return false;
         }
         final VulnerableSoftware other = (VulnerableSoftware) obj;
-        if ((this.name == null) ? (other.getName() != null) : !this.name.equals(other.getName())) {
-            return false;
-        }
-        return true;
+        return !((this.name == null) ? (other.getName() != null) : !this.name.equals(other.getName()));
     }
 
     /**

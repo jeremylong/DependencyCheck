@@ -63,8 +63,6 @@ public class HintAnalyzerTest extends BaseDBTestCase {
      */
     @Test
     public void testAnalyze() throws Exception {
-        HintAnalyzer instance = new HintAnalyzer();
-
         //File guice = new File(this.getClass().getClassLoader().getResource("guice-3.0.jar").getPath());
         File guice = BaseTest.getResourceAsFile(this, "guice-3.0.jar");
         //Dependency guice = new Dependency(fileg);

@@ -44,10 +44,7 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
      * The Logger for use throughout the class
      */
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(NvdCveAnalyzer.class);
-    /**
-     * The maximum number of query results to return.
-     */
-    private static final int MAX_QUERY_RESULTS = 100;
+
     /**
      * The CVE Index.
      */

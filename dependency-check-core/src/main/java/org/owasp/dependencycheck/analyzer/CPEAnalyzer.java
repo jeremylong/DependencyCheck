@@ -810,10 +810,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             if (this.confidence != other.confidence) {
                 return false;
             }
-            if (this.identifier != other.identifier && (this.identifier == null || !this.identifier.equals(other.identifier))) {
-                return false;
-            }
-            return true;
+            return !(this.identifier != other.identifier && (this.identifier == null || !this.identifier.equals(other.identifier)));
         }
         //</editor-fold>
 

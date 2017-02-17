@@ -20,15 +20,17 @@ package org.owasp.dependencycheck.analyzer;
 import java.io.File;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
  *
  * @author Jeremy Long
  */
-public class FileNameAnalyzerTest extends BaseTest  {
+public class FileNameAnalyzerTest extends BaseTest {
 
     /**
      * Test of getName method, of class FileNameAnalyzer.
@@ -76,19 +78,26 @@ public class FileNameAnalyzerTest extends BaseTest  {
      * Test of initialize method, of class FileNameAnalyzer.
      */
     @Test
-    public void testInitialize() throws Exception {
+    public void testInitialize() {
         FileNameAnalyzer instance = new FileNameAnalyzer();
-        instance.initialize();
-        assertTrue(true); //initialize does nothing.
+        try {
+            instance.initialize();
+        } catch (InitializationException ex) {
+            fail(ex.getMessage());
+        }
+        assertTrue(instance.isEnabled());
     }
 
     /**
      * Test of close method, of class FileNameAnalyzer.
      */
     @Test
-    public void testClose() throws Exception {
+    public void testClose() {
         FileNameAnalyzer instance = new FileNameAnalyzer();
-        instance.close();
-        assertTrue(true); //close does nothing.
+        try {
+            instance.close();
+        } catch (Exception ex) {
+            fail(ex.getMessage());
+        }
     }
 }

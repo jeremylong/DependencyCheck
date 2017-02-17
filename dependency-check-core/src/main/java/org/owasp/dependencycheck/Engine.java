@@ -606,7 +606,7 @@ public class Engine implements FileFilter {
      * @param analyzer the analyzer to obtain an executor
      * @return the executor service
      */
-    ExecutorService getExecutorService(Analyzer analyzer) {
+    protected ExecutorService getExecutorService(Analyzer analyzer) {
         if (analyzer.supportsParallelProcessing()) {
             // just a fair trade-off that should be reasonable for all analyzer types
             final int maximumNumberOfThreads = 4 * Runtime.getRuntime().availableProcessors();

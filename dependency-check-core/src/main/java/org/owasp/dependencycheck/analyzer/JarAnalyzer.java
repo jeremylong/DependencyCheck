@@ -168,11 +168,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
 
     //</editor-fold>
-    /**
-     * Constructs a new JarAnalyzer.
-     */
-    public JarAnalyzer() {
-    }
 
     //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
     /**

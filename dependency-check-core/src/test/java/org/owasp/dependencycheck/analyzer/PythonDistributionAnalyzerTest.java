@@ -29,6 +29,7 @@ import java.io.File;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Unit tests for PythonDistributionAnalyzer.
@@ -93,13 +94,15 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
 
     /**
      * Test of inspect method, of class PythonDistributionAnalyzer.
-     *
-     * @throws AnalysisException is thrown when an exception occurs.
      */
     @Test
-    public void testAnalyzeWheel() throws AnalysisException {
-        djangoAssertions(new Dependency(BaseTest.getResourceAsFile(this,
-                "python/Django-1.7.2-py2.py3-none-any.whl")));
+    public void testAnalyzeWheel() {
+        try {
+            djangoAssertions(new Dependency(BaseTest.getResourceAsFile(this,
+                    "python/Django-1.7.2-py2.py3-none-any.whl")));
+        } catch (AnalysisException ex) {
+            fail(ex.getMessage());
+        }
     }
 
     /**
@@ -131,23 +134,39 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
     }
 
     @Test
-    public void testAnalyzeEggInfoFolder() throws AnalysisException {
-        eggtestAssertions(this, "python/site-packages/EggTest.egg-info/PKG-INFO");
+    public void testAnalyzeEggInfoFolder() {
+        try {
+            eggtestAssertions(this, "python/site-packages/EggTest.egg-info/PKG-INFO");
+        } catch (AnalysisException ex) {
+            fail(ex.getMessage());
+        }
     }
 
     @Test
-    public void testAnalyzeEggArchive() throws AnalysisException {
-        eggtestAssertions(this, "python/dist/EggTest-0.0.1-py2.7.egg");
+    public void testAnalyzeEggArchive() {
+        try {
+            eggtestAssertions(this, "python/dist/EggTest-0.0.1-py2.7.egg");
+        } catch (AnalysisException ex) {
+            fail(ex.getMessage());
+        }
     }
 
     @Test
-    public void testAnalyzeEggArchiveNamedZip() throws AnalysisException {
-        eggtestAssertions(this, "python/dist/EggTest-0.0.1-py2.7.zip");
+    public void testAnalyzeEggArchiveNamedZip() {
+        try {
+            eggtestAssertions(this, "python/dist/EggTest-0.0.1-py2.7.zip");
+        } catch (AnalysisException ex) {
+            fail(ex.getMessage());
+        }
     }
 
     @Test
-    public void testAnalyzeEggFolder() throws AnalysisException {
-        eggtestAssertions(this, "python/site-packages/EggTest-0.0.1-py2.7.egg/EGG-INFO/PKG-INFO");
+    public void testAnalyzeEggFolder() {
+        try {
+            eggtestAssertions(this, "python/site-packages/EggTest-0.0.1-py2.7.egg/EGG-INFO/PKG-INFO");
+        } catch (AnalysisException ex) {
+            fail(ex.getMessage());
+        }
     }
 
     public void eggtestAssertions(Object context, final String resource) throws AnalysisException {
