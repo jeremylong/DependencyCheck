@@ -63,6 +63,7 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("unused")
 public class DependencyCheckScanAgent {
 
+    //<editor-fold defaultstate="collapsed" desc="private fields">
     /**
      * System specific new line character.
      */
@@ -75,6 +76,141 @@ public class DependencyCheckScanAgent {
      * The application name for the report.
      */
     private String applicationName = "Dependency-Check";
+    /**
+     * The pre-determined dependencies to scan
+     */
+    private List<Dependency> dependencies;
+    /**
+     * The location of the data directory that contains
+     */
+    private String dataDirectory = null;
+    /**
+     * Specifies the destination directory for the generated Dependency-Check
+     * report.
+     */
+    private String reportOutputDirectory;
+    /**
+     * Specifies if the build should be failed if a CVSS score above a specified
+     * level is identified. The default is 11 which means since the CVSS scores
+     * are 0-10, by default the build will never fail and the CVSS score is set
+     * to 11. The valid range for the fail build on CVSS is 0 to 11, where
+     * anything above 10 will not cause the build to fail.
+     */
+    private float failBuildOnCVSS = 11;
+    /**
+     * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not
+     * recommended that this be turned to false. Default is true.
+     */
+    private boolean autoUpdate = true;
+    /**
+     * flag indicating whether or not to generate a report of findings.
+     */
+    private boolean generateReport = true;
+    /**
+     * The report format to be generated (HTML, XML, VULN, ALL). This
+     * configuration option has no affect if using this within the Site plugin
+     * unless the externalReport is set to true. Default is HTML.
+     */
+    private ReportGenerator.Format reportFormat = ReportGenerator.Format.HTML;
+    /**
+     * The Proxy Server.
+     */
+    private String proxyServer;
+    /**
+     * The Proxy Port.
+     */
+    private String proxyPort;
+    /**
+     * The Proxy username.
+     */
+    private String proxyUsername;
+    /**
+     * The Proxy password.
+     */
+    private String proxyPassword;
+    /**
+     * The Connection Timeout.
+     */
+    private String connectionTimeout;
+    /**
+     * The file path used for verbose logging.
+     */
+    private String logFile = null;
+    /**
+     * flag indicating whether or not to show a summary of findings.
+     */
+    private boolean showSummary = true;
+    /**
+     * The path to the suppression file.
+     */
+    private String suppressionFile;
+    /**
+     * The password to use when connecting to the database.
+     */
+    private String databasePassword;
+    /**
+     * Whether or not the Maven Central analyzer is enabled.
+     */
+    private boolean centralAnalyzerEnabled = true;
+    /**
+     * The URL of Maven Central.
+     */
+    private String centralUrl;
+    /**
+     * Whether or not the nexus analyzer is enabled.
+     */
+    private boolean nexusAnalyzerEnabled = true;
+    /**
+     * The URL of the Nexus server.
+     */
+    private String nexusUrl;
+    /**
+     * Whether or not the defined proxy should be used when connecting to Nexus.
+     */
+    private boolean nexusUsesProxy = true;
+    /**
+     * The database driver name; such as org.h2.Driver.
+     */
+    private String databaseDriverName;
+    /**
+     * The path to the database driver JAR file if it is not on the class path.
+     */
+    private String databaseDriverPath;
+    /**
+     * The database connection string.
+     */
+    private String connectionString;
+    /**
+     * The user name for connecting to the database.
+     */
+    private String databaseUser;
+    /**
+     * Additional ZIP File extensions to add analyze. This should be a
+     * comma-separated list of file extensions to treat like ZIP files.
+     */
+    private String zipExtensions;
+    /**
+     * The url for the modified NVD CVE (1.2 schema).
+     */
+    private String cveUrl12Modified;
+    /**
+     * The url for the modified NVD CVE (2.0 schema).
+     */
+    private String cveUrl20Modified;
+    /**
+     * Base Data Mirror URL for CVE 1.2.
+     */
+    private String cveUrl12Base;
+    /**
+     * Data Mirror URL for CVE 2.0.
+     */
+    private String cveUrl20Base;
+    /**
+     * The path to Mono for .NET assembly analysis on non-windows systems.
+     */
+    private String pathToMono;
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="getters/setters">
 
     /**
      * Get the value of applicationName.
@@ -95,11 +231,6 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * The pre-determined dependencies to scan
-     */
-    private List<Dependency> dependencies;
-
-    /**
      * Returns a list of pre-determined dependencies.
      *
      * @return returns a list of dependencies
@@ -116,11 +247,6 @@ public class DependencyCheckScanAgent {
     public void setDependencies(List<Dependency> dependencies) {
         this.dependencies = dependencies;
     }
-
-    /**
-     * The location of the data directory that contains
-     */
-    private String dataDirectory = null;
 
     /**
      * Get the value of dataDirectory.
@@ -141,12 +267,6 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * Specifies the destination directory for the generated Dependency-Check
-     * report.
-     */
-    private String reportOutputDirectory;
-
-    /**
      * Get the value of reportOutputDirectory.
      *
      * @return the value of reportOutputDirectory
@@ -163,15 +283,6 @@ public class DependencyCheckScanAgent {
     public void setReportOutputDirectory(String reportOutputDirectory) {
         this.reportOutputDirectory = reportOutputDirectory;
     }
-
-    /**
-     * Specifies if the build should be failed if a CVSS score above a specified
-     * level is identified. The default is 11 which means since the CVSS scores
-     * are 0-10, by default the build will never fail and the CVSS score is set
-     * to 11. The valid range for the fail build on CVSS is 0 to 11, where
-     * anything above 10 will not cause the build to fail.
-     */
-    private float failBuildOnCVSS = 11;
 
     /**
      * Get the value of failBuildOnCVSS.
@@ -192,12 +303,6 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not
-     * recommended that this be turned to false. Default is true.
-     */
-    private boolean autoUpdate = true;
-
-    /**
      * Get the value of autoUpdate.
      *
      * @return the value of autoUpdate
@@ -214,11 +319,6 @@ public class DependencyCheckScanAgent {
     public void setAutoUpdate(boolean autoUpdate) {
         this.autoUpdate = autoUpdate;
     }
-
-    /**
-     * flag indicating whether or not to generate a report of findings.
-     */
-    private boolean generateReport = true;
 
     /**
      * Get the value of generateReport.
@@ -239,13 +339,6 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * The report format to be generated (HTML, XML, VULN, ALL). This
-     * configuration option has no affect if using this within the Site plugin
-     * unless the externalReport is set to true. Default is HTML.
-     */
-    private ReportGenerator.Format reportFormat = ReportGenerator.Format.HTML;
-
-    /**
      * Get the value of reportFormat.
      *
      * @return the value of reportFormat
@@ -262,11 +355,6 @@ public class DependencyCheckScanAgent {
     public void setReportFormat(ReportGenerator.Format reportFormat) {
         this.reportFormat = reportFormat;
     }
-
-    /**
-     * The Proxy Server.
-     */
-    private String proxyServer;
 
     /**
      * Get the value of proxyServer.
@@ -312,11 +400,6 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * The Proxy Port.
-     */
-    private String proxyPort;
-
-    /**
      * Get the value of proxyPort.
      *
      * @return the value of proxyPort
@@ -333,11 +416,6 @@ public class DependencyCheckScanAgent {
     public void setProxyPort(String proxyPort) {
         this.proxyPort = proxyPort;
     }
-
-    /**
-     * The Proxy username.
-     */
-    private String proxyUsername;
 
     /**
      * Get the value of proxyUsername.
@@ -358,11 +436,6 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * The Proxy password.
-     */
-    private String proxyPassword;
-
-    /**
      * Get the value of proxyPassword.
      *
      * @return the value of proxyPassword
@@ -379,11 +452,6 @@ public class DependencyCheckScanAgent {
     public void setProxyPassword(String proxyPassword) {
         this.proxyPassword = proxyPassword;
     }
-
-    /**
-     * The Connection Timeout.
-     */
-    private String connectionTimeout;
 
     /**
      * Get the value of connectionTimeout.
@@ -404,11 +472,6 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * The file path used for verbose logging.
-     */
-    private String logFile = null;
-
-    /**
      * Get the value of logFile.
      *
      * @return the value of logFile
@@ -425,11 +488,6 @@ public class DependencyCheckScanAgent {
     public void setLogFile(String logFile) {
         this.logFile = logFile;
     }
-
-    /**
-     * The path to the suppression file.
-     */
-    private String suppressionFile;
 
     /**
      * Get the value of suppressionFile.
@@ -450,11 +508,6 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * flag indicating whether or not to show a summary of findings.
-     */
-    private boolean showSummary = true;
-
-    /**
      * Get the value of showSummary.
      *
      * @return the value of showSummary
@@ -471,11 +524,6 @@ public class DependencyCheckScanAgent {
     public void setShowSummary(boolean showSummary) {
         this.showSummary = showSummary;
     }
-
-    /**
-     * Whether or not the Maven Central analyzer is enabled.
-     */
-    private boolean centralAnalyzerEnabled = true;
 
     /**
      * Get the value of centralAnalyzerEnabled.
@@ -496,11 +544,6 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * The URL of Maven Central.
-     */
-    private String centralUrl;
-
-    /**
      * Get the value of centralUrl.
      *
      * @return the value of centralUrl
@@ -517,11 +560,6 @@ public class DependencyCheckScanAgent {
     public void setCentralUrl(String centralUrl) {
         this.centralUrl = centralUrl;
     }
-
-    /**
-     * Whether or not the nexus analyzer is enabled.
-     */
-    private boolean nexusAnalyzerEnabled = true;
 
     /**
      * Get the value of nexusAnalyzerEnabled.
@@ -542,11 +580,6 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * The URL of the Nexus server.
-     */
-    private String nexusUrl;
-
-    /**
      * Get the value of nexusUrl.
      *
      * @return the value of nexusUrl
@@ -563,11 +596,6 @@ public class DependencyCheckScanAgent {
     public void setNexusUrl(String nexusUrl) {
         this.nexusUrl = nexusUrl;
     }
-
-    /**
-     * Whether or not the defined proxy should be used when connecting to Nexus.
-     */
-    private boolean nexusUsesProxy = true;
 
     /**
      * Get the value of nexusUsesProxy.
@@ -588,11 +616,6 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * The database driver name; such as org.h2.Driver.
-     */
-    private String databaseDriverName;
-
-    /**
      * Get the value of databaseDriverName.
      *
      * @return the value of databaseDriverName
@@ -609,11 +632,6 @@ public class DependencyCheckScanAgent {
     public void setDatabaseDriverName(String databaseDriverName) {
         this.databaseDriverName = databaseDriverName;
     }
-
-    /**
-     * The path to the database driver JAR file if it is not on the class path.
-     */
-    private String databaseDriverPath;
 
     /**
      * Get the value of databaseDriverPath.
@@ -634,11 +652,6 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * The database connection string.
-     */
-    private String connectionString;
-
-    /**
      * Get the value of connectionString.
      *
      * @return the value of connectionString
@@ -655,11 +668,6 @@ public class DependencyCheckScanAgent {
     public void setConnectionString(String connectionString) {
         this.connectionString = connectionString;
     }
-
-    /**
-     * The user name for connecting to the database.
-     */
-    private String databaseUser;
 
     /**
      * Get the value of databaseUser.
@@ -680,11 +688,6 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * The password to use when connecting to the database.
-     */
-    private String databasePassword;
-
-    /**
      * Get the value of databasePassword.
      *
      * @return the value of databasePassword
@@ -701,12 +704,6 @@ public class DependencyCheckScanAgent {
     public void setDatabasePassword(String databasePassword) {
         this.databasePassword = databasePassword;
     }
-
-    /**
-     * Additional ZIP File extensions to add analyze. This should be a
-     * comma-separated list of file extensions to treat like ZIP files.
-     */
-    private String zipExtensions;
 
     /**
      * Get the value of zipExtensions.
@@ -727,11 +724,6 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * The url for the modified NVD CVE (1.2 schema).
-     */
-    private String cveUrl12Modified;
-
-    /**
      * Get the value of cveUrl12Modified.
      *
      * @return the value of cveUrl12Modified
@@ -748,11 +740,6 @@ public class DependencyCheckScanAgent {
     public void setCveUrl12Modified(String cveUrl12Modified) {
         this.cveUrl12Modified = cveUrl12Modified;
     }
-
-    /**
-     * The url for the modified NVD CVE (2.0 schema).
-     */
-    private String cveUrl20Modified;
 
     /**
      * Get the value of cveUrl20Modified.
@@ -773,11 +760,6 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * Base Data Mirror URL for CVE 1.2.
-     */
-    private String cveUrl12Base;
-
-    /**
      * Get the value of cveUrl12Base.
      *
      * @return the value of cveUrl12Base
@@ -794,11 +776,6 @@ public class DependencyCheckScanAgent {
     public void setCveUrl12Base(String cveUrl12Base) {
         this.cveUrl12Base = cveUrl12Base;
     }
-
-    /**
-     * Data Mirror URL for CVE 2.0.
-     */
-    private String cveUrl20Base;
 
     /**
      * Get the value of cveUrl20Base.
@@ -819,11 +796,6 @@ public class DependencyCheckScanAgent {
     }
 
     /**
-     * The path to Mono for .NET assembly analysis on non-windows systems.
-     */
-    private String pathToMono;
-
-    /**
      * Get the value of pathToMono.
      *
      * @return the value of pathToMono
@@ -840,6 +812,7 @@ public class DependencyCheckScanAgent {
     public void setPathToMono(String pathToMono) {
         this.pathToMono = pathToMono;
     }
+    //</editor-fold>
 
     /**
      * Executes the Dependency-Check on the dependent libraries.
@@ -1044,5 +1017,4 @@ public class DependencyCheckScanAgent {
                     summary.toString());
         }
     }
-
 }

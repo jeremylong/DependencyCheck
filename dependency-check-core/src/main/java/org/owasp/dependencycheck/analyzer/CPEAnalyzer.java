@@ -599,11 +599,10 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                         }
                     }
                 }
-                if (bestGuessConf == null || bestGuessConf.compareTo(conf) > 0) {
-                    if (bestGuess.getVersionParts().size() < evVer.getVersionParts().size()) {
-                        bestGuess = evVer;
-                        bestGuessConf = conf;
-                    }
+                if ((bestGuessConf == null || bestGuessConf.compareTo(conf) > 0)
+                        && bestGuess.getVersionParts().size() < evVer.getVersionParts().size()) {
+                    bestGuess = evVer;
+                    bestGuessConf = conf;
                 }
             }
         }
@@ -613,10 +612,12 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             final String cpeUrlName = String.format("cpe:/a:%s:%s", vendor, product);
             url = String.format(NVD_SEARCH_URL, URLEncoder.encode(cpeUrlName, "UTF-8"));
         }
-        if (bestGuessConf == null) {
+        if (bestGuessConf
+                == null) {
             bestGuessConf = Confidence.LOW;
         }
         final IdentifierMatch match = new IdentifierMatch("cpe", cpeName, url, IdentifierConfidence.BEST_GUESS, bestGuessConf);
+
         collected.add(match);
 
         Collections.sort(collected);
@@ -648,6 +649,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     @Override
     protected String getAnalyzerEnabledSettingKey() {
         return Settings.KEYS.ANALYZER_CPE_ENABLED;
+
     }
 
     /**

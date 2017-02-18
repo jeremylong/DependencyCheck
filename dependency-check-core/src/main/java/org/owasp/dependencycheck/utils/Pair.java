@@ -26,6 +26,14 @@ package org.owasp.dependencycheck.utils;
  * @author Jeremy Long
  */
 public class Pair<L, R> {
+    /**
+     * The left element of the pair.
+     */
+    private L left = null;
+    /**
+     * The right element of the pair.
+     */
+    private R right = null;
 
     /**
      * Constructs a new empty pair.
@@ -43,10 +51,6 @@ public class Pair<L, R> {
         this.left = left;
         this.right = right;
     }
-    /**
-     * The left element of the pair.
-     */
-    private L left = null;
 
     /**
      * Get the value of left.
@@ -65,10 +69,6 @@ public class Pair<L, R> {
     public void setLeft(L left) {
         this.left = left;
     }
-    /**
-     * The right element of the pair.
-     */
-    private R right = null;
 
     /**
      * Get the value of right.

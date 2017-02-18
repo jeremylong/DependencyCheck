@@ -105,14 +105,6 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * in {@link #extractFiles(File, File, Engine)}.
      */
     private static final Set<String> EXTENSIONS = newHashSet("tar", "gz", "tgz", "bz2", "tbz2");
-
-    /**
-     * Detects files with extensions to remove from the engine's collection of
-     * dependencies.
-     */
-    private static final FileFilter REMOVE_FROM_ANALYSIS = FileFilterBuilder.newInstance().addExtensions("zip", "tar", "gz", "tgz", "bz2", "tbz2")
-            .build();
-
     static {
         final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
         if (additionalZipExt != null) {
@@ -123,19 +115,26 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
+     * Detects files with extensions to remove from the engine's collection of
+     * dependencies.
+     */
+    private static final FileFilter REMOVE_FROM_ANALYSIS = FileFilterBuilder.newInstance()
+            .addExtensions("zip", "tar", "gz", "tgz", "bz2", "tbz2").build();
+
+    /**
      * The file filter used to filter supported files.
      */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
-
-    @Override
-    protected FileFilter getFileFilter() {
-        return FILTER;
-    }
 
     /**
      * Detects files with .zip extension.
      */
     private static final FileFilter ZIP_FILTER = FileFilterBuilder.newInstance().addExtensions("zip").build();
+
+    @Override
+    protected FileFilter getFileFilter() {
+        return FILTER;
+    }
 
     /**
      * Returns the name of the analyzer.

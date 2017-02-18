@@ -17,17 +17,14 @@
  */
 package org.owasp.dependencycheck;
 
-import org.owasp.dependencycheck.CliParser;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import org.apache.commons.cli.ParseException;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.owasp.dependencycheck.utils.Settings;
@@ -46,14 +43,6 @@ public class CliParserTest {
     @AfterClass
     public static void tearDownClass() throws Exception {
         Settings.cleanup(true);
-    }
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
     }
 
     /**

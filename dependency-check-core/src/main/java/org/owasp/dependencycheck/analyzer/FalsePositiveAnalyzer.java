@@ -39,7 +39,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This analyzer attempts to remove some well known false positives - specifically regarding the java runtime.
+ * This analyzer attempts to remove some well known false positives -
+ * specifically regarding the java runtime.
  *
  * @author Jeremy Long
  */
@@ -84,6 +85,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
+
     /**
      * <p>
      * Returns the setting key to determine if the analyzer is enabled.</p>
@@ -97,11 +99,13 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     //</editor-fold>
 
     /**
-     * Analyzes the dependencies and removes bad/incorrect CPE associations based on various heuristics.
+     * Analyzes the dependencies and removes bad/incorrect CPE associations
+     * based on various heuristics.
      *
      * @param dependency the dependency to analyze.
      * @param engine the engine that is scanning the dependencies
-     * @throws AnalysisException is thrown if there is an error reading the JAR file.
+     * @throws AnalysisException is thrown if there is an error reading the JAR
+     * file.
      */
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
@@ -117,22 +121,23 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     /**
      * Removes inaccurate matches on springframework CPEs.
      *
-     * @param dependency the dependency to test for and remove known inaccurate CPE matches
+     * @param dependency the dependency to test for and remove known inaccurate
+     * CPE matches
      */
     private void removeBadSpringMatches(Dependency dependency) {
         String mustContain = null;
         for (Identifier i : dependency.getIdentifiers()) {
-            if ("maven".contains(i.getType())) {
-                if (i.getValue() != null && i.getValue().startsWith("org.springframework.")) {
-                    final int endPoint = i.getValue().indexOf(':', 19);
-                    if (endPoint >= 0) {
-                        mustContain = i.getValue().substring(19, endPoint).toLowerCase();
-                        break;
-                    }
+            if ("maven".contains(i.getType())
+                    && i.getValue() != null && i.getValue().startsWith("org.springframework.")) {
+                final int endPoint = i.getValue().indexOf(':', 19);
+                if (endPoint >= 0) {
+                    mustContain = i.getValue().substring(19, endPoint).toLowerCase();
+                    break;
                 }
             }
         }
-        if (mustContain != null) {
+        if (mustContain
+                != null) {
             final Iterator<Identifier> itr = dependency.getIdentifiers().iterator();
             while (itr.hasNext()) {
                 final Identifier i = itr.next();
@@ -149,7 +154,8 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
 
     /**
      * <p>
-     * Intended to remove spurious CPE entries. By spurious we mean duplicate, less specific CPE entries.</p>
+     * Intended to remove spurious CPE entries. By spurious we mean duplicate,
+     * less specific CPE entries.</p>
      * <p>
      * Example:</p>
      * <code>
@@ -200,10 +206,8 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                             if (nextVersion.startsWith(currentVersion) || "-".equals(currentVersion)) {
                                 dependency.getIdentifiers().remove(currentId);
                             }
-                        } else {
-                            if (currentVersion.startsWith(nextVersion) || "-".equals(nextVersion)) {
-                                dependency.getIdentifiers().remove(nextId);
-                            }
+                        } else if (currentVersion.startsWith(nextVersion) || "-".equals(nextVersion)) {
+                            dependency.getIdentifiers().remove(nextId);
                         }
                     }
                 }
@@ -211,7 +215,8 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
         }
     }
     /**
-     * Regex to identify core java libraries and a few other commonly misidentified ones.
+     * Regex to identify core java libraries and a few other commonly
+     * misidentified ones.
      */
     public static final Pattern CORE_JAVA = Pattern.compile("^cpe:/a:(sun|oracle|ibm):(j2[ems]e|"
             + "java(_platform_micro_edition|_runtime_environment|_se|virtual_machine|se_development_kit|fx)?|"
@@ -226,12 +231,14 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      */
     public static final Pattern CORE_FILES = Pattern.compile("(^|/)((alt[-])?rt|jsse|jfxrt|jfr|jce|javaws|deploy|charsets)\\.jar$");
     /**
-     * Regex to identify core jsf java library files. This is currently incomplete.
+     * Regex to identify core jsf java library files. This is currently
+     * incomplete.
      */
     public static final Pattern CORE_JSF_FILES = Pattern.compile("(^|/)jsf[-][^/]*\\.jar$");
 
     /**
-     * Removes any CPE entries for the JDK/JRE unless the filename ends with rt.jar
+     * Removes any CPE entries for the JDK/JRE unless the filename ends with
+     * rt.jar
      *
      * @param dependency the dependency to remove JRE CPEs from
      */
@@ -275,8 +282,9 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Removes bad CPE matches for a dependency. Unfortunately, right now these are hard-coded patches for specific problems
-     * identified when testing this on a LARGE volume of jar files.
+     * Removes bad CPE matches for a dependency. Unfortunately, right now these
+     * are hard-coded patches for specific problems identified when testing this
+     * on a LARGE volume of jar files.
      *
      * @param dependency the dependency to analyze
      */
@@ -351,7 +359,8 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Removes CPE matches for the wrong version of a dependency. Currently, this only covers Axis 1 & 2.
+     * Removes CPE matches for the wrong version of a dependency. Currently,
+     * this only covers Axis 1 & 2.
      *
      * @param dependency the dependency to analyze
      */
@@ -384,8 +393,10 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * There are some known CPE entries, specifically regarding sun and oracle products due to the acquisition and changes in
-     * product names, that based on given evidence we can add the related CPE entries to ensure a complete list of CVE entries.
+     * There are some known CPE entries, specifically regarding sun and oracle
+     * products due to the acquisition and changes in product names, that based
+     * on given evidence we can add the related CPE entries to ensure a complete
+     * list of CVE entries.
      *
      * @param dependency the dependency being analyzed
      */
@@ -422,8 +433,9 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Removes duplicate entries identified that are contained within JAR files. These occasionally crop up due to POM entries or
-     * other types of files (such as DLLs and EXEs) being contained within the JAR.
+     * Removes duplicate entries identified that are contained within JAR files.
+     * These occasionally crop up due to POM entries or other types of files
+     * (such as DLLs and EXEs) being contained within the JAR.
      *
      * @param dependency the dependency that might be a duplicate
      * @param engine the engine used to scan all dependencies
@@ -462,7 +474,8 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Retrieves a given dependency, based on a given path, from a list of dependencies.
+     * Retrieves a given dependency, based on a given path, from a list of
+     * dependencies.
      *
      * @param dependencyPath the path of the dependency to return
      * @param dependencies the collection of dependencies to search
@@ -478,7 +491,8 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Takes a full CPE and returns the CPE trimmed to include only vendor and product.
+     * Takes a full CPE and returns the CPE trimmed to include only vendor and
+     * product.
      *
      * @param value the CPE value to trim
      * @return a CPE value that only includes the vendor and product

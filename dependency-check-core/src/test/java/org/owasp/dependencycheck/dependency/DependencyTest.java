@@ -218,7 +218,7 @@ public class DependencyTest extends BaseTest {
         instance.getProductEvidence().addEvidence("used", "used", "used", Confidence.HIGH);
         instance.getProductEvidence().addEvidence("not", "not", "not", Confidence.MEDIUM);
         for (Evidence e : instance.getProductEvidence().iterator(Confidence.HIGH)) {
-            String use = e.getValue();
+            e.getValue();
         }
 
         EvidenceCollection result = instance.getEvidenceUsed();

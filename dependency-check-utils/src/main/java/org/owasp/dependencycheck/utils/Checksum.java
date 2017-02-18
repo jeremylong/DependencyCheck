@@ -40,6 +40,10 @@ public final class Checksum {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Checksum.class);
+    /**
+     * Hex code characters used in getHex.
+     */
+    private static final String HEXES = "0123456789abcdef";
 
     /**
      * Private constructor for a utility class.
@@ -120,10 +124,6 @@ public final class Checksum {
         final byte[] b = getChecksum("SHA1", file);
         return getHex(b);
     }
-    /**
-     * Hex code characters used in getHex.
-     */
-    private static final String HEXES = "0123456789abcdef";
 
     /**
      * <p>

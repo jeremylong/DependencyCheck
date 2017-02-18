@@ -62,21 +62,6 @@ public final class CpeMemoryIndex {
      * singleton instance.
      */
     private static final CpeMemoryIndex INSTANCE = new CpeMemoryIndex();
-
-    /**
-     * private constructor for singleton.
-     */
-    private CpeMemoryIndex() {
-    }
-
-    /**
-     * Gets the singleton instance of the CpeMemoryIndex.
-     *
-     * @return the instance of the CpeMemoryIndex
-     */
-    public static CpeMemoryIndex getInstance() {
-        return INSTANCE;
-    }
     /**
      * The in memory Lucene index.
      */
@@ -105,6 +90,25 @@ public final class CpeMemoryIndex {
      * The search field analyzer for the vendor field.
      */
     private SearchFieldAnalyzer vendorFieldAnalyzer;
+    /**
+     * A flag indicating whether or not the index is open.
+     */
+    private boolean openState = false;
+
+    /**
+     * private constructor for singleton.
+     */
+    private CpeMemoryIndex() {
+    }
+
+    /**
+     * Gets the singleton instance of the CpeMemoryIndex.
+     *
+     * @return the instance of the CpeMemoryIndex
+     */
+    public static CpeMemoryIndex getInstance() {
+        return INSTANCE;
+    }
 
     /**
      * Creates and loads data into an in memory index.
@@ -129,10 +133,6 @@ public final class CpeMemoryIndex {
             }
         }
     }
-    /**
-     * A flag indicating whether or not the index is open.
-     */
-    private boolean openState = false;
 
     /**
      * returns whether or not the index is open.

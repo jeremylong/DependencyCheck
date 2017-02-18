@@ -41,7 +41,7 @@ public class ArchiveAnalyzerIntegrationTest extends BaseDBTestCase {
     @Test
     public void testSupportsExtensions() {
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
-        Set<String> expResult = new HashSet<String>();
+        Set<String> expResult = new HashSet<>();
         expResult.add("zip");
         expResult.add("war");
         expResult.add("ear");
@@ -114,6 +114,8 @@ public class ArchiveAnalyzerIntegrationTest extends BaseDBTestCase {
 
     /**
      * Test of analyze method, of class ArchiveAnalyzer.
+     *
+     * @throws java.lang.Exception when an error occurs
      */
     @Test
     public void testAnalyze() throws Exception {
@@ -171,7 +173,7 @@ public class ArchiveAnalyzerIntegrationTest extends BaseDBTestCase {
             instance.close();
         }
     }
-    
+
     /**
      * Test of analyze method, of class ArchiveAnalyzer.
      */

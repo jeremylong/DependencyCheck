@@ -131,7 +131,7 @@ public class DriverLoaderTest extends BaseTest {
         File driver = new File(testClassPath, "../../src/test/resources/mysql-connector-java-5.1.27-bin.jar");
         assertTrue("MySQL Driver JAR file not found in src/test/resources?", driver.isFile());
 
-        Driver d = DriverLoader.load(className, driver.getAbsolutePath());
+        DriverLoader.load(className, driver.getAbsolutePath());
     }
 
     /**

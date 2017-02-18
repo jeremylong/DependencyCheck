@@ -82,7 +82,8 @@ public abstract class AbstractAnalyzer implements Analyzer {
     protected abstract void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException;
 
     /**
-     * Initializes a given Analyzer. This will be skipped if the analyzer is disabled.
+     * Initializes a given Analyzer. This will be skipped if the analyzer is
+     * disabled.
      *
      * @throws InitializationException thrown if there is an exception
      */
@@ -90,13 +91,14 @@ public abstract class AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * Closes a given Analyzer. This will be skipped if the analyzer is disabled.
+     * Closes a given Analyzer. This will be skipped if the analyzer is
+     * disabled.
      *
      * @throws Exception thrown if there is an exception
      */
     protected void closeAnalyzer() throws Exception {
+        // Intentionally empty, analyzer will override this if they must close a resource.
     }
-
 
     /**
      * Analyzes a given dependency. If the dependency is an archive, such as a
@@ -147,7 +149,6 @@ public abstract class AbstractAnalyzer implements Analyzer {
             closeAnalyzer();
         }
     }
-
 
     /**
      * The default is to support parallel processing.

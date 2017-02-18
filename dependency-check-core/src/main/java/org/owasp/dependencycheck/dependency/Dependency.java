@@ -73,30 +73,10 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * The file name of the dependency.
      */
     private String fileName;
-
     /**
      * The package path.
      */
     private String packagePath;
-
-    /**
-     * Returns the package path.
-     *
-     * @return the package path
-     */
-    public String getPackagePath() {
-        return packagePath;
-    }
-
-    /**
-     * Sets the package path.
-     *
-     * @param packagePath the package path
-     */
-    public void setPackagePath(String packagePath) {
-        this.packagePath = packagePath;
-    }
-
     /**
      * The md5 hash of the dependency.
      */
@@ -121,6 +101,60 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * A collection of version evidence.
      */
     private final EvidenceCollection versionEvidence;
+    /**
+     * The file name to display in reports.
+     */
+    private String displayName = null;
+    /**
+     * A set of identifiers that have been suppressed.
+     */
+    private Set<Identifier> suppressedIdentifiers;
+    /**
+     * A set of vulnerabilities that have been suppressed.
+     */
+    private SortedSet<Vulnerability> suppressedVulnerabilities;
+    /**
+     * The description of the JAR file.
+     */
+    private String description;
+    /**
+     * The license that this dependency uses.
+     */
+    private String license;
+    /**
+     * A list of vulnerabilities for this dependency.
+     */
+    private SortedSet<Vulnerability> vulnerabilities;
+    /**
+     * A collection of related dependencies.
+     */
+    private Set<Dependency> relatedDependencies = new TreeSet<Dependency>();
+    /**
+     * A list of projects that reference this dependency.
+     */
+    private Set<String> projectReferences = new HashSet<String>();
+    /**
+     * A list of available versions.
+     */
+    private List<String> availableVersions = new ArrayList<String>();
+
+    /**
+     * Returns the package path.
+     *
+     * @return the package path
+     */
+    public String getPackagePath() {
+        return packagePath;
+    }
+
+    /**
+     * Sets the package path.
+     *
+     * @param packagePath the package path
+     */
+    public void setPackagePath(String packagePath) {
+        this.packagePath = packagePath;
+    }
 
     /**
      * Constructs a new Dependency object.
@@ -221,11 +255,6 @@ public class Dependency implements Serializable, Comparable<Dependency> {
         }
         this.filePath = filePath;
     }
-
-    /**
-     * The file name to display in reports.
-     */
-    private String displayName = null;
 
     /**
      * Sets the file name to display in reports.
@@ -393,11 +422,6 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * A set of identifiers that have been suppressed.
-     */
-    private Set<Identifier> suppressedIdentifiers;
-
-    /**
      * Get the value of suppressedIdentifiers.
      *
      * @return the value of suppressedIdentifiers
@@ -423,11 +447,6 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     public void addSuppressedIdentifier(Identifier identifier) {
         this.suppressedIdentifiers.add(identifier);
     }
-
-    /**
-     * A set of vulnerabilities that have been suppressed.
-     */
-    private SortedSet<Vulnerability> suppressedVulnerabilities;
 
     /**
      * Get the value of suppressedVulnerabilities.
@@ -511,11 +530,6 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * The description of the JAR file.
-     */
-    private String description;
-
-    /**
      * Get the value of description.
      *
      * @return the value of description
@@ -534,11 +548,6 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * The license that this dependency uses.
-     */
-    private String license;
-
-    /**
      * Get the value of license.
      *
      * @return the value of license
@@ -555,11 +564,6 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     public void setLicense(String license) {
         this.license = license;
     }
-
-    /**
-     * A list of vulnerabilities for this dependency.
-     */
-    private SortedSet<Vulnerability> vulnerabilities;
 
     /**
      * Get the list of vulnerabilities.
@@ -611,11 +615,6 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
-     * A collection of related dependencies.
-     */
-    private Set<Dependency> relatedDependencies = new TreeSet<Dependency>();
-
-    /**
      * Get the value of {@link #relatedDependencies}. This field is used to
      * collect other dependencies which really represent the same dependency,
      * and may be presented as one item in reports.
@@ -625,11 +624,6 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     public Set<Dependency> getRelatedDependencies() {
         return relatedDependencies;
     }
-
-    /**
-     * A list of projects that reference this dependency.
-     */
-    private Set<String> projectReferences = new HashSet<String>();
 
     /**
      * Get the value of projectReferences.
@@ -697,11 +691,6 @@ public class Dependency implements Serializable, Comparable<Dependency> {
             LOGGER.debug("dependency: {}", dependency);
         }
     }
-
-    /**
-     * A list of available versions.
-     */
-    private List<String> availableVersions = new ArrayList<String>();
 
     /**
      * Get the value of availableVersions.

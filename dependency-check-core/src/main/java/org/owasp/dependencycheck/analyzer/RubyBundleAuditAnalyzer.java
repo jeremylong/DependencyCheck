@@ -373,10 +373,8 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                             + "Title link may not work. CPE below is guessed. CVSS score is estimated (-1.0 "
                             + " indicates unknown). See link below for full details. *** ");
                 }
-            } else if (appendToDescription) {
-                if (null != vulnerability) {
-                    vulnerability.setDescription(vulnerability.getDescription() + nextLine + "\n");
-                }
+            } else if (appendToDescription && null != vulnerability) {
+                vulnerability.setDescription(vulnerability.getDescription() + nextLine + "\n");
             }
         }
     }

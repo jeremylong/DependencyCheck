@@ -36,9 +36,6 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 public class DownloadTaskTest extends BaseTest {
 
-    public DownloadTaskTest() {
-    }
-
     /**
      * Test of call method, of class DownloadTask.
      */

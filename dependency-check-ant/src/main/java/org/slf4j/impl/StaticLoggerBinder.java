@@ -37,6 +37,11 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
      * The unique instance of this class
      */
     private static final StaticLoggerBinder SINGLETON = new StaticLoggerBinder();
+    /**
+     * Ant tasks have the log method we actually want to call. So we hang onto
+     * the task as a delegate
+     */
+    private Task task = null;
 
     /**
      * Return the singleton of this class.
@@ -46,12 +51,6 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
     public static final StaticLoggerBinder getSingleton() {
         return SINGLETON;
     }
-
-    /**
-     * Ant tasks have the log method we actually want to call. So we hang onto
-     * the task as a delegate
-     */
-    private Task task = null;
 
     /**
      * Set the Task which will this is to log through.

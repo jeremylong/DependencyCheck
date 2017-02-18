@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import java.sql.SQLException;
 import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
@@ -31,6 +32,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  *
@@ -42,12 +44,14 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
      * Pretty useless tests of open, commit, and close methods, of class CveDB.
      */
     @Test
-    public void testOpen() throws Exception {
+    public void testOpen() {
         CveDB instance = null;
         try {
             instance = new CveDB();
             instance.open();
             instance.commit();
+        } catch (DatabaseException | SQLException ex) {
+            fail(ex.getMessage());
         } finally {
             if (instance != null) {
                 instance.close();

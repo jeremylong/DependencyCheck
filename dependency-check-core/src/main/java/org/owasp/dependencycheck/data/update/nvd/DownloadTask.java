@@ -46,6 +46,30 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
      * The Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(DownloadTask.class);
+    /**
+     * The CVE DB to use when processing the files.
+     */
+    private final CveDB cveDB;
+    /**
+     * The processor service to pass the results of the download to.
+     */
+    private final ExecutorService processorService;
+    /**
+     * The NVD CVE Meta Data.
+     */
+    private NvdCveInfo nvdCveInfo;
+    /**
+     * A reference to the global settings object.
+     */
+    private final Settings settings;
+    /**
+     * a file.
+     */
+    private File first;
+    /**
+     * a file.
+     */
+    private File second;
 
     /**
      * Simple constructor for the callable download task.
@@ -77,22 +101,6 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
         this.second = file2;
 
     }
-    /**
-     * The CVE DB to use when processing the files.
-     */
-    private final CveDB cveDB;
-    /**
-     * The processor service to pass the results of the download to.
-     */
-    private final ExecutorService processorService;
-    /**
-     * The NVD CVE Meta Data.
-     */
-    private NvdCveInfo nvdCveInfo;
-    /**
-     * A reference to the global settings object.
-     */
-    private final Settings settings;
 
     /**
      * Get the value of nvdCveInfo.
@@ -111,10 +119,6 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
     public void setNvdCveInfo(NvdCveInfo nvdCveInfo) {
         this.nvdCveInfo = nvdCveInfo;
     }
-    /**
-     * a file.
-     */
-    private File first;
 
     /**
      * Get the value of first.
@@ -133,10 +137,6 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
     public void setFirst(File first) {
         this.first = first;
     }
-    /**
-     * a file.
-     */
-    private File second;
 
     /**
      * Get the value of second.

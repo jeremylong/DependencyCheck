@@ -18,13 +18,23 @@
 package org.owasp.dependencycheck.xml.hints;
 
 /**
- * Used to duplicate vendor evidence within a collection. The intent is if any evidence
- * is found in a collection that matches the value given the evidence will be
- * duplicated and the value replaced with the value indicated.
+ * Used to duplicate vendor evidence within a collection. The intent is if any
+ * evidence is found in a collection that matches the value given the evidence
+ * will be duplicated and the value replaced with the value indicated.
  *
  * @author Jeremy Long
  */
 public class VendorDuplicatingHintRule {
+
+    /**
+     * The evidence value to duplicate if found.
+     */
+    private String value;
+
+    /**
+     * The value to replace when duplicating the evidence.
+     */
+    private String duplicate;
 
     /**
      * Constructs a new duplicating rule.
@@ -36,11 +46,6 @@ public class VendorDuplicatingHintRule {
         this.value = value;
         this.duplicate = duplicate;
     }
-
-    /**
-     * The evidence value to duplicate if found.
-     */
-    private String value;
 
     /**
      * Get the value of value.
@@ -59,11 +64,6 @@ public class VendorDuplicatingHintRule {
     public void setValue(String value) {
         this.value = value;
     }
-
-    /**
-     * The value to replace when duplicating the evidence.
-     */
-    private String duplicate;
 
     /**
      * Get the value of duplicate.

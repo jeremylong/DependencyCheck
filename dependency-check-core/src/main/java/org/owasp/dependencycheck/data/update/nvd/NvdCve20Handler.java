@@ -74,6 +74,20 @@ public class NvdCve20Handler extends DefaultHandler {
     private int totalNumberOfEntries;
 
     /**
+     * The total number of application entries parsed.
+     */
+    private int totalNumberOfApplicationEntries;
+    /**
+     * the cve database.
+     */
+    private CveDB cveDB;
+
+    /**
+     * A list of CVE entries and associated VulnerableSoftware entries that contain previous entries.
+     */
+    private Map<String, List<VulnerableSoftware>> prevVersionVulnMap;
+
+    /**
      * Get the value of totalNumberOfEntries.
      *
      * @return the value of totalNumberOfEntries
@@ -81,11 +95,7 @@ public class NvdCve20Handler extends DefaultHandler {
     public int getTotalNumberOfEntries() {
         return totalNumberOfEntries;
     }
-    /**
-     * The total number of application entries parsed.
-     */
-    private int totalNumberOfApplicationEntries;
-
+    
     /**
      * Get the value of totalNumberOfApplicationEntries.
      *
@@ -218,10 +228,6 @@ public class NvdCve20Handler extends DefaultHandler {
             nodeText = null;
         }
     }
-    /**
-     * the cve database.
-     */
-    private CveDB cveDB;
 
     /**
      * Sets the cveDB.
@@ -231,11 +237,6 @@ public class NvdCve20Handler extends DefaultHandler {
     public void setCveDB(CveDB db) {
         cveDB = db;
     }
-    /**
-     * A list of CVE entries and associated VulnerableSoftware entries that contain previous entries.
-     */
-    private Map<String, List<VulnerableSoftware>> prevVersionVulnMap;
-
     /**
      * Sets the prevVersionVulnMap.
      *
