@@ -490,7 +490,6 @@
         <gav regex="true">^org\.springframework:spring-context:.*$</gav>
         <cpe>cpe:/a:context_project:context</cpe>
     </suppress>
-    
     <suppress base="true">
         <notes><![CDATA[
         Node.js false positives per issues #512 and #510
@@ -500,5 +499,12 @@
         <cpe>cpe:/a:file:file</cpe>
         <cpe>cpe:/a:shim:shim</cpe>
         <cpe>cpe:/a:shim_project:shim</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive suppression per issue #664 for JJWT - A Java and Android JSON Web Token library
+        ]]></notes>
+        <gav regex="true">^io\.jsonwebtoken:jjwt:.*$</gav>
+        <cpe>cpe:/a:sonatype:nexus</cpe>
     </suppress>
 </suppressions>
