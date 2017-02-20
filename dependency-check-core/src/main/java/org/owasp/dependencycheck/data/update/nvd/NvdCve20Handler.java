@@ -33,6 +33,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import static org.owasp.dependencycheck.data.update.nvd.NvdCve20Handler.AttributeValues.*;
+
 /**
  * A SAX Handler that will parse the NVD CVE XML (schema version 2.0).
  *
@@ -48,6 +50,18 @@ public class NvdCve20Handler extends DefaultHandler {
      * the current supported schema version.
      */
     private static final String CURRENT_SCHEMA_VERSION = "2.0";
+    /**
+     * a possible attribute value of the {@link AttributeValues#XML_LANG} attribute
+     */
+    private static final String EN = "en";
+    /**
+     * the prefix of the node text of a CPE
+     */
+    private static final String CPE_NODE_TEXT_PREFIX = "cpe:/a:";
+    /**
+     * the node text of an entry marked for deletion
+     */
+    private static final String REJECT_NODE_TEXT = "** REJECT **";
     /**
      * the current element.
      */
@@ -111,30 +125,30 @@ public class NvdCve20Handler extends DefaultHandler {
         if (current.isEntryNode()) {
             hasApplicationCpe = false;
             vulnerability = new Vulnerability();
-            vulnerability.setName(attributes.getValue("id"));
+            vulnerability.setName(attributes.getValue(ID));
         } else if (current.isVulnProductNode()) {
             nodeText = new StringBuilder(100);
         } else if (current.isVulnReferencesNode()) {
-            final String lang = attributes.getValue("xml:lang");
-            if ("en".equals(lang)) {
+            final String lang = attributes.getValue(XML_LANG);
+            if (EN.equals(lang)) {
                 reference = new Reference();
             } else {
                 reference = null;
             }
         } else if (reference != null && current.isVulnReferenceNode()) {
-            reference.setUrl(attributes.getValue("href"));
+            reference.setUrl(attributes.getValue(HREF));
             nodeText = new StringBuilder(130);
         } else if (reference != null && current.isVulnSourceNode()) {
             nodeText = new StringBuilder(30);
         } else if (current.isVulnSummaryNode()) {
             nodeText = new StringBuilder(500);
         } else if (current.isNVDNode()) {
-            final String nvdVer = attributes.getValue("nvd_xml_version");
+            final String nvdVer = attributes.getValue(NVD_XML_VERSION);
             if (!CURRENT_SCHEMA_VERSION.equals(nvdVer)) {
                 throw new SAXNotSupportedException("Schema version " + nvdVer + " is not supported");
             }
         } else if (current.isVulnCWENode()) {
-            vulnerability.setCwe(attributes.getValue("id"));
+            vulnerability.setCwe(attributes.getValue(ID));
         } else if (current.isCVSSScoreNode()) {
             nodeText = new StringBuilder(5);
         } else if (current.isCVSSAccessVectorNode()) {
@@ -206,7 +220,7 @@ public class NvdCve20Handler extends DefaultHandler {
             nodeText = null;
         } else if (current.isVulnProductNode()) {
             final String cpe = nodeText.toString();
-            if (cpe.startsWith("cpe:/a:")) {
+            if (cpe.startsWith(CPE_NODE_TEXT_PREFIX)) {
                 hasApplicationCpe = true;
                 vulnerability.addVulnerableSoftware(cpe);
             }
@@ -222,7 +236,7 @@ public class NvdCve20Handler extends DefaultHandler {
             nodeText = null;
         } else if (current.isVulnSummaryNode()) {
             vulnerability.setDescription(nodeText.toString());
-            if (nodeText.indexOf("** REJECT **") >= 0) {
+            if (nodeText.indexOf(REJECT_NODE_TEXT) >= 0) {
                 hasApplicationCpe = true; //ensure we process this to delete the vuln
             }
             nodeText = null;
@@ -258,9 +272,7 @@ public class NvdCve20Handler extends DefaultHandler {
         final String cveName = vuln.getName();
         if (prevVersionVulnMap != null && prevVersionVulnMap.containsKey(cveName)) {
             final List<VulnerableSoftware> vulnSoftware = prevVersionVulnMap.get(cveName);
-            for (VulnerableSoftware vs : vulnSoftware) {
-                vuln.updateVulnerableSoftware(vs);
-            }
+            vuln.getVulnerableSoftware().addAll(vulnSoftware);
         }
         if (cveDB != null) {
             cveDB.updateVulnerability(vuln);
@@ -492,4 +504,27 @@ public class NvdCve20Handler extends DefaultHandler {
         }
     }
     // </editor-fold>
+
+    /**
+     * A simple class to maintain information about the attribute values encountered while parsing the NVD CVE XML.
+     */
+    protected static class AttributeValues {
+
+        /**
+         * An attribute in the NVD CVE Schema 2.0
+         */
+        protected static final String ID = "id";
+        /**
+         * An attribute in the NVD CVE Schema 2.0
+         */
+        protected static final String XML_LANG = "xml:lang";
+        /**
+         * An attribute in the NVD CVE Schema 2.0
+         */
+        protected static final String HREF = "href";
+        /**
+         * An attribute in the NVD CVE Schema 2.0
+         */
+        protected static final String NVD_XML_VERSION = "nvd_xml_version";
+    }
 }
