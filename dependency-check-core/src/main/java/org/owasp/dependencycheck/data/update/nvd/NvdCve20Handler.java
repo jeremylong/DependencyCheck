@@ -272,7 +272,9 @@ public class NvdCve20Handler extends DefaultHandler {
         final String cveName = vuln.getName();
         if (prevVersionVulnMap != null && prevVersionVulnMap.containsKey(cveName)) {
             final List<VulnerableSoftware> vulnSoftware = prevVersionVulnMap.get(cveName);
-            vuln.getVulnerableSoftware().addAll(vulnSoftware);
+            for (VulnerableSoftware vs : vulnSoftware) {
+                vuln.updateVulnerableSoftware(vs);
+            }
         }
         if (cveDB != null) {
             cveDB.updateVulnerability(vuln);
