@@ -25,6 +25,11 @@
       <archive>https://dwr.dev.java.net/servlets/SummarizeList?listName=announce</archive>
     </mailingList>
   </mailingLists>
+  <!-- added the organization for testing purposes-->
+  <organization>
+    <name>get ahead</name>
+    <url>http://getahead.ltd.uk/dwr</url>
+  </organization>
   <developers>
     <developer>
       <id>joe_walker</id>
