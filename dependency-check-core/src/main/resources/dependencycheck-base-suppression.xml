@@ -507,12 +507,4 @@
         <gav regex="true">^io\.jsonwebtoken:jjwt:.*$</gav>
         <cpe>cpe:/a:sonatype:nexus</cpe>
     </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        False positive suppression per issue #660 - the organization name contains http:// so it gets flagged as http server.
-        ]]></notes>
-        <gav regex="true">^commons-validator:commons-validator:.*$</gav>
-        <cpe>cpe:/a:apache:http_server</cpe>
-        <cpe>cpe:/a:apache:apache_http_server</cpe>
-    </suppress>
 </suppressions>

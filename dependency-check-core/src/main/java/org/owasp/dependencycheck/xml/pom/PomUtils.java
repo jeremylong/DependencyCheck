@@ -47,7 +47,7 @@ public final class PomUtils {
      * Reads in the specified POM and converts it to a Model.
      *
      * @param file the pom.xml file
-     * @return returns a
+     * @return returns an object representation of the POM
      * @throws AnalysisException is thrown if there is an exception extracting
      * or parsing the POM {@link Model} object
      */
@@ -59,12 +59,10 @@ public final class PomUtils {
                 throw new AnalysisException(String.format("Unable to parse pom '%s'", file.getPath()));
             }
             return model;
+        } catch (AnalysisException ex) {
+            throw ex;
         } catch (PomParseException ex) {
             LOGGER.warn("Unable to parse pom '{}'", file.getPath());
-            LOGGER.debug("", ex);
-            throw new AnalysisException(ex);
-        } catch (IOException ex) {
-            LOGGER.warn("Unable to parse pom '{}'(IO Exception)", file.getPath());
             LOGGER.debug("", ex);
             throw new AnalysisException(ex);
         } catch (Throwable ex) {
@@ -79,7 +77,7 @@ public final class PomUtils {
      *
      * @param path the path to the pom.xml file within the jar file
      * @param jar the jar file to extract the pom from
-     * @return returns a
+     * @return returns an object representation of the POM
      * @throws AnalysisException is thrown if there is an exception extracting
      * or parsing the POM {@link Model} object
      */
@@ -93,6 +91,8 @@ public final class PomUtils {
                 if (model == null) {
                     throw new AnalysisException(String.format("Unable to parse pom '%s/%s'", jar.getName(), path));
                 }
+            } catch (AnalysisException ex) {
+                throw ex;
             } catch (SecurityException ex) {
                 LOGGER.warn("Unable to parse pom '{}' in jar '{}'; invalid signature", path, jar.getName());
                 LOGGER.debug("", ex);

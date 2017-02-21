@@ -24,13 +24,17 @@ import static org.junit.Assert.*;
 import org.owasp.dependencycheck.BaseTest;
 
 /**
+ * Test the PomUtils object.
  *
- * @author jeremy
+ * @author Jeremy Long
  */
 public class PomUtilsTest extends BaseTest {
 
     /**
      * Test of readPom method, of class PomUtils.
+     *
+     * @throws java.lang.Exception thrown when the test fails due to an
+     * exception
      */
     @Test
     public void testReadPom_File() throws Exception {
@@ -38,7 +42,12 @@ public class PomUtilsTest extends BaseTest {
         String expResult = "Direct Web Remoting";
         Model result = PomUtils.readPom(file);
         assertEquals(expResult, result.getName());
-        
+
+        expResult = "get ahead";
+        assertEquals(expResult, result.getOrganization());
+        expResult = "http://getahead.ltd.uk/dwr";
+        assertEquals(expResult, result.getOrganizationUrl());
+
         file = BaseTest.getResourceAsFile(this, "jmockit-1.26.pom");
         expResult = "Main";
         result = PomUtils.readPom(file);

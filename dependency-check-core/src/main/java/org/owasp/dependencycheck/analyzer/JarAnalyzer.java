@@ -166,9 +166,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
 
-
     //</editor-fold>
-
     //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
     /**
      * Returns the FileFilter.
@@ -540,6 +538,12 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             dependency.getProductEvidence().addEvidence("pom", "organization name", org, Confidence.LOW);
             addMatchingValues(classes, org, dependency.getVendorEvidence());
             addMatchingValues(classes, org, dependency.getProductEvidence());
+        }
+        // org name
+        final String orgUrl = pom.getOrganizationUrl();
+        if (orgUrl != null && !orgUrl.isEmpty()) {
+            dependency.getVendorEvidence().addEvidence("pom", "organization url", orgUrl, Confidence.MEDIUM);
+            dependency.getProductEvidence().addEvidence("pom", "organization url", orgUrl, Confidence.LOW);
         }
         //pom name
         final String pomName = pom.getName();
@@ -1110,6 +1114,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * Stores information about a class name.
      */
     protected static class ClassNameInformation {
+
         /**
          * The fully qualified class name.
          */
@@ -1180,6 +1185,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         public void setName(String name) {
             this.name = name;
         }
+
         /**
          * Get the value of packageStructure
          *
