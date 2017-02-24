@@ -28,6 +28,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
@@ -38,8 +40,12 @@ import org.joda.time.format.DateTimeFormatter;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.xml.suppression.SuppressionParseException;
+import org.owasp.dependencycheck.xml.suppression.SuppressionParser;
+import org.owasp.dependencycheck.xml.suppression.SuppressionRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,13 +122,55 @@ public class ReportGenerator {
         final String scanDateXML = dateFormatXML.print(dt);
 
         context.put("applicationName", applicationName);
-        context.put("dependencies", dependencies);
         context.put("analyzers", analyzers);
         context.put("properties", properties);
         context.put("scanDate", scanDate);
         context.put("scanDateXML", scanDateXML);
         context.put("enc", enc);
+        context.put("dependencies", addNotesToReport(dependencies));
         context.put("version", Settings.getString(Settings.KEYS.APPLICATION_VERSION, "Unknown"));
+    }
+
+    /**
+     * creates a suppression note adder to dependency
+     *
+     * @param dependencies the list of dependencies
+     * @return dependencies with notes added suppressed vulnerabilities
+     */
+
+    public List<Dependency> addNotesToReport(List<Dependency> dependencies){
+        final String suppressionFilePath = Settings.getString(Settings.KEYS.SUPPRESSION_FILE);
+
+        LOGGER.info("Settings.KEYS.SUPPRESSION_FILE"+Settings.KEYS.SUPPRESSION_FILE);
+
+        if(StringUtils.isBlank(suppressionFilePath)){
+            return dependencies;
+        }
+
+        final SuppressionParser parser1 = new SuppressionParser();
+        List<SuppressionRule> suppressionRule=null;
+
+        if(!suppressionFilePath.isEmpty()){
+            try {
+                suppressionRule=parser1.parseSuppressionRules(new File(suppressionFilePath));
+            } catch (SuppressionParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for(Dependency dependency:dependencies){
+            for(Vulnerability suppressedVulnerability: dependency.getSuppressedVulnerabilities()){
+                for(SuppressionRule suppressionRule1:suppressionRule){
+                    for(String cve: suppressionRule1.getCve()){
+                        if(suppressedVulnerability.getName().equals(cve)){
+                            suppressedVulnerability.setNotes(suppressionRule1.getNotes());
+                        }
+
+                    }
+                }
+            }
+        }
+        return dependencies;
     }
 
     /**

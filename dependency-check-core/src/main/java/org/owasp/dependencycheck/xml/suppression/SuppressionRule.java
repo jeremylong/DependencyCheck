@@ -175,6 +175,49 @@ public class SuppressionRule {
         return !cvssBelow.isEmpty();
     }
 
+
+    /**
+     * The notes added in suppression file
+     */
+
+    private String notes = new String();
+
+    /**
+     * Get the value of notes.
+     *
+     * @return the value of notes
+     */
+    public String getNotes() {
+        return notes;
+    }
+
+    /**
+     * Set the value of notes.
+     *
+     * @param notes new value of cve
+     */
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    /**
+     * Adds the notes to the cve list.
+     *
+     * @param notes the cve to add
+     */
+    public void addNotes(String notes) {
+        this.notes=notes;
+    }
+
+    /**
+     * Returns whether this suppression rule has notes entries.
+     *
+     * @return whether this suppression rule has notes entries
+     */
+    public boolean hasNotes() {
+        return !cve.isEmpty();
+    }
+
     /**
      * Get the value of CWE.
      *
