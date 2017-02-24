@@ -59,6 +59,11 @@ public class SuppressionRule {
      * A Maven GAV to suppression.
      */
     private PropertyType gav = null;
+    /**
+     * The notes added in suppression file
+     */
+
+    private String notes;
 
     /**
      * A flag indicating whether or not the suppression rule is a core/base rule
@@ -174,13 +179,6 @@ public class SuppressionRule {
     public boolean hasCvssBelow() {
         return !cvssBelow.isEmpty();
     }
-
-
-    /**
-     * The notes added in suppression file
-     */
-
-    private String notes;
 
     /**
      * Get the value of notes.
