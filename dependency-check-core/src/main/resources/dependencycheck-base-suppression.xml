@@ -500,6 +500,14 @@
         <cpe>cpe:/a:shim:shim</cpe>
         <cpe>cpe:/a:shim_project:shim</cpe>
     </suppress>
+    <suppress base='true">
+       <notes><![CDATA[
+       False positives on python.
+       ]]></notes>
+       <filePath regex="true">.*__init__\.py$</filePath>
+       <cpe>cpe:/a:shim:shim</cpe>
+       <cpe>cpe:/a:python:python</cpe>
+    </suppress>
     <suppress base="true">
         <notes><![CDATA[
         False positive suppression per issue #664 for JJWT - A Java and Android JSON Web Token library
