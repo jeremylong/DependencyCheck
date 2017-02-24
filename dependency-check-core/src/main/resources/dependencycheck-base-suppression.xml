@@ -500,7 +500,7 @@
         <cpe>cpe:/a:shim:shim</cpe>
         <cpe>cpe:/a:shim_project:shim</cpe>
     </suppress>
-    <suppress base='true">
+    <suppress base="true">
        <notes><![CDATA[
        False positives on python.
        ]]></notes>
