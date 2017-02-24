@@ -141,8 +141,6 @@ public class ReportGenerator {
     public List<Dependency> addNotesToReport(List<Dependency> dependencies){
         final String suppressionFilePath = Settings.getString(Settings.KEYS.SUPPRESSION_FILE);
 
-        LOGGER.info("Settings.KEYS.SUPPRESSION_FILE"+Settings.KEYS.SUPPRESSION_FILE);
-
         if(StringUtils.isBlank(suppressionFilePath)){
             return dependencies;
         }

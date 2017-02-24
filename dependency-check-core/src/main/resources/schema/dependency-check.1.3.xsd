@@ -168,7 +168,6 @@
                                                                     <xs:element name="severity" type="xs:string" minOccurs="1" maxOccurs="1" />
                                                                     <xs:element name="cwe" type="xs:string" minOccurs="0" maxOccurs="1" />
                                                                     <xs:element name="description" type="xs:string" minOccurs="1" maxOccurs="1" />
-                                                                    <xs:element name="notes" type="xs:string" minOccurs="1" maxOccurs="1" />
                                                                     <xs:element name="references" minOccurs="0" maxOccurs="1">
                                                                         <xs:complexType>
                                                                             <xs:sequence>
@@ -212,6 +211,7 @@
                                                                     <xs:element name="severity" type="xs:string" minOccurs="1" maxOccurs="1" />
                                                                     <xs:element name="cwe" type="xs:string" minOccurs="0" maxOccurs="1" />
                                                                     <xs:element name="description" type="xs:string" minOccurs="1" maxOccurs="1" />
+                                                                    <xs:element name="notes" type="xs:string" minOccurs="1" maxOccurs="1" />
                                                                     <xs:element name="references" minOccurs="0" maxOccurs="1">
                                                                         <xs:complexType>
                                                                             <xs:sequence>
