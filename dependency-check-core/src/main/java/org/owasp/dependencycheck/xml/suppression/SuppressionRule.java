@@ -180,7 +180,7 @@ public class SuppressionRule {
      * The notes added in suppression file
      */
 
-    private String notes = new String();
+    private String notes;
 
     /**
      * Get the value of notes.
