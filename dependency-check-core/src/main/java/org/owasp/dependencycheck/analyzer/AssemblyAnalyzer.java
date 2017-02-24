@@ -214,6 +214,12 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
 
             grokAssemblyExe = tempFile;
             LOGGER.debug("Extracted GrokAssembly.exe to {}", grokAssemblyExe.getPath());
+
+            String cfg = grokAssemblyExe.getPath() + ".config";
+            fos = new FileOutputStream(cfg);
+            is = AssemblyAnalyzer.class.getClassLoader().getResourceAsStream("GrokAssembly.exe.config");
+            IOUtils.copy(is, fos);
+            LOGGER.debug("Extracted GrokAssembly.exe.config to {}", cfg);
         } catch (IOException ioe) {
             this.setEnabled(false);
             LOGGER.warn("Could not extract GrokAssembly.exe: {}", ioe.getMessage());
