@@ -46,12 +46,6 @@ public class SuppressionHandler extends DefaultHandler {
      * The CVE element name.
      */
     public static final String CVE = "cve";
-
-    /**
-     * The CVE element name.
-     */
-    public static final String NOTES = "notes";
-
     /**
      * The CPE element name.
      */
@@ -71,16 +65,7 @@ public class SuppressionHandler extends DefaultHandler {
     /**
      * A list of suppression rules.
      */
-    private final List<SuppressionRule> suppressionRules = new ArrayList<SuppressionRule>();
-
-    /**
-     * Get the value of suppressionRules.
-     *
-     * @return the value of suppressionRules
-     */
-    public List<SuppressionRule> getSuppressionRules() {
-        return suppressionRules;
-    }
+    private final List<SuppressionRule> suppressionRules = new ArrayList<>();
     /**
      * The current rule being read.
      */
@@ -93,6 +78,15 @@ public class SuppressionHandler extends DefaultHandler {
      * The current node text being extracted from the element.
      */
     private StringBuilder currentText;
+
+    /**
+     * Get the value of suppressionRules.
+     *
+     * @return the value of suppressionRules
+     */
+    public List<SuppressionRule> getSuppressionRules() {
+        return suppressionRules;
+    }
 
     /**
      * Handles the start element event.
@@ -146,11 +140,7 @@ public class SuppressionHandler extends DefaultHandler {
             rule.addCwe(currentText.toString());
         } else if (CVE.equals(qName)) {
             rule.addCve(currentText.toString());
-        }
-        else if (NOTES.equals(qName)) {
-            rule.addNotes(currentText.toString());
-        }
-        else if (CVSS_BELOW.equals(qName)) {
+        } else if (CVSS_BELOW.equals(qName)) {
             final float cvss = Float.parseFloat(currentText.toString());
             rule.addCvssBelow(cvss);
         }
@@ -170,8 +160,8 @@ public class SuppressionHandler extends DefaultHandler {
     }
 
     /**
-     * Processes field members that have been collected during the characters and startElement method to construct a
-     * PropertyType object.
+     * Processes field members that have been collected during the characters
+     * and startElement method to construct a PropertyType object.
      *
      * @return a PropertyType object
      */
