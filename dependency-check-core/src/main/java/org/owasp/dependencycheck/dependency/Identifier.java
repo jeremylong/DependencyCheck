@@ -20,21 +20,161 @@ package org.owasp.dependencycheck.dependency;
 import java.io.Serializable;
 
 /**
+ * In identifier such as a CPE or dependency coordinates (i.e. GAV).
  *
  * @author Jeremy Long
  */
 public class Identifier implements Serializable, Comparable<Identifier> {
 
+    //<editor-fold defaultstate="collapsed" desc="fields">
     /**
      * The serial version UID for serialization.
      */
     private static final long serialVersionUID = 1L;
+    /**
+     * The confidence that this is the correct identifier.
+     */
+    private Confidence confidence;
+    /**
+     * The value of the identifier
+     */
+    private String value;
+    /**
+     * The url for the identifier.
+     */
+    private String url;
+    /**
+     * The type of the identifier.
+     */
+    private String type;
+    /**
+     * A description of the identifier.
+     */
+    private String description;
+    /**
+     * Notes about the vulnerability. Generally used for suppression
+     * information.
+     */
+    private String notes;
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="getters/setters">
+    /**
+     * Get the value of confidence.
+     *
+     * @return the value of confidence
+     */
+    public Confidence getConfidence() {
+        return confidence;
+    }
 
     /**
-     * Default constructor. Should only be used for automatic class
-     * creation as is the case with many XML parsers (for the parsing
-     * of the Dependency-Check XML report). For all other use-cases,
-     * please use the non-default constructors.
+     * Set the value of confidence.
+     *
+     * @param confidence new value of confidence
+     */
+    public void setConfidence(Confidence confidence) {
+        this.confidence = confidence;
+    }
+
+    /**
+     * Get the value of value.
+     *
+     * @return the value of value
+     */
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * Set the value of value.
+     *
+     * @param value new value of value
+     */
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    /**
+     * Get the value of url.
+     *
+     * @return the value of url
+     */
+    public String getUrl() {
+        return url;
+    }
+
+    /**
+     * Set the value of url.
+     *
+     * @param url new value of url
+     */
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    /**
+     * Get the value of type.
+     *
+     * @return the value of type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * <p>
+     * Set the value of type.</p><p>
+     * Example would be "CPE".</p>
+     *
+     * @param type new value of type
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     * Get the value of description.
+     *
+     * @return the value of description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Set the value of description.
+     *
+     * @param description new value of description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * Get the value of notes from suppression notes.
+     *
+     * @return the value of notes
+     */
+    public String getNotes() {
+        return notes;
+    }
+
+    /**
+     * Set the value of notes.
+     *
+     * @param notes new value of notes
+     */
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+    //</editor-fold>
+
+    /**
+     * Default constructor. Should only be used for automatic class creation as
+     * is the case with many XML parsers (for the parsing of the
+     * Dependency-Check XML report). For all other use-cases, please use the
+     * non-default constructors.
      */
     public Identifier() {
     }
@@ -62,120 +202,6 @@ public class Identifier implements Serializable, Comparable<Identifier> {
      */
     public Identifier(String type, String value, String url, String description) {
         this(type, value, url);
-        this.description = description;
-    }
-
-    /**
-     * The confidence that this is the correct identifier.
-     */
-    private Confidence confidence;
-
-    /**
-     * Get the value of confidence.
-     *
-     * @return the value of confidence
-     */
-    public Confidence getConfidence() {
-        return confidence;
-    }
-
-    /**
-     * Set the value of confidence.
-     *
-     * @param confidence new value of confidence
-     */
-    public void setConfidence(Confidence confidence) {
-        this.confidence = confidence;
-    }
-
-    /**
-     * The value of the identifier
-     */
-    private String value;
-
-    /**
-     * Get the value of value.
-     *
-     * @return the value of value
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * Set the value of value.
-     *
-     * @param value new value of value
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
-    /**
-     * The url for the identifier.
-     */
-    private String url;
-
-    /**
-     * Get the value of url.
-     *
-     * @return the value of url
-     */
-    public String getUrl() {
-        return url;
-    }
-
-    /**
-     * Set the value of url.
-     *
-     * @param url new value of url
-     */
-    public void setUrl(String url) {
-        this.url = url;
-    }
-    /**
-     * The type of the identifier.
-     */
-    private String type;
-
-    /**
-     * Get the value of type.
-     *
-     * @return the value of type
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * <p>
-     * Set the value of type.</p><p>
-     * Example would be "CPE".</p>
-     *
-     * @param type new value of type
-     */
-    public void setType(String type) {
-        this.type = type;
-    }
-    /**
-     * A description of the identifier.
-     */
-    private String description;
-
-    /**
-     * Get the value of description.
-     *
-     * @return the value of description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Set the value of description.
-     *
-     * @param description new value of description
-     */
-    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -213,7 +239,8 @@ public class Identifier implements Serializable, Comparable<Identifier> {
     }
 
     /**
-     * Implementation of the comparator interface. This compares the value of the identifier only.
+     * Implementation of the comparator interface. This compares the value of
+     * the identifier only.
      *
      * @param o the object being compared
      * @return an integer indicating the ordering
