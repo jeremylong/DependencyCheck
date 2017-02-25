@@ -141,7 +141,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 #end
                     <description>$enc.xml($vuln.description)</description>
                     <references>
-#foreach($ref in $vuln.getReferences(true))
+#foreach($ref in $vuln.getReferences())
                         <reference>
                             <source>$enc.xml($ref.source)</source>
                             <url>$enc.xml($ref.url)</url>
@@ -150,7 +150,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 #end
                     </references>
                     <vulnerableSoftware>
-#foreach($vs in $vuln.getVulnerableSoftware(true))
+#foreach($vs in $vuln.getVulnerableSoftware())
                         <software#if($vs.hasPreviousVersion()) allPreviousVersion="true"#end>$enc.xml($vs.name)</software>
 #end
                     </vulnerableSoftware>
@@ -171,8 +171,9 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <cwe>$enc.xml($vuln.cwe)</cwe>
 #end
                     <description>$enc.xml($vuln.description)</description>
+                    <notes>$enc.xml($vuln.notes)</notes>
                     <references>
-#foreach($ref in $vuln.getReferences(true))
+#foreach($ref in $vuln.getReferences())
                         <reference>
                             <source>$enc.xml($ref.source)</source>
                             <url>$enc.xml($ref.url)</url>
@@ -181,7 +182,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 #end
                     </references>
                     <vulnerableSoftware>
-#foreach($vs in $vuln.getVulnerableSoftware(true))
+#foreach($vs in $vuln.getVulnerableSoftware())
                         <software#if($vs.hasPreviousVersion()) allPreviousVersion="true"#end>$enc.xml($vs.name)</software>
 #end
                     </vulnerableSoftware>
