@@ -510,6 +510,28 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        checkpoint firewall is not at the application layer.
+        ]]></notes>
+        <filePath regex="true">.*</filePath>
+        <cpe>cpe:/a:checkpoint:check_point</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       Bouncy Castle Time Stamp Protocol is not related to openpgp.
+       ]]></notes>
+       <gav regex="true">^org\.bouncycastle:bctsp.*$</gav>
+       <cpe>cpe:/a:openpgp:openpgp</cpe>
+       <cpe>cpe:/a:pgp:openpgp</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       Apache XML Graphics is used by Batik - but should not be identified as batik.
+       ]]></notes>
+       <gav regex="true">^org\.apache\.xmlgraphics:xmlgraphics-commons:.*$</gav>
+       <cpe>cpe:/a:apache:batik</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         False positive suppression per issue #664 for JJWT - A Java and Android JSON Web Token library
         ]]></notes>
         <gav regex="true">^io\.jsonwebtoken:jjwt:.*$</gav>
