@@ -812,8 +812,15 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                     ##yes, we are HTML Encoding into JavaScript... the escape utils don't have a JS Encode and I haven't written one yet
                                     &nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CPE for this file" onclick="copyText('$enc.html($dependency.FileNameForJavaScript)', '$enc.html($dependency.Sha1sum)', '$enc.html($suppressGav)', 'cpe', '$enc.html($id.value)')">suppress</button>
                                 #end
-                                #if ($id.description)
-                                    <br/>$enc.html($id.description)
+                                #if ($id.description || $id.notes)
+                                    <ul>
+                                    #if ($id.description)
+                                        <li>Description: $enc.html($id.description)</li>
+                                    #end
+                                    #if ($id.notes)
+                                        <li>Notes: $enc.xml($id.notes)</li>
+                                    #end
+                                    </ul>
                                 #end
                                 </li>
                             #end
@@ -838,15 +845,18 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                             <br/>CVSS Score: $vuln.cvssScore (AV:$enc.html($vuln.cvssAccessVector.substring(0,1))/AC:$enc.html($vuln.cvssAccessComplexity.substring(0,1))/Au:$enc.html($vuln.cvssAuthentication.substring(0,1))/C:$enc.html($vuln.cvssConfidentialityImpact.substring(0,1))/I:$enc.html($vuln.cvssIntegrityImpact.substring(0,1))/A:$enc.html($vuln.cvssAvailabilityImpact.substring(0,1)))
                             #if ($vuln.cwe)
                                 <br/>CWE: $vuln.cwe
+                            #end
+                            #if ($vuln.notes)
+                                <br/>Notes: $enc.xml($vuln.notes)
                             #end</p>
                             <p>$enc.html($vuln.description)
-                                #if ($vuln.getReferences().size()>0)
-                                    <ul>
-                                    #foreach($ref in $vuln.getReferences(true))
-                                        <li>$enc.html($ref.source) - <a target="_blank" href="$enc.html($ref.url)">$ref.name</a></li>
-                                    #end
-                                    </ul>
+                            #if ($vuln.getReferences().size()>0)
+                                <ul>
+                                #foreach($ref in $vuln.getReferences(true))
+                                    <li>$enc.html($ref.source) - <a target="_blank" href="$enc.html($ref.url)">$ref.name</a></li>
                                 #end
+                                </ul>
+                            #end
                             </p>
 
                             #if ($vuln.getVulnerableSoftware().size()<2)
@@ -947,8 +957,15 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                         #if ($id.confidence)
                                             &nbsp;&nbsp;<i>Confidence</i>:$id.confidence
                                         #end
-                                        #if ($id.description)
-                                            <br/>$enc.html($id.description)
+                                        #if ($id.description || $id.notes)
+                                            <ul>
+                                            #if ($id.description)
+                                                <li>Description: $enc.html($id.description)</li>
+                                            #end
+                                            #if ($id.notes)
+                                                <li>Notes: $enc.xml($id.notes)</li>
+                                            #end
+                                            </ul>
                                         #end
                                         </li>
                                     #end
@@ -973,6 +990,9 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                     <br/>CVSS Score: $vuln.cvssScore
                                     #if ($vuln.cwe)
                                         <br/>CWE: $vuln.cwe
+                                    #end
+                                    #if ($vuln.notes)
+                                        <br/>Notes: $enc.xml($vuln.notes)
                                     #end</p>
                                     <p>$enc.html($vuln.description)
                                         #if ($vuln.getReferences().size()>0)
@@ -985,7 +1005,7 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                     </p>
                                     #if ($vuln.getVulnerableSoftware().size()<2)
                                         <p>Vulnerable Software &amp; Versions:<ul>
-                                            git st<li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedCPE)">$enc.html($vuln.matchedCPE)</a> #if($vuln.hasMatchedAllPreviousCPE()) and all previous versions#end</li>
+                                            <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedCPE)">$enc.html($vuln.matchedCPE)</a> #if($vuln.hasMatchedAllPreviousCPE()) and all previous versions#end</li>
                                         </ul></p>
                                     #else
                                         <p>Vulnerable Software &amp; Versions:&nbsp;(<a href="#" onclick="return toggleDisplay(this,'.vs$vsctr', 'show all', 'show less');">show all</a>)<ul>

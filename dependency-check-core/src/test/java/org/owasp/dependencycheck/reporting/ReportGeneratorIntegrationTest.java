@@ -123,6 +123,9 @@ public class ReportGeneratorIntegrationTest extends BaseDBTestCase {
                 f.mkdir();
             }
             String writeTo = "target/test-reports/Report.xml";
+            File suppressionFile = BaseTest.getResourceAsFile(this, "incorrectSuppressions.xml");
+            
+            Settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile.getAbsolutePath());
             
             //File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
             File struts = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
@@ -151,7 +154,7 @@ public class ReportGeneratorIntegrationTest extends BaseDBTestCase {
             
             engine.cleanup();
             
-            InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/dependency-check.1.3.xsd");
+            InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/dependency-check.1.4.xsd");
             StreamSource xsdSource = new StreamSource(xsdStream);
             StreamSource xmlSource = new StreamSource(new File(writeTo));
             SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
