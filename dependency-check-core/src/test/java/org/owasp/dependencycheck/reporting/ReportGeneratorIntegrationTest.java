@@ -123,6 +123,9 @@ public class ReportGeneratorIntegrationTest extends BaseDBTestCase {
                 f.mkdir();
             }
             String writeTo = "target/test-reports/Report.xml";
+            File suppressionFile = BaseTest.getResourceAsFile(this, "incorrectSuppressions.xml");
+            
+            Settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile.getAbsolutePath());
             
             //File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
             File struts = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");

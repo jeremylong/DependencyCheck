@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+   <suppress>
+      <notes><![CDATA[
+      Invalid suppression of CPE - just testing the notes.
+      ]]></notes>
+      <gav regex="true">^jetty:org\.mortbay\.jetty:.*$</gav>
+      <cpe>cpe:/a:mortbay_jetty:jetty</cpe>
+   </suppress>
+   <suppress>
+	   <notes><![CDATA[
+	   Invalid suppression of CVE - just testing the notes.
+	   ]]></notes>
+	   <gav regex="true">^org\.apache\.struts:struts2-core:.*$</gav>
+	   <cve>CVE-2008-6504</cve>
+	</suppress>
+</suppressions>
