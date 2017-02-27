@@ -68,21 +68,15 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Suppresses false positives on glassfish
+        Suppresses false positives on glassfish and grizzly. Updated per issue #672.
         ]]></notes>
-        <gav regex="true">org\.glassfish:.*(json|faces).*</gav>
+        <gav regex="true">org\.glassfish(\.(web|grizzly)):.*(json|faces|jstl|grizzly).*</gav>
         <cpe>cpe:/a:oracle:glassfish</cpe>
+        <cpe>cpe:/a:oracle:glassfish_server</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Suppresses false positives on the grizzly-framework
-        ]]></notes>
-        <gav regex="true">org\.glassfish\.grizzly:grizzly-framework:.*</gav>
-        <cpe>cpe:/a:oracle:glassfish</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        Suppresses false positives on the grizzly-framework
+        Suppresses false positives on ldap_project (issue #165).
         ]]></notes>
         <gav regex="true">org\.forgerock\.opendj:opendj-ldap-sdk:.*</gav>
         <cpe>cpe:/a:ldap_project:ldap</cpe>
