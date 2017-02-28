@@ -78,11 +78,10 @@ public final class CveDB {
      */
     private final DatabaseProperties databaseProperties;
     /**
-     * Creates a new CveDB object and opens the database connection. Note, the
-     * connection must be closed by the caller by calling the close method.
-     * ======= Does the underlying connection support batch operations?
+     * Does the underlying connection support batch operations?
+     * Currently we do not support batch execution.
      */
-    private final boolean batchSupported;
+    private final boolean batchSupported = false;
     /**
      * The prepared statements.
      */
@@ -127,7 +126,6 @@ public final class CveDB {
     public CveDB() throws DatabaseException {
         open();
         final String databaseProductName = determineDatabaseProductName();
-        batchSupported = isBatchSupportedFor(databaseProductName);
         statementBundle = databaseProductName != null ?
                 ResourceBundle.getBundle("data/dbStatements", new Locale(databaseProductName)) :
                 ResourceBundle.getBundle("data/dbStatements");
@@ -149,21 +147,6 @@ public final class CveDB {
             LOGGER.warn("Problem determining database product!", se);
             return null;
         }
-    }
-
-    /**
-     * Returns if the database supports batch execution of statements.
-     *
-     * @param databaseProductName the product name of the database
-     * @return if the database supports batch execution
-     */
-    private boolean isBatchSupportedFor(String databaseProductName) {
-        if ("mysql".equalsIgnoreCase(databaseProductName)) {
-            return false;
-        }
-
-        // per default we do not support batch execution
-        return false;
     }
 
     /**
@@ -227,7 +210,7 @@ public final class CveDB {
             throws DatabaseException {
 
         final EnumMap<PreparedStatementCveDb, PreparedStatement> result = new EnumMap<PreparedStatementCveDb, PreparedStatement>(PreparedStatementCveDb.class);
-        for (PreparedStatementCveDb key : PreparedStatementCveDb.values()) {
+        for (PreparedStatementCveDb key : values()) {
             final String statementString = statementBundle.getString(key.name());
             final PreparedStatement preparedStatement;
             try {
@@ -610,7 +593,7 @@ public final class CveDB {
             }
 
             final PreparedStatement insertReference = getPreparedStatement(INSERT_REFERENCE);
-            if(batchSupported) {
+            if (batchSupported) {
                 insertReference.clearBatch();
             }
             for (Reference r : vuln.getReferences()) {
@@ -631,7 +614,7 @@ public final class CveDB {
             }
 
             final PreparedStatement insertSoftware = getPreparedStatement(INSERT_SOFTWARE);
-            if(batchSupported) {
+            if (batchSupported) {
                 insertSoftware.clearBatch();
             }
             for (VulnerableSoftware s : vuln.getVulnerableSoftware()) {
