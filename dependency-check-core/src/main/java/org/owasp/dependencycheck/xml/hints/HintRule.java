@@ -35,44 +35,44 @@ public class HintRule {
     /**
      * The list of file names to match.
      */
-    private final List<PropertyType> filenames = new ArrayList<PropertyType>();
+    private final List<PropertyType> filenames = new ArrayList<>();
     /**
      * The list of vendor evidence that is being matched.
      */
-    private final List<Evidence> givenVendor = new ArrayList<Evidence>();
+    private final List<Evidence> givenVendor = new ArrayList<>();
     /**
      * The list of product evidence that is being matched.
      */
-    private final List<Evidence> givenProduct = new ArrayList<Evidence>();
+    private final List<Evidence> givenProduct = new ArrayList<>();
     /**
      * The list of product evidence that is being matched.
      */
-    private final List<Evidence> givenVersion = new ArrayList<Evidence>();
+    private final List<Evidence> givenVersion = new ArrayList<>();
     /**
      * The list of vendor hints to add.
      */
-    private final List<Evidence> addVendor = new ArrayList<Evidence>();
+    private final List<Evidence> addVendor = new ArrayList<>();
     /**
      * The list of product evidence to add.
      */
-    private final List<Evidence> addProduct = new ArrayList<Evidence>();
+    private final List<Evidence> addProduct = new ArrayList<>();
     /**
      * The list of version evidence to add.
      */
-    private final List<Evidence> addVersion = new ArrayList<Evidence>();
+    private final List<Evidence> addVersion = new ArrayList<>();
 
     /**
      * The list of vendor hints to add.
      */
-    private final List<Evidence> removeVendor = new ArrayList<Evidence>();
+    private final List<Evidence> removeVendor = new ArrayList<>();
     /**
      * The list of product evidence to add.
      */
-    private final List<Evidence> removeProduct = new ArrayList<Evidence>();
+    private final List<Evidence> removeProduct = new ArrayList<>();
     /**
      * The list of version evidence to add.
      */
-    private final List<Evidence> removeVersion = new ArrayList<Evidence>();
+    private final List<Evidence> removeVersion = new ArrayList<>();
 
     /**
      * Adds the filename evidence to the collection.
