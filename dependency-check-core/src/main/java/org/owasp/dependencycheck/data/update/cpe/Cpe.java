@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.update.cpe;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import org.owasp.dependencycheck.data.update.exception.InvalidDataException;
@@ -36,7 +37,8 @@ public class Cpe {
      */
     public Cpe(String value) throws UnsupportedEncodingException, InvalidDataException {
         this.value = value;
-        final String[] data = value.substring(7).split(":");
+        final String valueWithoutPrefix = value.substring(7);
+        final String[] data = StringUtils.split(valueWithoutPrefix, ':');
         if (data.length >= 2) {
             vendor = URLDecoder.decode(data[0].replace("+", "%2B"), "UTF-8");
             product = URLDecoder.decode(data[1].replace("+", "%2B"), "UTF-8");

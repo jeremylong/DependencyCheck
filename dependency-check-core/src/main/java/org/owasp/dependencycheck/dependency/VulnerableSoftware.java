@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.dependency;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.data.cpe.IndexEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +74,8 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     public void parseName(String cpeName) throws UnsupportedEncodingException {
         this.name = cpeName;
         if (cpeName != null && cpeName.length() > 7) {
-            final String[] data = cpeName.substring(7).split(":");
+            final String cpeNameWithoutPrefix = cpeName.substring(7);
+            final String[] data = StringUtils.split(cpeNameWithoutPrefix, ':');
             if (data.length >= 1) {
                 this.setVendor(urlDecode(data[0]));
             }
@@ -172,8 +174,8 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     @Override
     public int compareTo(VulnerableSoftware vs) {
         int result = 0;
-        final String[] left = this.name.split(":");
-        final String[] right = vs.getName().split(":");
+        final String[] left = StringUtils.split(this.name, ':');
+        final String[] right = StringUtils.split(vs.getName(), ':');
         final int max = (left.length <= right.length) ? left.length : right.length;
         if (max > 0) {
             for (int i = 0; result == 0 && i < max; i++) {
