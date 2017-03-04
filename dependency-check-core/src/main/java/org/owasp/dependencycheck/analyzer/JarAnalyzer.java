@@ -43,6 +43,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -1150,7 +1151,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         ClassNameInformation(String className) {
             name = className;
             if (name.contains("/")) {
-                final String[] tmp = className.toLowerCase().split("/");
+                final String[] tmp = StringUtils.split(className.toLowerCase(), '/');
                 int start = 0;
                 int end = 3;
                 if ("com".equals(tmp[0]) || "org".equals(tmp[0])) {

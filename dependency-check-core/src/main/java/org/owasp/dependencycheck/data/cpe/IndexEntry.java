@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.data.cpe;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * A CPE entry containing the name, vendor, product, and version.
@@ -143,7 +144,8 @@ public class IndexEntry implements Serializable {
      */
     public void parseName(String cpeName) throws UnsupportedEncodingException {
         if (cpeName != null && cpeName.length() > 7) {
-            final String[] data = cpeName.substring(7).split(":");
+            final String cpeNameWithoutPrefix = cpeName.substring(7);
+            final String[] data = StringUtils.split(cpeNameWithoutPrefix, ':');
             if (data.length >= 1) {
                 vendor = URLDecoder.decode(data[0].replace("+", "%2B"), "UTF-8");
                 if (data.length >= 2) {
