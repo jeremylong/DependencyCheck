@@ -26,28 +26,29 @@ import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Locale;
-import org.eclipse.aether.artifact.Artifact;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
+import org.apache.maven.shared.artifact.ArtifactCoordinate;
+import org.apache.maven.shared.artifact.TransferUtils;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
-import org.eclipse.aether.RepositorySystem;
-import org.eclipse.aether.RepositorySystemSession;
-import org.eclipse.aether.artifact.DefaultArtifact;
-import org.eclipse.aether.repository.RemoteRepository;
-import org.eclipse.aether.resolution.ArtifactRequest;
-import org.eclipse.aether.resolution.ArtifactResolutionException;
-import org.eclipse.aether.resolution.ArtifactResult;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
@@ -108,23 +109,19 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(readonly = true, required = true, property = "reactorProjects")
     private List<MavenProject> reactorProjects;
     /**
-     * The entry point to Aether, i.e. the component doing all the work.
+     * The entry point towards a Maven version independent way of resolving artifacts (handles both Maven 3.0 sonatype and Maven 3.1+ eclipse Aether implementations).
      */
     @Component
-    private RepositorySystem repoSystem;
+    private ArtifactResolver artifactResolver;
 
-    /**
-     * The current repository/network configuration of Maven.
-     */
-    @Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
-    private RepositorySystemSession repoSession;
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
+    protected MavenSession session;
 
-    /**
-     * The project's remote repositories to use for the resolution of plug-ins
-     * and their dependencies.
+   /**
+     * Remote repositories which will be searched for artifacts.
      */
-    @Parameter(defaultValue = "${project.remotePluginRepositories}", readonly = true)
-    private List<RemoteRepository> remoteRepos;
+    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true )
+    private List<ArtifactRepository> remoteRepositories;
 
     /**
      * Component within Maven to build the dependency graph.
@@ -629,7 +626,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     protected ExceptionCollection scanArtifacts(MavenProject project, Engine engine) {
         try {
             final DependencyNode dn = dependencyGraphBuilder.buildDependencyGraph(project, null, reactorProjects);
-            return collectDependencies(engine, project, dn.getChildren());
+            final ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest();
+            return collectDependencies(engine, project, dn.getChildren(), buildingRequest);
         } catch (DependencyGraphBuilderException ex) {
             final String msg = String.format("Unable to build dependency graph on project %s", project.getName());
             getLog().debug(msg, ex);
@@ -648,29 +646,24 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @return a collection of exceptions that may have occurred while resolving
      * and scanning the dependencies
      */
-    private ExceptionCollection collectDependencies(Engine engine, MavenProject project, List<DependencyNode> nodes) {
+    private ExceptionCollection collectDependencies(Engine engine, MavenProject project, List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest) {
         ExceptionCollection exCol = null;
         for (DependencyNode dependencyNode : nodes) {
-            exCol = collectDependencies(engine, project, dependencyNode.getChildren());
+            exCol = collectDependencies(engine, project, dependencyNode.getChildren(), buildingRequest);
             if (excludeFromScan(dependencyNode.getArtifact().getScope())) {
                 continue;
             }
             try {
-                //an alternative request method is documented here
-                // https://www.mirkosertic.de/wordpress/2015/12/how-to-download-maven-artifacts-with-maven-3-1-and-eclipse-aether/
-                final ArtifactRequest request = new ArtifactRequest();
-                request.setArtifact(new DefaultArtifact(dependencyNode.getArtifact().getId()));
-                request.setRepositories(remoteRepos);
-                final ArtifactResult result = repoSystem.resolveArtifact(repoSession, request);
-                if (result.isResolved() && result.getArtifact() != null && result.getArtifact().getFile() != null) {
-                    final List<Dependency> deps = engine.scan(result.getArtifact().getFile().getAbsoluteFile(),
+                final ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
+                final Artifact result = artifactResolver.resolveArtifact( buildingRequest, coordinate ).getArtifact();
+                if (result.isResolved() && result.getFile()!= null) {
+                    final List<Dependency> deps = engine.scan(result.getFile().getAbsoluteFile(),
                             project.getName() + ":" + dependencyNode.getArtifact().getScope());
                     if (deps != null) {
                         if (deps.size() == 1) {
                             final Dependency d = deps.get(0);
                             if (d != null) {
-                                final Artifact a = result.getArtifact();
-                                final MavenArtifact ma = new MavenArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion());
+                                final MavenArtifact ma = new MavenArtifact(result.getGroupId(), result.getArtifactId(), result.getVersion());
                                 d.addAsEvidence("pom", ma, Confidence.HIGHEST);
                                 if (getLog().isDebugEnabled()) {
                                     getLog().debug(String.format("Adding project reference %s on dependency %s",
@@ -689,9 +682,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                             exCol = new ExceptionCollection();
                         }
                         getLog().error(msg);
-                        for (Exception ex : result.getExceptions()) {
-                            exCol.addException(ex);
-                        }
                     }
                 } else {
                     final String msg = String.format("Unable to resolve '%s' in project %s",
@@ -700,11 +690,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     if (exCol == null) {
                         exCol = new ExceptionCollection();
                     }
-                    for (Exception ex : result.getExceptions()) {
-                        exCol.addException(ex);
-                    }
                 }
-            } catch (ArtifactResolutionException ex) {
+            } catch (ArtifactResolverException ex) {
                 if (exCol == null) {
                     exCol = new ExceptionCollection();
                 }
@@ -712,6 +699,20 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
         }
         return exCol;
+    }
+
+    /**
+     * @return Returns a new ProjectBuildingRequest populated from the current session and the current project remote
+     *         repositories, used to resolve artifacts.
+     */
+    public ProjectBuildingRequest newResolveArtifactProjectBuildingRequest()
+    {
+        ProjectBuildingRequest buildingRequest =
+            new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+
+        buildingRequest.setRemoteRepositories( remoteRepositories );
+
+        return buildingRequest;
     }
 
     /**
