@@ -40,9 +40,7 @@ public class CveDBMySQLTest extends BaseTest {
     @Test
     public void testOpen() {
         try {
-            CveDB instance = new CveDB();
-            instance.open();
-            instance.close();
+            CveDB instance = CveDB.getInstance();
         } catch (DatabaseException ex) {
             System.out.println("Unable to connect to the My SQL database; verify that the db server is running and that the schema has been generated");
             fail(ex.getMessage());
@@ -54,18 +52,15 @@ public class CveDBMySQLTest extends BaseTest {
      */
     @Test
     public void testGetCPEs() throws Exception {
-        CveDB instance = new CveDB();
+        CveDB instance = CveDB.getInstance();
         try {
             String vendor = "apache";
-            String product = "struts";
-            instance.open();
+            String product = "struts";            
             Set<VulnerableSoftware> result = instance.getCPEs(vendor, product);
             assertTrue("Has data been loaded into the MySQL DB? if not consider using the CLI to populate it", result.size() > 5);
         } catch (Exception ex) {
             System.out.println("Unable to access the My SQL database; verify that the db server is running and that the schema has been generated");
             throw ex;
-        } finally {
-            instance.close();
         }
     }
 
@@ -75,16 +70,13 @@ public class CveDBMySQLTest extends BaseTest {
     @Test
     public void testGetVulnerabilities() throws Exception {
         String cpeStr = "cpe:/a:apache:struts:2.1.2";
-        CveDB instance = new CveDB();
+        CveDB instance = CveDB.getInstance();
         try {
-            instance.open();
             List<Vulnerability> result = instance.getVulnerabilities(cpeStr);
             assertTrue(result.size() > 5);
         } catch (Exception ex) {
             System.out.println("Unable to access the My SQL database; verify that the db server is running and that the schema has been generated");
             throw ex;
-        } finally {
-            instance.close();
-        }
+        } 
     }
 }

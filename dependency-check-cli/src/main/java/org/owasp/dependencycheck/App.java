@@ -284,15 +284,8 @@ public class App {
             final List<Dependency> dependencies = engine.getDependencies();
             DatabaseProperties prop = null;
             CveDB cve = null;
-            try {
-                cve = new CveDB();
-                cve.open();
-                prop = cve.getDatabaseProperties();
-            } finally {
-                if (cve != null) {
-                    cve.close();
-                }
-            }
+            cve = CveDB.getInstance();
+            prop = cve.getDatabaseProperties();
             final ReportGenerator report = new ReportGenerator(applicationName, dependencies, engine.getAnalyzers(), prop);
             try {
                 report.generateReports(reportDirectory, outputFormat);

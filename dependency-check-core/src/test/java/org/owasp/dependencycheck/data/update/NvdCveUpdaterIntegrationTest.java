@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
 
@@ -28,7 +29,7 @@ import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
  *
  * @author Jeremy Long
  */
-    public class NvdCveUpdaterIntegrationTest extends BaseTest {
+public class NvdCveUpdaterIntegrationTest extends BaseTest {
 
     public NvdCveUpdater getUpdater() {
         NvdCveUpdater instance = new NvdCveUpdater();
@@ -55,12 +56,7 @@ import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
     @Test
     public void testUpdatesNeeded() throws Exception {
         NvdCveUpdater instance = getUpdater();
-        try {
-            instance.openDataStores();
-            UpdateableNvdCve result = instance.getUpdatesNeeded();
-            assertNotNull(result);
-        } finally {
-            instance.closeDataStores();
-        }
+        UpdateableNvdCve result = instance.getUpdatesNeeded();
+        assertNotNull(result);
     }
 }

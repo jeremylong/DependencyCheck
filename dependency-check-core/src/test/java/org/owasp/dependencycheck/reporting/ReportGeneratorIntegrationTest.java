@@ -144,10 +144,8 @@ public class ReportGeneratorIntegrationTest extends BaseDBTestCase {
             engine.scan(jetty);
             engine.analyzeDependencies();
             
-            CveDB cveDB = new CveDB();
-            cveDB.open();
+            CveDB cveDB = CveDB.getInstance();
             DatabaseProperties dbProp = cveDB.getDatabaseProperties();
-            cveDB.close();
             
             ReportGenerator generator = new ReportGenerator("Test Report", engine.getDependencies(), engine.getAnalyzers(), dbProp);
             generator.generateReport(templateName, writeTo);

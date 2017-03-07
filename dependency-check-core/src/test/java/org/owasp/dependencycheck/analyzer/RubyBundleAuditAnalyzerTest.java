@@ -65,10 +65,8 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
      *
      * @throws Exception thrown if there is a problem
      */
-    @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp();
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
         Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
         Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);

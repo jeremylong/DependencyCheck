@@ -36,19 +36,11 @@ public class DatabasePropertiesIntegrationTest extends BaseDBTestCase {
      */
     @Test
     public void testIsEmpty() throws Exception {
-        CveDB cveDB = null;
-        try {
-            cveDB = new CveDB();
-            cveDB.open();
-            DatabaseProperties instance = cveDB.getDatabaseProperties();
-            assertNotNull(instance);
-            //no exception means the call worked... whether or not it is empty depends on if the db is new
-            //assertEquals(expResult, result);
-        } finally {
-            if (cveDB != null) {
-                cveDB.close();
-            }
-        }
+        CveDB cveDB = CveDB.getInstance();
+        DatabaseProperties instance = cveDB.getDatabaseProperties();
+        assertNotNull(instance);
+        //no exception means the call worked... whether or not it is empty depends on if the db is new
+        //assertEquals(expResult, result);
     }
 
     /**
@@ -61,24 +53,12 @@ public class DatabasePropertiesIntegrationTest extends BaseDBTestCase {
         long expected = 1337;
         updatedValue.setId(key);
         updatedValue.setTimestamp(expected);
-        CveDB cveDB = null;
-        try {
-            cveDB = new CveDB();
-            cveDB.open();
-            DatabaseProperties instance = cveDB.getDatabaseProperties();
-            instance.save(updatedValue);
-            //reload the properties
-            cveDB.close();
-            cveDB = new CveDB();
-            cveDB.open();
-            instance = cveDB.getDatabaseProperties();
-            long results = Long.parseLong(instance.getProperty("NVD CVE " + key));
-            assertEquals(expected, results);
-        } finally {
-            if (cveDB != null) {
-                cveDB.close();
-            }
-        }
+        CveDB cveDB = CveDB.getInstance();
+        DatabaseProperties instance = cveDB.getDatabaseProperties();
+        instance.save(updatedValue);
+        instance = cveDB.reloadProperties();
+        long results = Long.parseLong(instance.getProperty("NVD CVE " + key));
+        assertEquals(expected, results);
     }
 
     /**
@@ -88,19 +68,11 @@ public class DatabasePropertiesIntegrationTest extends BaseDBTestCase {
     public void testGetProperty_String_String() throws Exception {
         String key = "doesn't exist";
         String defaultValue = "default";
-        CveDB cveDB = null;
-        try {
-            cveDB = new CveDB();
-            cveDB.open();
-            DatabaseProperties instance = cveDB.getDatabaseProperties();
-            String expResult = "default";
-            String result = instance.getProperty(key, defaultValue);
-            assertEquals(expResult, result);
-        } finally {
-            if (cveDB != null) {
-                cveDB.close();
-            }
-        }
+        CveDB cveDB = CveDB.getInstance();
+        DatabaseProperties instance = cveDB.getDatabaseProperties();
+        String expResult = "default";
+        String result = instance.getProperty(key, defaultValue);
+        assertEquals(expResult, result);
     }
 
     /**
@@ -109,20 +81,12 @@ public class DatabasePropertiesIntegrationTest extends BaseDBTestCase {
     @Test
     public void testGetProperty_String() throws DatabaseException {
         String key = "version";
-        CveDB cveDB = null;
-        try {
-            cveDB = new CveDB();
-            cveDB.open();
-            DatabaseProperties instance = cveDB.getDatabaseProperties();
-            String result = instance.getProperty(key);
-            double version = Double.parseDouble(result);
-            assertTrue(version >= 2.8);
-            assertTrue(version <= 10);
-        } finally {
-            if (cveDB != null) {
-                cveDB.close();
-            }
-        }
+        CveDB cveDB = CveDB.getInstance();
+        DatabaseProperties instance = cveDB.getDatabaseProperties();
+        String result = instance.getProperty(key);
+        double version = Double.parseDouble(result);
+        assertTrue(version >= 2.8);
+        assertTrue(version <= 10);
     }
 
     /**
@@ -130,17 +94,9 @@ public class DatabasePropertiesIntegrationTest extends BaseDBTestCase {
      */
     @Test
     public void testGetProperties() throws DatabaseException {
-        CveDB cveDB = null;
-        try {
-            cveDB = new CveDB();
-            cveDB.open();
-            DatabaseProperties instance = cveDB.getDatabaseProperties();
-            Properties result = instance.getProperties();
-            assertTrue(result.size() > 0);
-        } finally {
-            if (cveDB != null) {
-                cveDB.close();
-            }
-        }
+        CveDB cveDB = CveDB.getInstance();
+        DatabaseProperties instance = cveDB.getDatabaseProperties();
+        Properties result = instance.getProperties();
+        assertTrue(result.size() > 0);
     }
 }

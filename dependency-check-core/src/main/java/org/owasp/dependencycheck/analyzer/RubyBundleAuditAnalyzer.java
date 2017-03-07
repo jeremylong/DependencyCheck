@@ -145,8 +145,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void initializeFileTypeAnalyzer() throws InitializationException {
         try {
-            cvedb = new CveDB();
-            cvedb.open();
+            cvedb = CveDB.getInstance();
         } catch (DatabaseException ex) {
             LOGGER.warn("Exception opening the database");
             LOGGER.debug("error", ex);
@@ -160,7 +159,6 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (AnalysisException ae) {
 
             setEnabled(false);
-            cvedb.close();
             cvedb = null;
             final String msg = String.format("Exception from bundle-audit process: %s. Disabling %s", ae.getCause(), ANALYZER_NAME);
             throw new InitializationException(msg, ae);

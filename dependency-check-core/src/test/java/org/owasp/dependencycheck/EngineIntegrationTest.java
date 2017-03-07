@@ -71,10 +71,8 @@ public class EngineIntegrationTest extends BaseDBTestCase {
                 throw ex;
             }
         }
-        CveDB cveDB = new CveDB();
-        cveDB.open();
+        CveDB cveDB = CveDB.getInstance();
         DatabaseProperties dbProp = cveDB.getDatabaseProperties();
-        cveDB.close();
         ReportGenerator rg = new ReportGenerator("DependencyCheck", instance.getDependencies(), instance.getAnalyzers(), dbProp);
         rg.generateReports("./target/", "ALL");
         instance.cleanup();

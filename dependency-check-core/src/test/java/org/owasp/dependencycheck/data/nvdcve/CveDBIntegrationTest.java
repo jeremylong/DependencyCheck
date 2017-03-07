@@ -47,15 +47,10 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
     public void testOpen() {
         CveDB instance = null;
         try {
-            instance = new CveDB();
-            instance.open();
+            instance = CveDB.getInstance();
             instance.commit();
         } catch (DatabaseException | SQLException ex) {
             fail(ex.getMessage());
-        } finally {
-            if (instance != null) {
-                instance.close();
-            }
         }
     }
 
@@ -64,19 +59,11 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
      */
     @Test
     public void testGetCPEs() throws Exception {
-        CveDB instance = null;
-        try {
-            instance = new CveDB();
-            String vendor = "apache";
-            String product = "struts";
-            instance.open();
-            Set<VulnerableSoftware> result = instance.getCPEs(vendor, product);
-            assertTrue(result.size() > 5);
-        } finally {
-            if (instance != null) {
-                instance.close();
-            }
-        }
+        CveDB instance = CveDB.getInstance();
+        String vendor = "apache";
+        String product = "struts";
+        Set<VulnerableSoftware> result = instance.getCPEs(vendor, product);
+        assertTrue(result.size() > 5);
     }
 
     /**
@@ -84,18 +71,9 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
      */
     @Test
     public void testgetVulnerability() throws Exception {
-        CveDB instance = null;
-        try {
-            instance = new CveDB();
-            instance.open();
-            Vulnerability result = instance.getVulnerability("CVE-2014-0094");
-            assertEquals("The ParametersInterceptor in Apache Struts before 2.3.16.1 allows remote attackers to \"manipulate\" the ClassLoader via the class parameter, which is passed to the getClass method.", result.getDescription());
-
-        } finally {
-            if (instance != null) {
-                instance.close();
-            }
-        }
+        CveDB instance = CveDB.getInstance();
+        Vulnerability result = instance.getVulnerability("CVE-2014-0094");
+        assertEquals("The ParametersInterceptor in Apache Struts before 2.3.16.1 allows remote attackers to \"manipulate\" the ClassLoader via the class parameter, which is passed to the getClass method.", result.getDescription());
     }
 
     /**
@@ -104,42 +82,34 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
     @Test
     public void testGetVulnerabilities() throws Exception {
         String cpeStr = "cpe:/a:apache:struts:2.1.2";
-        CveDB instance = null;
+        CveDB instance = CveDB.getInstance();
         List<Vulnerability> results;
-        try {
-            instance = new CveDB();
-            instance.open();
-            results = instance.getVulnerabilities(cpeStr);
-            assertTrue(results.size() > 5);
-            cpeStr = "cpe:/a:jruby:jruby:1.6.3";
-            results = instance.getVulnerabilities(cpeStr);
-            assertTrue(results.size() > 1);
 
-            boolean found = false;
-            String expected = "CVE-2011-4838";
-            for (Vulnerability v : results) {
-                if (expected.equals(v.getName())) {
-                    found = true;
-                    break;
-                }
-            }
-            assertTrue("Expected " + expected + ", but was not identified", found);
+        results = instance.getVulnerabilities(cpeStr);
+        assertTrue(results.size() > 5);
+        cpeStr = "cpe:/a:jruby:jruby:1.6.3";
+        results = instance.getVulnerabilities(cpeStr);
+        assertTrue(results.size() > 1);
 
-            found = false;
-            expected = "CVE-2012-5370";
-            for (Vulnerability v : results) {
-                if (expected.equals(v.getName())) {
-                    found = true;
-                    break;
-                }
-            }
-            assertTrue("Expected " + expected + ", but was not identified", found);
-
-        } finally {
-            if (instance != null) {
-                instance.close();
+        boolean found = false;
+        String expected = "CVE-2011-4838";
+        for (Vulnerability v : results) {
+            if (expected.equals(v.getName())) {
+                found = true;
+                break;
             }
         }
+        assertTrue("Expected " + expected + ", but was not identified", found);
+
+        found = false;
+        expected = "CVE-2012-5370";
+        for (Vulnerability v : results) {
+            if (expected.equals(v.getName())) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("Expected " + expected + ", but was not identified", found);
     }
 
     /**
@@ -147,61 +117,53 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
      */
     @Test
     public void testGetMatchingSoftware() throws Exception {
-        CveDB instance = null;
-        Map<String, Boolean> versions = new HashMap<String, Boolean>();
+        CveDB instance = CveDB.getInstance();
+        Map<String, Boolean> versions = new HashMap<>();
         DependencyVersion identifiedVersion = new DependencyVersion("1.0.1o");
         versions.put("cpe:/a:openssl:openssl:1.0.1e", Boolean.FALSE);
-        try {
-            instance = new CveDB();
-            Entry<String, Boolean> results = instance.getMatchingSoftware(versions, "openssl", "openssl", identifiedVersion);
-            assertNull(results);
-            versions.put("cpe:/a:openssl:openssl:1.0.1p", Boolean.FALSE);
-            results = instance.getMatchingSoftware(versions, "openssl", "openssl", identifiedVersion);
-            assertNull(results);
+        Entry<String, Boolean> results = instance.getMatchingSoftware(versions, "openssl", "openssl", identifiedVersion);
+        assertNull(results);
+        versions.put("cpe:/a:openssl:openssl:1.0.1p", Boolean.FALSE);
+        results = instance.getMatchingSoftware(versions, "openssl", "openssl", identifiedVersion);
+        assertNull(results);
 
-            versions.put("cpe:/a:openssl:openssl:1.0.1q", Boolean.TRUE);
-            results = instance.getMatchingSoftware(versions, "openssl", "openssl", identifiedVersion);
-            assertNotNull(results);
-            assertEquals("cpe:/a:openssl:openssl:1.0.1q", results.getKey());
+        versions.put("cpe:/a:openssl:openssl:1.0.1q", Boolean.TRUE);
+        results = instance.getMatchingSoftware(versions, "openssl", "openssl", identifiedVersion);
+        assertNotNull(results);
+        assertEquals("cpe:/a:openssl:openssl:1.0.1q", results.getKey());
 
-            versions.clear();
+        versions.clear();
 
-            versions.put("cpe:/a:springsource:spring_framework:3.2.5", Boolean.FALSE);
-            versions.put("cpe:/a:springsource:spring_framework:3.2.6", Boolean.FALSE);
-            versions.put("cpe:/a:springsource:spring_framework:3.2.7", Boolean.TRUE);
+        versions.put("cpe:/a:springsource:spring_framework:3.2.5", Boolean.FALSE);
+        versions.put("cpe:/a:springsource:spring_framework:3.2.6", Boolean.FALSE);
+        versions.put("cpe:/a:springsource:spring_framework:3.2.7", Boolean.TRUE);
 
-            versions.put("cpe:/a:springsource:spring_framework:4.0.1", Boolean.TRUE);
-            versions.put("cpe:/a:springsource:spring_framework:4.0.0:m1", Boolean.FALSE);
-            versions.put("cpe:/a:springsource:spring_framework:4.0.0:m2", Boolean.FALSE);
-            versions.put("cpe:/a:springsource:spring_framework:4.0.0:rc1", Boolean.FALSE);
+        versions.put("cpe:/a:springsource:spring_framework:4.0.1", Boolean.TRUE);
+        versions.put("cpe:/a:springsource:spring_framework:4.0.0:m1", Boolean.FALSE);
+        versions.put("cpe:/a:springsource:spring_framework:4.0.0:m2", Boolean.FALSE);
+        versions.put("cpe:/a:springsource:spring_framework:4.0.0:rc1", Boolean.FALSE);
 
-            identifiedVersion = new DependencyVersion("3.2.2");
-            results = instance.getMatchingSoftware(versions, "springsource", "spring_framework", identifiedVersion);
-            assertEquals("cpe:/a:springsource:spring_framework:3.2.7", results.getKey());
-            assertTrue(results.getValue());
-            identifiedVersion = new DependencyVersion("3.2.12");
-            results = instance.getMatchingSoftware(versions, "springsource", "spring_framework", identifiedVersion);
-            assertNull(results);
+        identifiedVersion = new DependencyVersion("3.2.2");
+        results = instance.getMatchingSoftware(versions, "springsource", "spring_framework", identifiedVersion);
+        assertEquals("cpe:/a:springsource:spring_framework:3.2.7", results.getKey());
+        assertTrue(results.getValue());
+        identifiedVersion = new DependencyVersion("3.2.12");
+        results = instance.getMatchingSoftware(versions, "springsource", "spring_framework", identifiedVersion);
+        assertNull(results);
 
-            identifiedVersion = new DependencyVersion("4.0.0");
-            results = instance.getMatchingSoftware(versions, "springsource", "spring_framework", identifiedVersion);
-            assertEquals("cpe:/a:springsource:spring_framework:4.0.1", results.getKey());
-            assertTrue(results.getValue());
-            identifiedVersion = new DependencyVersion("4.1.0");
-            results = instance.getMatchingSoftware(versions, "springsource", "spring_framework", identifiedVersion);
-            assertNull(results);
+        identifiedVersion = new DependencyVersion("4.0.0");
+        results = instance.getMatchingSoftware(versions, "springsource", "spring_framework", identifiedVersion);
+        assertEquals("cpe:/a:springsource:spring_framework:4.0.1", results.getKey());
+        assertTrue(results.getValue());
+        identifiedVersion = new DependencyVersion("4.1.0");
+        results = instance.getMatchingSoftware(versions, "springsource", "spring_framework", identifiedVersion);
+        assertNull(results);
 
-            versions.clear();
+        versions.clear();
 
-            versions.put("cpe:/a:jruby:jruby:-", Boolean.FALSE);
-            identifiedVersion = new DependencyVersion("1.6.3");
-            results = instance.getMatchingSoftware(versions, "springsource", "spring_framework", identifiedVersion);
-            assertNotNull(results);
-        } finally {
-            if (instance != null) {
-                instance.close();
-            }
-        }
+        versions.put("cpe:/a:jruby:jruby:-", Boolean.FALSE);
+        identifiedVersion = new DependencyVersion("1.6.3");
+        results = instance.getMatchingSoftware(versions, "springsource", "spring_framework", identifiedVersion);
+        assertNotNull(results);
     }
-
 }

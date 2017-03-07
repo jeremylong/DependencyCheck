@@ -34,7 +34,7 @@ import java.util.concurrent.Callable;
  *
  * @author Stefan Neuhaus
  */
-class AnalysisTask implements Callable<Void> {
+public class AnalysisTask implements Callable<Void> {
 
     /**
      * Instance of the logger.
