@@ -613,9 +613,7 @@ public class Engine implements FileFilter {
      */
     protected ExecutorService getExecutorService(Analyzer analyzer) {
         if (analyzer.supportsParallelProcessing()) {
-            // just a fair trade-off that should be reasonable for all analyzer types
-            final int maximumNumberOfThreads = 4 * Runtime.getRuntime().availableProcessors();
-            
+            final int maximumNumberOfThreads = Runtime.getRuntime().availableProcessors();
             LOGGER.debug("Parallel processing with up to {} threads: {}.", maximumNumberOfThreads, analyzer.getName());
             return Executors.newFixedThreadPool(maximumNumberOfThreads);
         } else {

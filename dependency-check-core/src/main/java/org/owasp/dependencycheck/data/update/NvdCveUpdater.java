@@ -63,11 +63,11 @@ public class NvdCveUpdater implements CachedWebDataSource {
     /**
      * The thread pool size to use for CPU-intense tasks.
      */
-    private static final int PROCESSING_THREAD_POOL_SIZE = 1;
+    private static final int PROCESSING_THREAD_POOL_SIZE = Runtime.getRuntime().availableProcessors();
     /**
      * The thread pool size to use when downloading files.
      */
-    private static final int DOWNLOAD_THREAD_POOL_SIZE = Settings.getInt(Settings.KEYS.MAX_DOWNLOAD_THREAD_POOL_SIZE, 50);
+    private static final int DOWNLOAD_THREAD_POOL_SIZE = Math.round(1.5f * Runtime.getRuntime().availableProcessors());
     /**
      * ExecutorService for CPU-intense processing tasks.
      */
@@ -99,16 +99,20 @@ public class NvdCveUpdater implements CachedWebDataSource {
         }
 
         try {
-            initializeExecutorServices();
-            cveDb = CveDB.getInstance();
-            dbProperties = cveDb.getDatabaseProperties();
             boolean autoUpdate = true;
             try {
                 autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
             } catch (InvalidSettingException ex) {
                 LOGGER.debug("Invalid setting for auto-update; using true.");
             }
-            if (autoUpdate && checkUpdate()) {
+            if (!autoUpdate) {
+                return;
+            }
+            initializeExecutorServices();
+            cveDb = CveDB.getInstance();
+            dbProperties = cveDb.getDatabaseProperties();
+
+            if (checkUpdate()) {
                 final UpdateableNvdCve updateable = getUpdatesNeeded();
                 if (updateable.isUpdateNeeded()) {
                     performUpdate(updateable);
