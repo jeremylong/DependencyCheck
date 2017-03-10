@@ -33,7 +33,7 @@ public class UpdateableNvdCve implements Iterable<NvdCveInfo>, Iterator<NvdCveIn
     /**
      * A collection of sources of data.
      */
-    private final Map<String, NvdCveInfo> collection = new TreeMap<String, NvdCveInfo>();
+    private final Map<String, NvdCveInfo> collection = new TreeMap<>();
 
     /**
      * Returns the collection of NvdCveInfo objects. This method is mainly used for testing.

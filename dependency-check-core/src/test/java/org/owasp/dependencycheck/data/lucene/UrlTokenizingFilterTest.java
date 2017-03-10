@@ -31,7 +31,7 @@ import org.apache.lucene.analysis.core.KeywordTokenizer;
  */
 public class UrlTokenizingFilterTest extends BaseTokenStreamTestCase {
 
-    private Analyzer analyzer;
+    private final Analyzer analyzer;
 
     public UrlTokenizingFilterTest() {
         analyzer = new Analyzer() {

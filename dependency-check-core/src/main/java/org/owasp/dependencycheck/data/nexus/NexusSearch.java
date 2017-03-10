@@ -22,7 +22,9 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.owasp.dependencycheck.utils.URLConnectionFactory;
@@ -30,6 +32,7 @@ import org.owasp.dependencycheck.utils.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * Class of methods to search Nexus repositories.
@@ -132,7 +135,7 @@ public class NexusSearch {
                         ma.setPomUrl(pomLink);
                     }
                     return ma;
-                } catch (Throwable e) {
+                } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
                     // Anything else is jacked-up XML stuff that we really can't recover
                     // from well
                     throw new IOException(e.getMessage(), e);
@@ -170,7 +173,7 @@ public class NexusSearch {
                 LOGGER.warn("Expected root node name of status, got {}", doc.getDocumentElement().getNodeName());
                 return false;
             }
-        } catch (Throwable e) {
+        } catch (IOException | ParserConfigurationException | SAXException e) {
             return false;
         }
 

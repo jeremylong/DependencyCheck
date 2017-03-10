@@ -95,6 +95,12 @@ public class Purge extends Task {
         this.failOnError = failOnError;
     }
 
+    /**
+     * Executes the dependency-check purge to delete the existing local copy of
+     * the NVD CVE data.
+     *
+     * @throws BuildException thrown if there is a problem deleting the file(s)
+     */
     @Override
     public void execute() throws BuildException {
         populateSettings();

@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.data.update.nvd;
 
-import org.owasp.dependencycheck.data.update.nvd.NvdCve12Handler;
 import java.io.File;
 import java.util.List;
 import java.util.Map;

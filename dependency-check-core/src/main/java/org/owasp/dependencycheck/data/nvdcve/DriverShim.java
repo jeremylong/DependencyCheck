@@ -126,11 +126,7 @@ class DriverShim implements Driver {
         if (m != null) {
             try {
                 return (java.util.logging.Logger) m.invoke(m);
-            } catch (IllegalAccessException ex) {
-                LOGGER.trace("", ex);
-            } catch (IllegalArgumentException ex) {
-                LOGGER.trace("", ex);
-            } catch (InvocationTargetException ex) {
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                 LOGGER.trace("", ex);
             }
         }

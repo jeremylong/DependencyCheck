@@ -35,7 +35,7 @@ public class ExceptionCollection extends Exception {
     /**
      * A collection of exceptions.
      */
-    private List<Throwable> exceptions;
+    private final List<Throwable> exceptions;
     /**
      * Flag indicating if a fatal exception occurred that would prevent the
      * attempt at completing the analysis even if exceptions occurred.
@@ -99,7 +99,7 @@ public class ExceptionCollection extends Exception {
      */
     public ExceptionCollection(Throwable exceptions, boolean fatal) {
         super();
-        this.exceptions = new ArrayList<Throwable>();
+        this.exceptions = new ArrayList<>();
         this.exceptions.add(exceptions);
         this.fatal = fatal;
     }

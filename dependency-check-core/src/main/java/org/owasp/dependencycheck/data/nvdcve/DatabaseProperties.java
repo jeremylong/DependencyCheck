@@ -166,7 +166,7 @@ public class DatabaseProperties {
      * @return a map of the database meta data
      */
     public Map<String, String> getMetaData() {
-        final Map<String, String> map = new TreeMap<String, String>();
+        final Map<String, String> map = new TreeMap<>();
         for (Entry<Object, Object> entry : properties.entrySet()) {
             final String key = (String) entry.getKey();
             if (!"version".equals(key)) {

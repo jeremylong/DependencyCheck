@@ -149,7 +149,7 @@ public final class CpeMemoryIndex {
      * @return the CPE Analyzer.
      */
     private Analyzer createSearchingAnalyzer() {
-        final Map<String, Analyzer> fieldAnalyzers = new HashMap<String, Analyzer>();
+        final Map<String, Analyzer> fieldAnalyzers = new HashMap<>();
         fieldAnalyzers.put(Fields.DOCUMENT_KEY, new KeywordAnalyzer());
         productFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
         vendorFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);

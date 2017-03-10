@@ -153,8 +153,8 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         if (project == null) {
             return Collections.emptySet();
         }
-        final Set<MavenProject> descendants = new HashSet<MavenProject>();
-        int size = 0;
+        final Set<MavenProject> descendants = new HashSet<>();
+        int size;
         if (getLog().isDebugEnabled()) {
             getLog().debug(String.format("Collecting descendants of %s", project.getName()));
         }
@@ -191,7 +191,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                         }
                     }
                 }
-                final Set<MavenProject> addedDescendants = new HashSet<MavenProject>();
+                final Set<MavenProject> addedDescendants = new HashSet<>();
                 for (MavenProject dec : descendants) {
                     for (String mod : dec.getModules()) {
                         try {

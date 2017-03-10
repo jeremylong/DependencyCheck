@@ -66,7 +66,7 @@ public class ComposerLockParser {
         LOGGER.info("Creating a ComposerLockParser");
         this.inputStream = inputStream;
         this.jsonReader = Json.createReader(inputStream);
-        this.composerDependencies = new ArrayList<ComposerDependency>();
+        this.composerDependencies = new ArrayList<>();
     }
 
     /**

@@ -145,7 +145,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
     protected synchronized void analyzeDependency(Dependency ignore, Engine engine) throws AnalysisException {
         if (!analyzed) {
             analyzed = true;
-            final Set<Dependency> dependenciesToRemove = new HashSet<Dependency>();
+            final Set<Dependency> dependenciesToRemove = new HashSet<>();
             final ListIterator<Dependency> mainIterator = engine.getDependencies().listIterator();
             //for (Dependency nextDependency : engine.getDependencies()) {
             while (mainIterator.hasNext()) {

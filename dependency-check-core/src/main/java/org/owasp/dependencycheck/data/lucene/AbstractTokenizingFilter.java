@@ -63,7 +63,7 @@ public abstract class AbstractTokenizingFilter extends TokenFilter {
      */
     public AbstractTokenizingFilter(TokenStream stream) {
         super(stream);
-        tokens = new LinkedList<String>();
+        tokens = new LinkedList<>();
     }
 
     /**

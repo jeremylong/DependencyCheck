@@ -141,7 +141,7 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
      * @return a Set of strings.
      */
     protected static Set<String> newHashSet(String... strings) {
-        final Set<String> set = new HashSet<String>(strings.length);
+        final Set<String> set = new HashSet<>(strings.length);
         Collections.addAll(set, strings);
         return set;
     }

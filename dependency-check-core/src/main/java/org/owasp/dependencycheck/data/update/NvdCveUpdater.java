@@ -24,13 +24,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.net.URL;
-import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
@@ -136,6 +136,10 @@ public class NvdCveUpdater implements CachedWebDataSource {
         }
     }
 
+    /**
+     * Initialize the executor services for download and processing of the NVD
+     * CVE XML data.
+     */
     protected void initializeExecutorServices() {
         processingExecutorService = Executors.newFixedThreadPool(PROCESSING_THREAD_POOL_SIZE);
         downloadExecutorService = Executors.newFixedThreadPool(DOWNLOAD_THREAD_POOL_SIZE);
@@ -143,6 +147,9 @@ public class NvdCveUpdater implements CachedWebDataSource {
         LOGGER.debug("#processing threads: {}", PROCESSING_THREAD_POOL_SIZE);
     }
 
+    /**
+     * Shutdown and cleanup of resources used by the executor services.
+     */
     private void shutdownExecutorServices() {
         if (processingExecutorService != null) {
             processingExecutorService.shutdownNow();
@@ -427,7 +434,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
             final long timestamp;
             try {
                 timestamp = timestampFuture.get(60, TimeUnit.SECONDS);
-            } catch (Exception e) {
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 throw new DownloadFailedException(e);
             }
             lastModifiedDates.put(url, timestamp);
@@ -441,7 +448,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
      */
     private static class TimestampRetriever implements Callable<Long> {
 
-        private String url;
+        private final String url;
 
         TimestampRetriever(String url) {
             this.url = url;

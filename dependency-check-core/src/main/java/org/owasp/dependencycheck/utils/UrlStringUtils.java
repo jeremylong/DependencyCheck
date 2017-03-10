@@ -69,7 +69,7 @@ public final class UrlStringUtils {
     /**
      * A listing of domain parts that should not be used as evidence. Yes, this is an incomplete list.
      */
-    private static final Set<String> IGNORE_LIST = new HashSet<String>(
+    private static final Set<String> IGNORE_LIST = new HashSet<>(
             Arrays.asList("www", "com", "org", "gov", "info", "name", "net", "pro", "tel", "mobi", "xxx"));
 
     /**
@@ -87,7 +87,7 @@ public final class UrlStringUtils {
      * @throws MalformedURLException thrown if the URL is malformed
      */
     public static List<String> extractImportantUrlData(String text) throws MalformedURLException {
-        final List<String> importantParts = new ArrayList<String>();
+        final List<String> importantParts = new ArrayList<>();
         final URL url = new URL(text);
         final String[] domain = url.getHost().split("\\.");
         //add the domain except www and the tld.

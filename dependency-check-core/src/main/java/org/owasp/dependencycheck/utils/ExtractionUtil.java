@@ -197,9 +197,7 @@ public final class ExtractionUtil {
                     extractFile(input, destination, filter, entry);
                 }
             }
-        } catch (IOException ex) {
-            throw new ArchiveExtractionException(ex);
-        } catch (Throwable ex) {
+        } catch (IOException | AnalysisException ex) {
             throw new ArchiveExtractionException(ex);
         } finally {
             FileUtils.close(input);

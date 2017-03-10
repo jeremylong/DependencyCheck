@@ -49,7 +49,7 @@ public final class Settings {
     /**
      * Thread local settings.
      */
-    private static final ThreadLocal<Settings> LOCAL_SETTINGS = new ThreadLocal<Settings>();
+    private static final ThreadLocal<Settings> LOCAL_SETTINGS = new ThreadLocal<>();
     /**
      * The properties.
      */
@@ -530,9 +530,7 @@ public final class Settings {
     private static void logProperties(String header, Properties properties) {
         if (LOGGER.isDebugEnabled()) {
             final StringWriter sw = new StringWriter();
-            PrintWriter pw = null;
-            try {
-                pw = new PrintWriter(sw);
+            try (PrintWriter pw = new PrintWriter(sw)) {
                 pw.format("%s:%n%n", header);
                 final Enumeration<?> e = properties.propertyNames();
                 while (e.hasMoreElements()) {
@@ -548,10 +546,6 @@ public final class Settings {
                 }
                 pw.flush();
                 LOGGER.debug(sw.toString());
-            } finally {
-                if (pw != null) {
-                    pw.close();
-                }
             }
 
         }

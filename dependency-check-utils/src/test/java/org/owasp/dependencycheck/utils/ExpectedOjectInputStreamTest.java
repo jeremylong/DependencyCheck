@@ -69,15 +69,16 @@ public class ExpectedOjectInputStreamTest {
      */
     @Test(expected = java.io.InvalidClassException.class)
     public void testResolveClassException() throws Exception {
-        List<SimplePojo> data = new ArrayList<SimplePojo>();
+        List<SimplePojo> data = new ArrayList<>();
         data.add(new SimplePojo());
 
         ByteArrayOutputStream mem = new ByteArrayOutputStream();
-        ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(mem));
-        out.writeObject(data);
-        out.flush();
-        byte[] buf = mem.toByteArray();
-        out.close();
+        byte[] buf;
+        try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(mem))) {
+            out.writeObject(data);
+            out.flush();
+            buf = mem.toByteArray();
+        }
         ByteArrayInputStream in = new ByteArrayInputStream(buf);
 
         ExpectedOjectInputStream instance = new ExpectedOjectInputStream(in, "java.util.ArrayList", "org.owasp.dependencycheck.utils.SimplePojo");

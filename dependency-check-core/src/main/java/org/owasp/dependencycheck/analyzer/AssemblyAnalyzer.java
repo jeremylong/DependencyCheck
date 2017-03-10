@@ -84,7 +84,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      */
     protected List<String> buildArgumentList() {
         // Use file.separator as a wild guess as to whether this is Windows
-        final List<String> args = new ArrayList<String>();
+        final List<String> args = new ArrayList<>();
         if (!SystemUtils.IS_OS_WINDOWS) {
             if (Settings.getString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH) != null) {
                 args.add(Settings.getString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH));
@@ -176,18 +176,17 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
 
         } catch (ParserConfigurationException pce) {
             throw new AnalysisException("Error initializing the assembly analyzer", pce);
-        } catch (IOException ioe) {
+        } catch (IOException | XPathExpressionException ioe) {
             throw new AnalysisException(ioe);
-        } catch (SAXException saxe) {
+        }catch (SAXException saxe) {
             LOGGER.error("----------------------------------------------------");
             LOGGER.error("Failed to read the Assembly Analyzer results. "
                     + "On some systems mono-runtime and mono-devel need to be installed.");
             LOGGER.error("----------------------------------------------------");
             throw new AnalysisException("Couldn't parse Assembly Analzyzer results (GrokAssembly)", saxe);
-        } catch (XPathExpressionException xpe) {
-            // This shouldn't happen
-            throw new AnalysisException(xpe);
         }
+        // This shouldn't happen
+        
     }
 
     /**
@@ -280,7 +279,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (InitializationException e) {
             setEnabled(false);
             throw e;
-        } catch (Throwable e) {
+        } catch (IOException | ParserConfigurationException | SAXException | XPathExpressionException | InterruptedException e) {
             LOGGER.warn("An error occurred with the .NET AssemblyAnalyzer;\n"
                     + "this can be ignored unless you are scanning .NET DLLs. Please see the log for more details.");
             LOGGER.debug("Could not execute GrokAssembly {}", e.getMessage());
@@ -366,10 +365,8 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             if (retCode == 0) {
                 return true;
             }
-        } catch (IOException ex) {
-            LOGGER.debug("Path seach failed for " + file);
-        } catch (InterruptedException ex) {
-            LOGGER.debug("Path seach failed for " + file);
+        } catch (IOException | InterruptedException ex) {
+            LOGGER.debug("Path seach failed for " + file, ex);
         }
         return false;
     }

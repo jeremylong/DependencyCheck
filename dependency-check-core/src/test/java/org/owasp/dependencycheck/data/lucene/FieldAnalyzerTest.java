@@ -61,19 +61,19 @@ public class FieldAnalyzerTest extends BaseTest {
         String field2 = "vendor";
         String text2 = "springsource";
 
-        IndexWriter w = createIndex(analyzer, index);
-        addDoc(w, field1, text1, field2, text2);
-        text1 = "x-stream";
-        text2 = "xstream";
-        addDoc(w, field1, text1, field2, text2);
-        w.close();
+        try (IndexWriter w = createIndex(analyzer, index)) {
+            addDoc(w, field1, text1, field2, text2);
+            text1 = "x-stream";
+            text2 = "xstream";
+            addDoc(w, field1, text1, field2, text2);
+        }
 
         //Analyzer searchingAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
         String querystr = "product:\"(Spring Framework Core)\" vendor:(SpringSource)";
 
         SearchFieldAnalyzer searchAnalyzerProduct = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
         SearchFieldAnalyzer searchAnalyzerVendor = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
-        HashMap<String, Analyzer> map = new HashMap<String, Analyzer>();
+        HashMap<String, Analyzer> map = new HashMap<>();
         map.put(field1, searchAnalyzerProduct);
         map.put(field2, searchAnalyzerVendor);
         PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(new StandardAnalyzer(LuceneUtils.CURRENT_VERSION), map);

@@ -105,6 +105,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * in {@link #extractFiles(File, File, Engine)}.
      */
     private static final Set<String> EXTENSIONS = newHashSet("tar", "gz", "tgz", "bz2", "tbz2");
+
     static {
         final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
         if (additionalZipExt != null) {
@@ -220,6 +221,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * Does not support parallel processing as it both modifies and iterates
      * over the engine's list of dependencies.
      *
+     * @return <code>true</code> if the analyzer supports parallel processing;
+     * otherwise <code>false</code>
      * @see #analyzeDependency(Dependency, Engine)
      * @see #findMoreDependencies(Engine, File)
      */
@@ -517,7 +520,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                     extractAcceptedFile(input, file);
                 }
             }
-        } catch (Throwable ex) {
+        } catch (IOException | AnalysisException ex) {
             throw new ArchiveExtractionException(ex);
         } finally {
             FileUtils.close(input);

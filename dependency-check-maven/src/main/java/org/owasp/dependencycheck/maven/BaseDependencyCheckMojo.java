@@ -114,6 +114,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Component
     private ArtifactResolver artifactResolver;
 
+    /**
+     * The Maven Session.
+     */
     @Parameter( defaultValue = "${session}", readonly = true, required = true )
     protected MavenSession session;
 

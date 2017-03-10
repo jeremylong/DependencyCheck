@@ -28,6 +28,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
+import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.exception.ScanAgentException;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.Settings;
@@ -842,7 +843,7 @@ public class DependencyCheckScanAgent {
      */
     private void generateExternalReports(Engine engine, File outDirectory) {
         DatabaseProperties prop = null;
-        CveDB cve = null;
+        CveDB cve;
         try {
             cve = CveDB.getInstance();
             prop = cve.getDatabaseProperties();
@@ -853,12 +854,8 @@ public class DependencyCheckScanAgent {
         final ReportGenerator r = new ReportGenerator(this.applicationName, engine.getDependencies(), engine.getAnalyzers(), prop);
         try {
             r.generateReports(outDirectory.getCanonicalPath(), this.reportFormat.name());
-        } catch (IOException ex) {
+        } catch (IOException | ReportException ex) {
             LOGGER.error("Unexpected exception occurred during analysis; please see the verbose error log for more details.");
-            LOGGER.debug("", ex);
-        } catch (Throwable ex) {
-            LOGGER.error(
-                    "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
             LOGGER.debug("", ex);
         }
     }

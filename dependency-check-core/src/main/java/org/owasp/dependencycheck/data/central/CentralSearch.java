@@ -24,8 +24,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.utils.Settings;
@@ -35,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * Class of methods to search Maven Central via Central.
@@ -117,7 +120,7 @@ public class CentralSearch {
                 if ("0".equals(numFound)) {
                     missing = true;
                 } else {
-                    result = new ArrayList<MavenArtifact>();
+                    result = new ArrayList<>();
                     final NodeList docs = (NodeList) xpath.evaluate("/response/result/doc", doc, XPathConstants.NODESET);
                     for (int i = 0; i < docs.getLength(); i++) {
                         final String g = xpath.evaluate("./str[@name='g']", docs.item(i));
@@ -149,7 +152,7 @@ public class CentralSearch {
                         result.add(new MavenArtifact(g, a, v, jarAvailable, pomAvailable, useHTTPS));
                     }
                 }
-            } catch (Throwable e) {
+            } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
                 // Anything else is jacked up XML stuff that we really can't recover from well
                 throw new IOException(e.getMessage(), e);
             }

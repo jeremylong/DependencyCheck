@@ -942,7 +942,7 @@ public class Check extends Update {
                     }
                 }
                 DatabaseProperties prop = null;
-                CveDB cve = null;
+                CveDB cve;
                 try {
                     cve = CveDB.getInstance();
                     prop = cve.getDatabaseProperties();

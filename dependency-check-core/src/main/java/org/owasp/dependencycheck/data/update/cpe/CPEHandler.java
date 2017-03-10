@@ -60,7 +60,7 @@ public class CPEHandler extends DefaultHandler {
     /**
      * The list of CPE values.
      */
-    private final List<Cpe> data = new ArrayList<Cpe>();
+    private final List<Cpe> data = new ArrayList<>();
 
     /**
      * Returns the list of CPE values.

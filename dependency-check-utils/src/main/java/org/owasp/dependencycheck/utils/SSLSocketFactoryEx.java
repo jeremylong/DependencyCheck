@@ -283,7 +283,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
             }
         }
 
-        final List<String> aa = new ArrayList<String>();
+        final List<String> aa = new ArrayList<>();
         for (String preferredProtocol : preferredProtocols) {
             final int idx = Arrays.binarySearch(availableProtocols, preferredProtocol);
             if (idx >= 0) {

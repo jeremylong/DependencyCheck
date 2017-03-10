@@ -70,7 +70,7 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
             MavenProject project = new MockUp<MavenProject>() {
                 @Mock
                 public Set<Artifact> getArtifacts() {
-                    Set<Artifact> artifacts = new HashSet<Artifact>();
+                    Set<Artifact> artifacts = new HashSet<>();
                     Artifact a = new ArtifactStub();
                     try {
                         File file = new File(Test.class.getProtectionDomain().getCodeSource().getLocation().toURI());
@@ -107,6 +107,9 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
         }
     }
 
+    /**
+     * Implementation of ODC Mojo for testing.
+     */
     public class BaseDependencyCheckMojoImpl extends BaseDependencyCheckMojo {
 
         @Override

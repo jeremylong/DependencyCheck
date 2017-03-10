@@ -255,7 +255,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     protected boolean analyzePOM(Dependency dependency, List<ClassNameInformation> classes, Engine engine) throws AnalysisException {
         JarFile jar = null;
-        List<String> pomEntries = null;
+        List<String> pomEntries;
         try {
             jar = new JarFile(dependency.getActualFilePath());
             pomEntries = retrievePomListing(jar);
@@ -636,9 +636,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     protected boolean parseManifest(Dependency dependency, List<ClassNameInformation> classInformation)
             throws IOException {
         boolean foundSomething = false;
-        JarFile jar = null;
-        try {
-            jar = new JarFile(dependency.getActualFilePath());
+        try (JarFile jar = new JarFile(dependency.getActualFilePath())) {
             final Manifest manifest = jar.getManifest();
             if (manifest == null) {
                 if (!dependency.getFileName().toLowerCase().endsWith("-sources.jar")
@@ -792,10 +790,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             if (specificationVersion != null && !hasImplementationVersion) {
                 foundSomething = true;
                 versionEvidence.addEvidence(source, "specification-version", specificationVersion, Confidence.HIGH);
-            }
-        } finally {
-            if (jar != null) {
-                jar.close();
             }
         }
         return foundSomething;
@@ -1124,7 +1118,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
          * Up to the first four levels of the package structure, excluding a
          * leading "org" or "com".
          */
-        private final ArrayList<String> packageStructure = new ArrayList<String>();
+        private final ArrayList<String> packageStructure = new ArrayList<>();
 
         /**
          * <p>

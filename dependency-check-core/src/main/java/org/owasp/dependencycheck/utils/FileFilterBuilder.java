@@ -48,15 +48,15 @@ public class FileFilterBuilder {
     /**
      * A set of filenames to filter.
      */
-    private final Set<String> filenames = new HashSet<String>();
+    private final Set<String> filenames = new HashSet<>();
     /**
      * A set of extensions to filter.
      */
-    private final Set<String> extensions = new HashSet<String>();
+    private final Set<String> extensions = new HashSet<>();
     /**
      * An array list of file filters.
      */
-    private final List<IOFileFilter> fileFilters = new ArrayList<IOFileFilter>();
+    private final List<IOFileFilter> fileFilters = new ArrayList<>();
 
     /**
      * Create a new instance and return it. This method is for convenience in using the builder pattern within a single statement.
@@ -125,10 +125,10 @@ public class FileFilterBuilder {
         }
         final OrFileFilter filter = new OrFileFilter();
         if (!filenames.isEmpty()) {
-            filter.addFileFilter(new NameFileFilter(new ArrayList<String>(filenames)));
+            filter.addFileFilter(new NameFileFilter(new ArrayList<>(filenames)));
         }
         if (!extensions.isEmpty()) {
-            filter.addFileFilter(new SuffixFileFilter(new ArrayList<String>(extensions), IOCase.INSENSITIVE));
+            filter.addFileFilter(new SuffixFileFilter(new ArrayList<>(extensions), IOCase.INSENSITIVE));
         }
         for (IOFileFilter iof : fileFilters) {
             filter.addFileFilter(iof);

@@ -228,7 +228,7 @@ public final class CveDB {
     private EnumMap<PreparedStatementCveDb, PreparedStatement> prepareStatements()
             throws DatabaseException {
 
-        final EnumMap<PreparedStatementCveDb, PreparedStatement> result = new EnumMap<PreparedStatementCveDb, PreparedStatement>(PreparedStatementCveDb.class);
+        final EnumMap<PreparedStatementCveDb, PreparedStatement> result = new EnumMap<>(PreparedStatementCveDb.class);
         for (PreparedStatementCveDb key : values()) {
             final String statementString = statementBundle.getString(key.name());
             final PreparedStatement preparedStatement;
@@ -777,7 +777,7 @@ public final class CveDB {
 
         final boolean isVersionTwoADifferentProduct = "apache".equals(vendor) && "struts".equals(product);
 
-        final Set<String> majorVersionsAffectingAllPrevious = new HashSet<String>();
+        final Set<String> majorVersionsAffectingAllPrevious = new HashSet<>();
         final boolean matchesAnyPrevious = identifiedVersion == null || "-".equals(identifiedVersion.toString());
         String majorVersionMatch = null;
         for (Entry<String, Boolean> entry : vulnerableSoftware.entrySet()) {
@@ -806,12 +806,12 @@ public final class CveDB {
             if (!entry.getValue()) {
                 final DependencyVersion v = parseDependencyVersion(entry.getKey());
                 //this can't dereference a null 'majorVersionMatch' as canSkipVersions accounts for this.
-                if (canSkipVersions && !majorVersionMatch.equals(v.getVersionParts().get(0))) {
+                if (canSkipVersions && majorVersionMatch != null && !majorVersionMatch.equals(v.getVersionParts().get(0))) {
                     continue;
                 }
                 //this can't dereference a null 'identifiedVersion' because if it was null we would have exited
                 //in the above loop or just after loop (if matchesAnyPrevious return null).
-                if (identifiedVersion.equals(v)) {
+                if (identifiedVersion != null && identifiedVersion.equals(v)) {
                     return entry;
                 }
             }
@@ -820,12 +820,12 @@ public final class CveDB {
             if (entry.getValue()) {
                 final DependencyVersion v = parseDependencyVersion(entry.getKey());
                 //this can't dereference a null 'majorVersionMatch' as canSkipVersions accounts for this.
-                if (canSkipVersions && !majorVersionMatch.equals(v.getVersionParts().get(0))) {
+                if (canSkipVersions && majorVersionMatch != null && !majorVersionMatch.equals(v.getVersionParts().get(0))) {
                     continue;
                 }
                 //this can't dereference a null 'identifiedVersion' because if it was null we would have exited
                 //in the above loop or just after loop (if matchesAnyPrevious return null).
-                if (entry.getValue() && identifiedVersion.compareTo(v) <= 0) {
+                if (entry.getValue() && identifiedVersion != null && identifiedVersion.compareTo(v) <= 0) {
                     if (!(isVersionTwoADifferentProduct && !identifiedVersion.getVersionParts().get(0).equals(v.getVersionParts().get(0)))) {
                         return entry;
                     }

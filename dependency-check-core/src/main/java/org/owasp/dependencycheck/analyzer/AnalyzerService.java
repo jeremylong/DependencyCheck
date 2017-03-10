@@ -57,7 +57,7 @@ public class AnalyzerService {
      * @return a list of Analyzers.
      */
     public List<Analyzer> getAnalyzers() {
-        final List<Analyzer> analyzers = new ArrayList<Analyzer>();
+        final List<Analyzer> analyzers = new ArrayList<>();
         final Iterator<Analyzer> iterator = service.iterator();
         boolean experimentalEnabled = false;
         try {

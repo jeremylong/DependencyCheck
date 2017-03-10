@@ -229,7 +229,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
             is = new FileInputStream(file);
 
             final byte[] buf = new byte[5];
-            int read = 0;
+            int read;
             try {
                 read = is.read(buf);
             } catch (IOException ex) {

@@ -91,7 +91,7 @@ public class PomHandler extends DefaultHandler {
     /**
      * The stack of elements processed; used to determine the parent node.
      */
-    private final Deque<String> stack = new ArrayDeque<String>();
+    private final Deque<String> stack = new ArrayDeque<>();
     /**
      * The license object.
      */

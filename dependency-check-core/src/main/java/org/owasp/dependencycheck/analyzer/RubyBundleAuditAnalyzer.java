@@ -113,7 +113,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         if (!folder.isDirectory()) {
             throw new AnalysisException(String.format("%s should have been a directory.", folder.getAbsolutePath()));
         }
-        final List<String> args = new ArrayList<String>();
+        final List<String> args = new ArrayList<>();
         final String bundleAuditPath = Settings.getString(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH);
         File bundleAudit = null;
         if (bundleAuditPath != null) {
@@ -342,7 +342,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         Dependency dependency = null;
         Vulnerability vulnerability = null;
         String gem = null;
-        final Map<String, Dependency> map = new HashMap<String, Dependency>();
+        final Map<String, Dependency> map = new HashMap<>();
         boolean appendToDescription = false;
         while (rdr.ready()) {
             final String nextLine = rdr.readLine();

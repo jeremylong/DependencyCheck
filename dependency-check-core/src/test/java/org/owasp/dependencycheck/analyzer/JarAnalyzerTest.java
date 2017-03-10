@@ -136,7 +136,7 @@ public class JarAnalyzerTest extends BaseTest {
         File file = BaseTest.getResourceAsFile(this, "xalan-2.7.0.jar");
         Dependency result = new Dependency(file);
         JarAnalyzer instance = new JarAnalyzer();
-        List<JarAnalyzer.ClassNameInformation> cni = new ArrayList<JarAnalyzer.ClassNameInformation>();
+        List<JarAnalyzer.ClassNameInformation> cni = new ArrayList<>();
         instance.parseManifest(result, cni);
 
         assertTrue(result.getVersionEvidence().getEvidence("manifest: org/apache/xalan/").size() > 0);

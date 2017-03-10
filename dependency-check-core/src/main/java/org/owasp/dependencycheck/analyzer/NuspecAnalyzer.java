@@ -136,9 +136,7 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
             try {
                 fis = new FileInputStream(dependency.getActualFilePath());
                 np = parser.parse(fis);
-            } catch (NuspecParseException ex) {
-                throw new AnalysisException(ex);
-            } catch (FileNotFoundException ex) {
+            } catch (NuspecParseException | FileNotFoundException ex) {
                 throw new AnalysisException(ex);
             } finally {
                 if (fis != null) {
