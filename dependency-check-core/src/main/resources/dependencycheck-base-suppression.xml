@@ -538,4 +538,11 @@
         <gav regex="true">^org\.apache\.james:apache-mime4j-core:.*$</gav>
         <cpe>cpe:/a:jcore:jcore</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive
+        ]]></notes>
+        <gav regex="true">^javax\.servlet:servlet-api:.*$</gav>
+        <cpe>cpe:/a:sun:one_application_server</cpe>
+    </suppress>
 </suppressions>
