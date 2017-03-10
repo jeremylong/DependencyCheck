@@ -43,11 +43,6 @@ public class ComposerLockParser {
     private final JsonReader jsonReader;
 
     /**
-     * The input stream we'll read
-     */
-    private final InputStream inputStream; // NOPMD - it gets set in the constructor, read later
-
-    /**
      * The List of ComposerDependencies found
      */
     private final List<ComposerDependency> composerDependencies;
@@ -58,13 +53,12 @@ public class ComposerLockParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComposerLockParser.class);
 
     /**
-     * Createas a ComposerLockParser from a JsonReader and an InputStream.
+     * Creates a ComposerLockParser from a JsonReader and an InputStream.
      *
      * @param inputStream the InputStream to parse
      */
     public ComposerLockParser(InputStream inputStream) {
         LOGGER.info("Creating a ComposerLockParser");
-        this.inputStream = inputStream;
         this.jsonReader = Json.createReader(inputStream);
         this.composerDependencies = new ArrayList<>();
     }

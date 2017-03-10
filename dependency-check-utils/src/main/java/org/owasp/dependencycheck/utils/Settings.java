@@ -784,8 +784,7 @@ public final class Settings {
      * @return the property from the properties file
      */
     public static String getString(String key, String defaultValue) {
-        final String str = System.getProperty(key, LOCAL_SETTINGS.get().props.getProperty(key, defaultValue));
-        return str;
+        return System.getProperty(key, LOCAL_SETTINGS.get().props.getProperty(key, defaultValue));
     }
 
     /**

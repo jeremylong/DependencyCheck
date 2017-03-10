@@ -630,7 +630,7 @@ public class Engine implements FileFilter {
      * @throws InitializationException thrown when there is a problem
      * initializing the analyzer
      */
-    protected Analyzer initializeAnalyzer(Analyzer analyzer) throws InitializationException {
+    protected void initializeAnalyzer(Analyzer analyzer) throws InitializationException {
         try {
             LOGGER.debug("Initializing {}", analyzer.getName());
             analyzer.initialize();
@@ -653,7 +653,6 @@ public class Engine implements FileFilter {
             }
             throw new InitializationException("Unexpected Exception", ex);
         }
-        return analyzer;
     }
 
     /**

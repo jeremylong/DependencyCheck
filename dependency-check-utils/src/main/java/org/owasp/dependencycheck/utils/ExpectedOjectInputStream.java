@@ -36,7 +36,7 @@ public class ExpectedOjectInputStream extends ObjectInputStream {
     /**
      * The list of fully qualified class names that are able to be deserialized.
      */
-    private List<String> expected = new ArrayList<>();
+    private final List<String> expected = new ArrayList<>();
 
     /**
      * Constructs a new ExpectedOjectInputStream that can be used to securely deserialize an object by restricting the classes

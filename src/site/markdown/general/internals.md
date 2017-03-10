@@ -15,6 +15,9 @@ a list of vulnerable software:
       <vuln:product>cpe:/a:vmware:springsource_spring_security:3.1.2</vuln:product>
       <vuln:product>cpe:/a:vmware:springsource_spring_security:2.0.4</vuln:product>
       <vuln:product>cpe:/a:vmware:springsource_spring_security:3.0.1</vuln:product>
+    </vuln:vulnerable-software-list>
+  ...
+  </entry>
 ```
 
 These CPE entries are read "cpe:/[Entry Type]:[Vendor]:[Product]:[Version]:[Revision]:...". The CPE data is collected

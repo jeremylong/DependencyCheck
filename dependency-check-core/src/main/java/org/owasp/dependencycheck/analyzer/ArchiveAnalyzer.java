@@ -347,8 +347,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * @return any dependencies that weren't known to the engine before
      */
     private static List<Dependency> findMoreDependencies(Engine engine, File file) {
-        final List<Dependency> added = engine.scan(file);
-        return added;
+        return engine.scan(file);
     }
 
     /**

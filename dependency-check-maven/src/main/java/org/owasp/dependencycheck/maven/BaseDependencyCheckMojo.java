@@ -608,8 +608,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         final Object obj = current.getContextValue(getDataFileContextKey());
         if (obj != null) {
             if (obj instanceof String) {
-                final File f = new File((String) obj);
-                return f;
+             return new File((String) obj);
             }
         } else if (getLog().isDebugEnabled()) {
             getLog().debug("Context value not found");
