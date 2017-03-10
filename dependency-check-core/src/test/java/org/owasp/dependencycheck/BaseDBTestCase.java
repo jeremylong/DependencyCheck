@@ -26,7 +26,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -44,10 +43,6 @@ public abstract class BaseDBTestCase extends BaseTest {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(BaseDBTestCase.class);
 
-//    @BeforeClass
-//    public static void setUpClass() throws Exception {
-//        BaseTest.setUpClass();
-//    }
     @Before
     public void setUpDb() throws Exception {
         ensureDBExists();        

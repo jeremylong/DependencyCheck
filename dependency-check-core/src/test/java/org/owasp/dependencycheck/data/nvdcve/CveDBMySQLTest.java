@@ -35,19 +35,6 @@ import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 public class CveDBMySQLTest extends BaseTest {
 
     /**
-     * Pretty useless tests of open, commit, and close methods, of class CveDB.
-     */
-    @Test
-    public void testOpen() {
-        try {
-            CveDB instance = CveDB.getInstance();
-        } catch (DatabaseException ex) {
-            System.out.println("Unable to connect to the My SQL database; verify that the db server is running and that the schema has been generated");
-            fail(ex.getMessage());
-        }
-    }
-
-    /**
      * Test of getCPEs method, of class CveDB.
      */
     @Test
@@ -55,7 +42,7 @@ public class CveDBMySQLTest extends BaseTest {
         CveDB instance = CveDB.getInstance();
         try {
             String vendor = "apache";
-            String product = "struts";            
+            String product = "struts";
             Set<VulnerableSoftware> result = instance.getCPEs(vendor, product);
             assertTrue("Has data been loaded into the MySQL DB? if not consider using the CLI to populate it", result.size() > 5);
         } catch (Exception ex) {
@@ -77,6 +64,6 @@ public class CveDBMySQLTest extends BaseTest {
         } catch (Exception ex) {
             System.out.println("Unable to access the My SQL database; verify that the db server is running and that the schema has been generated");
             throw ex;
-        } 
+        }
     }
 }
