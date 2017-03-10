@@ -495,12 +495,12 @@
         <cpe>cpe:/a:shim_project:shim</cpe>
     </suppress>
     <suppress base="true">
-       <notes><![CDATA[
+        <notes><![CDATA[
        False positives on python.
        ]]></notes>
-       <filePath regex="true">.*__init__\.py$</filePath>
-       <cpe>cpe:/a:shim:shim</cpe>
-       <cpe>cpe:/a:python:python</cpe>
+        <filePath regex="true">.*__init__\.py$</filePath>
+        <cpe>cpe:/a:shim:shim</cpe>
+        <cpe>cpe:/a:python:python</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -510,19 +510,19 @@
         <cpe>cpe:/a:checkpoint:check_point</cpe>
     </suppress>
     <suppress base="true">
-       <notes><![CDATA[
+        <notes><![CDATA[
        Bouncy Castle Time Stamp Protocol is not related to openpgp.
        ]]></notes>
-       <gav regex="true">^org\.bouncycastle:bctsp.*$</gav>
-       <cpe>cpe:/a:openpgp:openpgp</cpe>
-       <cpe>cpe:/a:pgp:openpgp</cpe>
+        <gav regex="true">^org\.bouncycastle:bctsp.*$</gav>
+        <cpe>cpe:/a:openpgp:openpgp</cpe>
+        <cpe>cpe:/a:pgp:openpgp</cpe>
     </suppress>
     <suppress base="true">
-       <notes><![CDATA[
+        <notes><![CDATA[
        Apache XML Graphics is used by Batik - but should not be identified as batik.
        ]]></notes>
-       <gav regex="true">^org\.apache\.xmlgraphics:xmlgraphics-commons:.*$</gav>
-       <cpe>cpe:/a:apache:batik</cpe>
+        <gav regex="true">^org\.apache\.xmlgraphics:xmlgraphics-commons:.*$</gav>
+        <cpe>cpe:/a:apache:batik</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -530,5 +530,12 @@
         ]]></notes>
         <gav regex="true">^io\.jsonwebtoken:jjwt:.*$</gav>
         <cpe>cpe:/a:sonatype:nexus</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive suppresion per issue #679 - jcore is a php wbe cms.
+        ]]></notes>
+        <gav regex="true">^org\.apache\.james:apache-mime4j-core:.*$</gav>
+        <cpe>cpe:/a:jcore:jcore</cpe>
     </suppress>
 </suppressions>
