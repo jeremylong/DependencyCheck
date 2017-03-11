@@ -82,11 +82,6 @@ public final class CveDB {
      */
     private DatabaseProperties databaseProperties;
     /**
-     * Does the underlying connection support batch operations? Currently we do
-     * not support batch execution.
-     */
-    private final boolean batchSupported = false;
-    /**
      * The prepared statements.
      */
     private final EnumMap<PreparedStatementCveDb, PreparedStatement> preparedStatements;
@@ -623,30 +618,14 @@ public final class CveDB {
             }
 
             final PreparedStatement insertReference = getPreparedStatement(INSERT_REFERENCE);
-            if (batchSupported) {
-                insertReference.clearBatch();
-            }
             for (Reference r : vuln.getReferences()) {
                 insertReference.setInt(1, vulnerabilityId);
                 insertReference.setString(2, r.getName());
                 insertReference.setString(3, r.getUrl());
                 insertReference.setString(4, r.getSource());
-
-                if (batchSupported) {
-                    insertReference.addBatch();
-                } else {
-                    insertReference.execute();
-                }
+                insertReference.execute();
             }
-
-            if (batchSupported) {
-                insertReference.executeBatch();
-            }
-
             final PreparedStatement insertSoftware = getPreparedStatement(INSERT_SOFTWARE);
-            if (batchSupported) {
-                insertSoftware.clearBatch();
-            }
             for (VulnerableSoftware s : vuln.getVulnerableSoftware()) {
                 int cpeProductId = 0;
                 final PreparedStatement selectCpeId = getPreparedStatement(SELECT_CPE_ID);
@@ -682,23 +661,16 @@ public final class CveDB {
                 } else {
                     insertSoftware.setString(3, s.getPreviousVersion());
                 }
-                if (batchSupported) {
-                    insertSoftware.addBatch();
-                } else {
-                    try {
-                        insertSoftware.execute();
-                    } catch (SQLException ex) {
-                        if (ex.getMessage().contains("Duplicate entry")) {
-                            final String msg = String.format("Duplicate software key identified in '%s:%s'", vuln.getName(), s.getName());
-                            LOGGER.info(msg, ex);
-                        } else {
-                            throw ex;
-                        }
+                try {
+                    insertSoftware.execute();
+                } catch (SQLException ex) {
+                    if (ex.getMessage().contains("Duplicate entry")) {
+                        final String msg = String.format("Duplicate software key identified in '%s:%s'", vuln.getName(), s.getName());
+                        LOGGER.info(msg, ex);
+                    } else {
+                        throw ex;
                     }
                 }
-            }
-            if (batchSupported) {
-                insertSoftware.executeBatch();
             }
         } catch (SQLException ex) {
             final String msg = String.format("Error updating '%s'", vuln.getName());
