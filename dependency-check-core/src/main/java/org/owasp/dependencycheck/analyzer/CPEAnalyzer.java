@@ -163,8 +163,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      */
     public void open() throws IOException, DatabaseException {
         if (!isOpen()) {
-            cve = new CveDB();
-            cve.open();
+            cve = CveDB.getInstance();
             cpe = CpeMemoryIndex.getInstance();
             try {
                 final long creationStart = System.currentTimeMillis();
@@ -186,10 +185,6 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         if (cpe != null) {
             cpe.close();
             cpe = null;
-        }
-        if (cve != null) {
-            cve.close();
-            cve = null;
         }
     }
 

@@ -1029,18 +1029,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     protected void writeReports(Engine engine, MavenProject p, File outputDir) throws ReportException {
         DatabaseProperties prop = null;
-        CveDB cve = null;
         try {
-            cve = new CveDB();
-            cve.open();
+            final CveDB cve = CveDB.getInstance();
             prop = cve.getDatabaseProperties();
         } catch (DatabaseException ex) {
+            //TODO shouldn't this throw an exception?
             if (getLog().isDebugEnabled()) {
                 getLog().debug("Unable to retrieve DB Properties", ex);
-            }
-        } finally {
-            if (cve != null) {
-                cve.close();
             }
         }
         final ReportGenerator r = new ReportGenerator(p.getName(), engine.getDependencies(), engine.getAnalyzers(), prop);

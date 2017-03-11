@@ -844,22 +844,17 @@ public class DependencyCheckScanAgent {
         DatabaseProperties prop = null;
         CveDB cve = null;
         try {
-            cve = new CveDB();
-            cve.open();
+            cve = CveDB.getInstance();
             prop = cve.getDatabaseProperties();
         } catch (DatabaseException ex) {
+            //TODO shouldn't this throw an exception or return?
             LOGGER.debug("Unable to retrieve DB Properties", ex);
-        } finally {
-            if (cve != null) {
-                cve.close();
-            }
         }
         final ReportGenerator r = new ReportGenerator(this.applicationName, engine.getDependencies(), engine.getAnalyzers(), prop);
         try {
             r.generateReports(outDirectory.getCanonicalPath(), this.reportFormat.name());
         } catch (IOException ex) {
-            LOGGER.error(
-                    "Unexpected exception occurred during analysis; please see the verbose error log for more details.");
+            LOGGER.error("Unexpected exception occurred during analysis; please see the verbose error log for more details.");
             LOGGER.debug("", ex);
         } catch (Throwable ex) {
             LOGGER.error(

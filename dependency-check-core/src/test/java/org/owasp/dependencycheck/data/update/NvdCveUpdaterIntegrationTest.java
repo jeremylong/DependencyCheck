@@ -28,7 +28,7 @@ import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
  *
  * @author Jeremy Long
  */
-    public class NvdCveUpdaterIntegrationTest extends BaseTest {
+public class NvdCveUpdaterIntegrationTest extends BaseTest {
 
     public NvdCveUpdater getUpdater() {
         NvdCveUpdater instance = new NvdCveUpdater();
@@ -55,12 +55,7 @@ import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
     @Test
     public void testUpdatesNeeded() throws Exception {
         NvdCveUpdater instance = getUpdater();
-        try {
-            instance.openDataStores();
-            UpdateableNvdCve result = instance.getUpdatesNeeded();
-            assertNotNull(result);
-        } finally {
-            instance.closeDataStores();
-        }
+        UpdateableNvdCve result = instance.getUpdatesNeeded();
+        assertNotNull(result);
     }
 }

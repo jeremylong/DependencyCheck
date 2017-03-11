@@ -71,7 +71,7 @@ public class Engine implements FileFilter {
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-    private final Map<AnalysisPhase, List<Analyzer>> analyzers = new EnumMap<AnalysisPhase, List<Analyzer>>(AnalysisPhase.class);
+    private final Map<AnalysisPhase, List<Analyzer>> analyzers = new EnumMap<>(AnalysisPhase.class);
 
     /**
      * A Map of analyzers grouped by Analysis phase.
@@ -126,6 +126,11 @@ public class Engine implements FileFilter {
      * Properly cleans up resources allocated during analysis.
      */
     public void cleanup() {
+        try {
+            CveDB.getInstance().closeDatabase();
+        } catch (DatabaseException ex) {
+            LOGGER.trace("Error closing the database", ex);
+        }
         ConnectionFactory.cleanup();
     }
 
@@ -140,7 +145,7 @@ public class Engine implements FileFilter {
         for (AnalysisPhase phase : AnalysisPhase.values()) {
             analyzers.put(phase, new ArrayList<Analyzer>());
         }
-
+        
         final AnalyzerService service = new AnalyzerService(serviceClassLoader);
         final List<Analyzer> iterator = service.getAnalyzers();
         for (Analyzer a : iterator) {
@@ -213,7 +218,7 @@ public class Engine implements FileFilter {
      * @since v1.4.4
      */
     public List<Dependency> scan(String[] paths, String projectReference) {
-        final List<Dependency> deps = new ArrayList<Dependency>();
+        final List<Dependency> deps = new ArrayList<>();
         for (String path : paths) {
             final List<Dependency> d = scan(path, projectReference);
             if (d != null) {
@@ -384,7 +389,7 @@ public class Engine implements FileFilter {
      */
     protected List<Dependency> scanDirectory(File dir, String projectReference) {
         final File[] files = dir.listFiles();
-        final List<Dependency> deps = new ArrayList<Dependency>();
+        final List<Dependency> deps = new ArrayList<>();
         if (files != null) {
             for (File f : files) {
                 if (f.isDirectory()) {
@@ -504,7 +509,7 @@ public class Engine implements FileFilter {
         } catch (DatabaseException ex) {
             throwFatalExceptionCollection("Unable to connect to the dependency-check database.", ex, exceptions);
         }
-
+        
         LOGGER.debug("\n----------------------------------------------------\nBEGIN ANALYSIS\n----------------------------------------------------");
         LOGGER.info("Analysis Started");
         final long analysisStart = System.currentTimeMillis();
@@ -512,7 +517,7 @@ public class Engine implements FileFilter {
         // analysis phases
         for (AnalysisPhase phase : AnalysisPhase.values()) {
             final List<Analyzer> analyzerList = analyzers.get(phase);
-
+            
             for (final Analyzer analyzer : analyzerList) {
                 final long analyzerStart = System.currentTimeMillis();
                 try {
@@ -521,10 +526,10 @@ public class Engine implements FileFilter {
                     exceptions.add(ex);
                     continue;
                 }
-
+                
                 if (analyzer.isEnabled()) {
                     executeAnalysisTasks(analyzer, exceptions);
-
+                    
                     final long analyzerDurationMillis = System.currentTimeMillis() - analyzerStart;
                     final long analyzerDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(analyzerDurationMillis);
                     LOGGER.info("Finished {} ({} seconds)", analyzer.getName(), analyzerDurationSeconds);
@@ -535,12 +540,12 @@ public class Engine implements FileFilter {
         }
         for (AnalysisPhase phase : AnalysisPhase.values()) {
             final List<Analyzer> analyzerList = analyzers.get(phase);
-
+            
             for (Analyzer a : analyzerList) {
                 closeAnalyzer(a);
             }
         }
-
+        
         LOGGER.debug("\n----------------------------------------------------\nEND ANALYSIS\n----------------------------------------------------");
         final long analysisDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - analysisStart);
         LOGGER.info("Analysis Complete ({} seconds)", analysisDurationSeconds);
@@ -561,7 +566,7 @@ public class Engine implements FileFilter {
         LOGGER.debug("Starting {}", analyzer.getName());
         final List<AnalysisTask> analysisTasks = getAnalysisTasks(analyzer, exceptions);
         final ExecutorService executorService = getExecutorService(analyzer);
-
+        
         try {
             final List<Future<Void>> results = executorService.invokeAll(analysisTasks, 10, TimeUnit.MINUTES);
 
@@ -608,9 +613,7 @@ public class Engine implements FileFilter {
      */
     protected ExecutorService getExecutorService(Analyzer analyzer) {
         if (analyzer.supportsParallelProcessing()) {
-            // just a fair trade-off that should be reasonable for all analyzer types
-            final int maximumNumberOfThreads = 4 * Runtime.getRuntime().availableProcessors();
-
+            final int maximumNumberOfThreads = Runtime.getRuntime().availableProcessors();
             LOGGER.debug("Parallel processing with up to {} threads: {}.", maximumNumberOfThreads, analyzer.getName());
             return Executors.newFixedThreadPool(maximumNumberOfThreads);
         } else {
@@ -692,7 +695,7 @@ public class Engine implements FileFilter {
      * @return a list of Analyzers
      */
     public List<Analyzer> getAnalyzers() {
-        final List<Analyzer> ret = new ArrayList<Analyzer>();
+        final List<Analyzer> ret = new ArrayList<>();
         for (AnalysisPhase phase : AnalysisPhase.values()) {
             final List<Analyzer> analyzerList = analyzers.get(phase);
             ret.addAll(analyzerList);
@@ -749,16 +752,9 @@ public class Engine implements FileFilter {
      * database
      */
     private void ensureDataExists() throws NoDataException, DatabaseException {
-        final CveDB cve = new CveDB();
-        try {
-            cve.open();
-            if (!cve.dataExists()) {
-                throw new NoDataException("No documents exist");
-            }
-        } catch (DatabaseException ex) {
-            throw new NoDataException(ex.getMessage(), ex);
-        } finally {
-            cve.close();
+        final CveDB cve = CveDB.getInstance();
+        if (!cve.dataExists()) {
+            throw new NoDataException("No documents exist");
         }
     }
 

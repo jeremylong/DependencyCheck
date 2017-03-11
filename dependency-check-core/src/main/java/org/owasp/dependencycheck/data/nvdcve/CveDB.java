@@ -51,15 +51,19 @@ import org.slf4j.LoggerFactory;
 import static org.owasp.dependencycheck.data.nvdcve.CveDB.PreparedStatementCveDb.*;
 
 /**
- * The database holding information about the NVD CVE data.
- * This class is safe to be accessed from multiple threads in parallel, however
- * internally only one connection will be used.
+ * The database holding information about the NVD CVE data. This class is safe
+ * to be accessed from multiple threads in parallel, however internally only one
+ * connection will be used.
  *
  * @author Jeremy Long
  */
 @ThreadSafe
 public final class CveDB {
 
+    /**
+     * Singleton instance of the CveDB.
+     */
+    private static CveDB INSTANCE = null;
     /**
      * The logger.
      */
@@ -76,10 +80,10 @@ public final class CveDB {
      * Database properties object containing the 'properties' from the database
      * table.
      */
-    private final DatabaseProperties databaseProperties;
+    private DatabaseProperties databaseProperties;
     /**
-     * Does the underlying connection support batch operations?
-     * Currently we do not support batch execution.
+     * Does the underlying connection support batch operations? Currently we do
+     * not support batch execution.
      */
     private final boolean batchSupported = false;
     /**
@@ -117,18 +121,31 @@ public final class CveDB {
     }
 
     /**
+     * Gets the CveDB singleton object.
+     *
+     * @return the CveDB singleton
+     * @throws DatabaseException thrown if there is a database error
+     */
+    public synchronized static CveDB getInstance() throws DatabaseException {
+        if (INSTANCE == null) {
+            INSTANCE = new CveDB();
+        }
+        return INSTANCE;
+    }
+
+    /**
      * Creates a new CveDB object and opens the database connection. Note, the
      * connection must be closed by the caller by calling the close method.
      *
      * @throws DatabaseException thrown if there is an exception opening the
      * database.
      */
-    public CveDB() throws DatabaseException {
-        open();
+    private CveDB() throws DatabaseException {
+        openDatabase();
         final String databaseProductName = determineDatabaseProductName();
-        statementBundle = databaseProductName != null ?
-                ResourceBundle.getBundle("data/dbStatements", new Locale(databaseProductName)) :
-                ResourceBundle.getBundle("data/dbStatements");
+        statementBundle = databaseProductName != null
+                ? ResourceBundle.getBundle("data/dbStatements", new Locale(databaseProductName))
+                : ResourceBundle.getBundle("data/dbStatements");
         preparedStatements = prepareStatements();
         databaseProperties = new DatabaseProperties(this);
     }
@@ -165,7 +182,7 @@ public final class CveDB {
      * @throws DatabaseException thrown if there is an error opening the
      * database connection
      */
-    public synchronized void open() throws DatabaseException {
+    public synchronized void openDatabase() throws DatabaseException {
         if (!isOpen()) {
             connection = ConnectionFactory.getConnection();
         }
@@ -175,7 +192,7 @@ public final class CveDB {
      * Closes the DB4O database. Close should be called on this object when it
      * is done being used.
      */
-    public synchronized void close() {
+    public synchronized void closeDatabase() {
         if (isOpen()) {
             closeStatements();
             try {
@@ -188,6 +205,7 @@ public final class CveDB {
                 LOGGER.debug("", ex);
             }
             connection = null;
+            INSTANCE = null;
         }
     }
 
@@ -204,7 +222,8 @@ public final class CveDB {
      * Prepares all statements to be used and returns them.
      *
      * @return the prepared statements
-     * @throws DatabaseException thrown if there is an error preparing the statements
+     * @throws DatabaseException thrown if there is an error preparing the
+     * statements
      */
     private EnumMap<PreparedStatementCveDb, PreparedStatement> prepareStatements()
             throws DatabaseException {
@@ -239,7 +258,8 @@ public final class CveDB {
     /**
      * Returns the specified prepared statement.
      *
-     * @param key the prepared statement from {@link PreparedStatementCveDb} to return
+     * @param key the prepared statement from {@link PreparedStatementCveDb} to
+     * return
      * @return the prepared statement
      * @throws SQLException thrown if a SQL Exception occurs
      */
@@ -270,7 +290,7 @@ public final class CveDB {
     @SuppressWarnings("FinalizeDeclaration")
     protected void finalize() throws Throwable {
         LOGGER.debug("Entering finalize");
-        close();
+        closeDatabase();
         super.finalize();
     }
 
@@ -280,6 +300,16 @@ public final class CveDB {
      * @return the value of databaseProperties
      */
     public DatabaseProperties getDatabaseProperties() {
+        return databaseProperties;
+    }
+
+    /**
+     * Used within the unit tests to reload the database properties.
+     *
+     * @return the database properties
+     */
+    protected DatabaseProperties reloadProperties() {
+        databaseProperties = new DatabaseProperties(this);
         return databaseProperties;
     }
 
@@ -294,7 +324,7 @@ public final class CveDB {
      * @return a set of vulnerable software
      */
     public synchronized Set<VulnerableSoftware> getCPEs(String vendor, String product) {
-        final Set<VulnerableSoftware> cpe = new HashSet<VulnerableSoftware>();
+        final Set<VulnerableSoftware> cpe = new HashSet<>();
         ResultSet rs = null;
         try {
             final PreparedStatement ps = getPreparedStatement(SELECT_CPE_ENTRIES);
@@ -324,13 +354,13 @@ public final class CveDB {
      * data from the DB
      */
     public synchronized Set<Pair<String, String>> getVendorProductList() throws DatabaseException {
-        final Set<Pair<String, String>> data = new HashSet<Pair<String, String>>();
+        final Set<Pair<String, String>> data = new HashSet<>();
         ResultSet rs = null;
         try {
             final PreparedStatement ps = getPreparedStatement(SELECT_VENDOR_PRODUCT_LIST);
             rs = ps.executeQuery();
             while (rs.next()) {
-                data.add(new Pair<String, String>(rs.getString(1), rs.getString(2)));
+                data.add(new Pair<>(rs.getString(1), rs.getString(2)));
             }
         } catch (SQLException ex) {
             final String msg = "An unexpected SQL Exception occurred; please see the verbose log for more details.";
@@ -410,7 +440,7 @@ public final class CveDB {
             LOGGER.trace("", ex);
         }
         final DependencyVersion detectedVersion = parseDependencyVersion(cpe);
-        final List<Vulnerability> vulnerabilities = new ArrayList<Vulnerability>();
+        final List<Vulnerability> vulnerabilities = new ArrayList<>();
 
         ResultSet rs = null;
         try {
@@ -420,7 +450,7 @@ public final class CveDB {
             rs = ps.executeQuery();
             String currentCVE = "";
 
-            final Map<String, Boolean> vulnSoftware = new HashMap<String, Boolean>();
+            final Map<String, Boolean> vulnSoftware = new HashMap<>();
             while (rs.next()) {
                 final String cveId = rs.getString(1);
                 if (!currentCVE.equals(cveId)) { //check for match and add
