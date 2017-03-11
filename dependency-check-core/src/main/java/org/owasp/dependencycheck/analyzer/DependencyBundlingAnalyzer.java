@@ -499,7 +499,7 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
      * @return true if the path contains '.war\' or '.ear\'.
      */
     private boolean containedInWar(String filePath) {
-        return filePath == null ? false : filePath.matches(".*\\.(ear|war)[\\\\/].*");
+        return filePath != null && filePath.matches(".*\\.(ear|war)[\\\\/].*");
     }
 
 }
