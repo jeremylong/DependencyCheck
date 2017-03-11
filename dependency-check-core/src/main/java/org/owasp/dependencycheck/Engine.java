@@ -626,7 +626,6 @@ public class Engine implements FileFilter {
      * Initializes the given analyzer.
      *
      * @param analyzer the analyzer to initialize
-     * @return the initialized analyzer
      * @throws InitializationException thrown when there is a problem
      * initializing the analyzer
      */

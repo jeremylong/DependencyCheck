@@ -156,7 +156,7 @@ public class HintParser {
             hints.setHintRules(handler.getHintRules());
             hints.setVendorDuplicatingHintRules(handler.getVendorDuplicatingHintRules());
             return hints;
-        } catch (ParserConfigurationException ex) {
+        } catch (ParserConfigurationException | FileNotFoundException ex) {
             LOGGER.debug("", ex);
             throw new HintParseException(ex);
         } catch (SAXException ex) {
@@ -166,9 +166,6 @@ public class HintParser {
                 LOGGER.debug("", ex);
                 throw new HintParseException(ex);
             }
-        } catch (FileNotFoundException ex) {
-            LOGGER.debug("", ex);
-            throw new HintParseException(ex);
         } catch (IOException ex) {
             LOGGER.debug("", ex);
             throw new HintParseException(ex);

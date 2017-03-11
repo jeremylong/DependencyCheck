@@ -25,15 +25,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
@@ -350,8 +343,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @param path the path to the pom.xml within the JarFile
      * @param jar the JarFile to load the pom.properties from
      * @return a Properties object or null if no pom.properties was found
-     * @throws IOException thrown if there is an exception reading the
-     * pom.properties
      */
     private Properties retrievePomProperties(String path, final JarFile jar) {
         Properties pomProperties = null;
@@ -1127,7 +1118,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
          * package structure. Up to the first four levels of the package
          * structure are stored, excluding a leading "org" or "com".
          * Example:</p>
-         * <code>ClassNameInformation obj = new ClassNameInformation("org.owasp.dependencycheck.analyzer.JarAnalyzer");
+         * <code>ClassNameInformation obj = new ClassNameInformation("org/owasp/dependencycheck/analyzer/JarAnalyzer");
          * System.out.println(obj.getName());
          * for (String p : obj.getPackageStructure())
          *     System.out.println(p);
@@ -1155,9 +1146,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 if (tmp.length <= end) {
                     end = tmp.length - 1;
                 }
-                for (int i = start; i <= end; i++) {
-                    packageStructure.add(tmp[i]);
-                }
+                packageStructure.addAll(Arrays.asList(tmp).subList(start, end + 1));
             } else {
                 packageStructure.add(name);
             }

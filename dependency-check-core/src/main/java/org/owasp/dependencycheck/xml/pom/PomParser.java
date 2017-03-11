@@ -98,10 +98,7 @@ public class PomParser {
             final InputSource in = new InputSource(reader);
             xmlReader.parse(in);
             return handler.getModel();
-        } catch (ParserConfigurationException | SAXException ex) {
-            LOGGER.debug("", ex);
-            throw new PomParseException(ex);
-        } catch (FileNotFoundException ex) {
+        } catch (ParserConfigurationException | SAXException | FileNotFoundException ex) {
             LOGGER.debug("", ex);
             throw new PomParseException(ex);
         } catch (IOException ex) {

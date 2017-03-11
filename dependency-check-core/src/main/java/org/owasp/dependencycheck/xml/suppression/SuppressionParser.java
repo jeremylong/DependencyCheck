@@ -136,7 +136,7 @@ public class SuppressionParser {
             final InputSource in = new InputSource(reader);
             xmlReader.parse(in);
             return handler.getSuppressionRules();
-        } catch (ParserConfigurationException ex) {
+        } catch (ParserConfigurationException | FileNotFoundException ex) {
             LOGGER.debug("", ex);
             throw new SuppressionParseException(ex);
         } catch (SAXException ex) {
@@ -146,9 +146,6 @@ public class SuppressionParser {
                 LOGGER.debug("", ex);
                 throw new SuppressionParseException(ex);
             }
-        } catch (FileNotFoundException ex) {
-            LOGGER.debug("", ex);
-            throw new SuppressionParseException(ex);
         } catch (IOException ex) {
             LOGGER.debug("", ex);
             throw new SuppressionParseException(ex);

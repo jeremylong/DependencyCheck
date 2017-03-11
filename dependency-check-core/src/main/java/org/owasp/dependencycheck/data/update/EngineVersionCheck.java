@@ -98,7 +98,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
             final boolean enabled = Settings.getBoolean(Settings.KEYS.UPDATE_VERSION_CHECK_ENABLED, true);
             final String original = Settings.getString(Settings.KEYS.CVE_ORIGINAL_MODIFIED_20_URL);
             final String current = Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL);
-            /**
+            /*
              * Only update if auto-update is enabled, the engine check is
              * enabled, and the NVD CVE URLs have not been modified (i.e. the
              * user has not configured them to point to an internal source).

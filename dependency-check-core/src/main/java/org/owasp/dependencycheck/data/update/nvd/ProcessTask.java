@@ -167,8 +167,6 @@ public class ProcessTask implements Callable<ProcessTask> {
             importXML(filePair.getFirst(), filePair.getSecond());
             cveDB.commit();
             properties.save(filePair.getNvdCveInfo());
-        } catch (FileNotFoundException ex) {
-            throw new UpdateException(ex);
         } catch (ParserConfigurationException | SAXException | SQLException | DatabaseException | ClassNotFoundException | IOException ex) {
             throw new UpdateException(ex);
         } finally {

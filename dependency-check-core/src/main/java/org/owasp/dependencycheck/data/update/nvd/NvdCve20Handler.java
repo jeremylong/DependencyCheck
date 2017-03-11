@@ -182,9 +182,7 @@ public class NvdCve20Handler extends DefaultHandler {
                 totalNumberOfApplicationEntries += 1;
                 try {
                     saveEntry(vulnerability);
-                } catch (DatabaseException ex) {
-                    throw new SAXException(ex);
-                } catch (CorruptIndexException ex) {
+                } catch (DatabaseException | CorruptIndexException ex) {
                     throw new SAXException(ex);
                 } catch (IOException ex) {
                     throw new SAXException(ex);

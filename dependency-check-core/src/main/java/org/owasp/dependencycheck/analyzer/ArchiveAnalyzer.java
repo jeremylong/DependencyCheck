@@ -571,9 +571,6 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         try {
             out = new FileOutputStream(outputFile);
             IOUtils.copy(inputStream, out);
-        } catch (FileNotFoundException ex) {
-            LOGGER.debug("", ex);
-            throw new ArchiveExtractionException(ex);
         } catch (IOException ex) {
             LOGGER.debug("", ex);
             throw new ArchiveExtractionException(ex);
