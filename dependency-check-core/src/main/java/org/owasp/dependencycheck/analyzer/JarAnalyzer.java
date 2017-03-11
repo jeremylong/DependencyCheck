@@ -247,28 +247,12 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @return whether or not evidence was added to the dependency
      */
     protected boolean analyzePOM(Dependency dependency, List<ClassNameInformation> classes, Engine engine) throws AnalysisException {
-        JarFile jar = null;
-        List<String> pomEntries;
-        try {
-            jar = new JarFile(dependency.getActualFilePath());
-            pomEntries = retrievePomListing(jar);
-        } catch (IOException ex) {
-            LOGGER.warn("Unable to read JarFile '{}'.", dependency.getActualFilePath());
-            LOGGER.trace("", ex);
-            if (jar != null) {
-                try {
-                    jar.close();
-                } catch (IOException ex1) {
-                    LOGGER.trace("", ex1);
-                }
-            }
-            return false;
-        }
-        if (pomEntries != null && pomEntries.size() <= 1) {
-            try {
-                String path = null;
+        try (JarFile jar = new JarFile(dependency.getActualFilePath())) {
+            List<String> pomEntries = retrievePomListing(jar);
+            if (pomEntries != null && pomEntries.size() <= 1) {
+                String path;
+                File pomFile;
                 Properties pomProperties = null;
-                File pomFile = null;
                 if (pomEntries.size() == 1) {
                     path = pomEntries.get(0);
                     pomFile = extractPom(path, jar);
@@ -282,55 +266,44 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     if (pom != null && pomProperties != null) {
                         pom.processProperties(pomProperties);
                     }
-                    if (pom != null) {
-                        return setPomEvidence(dependency, pom, classes);
-                    }
-                    return false;
+                    return pom != null && setPomEvidence(dependency, pom, classes);
                 } else {
                     return false;
                 }
-            } finally {
+            }
+
+            //reported possible null dereference on pomEntries is on a non-feasible path
+            for (String path : pomEntries) {
+                //TODO - one of these is likely the pom for the main JAR we are analyzing
+                LOGGER.debug("Reading pom entry: {}", path);
                 try {
-                    jar.close();
-                } catch (IOException ex) {
+                    //extract POM to its own directory and add it as its own dependency
+                    final Properties pomProperties = retrievePomProperties(path, jar);
+                    final File pomFile = extractPom(path, jar);
+                    final Model pom = PomUtils.readPom(pomFile);
+                    pom.processProperties(pomProperties);
+
+                    final String displayPath = String.format("%s%s%s",
+                            dependency.getFilePath(),
+                            File.separator,
+                            path);
+                    final String displayName = String.format("%s%s%s",
+                            dependency.getFileName(),
+                            File.separator,
+                            path);
+                    final Dependency newDependency = new Dependency();
+                    newDependency.setActualFilePath(pomFile.getAbsolutePath());
+                    newDependency.setFileName(displayName);
+                    newDependency.setFilePath(displayPath);
+                    setPomEvidence(newDependency, pom, null);
+                    engine.getDependencies().add(newDependency);
+                } catch (AnalysisException ex) {
+                    LOGGER.warn("An error occurred while analyzing '{}'.", dependency.getActualFilePath());
                     LOGGER.trace("", ex);
                 }
             }
-        }
-
-        //reported possible null dereference on pomEntries is on a non-feasible path
-        for (String path : pomEntries) {
-            //TODO - one of these is likely the pom for the main JAR we are analyzing
-            LOGGER.debug("Reading pom entry: {}", path);
-            try {
-                //extract POM to its own directory and add it as its own dependency
-                final Properties pomProperties = retrievePomProperties(path, jar);
-                final File pomFile = extractPom(path, jar);
-                final Model pom = PomUtils.readPom(pomFile);
-                pom.processProperties(pomProperties);
-
-                final String displayPath = String.format("%s%s%s",
-                        dependency.getFilePath(),
-                        File.separator,
-                        path);
-                final String displayName = String.format("%s%s%s",
-                        dependency.getFileName(),
-                        File.separator,
-                        path);
-                final Dependency newDependency = new Dependency();
-                newDependency.setActualFilePath(pomFile.getAbsolutePath());
-                newDependency.setFileName(displayName);
-                newDependency.setFilePath(displayPath);
-                setPomEvidence(newDependency, pom, null);
-                engine.getDependencies().add(newDependency);
-            } catch (AnalysisException ex) {
-                LOGGER.warn("An error occurred while analyzing '{}'.", dependency.getActualFilePath());
-                LOGGER.trace("", ex);
-            }
-        }
-        try {
-            jar.close();
         } catch (IOException ex) {
+            LOGGER.warn("Unable to read JarFile '{}'.", dependency.getActualFilePath());
             LOGGER.trace("", ex);
         }
         return false;
@@ -437,11 +410,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * otherwise false
      */
     public static boolean setPomEvidence(Dependency dependency, Model pom, List<ClassNameInformation> classes) {
+        if (pom == null) {
+            return false;
+        }
         boolean foundSomething = false;
         boolean addAsIdentifier = true;
-        if (pom == null) {
-            return foundSomething;
-        }
         String groupid = pom.getGroupId();
         String parentGroupId = pom.getParentGroupId();
         String artifactid = pom.getArtifactId();
