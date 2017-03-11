@@ -38,6 +38,7 @@ import java.util.Properties;
  * @author Jeremy Long
  */
 public final class Settings {
+
     /**
      * The logger.
      */
@@ -424,7 +425,6 @@ public final class Settings {
         }
     }
     //</editor-fold>
-
 
     /**
      * Private constructor for the Settings class. This class loads the
@@ -974,7 +974,7 @@ public final class Settings {
      */
     public static File getDataDirectory() throws IOException {
         final File path = Settings.getDataFile(Settings.KEYS.DATA_DIRECTORY);
-        if (path.exists() || path.mkdirs()) {
+        if (path != null && (path.exists() || path.mkdirs())) {
             return path;
         }
         throw new IOException(String.format("Unable to create the data directory '%s'", path.getAbsolutePath()));
