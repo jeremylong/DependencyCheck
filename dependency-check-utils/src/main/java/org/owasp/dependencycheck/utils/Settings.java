@@ -57,7 +57,7 @@ public final class Settings {
     private Properties props = null;
 
     /**
-     * A reference to the temporary directory; used incase it needs to be
+     * A reference to the temporary directory; used in case it needs to be
      * deleted during cleanup.
      */
     private static File tempDirectory = null;

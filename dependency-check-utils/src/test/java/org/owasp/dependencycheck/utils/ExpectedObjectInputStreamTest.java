@@ -26,15 +26,16 @@ import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.fail;
 import org.junit.Test;
+import static org.junit.Assert.fail;
 
 /**
  *
  * @author jeremy
  */
-public class ExpectedOjectInputStreamTest {
+public class ExpectedObjectInputStreamTest {
 
     /**
-     * Test of resolveClass method, of class ExpectedOjectInputStream.
+     * Test of resolveClass method, of class ExpectedObjectInputStream.
      */
     @Test
     public void testResolveClass() {
@@ -49,7 +50,7 @@ public class ExpectedOjectInputStreamTest {
             byte[] buf = mem.toByteArray();
             out.close();
             ByteArrayInputStream in = new ByteArrayInputStream(buf);
-            ExpectedOjectInputStream instance = new ExpectedOjectInputStream(in, "java.util.ArrayList", "org.owasp.dependencycheck.utils.SimplePojo", "java.lang.Integer", "java.lang.Number");
+            ExpectedObjectInputStream instance = new ExpectedObjectInputStream(in, "java.util.ArrayList", "org.owasp.dependencycheck.utils.SimplePojo", "java.lang.Integer", "java.lang.Number");
             instance.readObject();
         } catch (IOException | ClassNotFoundException ex) {
             fail(ex.getMessage());
@@ -65,7 +66,7 @@ public class ExpectedOjectInputStreamTest {
     }
 
     /**
-     * Test of resolveClass method, of class ExpectedOjectInputStream.
+     * Test of resolveClass method, of class ExpectedObjectInputStream.
      */
     @Test(expected = java.io.InvalidClassException.class)
     public void testResolveClassException() throws Exception {
@@ -81,7 +82,7 @@ public class ExpectedOjectInputStreamTest {
         }
         ByteArrayInputStream in = new ByteArrayInputStream(buf);
 
-        ExpectedOjectInputStream instance = new ExpectedOjectInputStream(in, "java.util.ArrayList", "org.owasp.dependencycheck.utils.SimplePojo");
+        ExpectedObjectInputStream instance = new ExpectedObjectInputStream(in, "java.util.ArrayList", "org.owasp.dependencycheck.utils.SimplePojo");
         instance.readObject();
     }
 }

@@ -128,11 +128,11 @@ public class CentralSearch {
                         final String a = xpath.evaluate("./str[@name='a']", docs.item(i));
                         LOGGER.trace("ArtifactId: {}", a);
                         final String v = xpath.evaluate("./str[@name='v']", docs.item(i));
-                        NodeList atts = (NodeList) xpath.evaluate("./arr[@name='ec']/str", docs.item(i), XPathConstants.NODESET);
+                        NodeList attributes = (NodeList) xpath.evaluate("./arr[@name='ec']/str", docs.item(i), XPathConstants.NODESET);
                         boolean pomAvailable = false;
                         boolean jarAvailable = false;
-                        for (int x = 0; x < atts.getLength(); x++) {
-                            final String tmp = xpath.evaluate(".", atts.item(x));
+                        for (int x = 0; x < attributes.getLength(); x++) {
+                            final String tmp = xpath.evaluate(".", attributes.item(x));
                             if (".pom".equals(tmp)) {
                                 pomAvailable = true;
                             } else if (".jar".equals(tmp)) {
@@ -140,10 +140,10 @@ public class CentralSearch {
                             }
                         }
 
-                        atts = (NodeList) xpath.evaluate("./arr[@name='tags']/str", docs.item(i), XPathConstants.NODESET);
+                        attributes = (NodeList) xpath.evaluate("./arr[@name='tags']/str", docs.item(i), XPathConstants.NODESET);
                         boolean useHTTPS = false;
-                        for (int x = 0; x < atts.getLength(); x++) {
-                            final String tmp = xpath.evaluate(".", atts.item(x));
+                        for (int x = 0; x < attributes.getLength(); x++) {
+                            final String tmp = xpath.evaluate(".", attributes.item(x));
                             if ("https".equals(tmp)) {
                                 useHTTPS = true;
                             }

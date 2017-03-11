@@ -183,7 +183,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.error("Failed to read the Assembly Analyzer results. "
                     + "On some systems mono-runtime and mono-devel need to be installed.");
             LOGGER.error("----------------------------------------------------");
-            throw new AnalysisException("Couldn't parse Assembly Analzyzer results (GrokAssembly)", saxe);
+            throw new AnalysisException("Couldn't parse Assembly Analyzer results (GrokAssembly)", saxe);
         }
         // This shouldn't happen
         
@@ -202,7 +202,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             tempFile = File.createTempFile("GKA", ".exe", Settings.getTempDirectory());
         } catch (IOException ex) {
             setEnabled(false);
-            throw new InitializationException("Unable to create temporary file for the assembly analyzerr", ex);
+            throw new InitializationException("Unable to create temporary file for the assembly analyzer", ex);
         }
         FileOutputStream fos = null;
         InputStream is = null;
@@ -248,7 +248,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         //
         // We need to create a non-fatal warning error type that will
         // get added to the report.
-        //TOOD this idea needs to get replicated to the bundle audit analyzer.
+        //TODO this idea needs to get replicated to the bundle audit analyzer.
         if (args == null) {
             setEnabled(false);
             LOGGER.error("----------------------------------------------------");
@@ -366,7 +366,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                 return true;
             }
         } catch (IOException | InterruptedException ex) {
-            LOGGER.debug("Path seach failed for " + file, ex);
+            LOGGER.debug("Path search failed for " + file, ex);
         }
         return false;
     }

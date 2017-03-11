@@ -598,7 +598,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
             LOGGER.warn("Unable to read '{}' to determine hashes.", file.getName());
             LOGGER.debug("", ex);
         } catch (NoSuchAlgorithmException ex) {
-            LOGGER.warn("Unable to use MD5 of SHA1 checksums.");
+            LOGGER.warn("Unable to use MD5 or SHA1 checksums.");
             LOGGER.debug("", ex);
         }
         this.setMd5sum(md5);

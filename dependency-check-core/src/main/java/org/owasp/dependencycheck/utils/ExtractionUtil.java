@@ -280,7 +280,7 @@ public final class ExtractionUtil {
         if (!file.renameTo(gzip)) {
             throw new IOException("Unable to rename '" + file.getPath() + "'");
         }
-        final File newfile = new File(originalPath);
+        final File newFile = new File(originalPath);
 
         final byte[] buffer = new byte[4096];
 
@@ -288,7 +288,7 @@ public final class ExtractionUtil {
         FileOutputStream out = null;
         try {
             cin = new GZIPInputStream(new FileInputStream(gzip));
-            out = new FileOutputStream(newfile);
+            out = new FileOutputStream(newFile);
 
             int len;
             while ((len = cin.read(buffer)) > 0) {

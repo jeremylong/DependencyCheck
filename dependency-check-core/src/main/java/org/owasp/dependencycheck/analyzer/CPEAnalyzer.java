@@ -208,7 +208,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * @throws ParseException is thrown when the Lucene query cannot be parsed.
      */
     protected void determineCPE(Dependency dependency) throws CorruptIndexException, IOException, ParseException {
-        //TODO test dojo-war against this. we shold get dojo-toolkit:dojo-toolkit AND dojo-toolkit:toolkit
+        //TODO test dojo-war against this. we should get dojo-toolkit:dojo-toolkit AND dojo-toolkit:toolkit
         String vendors = "";
         String products = "";
         for (Confidence confidence : Confidence.values()) {

@@ -133,7 +133,7 @@
 
       <xsd:simpleType name="cweNamePatternType">
             <xsd:restriction base="xsd:token">
-                  <xsd:pattern value="CWE-[1-9]\d{0,5}"></xsd:pattern>
+                  <xsd:pattern value="CWE-[1-9]\d{0,5}"/>
             </xsd:restriction>
       </xsd:simpleType>
 </xsd:schema>

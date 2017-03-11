@@ -172,7 +172,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             exitValue = process.waitFor();
         } catch (InterruptedException ex) {
             setEnabled(false);
-            final String msg = String.format("Bundle-audit process was interupted. Disabling %s", ANALYZER_NAME);
+            final String msg = String.format("Bundle-audit process was interrupted. Disabling %s", ANALYZER_NAME);
             throw new InitializationException(msg);
         }
         if (0 == exitValue) {

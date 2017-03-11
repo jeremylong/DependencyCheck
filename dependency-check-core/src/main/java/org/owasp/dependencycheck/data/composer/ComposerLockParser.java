@@ -81,7 +81,7 @@ public class ComposerLockParser {
                                 final String group = groupName.substring(0, groupName.indexOf('/'));
                                 final String project = groupName.substring(groupName.indexOf('/') + 1);
                                 String version = pkg.getString("version");
-                                // Some version nubmers begin with v - which doesn't end up matching CPE's
+                                // Some version numbers begin with v - which doesn't end up matching CPE's
                                 if (version.startsWith("v")) {
                                     version = version.substring(1);
                                 }

@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class VersionFilterAnalyzer extends AbstractAnalyzer {
 
-    //<editor-fold defaultstate="collapsed" desc="Constaints">
+    //<editor-fold defaultstate="collapsed" desc="Constants">
     /**
      * Evidence source.
      */

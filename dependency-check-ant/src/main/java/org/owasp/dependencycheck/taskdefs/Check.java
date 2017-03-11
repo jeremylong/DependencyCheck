@@ -69,9 +69,8 @@ public class Check extends Update {
      * Whether the CMake analyzer should be enabled.
      */
     private Boolean cmakeAnalyzerEnabled;
-
     /**
-     * Whether or not the openssl analyzer is enabled.
+     * Whether or not the Open SSL analyzer is enabled.
      */
     private Boolean opensslAnalyzerEnabled;
     /**
@@ -90,7 +89,6 @@ public class Check extends Update {
      * Whether or not the nexus analyzer is enabled.
      */
     private Boolean nexusAnalyzerEnabled;
-
     /**
      * The URL of a Nexus server's REST API end point
      * (http://domain/nexus/service/local).
@@ -109,7 +107,7 @@ public class Check extends Update {
      * The path to Mono for .NET assembly analysis on non-windows systems.
      */
     private String pathToMono;
-    
+
     /**
      * The application name for the report.
      *
@@ -121,7 +119,6 @@ public class Check extends Update {
      * The name of the project being analyzed.
      */
     private String projectName = "dependency-check";
-
     /**
      * Specifies the destination directory for the generated Dependency-Check
      * report.
@@ -189,7 +186,8 @@ public class Check extends Update {
     /**
      * Whether or not the .NET Assembly Analyzer is enabled.
      */
-    private Boolean assemblyAnalyzerEnabled;    /**
+    private Boolean assemblyAnalyzerEnabled;
+    /**
      * Whether the autoconf analyzer should be enabled.
      */
     private Boolean autoconfAnalyzerEnabled;
@@ -213,9 +211,9 @@ public class Check extends Update {
      */
     private Resources path = null;
     /**
-     * Reference to path/fileset to convert
+     * Reference to path/file set to convert
      */
-    private Reference refid = null;
+    private Reference refId = null;
 
     /**
      * Add an arbitrary ResourceCollection.
@@ -225,7 +223,7 @@ public class Check extends Update {
      */
     public void add(ResourceCollection rc) {
         if (isReference()) {
-            throw new BuildException("Nested elements are not allowed when using the refid attribute.");
+            throw new BuildException("Nested elements are not allowed when using the refId attribute.");
         }
         getPath().add(rc);
     }
@@ -245,12 +243,12 @@ public class Check extends Update {
     }
 
     /**
-     * Learn whether the refid attribute of this element been set.
+     * Learn whether the refId attribute of this element been set.
      *
-     * @return true if refid is valid.
+     * @return true if refId is valid.
      */
     public boolean isReference() {
-        return refid != null;
+        return refId != null;
     }
 
     /**
@@ -259,11 +257,11 @@ public class Check extends Update {
      *
      * @param r the reference to a path, fileset, dirset or filelist.
      */
-    public void setRefid(Reference r) {
+    public void setRefId(Reference r) {
         if (path != null) {
-            throw new BuildException("Nested elements are not allowed when using the refid attribute.");
+            throw new BuildException("Nested elements are not allowed when using the refId attribute.");
         }
-        refid = r;
+        refId = r;
     }
 
     /**
@@ -274,9 +272,9 @@ public class Check extends Update {
      */
     private void dealWithReferences() throws BuildException {
         if (isReference()) {
-            final Object o = refid.getReferencedObject(getProject());
+            final Object o = refId.getReferencedObject(getProject());
             if (!(o instanceof ResourceCollection)) {
-                throw new BuildException("refid '" + refid.getRefId()
+                throw new BuildException("refId '" + refId.getRefId()
                         + "' does not refer to a resource collection.");
             }
             getPath().add((ResourceCollection) o);
@@ -284,7 +282,6 @@ public class Check extends Update {
     }
     // END COPY from org.apache.tools.ant.taskdefs
 
-    
     /**
      * Construct a new DependencyCheckTask.
      */
@@ -317,6 +314,7 @@ public class Check extends Update {
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
     }
+
     /**
      * Get the value of projectName.
      *
@@ -470,6 +468,7 @@ public class Check extends Update {
     public void setHintsFile(String hintsFile) {
         this.hintsFile = hintsFile;
     }
+
     /**
      * Get the value of showSummary.
      *
@@ -670,9 +669,9 @@ public class Check extends Update {
     }
 
     /**
-     * Returns if the cocoapods analyyzer is enabled.
+     * Returns if the cocoapods analyzer is enabled.
      *
-     * @return if the cocoapods analyyzer is enabled
+     * @return if the cocoapods analyzer is enabled
      */
     public boolean isCocoapodsAnalyzerEnabled() {
         return cocoapodsAnalyzerEnabled;
@@ -950,7 +949,7 @@ public class Check extends Update {
                     //TODO shouldn't this be a fatal exception
                     log("Unable to retrieve DB Properties", ex, Project.MSG_DEBUG);
                 }
-                
+
                 final ReportGenerator reporter = new ReportGenerator(getProjectName(), engine.getDependencies(), engine.getAnalyzers(), prop);
                 reporter.generateReports(reportOutputDirectory, reportFormat);
 

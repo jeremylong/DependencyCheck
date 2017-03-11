@@ -109,7 +109,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(readonly = true, required = true, property = "reactorProjects")
     private List<MavenProject> reactorProjects;
     /**
-     * The entry point towards a Maven version independent way of resolving artifacts (handles both Maven 3.0 sonatype and Maven 3.1+ eclipse Aether implementations).
+     * The entry point towards a Maven version independent way of resolving artifacts (handles both Maven 3.0
+     * Sonatype and Maven 3.1+ eclipse Aether implementations).
      */
     @Component
     private ArtifactResolver artifactResolver;
@@ -603,7 +604,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     protected File getDataFile(MavenProject current) {
         if (getLog().isDebugEnabled()) {
-            getLog().debug(String.format("Getting data filefor %s using key '%s'", current.getName(), getDataFileContextKey()));
+            getLog().debug(String.format("Getting data file for %s using key '%s'", current.getName(), getDataFileContextKey()));
         }
         final Object obj = current.getContextValue(getDataFileContextKey());
         if (obj != null) {
@@ -718,7 +719,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Executes the dependency-check scan and generates the necassary report.
+     * Executes the dependency-check scan and generates the necessary report.
      *
      * @throws MojoExecutionException thrown if there is an exception running
      * the scan
@@ -1160,7 +1161,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Writes the scan data to disk. This is used to serialize the scan data
      * between the "check" and "aggregate" phase.
      *
-     * @param mp the mMven project for which the data file was created
+     * @param mp the Maven project for which the data file was created
      * @param writeTo the directory to write the data file
      * @param dependencies the list of dependencies to serialize
      */

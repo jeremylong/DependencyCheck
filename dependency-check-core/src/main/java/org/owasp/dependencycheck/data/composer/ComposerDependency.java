@@ -18,7 +18,7 @@
 package org.owasp.dependencycheck.data.composer;
 
 /**
- * Reperesents a dependency (GAV, right now) from a Composer dependency.
+ * Represents a dependency (GAV, right now) from a Composer dependency.
  *
  * @author colezlaw
  */

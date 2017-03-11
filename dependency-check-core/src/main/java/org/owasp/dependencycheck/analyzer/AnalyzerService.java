@@ -63,7 +63,7 @@ public class AnalyzerService {
         try {
             experimentalEnabled = Settings.getBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, false);
         } catch (InvalidSettingException ex) {
-            LOGGER.error("invalide experimental setting", ex);
+            LOGGER.error("invalid experimental setting", ex);
         }
         while (iterator.hasNext()) {
             final Analyzer a = iterator.next();

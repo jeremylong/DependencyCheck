@@ -397,10 +397,10 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
      *
      * <p>
      * Example, given the following input:</p>
-     * <code>'Please visit https://www.somedomain.com/path1/path2/file.php?id=439'</code>
+     * <code>'Please visit https://www.owasp.com/path1/path2/file.php?id=439'</code>
      * <p>
      * The function would return:</p>
-     * <code>'Please visit somedomain path1 path2 file'</code>
+     * <code>'Please visit owasp path1 path2 file'</code>
      *
      * @param value the value that may contain a url
      * @return the modified string

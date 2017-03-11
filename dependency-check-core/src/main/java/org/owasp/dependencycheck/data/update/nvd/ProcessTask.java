@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.data.update.nvd;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;

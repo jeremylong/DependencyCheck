@@ -69,7 +69,7 @@ public class CpeUpdater { //extends BaseUpdater implements CachedWebDataSource {
 //                return;
 //            }
 //        } catch (InvalidSettingException ex) {
-//            LOGGER.trace("inavlid setting UPDATE_NVDCVE_ENABLED", ex);
+//            LOGGER.trace("invalid setting UPDATE_NVDCVE_ENABLED", ex);
 //        }
 //         */
 //
