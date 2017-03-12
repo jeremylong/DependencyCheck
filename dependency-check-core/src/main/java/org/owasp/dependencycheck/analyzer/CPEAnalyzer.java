@@ -188,6 +188,11 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         }
     }
 
+    /**
+     * Returns whether or not the analyzer is open.
+     *
+     * @return <code>true</code> if the analyzer is open
+     */
     public boolean isOpen() {
         return cpe != null && cpe.isOpen();
     }
@@ -203,7 +208,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * @throws ParseException is thrown when the Lucene query cannot be parsed.
      */
     protected void determineCPE(Dependency dependency) throws CorruptIndexException, IOException, ParseException {
-        //TODO test dojo-war against this. we shold get dojo-toolkit:dojo-toolkit AND dojo-toolkit:toolkit
+        //TODO test dojo-war against this. we should get dojo-toolkit:dojo-toolkit AND dojo-toolkit:toolkit
         String vendors = "";
         String products = "";
         for (Confidence confidence : Confidence.values()) {
@@ -291,7 +296,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     protected List<IndexEntry> searchCPE(String vendor, String product,
             Set<String> vendorWeightings, Set<String> productWeightings) {
 
-        final List<IndexEntry> ret = new ArrayList<IndexEntry>(MAX_QUERY_RESULTS);
+        final List<IndexEntry> ret = new ArrayList<>(MAX_QUERY_RESULTS);
 
         final String searchString = buildSearch(vendor, product, vendorWeightings, productWeightings);
         if (searchString == null) {
@@ -477,7 +482,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             return false;
         }
         final String[] words = text.split("[\\s_-]");
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
         String tempWord = null;
         for (String word : words) {
             /*
@@ -555,7 +560,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         DependencyVersion bestGuess = new DependencyVersion("-");
         Confidence bestGuessConf = null;
         boolean hasBroadMatch = false;
-        final List<IdentifierMatch> collected = new ArrayList<IdentifierMatch>();
+        final List<IdentifierMatch> collected = new ArrayList<>();
 
         //TODO the following algorithm incorrectly identifies things as a lower version
         // if there lower confidence evidence when the current (highest) version number

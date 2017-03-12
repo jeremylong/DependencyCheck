@@ -84,7 +84,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      */
     protected List<String> buildArgumentList() {
         // Use file.separator as a wild guess as to whether this is Windows
-        final List<String> args = new ArrayList<String>();
+        final List<String> args = new ArrayList<>();
         if (!SystemUtils.IS_OS_WINDOWS) {
             if (Settings.getString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH) != null) {
                 args.add(Settings.getString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH));
@@ -144,7 +144,8 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
                         dependency.getActualFilePath());
                 return;
             } else if (rc != 0) {
-                LOGGER.debug("Return code {} from GrokAssembly; dependency-check is unable to analyze the library: {}", rc, dependency.getActualFilePath());
+                LOGGER.debug("Return code {} from GrokAssembly; dependency-check is unable to analyze the library: {}",
+                        rc, dependency.getActualFilePath());
                 return;
             }
 
@@ -176,18 +177,17 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
 
         } catch (ParserConfigurationException pce) {
             throw new AnalysisException("Error initializing the assembly analyzer", pce);
-        } catch (IOException ioe) {
+        } catch (IOException | XPathExpressionException ioe) {
             throw new AnalysisException(ioe);
         } catch (SAXException saxe) {
             LOGGER.error("----------------------------------------------------");
             LOGGER.error("Failed to read the Assembly Analyzer results. "
                     + "On some systems mono-runtime and mono-devel need to be installed.");
             LOGGER.error("----------------------------------------------------");
-            throw new AnalysisException("Couldn't parse Assembly Analzyzer results (GrokAssembly)", saxe);
-        } catch (XPathExpressionException xpe) {
-            // This shouldn't happen
-            throw new AnalysisException(xpe);
+            throw new AnalysisException("Couldn't parse Assembly Analyzer results (GrokAssembly)", saxe);
         }
+        // This shouldn't happen
+
     }
 
     /**
@@ -199,46 +199,27 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void initializeFileTypeAnalyzer() throws InitializationException {
         final File tempFile;
+        final String cfg;
         try {
             tempFile = File.createTempFile("GKA", ".exe", Settings.getTempDirectory());
+            cfg = tempFile.getPath() + ".config";
         } catch (IOException ex) {
             setEnabled(false);
-            throw new InitializationException("Unable to create temporary file for the assembly analyzerr", ex);
+            throw new InitializationException("Unable to create temporary file for the assembly analyzer", ex);
         }
-        FileOutputStream fos = null;
-        InputStream is = null;
-        try {
-            fos = new FileOutputStream(tempFile);
-            is = AssemblyAnalyzer.class.getClassLoader().getResourceAsStream("GrokAssembly.exe");
+        try (FileOutputStream fos = new FileOutputStream(tempFile);
+                InputStream is = AssemblyAnalyzer.class.getClassLoader().getResourceAsStream("GrokAssembly.exe");
+                FileOutputStream fosCfg = new FileOutputStream(cfg);
+                InputStream isCfg = AssemblyAnalyzer.class.getClassLoader().getResourceAsStream("GrokAssembly.exe.config")) {
             IOUtils.copy(is, fos);
-
             grokAssemblyExe = tempFile;
             LOGGER.debug("Extracted GrokAssembly.exe to {}", grokAssemblyExe.getPath());
-
-            String cfg = grokAssemblyExe.getPath() + ".config";
-            fos = new FileOutputStream(cfg);
-            is = AssemblyAnalyzer.class.getClassLoader().getResourceAsStream("GrokAssembly.exe.config");
-            IOUtils.copy(is, fos);
+            IOUtils.copy(isCfg, fosCfg);
             LOGGER.debug("Extracted GrokAssembly.exe.config to {}", cfg);
         } catch (IOException ioe) {
             this.setEnabled(false);
             LOGGER.warn("Could not extract GrokAssembly.exe: {}", ioe.getMessage());
             throw new InitializationException("Could not extract GrokAssembly.exe", ioe);
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (Throwable e) {
-                    LOGGER.debug("Error closing output stream");
-                }
-            }
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (Throwable e) {
-                    LOGGER.debug("Error closing input stream");
-                }
-            }
         }
 
         // Now, need to see if GrokAssembly actually runs from this location.
@@ -249,7 +230,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         //
         // We need to create a non-fatal warning error type that will
         // get added to the report.
-        //TOOD this idea needs to get replicated to the bundle audit analyzer.
+        //TODO this idea needs to get replicated to the bundle audit analyzer.
         if (args == null) {
             setEnabled(false);
             LOGGER.error("----------------------------------------------------");
@@ -280,7 +261,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (InitializationException e) {
             setEnabled(false);
             throw e;
-        } catch (Throwable e) {
+        } catch (IOException | ParserConfigurationException | SAXException | XPathExpressionException | InterruptedException e) {
             LOGGER.warn("An error occurred with the .NET AssemblyAnalyzer;\n"
                     + "this can be ignored unless you are scanning .NET DLLs. Please see the log for more details.");
             LOGGER.debug("Could not execute GrokAssembly {}", e.getMessage());
@@ -366,10 +347,8 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             if (retCode == 0) {
                 return true;
             }
-        } catch (IOException ex) {
-            LOGGER.debug("Path seach failed for " + file);
-        } catch (InterruptedException ex) {
-            LOGGER.debug("Path seach failed for " + file);
+        } catch (IOException | InterruptedException ex) {
+            LOGGER.debug("Path search failed for " + file, ex);
         }
         return false;
     }

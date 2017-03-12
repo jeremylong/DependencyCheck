@@ -128,15 +128,15 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     /**
      * A collection of related dependencies.
      */
-    private Set<Dependency> relatedDependencies = new TreeSet<Dependency>();
+    private Set<Dependency> relatedDependencies = new TreeSet<>();
     /**
      * A list of projects that reference this dependency.
      */
-    private Set<String> projectReferences = new HashSet<String>();
+    private Set<String> projectReferences = new HashSet<>();
     /**
      * A list of available versions.
      */
-    private List<String> availableVersions = new ArrayList<String>();
+    private List<String> availableVersions = new ArrayList<>();
 
     /**
      * Returns the package path.
@@ -598,7 +598,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
             LOGGER.warn("Unable to read '{}' to determine hashes.", file.getName());
             LOGGER.debug("", ex);
         } catch (NoSuchAlgorithmException ex) {
-            LOGGER.warn("Unable to use MD5 of SHA1 checksums.");
+            LOGGER.warn("Unable to use MD5 or SHA1 checksums.");
             LOGGER.debug("", ex);
         }
         this.setMd5sum(md5);

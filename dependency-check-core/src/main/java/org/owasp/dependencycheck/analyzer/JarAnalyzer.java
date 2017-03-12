@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -254,28 +255,12 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @return whether or not evidence was added to the dependency
      */
     protected boolean analyzePOM(Dependency dependency, List<ClassNameInformation> classes, Engine engine) throws AnalysisException {
-        JarFile jar = null;
-        List<String> pomEntries = null;
-        try {
-            jar = new JarFile(dependency.getActualFilePath());
-            pomEntries = retrievePomListing(jar);
-        } catch (IOException ex) {
-            LOGGER.warn("Unable to read JarFile '{}'.", dependency.getActualFilePath());
-            LOGGER.trace("", ex);
-            if (jar != null) {
-                try {
-                    jar.close();
-                } catch (IOException ex1) {
-                    LOGGER.trace("", ex1);
-                }
-            }
-            return false;
-        }
-        if (pomEntries != null && pomEntries.size() <= 1) {
-            try {
-                String path = null;
+        try (JarFile jar = new JarFile(dependency.getActualFilePath())) {
+            final List<String> pomEntries = retrievePomListing(jar);
+            if (pomEntries != null && pomEntries.size() <= 1) {
+                String path;
+                File pomFile;
                 Properties pomProperties = null;
-                File pomFile = null;
                 if (pomEntries.size() == 1) {
                     path = pomEntries.get(0);
                     pomFile = extractPom(path, jar);
@@ -289,55 +274,44 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     if (pom != null && pomProperties != null) {
                         pom.processProperties(pomProperties);
                     }
-                    if (pom != null) {
-                        return setPomEvidence(dependency, pom, classes);
-                    }
-                    return false;
+                    return pom != null && setPomEvidence(dependency, pom, classes);
                 } else {
                     return false;
                 }
-            } finally {
+            }
+
+            //reported possible null dereference on pomEntries is on a non-feasible path
+            for (String path : pomEntries) {
+                //TODO - one of these is likely the pom for the main JAR we are analyzing
+                LOGGER.debug("Reading pom entry: {}", path);
                 try {
-                    jar.close();
-                } catch (IOException ex) {
+                    //extract POM to its own directory and add it as its own dependency
+                    final Properties pomProperties = retrievePomProperties(path, jar);
+                    final File pomFile = extractPom(path, jar);
+                    final Model pom = PomUtils.readPom(pomFile);
+                    pom.processProperties(pomProperties);
+
+                    final String displayPath = String.format("%s%s%s",
+                            dependency.getFilePath(),
+                            File.separator,
+                            path);
+                    final String displayName = String.format("%s%s%s",
+                            dependency.getFileName(),
+                            File.separator,
+                            path);
+                    final Dependency newDependency = new Dependency();
+                    newDependency.setActualFilePath(pomFile.getAbsolutePath());
+                    newDependency.setFileName(displayName);
+                    newDependency.setFilePath(displayPath);
+                    setPomEvidence(newDependency, pom, null);
+                    engine.getDependencies().add(newDependency);
+                } catch (AnalysisException ex) {
+                    LOGGER.warn("An error occurred while analyzing '{}'.", dependency.getActualFilePath());
                     LOGGER.trace("", ex);
                 }
             }
-        }
-
-        //reported possible null dereference on pomEntries is on a non-feasible path
-        for (String path : pomEntries) {
-            //TODO - one of these is likely the pom for the main JAR we are analyzing
-            LOGGER.debug("Reading pom entry: {}", path);
-            try {
-                //extract POM to its own directory and add it as its own dependency
-                final Properties pomProperties = retrievePomProperties(path, jar);
-                final File pomFile = extractPom(path, jar);
-                final Model pom = PomUtils.readPom(pomFile);
-                pom.processProperties(pomProperties);
-
-                final String displayPath = String.format("%s%s%s",
-                        dependency.getFilePath(),
-                        File.separator,
-                        path);
-                final String displayName = String.format("%s%s%s",
-                        dependency.getFileName(),
-                        File.separator,
-                        path);
-                final Dependency newDependency = new Dependency();
-                newDependency.setActualFilePath(pomFile.getAbsolutePath());
-                newDependency.setFileName(displayName);
-                newDependency.setFilePath(displayPath);
-                setPomEvidence(newDependency, pom, null);
-                engine.getDependencies().add(newDependency);
-            } catch (AnalysisException ex) {
-                LOGGER.warn("An error occurred while analyzing '{}'.", dependency.getActualFilePath());
-                LOGGER.trace("", ex);
-            }
-        }
-        try {
-            jar.close();
         } catch (IOException ex) {
+            LOGGER.warn("Unable to read JarFile '{}'.", dependency.getActualFilePath());
             LOGGER.trace("", ex);
         }
         return false;
@@ -350,17 +324,13 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @param path the path to the pom.xml within the JarFile
      * @param jar the JarFile to load the pom.properties from
      * @return a Properties object or null if no pom.properties was found
-     * @throws IOException thrown if there is an exception reading the
-     * pom.properties
      */
     private Properties retrievePomProperties(String path, final JarFile jar) {
         Properties pomProperties = null;
         final String propPath = path.substring(0, path.length() - 7) + "pom.properies";
         final ZipEntry propEntry = jar.getEntry(propPath);
         if (propEntry != null) {
-            Reader reader = null;
-            try {
-                reader = new InputStreamReader(jar.getInputStream(propEntry), "UTF-8");
+            try (Reader reader = new InputStreamReader(jar.getInputStream(propEntry), "UTF-8")) {
                 pomProperties = new Properties();
                 pomProperties.load(reader);
                 LOGGER.debug("Read pom.properties: {}", propPath);
@@ -368,14 +338,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.trace("UTF-8 is not supported", ex);
             } catch (IOException ex) {
                 LOGGER.trace("Unable to read the POM properties", ex);
-            } finally {
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException ex) {
-                        LOGGER.trace("close error", ex);
-                    }
-                }
             }
         }
         return pomProperties;
@@ -413,24 +375,18 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * the file
      */
     private File extractPom(String path, JarFile jar) throws AnalysisException {
-        InputStream input = null;
-        FileOutputStream fos = null;
         final File tmpDir = getNextTempDirectory();
         final File file = new File(tmpDir, "pom.xml");
-        try {
-            final ZipEntry entry = jar.getEntry(path);
-            if (entry == null) {
-                throw new AnalysisException(String.format("Pom (%s)does not exist in %s", path, jar.getName()));
-            }
-            input = jar.getInputStream(entry);
-            fos = new FileOutputStream(file);
+        final ZipEntry entry = jar.getEntry(path);
+        if (entry == null) {
+            throw new AnalysisException(String.format("Pom (%s) does not exist in %s", path, jar.getName()));
+        }
+        try (InputStream input = jar.getInputStream(entry);
+                FileOutputStream fos = new FileOutputStream(file)) {
             IOUtils.copy(input, fos);
         } catch (IOException ex) {
             LOGGER.warn("An error occurred reading '{}' from '{}'.", path, jar.getName());
             LOGGER.error("", ex);
-        } finally {
-            FileUtils.close(fos);
-            FileUtils.close(input);
         }
         return file;
     }
@@ -446,11 +402,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * otherwise false
      */
     public static boolean setPomEvidence(Dependency dependency, Model pom, List<ClassNameInformation> classes) {
+        if (pom == null) {
+            return false;
+        }
         boolean foundSomething = false;
         boolean addAsIdentifier = true;
-        if (pom == null) {
-            return foundSomething;
-        }
         String groupid = pom.getGroupId();
         String parentGroupId = pom.getParentGroupId();
         String artifactid = pom.getArtifactId();
@@ -636,9 +592,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     protected boolean parseManifest(Dependency dependency, List<ClassNameInformation> classInformation)
             throws IOException {
         boolean foundSomething = false;
-        JarFile jar = null;
-        try {
-            jar = new JarFile(dependency.getActualFilePath());
+        try (JarFile jar = new JarFile(dependency.getActualFilePath())) {
             final Manifest manifest = jar.getManifest();
             if (manifest == null) {
                 if (!dependency.getFileName().toLowerCase().endsWith("-sources.jar")
@@ -793,10 +747,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 foundSomething = true;
                 versionEvidence.addEvidence(source, "specification-version", specificationVersion, Confidence.HIGH);
             }
-        } finally {
-            if (jar != null) {
-                jar.close();
-            }
         }
         return foundSomething;
     }
@@ -950,9 +900,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private List<ClassNameInformation> collectClassNames(Dependency dependency) {
         final List<ClassNameInformation> classNames = new ArrayList<>();
-        JarFile jar = null;
-        try {
-            jar = new JarFile(dependency.getActualFilePath());
+        try (JarFile jar = new JarFile(dependency.getActualFilePath())) {
             final Enumeration<JarEntry> entries = jar.entries();
             while (entries.hasMoreElements()) {
                 final JarEntry entry = entries.nextElement();
@@ -966,14 +914,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (IOException ex) {
             LOGGER.warn("Unable to open jar file '{}'.", dependency.getFileName());
             LOGGER.debug("", ex);
-        } finally {
-            if (jar != null) {
-                try {
-                    jar.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("", ex);
-                }
-            }
         }
         return classNames;
     }
@@ -1124,7 +1064,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
          * Up to the first four levels of the package structure, excluding a
          * leading "org" or "com".
          */
-        private final ArrayList<String> packageStructure = new ArrayList<String>();
+        private final ArrayList<String> packageStructure = new ArrayList<>();
 
         /**
          * <p>
@@ -1133,7 +1073,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
          * package structure. Up to the first four levels of the package
          * structure are stored, excluding a leading "org" or "com".
          * Example:</p>
-         * <code>ClassNameInformation obj = new ClassNameInformation("org.owasp.dependencycheck.analyzer.JarAnalyzer");
+         * <code>ClassNameInformation obj = new ClassNameInformation("org/owasp/dependencycheck/analyzer/JarAnalyzer");
          * System.out.println(obj.getName());
          * for (String p : obj.getPackageStructure())
          *     System.out.println(p);
@@ -1161,9 +1101,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 if (tmp.length <= end) {
                     end = tmp.length - 1;
                 }
-                for (int i = start; i <= end; i++) {
-                    packageStructure.add(tmp[i]);
-                }
+                packageStructure.addAll(Arrays.asList(tmp).subList(start, end + 1));
             } else {
                 packageStructure.add(name);
             }

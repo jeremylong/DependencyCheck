@@ -38,6 +38,7 @@ import java.util.Properties;
  * @author Jeremy Long
  */
 public final class Settings {
+
     /**
      * The logger.
      */
@@ -49,14 +50,14 @@ public final class Settings {
     /**
      * Thread local settings.
      */
-    private static final ThreadLocal<Settings> LOCAL_SETTINGS = new ThreadLocal<Settings>();
+    private static final ThreadLocal<Settings> LOCAL_SETTINGS = new ThreadLocal<>();
     /**
      * The properties.
      */
     private Properties props = null;
 
     /**
-     * A reference to the temporary directory; used incase it needs to be
+     * A reference to the temporary directory; used in case it needs to be
      * deleted during cleanup.
      */
     private static File tempDirectory = null;
@@ -425,7 +426,6 @@ public final class Settings {
     }
     //</editor-fold>
 
-
     /**
      * Private constructor for the Settings class. This class loads the
      * properties files.
@@ -433,10 +433,8 @@ public final class Settings {
      * @param propertiesFilePath the path to the base properties file to load
      */
     private Settings(String propertiesFilePath) {
-        InputStream in = null;
         props = new Properties();
-        try {
-            in = this.getClass().getClassLoader().getResourceAsStream(propertiesFilePath);
+        try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(propertiesFilePath)) {
             props.load(in);
         } catch (NullPointerException ex) {
             LOGGER.error("Did not find settings file '{}'.", propertiesFilePath);
@@ -444,14 +442,6 @@ public final class Settings {
         } catch (IOException ex) {
             LOGGER.error("Unable to load settings from '{}'.", propertiesFilePath);
             LOGGER.debug("", ex);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("", ex);
-                }
-            }
         }
         logProperties("Properties loaded", props);
     }
@@ -530,9 +520,7 @@ public final class Settings {
     private static void logProperties(String header, Properties properties) {
         if (LOGGER.isDebugEnabled()) {
             final StringWriter sw = new StringWriter();
-            PrintWriter pw = null;
-            try {
-                pw = new PrintWriter(sw);
+            try (PrintWriter pw = new PrintWriter(sw)) {
                 pw.format("%s:%n%n", header);
                 final Enumeration<?> e = properties.propertyNames();
                 while (e.hasMoreElements()) {
@@ -548,10 +536,6 @@ public final class Settings {
                 }
                 pw.flush();
                 LOGGER.debug(sw.toString());
-            } finally {
-                if (pw != null) {
-                    pw.close();
-                }
             }
 
         }
@@ -650,18 +634,8 @@ public final class Settings {
      * the properties
      */
     public static void mergeProperties(File filePath) throws FileNotFoundException, IOException {
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(filePath);
+        try (FileInputStream fis = new FileInputStream(filePath)) {
             mergeProperties(fis);
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("close error", ex);
-                }
-            }
         }
     }
 
@@ -678,18 +652,8 @@ public final class Settings {
      * the properties
      */
     public static void mergeProperties(String filePath) throws FileNotFoundException, IOException {
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(filePath);
+        try (FileInputStream fis = new FileInputStream(filePath)) {
             mergeProperties(fis);
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("close error", ex);
-                }
-            }
         }
     }
 
@@ -790,8 +754,7 @@ public final class Settings {
      * @return the property from the properties file
      */
     public static String getString(String key, String defaultValue) {
-        final String str = System.getProperty(key, LOCAL_SETTINGS.get().props.getProperty(key, defaultValue));
-        return str;
+        return System.getProperty(key, LOCAL_SETTINGS.get().props.getProperty(key, defaultValue));
     }
 
     /**
@@ -981,9 +944,10 @@ public final class Settings {
      */
     public static File getDataDirectory() throws IOException {
         final File path = Settings.getDataFile(Settings.KEYS.DATA_DIRECTORY);
-        if (path.exists() || path.mkdirs()) {
+        if (path != null && (path.exists() || path.mkdirs())) {
             return path;
         }
-        throw new IOException(String.format("Unable to create the data directory '%s'", path.getAbsolutePath()));
+        throw new IOException(String.format("Unable to create the data directory '%s'",
+                (path == null) ? "unknown" : path.getAbsolutePath()));
     }
 }

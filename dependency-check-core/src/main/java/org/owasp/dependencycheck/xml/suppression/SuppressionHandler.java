@@ -71,7 +71,7 @@ public class SuppressionHandler extends DefaultHandler {
     /**
      * A list of suppression rules.
      */
-    private final List<SuppressionRule> suppressionRules = new ArrayList<SuppressionRule>();
+    private final List<SuppressionRule> suppressionRules = new ArrayList<>();
 
     /**
      * Get the value of suppressionRules.

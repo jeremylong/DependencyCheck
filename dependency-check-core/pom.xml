@@ -244,7 +244,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 <version>${reporting.pmd-plugin.version}</version>
                 <configuration>
                     <targetJdk>1.6</targetJdk>
-                    <linkXref>true</linkXref>
+                    <linkXRef>true</linkXRef>
                     <sourceEncoding>utf-8</sourceEncoding>
                     <excludes>
                         <exclude>**/generated/*.java</exclude>

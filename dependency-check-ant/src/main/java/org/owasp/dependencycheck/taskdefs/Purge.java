@@ -95,6 +95,12 @@ public class Purge extends Task {
         this.failOnError = failOnError;
     }
 
+    /**
+     * Executes the dependency-check purge to delete the existing local copy of
+     * the NVD CVE data.
+     *
+     * @throws BuildException thrown if there is a problem deleting the file(s)
+     */
     @Override
     public void execute() throws BuildException {
         populateSettings();
@@ -138,9 +144,7 @@ public class Purge extends Task {
      */
     protected void populateSettings() throws BuildException {
         Settings.initialize();
-        InputStream taskProperties = null;
-        try {
-            taskProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);
+        try (InputStream taskProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {
             Settings.mergeProperties(taskProperties);
         } catch (IOException ex) {
             final String msg = "Unable to load the dependency-check ant task.properties file.";
@@ -148,14 +152,6 @@ public class Purge extends Task {
                 throw new BuildException(msg, ex);
             }
             log(msg, ex, Project.MSG_WARN);
-        } finally {
-            if (taskProperties != null) {
-                try {
-                    taskProperties.close();
-                } catch (IOException ex) {
-                    log("", ex, Project.MSG_DEBUG);
-                }
-            }
         }
         if (dataDirectory != null) {
             Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);

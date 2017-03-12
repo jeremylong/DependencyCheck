@@ -342,7 +342,7 @@ public final class ConnectionFactory {
                 LOGGER.warn("A new version of dependency-check is available; consider upgrading");
                 Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             } else if (e0 == c0 && e1 == c1) {
-                //do nothing - not sure how we got here, but just incase...
+                //do nothing - not sure how we got here, but just in case...
             } else {
                 LOGGER.error("The database schema must be upgraded to use this version of dependency-check. Please see {} for more information.",
                         UPGRADE_HELP_URL);

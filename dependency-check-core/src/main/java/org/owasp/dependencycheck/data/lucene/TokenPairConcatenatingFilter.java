@@ -71,7 +71,7 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
      */
     public TokenPairConcatenatingFilter(TokenStream stream) {
         super(stream);
-        words = new LinkedList<String>();
+        words = new LinkedList<>();
     }
 
     /**

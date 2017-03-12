@@ -173,7 +173,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      */
     @SuppressWarnings("null")
     private void removeSpuriousCPE(Dependency dependency) {
-        final List<Identifier> ids = new ArrayList<Identifier>(dependency.getIdentifiers());
+        final List<Identifier> ids = new ArrayList<>(dependency.getIdentifiers());
         Collections.sort(ids);
         final ListIterator<Identifier> mainItr = ids.listIterator();
         while (mainItr.hasNext()) {
@@ -440,33 +440,31 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      * @param dependency the dependency that might be a duplicate
      * @param engine the engine used to scan all dependencies
      */
-    private void removeDuplicativeEntriesFromJar(Dependency dependency, Engine engine) {
+    private synchronized void removeDuplicativeEntriesFromJar(Dependency dependency, Engine engine) {
         if (dependency.getFileName().toLowerCase().endsWith("pom.xml")
                 || DLL_EXE_FILTER.accept(dependency.getActualFile())) {
             String parentPath = dependency.getFilePath().toLowerCase();
             if (parentPath.contains(".jar")) {
                 parentPath = parentPath.substring(0, parentPath.indexOf(".jar") + 4);
                 final List<Dependency> dependencies = engine.getDependencies();
-                synchronized (dependencies) {
-                    final Dependency parent = findDependency(parentPath, dependencies);
-                    if (parent != null) {
-                        boolean remove = false;
-                        for (Identifier i : dependency.getIdentifiers()) {
-                            if ("cpe".equals(i.getType())) {
-                                final String trimmedCPE = trimCpeToVendor(i.getValue());
-                                for (Identifier parentId : parent.getIdentifiers()) {
-                                    if ("cpe".equals(parentId.getType()) && parentId.getValue().startsWith(trimmedCPE)) {
-                                        remove |= true;
-                                    }
+                final Dependency parent = findDependency(parentPath, dependencies);
+                if (parent != null) {
+                    boolean remove = false;
+                    for (Identifier i : dependency.getIdentifiers()) {
+                        if ("cpe".equals(i.getType())) {
+                            final String trimmedCPE = trimCpeToVendor(i.getValue());
+                            for (Identifier parentId : parent.getIdentifiers()) {
+                                if ("cpe".equals(parentId.getType()) && parentId.getValue().startsWith(trimmedCPE)) {
+                                    remove |= true;
                                 }
                             }
-                            if (!remove) { //we can escape early
-                                return;
-                            }
                         }
-                        if (remove) {
-                            dependencies.remove(dependency);
+                        if (!remove) { //we can escape early
+                            return;
                         }
+                    }
+                    if (remove) {
+                        dependencies.remove(dependency);
                     }
                 }
             }

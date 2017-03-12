@@ -17,10 +17,11 @@
  */
 package org.owasp.dependencycheck.data.update.nvd;
 
-import org.owasp.dependencycheck.data.update.nvd.NvdCve20Handler;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -29,6 +30,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -49,7 +51,7 @@ public class NvdCve_2_0_HandlerTest extends BaseTest {
             NvdCve20Handler instance = new NvdCve20Handler();
 
             saxParser.parse(file, instance);
-        } catch (Throwable ex) {
+        } catch (ParserConfigurationException | SAXException | IOException ex) {
             ex.printStackTrace();
             results = ex;
         }
@@ -80,7 +82,7 @@ public class NvdCve_2_0_HandlerTest extends BaseTest {
             saxParser.parse(file20, instance);
 
             assertTrue(instance.getTotalNumberOfEntries()==1);            
-        } catch (Throwable ex) {
+        } catch (ParserConfigurationException | SAXException | IOException ex) {
             results = ex;
         }
         assertTrue("Exception thrown during parse of 2012 CVE version 2.0?", results == null);

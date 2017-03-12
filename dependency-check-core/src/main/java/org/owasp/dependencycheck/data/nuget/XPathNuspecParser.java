@@ -17,14 +17,18 @@
  */
 package org.owasp.dependencycheck.data.nuget;
 
+import java.io.IOException;
 import java.io.InputStream;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.owasp.dependencycheck.utils.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 /**
  * Parse a Nuspec file using XPath.
@@ -78,7 +82,7 @@ public class XPathNuspecParser implements NuspecParser {
             nuspec.setLicenseUrl(getOrNull((Node) xpath.evaluate("/package/metadata/licenseUrl", d, XPathConstants.NODE)));
             nuspec.setTitle(getOrNull((Node) xpath.evaluate("/package/metadata/title", d, XPathConstants.NODE)));
             return nuspec;
-        } catch (Throwable e) {
+        } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException | NuspecParseException e) {
             throw new NuspecParseException("Unable to parse nuspec", e);
         }
     }

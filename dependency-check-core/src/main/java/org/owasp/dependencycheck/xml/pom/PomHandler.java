@@ -91,7 +91,7 @@ public class PomHandler extends DefaultHandler {
     /**
      * The stack of elements processed; used to determine the parent node.
      */
-    private final Deque<String> stack = new ArrayDeque<String>();
+    private final Deque<String> stack = new ArrayDeque<>();
     /**
      * The license object.
      */
@@ -101,7 +101,7 @@ public class PomHandler extends DefaultHandler {
      * The current node text being extracted from the element.
      */
     private StringBuilder currentText;
-            
+
     /**
      * Handles the start element event.
      *
@@ -132,66 +132,77 @@ public class PomHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         stack.pop();
         final String parentNode = stack.peek();
-        if (null != parentNode) switch (parentNode) {
-            case PROJECT:
-                if (null != qName) switch (qName) {
-                    case GROUPID:
-                        model.setGroupId(currentText.toString());
-                        break;
-                    case ARTIFACTID:
-                        model.setArtifactId(currentText.toString());
-                        break;
-                    case VERSION:
-                        model.setVersion(currentText.toString());
-                        break;
-                    case NAME:
-                        model.setName(currentText.toString());
-                        break;
-                    case DESCRIPTION:
-                        model.setDescription(currentText.toString());
-                        break;
-                    case URL:
-                        model.setProjectURL(currentText.toString());
-                        break;
-                    default:
-                        break;
-                }   break;
-            case ORGANIZATION:
-                if (NAME.equals(qName)) {
-                    model.setOrganization(currentText.toString());
-                } else if (URL.equals(qName)) {
-                    model.setOrganizationUrl(currentText.toString());
-                }   break;
-            case PARENT:
-                if (null != qName) switch (qName) {
-                    case GROUPID:
-                        model.setParentGroupId(currentText.toString());
-                        break;
-                    case ARTIFACTID:
-                        model.setParentArtifactId(currentText.toString());
-                        break;
-                    case VERSION:
-                        model.setParentVersion(currentText.toString());
-                        break;
-                    default:
-                        break;
-                }   break;
-            case LICENSE:
-                if (license != null) {
+        if (null != parentNode) {
+            switch (parentNode) {
+                case PROJECT:
+                    if (null != qName) {
+                        switch (qName) {
+                            case GROUPID:
+                                model.setGroupId(currentText.toString());
+                                break;
+                            case ARTIFACTID:
+                                model.setArtifactId(currentText.toString());
+                                break;
+                            case VERSION:
+                                model.setVersion(currentText.toString());
+                                break;
+                            case NAME:
+                                model.setName(currentText.toString());
+                                break;
+                            case DESCRIPTION:
+                                model.setDescription(currentText.toString());
+                                break;
+                            case URL:
+                                model.setProjectURL(currentText.toString());
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    break;
+                case ORGANIZATION:
                     if (NAME.equals(qName)) {
-                        license.setName(currentText.toString());
+                        model.setOrganization(currentText.toString());
                     } else if (URL.equals(qName)) {
-                        license.setUrl(currentText.toString());
+                        model.setOrganizationUrl(currentText.toString());
                     }
-                }   break;
-            case LICENSES:
-                if (LICENSE.equals(qName)) {
+                    break;
+                case PARENT:
+                    if (null != qName) {
+                        switch (qName) {
+                            case GROUPID:
+                                model.setParentGroupId(currentText.toString());
+                                break;
+                            case ARTIFACTID:
+                                model.setParentArtifactId(currentText.toString());
+                                break;
+                            case VERSION:
+                                model.setParentVersion(currentText.toString());
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    break;
+                case LICENSE:
                     if (license != null) {
-                        model.addLicense(license);
+                        if (NAME.equals(qName)) {
+                            license.setName(currentText.toString());
+                        } else if (URL.equals(qName)) {
+                            license.setUrl(currentText.toString());
+                        }
                     }
-                }   break;
-            default:
-                break;
+                    break;
+                case LICENSES:
+                    if (LICENSE.equals(qName)) {
+                        if (license != null) {
+                            model.addLicense(license);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

@@ -26,61 +26,53 @@ import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.fail;
 import org.junit.Test;
+import static org.junit.Assert.fail;
 
 /**
  *
  * @author jeremy
  */
-public class ExpectedOjectInputStreamTest {
+public class ExpectedObjectInputStreamTest {
 
     /**
-     * Test of resolveClass method, of class ExpectedOjectInputStream.
+     * Test of resolveClass method, of class ExpectedObjectInputStream.
      */
     @Test
     public void testResolveClass() {
-        ObjectOutputStream out = null;
-        try {
-            List<SimplePojo> data = new ArrayList<>();
-            data.add(new SimplePojo());
-            ByteArrayOutputStream mem = new ByteArrayOutputStream();
-            out = new ObjectOutputStream(new BufferedOutputStream(mem));
+        List<SimplePojo> data = new ArrayList<>();
+        data.add(new SimplePojo());
+        try (ByteArrayOutputStream mem = new ByteArrayOutputStream();
+                ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(mem))) {
             out.writeObject(data);
             out.flush();
             byte[] buf = mem.toByteArray();
             out.close();
             ByteArrayInputStream in = new ByteArrayInputStream(buf);
-            ExpectedOjectInputStream instance = new ExpectedOjectInputStream(in, "java.util.ArrayList", "org.owasp.dependencycheck.utils.SimplePojo", "java.lang.Integer", "java.lang.Number");
+            ExpectedObjectInputStream instance = new ExpectedObjectInputStream(in, "java.util.ArrayList", "org.owasp.dependencycheck.utils.SimplePojo", "java.lang.Integer", "java.lang.Number");
             instance.readObject();
         } catch (IOException | ClassNotFoundException ex) {
             fail(ex.getMessage());
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
         }
     }
 
     /**
-     * Test of resolveClass method, of class ExpectedOjectInputStream.
+     * Test of resolveClass method, of class ExpectedObjectInputStream.
      */
     @Test(expected = java.io.InvalidClassException.class)
     public void testResolveClassException() throws Exception {
-        List<SimplePojo> data = new ArrayList<SimplePojo>();
+        List<SimplePojo> data = new ArrayList<>();
         data.add(new SimplePojo());
 
         ByteArrayOutputStream mem = new ByteArrayOutputStream();
-        ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(mem));
-        out.writeObject(data);
-        out.flush();
-        byte[] buf = mem.toByteArray();
-        out.close();
+        byte[] buf;
+        try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(mem))) {
+            out.writeObject(data);
+            out.flush();
+            buf = mem.toByteArray();
+        }
         ByteArrayInputStream in = new ByteArrayInputStream(buf);
 
-        ExpectedOjectInputStream instance = new ExpectedOjectInputStream(in, "java.util.ArrayList", "org.owasp.dependencycheck.utils.SimplePojo");
+        ExpectedObjectInputStream instance = new ExpectedObjectInputStream(in, "java.util.ArrayList", "org.owasp.dependencycheck.utils.SimplePojo");
         instance.readObject();
     }
 }

@@ -93,7 +93,7 @@ public class NvdCve12Handler extends DefaultHandler {
             skip = "1".equals(reject);
             if (!skip) {
                 vulnerability = attributes.getValue("name");
-                software = new ArrayList<VulnerableSoftware>();
+                software = new ArrayList<>();
             } else {
                 vulnerability = null;
                 software = null;
@@ -132,7 +132,7 @@ public class NvdCve12Handler extends DefaultHandler {
             if (!CURRENT_SCHEMA_VERSION.equals(nvdVer)) {
                 throw new SAXNotSupportedException("Schema version " + nvdVer + " is not supported");
             }
-            vulnerabilities = new HashMap<String, List<VulnerableSoftware>>();
+            vulnerabilities = new HashMap<>();
         }
     }
 

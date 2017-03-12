@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.data.update.nvd;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -167,19 +166,7 @@ public class ProcessTask implements Callable<ProcessTask> {
             importXML(filePair.getFirst(), filePair.getSecond());
             cveDB.commit();
             properties.save(filePair.getNvdCveInfo());
-        } catch (FileNotFoundException ex) {
-            throw new UpdateException(ex);
-        } catch (ParserConfigurationException ex) {
-            throw new UpdateException(ex);
-        } catch (SAXException ex) {
-            throw new UpdateException(ex);
-        } catch (IOException ex) {
-            throw new UpdateException(ex);
-        } catch (SQLException ex) {
-            throw new UpdateException(ex);
-        } catch (DatabaseException ex) {
-            throw new UpdateException(ex);
-        } catch (ClassNotFoundException ex) {
+        } catch (ParserConfigurationException | SAXException | SQLException | DatabaseException | ClassNotFoundException | IOException ex) {
             throw new UpdateException(ex);
         } finally {
             filePair.cleanup();

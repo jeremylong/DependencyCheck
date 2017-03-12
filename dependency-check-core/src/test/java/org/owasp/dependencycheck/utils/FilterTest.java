@@ -48,12 +48,12 @@ public class FilterTest extends BaseTest {
      */
     @Test
     public void testFilter_Iterable() {
-        List<String> testData = new ArrayList<String>();
+        List<String> testData = new ArrayList<>();
         testData.add("keep");
         testData.add("remove");
         testData.add("keep");
 
-        List<String> expResults = new ArrayList<String>();
+        List<String> expResults = new ArrayList<>();
         expResults.add("keep");
         expResults.add("keep");
 

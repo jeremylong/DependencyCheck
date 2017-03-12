@@ -114,23 +114,27 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
      * @return Iterable&lt;Evidence&gt; an iterable collection of evidence
      */
     public final Iterable<Evidence> iterator(Confidence confidence) {
-        if (confidence == Confidence.HIGHEST) {
-            return EvidenceCollection.HIGHEST_CONFIDENCE.filter(this.list);
-        } else if (confidence == Confidence.HIGH) {
-            return EvidenceCollection.HIGH_CONFIDENCE.filter(this.list);
-        } else if (confidence == Confidence.MEDIUM) {
-            return EvidenceCollection.MEDIUM_CONFIDENCE.filter(this.list);
-        } else {
-            return EvidenceCollection.LOW_CONFIDENCE.filter(this.list);
+        if (null != confidence) {
+            switch (confidence) {
+                case HIGHEST:
+                    return EvidenceCollection.HIGHEST_CONFIDENCE.filter(this.list);
+                case HIGH:
+                    return EvidenceCollection.HIGH_CONFIDENCE.filter(this.list);
+                case MEDIUM:
+                    return EvidenceCollection.MEDIUM_CONFIDENCE.filter(this.list);
+                default:
+                    return EvidenceCollection.LOW_CONFIDENCE.filter(this.list);
+            }
         }
+        return null;
     }
 
     /**
      * Creates a new EvidenceCollection.
      */
     public EvidenceCollection() {
-        list = new TreeSet<Evidence>();
-        weightedStrings = new HashSet<String>();
+        list = new TreeSet<>();
+        weightedStrings = new HashSet<>();
     }
 
     /**
@@ -204,7 +208,7 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
         if (source == null) {
             return null;
         }
-        final Set<Evidence> ret = new HashSet<Evidence>();
+        final Set<Evidence> ret = new HashSet<>();
         for (Evidence e : list) {
             if (source.equals(e.getSource())) {
                 ret.add(e);
@@ -224,7 +228,7 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
         if (source == null || name == null) {
             return null;
         }
-        final Set<Evidence> ret = new HashSet<Evidence>();
+        final Set<Evidence> ret = new HashSet<>();
         for (Evidence e : list) {
             if (source.equals(e.getSource()) && name.equals(e.getName())) {
                 ret.add(e);
@@ -345,7 +349,7 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
      * collections
      */
     public static Set<Evidence> mergeForDisplay(EvidenceCollection... ec) {
-        final Set<Evidence> ret = new TreeSet<Evidence>();
+        final Set<Evidence> ret = new TreeSet<>();
         for (EvidenceCollection col : ec) {
             for (Evidence e : col) {
                 //if (e.isUsed()) {
@@ -393,10 +397,10 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
      *
      * <p>
      * Example, given the following input:</p>
-     * <code>'Please visit https://www.somedomain.com/path1/path2/file.php?id=439'</code>
+     * <code>'Please visit https://www.owasp.com/path1/path2/file.php?id=439'</code>
      * <p>
      * The function would return:</p>
-     * <code>'Please visit somedomain path1 path2 file'</code>
+     * <code>'Please visit owasp path1 path2 file'</code>
      *
      * @param value the value that may contain a url
      * @return the modified string

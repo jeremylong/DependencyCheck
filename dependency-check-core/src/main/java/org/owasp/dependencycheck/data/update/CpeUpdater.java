@@ -16,7 +16,7 @@
  * Copyright (c) 2015 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.update;
-
+/*
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -37,7 +37,7 @@ import org.owasp.dependencycheck.utils.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
-
+*/
 /**
  *
  * This class is currently unused and if enabled will likely not work on MySQL
@@ -69,7 +69,7 @@ public class CpeUpdater { //extends BaseUpdater implements CachedWebDataSource {
 //                return;
 //            }
 //        } catch (InvalidSettingException ex) {
-//            LOGGER.trace("inavlid setting UPDATE_NVDCVE_ENABLED", ex);
+//            LOGGER.trace("invalid setting UPDATE_NVDCVE_ENABLED", ex);
 //        }
 //         */
 //

@@ -88,10 +88,6 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
     private static final String SUPPORTED_EXTENSIONS = "jar";
 
     /**
-     * Whether or not the Nexus analyzer should use a proxy if configured.
-     */
-    private boolean useProxy;
-    /**
      * The Nexus Search to be set up for this analyzer.
      */
     private NexusSearch searcher;
@@ -148,7 +144,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
         LOGGER.debug("Initializing Nexus Analyzer");
         LOGGER.debug("Nexus Analyzer enabled: {}", isEnabled());
         if (isEnabled()) {
-            useProxy = useProxy();
+            final boolean useProxy = useProxy();
             final String searchUrl = Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL);
             LOGGER.debug("Nexus Analyzer URL: {}", searchUrl);
             try {

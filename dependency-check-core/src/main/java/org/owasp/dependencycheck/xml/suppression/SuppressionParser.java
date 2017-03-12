@@ -64,38 +64,18 @@ public class SuppressionParser {
      * @throws SuppressionParseException thrown if the XML file cannot be parsed
      */
     public List<SuppressionRule> parseSuppressionRules(File file) throws SuppressionParseException {
-        FileInputStream fis = null;
         try {
-            fis = new FileInputStream(file);
-            return parseSuppressionRules(fis);
-        } catch (IOException ex) {
-            LOGGER.debug("", ex);
-            throw new SuppressionParseException(ex);
+            try (FileInputStream fis = new FileInputStream(file)) {
+                return parseSuppressionRules(fis);
+            } catch (IOException ex) {
+                LOGGER.debug("", ex);
+                throw new SuppressionParseException(ex);
+            }
         } catch (SAXException ex) {
-            try {
-                if (fis != null) {
-                    try {
-                        fis.close();
-                    } catch (IOException ex1) {
-                        LOGGER.debug("Unable to close stream", ex1);
-                    }
-                }
-                fis = new FileInputStream(file);
-            } catch (FileNotFoundException ex1) {
-                throw new SuppressionParseException(ex);
-            }
-            try {
+            try (FileInputStream fis = new FileInputStream(file)) {
                 return parseSuppressionRules(fis, OLD_SUPPRESSION_SCHEMA);
-            } catch (SAXException ex1) {
+            } catch (SAXException | IOException ex1) {
                 throw new SuppressionParseException(ex);
-            }
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException ex) {
-                    LOGGER.debug("Unable to close stream", ex);
-                }
             }
         }
     }
@@ -124,19 +104,18 @@ public class SuppressionParser {
      * @throws SAXException thrown if the XML cannot be parsed
      */
     private List<SuppressionRule> parseSuppressionRules(InputStream inputStream, String schema) throws SuppressionParseException, SAXException {
-        InputStream schemaStream = null;
-        try {
-            schemaStream = this.getClass().getClassLoader().getResourceAsStream(schema);
+        try (InputStream schemaStream = this.getClass().getClassLoader().getResourceAsStream(schema)) {
             final SuppressionHandler handler = new SuppressionHandler();
             final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream);
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setErrorHandler(new SuppressionErrorHandler());
             xmlReader.setContentHandler(handler);
-            final Reader reader = new InputStreamReader(inputStream, "UTF-8");
-            final InputSource in = new InputSource(reader);
-            xmlReader.parse(in);
-            return handler.getSuppressionRules();
-        } catch (ParserConfigurationException ex) {
+            try (Reader reader = new InputStreamReader(inputStream, "UTF-8")) {
+                final InputSource in = new InputSource(reader);
+                xmlReader.parse(in);
+                return handler.getSuppressionRules();
+            }
+        } catch (ParserConfigurationException | FileNotFoundException ex) {
             LOGGER.debug("", ex);
             throw new SuppressionParseException(ex);
         } catch (SAXException ex) {
@@ -146,20 +125,9 @@ public class SuppressionParser {
                 LOGGER.debug("", ex);
                 throw new SuppressionParseException(ex);
             }
-        } catch (FileNotFoundException ex) {
-            LOGGER.debug("", ex);
-            throw new SuppressionParseException(ex);
         } catch (IOException ex) {
             LOGGER.debug("", ex);
             throw new SuppressionParseException(ex);
-        } finally {
-            if (schemaStream != null) {
-                try {
-                    schemaStream.close();
-                } catch (IOException ex) {
-                    LOGGER.debug("Error closing suppression file stream", ex);
-                }
-            }
         }
     }
 }

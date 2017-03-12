@@ -65,11 +65,8 @@ public final class Checksum {
      */
     public static byte[] getChecksum(String algorithm, File file) throws NoSuchAlgorithmException, IOException {
         final MessageDigest md = MessageDigest.getInstance(algorithm);
-        FileInputStream fis = null;
-        FileChannel ch = null;
-        try {
-            fis = new FileInputStream(file);
-            ch = fis.getChannel();
+        try (FileInputStream fis = new FileInputStream(file);
+                FileChannel ch = fis.getChannel()) {
             final ByteBuffer buf = ByteBuffer.allocateDirect(8192);
             int b = ch.read(buf);
             while (b != -1 && b != 0) {
@@ -81,21 +78,6 @@ public final class Checksum {
                 b = ch.read(buf);
             }
             return md.digest();
-        } finally {
-            if (ch != null) {
-                try {
-                    ch.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("Error closing channel '{}'.", file.getName(), ex);
-                }
-            }
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("Error closing file '{}'.", file.getName(), ex);
-                }
-            }
         }
     }
 

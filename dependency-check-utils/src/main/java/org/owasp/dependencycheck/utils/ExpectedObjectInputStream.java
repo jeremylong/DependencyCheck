@@ -31,12 +31,12 @@ import java.util.List;
  *
  * @author Jeremy Long
  */
-public class ExpectedOjectInputStream extends ObjectInputStream {
+public class ExpectedObjectInputStream extends ObjectInputStream {
 
     /**
      * The list of fully qualified class names that are able to be deserialized.
      */
-    private List<String> expected = new ArrayList<String>();
+    private final List<String> expected = new ArrayList<>();
 
     /**
      * Constructs a new ExpectedOjectInputStream that can be used to securely deserialize an object by restricting the classes
@@ -46,7 +46,7 @@ public class ExpectedOjectInputStream extends ObjectInputStream {
      * @param expected the fully qualified class names of the classes that can be deserialized
      * @throws IOException thrown if there is an error reading from the stream
      */
-    public ExpectedOjectInputStream(InputStream inputStream, String... expected) throws IOException {
+    public ExpectedObjectInputStream(InputStream inputStream, String... expected) throws IOException {
         super(inputStream);
         this.expected.addAll(Arrays.asList(expected));
     }

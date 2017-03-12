@@ -76,7 +76,7 @@ public class Engine implements FileFilter {
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-    private final Set<FileTypeAnalyzer> fileTypeAnalyzers = new HashSet<FileTypeAnalyzer>();
+    private final Set<FileTypeAnalyzer> fileTypeAnalyzers = new HashSet<>();
 
     /**
      * The ClassLoader to use when dynamically loading Analyzer and Update
@@ -145,7 +145,7 @@ public class Engine implements FileFilter {
         for (AnalysisPhase phase : AnalysisPhase.values()) {
             analyzers.put(phase, new ArrayList<Analyzer>());
         }
-        
+
         final AnalyzerService service = new AnalyzerService(serviceClassLoader);
         final List<Analyzer> iterator = service.getAnalyzers();
         for (Analyzer a : iterator) {
@@ -281,7 +281,7 @@ public class Engine implements FileFilter {
      * @since v1.4.4
      */
     public List<Dependency> scan(File[] files, String projectReference) {
-        final List<Dependency> deps = new ArrayList<Dependency>();
+        final List<Dependency> deps = new ArrayList<>();
         for (File file : files) {
             final List<Dependency> d = scan(file, projectReference);
             if (d != null) {
@@ -316,7 +316,7 @@ public class Engine implements FileFilter {
      * @since v1.4.4
      */
     public List<Dependency> scan(Collection<File> files, String projectReference) {
-        final List<Dependency> deps = new ArrayList<Dependency>();
+        final List<Dependency> deps = new ArrayList<>();
         for (File file : files) {
             final List<Dependency> d = scan(file, projectReference);
             if (d != null) {
@@ -357,7 +357,7 @@ public class Engine implements FileFilter {
             } else {
                 final Dependency d = scanFile(file, projectReference);
                 if (d != null) {
-                    final List<Dependency> deps = new ArrayList<Dependency>();
+                    final List<Dependency> deps = new ArrayList<>();
                     deps.add(d);
                     return deps;
                 }
@@ -509,7 +509,7 @@ public class Engine implements FileFilter {
         } catch (DatabaseException ex) {
             throwFatalExceptionCollection("Unable to connect to the dependency-check database.", ex, exceptions);
         }
-        
+
         LOGGER.debug("\n----------------------------------------------------\nBEGIN ANALYSIS\n----------------------------------------------------");
         LOGGER.info("Analysis Started");
         final long analysisStart = System.currentTimeMillis();
@@ -517,7 +517,7 @@ public class Engine implements FileFilter {
         // analysis phases
         for (AnalysisPhase phase : AnalysisPhase.values()) {
             final List<Analyzer> analyzerList = analyzers.get(phase);
-            
+
             for (final Analyzer analyzer : analyzerList) {
                 final long analyzerStart = System.currentTimeMillis();
                 try {
@@ -526,10 +526,10 @@ public class Engine implements FileFilter {
                     exceptions.add(ex);
                     continue;
                 }
-                
+
                 if (analyzer.isEnabled()) {
                     executeAnalysisTasks(analyzer, exceptions);
-                    
+
                     final long analyzerDurationMillis = System.currentTimeMillis() - analyzerStart;
                     final long analyzerDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(analyzerDurationMillis);
                     LOGGER.info("Finished {} ({} seconds)", analyzer.getName(), analyzerDurationSeconds);
@@ -540,12 +540,12 @@ public class Engine implements FileFilter {
         }
         for (AnalysisPhase phase : AnalysisPhase.values()) {
             final List<Analyzer> analyzerList = analyzers.get(phase);
-            
+
             for (Analyzer a : analyzerList) {
                 closeAnalyzer(a);
             }
         }
-        
+
         LOGGER.debug("\n----------------------------------------------------\nEND ANALYSIS\n----------------------------------------------------");
         final long analysisDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - analysisStart);
         LOGGER.info("Analysis Complete ({} seconds)", analysisDurationSeconds);
@@ -566,7 +566,7 @@ public class Engine implements FileFilter {
         LOGGER.debug("Starting {}", analyzer.getName());
         final List<AnalysisTask> analysisTasks = getAnalysisTasks(analyzer, exceptions);
         final ExecutorService executorService = getExecutorService(analyzer);
-        
+
         try {
             final List<Future<Void>> results = executorService.invokeAll(analysisTasks, 10, TimeUnit.MINUTES);
 
@@ -626,11 +626,10 @@ public class Engine implements FileFilter {
      * Initializes the given analyzer.
      *
      * @param analyzer the analyzer to initialize
-     * @return the initialized analyzer
      * @throws InitializationException thrown when there is a problem
      * initializing the analyzer
      */
-    protected Analyzer initializeAnalyzer(Analyzer analyzer) throws InitializationException {
+    protected void initializeAnalyzer(Analyzer analyzer) throws InitializationException {
         try {
             LOGGER.debug("Initializing {}", analyzer.getName());
             analyzer.initialize();
@@ -653,7 +652,6 @@ public class Engine implements FileFilter {
             }
             throw new InitializationException("Unexpected Exception", ex);
         }
-        return analyzer;
     }
 
     /**

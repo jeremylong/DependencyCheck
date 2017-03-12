@@ -79,38 +79,19 @@ public class HintParser {
      * @throws HintParseException thrown if the XML file cannot be parsed
      */
     public Hints parseHints(File file) throws HintParseException {
-        FileInputStream fis = null;
+        //TODO there must be a better way to determine which schema to use for validation.
         try {
-            fis = new FileInputStream(file);
-            return parseHints(fis);
-        } catch (IOException ex) {
-            LOGGER.debug("", ex);
-            throw new HintParseException(ex);
-        } catch (SAXException ex) {
-            try {
-                if (fis != null) {
-                    try {
-                        fis.close();
-                    } catch (IOException ex1) {
-                        LOGGER.debug("Unable to close stream", ex1);
-                    }
-                }
-                fis = new FileInputStream(file);
-            } catch (FileNotFoundException ex1) {
-                throw new HintParseException(ex1);
-            }
-            try {
-                return parseHints(fis, HINT_SCHEMA_OLD);
-            } catch (SAXException ex1) {
+            try (FileInputStream fis = new FileInputStream(file)) {
+                return parseHints(fis);
+            } catch (IOException ex) {
+                LOGGER.debug("", ex);
                 throw new HintParseException(ex);
             }
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException ex) {
-                    LOGGER.debug("Unable to close stream", ex);
-                }
+        } catch (SAXException ex) {
+            try (FileInputStream fis = new FileInputStream(file)) {
+                return parseHints(fis, HINT_SCHEMA_OLD);
+            } catch (SAXException | IOException ex1) {
+                throw new HintParseException(ex);
             }
         }
     }
@@ -139,24 +120,21 @@ public class HintParser {
      * @throws SAXException thrown if the XML cannot be parsed
      */
     private Hints parseHints(InputStream inputStream, String schema) throws HintParseException, SAXException {
-        InputStream schemaStream = null;
-        try {
-            schemaStream = this.getClass().getClassLoader().getResourceAsStream(schema);
+        try (InputStream schemaStream = this.getClass().getClassLoader().getResourceAsStream(schema)) {
             final HintHandler handler = new HintHandler();
             final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream);
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setErrorHandler(new HintErrorHandler());
             xmlReader.setContentHandler(handler);
-
-            final Reader reader = new InputStreamReader(inputStream, "UTF-8");
-            final InputSource in = new InputSource(reader);
-
-            xmlReader.parse(in);
-            final Hints hints = new Hints();
-            hints.setHintRules(handler.getHintRules());
-            hints.setVendorDuplicatingHintRules(handler.getVendorDuplicatingHintRules());
-            return hints;
-        } catch (ParserConfigurationException ex) {
+            try (Reader reader = new InputStreamReader(inputStream, "UTF-8")) {
+                final InputSource in = new InputSource(reader);
+                xmlReader.parse(in);
+                final Hints hints = new Hints();
+                hints.setHintRules(handler.getHintRules());
+                hints.setVendorDuplicatingHintRules(handler.getVendorDuplicatingHintRules());
+                return hints;
+            }
+        } catch (ParserConfigurationException | FileNotFoundException ex) {
             LOGGER.debug("", ex);
             throw new HintParseException(ex);
         } catch (SAXException ex) {
@@ -166,20 +144,9 @@ public class HintParser {
                 LOGGER.debug("", ex);
                 throw new HintParseException(ex);
             }
-        } catch (FileNotFoundException ex) {
-            LOGGER.debug("", ex);
-            throw new HintParseException(ex);
         } catch (IOException ex) {
             LOGGER.debug("", ex);
             throw new HintParseException(ex);
-        } finally {
-            if (schemaStream != null) {
-                try {
-                    schemaStream.close();
-                } catch (IOException ex) {
-                    LOGGER.debug("Error closing hint file stream", ex);
-                }
-            }
         }
     }
 }

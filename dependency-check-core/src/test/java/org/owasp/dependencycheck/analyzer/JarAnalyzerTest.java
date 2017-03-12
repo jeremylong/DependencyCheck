@@ -22,20 +22,24 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * @author Jeremy Long
  */
 public class JarAnalyzerTest extends BaseTest {
 
-//    private static final Logger LOGGER = LoggerFactory.getLogger(JarAnalyzerTest.class);
-    
     /**
      * Test of inspect method, of class JarAnalyzer.
      *
@@ -51,14 +55,14 @@ public class JarAnalyzerTest extends BaseTest {
         instance.analyze(result, null);
         assertTrue(result.getVendorEvidence().toString().toLowerCase().contains("apache"));
         assertTrue(result.getVendorEvidence().getWeighting().contains("apache"));
-        
+
         file = BaseTest.getResourceAsFile(this, "dwr.jar");
         result = new Dependency(file);
         instance.analyze(result, null);
         boolean found = false;
         for (Evidence e : result.getVendorEvidence()) {
             if (e.getName().equals("url")) {
-            	assertEquals("Project url was not as expected in dwr.jar", e.getValue(), "http://getahead.ltd.uk/dwr");
+                assertEquals("Project url was not as expected in dwr.jar", e.getValue(), "http://getahead.ltd.uk/dwr");
                 found = true;
                 break;
             }
@@ -136,9 +140,40 @@ public class JarAnalyzerTest extends BaseTest {
         File file = BaseTest.getResourceAsFile(this, "xalan-2.7.0.jar");
         Dependency result = new Dependency(file);
         JarAnalyzer instance = new JarAnalyzer();
-        List<JarAnalyzer.ClassNameInformation> cni = new ArrayList<JarAnalyzer.ClassNameInformation>();
+        List<JarAnalyzer.ClassNameInformation> cni = new ArrayList<>();
         instance.parseManifest(result, cni);
 
         assertTrue(result.getVersionEvidence().getEvidence("manifest: org/apache/xalan/").size() > 0);
+    }
+
+    /**
+     * Test of getAnalysisPhase method, of class JarAnalyzer.
+     */
+    @Test
+    public void testGetAnalysisPhase() {
+        JarAnalyzer instance = new JarAnalyzer();
+        AnalysisPhase expResult = AnalysisPhase.INFORMATION_COLLECTION;
+        AnalysisPhase result = instance.getAnalysisPhase();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of getAnalyzerEnabledSettingKey method, of class JarAnalyzer.
+     */
+    @Test
+    public void testGetAnalyzerEnabledSettingKey() {
+        JarAnalyzer instance = new JarAnalyzer();
+        String expResult = Settings.KEYS.ANALYZER_JAR_ENABLED;
+        String result = instance.getAnalyzerEnabledSettingKey();
+        assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testClassInformation() {
+        JarAnalyzer.ClassNameInformation instance = new JarAnalyzer.ClassNameInformation("org/owasp/dependencycheck/analyzer/JarAnalyzer");
+        assertEquals("org/owasp/dependencycheck/analyzer/JarAnalyzer", instance.getName());
+        List<String> expected = Arrays.asList("owasp", "dependencycheck", "analyzer", "jaranalyzer");
+        List<String> results = instance.getPackageStructure();
+        assertEquals(expected, results);
     }
 }

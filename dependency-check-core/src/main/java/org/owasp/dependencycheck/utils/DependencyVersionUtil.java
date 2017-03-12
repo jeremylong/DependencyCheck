@@ -74,7 +74,7 @@ public final class DependencyVersionUtil {
         //'-' is a special case used within the CVE entries, just include it as the version.
         if ("-".equals(text)) {
             final DependencyVersion dv = new DependencyVersion();
-            final List<String> list = new ArrayList<String>();
+            final List<String> list = new ArrayList<>();
             list.add(text);
             dv.setVersionParts(list);
             return dv;

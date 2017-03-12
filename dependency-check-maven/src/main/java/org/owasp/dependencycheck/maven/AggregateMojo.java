@@ -64,7 +64,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
      * and generates the subsequent reports.
      *
      * @throws MojoExecutionException thrown if there is ane exception running
-     * the mojo
+     * the Mojo
      * @throws MojoFailureException thrown if dependency-check is configured to
      * fail the build
      */
@@ -118,7 +118,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         }
         File outputDir = getCorrectOutputDirectory(this.getProject());
         if (outputDir == null) {
-            //in some regards we shouldn't be writting this, but we are anyway.
+            //in some regards we shouldn't be writing this, but we are anyway.
             //we shouldn't write this because nothing is configured to generate this report.
             outputDir = new File(this.getProject().getBuild().getDirectory());
         }
@@ -153,8 +153,8 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         if (project == null) {
             return Collections.emptySet();
         }
-        final Set<MavenProject> descendants = new HashSet<MavenProject>();
-        int size = 0;
+        final Set<MavenProject> descendants = new HashSet<>();
+        int size;
         if (getLog().isDebugEnabled()) {
             getLog().debug(String.format("Collecting descendants of %s", project.getName()));
         }
@@ -165,7 +165,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                     mpp = mpp.getCanonicalFile();
                     if (mpp.compareTo(mod.getBasedir()) == 0 && descendants.add(mod)
                             && getLog().isDebugEnabled()) {
-                        getLog().debug(String.format("Decendent module %s added", mod.getName()));
+                        getLog().debug(String.format("Descendant module %s added", mod.getName()));
 
                     }
                 } catch (IOException ex) {
@@ -180,18 +180,18 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
             for (MavenProject p : getReactorProjects()) {
                 if (project.equals(p.getParent()) || descendants.contains(p.getParent())) {
                     if (descendants.add(p) && getLog().isDebugEnabled()) {
-                        getLog().debug(String.format("Decendent %s added", p.getName()));
+                        getLog().debug(String.format("Descendant %s added", p.getName()));
 
                     }
                     for (MavenProject modTest : getReactorProjects()) {
                         if (p.getModules() != null && p.getModules().contains(modTest.getName())
                                 && descendants.add(modTest)
                                 && getLog().isDebugEnabled()) {
-                            getLog().debug(String.format("Decendent %s added", modTest.getName()));
+                            getLog().debug(String.format("Descendant %s added", modTest.getName()));
                         }
                     }
                 }
-                final Set<MavenProject> addedDescendants = new HashSet<MavenProject>();
+                final Set<MavenProject> addedDescendants = new HashSet<>();
                 for (MavenProject dec : descendants) {
                     for (String mod : dec.getModules()) {
                         try {
@@ -209,7 +209,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                 }
                 for (MavenProject addedDescendant : addedDescendants) {
                     if (descendants.add(addedDescendant) && getLog().isDebugEnabled()) {
-                        getLog().debug(String.format("Decendent module %s added", addedDescendant.getName()));
+                        getLog().debug(String.format("Descendant module %s added", addedDescendant.getName()));
                     }
                 }
             }
@@ -259,7 +259,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
 
     @Override
     public boolean canGenerateReport() {
-        return true; //aggregate always returns true for now - we can look at a more complicated/acurate solution later
+        return true; //aggregate always returns true for now - we can look at a more complicated/accurate solution later
     }
 
     /**

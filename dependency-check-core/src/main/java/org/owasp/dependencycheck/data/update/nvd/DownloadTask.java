@@ -19,7 +19,6 @@ package org.owasp.dependencycheck.data.update.nvd;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -224,33 +223,19 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
         if (file == null || !file.isFile()) {
             return false;
         }
-        InputStream is = null;
-        try {
-            is = new FileInputStream(file);
-
+        try (InputStream is = new FileInputStream(file)) {
             final byte[] buf = new byte[5];
-            int read = 0;
-            try {
-                read = is.read(buf);
-            } catch (IOException ex) {
-                return false;
-            }
+            int read;
+            read = is.read(buf);
             return read == 5
                     && buf[0] == '<'
                     && (buf[1] == '?')
                     && (buf[2] == 'x' || buf[2] == 'X')
                     && (buf[3] == 'm' || buf[3] == 'M')
                     && (buf[4] == 'l' || buf[4] == 'L');
-        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
+            LOGGER.debug("Error checking if file is xml", ex);
             return false;
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException ex) {
-                    LOGGER.debug("Error closing stream", ex);
-                }
-            }
         }
     }
 }

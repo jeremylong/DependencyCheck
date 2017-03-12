@@ -36,9 +36,9 @@ public class ConnectionFactoryTest extends BaseDBTestCase {
     @Test
     public void testInitialize() throws DatabaseException, SQLException {
         ConnectionFactory.initialize();
-        Connection result = ConnectionFactory.getConnection();
-        assertNotNull(result);
-        result.close();
+        try (Connection result = ConnectionFactory.getConnection()) {
+            assertNotNull(result);
+        }
         ConnectionFactory.cleanup();
     }
 }

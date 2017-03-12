@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -101,9 +101,7 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(dependency.getActualFile());
+        try (FileInputStream fis = new FileInputStream(dependency.getActualFile())) {
             final ComposerLockParser clp = new ComposerLockParser(fis);
             LOGGER.info("Checking composer.lock file {}", dependency.getActualFilePath());
             clp.process();
@@ -120,18 +118,10 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.info("Adding dependency {}", d);
                 engine.getDependencies().add(d);
             }
-        } catch (FileNotFoundException fnfe) {
+        } catch (IOException ex) {
             LOGGER.warn("Error opening dependency {}", dependency.getActualFilePath());
         } catch (ComposerException ce) {
             LOGGER.warn("Error parsing composer.json {}", dependency.getActualFilePath(), ce);
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (Exception e) {
-                    LOGGER.debug("Unable to close file", e);
-                }
-            }
         }
     }
 

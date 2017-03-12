@@ -66,7 +66,7 @@ public class DependencyVersion implements Iterable<String>, Comparable<Dependenc
      * @param version the version string to parse
      */
     public final void parseVersion(String version) {
-        versionParts = new ArrayList<String>();
+        versionParts = new ArrayList<>();
         if (version != null) {
             final Pattern rx = Pattern.compile("(\\d+[a-z]{1,3}$|[a-z]+\\d+|\\d+|(release|beta|alpha)$)");
             final Matcher matcher = rx.matcher(version.toLowerCase());

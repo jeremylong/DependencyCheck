@@ -24,8 +24,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.utils.Settings;
@@ -35,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * Class of methods to search Maven Central via Central.
@@ -117,7 +120,7 @@ public class CentralSearch {
                 if ("0".equals(numFound)) {
                     missing = true;
                 } else {
-                    result = new ArrayList<MavenArtifact>();
+                    result = new ArrayList<>();
                     final NodeList docs = (NodeList) xpath.evaluate("/response/result/doc", doc, XPathConstants.NODESET);
                     for (int i = 0; i < docs.getLength(); i++) {
                         final String g = xpath.evaluate("./str[@name='g']", docs.item(i));
@@ -125,11 +128,11 @@ public class CentralSearch {
                         final String a = xpath.evaluate("./str[@name='a']", docs.item(i));
                         LOGGER.trace("ArtifactId: {}", a);
                         final String v = xpath.evaluate("./str[@name='v']", docs.item(i));
-                        NodeList atts = (NodeList) xpath.evaluate("./arr[@name='ec']/str", docs.item(i), XPathConstants.NODESET);
+                        NodeList attributes = (NodeList) xpath.evaluate("./arr[@name='ec']/str", docs.item(i), XPathConstants.NODESET);
                         boolean pomAvailable = false;
                         boolean jarAvailable = false;
-                        for (int x = 0; x < atts.getLength(); x++) {
-                            final String tmp = xpath.evaluate(".", atts.item(x));
+                        for (int x = 0; x < attributes.getLength(); x++) {
+                            final String tmp = xpath.evaluate(".", attributes.item(x));
                             if (".pom".equals(tmp)) {
                                 pomAvailable = true;
                             } else if (".jar".equals(tmp)) {
@@ -137,10 +140,10 @@ public class CentralSearch {
                             }
                         }
 
-                        atts = (NodeList) xpath.evaluate("./arr[@name='tags']/str", docs.item(i), XPathConstants.NODESET);
+                        attributes = (NodeList) xpath.evaluate("./arr[@name='tags']/str", docs.item(i), XPathConstants.NODESET);
                         boolean useHTTPS = false;
-                        for (int x = 0; x < atts.getLength(); x++) {
-                            final String tmp = xpath.evaluate(".", atts.item(x));
+                        for (int x = 0; x < attributes.getLength(); x++) {
+                            final String tmp = xpath.evaluate(".", attributes.item(x));
                             if ("https".equals(tmp)) {
                                 useHTTPS = true;
                             }
@@ -149,7 +152,7 @@ public class CentralSearch {
                         result.add(new MavenArtifact(g, a, v, jarAvailable, pomAvailable, useHTTPS));
                     }
                 }
-            } catch (Throwable e) {
+            } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
                 // Anything else is jacked up XML stuff that we really can't recover from well
                 throw new IOException(e.getMessage(), e);
             }

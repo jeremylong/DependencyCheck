@@ -39,20 +39,9 @@ public class BaseTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         Settings.initialize();
-        InputStream mojoProperties = null;
-        try {
-            mojoProperties = BaseTest.class.getClassLoader().getResourceAsStream(BaseTest.PROPERTIES_FILE);
+        try (InputStream mojoProperties = BaseTest.class.getClassLoader().getResourceAsStream(BaseTest.PROPERTIES_FILE)) {
             Settings.mergeProperties(mojoProperties);
-        } finally {
-            if (mojoProperties != null) {
-                try {
-                    mojoProperties.close();
-                } catch (IOException ex) {
-                    Logger.getLogger(BaseTest.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
         }
-
     }
 
     @AfterClass

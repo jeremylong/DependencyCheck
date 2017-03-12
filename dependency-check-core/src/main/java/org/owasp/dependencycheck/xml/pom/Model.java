@@ -74,7 +74,7 @@ public class Model {
     /**
      * The list of licenses.
      */
-    private final List<License> licenses = new ArrayList<License>();
+    private final List<License> licenses = new ArrayList<>();
     /**
      * The project URL.
      */

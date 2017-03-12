@@ -121,17 +121,9 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     @Override
-    protected void analyzeDependency(Dependency dependency, Engine engine)
-            throws AnalysisException {
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         final File file = dependency.getActualFile();
-        JsonReader jsonReader;
-        try {
-            jsonReader = Json.createReader(FileUtils.openInputStream(file));
-        } catch (IOException e) {
-            throw new AnalysisException(
-                    "Problem occurred while reading dependency file.", e);
-        }
-        try {
+        try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {
             final JsonObject json = jsonReader.readObject();
             final EvidenceCollection productEvidence = dependency.getProductEvidence();
             final EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
@@ -151,8 +143,8 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
             dependency.setDisplayFileName(String.format("%s/%s", file.getParentFile().getName(), file.getName()));
         } catch (JsonException e) {
             LOGGER.warn("Failed to parse package.json file.", e);
-        } finally {
-            jsonReader.close();
+        } catch (IOException e) {
+            throw new AnalysisException("Problem occurred while reading dependency file.", e);
         }
     }
 

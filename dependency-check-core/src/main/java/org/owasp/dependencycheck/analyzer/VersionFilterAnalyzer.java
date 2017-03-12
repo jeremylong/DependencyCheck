@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class VersionFilterAnalyzer extends AbstractAnalyzer {
 
-    //<editor-fold defaultstate="collapsed" desc="Constaints">
+    //<editor-fold defaultstate="collapsed" desc="Constants">
     /**
      * Evidence source.
      */
@@ -126,7 +126,7 @@ public class VersionFilterAnalyzer extends AbstractAnalyzer {
      * the dependency.
      */
     @Override
-    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+    protected synchronized void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         String fileVersion = null;
         String pomVersion = null;
         String manifestVersion = null;
@@ -151,16 +151,14 @@ public class VersionFilterAnalyzer extends AbstractAnalyzer {
             if (fileMatch || manifestMatch || pomMatch) {
                 LOGGER.debug("filtering evidence from {}", dependency.getFileName());
                 final EvidenceCollection versionEvidence = dependency.getVersionEvidence();
-                synchronized (versionEvidence) {
-                    final Iterator<Evidence> itr = versionEvidence.iterator();
-                    while (itr.hasNext()) {
-                        final Evidence e = itr.next();
-                        if (!(pomMatch && VERSION.equals(e.getName())
-                                && (NEXUS.equals(e.getSource()) || CENTRAL.equals(e.getSource()) || POM.equals(e.getSource())))
-                                && !(fileMatch && VERSION.equals(e.getName()) && FILE.equals(e.getSource()))
-                                && !(manifestMatch && MANIFEST.equals(e.getSource()) && IMPLEMENTATION_VERSION.equals(e.getName()))) {
-                            itr.remove();
-                        }
+                final Iterator<Evidence> itr = versionEvidence.iterator();
+                while (itr.hasNext()) {
+                    final Evidence e = itr.next();
+                    if (!(pomMatch && VERSION.equals(e.getName())
+                            && (NEXUS.equals(e.getSource()) || CENTRAL.equals(e.getSource()) || POM.equals(e.getSource())))
+                            && !(fileMatch && VERSION.equals(e.getName()) && FILE.equals(e.getSource()))
+                            && !(manifestMatch && MANIFEST.equals(e.getSource()) && IMPLEMENTATION_VERSION.equals(e.getName()))) {
+                        itr.remove();
                     }
                 }
             }

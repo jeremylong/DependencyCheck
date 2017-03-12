@@ -255,7 +255,7 @@ public class HintRule {
         return removeVersion;
     }
     /**
-     * Adds a given version to the list of evidence to matche.
+     * Adds a given version to the list of evidence to match.
      *
      * @param source the source of the evidence
      * @param name the name of the evidence

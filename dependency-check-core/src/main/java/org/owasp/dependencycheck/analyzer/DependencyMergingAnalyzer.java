@@ -129,7 +129,7 @@ public class DependencyMergingAnalyzer extends AbstractAnalyzer {
     protected synchronized void analyzeDependency(Dependency ignore, Engine engine) throws AnalysisException {
         if (!analyzed) {
             analyzed = true;
-            final Set<Dependency> dependenciesToRemove = new HashSet<Dependency>();
+            final Set<Dependency> dependenciesToRemove = new HashSet<>();
             final ListIterator<Dependency> mainIterator = engine.getDependencies().listIterator();
             //for (Dependency nextDependency : engine.getDependencies()) {
             while (mainIterator.hasNext()) {
@@ -138,7 +138,7 @@ public class DependencyMergingAnalyzer extends AbstractAnalyzer {
                     final ListIterator<Dependency> subIterator = engine.getDependencies().listIterator(mainIterator.nextIndex());
                     while (subIterator.hasNext()) {
                         final Dependency nextDependency = subIterator.next();
-                        Dependency main = null;
+                        Dependency main;
                         if ((main = getMainGemspecDependency(dependency, nextDependency)) != null) {
                             if (main == dependency) {
                                 mergeDependencies(dependency, nextDependency, dependenciesToRemove);

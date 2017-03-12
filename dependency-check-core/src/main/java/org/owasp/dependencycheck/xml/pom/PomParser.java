@@ -58,21 +58,11 @@ public class PomParser {
      * @throws PomParseException thrown if the xml file cannot be parsed
      */
     public Model parse(File file) throws PomParseException {
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(file);
+        try (FileInputStream fis = new FileInputStream(file)) {
             return parse(fis);
         } catch (IOException ex) {
             LOGGER.debug("", ex);
             throw new PomParseException(ex);
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException ex) {
-                    LOGGER.debug("Unable to close stream", ex);
-                }
-            }
         }
     }
 
@@ -90,18 +80,15 @@ public class PomParser {
             final SAXParser saxParser = XmlUtils.buildSecureSaxParser();
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setContentHandler(handler);
-            BOMInputStream bomStream = new BOMInputStream(inputStream);
-            ByteOrderMark bom = bomStream.getBOM();
-            String defaultEncoding = "UTF-8";
-            String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();
+            final BOMInputStream bomStream = new BOMInputStream(inputStream);
+            final ByteOrderMark bom = bomStream.getBOM();
+            final String defaultEncoding = "UTF-8";
+            final String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();
             final Reader reader = new InputStreamReader(bomStream, charsetName);
             final InputSource in = new InputSource(reader);
             xmlReader.parse(in);
             return handler.getModel();
-        } catch (ParserConfigurationException | SAXException ex) {
-            LOGGER.debug("", ex);
-            throw new PomParseException(ex);
-        } catch (FileNotFoundException ex) {
+        } catch (ParserConfigurationException | SAXException | FileNotFoundException ex) {
             LOGGER.debug("", ex);
             throw new PomParseException(ex);
         } catch (IOException ex) {

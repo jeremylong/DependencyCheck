@@ -75,7 +75,7 @@ public final class DriverLoader {
      */
     public static Driver load(String className, String pathToDriver) throws DriverLoadException {
         final URLClassLoader parent = (URLClassLoader) ClassLoader.getSystemClassLoader();
-        final List<URL> urls = new ArrayList<URL>();
+        final List<URL> urls = new ArrayList<>();
         final String[] paths = pathToDriver.split(File.pathSeparator);
         for (String path : paths) {
             final File file = new File(path);
@@ -129,19 +129,7 @@ public final class DriverLoader {
             //using the DriverShim to get around the fact that the DriverManager won't register a driver not in the base class path
             DriverManager.registerDriver(shim);
             return shim;
-        } catch (ClassNotFoundException ex) {
-            final String msg = String.format("Unable to load database driver '%s'", className);
-            LOGGER.debug(msg, ex);
-            throw new DriverLoadException(msg, ex);
-        } catch (InstantiationException ex) {
-            final String msg = String.format("Unable to load database driver '%s'", className);
-            LOGGER.debug(msg, ex);
-            throw new DriverLoadException(msg, ex);
-        } catch (IllegalAccessException ex) {
-            final String msg = String.format("Unable to load database driver '%s'", className);
-            LOGGER.debug(msg, ex);
-            throw new DriverLoadException(msg, ex);
-        } catch (SQLException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException ex) {
             final String msg = String.format("Unable to load database driver '%s'", className);
             LOGGER.debug(msg, ex);
             throw new DriverLoadException(msg, ex);

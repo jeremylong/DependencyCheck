@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * A SAX Handler that will parse the CPE XML and load it into the databse.
+ * A SAX Handler that will parse the CPE XML and load it into the database.
  *
  * @author Jeremy Long
  */
@@ -60,7 +60,7 @@ public class CPEHandler extends DefaultHandler {
     /**
      * The list of CPE values.
      */
-    private final List<Cpe> data = new ArrayList<Cpe>();
+    private final List<Cpe> data = new ArrayList<>();
 
     /**
      * Returns the list of CPE values.
@@ -154,35 +154,10 @@ public class CPEHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         current.setNode(qName);
         if (current.isSchemaVersionNode() && !CURRENT_SCHEMA_VERSION.equals(nodeText.toString())) {
-            throw new SAXException("ERROR: Unexpecgted CPE Schema Version, expected: "
+            throw new SAXException("ERROR: Unexpected CPE Schema Version, expected: "
                     + CURRENT_SCHEMA_VERSION + ", file is: " + nodeText);
 
         }
-//        } else if (current.isCpeItemNode()) {
-//            //do nothing
-//        } else if (current.isTitleNode()) {
-//            //do nothing
-//        } else if (current.isCpeListNode()) {
-//            //do nothing
-//        } else if (current.isMetaNode()) {
-//            //do nothing
-//        } else if (current.isNotesNode()) {
-//            //do nothing
-//        } else if (current.isNoteNode()) {
-//            //do nothing
-//        } else if (current.isCheckNode()) {
-//            //do nothing
-//        } else if (current.isGeneratorNode()) {
-//            //do nothing
-//        } else if (current.isProductNameNode()) {
-//            //do nothing
-//        } else if (current.isProductVersionNode()) {
-//            //do nothing
-//        else if (current.isTimestampNode()) {
-//            //do nothing
-//        } else {
-//            throw new SAXException("ERROR STATE: Unexpected qName '" + qName + "'");
-//        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="The Element Class that maintains state information about the current node">

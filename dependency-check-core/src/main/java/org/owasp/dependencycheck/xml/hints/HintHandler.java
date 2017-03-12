@@ -149,8 +149,17 @@ public class HintHandler extends DefaultHandler {
      * Internal type to track the parent node state.
      */
     enum ParentType {
+        /**
+         * Marks the add node.
+         */
         ADD,
+        /**
+         * Marks the given node.
+         */
         GIVEN,
+        /**
+         * Marks the remove node.
+         */
         REMOVE
     }
     /**

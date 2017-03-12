@@ -3,7 +3,7 @@ package org.owasp.dependencycheck.utils;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-/*
+/**
  * This is an abstract filter that can be used to filter iterable list.
  *
  * This Filter class was copied from:
@@ -11,15 +11,35 @@ import java.util.NoSuchElementException;
  *
  * Erik Rasmussen - © 2006 - 2012 All Rights Reserved. @author Erik Rasmussen
  * https://plus.google.com/115403795880834599019/?rel=author
+ *
+ * @param <T> the type to filter
  */
 public abstract class Filter<T> {
 
+    /**
+     * Determines whether the object passes the filter.
+     *
+     * @param object the object to test
+     * @return whether or not the object passes the filter
+     */
     public abstract boolean passes(T object);
 
+    /**
+     * Filters a given iterator.
+     *
+     * @param iterator the iterator to filter
+     * @return the filtered iterator
+     */
     public Iterator<T> filter(Iterator<T> iterator) {
         return new FilterIterator(iterator);
     }
 
+    /**
+     * Filters a given iterable.
+     *
+     * @param iterable the iterable to filter
+     * @return the filtered iterable
+     */
     public Iterable<T> filter(final Iterable<T> iterable) {
         return new Iterable<T>() {
 

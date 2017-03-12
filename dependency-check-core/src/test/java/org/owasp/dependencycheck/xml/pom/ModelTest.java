@@ -248,7 +248,7 @@ public class ModelTest extends BaseTest {
     public void testGetLicenses() {
         Model instance = new Model();
         instance.addLicense(new License("name", "url"));
-        List<License> expResult = new ArrayList<License>();
+        List<License> expResult = new ArrayList<>();
         expResult.add(new License("name", "url"));
         List<License> result = instance.getLicenses();
         assertEquals(expResult, result);

@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
@@ -77,7 +78,13 @@ public class NvdCveUpdater implements CachedWebDataSource {
      */
     private ExecutorService downloadExecutorService = null;
 
+    /**
+     * Reference to the DAO.
+     */
     private CveDB cveDb = null;
+    /**
+     * The properties obtained from the database.
+     */
     private DatabaseProperties dbProperties = null;
 
     /**
@@ -135,6 +142,10 @@ public class NvdCveUpdater implements CachedWebDataSource {
         }
     }
 
+    /**
+     * Initialize the executor services for download and processing of the NVD
+     * CVE XML data.
+     */
     protected void initializeExecutorServices() {
         processingExecutorService = Executors.newFixedThreadPool(PROCESSING_THREAD_POOL_SIZE);
         downloadExecutorService = Executors.newFixedThreadPool(DOWNLOAD_THREAD_POOL_SIZE);
@@ -142,6 +153,9 @@ public class NvdCveUpdater implements CachedWebDataSource {
         LOGGER.debug("#processing threads: {}", PROCESSING_THREAD_POOL_SIZE);
     }
 
+    /**
+     * Shutdown and cleanup of resources used by the executor services.
+     */
     private void shutdownExecutorServices() {
         if (processingExecutorService != null) {
             processingExecutorService.shutdownNow();
@@ -426,7 +440,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
             final long timestamp;
             try {
                 timestamp = timestampFuture.get(60, TimeUnit.SECONDS);
-            } catch (Exception e) {
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 throw new DownloadFailedException(e);
             }
             lastModifiedDates.put(url, timestamp);
@@ -440,8 +454,16 @@ public class NvdCveUpdater implements CachedWebDataSource {
      */
     private static class TimestampRetriever implements Callable<Long> {
 
-        private String url;
+        /**
+         * The URL to obtain the timestamp from.
+         */
+        private final String url;
 
+        /**
+         * Instantiates a new timestamp retriever object.
+         *
+         * @param url the URL to hit
+         */
         TimestampRetriever(String url) {
             this.url = url;
         }

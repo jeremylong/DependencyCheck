@@ -98,20 +98,21 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The set of things we can handle with Zip methods
      */
-    private static final Set<String> ZIPPABLES = newHashSet("zip", "ear", "war", "jar", "sar", "apk", "nupkg");
+    private static final Set<String> KNOWN_ZIP_EXT = newHashSet("zip", "ear", "war", "jar", "sar", "apk", "nupkg");
     /**
      * The set of file extensions supported by this analyzer. Note for
      * developers, any additions to this list will need to be explicitly handled
      * in {@link #extractFiles(File, File, Engine)}.
      */
     private static final Set<String> EXTENSIONS = newHashSet("tar", "gz", "tgz", "bz2", "tbz2");
+
     static {
         final String additionalZipExt = Settings.getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);
         if (additionalZipExt != null) {
             final String[] ext = additionalZipExt.split("\\s*,\\s*");
-            Collections.addAll(ZIPPABLES, ext);
+            Collections.addAll(KNOWN_ZIP_EXT, ext);
         }
-        EXTENSIONS.addAll(ZIPPABLES);
+        EXTENSIONS.addAll(KNOWN_ZIP_EXT);
     }
 
     /**
@@ -220,6 +221,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * Does not support parallel processing as it both modifies and iterates
      * over the engine's list of dependencies.
      *
+     * @return <code>true</code> if the analyzer supports parallel processing;
+     * otherwise <code>false</code>
      * @see #analyzeDependency(Dependency, Engine)
      * @see #findMoreDependencies(Engine, File)
      */
@@ -300,11 +303,11 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private void addDisguisedJarsToDependencies(Dependency dependency, Engine engine) throws AnalysisException {
         if (ZIP_FILTER.accept(dependency.getActualFile()) && isZipFileActuallyJarFile(dependency)) {
-            final File tdir = getNextTempDirectory();
+            final File tempDir = getNextTempDirectory();
             final String fileName = dependency.getFileName();
 
             LOGGER.info("The zip file '{}' appears to be a JAR file, making a copy and analyzing it as a JAR.", fileName);
-            final File tmpLoc = new File(tdir, fileName.substring(0, fileName.length() - 3) + "jar");
+            final File tmpLoc = new File(tempDir, fileName.substring(0, fileName.length() - 3) + "jar");
             //store the archives sha1 and change it so that the engine doesn't think the zip and jar file are the same
             // and add it is a related dependency.
             final String archiveSha1 = dependency.getSha1sum();
@@ -344,8 +347,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * @return any dependencies that weren't known to the engine before
      */
     private static List<Dependency> findMoreDependencies(Engine engine, File file) {
-        final List<Dependency> added = engine.scan(file);
-        return added;
+        return engine.scan(file);
     }
 
     /**
@@ -397,7 +399,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             GzipCompressorInputStream gin = null;
             BZip2CompressorInputStream bzin = null;
             try {
-                if (ZIPPABLES.contains(archiveExt)) {
+                if (KNOWN_ZIP_EXT.contains(archiveExt)) {
                     in = new BufferedInputStream(fis);
                     ensureReadableJar(archiveExt, in);
                     zin = new ZipArchiveInputStream(in);
@@ -517,7 +519,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                     extractAcceptedFile(input, file);
                 }
             }
-        } catch (Throwable ex) {
+        } catch (IOException | AnalysisException ex) {
             throw new ArchiveExtractionException(ex);
         } finally {
             FileUtils.close(input);
@@ -533,14 +535,12 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static void extractAcceptedFile(ArchiveInputStream input, File file) throws AnalysisException {
         LOGGER.debug("Extracting '{}'", file.getPath());
-        FileOutputStream fos = null;
-        try {
-            final File parent = file.getParentFile();
-            if (!parent.isDirectory() && !parent.mkdirs()) {
-                final String msg = String.format("Unable to build directory '%s'.", parent.getAbsolutePath());
-                throw new AnalysisException(msg);
-            }
-            fos = new FileOutputStream(file);
+        final File parent = file.getParentFile();
+        if (!parent.isDirectory() && !parent.mkdirs()) {
+            final String msg = String.format("Unable to build directory '%s'.", parent.getAbsolutePath());
+            throw new AnalysisException(msg);
+        }
+        try (FileOutputStream fos = new FileOutputStream(file)) {
             IOUtils.copy(input, fos);
         } catch (FileNotFoundException ex) {
             LOGGER.debug("", ex);
@@ -550,8 +550,6 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.debug("", ex);
             final String msg = String.format("IO Exception while parsing file '%s'.", file.getName());
             throw new AnalysisException(msg, ex);
-        } finally {
-            FileUtils.close(fos);
         }
     }
 
@@ -565,18 +563,11 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private void decompressFile(CompressorInputStream inputStream, File outputFile) throws ArchiveExtractionException {
         LOGGER.debug("Decompressing '{}'", outputFile.getPath());
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(outputFile);
+        try (FileOutputStream out = new FileOutputStream(outputFile)) {
             IOUtils.copy(inputStream, out);
-        } catch (FileNotFoundException ex) {
-            LOGGER.debug("", ex);
-            throw new ArchiveExtractionException(ex);
         } catch (IOException ex) {
             LOGGER.debug("", ex);
             throw new ArchiveExtractionException(ex);
-        } finally {
-            FileUtils.close(out);
         }
     }
 
@@ -610,7 +601,6 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         } finally {
             ZipFile.closeQuietly(zip);
         }
-
         return isJar;
     }
 }

@@ -360,22 +360,12 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
         if (null == manifest) {
             LOGGER.debug("Manifest file not found.");
         } else {
-            InputStream in = null;
-            try {
-                in = new BufferedInputStream(new FileInputStream(manifest));
+            try (InputStream in = new BufferedInputStream(new FileInputStream(manifest))) {
                 result.load(in);
-            } catch (MessagingException e) {
+            } catch (MessagingException | FileNotFoundException e) {
                 LOGGER.warn(e.getMessage(), e);
-            } catch (FileNotFoundException e) {
-                LOGGER.warn(e.getMessage(), e);
-            } finally {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (IOException ex) {
-                        LOGGER.debug("failed to close input stream", ex);
-                    }
-                }
+            } catch (IOException ex) {
+                LOGGER.warn(ex.getMessage(), ex);
             }
         }
         return result;

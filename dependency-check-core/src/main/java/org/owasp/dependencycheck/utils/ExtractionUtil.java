@@ -85,18 +85,10 @@ public final class ExtractionUtil {
             return;
         }
 
-        FileInputStream fis = null;
-        ZipInputStream zis = null;
-
-        try {
-            fis = new FileInputStream(archive);
-        } catch (FileNotFoundException ex) {
-            LOGGER.debug("", ex);
-            throw new ExtractionException("Archive file was not found.", ex);
-        }
-        zis = new ZipInputStream(new BufferedInputStream(fis));
         ZipEntry entry;
-        try {
+        try (FileInputStream fis = new FileInputStream(archive);
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                ZipInputStream zis = new ZipInputStream(bis)) {
             while ((entry = zis.getNextEntry()) != null) {
                 if (entry.isDirectory()) {
                     final File d = new File(extractTo, entry.getName());
@@ -107,9 +99,7 @@ public final class ExtractionUtil {
                 } else {
                     final File file = new File(extractTo, entry.getName());
                     if (engine == null || engine.accept(file)) {
-                        FileOutputStream fos = null;
-                        try {
-                            fos = new FileOutputStream(file);
+                        try (FileOutputStream fos = new FileOutputStream(file)) {
                             IOUtils.copy(zis, fos);
                         } catch (FileNotFoundException ex) {
                             LOGGER.debug("", ex);
@@ -119,8 +109,6 @@ public final class ExtractionUtil {
                             LOGGER.debug("", ex);
                             final String msg = String.format("IO Exception while parsing file '%s'.", file.getName());
                             throw new ExtractionException(msg, ex);
-                        } finally {
-                            FileUtils.close(fos);
                         }
                     }
                 }
@@ -129,8 +117,6 @@ public final class ExtractionUtil {
             final String msg = String.format("Exception reading archive '%s'.", archive.getName());
             LOGGER.debug("", ex);
             throw new ExtractionException(msg, ex);
-        } finally {
-            FileUtils.close(zis);
         }
     }
 
@@ -142,31 +128,21 @@ public final class ExtractionUtil {
      * @param filter determines which files get extracted
      * @throws ExtractionException thrown if the archive is not found
      */
-    public static void extractFilesUsingFilter(File archive, File destination,
-            FilenameFilter filter) throws ExtractionException {
+    public static void extractFilesUsingFilter(File archive, File destination, FilenameFilter filter) throws ExtractionException {
         if (archive == null || destination == null) {
             return;
         }
 
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(archive);
+        try (FileInputStream fis = new FileInputStream(archive)) {
+            extractArchive(new ZipArchiveInputStream(new BufferedInputStream(
+                    fis)), destination, filter);
         } catch (FileNotFoundException ex) {
             LOGGER.debug("", ex);
             throw new ExtractionException("Archive file was not found.", ex);
-        }
-        try {
-            extractArchive(new ZipArchiveInputStream(new BufferedInputStream(
-                    fis)), destination, filter);
-        } catch (ArchiveExtractionException ex) {
+        } catch (IOException | ArchiveExtractionException ex) {
             LOGGER.warn("Exception extracting archive '{}'.", archive.getName());
             LOGGER.debug("", ex);
-        } finally {
-            try {
-                fis.close();
-            } catch (IOException ex) {
-                LOGGER.debug("", ex);
-            }
+            throw new ExtractionException("Unable to extract from archive", ex);
         }
     }
 
@@ -197,9 +173,7 @@ public final class ExtractionUtil {
                     extractFile(input, destination, filter, entry);
                 }
             }
-        } catch (IOException ex) {
-            throw new ArchiveExtractionException(ex);
-        } catch (Throwable ex) {
+        } catch (IOException | AnalysisException ex) {
             throw new ArchiveExtractionException(ex);
         } finally {
             FileUtils.close(input);
@@ -221,26 +195,19 @@ public final class ExtractionUtil {
             FilenameFilter filter, ArchiveEntry entry) throws ExtractionException {
         final File file = new File(destination, entry.getName());
         if (filter.accept(file.getParentFile(), file.getName())) {
-            LOGGER.debug("Extracting '{}'",
-                    file.getPath());
-            FileOutputStream fos = null;
-            try {
-                createParentFile(file);
-                fos = new FileOutputStream(file);
+            LOGGER.debug("Extracting '{}'", file.getPath());
+            createParentFile(file);
+
+            try (FileOutputStream fos = new FileOutputStream(file)) {
                 IOUtils.copy(input, fos);
             } catch (FileNotFoundException ex) {
                 LOGGER.debug("", ex);
-                final String msg = String.format("Unable to find file '%s'.",
-                        file.getName());
+                final String msg = String.format("Unable to find file '%s'.", file.getName());
                 throw new ExtractionException(msg, ex);
             } catch (IOException ex) {
                 LOGGER.debug("", ex);
-                final String msg = String
-                        .format("IO Exception while parsing file '%s'.",
-                                file.getName());
+                final String msg = String.format("IO Exception while parsing file '%s'.", file.getName());
                 throw new ExtractionException(msg, ex);
-            } finally {
-                FileUtils.close(fos);
             }
         }
     }
@@ -253,8 +220,7 @@ public final class ExtractionUtil {
      * @throws ExtractionException thrown if the parent paths could not be
      * created
      */
-    private static void createParentFile(final File file)
-            throws ExtractionException {
+    private static void createParentFile(final File file) throws ExtractionException {
         final File parent = file.getParentFile();
         if (!parent.isDirectory() && !parent.mkdirs()) {
             final String msg = String.format(
@@ -282,35 +248,11 @@ public final class ExtractionUtil {
         if (!file.renameTo(gzip)) {
             throw new IOException("Unable to rename '" + file.getPath() + "'");
         }
-        final File newfile = new File(originalPath);
-
-        final byte[] buffer = new byte[4096];
-
-        GZIPInputStream cin = null;
-        FileOutputStream out = null;
-        try {
-            cin = new GZIPInputStream(new FileInputStream(gzip));
-            out = new FileOutputStream(newfile);
-
-            int len;
-            while ((len = cin.read(buffer)) > 0) {
-                out.write(buffer, 0, len);
-            }
+        final File newFile = new File(originalPath);
+        try (GZIPInputStream cin = new GZIPInputStream(new FileInputStream(gzip));
+                FileOutputStream out = new FileOutputStream(newFile)) {
+            IOUtils.copy(cin, out);
         } finally {
-            if (cin != null) {
-                try {
-                    cin.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("ignore", ex);
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("ignore", ex);
-                }
-            }
             if (gzip.isFile() && !org.apache.commons.io.FileUtils.deleteQuietly(gzip)) {
                 LOGGER.debug("Failed to delete temporary file when extracting 'gz' {}", gzip.toString());
                 gzip.deleteOnExit();
