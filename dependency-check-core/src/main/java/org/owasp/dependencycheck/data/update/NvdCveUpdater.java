@@ -78,7 +78,13 @@ public class NvdCveUpdater implements CachedWebDataSource {
      */
     private ExecutorService downloadExecutorService = null;
 
+    /**
+     * Reference to the DAO.
+     */
     private CveDB cveDb = null;
+    /**
+     * The properties obtained from the database.
+     */
     private DatabaseProperties dbProperties = null;
 
     /**
@@ -448,8 +454,16 @@ public class NvdCveUpdater implements CachedWebDataSource {
      */
     private static class TimestampRetriever implements Callable<Long> {
 
+        /**
+         * The URL to obtain the timestamp from.
+         */
         private final String url;
 
+        /**
+         * Instantiates a new timestamp retriever object.
+         *
+         * @param url the URL to hit
+         */
         TimestampRetriever(String url) {
             this.url = url;
         }

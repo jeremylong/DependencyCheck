@@ -282,8 +282,8 @@ public class App {
                 exCol = ex;
             }
             final List<Dependency> dependencies = engine.getDependencies();
-            CveDB cve = CveDB.getInstance();
-            DatabaseProperties prop = cve.getDatabaseProperties();
+            final CveDB cve = CveDB.getInstance();
+            final DatabaseProperties prop = cve.getDatabaseProperties();
             final ReportGenerator report = new ReportGenerator(applicationName, dependencies, engine.getAnalyzers(), prop);
             try {
                 report.generateReports(reportDirectory, outputFormat);

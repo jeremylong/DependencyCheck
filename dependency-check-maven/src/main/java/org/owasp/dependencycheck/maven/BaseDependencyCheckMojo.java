@@ -17,13 +17,10 @@
  */
 package org.owasp.dependencycheck.maven;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Locale;
 import org.apache.maven.artifact.Artifact;
@@ -109,8 +106,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(readonly = true, required = true, property = "reactorProjects")
     private List<MavenProject> reactorProjects;
     /**
-     * The entry point towards a Maven version independent way of resolving artifacts (handles both Maven 3.0
-     * Sonatype and Maven 3.1+ eclipse Aether implementations).
+     * The entry point towards a Maven version independent way of resolving
+     * artifacts (handles both Maven 3.0 Sonatype and Maven 3.1+ eclipse Aether
+     * implementations).
      */
     @Component
     private ArtifactResolver artifactResolver;
@@ -118,13 +116,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * The Maven Session.
      */
-    @Parameter( defaultValue = "${session}", readonly = true, required = true )
+    @Parameter(defaultValue = "${session}", readonly = true, required = true)
     protected MavenSession session;
 
-   /**
+    /**
      * Remote repositories which will be searched for artifacts.
      */
-    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true )
+    @Parameter(defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true)
     private List<ArtifactRepository> remoteRepositories;
 
     /**
@@ -461,7 +459,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "externalReport")
     @Deprecated
     private String externalReport = null;
-    
+
     // </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Base Maven implementation">
     /**
@@ -531,6 +529,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     protected String getConnectionString() {
         return connectionString;
     }
+
     /**
      * Returns if the mojo should fail the build if an exception occurs.
      *
@@ -624,6 +623,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @param project the project being scanned
      * @param nodes the list of dependency nodes, generally obtained via the
      * DependencyGraphBuilder
+     * @param buildingRequest the Maven project building request
      * @return a collection of exceptions that may have occurred while resolving
      * and scanning the dependencies
      */
@@ -636,8 +636,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
             try {
                 final ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
-                final Artifact result = artifactResolver.resolveArtifact( buildingRequest, coordinate ).getArtifact();
-                if (result.isResolved() && result.getFile()!= null) {
+                final Artifact result = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();
+                if (result.isResolved() && result.getFile() != null) {
                     final List<Dependency> deps = engine.scan(result.getFile().getAbsoluteFile(),
                             project.getName() + ":" + dependencyNode.getArtifact().getScope());
                     if (deps != null) {
@@ -683,16 +683,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * @return Returns a new ProjectBuildingRequest populated from the current session and the current project remote
-     *         repositories, used to resolve artifacts.
+     * @return Returns a new ProjectBuildingRequest populated from the current
+     * session and the current project remote repositories, used to resolve
+     * artifacts.
      */
-    public ProjectBuildingRequest newResolveArtifactProjectBuildingRequest()
-    {
-        ProjectBuildingRequest buildingRequest =
-            new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
-
-        buildingRequest.setRemoteRepositories( remoteRepositories );
-
+    public ProjectBuildingRequest newResolveArtifactProjectBuildingRequest() {
+        final ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
+        buildingRequest.setRemoteRepositories(remoteRepositories);
         return buildingRequest;
     }
 
@@ -1060,8 +1057,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities: %n%s%n%n"
                         + "See the dependency-check report for more details.%n%n", ids.toString());
             } else {
-                msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater than '%.1f': %n%s%n%n"
-                        + "See the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
+                msg = String.format("%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater than '%.1f': "
+                        + "%n%s%n%nSee the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
             }
 
             throw new MojoFailureException(msg);
@@ -1136,5 +1133,4 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     //</editor-fold>
-
 }

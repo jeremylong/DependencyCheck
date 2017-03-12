@@ -47,7 +47,8 @@ public final class DBUtils {
      *
      * @param statement a prepared statement that just executed an insert
      * @return a primary key
-     * @throws DatabaseException thrown if there is an exception obtaining the key
+     * @throws DatabaseException thrown if there is an exception obtaining the
+     * key
      */
     public static int getGeneratedKey(PreparedStatement statement) throws DatabaseException {
         ResultSet rs = null;
@@ -72,27 +73,29 @@ public final class DBUtils {
      * @param statement a Statement object
      */
     public static void closeStatement(Statement statement) {
-        if (statement != null) {
-            try {
+        try {
+            if (statement != null && !statement.isClosed()) {
+
                 statement.close();
-            } catch (SQLException ex) {
-                LOGGER.trace(statement.toString(), ex);
             }
+        } catch (SQLException ex) {
+            LOGGER.trace(statement.toString(), ex);
         }
     }
 
     /**
-     * Closes the result set capturing and ignoring any SQLExceptions that occur.
+     * Closes the result set capturing and ignoring any SQLExceptions that
+     * occur.
      *
      * @param rs a ResultSet to close
      */
     public static void closeResultSet(ResultSet rs) {
-        if (rs != null) {
-            try {
+        try {
+            if (rs != null && !rs.isClosed()) {
                 rs.close();
-            } catch (SQLException ex) {
-                LOGGER.trace(rs.toString(), ex);
             }
+        } catch (SQLException ex) {
+            LOGGER.trace(rs.toString(), ex);
         }
     }
 }

@@ -111,7 +111,7 @@ public final class UrlStringUtils {
             final int pos = tmp.lastIndexOf('.');
             if (pos > 1) {
                 importantParts.add(tmp.substring(0, pos));
-            } else if (pos == 0 && tmp.length()>1) {
+            } else if (pos == 0 && tmp.length() > 1) {
                 importantParts.add(tmp.substring(1));
             } else {
                 importantParts.add(tmp);

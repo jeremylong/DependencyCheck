@@ -51,7 +51,8 @@ public class NvdCve20Handler extends DefaultHandler {
      */
     private static final String CURRENT_SCHEMA_VERSION = "2.0";
     /**
-     * a possible attribute value of the {@link AttributeValues#XML_LANG} attribute
+     * a possible attribute value of the {@link AttributeValues#XML_LANG}
+     * attribute
      */
     private static final String EN = "en";
     /**
@@ -97,7 +98,8 @@ public class NvdCve20Handler extends DefaultHandler {
     private CveDB cveDB;
 
     /**
-     * A list of CVE entries and associated VulnerableSoftware entries that contain previous entries.
+     * A list of CVE entries and associated VulnerableSoftware entries that
+     * contain previous entries.
      */
     private Map<String, List<VulnerableSoftware>> prevVersionVulnMap;
 
@@ -109,7 +111,7 @@ public class NvdCve20Handler extends DefaultHandler {
     public int getTotalNumberOfEntries() {
         return totalNumberOfEntries;
     }
-    
+
     /**
      * Get the value of totalNumberOfApplicationEntries.
      *
@@ -249,10 +251,12 @@ public class NvdCve20Handler extends DefaultHandler {
     public void setCveDB(CveDB db) {
         cveDB = db;
     }
+
     /**
      * Sets the prevVersionVulnMap.
      *
-     * @param map the map of vulnerable software with previous versions being vulnerable
+     * @param map the map of vulnerable software with previous versions being
+     * vulnerable
      */
     public void setPrevVersionVulnMap(Map<String, List<VulnerableSoftware>> map) {
         prevVersionVulnMap = map;
@@ -262,7 +266,8 @@ public class NvdCve20Handler extends DefaultHandler {
      * Saves a vulnerability to the CVE Database.
      *
      * @param vuln the vulnerability to store in the database
-     * @throws DatabaseException thrown if there is an error writing to the database
+     * @throws DatabaseException thrown if there is an error writing to the
+     * database
      * @throws CorruptIndexException is thrown if the CPE Index is corrupt
      * @throws IOException thrown if there is an IOException with the CPE Index
      */
@@ -281,7 +286,8 @@ public class NvdCve20Handler extends DefaultHandler {
 
     // <editor-fold defaultstate="collapsed" desc="The Element Class that maintains state information about the current node">
     /**
-     * A simple class to maintain information about the current element while parsing the NVD CVE XML.
+     * A simple class to maintain information about the current element while
+     * parsing the NVD CVE XML.
      */
     protected static class Element {
 
@@ -506,7 +512,8 @@ public class NvdCve20Handler extends DefaultHandler {
     // </editor-fold>
 
     /**
-     * A simple class to maintain information about the attribute values encountered while parsing the NVD CVE XML.
+     * A simple class to maintain information about the attribute values
+     * encountered while parsing the NVD CVE XML.
      */
     protected static class AttributeValues {
 

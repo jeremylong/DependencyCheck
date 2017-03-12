@@ -52,7 +52,8 @@ import org.xml.sax.SAXException;
  * @author Jeremy Long
  */
 public class HintAnalyzer extends AbstractAnalyzer {
- /**
+
+    /**
      * The Logger for use throughout the class
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(HintAnalyzer.class);
@@ -121,7 +122,7 @@ public class HintAnalyzer extends AbstractAnalyzer {
         }
     }
     //</editor-fold>
-   
+
     /**
      * The HintAnalyzer uses knowledge about a dependency to add additional
      * information to help in identification of identifiers or vulnerabilities.

@@ -25,8 +25,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
@@ -248,7 +256,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     protected boolean analyzePOM(Dependency dependency, List<ClassNameInformation> classes, Engine engine) throws AnalysisException {
         try (JarFile jar = new JarFile(dependency.getActualFilePath())) {
-            List<String> pomEntries = retrievePomListing(jar);
+            final List<String> pomEntries = retrievePomListing(jar);
             if (pomEntries != null && pomEntries.size() <= 1) {
                 String path;
                 File pomFile;

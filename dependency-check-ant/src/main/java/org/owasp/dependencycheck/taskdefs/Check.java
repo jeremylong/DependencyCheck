@@ -257,7 +257,7 @@ public class Check extends Update {
      *
      * @param r the reference to a path, fileset, dirset or filelist.
      */
-    public void setRefId(Reference r) {
+    public synchronized void setRefId(Reference r) {
         if (path != null) {
             throw new BuildException("Nested elements are not allowed when using the refId attribute.");
         }
@@ -923,7 +923,7 @@ public class Check extends Update {
                     log(ex.getMessage(), Project.MSG_ERR);
                 }
             } else {
-                for (Resource resource : path) {
+                for (Resource resource : getPath()) {
                     final FileProvider provider = resource.as(FileProvider.class);
                     if (provider != null) {
                         final File file = provider.getFile();
@@ -987,7 +987,7 @@ public class Check extends Update {
      * @throws BuildException if the task was not configured correctly.
      */
     private void validateConfiguration() throws BuildException {
-        if (path == null) {
+        if (getPath() == null) {
             throw new BuildException("No project dependencies have been defined to analyze.");
         }
         if (failBuildOnCVSS < 0 || failBuildOnCVSS > 11) {

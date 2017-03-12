@@ -63,7 +63,7 @@ public final class CveDB {
     /**
      * Singleton instance of the CveDB.
      */
-    private static CveDB INSTANCE = null;
+    private static CveDB instance = null;
     /**
      * The logger.
      */
@@ -91,27 +91,93 @@ public final class CveDB {
      * statement bundles "dbStatements*.properties".
      */
     enum PreparedStatementCveDb {
+        /**
+         * Key for SQL Statement.
+         */
         CLEANUP_ORPHANS,
+        /**
+         * Key for SQL Statement.
+         */
         COUNT_CPE,
+        /**
+         * Key for SQL Statement.
+         */
         DELETE_REFERENCE,
+        /**
+         * Key for SQL Statement.
+         */
         DELETE_SOFTWARE,
+        /**
+         * Key for SQL Statement.
+         */
         DELETE_VULNERABILITY,
+        /**
+         * Key for SQL Statement.
+         */
         INSERT_CPE,
+        /**
+         * Key for SQL Statement.
+         */
         INSERT_PROPERTY,
+        /**
+         * Key for SQL Statement.
+         */
         INSERT_REFERENCE,
+        /**
+         * Key for SQL Statement.
+         */
         INSERT_SOFTWARE,
+        /**
+         * Key for SQL Statement.
+         */
         INSERT_VULNERABILITY,
+        /**
+         * Key for SQL Statement.
+         */
         MERGE_PROPERTY,
+        /**
+         * Key for SQL Statement.
+         */
         SELECT_CPE_ENTRIES,
+        /**
+         * Key for SQL Statement.
+         */
         SELECT_CPE_ID,
+        /**
+         * Key for SQL Statement.
+         */
         SELECT_CVE_FROM_SOFTWARE,
+        /**
+         * Key for SQL Statement.
+         */
         SELECT_PROPERTIES,
+        /**
+         * Key for SQL Statement.
+         */
         SELECT_REFERENCES,
+        /**
+         * Key for SQL Statement.
+         */
         SELECT_SOFTWARE,
+        /**
+         * Key for SQL Statement.
+         */
         SELECT_VENDOR_PRODUCT_LIST,
+        /**
+         * Key for SQL Statement.
+         */
         SELECT_VULNERABILITY,
+        /**
+         * Key for SQL Statement.
+         */
         SELECT_VULNERABILITY_ID,
+        /**
+         * Key for SQL Statement.
+         */
         UPDATE_PROPERTY,
+        /**
+         * Key for SQL Statement.
+         */
         UPDATE_VULNERABILITY
     }
 
@@ -121,11 +187,11 @@ public final class CveDB {
      * @return the CveDB singleton
      * @throws DatabaseException thrown if there is a database error
      */
-    public synchronized static CveDB getInstance() throws DatabaseException {
-        if (INSTANCE == null) {
-            INSTANCE = new CveDB();
+    public static synchronized CveDB getInstance() throws DatabaseException {
+        if (instance == null) {
+            instance = new CveDB();
         }
-        return INSTANCE;
+        return instance;
     }
 
     /**
@@ -150,24 +216,15 @@ public final class CveDB {
      *
      * @return the product name of the database if successful, {@code null} else
      */
-    private String determineDatabaseProductName() {
+    private synchronized String determineDatabaseProductName() {
         try {
-            final String databaseProductName = getConnection().getMetaData().getDatabaseProductName();
+            final String databaseProductName = connection.getMetaData().getDatabaseProductName();
             LOGGER.debug("Database product: {}", databaseProductName);
             return databaseProductName;
         } catch (SQLException se) {
             LOGGER.warn("Problem determining database product!", se);
             return null;
         }
-    }
-
-    /**
-     * Returns the database connection.
-     *
-     * @return the database connection
-     */
-    private Connection getConnection() {
-        return connection;
     }
 
     /**
@@ -191,7 +248,7 @@ public final class CveDB {
         if (isOpen()) {
             closeStatements();
             try {
-                getConnection().close();
+                connection.close();
             } catch (SQLException ex) {
                 LOGGER.error("There was an error attempting to close the CveDB, see the log for more details.");
                 LOGGER.debug("", ex);
@@ -200,7 +257,7 @@ public final class CveDB {
                 LOGGER.debug("", ex);
             }
             connection = null;
-            INSTANCE = null;
+            instance = null;
         }
     }
 
@@ -210,7 +267,7 @@ public final class CveDB {
      * @return whether the database connection is open or closed
      */
     private boolean isOpen() {
-        return getConnection() != null;
+        return connection != null;
     }
 
     /**
@@ -229,9 +286,9 @@ public final class CveDB {
             final PreparedStatement preparedStatement;
             try {
                 if (key == INSERT_VULNERABILITY || key == INSERT_CPE) {
-                    preparedStatement = getConnection().prepareStatement(statementString, new String[]{"id"});
+                    preparedStatement = connection.prepareStatement(statementString, new String[]{"id"});
                 } else {
-                    preparedStatement = getConnection().prepareStatement(statementString);
+                    preparedStatement = connection.prepareStatement(statementString);
                 }
             } catch (SQLException exception) {
                 throw new DatabaseException(exception);
@@ -272,7 +329,7 @@ public final class CveDB {
     public synchronized void commit() throws SQLException {
         //temporary remove this as autocommit is on.
         //if (isOpen()) {
-        //    getConnection().commit();
+        //    connection.commit();
         //}
     }
 
@@ -625,6 +682,7 @@ public final class CveDB {
                 insertReference.setString(4, r.getSource());
                 insertReference.execute();
             }
+
             final PreparedStatement insertSoftware = getPreparedStatement(INSERT_SOFTWARE);
             for (VulnerableSoftware s : vuln.getVulnerableSoftware()) {
                 int cpeProductId = 0;
@@ -671,6 +729,7 @@ public final class CveDB {
                         throw ex;
                     }
                 }
+
             }
         } catch (SQLException ex) {
             final String msg = String.format("Error updating '%s'", vuln.getName());
@@ -856,10 +915,11 @@ public final class CveDB {
     public synchronized void deleteUnusedCpe() {
         PreparedStatement ps = null;
         try {
-            ps = getConnection().prepareStatement(statementBundle.getString("DELETE_UNUSED_DICT_CPE"));
+            ps = connection.prepareStatement(statementBundle.getString("DELETE_UNUSED_DICT_CPE"));
             ps.executeUpdate();
         } catch (SQLException ex) {
             LOGGER.error("Unable to delete CPE dictionary entries", ex);
+        } finally {
             DBUtils.closeStatement(ps);
         }
     }
@@ -877,13 +937,14 @@ public final class CveDB {
     public synchronized void addCpe(String cpe, String vendor, String product) {
         PreparedStatement ps = null;
         try {
-            ps = getConnection().prepareStatement(statementBundle.getString("ADD_DICT_CPE"));
+            ps = connection.prepareStatement(statementBundle.getString("ADD_DICT_CPE"));
             ps.setString(1, cpe);
             ps.setString(2, vendor);
             ps.setString(3, product);
             ps.executeUpdate();
         } catch (SQLException ex) {
             LOGGER.error("Unable to add CPE dictionary entry", ex);
+        } finally {
             DBUtils.closeStatement(ps);
         }
     }

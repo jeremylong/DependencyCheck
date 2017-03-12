@@ -144,7 +144,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
         LOGGER.debug("Initializing Nexus Analyzer");
         LOGGER.debug("Nexus Analyzer enabled: {}", isEnabled());
         if (isEnabled()) {
-            boolean useProxy = useProxy();
+            final boolean useProxy = useProxy();
             final String searchUrl = Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL);
             LOGGER.debug("Nexus Analyzer URL: {}", searchUrl);
             try {

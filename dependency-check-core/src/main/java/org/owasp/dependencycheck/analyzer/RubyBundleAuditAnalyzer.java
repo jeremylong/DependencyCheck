@@ -180,9 +180,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             final String msg = String.format("Unexpected exit code from bundle-audit process. Disabling %s: %s", ANALYZER_NAME, exitValue);
             throw new InitializationException(msg);
         } else {
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"))) {
                 if (!reader.ready()) {
                     LOGGER.warn("Bundle-audit error stream unexpectedly not ready. Disabling " + ANALYZER_NAME);
                     setEnabled(false);
@@ -201,14 +199,6 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             } catch (IOException ex) {
                 setEnabled(false);
                 throw new InitializationException("Unable to read bundle-audit output.", ex);
-            } finally {
-                if (null != reader) {
-                    try {
-                        reader.close();
-                    } catch (IOException ex) {
-                        LOGGER.debug("Error closing reader", ex);
-                    }
-                }
             }
         }
 
@@ -296,35 +286,19 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             final String msg = String.format("Unexpected exit code from bundle-audit process; exit code: %s", exitValue);
             throw new AnalysisException(msg);
         }
-        BufferedReader rdr = null;
-        BufferedReader errReader = null;
         try {
-            errReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
-            while (errReader.ready()) {
-                final String error = errReader.readLine();
-                LOGGER.warn(error);
+            try (BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"))) {
+                while (errReader.ready()) {
+                    final String error = errReader.readLine();
+                    LOGGER.warn(error);
+                }
             }
-            rdr = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
-            processBundlerAuditOutput(dependency, engine, rdr);
+            try (BufferedReader rdr = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"))) {
+                processBundlerAuditOutput(dependency, engine, rdr);
+            }
         } catch (IOException ioe) {
             LOGGER.warn("bundle-audit failure", ioe);
-        } finally {
-            if (errReader != null) {
-                try {
-                    errReader.close();
-                } catch (IOException ioe) {
-                    LOGGER.warn("bundle-audit close failure", ioe);
-                }
-            }
-            if (null != rdr) {
-                try {
-                    rdr.close();
-                } catch (IOException ioe) {
-                    LOGGER.warn("bundle-audit close failure", ioe);
-                }
-            }
         }
-
     }
 
     /**

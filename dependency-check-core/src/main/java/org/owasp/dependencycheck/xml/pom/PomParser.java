@@ -80,10 +80,10 @@ public class PomParser {
             final SAXParser saxParser = XmlUtils.buildSecureSaxParser();
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setContentHandler(handler);
-            BOMInputStream bomStream = new BOMInputStream(inputStream);
-            ByteOrderMark bom = bomStream.getBOM();
-            String defaultEncoding = "UTF-8";
-            String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();
+            final BOMInputStream bomStream = new BOMInputStream(inputStream);
+            final ByteOrderMark bom = bomStream.getBOM();
+            final String defaultEncoding = "UTF-8";
+            final String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();
             final Reader reader = new InputStreamReader(bomStream, charsetName);
             final InputSource in = new InputSource(reader);
             xmlReader.parse(in);

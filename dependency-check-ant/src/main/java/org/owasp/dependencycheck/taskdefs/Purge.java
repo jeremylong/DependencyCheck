@@ -144,7 +144,6 @@ public class Purge extends Task {
      */
     protected void populateSettings() throws BuildException {
         Settings.initialize();
-        
         try (InputStream taskProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {
             Settings.mergeProperties(taskProperties);
         } catch (IOException ex) {

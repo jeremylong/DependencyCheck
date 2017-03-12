@@ -19,7 +19,6 @@ package org.owasp.dependencycheck.data.update.nvd;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;

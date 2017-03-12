@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
@@ -132,7 +131,7 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
         try {
             final NuspecParser parser = new XPathNuspecParser();
             NugetPackage np = null;
-            try (FileInputStream fis =new FileInputStream(dependency.getActualFilePath())) {
+            try (FileInputStream fis = new FileInputStream(dependency.getActualFilePath())) {
                 np = parser.parse(fis);
             } catch (NuspecParseException | FileNotFoundException ex) {
                 throw new AnalysisException(ex);
