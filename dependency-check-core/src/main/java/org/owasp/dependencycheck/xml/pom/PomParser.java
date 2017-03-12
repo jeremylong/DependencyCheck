@@ -58,21 +58,11 @@ public class PomParser {
      * @throws PomParseException thrown if the xml file cannot be parsed
      */
     public Model parse(File file) throws PomParseException {
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(file);
+        try (FileInputStream fis = new FileInputStream(file)) {
             return parse(fis);
         } catch (IOException ex) {
             LOGGER.debug("", ex);
             throw new PomParseException(ex);
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException ex) {
-                    LOGGER.debug("Unable to close stream", ex);
-                }
-            }
         }
     }
 

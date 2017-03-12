@@ -535,14 +535,12 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static void extractAcceptedFile(ArchiveInputStream input, File file) throws AnalysisException {
         LOGGER.debug("Extracting '{}'", file.getPath());
-        FileOutputStream fos = null;
-        try {
-            final File parent = file.getParentFile();
-            if (!parent.isDirectory() && !parent.mkdirs()) {
-                final String msg = String.format("Unable to build directory '%s'.", parent.getAbsolutePath());
-                throw new AnalysisException(msg);
-            }
-            fos = new FileOutputStream(file);
+        final File parent = file.getParentFile();
+        if (!parent.isDirectory() && !parent.mkdirs()) {
+            final String msg = String.format("Unable to build directory '%s'.", parent.getAbsolutePath());
+            throw new AnalysisException(msg);
+        }
+        try (FileOutputStream fos = new FileOutputStream(file)) {
             IOUtils.copy(input, fos);
         } catch (FileNotFoundException ex) {
             LOGGER.debug("", ex);
@@ -552,8 +550,6 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.debug("", ex);
             final String msg = String.format("IO Exception while parsing file '%s'.", file.getName());
             throw new AnalysisException(msg, ex);
-        } finally {
-            FileUtils.close(fos);
         }
     }
 
@@ -567,15 +563,11 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private void decompressFile(CompressorInputStream inputStream, File outputFile) throws ArchiveExtractionException {
         LOGGER.debug("Decompressing '{}'", outputFile.getPath());
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(outputFile);
+        try (FileOutputStream out = new FileOutputStream(outputFile)) {
             IOUtils.copy(inputStream, out);
         } catch (IOException ex) {
             LOGGER.debug("", ex);
             throw new ArchiveExtractionException(ex);
-        } finally {
-            FileUtils.close(out);
         }
     }
 
@@ -609,7 +601,6 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         } finally {
             ZipFile.closeQuietly(zip);
         }
-
         return isJar;
     }
 }

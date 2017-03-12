@@ -39,12 +39,10 @@ public class ExpectedObjectInputStreamTest {
      */
     @Test
     public void testResolveClass() {
-        ObjectOutputStream out = null;
-        try {
-            List<SimplePojo> data = new ArrayList<>();
-            data.add(new SimplePojo());
-            ByteArrayOutputStream mem = new ByteArrayOutputStream();
-            out = new ObjectOutputStream(new BufferedOutputStream(mem));
+        List<SimplePojo> data = new ArrayList<>();
+        data.add(new SimplePojo());
+        try (ByteArrayOutputStream mem = new ByteArrayOutputStream();
+                ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(mem))) {
             out.writeObject(data);
             out.flush();
             byte[] buf = mem.toByteArray();
@@ -54,14 +52,6 @@ public class ExpectedObjectInputStreamTest {
             instance.readObject();
         } catch (IOException | ClassNotFoundException ex) {
             fail(ex.getMessage());
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
         }
     }
 

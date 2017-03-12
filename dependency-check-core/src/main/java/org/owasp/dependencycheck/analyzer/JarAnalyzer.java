@@ -322,9 +322,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         final String propPath = path.substring(0, path.length() - 7) + "pom.properies";
         final ZipEntry propEntry = jar.getEntry(propPath);
         if (propEntry != null) {
-            Reader reader = null;
-            try {
-                reader = new InputStreamReader(jar.getInputStream(propEntry), "UTF-8");
+            try (Reader reader = new InputStreamReader(jar.getInputStream(propEntry), "UTF-8")) {
                 pomProperties = new Properties();
                 pomProperties.load(reader);
                 LOGGER.debug("Read pom.properties: {}", propPath);
@@ -332,14 +330,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.trace("UTF-8 is not supported", ex);
             } catch (IOException ex) {
                 LOGGER.trace("Unable to read the POM properties", ex);
-            } finally {
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException ex) {
-                        LOGGER.trace("close error", ex);
-                    }
-                }
             }
         }
         return pomProperties;
@@ -377,24 +367,18 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * the file
      */
     private File extractPom(String path, JarFile jar) throws AnalysisException {
-        InputStream input = null;
-        FileOutputStream fos = null;
         final File tmpDir = getNextTempDirectory();
         final File file = new File(tmpDir, "pom.xml");
-        try {
-            final ZipEntry entry = jar.getEntry(path);
-            if (entry == null) {
-                throw new AnalysisException(String.format("Pom (%s)does not exist in %s", path, jar.getName()));
-            }
-            input = jar.getInputStream(entry);
-            fos = new FileOutputStream(file);
+        final ZipEntry entry = jar.getEntry(path);
+        if (entry == null) {
+            throw new AnalysisException(String.format("Pom (%s) does not exist in %s", path, jar.getName()));
+        }
+        try (InputStream input = jar.getInputStream(entry);
+                FileOutputStream fos = new FileOutputStream(file)) {
             IOUtils.copy(input, fos);
         } catch (IOException ex) {
             LOGGER.warn("An error occurred reading '{}' from '{}'.", path, jar.getName());
             LOGGER.error("", ex);
-        } finally {
-            FileUtils.close(fos);
-            FileUtils.close(input);
         }
         return file;
     }
@@ -908,9 +892,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private List<ClassNameInformation> collectClassNames(Dependency dependency) {
         final List<ClassNameInformation> classNames = new ArrayList<>();
-        JarFile jar = null;
-        try {
-            jar = new JarFile(dependency.getActualFilePath());
+        try (JarFile jar = new JarFile(dependency.getActualFilePath())) {
             final Enumeration<JarEntry> entries = jar.entries();
             while (entries.hasMoreElements()) {
                 final JarEntry entry = entries.nextElement();
@@ -924,14 +906,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (IOException ex) {
             LOGGER.warn("Unable to open jar file '{}'.", dependency.getFileName());
             LOGGER.debug("", ex);
-        } finally {
-            if (jar != null) {
-                try {
-                    jar.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("", ex);
-                }
-            }
         }
         return classNames;
     }

@@ -596,28 +596,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Returns the correct output directory depending on if a site is being
-     * executed or not.
-     *
-     * @param current the Maven project to get the output directory from
-     * @return the directory to write the report(s)
-     */
-    protected File getDataFile(MavenProject current) {
-        if (getLog().isDebugEnabled()) {
-            getLog().debug(String.format("Getting data file for %s using key '%s'", current.getName(), getDataFileContextKey()));
-        }
-        final Object obj = current.getContextValue(getDataFileContextKey());
-        if (obj != null) {
-            if (obj instanceof String) {
-             return new File((String) obj);
-            }
-        } else if (getLog().isDebugEnabled()) {
-            getLog().debug("Context value not found");
-        }
-        return null;
-    }
-
-    /**
      * Scans the project's artifacts and adds them to the engine's dependency
      * list.
      *
@@ -1157,60 +1135,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         return "dependency-output-dir-" + dataFileName;
     }
 
-    /**
-     * Writes the scan data to disk. This is used to serialize the scan data
-     * between the "check" and "aggregate" phase.
-     *
-     * @param mp the Maven project for which the data file was created
-     * @param writeTo the directory to write the data file
-     * @param dependencies the list of dependencies to serialize
-     */
-    protected void writeDataFile(MavenProject mp, File writeTo, List<Dependency> dependencies) {
-        File file;
-        //check to see if this was already written out
-        if (mp.getContextValue(this.getDataFileContextKey()) == null) {
-            if (writeTo == null) {
-                file = new File(mp.getBuild().getDirectory());
-                file = new File(file, dataFileName);
-            } else {
-                file = new File(writeTo, dataFileName);
-            }
-            final File parent = file.getParentFile();
-            if (!parent.isDirectory() && !parent.mkdirs()) {
-                getLog().error(String.format("Directory '%s' does not exist and cannot be created; unable to write data file.",
-                        parent.getAbsolutePath()));
-            }
-
-            ObjectOutputStream out = null;
-            try {
-                if (dependencies != null) {
-                    out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-                    out.writeObject(dependencies);
-                }
-                if (getLog().isDebugEnabled()) {
-                    getLog().debug(String.format("Serialized data file written to '%s' for %s, referenced by key %s",
-                            file.getAbsolutePath(), mp.getName(), this.getDataFileContextKey()));
-                }
-                mp.setContextValue(this.getDataFileContextKey(), file.getAbsolutePath());
-            } catch (IOException ex) {
-                getLog().warn("Unable to create data file used for report aggregation; "
-                        + "if report aggregation is being used the results may be incomplete.");
-                if (getLog().isDebugEnabled()) {
-                    getLog().debug(ex.getMessage(), ex);
-                }
-            } finally {
-                if (out != null) {
-                    try {
-                        out.close();
-                    } catch (IOException ex) {
-                        if (getLog().isDebugEnabled()) {
-                            getLog().debug("ignore", ex);
-                        }
-                    }
-                }
-            }
-        }
-    }
     //</editor-fold>
 
 }

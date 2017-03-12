@@ -54,12 +54,10 @@ public final class CweDB {
      * @return a HashMap of CWE data
      */
     private static Map<String, String> loadData() {
-        ObjectInputStream oin = null;
-        try {
-            final String filePath = "data/cwe.hashmap.serialized";
-            final InputStream input = CweDB.class.getClassLoader().getResourceAsStream(filePath);
-            oin = new ObjectInputStream(input);
-            @SuppressWarnings("unchecked")
+        final String filePath = "data/cwe.hashmap.serialized";
+        try (InputStream input = CweDB.class.getClassLoader().getResourceAsStream(filePath);
+                ObjectInputStream oin = new ObjectInputStream(input)) {
+
             final Map<String, String> ret = (HashMap<String, String>) oin.readObject();
             return ret;
         } catch (ClassNotFoundException ex) {
@@ -68,14 +66,6 @@ public final class CweDB {
         } catch (IOException ex) {
             LOGGER.warn("Unable to load CWE data due to an IO Error. This should not be an issue.");
             LOGGER.debug("", ex);
-        } finally {
-            if (oin != null) {
-                try {
-                    oin.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("", ex);
-                }
-            }
         }
         return null;
     }

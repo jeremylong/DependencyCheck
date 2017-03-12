@@ -433,10 +433,8 @@ public final class Settings {
      * @param propertiesFilePath the path to the base properties file to load
      */
     private Settings(String propertiesFilePath) {
-        InputStream in = null;
         props = new Properties();
-        try {
-            in = this.getClass().getClassLoader().getResourceAsStream(propertiesFilePath);
+        try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(propertiesFilePath)) {
             props.load(in);
         } catch (NullPointerException ex) {
             LOGGER.error("Did not find settings file '{}'.", propertiesFilePath);
@@ -444,14 +442,6 @@ public final class Settings {
         } catch (IOException ex) {
             LOGGER.error("Unable to load settings from '{}'.", propertiesFilePath);
             LOGGER.debug("", ex);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("", ex);
-                }
-            }
         }
         logProperties("Properties loaded", props);
     }
@@ -644,18 +634,8 @@ public final class Settings {
      * the properties
      */
     public static void mergeProperties(File filePath) throws FileNotFoundException, IOException {
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(filePath);
+        try (FileInputStream fis = new FileInputStream(filePath)) {
             mergeProperties(fis);
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("close error", ex);
-                }
-            }
         }
     }
 
@@ -672,18 +652,8 @@ public final class Settings {
      * the properties
      */
     public static void mergeProperties(String filePath) throws FileNotFoundException, IOException {
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(filePath);
+        try (FileInputStream fis = new FileInputStream(filePath)) {
             mergeProperties(fis);
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("close error", ex);
-                }
-            }
         }
     }
 
@@ -977,6 +947,7 @@ public final class Settings {
         if (path != null && (path.exists() || path.mkdirs())) {
             return path;
         }
-        throw new IOException(String.format("Unable to create the data directory '%s'", path.getAbsolutePath()));
+        throw new IOException(String.format("Unable to create the data directory '%s'",
+                (path == null) ? "unknown" : path.getAbsolutePath()));
     }
 }

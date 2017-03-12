@@ -178,7 +178,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             throw new AnalysisException("Error initializing the assembly analyzer", pce);
         } catch (IOException | XPathExpressionException ioe) {
             throw new AnalysisException(ioe);
-        }catch (SAXException saxe) {
+        } catch (SAXException saxe) {
             LOGGER.error("----------------------------------------------------");
             LOGGER.error("Failed to read the Assembly Analyzer results. "
                     + "On some systems mono-runtime and mono-devel need to be installed.");
@@ -186,7 +186,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             throw new AnalysisException("Couldn't parse Assembly Analyzer results (GrokAssembly)", saxe);
         }
         // This shouldn't happen
-        
+
     }
 
     /**
@@ -198,46 +198,27 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void initializeFileTypeAnalyzer() throws InitializationException {
         final File tempFile;
+        final String cfg;
         try {
             tempFile = File.createTempFile("GKA", ".exe", Settings.getTempDirectory());
+            cfg = tempFile.getPath() + ".config";
         } catch (IOException ex) {
             setEnabled(false);
             throw new InitializationException("Unable to create temporary file for the assembly analyzer", ex);
         }
-        FileOutputStream fos = null;
-        InputStream is = null;
-        try {
-            fos = new FileOutputStream(tempFile);
-            is = AssemblyAnalyzer.class.getClassLoader().getResourceAsStream("GrokAssembly.exe");
+        try (FileOutputStream fos = new FileOutputStream(tempFile);
+                InputStream is = AssemblyAnalyzer.class.getClassLoader().getResourceAsStream("GrokAssembly.exe");
+                FileOutputStream fosCfg = new FileOutputStream(cfg);
+                InputStream isCfg = AssemblyAnalyzer.class.getClassLoader().getResourceAsStream("GrokAssembly.exe.config")) {
             IOUtils.copy(is, fos);
-
             grokAssemblyExe = tempFile;
             LOGGER.debug("Extracted GrokAssembly.exe to {}", grokAssemblyExe.getPath());
-
-            String cfg = grokAssemblyExe.getPath() + ".config";
-            fos = new FileOutputStream(cfg);
-            is = AssemblyAnalyzer.class.getClassLoader().getResourceAsStream("GrokAssembly.exe.config");
-            IOUtils.copy(is, fos);
+            IOUtils.copy(isCfg, fosCfg);
             LOGGER.debug("Extracted GrokAssembly.exe.config to {}", cfg);
         } catch (IOException ioe) {
             this.setEnabled(false);
             LOGGER.warn("Could not extract GrokAssembly.exe: {}", ioe.getMessage());
             throw new InitializationException("Could not extract GrokAssembly.exe", ioe);
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (Throwable e) {
-                    LOGGER.debug("Error closing output stream");
-                }
-            }
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (Throwable e) {
-                    LOGGER.debug("Error closing input stream");
-                }
-            }
         }
 
         // Now, need to see if GrokAssembly actually runs from this location.
