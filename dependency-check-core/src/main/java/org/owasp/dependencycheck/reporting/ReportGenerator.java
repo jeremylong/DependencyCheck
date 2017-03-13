@@ -126,6 +126,28 @@ public class ReportGenerator {
     }
 
     /**
+     * Constructs a new ReportGenerator.
+     *
+     * @param applicationName the application name being analyzed
+     * @param applicationVersion the application version being analyzed
+     * @param artifactID the application version being analyzed
+     * @param applicationVersion the application version being analyzed
+     * @param dependencies the list of dependencies
+     * @param analyzers the list of analyzers used
+     * @param properties the database properties (containing timestamps of the
+     * NVD CVE data)
+     */
+
+    public ReportGenerator(String applicationName,String applicationVersion,String artifactID,String groupID, List<Dependency> dependencies, List<Analyzer> analyzers, DatabaseProperties properties) {
+
+        this(applicationName,dependencies,analyzers,properties);
+        context.put("applicationVersion",applicationVersion);
+        context.put("artifactID",artifactID);
+        context.put("groupID",groupID);
+    }
+
+
+    /**
      * Creates a new Velocity Engine.
      *
      * @return a velocity engine
