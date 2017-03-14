@@ -9,6 +9,11 @@ dependencyCheckPurge                                | Deletes the local copy of 
 
 Configuration: dependencyCheckPurge
 ====================
+The following properties can be configured for the dependencyCheckPurge task:
+
+Property             | Description                        | Default Value
+---------------------|------------------------------------|------------------
+failOnError          | Fails the build if an error occurs during the dependency-check analysis.                                           | true
 
 #### Example
 ```groovy
