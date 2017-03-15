@@ -30,6 +30,8 @@ import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.utils.Settings;
 
 import static org.junit.Assert.assertTrue;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 
 
 /**
@@ -48,6 +50,7 @@ public class DependencyCheckTaskTest {
     public void setUp() throws Exception {
         Settings.initialize();
         BaseDBTestCase.ensureDBExists();
+        CveDB.getInstance().openDatabase();
         final String buildFile = this.getClass().getClassLoader().getResource("build.xml").getPath();
         buildFileRule.configureProject(buildFile);
     }
@@ -57,6 +60,10 @@ public class DependencyCheckTaskTest {
         //no cleanup...
         //executeTarget("cleanup");
         Settings.cleanup(true);
+        try {
+            CveDB.getInstance().closeDatabase();
+        } catch (DatabaseException ex) {
+        }
     }
 
     /**
@@ -73,7 +80,6 @@ public class DependencyCheckTaskTest {
         buildFileRule.executeTarget("test.fileset");
 
         assertTrue("DependencyCheck report was not generated", report.exists());
-
     }
 
     /**

@@ -75,7 +75,7 @@ public final class CveDB {
     /**
      * The bundle of statements used when accessing the database.
      */
-    private final ResourceBundle statementBundle;
+    private ResourceBundle statementBundle;
     /**
      * Database properties object containing the 'properties' from the database
      * table.
@@ -84,7 +84,7 @@ public final class CveDB {
     /**
      * The prepared statements.
      */
-    private final EnumMap<PreparedStatementCveDb, PreparedStatement> preparedStatements;
+    private EnumMap<PreparedStatementCveDb, PreparedStatement> preparedStatements;
 
     /**
      * The enum value names must match the keys of the statements in the
@@ -203,12 +203,6 @@ public final class CveDB {
      */
     private CveDB() throws DatabaseException {
         openDatabase();
-        final String databaseProductName = determineDatabaseProductName();
-        statementBundle = databaseProductName != null
-                ? ResourceBundle.getBundle("data/dbStatements", new Locale(databaseProductName))
-                : ResourceBundle.getBundle("data/dbStatements");
-        preparedStatements = prepareStatements();
-        databaseProperties = new DatabaseProperties(this);
     }
 
     /**
@@ -237,6 +231,12 @@ public final class CveDB {
     public synchronized void openDatabase() throws DatabaseException {
         if (!isOpen()) {
             connection = ConnectionFactory.getConnection();
+            final String databaseProductName = determineDatabaseProductName();
+            statementBundle = databaseProductName != null
+                    ? ResourceBundle.getBundle("data/dbStatements", new Locale(databaseProductName))
+                    : ResourceBundle.getBundle("data/dbStatements");
+            preparedStatements = prepareStatements();
+            databaseProperties = new DatabaseProperties(this);
         }
     }
 
@@ -257,7 +257,8 @@ public final class CveDB {
                 LOGGER.debug("", ex);
             }
             connection = null;
-            instance = null;
+            preparedStatements = null;
+            databaseProperties = null;
         }
     }
 
@@ -266,7 +267,7 @@ public final class CveDB {
      *
      * @return whether the database connection is open or closed
      */
-    private boolean isOpen() {
+    private synchronized boolean isOpen() {
         return connection != null;
     }
 
@@ -277,7 +278,7 @@ public final class CveDB {
      * @throws DatabaseException thrown if there is an error preparing the
      * statements
      */
-    private EnumMap<PreparedStatementCveDb, PreparedStatement> prepareStatements()
+    private synchronized EnumMap<PreparedStatementCveDb, PreparedStatement> prepareStatements()
             throws DatabaseException {
 
         final EnumMap<PreparedStatementCveDb, PreparedStatement> result = new EnumMap<>(PreparedStatementCveDb.class);
@@ -301,7 +302,7 @@ public final class CveDB {
     /**
      * Closes all prepared statements.
      */
-    private void closeStatements() {
+    private synchronized void closeStatements() {
         for (PreparedStatement preparedStatement : preparedStatements.values()) {
             DBUtils.closeStatement(preparedStatement);
         }
@@ -315,7 +316,7 @@ public final class CveDB {
      * @return the prepared statement
      * @throws SQLException thrown if a SQL Exception occurs
      */
-    private PreparedStatement getPreparedStatement(PreparedStatementCveDb key) throws SQLException {
+    private synchronized PreparedStatement getPreparedStatement(PreparedStatementCveDb key) throws SQLException {
         final PreparedStatement preparedStatement = preparedStatements.get(key);
         preparedStatement.clearParameters();
         return preparedStatement;
@@ -351,7 +352,7 @@ public final class CveDB {
      *
      * @return the value of databaseProperties
      */
-    public DatabaseProperties getDatabaseProperties() {
+    public synchronized DatabaseProperties getDatabaseProperties() {
         return databaseProperties;
     }
 
@@ -360,7 +361,7 @@ public final class CveDB {
      *
      * @return the database properties
      */
-    protected DatabaseProperties reloadProperties() {
+    protected synchronized DatabaseProperties reloadProperties() {
         databaseProperties = new DatabaseProperties(this);
         return databaseProperties;
     }
