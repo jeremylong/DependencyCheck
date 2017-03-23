@@ -38,6 +38,6 @@ OWASP dependency-check's core analysis engine can be used as:
 For help with dependency-check the following resource can be used:
 
 - Post to the [google group](https://groups.google.com/forum/#!forum/dependency-check): 
-[subscribe](mailto://dependency-check+subscribe@googlegroups.com), 
-[post](mailto://dependency-check@googlegroups.com), 
+[subscribe](mailto:dependency-check+subscribe@googlegroups.com), 
+[post](mailto:dependency-check@googlegroups.com), 
 - Open a [github issue](https://github.com/jeremylong/DependencyCheck/issues)
