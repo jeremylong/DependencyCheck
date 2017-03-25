@@ -126,11 +126,7 @@ public class Engine implements FileFilter {
      * Properly cleans up resources allocated during analysis.
      */
     public void cleanup() {
-        try {
-            CveDB.getInstance().closeDatabase();
-        } catch (DatabaseException ex) {
-            LOGGER.trace("Error closing the database", ex);
-        }
+        CveDB.close();
         ConnectionFactory.cleanup();
     }
 
@@ -754,6 +750,7 @@ public class Engine implements FileFilter {
         if (!cve.dataExists()) {
             throw new NoDataException("No documents exist");
         }
+        CveDB.close();
     }
 
     /**

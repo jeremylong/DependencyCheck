@@ -285,6 +285,7 @@ public class App {
             final CveDB cve = CveDB.getInstance();
             final DatabaseProperties prop = cve.getDatabaseProperties();
             final ReportGenerator report = new ReportGenerator(applicationName, dependencies, engine.getAnalyzers(), prop);
+            CveDB.close();
             try {
                 report.generateReports(reportDirectory, outputFormat);
             } catch (ReportException ex) {

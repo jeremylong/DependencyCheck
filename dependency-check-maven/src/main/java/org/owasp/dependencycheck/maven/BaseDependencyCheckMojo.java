@@ -1017,6 +1017,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
         }
         final ReportGenerator r = new ReportGenerator(p.getName(), engine.getDependencies(), engine.getAnalyzers(), prop);
+        CveDB.close();
         try {
             r.generateReports(outputDir.getAbsolutePath(), format);
         } catch (ReportException ex) {

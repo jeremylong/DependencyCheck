@@ -139,6 +139,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
             throw new UpdateException("Database Exception, unable to update the data to use the most current data.", ex);
         } finally {
             shutdownExecutorServices();
+            CveDB.close();
         }
     }
 
@@ -206,6 +207,8 @@ public class NvdCveUpdater implements CachedWebDataSource {
             return cve.dataExists();
         } catch (DatabaseException ex) {
             return false;
+        } finally {
+            CveDB.close();
         }
     }
 

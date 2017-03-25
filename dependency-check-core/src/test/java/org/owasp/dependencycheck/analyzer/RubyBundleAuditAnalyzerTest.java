@@ -53,7 +53,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
  * @author Dale Visser
  */
 public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
-
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(RubyBundleAuditAnalyzerTest.class);
 
     /**
@@ -117,7 +117,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
             analyzer.analyze(result, engine);
             int size = engine.getDependencies().size();
             assertTrue(size >= 1);
-
+            
             Dependency dependency = engine.getDependencies().get(0);
             assertTrue(dependency.getProductEvidence().toString().toLowerCase().contains("redcarpet"));
             assertTrue(dependency.getVersionEvidence().toString().toLowerCase().contains("2.2.2"));
@@ -136,16 +136,16 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
     public void testAddCriticalityToVulnerability() throws AnalysisException, DatabaseException {
         try {
             analyzer.initialize();
-
+            
             final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                     "ruby/vulnerable/gems/sinatra/Gemfile.lock"));
             final Engine engine = new Engine();
             analyzer.analyze(result, engine);
-
+            
             Dependency dependency = engine.getDependencies().get(0);
             Vulnerability vulnerability = dependency.getVulnerabilities().first();
             assertEquals(vulnerability.getCvssScore(), 5.0f, 0.0);
-
+            
         } catch (InitializationException | DatabaseException | AnalysisException e) {
             LOGGER.warn("Exception setting up RubyBundleAuditAnalyzer. Make sure Ruby gem bundle-audit is installed. You may also need to set property \"analyzer.bundle.audit.path\".");
             Assume.assumeNoException("Exception setting up RubyBundleAuditAnalyzer; bundle audit may not be installed, or property \"analyzer.bundle.audit.path\" may not be set.", e);
@@ -166,6 +166,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
             analyzer.initialize();
         } catch (Exception e) {
             //expected, so ignore.
+            LOGGER.error("Exception", e);
         } finally {
             assertThat(analyzer.isEnabled(), is(false));
             LOGGER.info("phantom-bundle-audit is not available. Ruby Bundle Audit Analyzer is disabled as expected.");
@@ -197,14 +198,14 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
         while (dIterator.hasNext()) {
             Dependency dept = dIterator.next();
             LOGGER.info("dept path: " + dept.getActualFilePath());
-
+            
             Set<Identifier> identifiers = dept.getIdentifiers();
             Iterator<Identifier> idIterator = identifiers.iterator();
             while (idIterator.hasNext()) {
                 Identifier id = idIterator.next();
                 LOGGER.info("  Identifier: " + id.getValue() + ", type=" + id.getType() + ", url=" + id.getUrl() + ", conf=" + id.getConfidence());
             }
-
+            
             Set<Evidence> prodEv = dept.getProductEvidence().getEvidence();
             Iterator<Evidence> it = prodEv.iterator();
             while (it.hasNext()) {
@@ -217,7 +218,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
                 Evidence e = vIt.next();
                 LOGGER.info("  version: name=" + e.getName() + ", value=" + e.getValue() + ", source=" + e.getSource() + ", confidence=" + e.getConfidence());
             }
-
+            
             Set<Evidence> vendorEv = dept.getVendorEvidence().getEvidence();
             Iterator<Evidence> vendorIt = vendorEv.iterator();
             while (vendorIt.hasNext()) {

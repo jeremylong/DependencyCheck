@@ -208,6 +208,14 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
+        /**
+     * Closes the data source.
+     */
+    @Override
+    public void closeAnalyzer() {
+        CveDB.close();
+        cvedb = null;
+    }
     /**
      * Returns the name of the analyzer.
      *
