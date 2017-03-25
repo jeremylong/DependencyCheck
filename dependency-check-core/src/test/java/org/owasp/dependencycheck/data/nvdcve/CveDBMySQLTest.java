@@ -44,6 +44,8 @@ public class CveDBMySQLTest extends BaseTest {
         } catch (DatabaseException ex) {
             System.out.println("Unable to connect to the My SQL database; verify that the db server is running and that the schema has been generated");
             fail(ex.getMessage());
+        } finally {
+            CveDB.close();
         }
     }
 
@@ -61,6 +63,8 @@ public class CveDBMySQLTest extends BaseTest {
         } catch (Exception ex) {
             System.out.println("Unable to access the My SQL database; verify that the db server is running and that the schema has been generated");
             throw ex;
+        } finally {
+            CveDB.close();
         }
     }
 
@@ -77,6 +81,8 @@ public class CveDBMySQLTest extends BaseTest {
         } catch (Exception ex) {
             System.out.println("Unable to access the My SQL database; verify that the db server is running and that the schema has been generated");
             throw ex;
-        } 
+        } finally {
+            CveDB.close();
+        }
     }
 }

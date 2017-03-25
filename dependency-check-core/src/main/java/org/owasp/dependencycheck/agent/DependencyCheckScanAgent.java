@@ -850,6 +850,8 @@ public class DependencyCheckScanAgent {
         } catch (DatabaseException ex) {
             //TODO shouldn't this throw an exception or return?
             LOGGER.debug("Unable to retrieve DB Properties", ex);
+        } finally {
+            CveDB.close();
         }
         final ReportGenerator r = new ReportGenerator(this.applicationName, engine.getDependencies(), engine.getAnalyzers(), prop);
         try {

@@ -54,11 +54,6 @@ public abstract class BaseDBTestCase extends BaseTest {
         CveDB.getInstance().openDatabase();
     }
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        CveDB.getInstance().closeDatabase();
-    }
-
     public static void ensureDBExists() throws Exception {
         File f = new File("./target/data/dc.h2.db");
         if (f.exists() && f.isFile() && f.length() < 71680) {
