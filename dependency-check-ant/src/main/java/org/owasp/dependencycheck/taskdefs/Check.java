@@ -941,14 +941,11 @@ public class Check extends Update {
                     }
                 }
                 DatabaseProperties prop = null;
-                try {
-                    final CveDB cve = CveDB.getInstance();
+                try (CveDB cve = CveDB.getInstance()) {
                     prop = cve.getDatabaseProperties();
                 } catch (DatabaseException ex) {
                     //TODO shouldn't this be a fatal exception
                     log("Unable to retrieve DB Properties", ex, Project.MSG_DEBUG);
-                } finally {
-                    CveDB.close();
                 }
 
                 final ReportGenerator reporter = new ReportGenerator(getProjectName(), engine.getDependencies(), engine.getAnalyzers(), prop);

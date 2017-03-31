@@ -33,7 +33,6 @@ import static org.junit.Assert.assertTrue;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 
-
 /**
  *
  * @author Jeremy Long
@@ -50,7 +49,6 @@ public class DependencyCheckTaskTest {
     public void setUp() throws Exception {
         Settings.initialize();
         BaseDBTestCase.ensureDBExists();
-        CveDB.getInstance().openDatabase();
         final String buildFile = this.getClass().getClassLoader().getResource("build.xml").getPath();
         buildFileRule.configureProject(buildFile);
     }
@@ -60,10 +58,6 @@ public class DependencyCheckTaskTest {
         //no cleanup...
         //executeTarget("cleanup");
         Settings.cleanup(true);
-        try {
-            CveDB.getInstance().closeDatabase();
-        } catch (DatabaseException ex) {
-        }
     }
 
     /**

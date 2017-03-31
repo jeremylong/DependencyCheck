@@ -1007,8 +1007,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     protected void writeReports(Engine engine, MavenProject p, File outputDir) throws ReportException {
         DatabaseProperties prop = null;
-        try {
-            final CveDB cve = CveDB.getInstance();
+        try (CveDB cve = CveDB.getInstance()) {
             prop = cve.getDatabaseProperties();
         } catch (DatabaseException ex) {
             //TODO shouldn't this throw an exception?
@@ -1017,7 +1016,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
         }
         final ReportGenerator r = new ReportGenerator(p.getName(), engine.getDependencies(), engine.getAnalyzers(), prop);
-        CveDB.close();
         try {
             r.generateReports(outputDir.getAbsolutePath(), format);
         } catch (ReportException ex) {

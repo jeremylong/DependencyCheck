@@ -93,8 +93,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
      */
     @Override
     public void update() throws UpdateException {
-        try {
-            final CveDB db = CveDB.getInstance();
+        try (CveDB db = CveDB.getInstance()) {
             final boolean autoupdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);
             final boolean enabled = Settings.getBoolean(Settings.KEYS.UPDATE_VERSION_CHECK_ENABLED, true);
             final String original = Settings.getString(Settings.KEYS.CVE_ORIGINAL_MODIFIED_20_URL);
@@ -127,8 +126,6 @@ public class EngineVersionCheck implements CachedWebDataSource {
             throw new UpdateException("Error occurred updating database properties.");
         } catch (InvalidSettingException ex) {
             LOGGER.debug("Unable to determine if autoupdate is enabled", ex);
-        } finally {
-            CveDB.close();
         }
     }
 

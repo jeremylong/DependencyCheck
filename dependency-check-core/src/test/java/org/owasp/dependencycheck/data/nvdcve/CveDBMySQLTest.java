@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.data.nvdcve;
 
 import java.util.List;
 import java.util.Set;
+import static org.junit.Assert.assertFalse;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -39,13 +40,15 @@ public class CveDBMySQLTest extends BaseTest {
      */
     @Test
     public void testOpen() {
+        CveDB instance = null;
         try {
-            CveDB instance = CveDB.getInstance();
+            instance = CveDB.getInstance();
         } catch (DatabaseException ex) {
             System.out.println("Unable to connect to the My SQL database; verify that the db server is running and that the schema has been generated");
             fail(ex.getMessage());
         } finally {
-            CveDB.close();
+            instance.close();
+            assertFalse(instance.isOpen());
         }
     }
 
@@ -57,14 +60,14 @@ public class CveDBMySQLTest extends BaseTest {
         CveDB instance = CveDB.getInstance();
         try {
             String vendor = "apache";
-            String product = "struts";            
+            String product = "struts";
             Set<VulnerableSoftware> result = instance.getCPEs(vendor, product);
             assertTrue("Has data been loaded into the MySQL DB? if not consider using the CLI to populate it", result.size() > 5);
         } catch (Exception ex) {
             System.out.println("Unable to access the My SQL database; verify that the db server is running and that the schema has been generated");
             throw ex;
         } finally {
-            CveDB.close();
+            instance.close();
         }
     }
 
@@ -82,7 +85,7 @@ public class CveDBMySQLTest extends BaseTest {
             System.out.println("Unable to access the My SQL database; verify that the db server is running and that the schema has been generated");
             throw ex;
         } finally {
-            CveDB.close();
+            instance.close();
         }
     }
 }

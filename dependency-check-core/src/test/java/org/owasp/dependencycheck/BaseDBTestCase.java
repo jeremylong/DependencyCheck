@@ -51,7 +51,6 @@ public abstract class BaseDBTestCase extends BaseTest {
     @Before
     public void setUpDb() throws Exception {
         ensureDBExists();
-        CveDB.getInstance().openDatabase();
     }
 
     public static void ensureDBExists() throws Exception {

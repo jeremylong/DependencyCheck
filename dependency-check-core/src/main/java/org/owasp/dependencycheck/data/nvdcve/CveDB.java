@@ -58,7 +58,7 @@ import static org.owasp.dependencycheck.data.nvdcve.CveDB.PreparedStatementCveDb
  * @author Jeremy Long
  */
 @ThreadSafe
-public final class CveDB {
+public final class CveDB implements AutoCloseable {
 
     /**
      * Singleton instance of the CveDB.
@@ -253,7 +253,8 @@ public final class CveDB {
      * Closes the database connection. Close should be called on this object
      * when it is done being used.
      */
-    public static synchronized void close() {
+    @Override
+    public synchronized void close() {
         if (instance != null) {
             instance.usageCount -= 1;
             if (instance.usageCount <= 0 && instance.isOpen()) {
@@ -281,7 +282,7 @@ public final class CveDB {
      *
      * @return whether the database connection is open or closed
      */
-    private synchronized boolean isOpen() {
+    protected synchronized boolean isOpen() {
         return connection != null;
     }
 
