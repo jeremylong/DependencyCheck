@@ -44,10 +44,6 @@ public abstract class BaseDBTestCase extends BaseTest {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(BaseDBTestCase.class);
 
-//    @BeforeClass
-//    public static void setUpClass() throws Exception {
-//        BaseTest.setUpClass();
-//    }
     @Before
     public void setUpDb() throws Exception {
         ensureDBExists();
