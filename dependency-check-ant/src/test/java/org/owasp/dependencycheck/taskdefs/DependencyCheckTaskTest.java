@@ -30,8 +30,6 @@ import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.utils.Settings;
 
 import static org.junit.Assert.assertTrue;
-import org.owasp.dependencycheck.data.nvdcve.CveDB;
-import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 
 /**
  *
@@ -66,13 +64,10 @@ public class DependencyCheckTaskTest {
     @Test
     public void testAddFileSet() throws Exception {
         File report = new File("target/dependency-check-report.html");
-        if (report.exists()) {
-            if (!report.delete()) {
-                throw new Exception("Unable to delete 'target/DependencyCheck-Report.html' prior to test.");
-            }
+        if (report.exists() && !report.delete()) {
+            throw new Exception("Unable to delete 'target/DependencyCheck-Report.html' prior to test.");
         }
         buildFileRule.executeTarget("test.fileset");
-
         assertTrue("DependencyCheck report was not generated", report.exists());
     }
 
