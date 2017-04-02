@@ -71,62 +71,6 @@ Copyright (c) 2012 - Jeremy Long. All Rights Reserved.
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <configuration>
-                    <!--instrumentation>
-                        <ignoreTrivial>true</ignoreTrivial>
-                    </instrumentation-->
-                    <check>
-                        <branchRate>85</branchRate>
-                        <lineRate>85</lineRate>
-                        <haltOnFailure>false</haltOnFailure>
-                        <totalBranchRate>85</totalBranchRate>
-                        <totalLineRate>85</totalLineRate>
-                        <packageLineRate>85</packageLineRate>
-                        <packageBranchRate>85</packageBranchRate>
-                        <regexes>
-                            <regex>
-                                <pattern>.*\$.*</pattern>
-                                <branchRate>0</branchRate>
-                                <lineRate>0</lineRate>
-                            </regex>
-                            <regex>
-                                <pattern>org.owasp.dependencycheck.App</pattern>
-                                <branchRate>0</branchRate>
-                                <lineRate>0</lineRate>
-                            </regex>
-                        </regexes>
-                    </check>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>-Dfile.encoding=UTF-8</argLine>
-                    <systemProperties>
-                        <property>
-                            <name>cpe</name>
-                            <value>data/cpe</value>
-                            <workingDirectory>target</workingDirectory>
-                        </property>
-                        <property>
-                            <name>cve</name>
-                            <value>data/cpe</value>
-                            <workingDirectory>target</workingDirectory>
-                        </property>
-                    </systemProperties>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
                 <artifactId>appassembler-maven-plugin</artifactId>
                 <configuration>
                     <programs>

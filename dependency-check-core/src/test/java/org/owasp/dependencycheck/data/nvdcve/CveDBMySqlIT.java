@@ -27,12 +27,14 @@ import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  *
  * @author Jeremy Long
  */
-public class CveDBMySQLTest extends BaseTest {
+public class CveDBMySqlIT extends BaseTest {
 
     /**
      * Test of getCPEs method, of class CveDB.

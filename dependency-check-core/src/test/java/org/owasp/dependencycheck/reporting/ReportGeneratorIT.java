@@ -39,12 +39,13 @@ import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.xml.sax.SAXException;
+import static org.junit.Assert.fail;
 
 /**
  *
  * @author Jeremy Long
  */
-public class ReportGeneratorIntegrationTest extends BaseDBTestCase {
+public class ReportGeneratorIT extends BaseDBTestCase {
 
     /**
      * Test of generateReport method, of class ReportGenerator.

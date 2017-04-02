@@ -23,12 +23,14 @@ import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  *
  * @author Jeremy Long
  */
-public class NvdCveUpdaterIntegrationTest extends BaseTest {
+public class NvdCveUpdaterIT extends BaseTest {
 
     public NvdCveUpdater getUpdater() {
         NvdCveUpdater instance = new NvdCveUpdater();

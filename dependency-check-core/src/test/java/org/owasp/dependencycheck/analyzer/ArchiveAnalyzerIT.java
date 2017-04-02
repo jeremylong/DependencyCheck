@@ -33,7 +33,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long
  */
-public class ArchiveAnalyzerIntegrationTest extends BaseDBTestCase {
+public class ArchiveAnalyzerIT extends BaseDBTestCase {
 
     /**
      * Test of getSupportedExtensions method, of class ArchiveAnalyzer.
