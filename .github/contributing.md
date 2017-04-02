@@ -27,6 +27,7 @@
 - If you have written a new feature or have fixed a bug please open a new pull request with the patch.
 - Ensure the PR description clearly describes the problem and solution. Include any related issue number(s) if applicable.
 - Please ensure the PR passes the automated checks performed (travis-ci, codacy, etc.)
+- Please consider adding test cases for any new functionality
 
 ## Thank you for your contributions
 
