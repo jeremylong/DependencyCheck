@@ -554,4 +554,11 @@
         <cve>CVE-2016-6325</cve>
         <cve>CVE-2016-5425</cve>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #691
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.boot:spring-boot-starter-data-jpa:.*$</gav>
+        <cve>CVE-2016-6652</cve>
+    </suppress>
 </suppressions>
