@@ -545,4 +545,13 @@
         <gav regex="true">^javax\.servlet:servlet-api:.*$</gav>
         <cpe>cpe:/a:sun:one_application_server</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positives per issue #684.
+        ]]></notes>
+        <gav regex="true">^org\.apache\.tomcat\.embed:tomcat-embed.*$</gav>
+        <cve>CVE-2017-6056</cve>
+        <cve>CVE-2016-6325</cve>
+        <cve>CVE-2016-5425</cve>
+    </suppress>
 </suppressions>
