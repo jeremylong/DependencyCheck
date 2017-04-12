@@ -25,9 +25,7 @@ import java.io.FileOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.apache.commons.compress.utils.IOUtils;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,11 +45,6 @@ public abstract class BaseDBTestCase extends BaseTest {
     @Before
     public void setUpDb() throws Exception {
         ensureDBExists();
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        CveDB.getInstance().closeDatabase();
     }
 
     public static void ensureDBExists() throws Exception {

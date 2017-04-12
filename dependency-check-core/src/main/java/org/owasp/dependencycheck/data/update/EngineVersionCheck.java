@@ -93,7 +93,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
      */
     @Override
     public void update() throws UpdateException {
-        try {
+        try (CveDB db = CveDB.getInstance()) {
             final boolean autoupdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);
             final boolean enabled = Settings.getBoolean(Settings.KEYS.UPDATE_VERSION_CHECK_ENABLED, true);
             final String original = Settings.getString(Settings.KEYS.CVE_ORIGINAL_MODIFIED_20_URL);
@@ -105,7 +105,9 @@ public class EngineVersionCheck implements CachedWebDataSource {
              */
             if (enabled && autoupdate && original != null && original.equals(current)) {
                 LOGGER.debug("Begin Engine Version Check");
-                final DatabaseProperties properties = CveDB.getInstance().getDatabaseProperties();
+
+                final DatabaseProperties properties = db.getDatabaseProperties();
+
                 final long lastChecked = Long.parseLong(properties.getProperty(ENGINE_VERSION_CHECKED_ON, "0"));
                 final long now = System.currentTimeMillis();
                 updateToVersion = properties.getProperty(CURRENT_ENGINE_RELEASE, "");

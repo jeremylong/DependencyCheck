@@ -1,3 +1,5 @@
+Please delete any un-needed section from the following issue template:
+
 ### Reporting Bugs/Errors
 When reporting errors, 99% of the time log file output is required. Please post the log file as a [gist](https://gist.github.com/) and provide a link in the new issue.
 

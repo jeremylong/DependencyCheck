@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -84,6 +85,10 @@ public class Engine implements FileFilter {
      */
     private ClassLoader serviceClassLoader = Thread.currentThread().getContextClassLoader();
     /**
+     * A reference to the database.
+     */
+    private CveDB database = null;
+    /**
      * The Logger for use throughout the class.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Engine.class);
@@ -126,10 +131,9 @@ public class Engine implements FileFilter {
      * Properly cleans up resources allocated during analysis.
      */
     public void cleanup() {
-        try {
-            CveDB.getInstance().closeDatabase();
-        } catch (DatabaseException ex) {
-            LOGGER.trace("Error closing the database", ex);
+        if (database != null) {
+            database.close();
+            database = null;
         }
         ConnectionFactory.cleanup();
     }
@@ -483,31 +487,14 @@ public class Engine implements FileFilter {
      */
     public void analyzeDependencies() throws ExceptionCollection {
         final List<Throwable> exceptions = Collections.synchronizedList(new ArrayList<Throwable>());
-        boolean autoUpdate = true;
-        try {
-            autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
-        } catch (InvalidSettingException ex) {
-            LOGGER.debug("Invalid setting for auto-update; using true.");
-            exceptions.add(ex);
-        }
-        if (autoUpdate) {
-            try {
-                doUpdates();
-            } catch (UpdateException ex) {
-                exceptions.add(ex);
-                LOGGER.warn("Unable to update Cached Web DataSource, using local "
-                        + "data instead. Results may not include recent vulnerabilities.");
-                LOGGER.debug("Update Error", ex);
-            }
-        }
+
+        initializeAndUpdateDatabase(exceptions);
 
         //need to ensure that data exists
         try {
             ensureDataExists();
         } catch (NoDataException ex) {
             throwFatalExceptionCollection("Unable to continue dependency-check analysis.", ex, exceptions);
-        } catch (DatabaseException ex) {
-            throwFatalExceptionCollection("Unable to connect to the dependency-check database.", ex, exceptions);
         }
 
         LOGGER.debug("\n----------------------------------------------------\nBEGIN ANALYSIS\n----------------------------------------------------");
@@ -551,6 +538,47 @@ public class Engine implements FileFilter {
         LOGGER.info("Analysis Complete ({} seconds)", analysisDurationSeconds);
         if (exceptions.size() > 0) {
             throw new ExceptionCollection("One or more exceptions occurred during dependency-check analysis", exceptions);
+        }
+    }
+
+    /**
+     * Performs any necessary updates and initializes the database.
+     *
+     * @param exceptions a collection to store non-fatal exceptions
+     * @throws ExceptionCollection thrown if fatal exceptions occur
+     */
+    private void initializeAndUpdateDatabase(final List<Throwable> exceptions) throws ExceptionCollection {
+        boolean autoUpdate = true;
+        try {
+            autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
+        } catch (InvalidSettingException ex) {
+            LOGGER.debug("Invalid setting for auto-update; using true.");
+            exceptions.add(ex);
+        }
+        if (autoUpdate) {
+            try {
+                database = CveDB.getInstance();
+                doUpdates();
+            } catch (UpdateException ex) {
+                exceptions.add(ex);
+                LOGGER.warn("Unable to update Cached Web DataSource, using local "
+                        + "data instead. Results may not include recent vulnerabilities.");
+                LOGGER.debug("Update Error", ex);
+            } catch (DatabaseException ex) {
+                throw new ExceptionCollection("Unable to connect to the database", ex);
+            }
+        } else {
+            try {
+                if (ConnectionFactory.isH2Connection() && !ConnectionFactory.h2DataFileExists()) {
+                    throw new ExceptionCollection(new NoDataException("Autoupdate is disabled and the database does not exist"), true);
+                } else {
+                    database = CveDB.getInstance();
+                }
+            } catch (IOException ex) {
+                throw new ExceptionCollection(new DatabaseException("Autoupdate is disabled and unable to connect to the database"), true);
+            } catch (DatabaseException ex) {
+                throwFatalExceptionCollection("Unable to connect to the dependency-check database.", ex, exceptions);
+            }
         }
     }
 
@@ -746,12 +774,9 @@ public class Engine implements FileFilter {
      * NoDataException is thrown.
      *
      * @throws NoDataException thrown if no data exists in the CPE Index
-     * @throws DatabaseException thrown if there is an exception opening the
-     * database
      */
-    private void ensureDataExists() throws NoDataException, DatabaseException {
-        final CveDB cve = CveDB.getInstance();
-        if (!cve.dataExists()) {
+    private void ensureDataExists() throws NoDataException {
+        if (database == null || !database.dataExists()) {
             throw new NoDataException("No documents exist");
         }
     }

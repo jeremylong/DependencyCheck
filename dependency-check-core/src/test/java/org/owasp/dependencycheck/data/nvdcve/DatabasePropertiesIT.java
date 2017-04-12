@@ -44,6 +44,7 @@ public class DatabasePropertiesIT extends BaseDBTestCase {
         assertNotNull(instance);
         //no exception means the call worked... whether or not it is empty depends on if the db is new
         //assertEquals(expResult, result);
+        cveDB.close();
     }
 
     /**
@@ -62,6 +63,7 @@ public class DatabasePropertiesIT extends BaseDBTestCase {
         instance = cveDB.reloadProperties();
         long results = Long.parseLong(instance.getProperty("NVD CVE " + key));
         assertEquals(expected, results);
+        cveDB.close();
     }
 
     /**
@@ -76,6 +78,7 @@ public class DatabasePropertiesIT extends BaseDBTestCase {
         String expResult = "default";
         String result = instance.getProperty(key, defaultValue);
         assertEquals(expResult, result);
+        cveDB.close();
     }
 
     /**
@@ -90,6 +93,7 @@ public class DatabasePropertiesIT extends BaseDBTestCase {
         double version = Double.parseDouble(result);
         assertTrue(version >= 2.8);
         assertTrue(version <= 10);
+        cveDB.close();
     }
 
     /**
@@ -101,5 +105,6 @@ public class DatabasePropertiesIT extends BaseDBTestCase {
         DatabaseProperties instance = cveDB.getDatabaseProperties();
         Properties result = instance.getProperties();
         assertTrue(result.size() > 0);
+        cveDB.close();
     }
 }

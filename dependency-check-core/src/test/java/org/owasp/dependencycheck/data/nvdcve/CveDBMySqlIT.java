@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.data.nvdcve;
 
 import java.util.List;
 import java.util.Set;
+import static org.junit.Assert.assertFalse;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -37,6 +38,23 @@ import static org.junit.Assert.fail;
 public class CveDBMySqlIT extends BaseTest {
 
     /**
+     * Pretty useless tests of open, commit, and close methods, of class CveDB.
+     */
+    @Test
+    public void testOpen() {
+        CveDB instance = null;
+        try {
+            instance = CveDB.getInstance();
+        } catch (DatabaseException ex) {
+            System.out.println("Unable to connect to the My SQL database; verify that the db server is running and that the schema has been generated");
+            fail(ex.getMessage());
+        } finally {
+            instance.close();
+            assertFalse(instance.isOpen());
+        }
+    }
+
+    /**
      * Test of getCPEs method, of class CveDB.
      */
     @Test
@@ -50,6 +68,8 @@ public class CveDBMySqlIT extends BaseTest {
         } catch (Exception ex) {
             System.out.println("Unable to access the My SQL database; verify that the db server is running and that the schema has been generated");
             throw ex;
+        } finally {
+            instance.close();
         }
     }
 
@@ -66,6 +86,8 @@ public class CveDBMySqlIT extends BaseTest {
         } catch (Exception ex) {
             System.out.println("Unable to access the My SQL database; verify that the db server is running and that the schema has been generated");
             throw ex;
+        } finally {
+            instance.close();
         }
     }
 }

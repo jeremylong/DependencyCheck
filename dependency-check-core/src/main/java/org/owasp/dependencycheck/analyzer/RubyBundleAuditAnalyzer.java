@@ -132,7 +132,8 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.info("Launching: " + args + " from " + folder);
             return builder.start();
         } catch (IOException ioe) {
-            throw new AnalysisException("bundle-audit failure", ioe);
+            throw new AnalysisException("bundle-audit initialization failure; this error can be ignored if you are not analyzing Ruby. "
+                    + "Otherwise ensure that bundle-audit is installed and the path to bundle audit is correctly specified", ioe);
         }
     }
 
@@ -159,7 +160,6 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (AnalysisException ae) {
 
             setEnabled(false);
-            cvedb = null;
             final String msg = String.format("Exception from bundle-audit process: %s. Disabling %s", ae.getCause(), ANALYZER_NAME);
             throw new InitializationException(msg, ae);
         } catch (IOException ex) {
@@ -205,6 +205,17 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         if (isEnabled()) {
             LOGGER.info(ANALYZER_NAME + " is enabled. It is necessary to manually run \"bundle-audit update\" "
                     + "occasionally to keep its database up to date.");
+        }
+    }
+
+    /**
+     * Closes the data source.
+     */
+    @Override
+    public void closeAnalyzer() {
+        if (cvedb != null) {
+            cvedb.close();
+            cvedb = null;
         }
     }
 

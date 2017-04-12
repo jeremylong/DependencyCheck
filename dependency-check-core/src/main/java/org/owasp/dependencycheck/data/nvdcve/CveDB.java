@@ -58,12 +58,17 @@ import static org.owasp.dependencycheck.data.nvdcve.CveDB.PreparedStatementCveDb
  * @author Jeremy Long
  */
 @ThreadSafe
-public final class CveDB {
+public final class CveDB implements AutoCloseable {
 
     /**
      * Singleton instance of the CveDB.
      */
     private static CveDB instance = null;
+    /**
+     * Track the number of current users of the CveDB; so that if someone is
+     * using database another user cannot close the connection on them.
+     */
+    private int usageCount = 0;
     /**
      * The logger.
      */
@@ -75,7 +80,7 @@ public final class CveDB {
     /**
      * The bundle of statements used when accessing the database.
      */
-    private final ResourceBundle statementBundle;
+    private ResourceBundle statementBundle;
     /**
      * Database properties object containing the 'properties' from the database
      * table.
@@ -84,7 +89,7 @@ public final class CveDB {
     /**
      * The prepared statements.
      */
-    private final EnumMap<PreparedStatementCveDb, PreparedStatement> preparedStatements;
+    private final EnumMap<PreparedStatementCveDb, PreparedStatement> preparedStatements = new EnumMap<>(PreparedStatementCveDb.class);
 
     /**
      * The enum value names must match the keys of the statements in the
@@ -191,6 +196,10 @@ public final class CveDB {
         if (instance == null) {
             instance = new CveDB();
         }
+        if (!instance.isOpen()) {
+            instance.open();
+        }
+        instance.usageCount += 1;
         return instance;
     }
 
@@ -202,23 +211,17 @@ public final class CveDB {
      * database.
      */
     private CveDB() throws DatabaseException {
-        openDatabase();
-        final String databaseProductName = determineDatabaseProductName();
-        statementBundle = databaseProductName != null
-                ? ResourceBundle.getBundle("data/dbStatements", new Locale(databaseProductName))
-                : ResourceBundle.getBundle("data/dbStatements");
-        preparedStatements = prepareStatements();
-        databaseProperties = new DatabaseProperties(this);
     }
 
     /**
      * Tries to determine the product name of the database.
      *
+     * @param conn the database connection
      * @return the product name of the database if successful, {@code null} else
      */
-    private synchronized String determineDatabaseProductName() {
+    private static String determineDatabaseProductName(Connection conn) {
         try {
-            final String databaseProductName = connection.getMetaData().getDatabaseProductName();
+            final String databaseProductName = conn.getMetaData().getDatabaseProductName();
             LOGGER.debug("Database product: {}", databaseProductName);
             return databaseProductName;
         } catch (SQLException se) {
@@ -234,30 +237,43 @@ public final class CveDB {
      * @throws DatabaseException thrown if there is an error opening the
      * database connection
      */
-    public synchronized void openDatabase() throws DatabaseException {
-        if (!isOpen()) {
-            connection = ConnectionFactory.getConnection();
+    private synchronized void open() throws DatabaseException {
+        if (!instance.isOpen()) {
+            instance.connection = ConnectionFactory.getConnection();
+            final String databaseProductName = determineDatabaseProductName(instance.connection);
+            instance.statementBundle = databaseProductName != null
+                    ? ResourceBundle.getBundle("data/dbStatements", new Locale(databaseProductName))
+                    : ResourceBundle.getBundle("data/dbStatements");
+            instance.prepareStatements();
+            instance.databaseProperties = new DatabaseProperties(instance);
         }
     }
 
     /**
-     * Closes the DB4O database. Close should be called on this object when it
-     * is done being used.
+     * Closes the database connection. Close should be called on this object
+     * when it is done being used.
      */
-    public synchronized void closeDatabase() {
-        if (isOpen()) {
-            closeStatements();
-            try {
-                connection.close();
-            } catch (SQLException ex) {
-                LOGGER.error("There was an error attempting to close the CveDB, see the log for more details.");
-                LOGGER.debug("", ex);
-            } catch (Throwable ex) {
-                LOGGER.error("There was an exception attempting to close the CveDB, see the log for more details.");
-                LOGGER.debug("", ex);
+    @Override
+    public synchronized void close() {
+        if (instance != null) {
+            instance.usageCount -= 1;
+            if (instance.usageCount <= 0 && instance.isOpen()) {
+                instance.usageCount = 0;
+                instance.closeStatements();
+                try {
+                    instance.connection.close();
+                } catch (SQLException ex) {
+                    LOGGER.error("There was an error attempting to close the CveDB, see the log for more details.");
+                    LOGGER.debug("", ex);
+                } catch (Throwable ex) {
+                    LOGGER.error("There was an exception attempting to close the CveDB, see the log for more details.");
+                    LOGGER.debug("", ex);
+                }
+                instance.statementBundle = null;
+                instance.preparedStatements.clear();
+                instance.databaseProperties = null;
+                instance.connection = null;
             }
-            connection = null;
-            instance = null;
         }
     }
 
@@ -266,21 +282,17 @@ public final class CveDB {
      *
      * @return whether the database connection is open or closed
      */
-    private boolean isOpen() {
+    protected synchronized boolean isOpen() {
         return connection != null;
     }
 
     /**
-     * Prepares all statements to be used and returns them.
+     * Prepares all statements to be used.
      *
-     * @return the prepared statements
      * @throws DatabaseException thrown if there is an error preparing the
      * statements
      */
-    private EnumMap<PreparedStatementCveDb, PreparedStatement> prepareStatements()
-            throws DatabaseException {
-
-        final EnumMap<PreparedStatementCveDb, PreparedStatement> result = new EnumMap<>(PreparedStatementCveDb.class);
+    private void prepareStatements() throws DatabaseException {
         for (PreparedStatementCveDb key : values()) {
             final String statementString = statementBundle.getString(key.name());
             final PreparedStatement preparedStatement;
@@ -293,15 +305,14 @@ public final class CveDB {
             } catch (SQLException exception) {
                 throw new DatabaseException(exception);
             }
-            result.put(key, preparedStatement);
+            preparedStatements.put(key, preparedStatement);
         }
-        return result;
     }
 
     /**
      * Closes all prepared statements.
      */
-    private void closeStatements() {
+    private synchronized void closeStatements() {
         for (PreparedStatement preparedStatement : preparedStatements.values()) {
             DBUtils.closeStatement(preparedStatement);
         }
@@ -315,7 +326,7 @@ public final class CveDB {
      * @return the prepared statement
      * @throws SQLException thrown if a SQL Exception occurs
      */
-    private PreparedStatement getPreparedStatement(PreparedStatementCveDb key) throws SQLException {
+    private synchronized PreparedStatement getPreparedStatement(PreparedStatementCveDb key) throws SQLException {
         final PreparedStatement preparedStatement = preparedStatements.get(key);
         preparedStatement.clearParameters();
         return preparedStatement;
@@ -342,7 +353,7 @@ public final class CveDB {
     @SuppressWarnings("FinalizeDeclaration")
     protected void finalize() throws Throwable {
         LOGGER.debug("Entering finalize");
-        closeDatabase();
+        close();
         super.finalize();
     }
 
@@ -351,7 +362,7 @@ public final class CveDB {
      *
      * @return the value of databaseProperties
      */
-    public DatabaseProperties getDatabaseProperties() {
+    public synchronized DatabaseProperties getDatabaseProperties() {
         return databaseProperties;
     }
 
@@ -360,7 +371,7 @@ public final class CveDB {
      *
      * @return the database properties
      */
-    protected DatabaseProperties reloadProperties() {
+    protected synchronized DatabaseProperties reloadProperties() {
         databaseProperties = new DatabaseProperties(this);
         return databaseProperties;
     }

@@ -941,9 +941,7 @@ public class Check extends Update {
                     }
                 }
                 DatabaseProperties prop = null;
-                CveDB cve;
-                try {
-                    cve = CveDB.getInstance();
+                try (CveDB cve = CveDB.getInstance()) {
                     prop = cve.getDatabaseProperties();
                 } catch (DatabaseException ex) {
                     //TODO shouldn't this be a fatal exception

@@ -182,6 +182,10 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      */
     @Override
     public void closeAnalyzer() {
+        if (cve != null) {
+            cve.close();
+            cve = null;
+        }
         if (cpe != null) {
             cpe.close();
             cpe = null;

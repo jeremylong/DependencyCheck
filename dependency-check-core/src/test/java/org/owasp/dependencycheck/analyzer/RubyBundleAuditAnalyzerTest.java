@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.After;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -82,8 +83,10 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
      */
     @After
     public void tearDown() throws Exception {
-        analyzer.close();
-        analyzer = null;
+        if (analyzer != null) {
+            analyzer.close();
+            analyzer = null;
+        }
     }
 
     /**
@@ -166,6 +169,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
             analyzer.initialize();
         } catch (Exception e) {
             //expected, so ignore.
+            assertNotNull(e);
         } finally {
             assertThat(analyzer.isEnabled(), is(false));
             LOGGER.info("phantom-bundle-audit is not available. Ruby Bundle Audit Analyzer is disabled as expected.");
@@ -190,6 +194,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
             fail(ex.getMessage());
         } catch (ExceptionCollection ex) {
             Assume.assumeNoException("Exception setting up RubyBundleAuditAnalyzer; bundle audit may not be installed, or property \"analyzer.bundle.audit.path\" may not be set.", ex);
+            return;
         }
         List<Dependency> dependencies = engine.getDependencies();
         LOGGER.info(dependencies.size() + " dependencies found.");
