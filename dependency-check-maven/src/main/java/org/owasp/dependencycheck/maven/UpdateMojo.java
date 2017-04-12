@@ -37,7 +37,7 @@ import org.owasp.dependencycheck.utils.Settings;
 @Mojo(
         name = "update-only",
         defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
-        threadSafe = false,
+        threadSafe = true,
         requiresDependencyResolution = ResolutionScope.NONE,
         requiresOnline = true,
         aggregator = true
