@@ -14,6 +14,7 @@ The following properties can be configured for the dependencyCheckUpdate task:
 Property             | Description                        | Default Value
 ---------------------|------------------------------------|------------------
 cveValidForHours     | Sets the number of hours to wait before checking for new updates from the NVD.                                     | 4
+failOnError          | Fails the build if an error occurs during the dependency-check analysis.                                           | true
 
 #### Example
 ```groovy

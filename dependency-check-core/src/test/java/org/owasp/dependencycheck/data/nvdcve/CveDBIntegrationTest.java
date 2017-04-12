@@ -29,6 +29,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -51,6 +52,9 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
             instance.commit();
         } catch (DatabaseException | SQLException ex) {
             fail(ex.getMessage());
+        } finally {
+            instance.close();
+            assertFalse(instance.isOpen());
         }
     }
 
@@ -64,6 +68,7 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
         String product = "struts";
         Set<VulnerableSoftware> result = instance.getCPEs(vendor, product);
         assertTrue(result.size() > 5);
+        instance.close();
     }
 
     /**
@@ -74,6 +79,7 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
         CveDB instance = CveDB.getInstance();
         Vulnerability result = instance.getVulnerability("CVE-2014-0094");
         assertEquals("The ParametersInterceptor in Apache Struts before 2.3.16.1 allows remote attackers to \"manipulate\" the ClassLoader via the class parameter, which is passed to the getClass method.", result.getDescription());
+        instance.close();
     }
 
     /**
@@ -110,6 +116,7 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
             }
         }
         assertTrue("Expected " + expected + ", but was not identified", found);
+        instance.close();
     }
 
     /**
@@ -165,5 +172,6 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
         identifiedVersion = new DependencyVersion("1.6.3");
         results = instance.getMatchingSoftware(versions, "springsource", "spring_framework", identifiedVersion);
         assertNotNull(results);
+        instance.close();
     }
 }

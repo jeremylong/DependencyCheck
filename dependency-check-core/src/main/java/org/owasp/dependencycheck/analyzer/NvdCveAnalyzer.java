@@ -68,6 +68,7 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
      */
     @Override
     public void closeAnalyzer() {
+        cveDB.close();
         cveDB = null;
     }
 

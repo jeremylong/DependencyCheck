@@ -1007,8 +1007,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     protected void writeReports(Engine engine, MavenProject p, File outputDir) throws ReportException {
         DatabaseProperties prop = null;
-        try {
-            final CveDB cve = CveDB.getInstance();
+        try (CveDB cve = CveDB.getInstance()) {
             prop = cve.getDatabaseProperties();
         } catch (DatabaseException ex) {
             //TODO shouldn't this throw an exception?
