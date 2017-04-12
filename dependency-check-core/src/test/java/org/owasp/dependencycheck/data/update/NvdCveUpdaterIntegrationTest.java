@@ -20,7 +20,7 @@ package org.owasp.dependencycheck.data.update;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import org.junit.Test;
-import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
 
@@ -28,7 +28,7 @@ import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
  *
  * @author Jeremy Long
  */
-public class NvdCveUpdaterIntegrationTest extends BaseTest {
+public class NvdCveUpdaterIntegrationTest extends BaseDBTestCase {
 
     public NvdCveUpdater getUpdater() {
         NvdCveUpdater instance = new NvdCveUpdater();

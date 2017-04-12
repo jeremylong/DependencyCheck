@@ -843,12 +843,10 @@ public class DependencyCheckScanAgent {
      */
     private void generateExternalReports(Engine engine, File outDirectory) {
         DatabaseProperties prop = null;
-        CveDB cve;
-        try {
-            cve = CveDB.getInstance();
+        try (CveDB cve = CveDB.getInstance()) {
             prop = cve.getDatabaseProperties();
         } catch (DatabaseException ex) {
-            //TODO shouldn't this throw an exception or return?
+            //TODO shouldn't this be a fatal exception
             LOGGER.debug("Unable to retrieve DB Properties", ex);
         }
         final ReportGenerator r = new ReportGenerator(this.applicationName, engine.getDependencies(), engine.getAnalyzers(), prop);

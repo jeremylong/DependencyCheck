@@ -282,9 +282,15 @@ public class App {
                 exCol = ex;
             }
             final List<Dependency> dependencies = engine.getDependencies();
-            final CveDB cve = CveDB.getInstance();
-            final DatabaseProperties prop = cve.getDatabaseProperties();
+            DatabaseProperties prop = null;
+            try (CveDB cve = CveDB.getInstance()) {
+                prop = cve.getDatabaseProperties();
+            } catch (DatabaseException ex) {
+                //TODO shouldn't this be a fatal exception
+                LOGGER.debug("Unable to retrieve DB Properties", ex);
+            }
             final ReportGenerator report = new ReportGenerator(applicationName, dependencies, engine.getAnalyzers(), prop);
+
             try {
                 report.generateReports(reportDirectory, outputFormat);
             } catch (ReportException ex) {

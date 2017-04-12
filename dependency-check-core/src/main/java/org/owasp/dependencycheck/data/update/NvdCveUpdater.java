@@ -104,17 +104,17 @@ public class NvdCveUpdater implements CachedWebDataSource {
             LOGGER.trace("invalid setting UPDATE_NVDCVE_ENABLED", ex);
         }
 
+        boolean autoUpdate = true;
         try {
-            boolean autoUpdate = true;
-            try {
-                autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
-            } catch (InvalidSettingException ex) {
-                LOGGER.debug("Invalid setting for auto-update; using true.");
-            }
-            if (!autoUpdate) {
-                return;
-            }
-            initializeExecutorServices();
+            autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
+        } catch (InvalidSettingException ex) {
+            LOGGER.debug("Invalid setting for auto-update; using true.");
+        }
+        if (!autoUpdate) {
+            return;
+        }
+        initializeExecutorServices();
+        try {
             cveDb = CveDB.getInstance();
             dbProperties = cveDb.getDatabaseProperties();
 
@@ -139,6 +139,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
             throw new UpdateException("Database Exception, unable to update the data to use the most current data.", ex);
         } finally {
             shutdownExecutorServices();
+            cveDb.close();
         }
     }
 
@@ -201,8 +202,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
      * @return true if the database contains data
      */
     private boolean dataExists() {
-        try {
-            final CveDB cve = CveDB.getInstance();
+        try (CveDB cve = CveDB.getInstance()) {
             return cve.dataExists();
         } catch (DatabaseException ex) {
             return false;
