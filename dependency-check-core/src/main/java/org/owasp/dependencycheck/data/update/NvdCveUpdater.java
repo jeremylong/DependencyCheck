@@ -140,7 +140,6 @@ public class NvdCveUpdater implements CachedWebDataSource {
                     throw new UpdateException("Unable to obtain the update lock, skipping the database update. Skippinig the database update.");
                 }
             }
-            
             initializeExecutorServices();
             cveDb = CveDB.getInstance();
             dbProperties = cveDb.getDatabaseProperties();
