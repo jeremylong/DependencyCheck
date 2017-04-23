@@ -95,28 +95,16 @@ public class NvdCveUpdater implements CachedWebDataSource {
 
     /**
      * Downloads the latest NVD CVE XML file from the web and imports it into
-     * the current CVE Database.
+     * the current CVE Database. A lock on a file is obtained in an attempt to
+     * prevent more then one thread/JVM from updating the database at the same
+     * time. This method may sleep upto 5 minutes.
      *
      * @throws UpdateException is thrown if there is an error updating the
      * database
      */
     @Override
     public synchronized void update() throws UpdateException {
-        try {
-            if (!Settings.getBoolean(Settings.KEYS.UPDATE_NVDCVE_ENABLED, true)) {
-                return;
-            }
-        } catch (InvalidSettingException ex) {
-            LOGGER.trace("invalid setting UPDATE_NVDCVE_ENABLED", ex);
-        }
-
-        boolean autoUpdate = true;
-        try {
-            autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
-        } catch (InvalidSettingException ex) {
-            LOGGER.debug("Invalid setting for auto-update; using true.");
-        }
-        if (!autoUpdate) {
+        if (isUpdateConfiguredFalse()) {
             return;
         }
         FileLock lock = null;
@@ -147,7 +135,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
                             LOGGER.trace("ignorable error, sleep was interrupted.", ex);
                         }
                     }
-                } while (++ctr < 100 && (lock == null || !lock.isValid()));
+                } while (++ctr < 60 && (lock == null || !lock.isValid()));
                 if (lock == null || !lock.isValid()) {
                     throw new UpdateException("Unable to obtain the update lock, skipping the database update. Skippinig the database update.");
                 }
@@ -198,6 +186,29 @@ public class NvdCveUpdater implements CachedWebDataSource {
                 lockFile.delete();
             }
         }
+    }
+
+    /**
+     * Checks if the system is configured NOT to update.
+     *
+     * @return false if the system is configured to perform an update; otherwise
+     * true
+     */
+    private boolean isUpdateConfiguredFalse() {
+        try {
+            if (!Settings.getBoolean(Settings.KEYS.UPDATE_NVDCVE_ENABLED, true)) {
+                return true;
+            }
+        } catch (InvalidSettingException ex) {
+            LOGGER.trace("invalid setting UPDATE_NVDCVE_ENABLED", ex);
+        }
+        boolean autoUpdate = true;
+        try {
+            autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
+        } catch (InvalidSettingException ex) {
+            LOGGER.debug("Invalid setting for auto-update; using true.");
+        }
+        return !autoUpdate;
     }
 
     /**
