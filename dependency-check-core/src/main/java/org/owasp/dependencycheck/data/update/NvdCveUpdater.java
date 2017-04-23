@@ -17,6 +17,9 @@
  */
 package org.owasp.dependencycheck.data.update;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.MalformedURLException;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -24,6 +27,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.net.URL;
+import java.nio.channels.FileLock;
+import java.util.Date;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -31,6 +36,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.owasp.dependencycheck.data.nvdcve.ConnectionFactory;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
@@ -95,7 +101,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
      * database
      */
     @Override
-    public void update() throws UpdateException {
+    public synchronized void update() throws UpdateException {
         try {
             if (!Settings.getBoolean(Settings.KEYS.UPDATE_NVDCVE_ENABLED, true)) {
                 return;
@@ -113,8 +119,40 @@ public class NvdCveUpdater implements CachedWebDataSource {
         if (!autoUpdate) {
             return;
         }
-        initializeExecutorServices();
+        FileLock lock = null;
+        RandomAccessFile ulFile = null;
+        File lockFile = null;
         try {
+            if (ConnectionFactory.isH2Connection()) {
+                final File dir = Settings.getDataDirectory();
+                lockFile = new File(dir, "odc.update.lock");
+                if (lockFile.isFile() && getFileAge(lockFile) > 5 && !lockFile.delete()) {
+                    LOGGER.warn("An old db update lock file was found but the system was unable to delete the file. Consider manually deleting " + lockFile.getAbsolutePath());
+                }
+                int ctr = 0;
+                do {
+                    try {
+                        if (!lockFile.exists() && lockFile.createNewFile()) {
+                            ulFile = new RandomAccessFile(lockFile, "rw");
+                            lock = ulFile.getChannel().lock();
+                        }
+                    } catch (IOException ex) {
+                        LOGGER.trace("Expected error as another thread has likely locked the file", ex);
+                    }
+                    if (lock == null || !lock.isValid()) {
+                        try {
+                            LOGGER.debug(String.format("Sleeping thread %s for 5 seconds because we could not obtain the update lock.", Thread.currentThread().getName()));
+                            Thread.sleep(5000);
+                        } catch (InterruptedException ex) {
+                            LOGGER.trace("ignorable error, sleep was interrupted.", ex);
+                        }
+                    }
+                } while (++ctr < 100 && (lock == null || !lock.isValid()));
+                if (lock == null || !lock.isValid()) {
+                    throw new UpdateException("Unable to obtain the update lock, skipping the database update. Skippinig the database update.");
+                }
+            }
+            initializeExecutorServices();
             cveDb = CveDB.getInstance();
             dbProperties = cveDb.getDatabaseProperties();
 
@@ -137,10 +175,41 @@ public class NvdCveUpdater implements CachedWebDataSource {
             throw new UpdateException("Unable to download the NVD CVE data.", ex);
         } catch (DatabaseException ex) {
             throw new UpdateException("Database Exception, unable to update the data to use the most current data.", ex);
+        } catch (IOException ex) {
+            throw new UpdateException("Database Exception", ex);
         } finally {
             shutdownExecutorServices();
             cveDb.close();
+            if (lock != null) {
+                try {
+                    lock.release();
+                } catch (IOException ex) {
+                    LOGGER.trace("Ignorable exception", ex);
+                }
+            }
+            if (ulFile != null) {
+                try {
+                    ulFile.close();
+                } catch (IOException ex) {
+                    LOGGER.trace("Ignorable exception", ex);
+                }
+            }
+            if (lockFile != null) {
+                lockFile.delete();
+            }
         }
+    }
+
+    /**
+     * Returns the age of the file in minutes.
+     *
+     * @param file the file to calculate the age
+     * @return the age of the file
+     */
+    private long getFileAge(File file) {
+        final Date d = new Date();
+        final long modified = file.lastModified();
+        return (d.getTime() - modified) / 1000 / 60;
     }
 
     /**
