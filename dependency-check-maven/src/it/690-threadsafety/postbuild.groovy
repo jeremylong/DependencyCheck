@@ -16,13 +16,14 @@
  * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
  */
 
+import java.nio.charset.Charset;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
  
-// Save NVD-CVE for next IT (if not already done)
-File datasDwl = new File("target/local-repo/org/owasp/dependency-check-data/3.0", "dc.h2.db");
-File datasSave = new File("target/nvd-cve-backup", "dc.h2.db");
-if (datasDwl.exists() && !datasSave.exists()){
-    System.out.println("Save NVD-CVE into backup");
-    FileUtils.copyFile(datasDwl, datasSave);    
+String log = FileUtils.readFileToString(new File(basedir, "build.log"), Charset.defaultCharset().name());
+int count = StringUtils.countMatches(log, "Download Started for NVD CVE - 2002");
+if (count > 1){
+    System.out.println(String.format("NVD CVE was downloaded %s times, should be 0 or 1 times", count));
+    return false;
 }
+return true;

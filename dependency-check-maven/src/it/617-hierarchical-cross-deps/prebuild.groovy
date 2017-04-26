@@ -15,14 +15,3 @@
  *
  * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
  */
-
-import org.apache.commons.io.FileUtils;
-
-// Load NVD-CVE if not exist and had been saved in a previous IT
-File datasDwl = new File("target/local-repo/org/owasp/dependency-check-data/3.0", "dc.h2.db");
-File datasSave = new File("target/nvd-cve-backup", "dc.h2.db");
-
-if (!datasDwl.exists() && datasSave.exists()){
-    System.out.println("Load NVD-CVE from backup");
-    FileUtils.copyFile(datasSave, datasDwl);    
-}
