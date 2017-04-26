@@ -131,7 +131,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
             table.lined tr:nth-child(even) {
                 background-color: #fbfbfb;
             }
-            th.cve {
+            th.name {
                 width: 60px;
                 text-align: left;
                 cursor: pointer;
@@ -200,7 +200,7 @@ have been reported. Additionally, the HTML report provides many features not fou
                 #set($cnt=0)
                 <table id="vulnTable" class="lined">
                     <thead><tr>
-                        <th class="cve" data-sort="string">CVE</th>
+                        <th class="name" data-sort="string">NAME</th>
                         <th class="cwe" data-sort="string">CWE</th>
                         <th class="severity" data-sort="severity">Severity (CVSS)</th>
                         <th class="dependency" data-sort="string">Dependency</th>
@@ -210,7 +210,13 @@ have been reported. Additionally, the HTML report provides many features not fou
                     #if($dependency.getVulnerabilities().size()>0)
                         #foreach($vuln in $dependency.getVulnerabilities())
                             <tr>
-                                <td><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></td>
+                                <td>
+                                    #if($vuln.getSource().name().equals("NVD"))
+                                    <a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a>
+                                    #elseif($vuln.getSource().name().equals("NSP"))
+                                    <a target="_blank" href="https://nodesecurity.io/advisories/$enc.url($vuln.name)">NSP-$enc.html($vuln.name)</a>
+                                    #end
+                                </td>
                                 <td>
                                 #if ($vuln.cwe)
                                     $vuln.cwe
@@ -241,6 +247,11 @@ have been reported. Additionally, the HTML report provides many features not fou
                 </tbody>
                 </table>
             </div>
-        <p><br/><br/>This report contains data retrieved from the <a href="http://nvd.nist.gov">National Vulnerability Database</a>.</p>
+        <p>
+            <br/><br/>
+            This report contains data retrieved from the <a href="https://nvd.nist.gov">National Vulnerability Database</a>.
+            <br/>
+            This report may contain data retrieved from the <a href="https://nodesecurity.io">Node Security Platform</a>.
+        </p>
     </body>
 </html>
