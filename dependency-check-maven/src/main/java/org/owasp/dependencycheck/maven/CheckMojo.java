@@ -40,7 +40,7 @@ import org.owasp.dependencycheck.utils.Settings;
 @Mojo(
         name = "check",
         defaultPhase = LifecyclePhase.VERIFY,
-        threadSafe = true,
+        threadSafe = false,
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
         requiresOnline = true
 )
