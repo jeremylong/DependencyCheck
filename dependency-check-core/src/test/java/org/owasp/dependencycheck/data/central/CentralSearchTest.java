@@ -8,7 +8,7 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
@@ -50,7 +50,7 @@ public class CentralSearchTest extends BaseTest {
     // This test does generate network traffic and communicates with a host
     // you may not be able to reach. Remove the @Ignore annotation if you want to
     // test it anyway
-    @Test(expected = FileNotFoundException.class)
+    @Test(expected = IOException.class)
     public void testMissingSha1() throws Exception {
         searcher.searchSha1("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     }

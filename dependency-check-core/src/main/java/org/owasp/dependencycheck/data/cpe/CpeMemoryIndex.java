@@ -245,11 +245,12 @@ public final class CpeMemoryIndex {
      * @throws IOException is thrown if there is an issue with the underlying
      * Index
      */
-    public TopDocs search(String searchString, int maxQueryResults) throws ParseException, IOException {
+    public synchronized TopDocs search(String searchString, int maxQueryResults) throws ParseException, IOException {
         if (searchString == null || searchString.trim().isEmpty()) {
             throw new ParseException("Query is null or empty");
         }
         LOGGER.debug(searchString);
+        resetFieldAnalyzer();
         final Query query = queryParser.parse(searchString);
         return search(query, maxQueryResults);
     }
@@ -263,7 +264,7 @@ public final class CpeMemoryIndex {
      * @throws CorruptIndexException thrown if the Index is corrupt
      * @throws IOException thrown if there is an IOException
      */
-    public TopDocs search(Query query, int maxQueryResults) throws CorruptIndexException, IOException {
+    public synchronized TopDocs search(Query query, int maxQueryResults) throws CorruptIndexException, IOException {
         resetFieldAnalyzer();
         return indexSearcher.search(query, maxQueryResults);
     }

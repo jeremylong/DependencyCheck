@@ -20,19 +20,11 @@ import java.nio.charset.Charset;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
  
-// Save NVD-CVE for next IT (if not already done)
-File datasDwl = new File("target/local-repo/org/owasp/dependency-check-data/3.0", "dc.h2.db");
-File datasSave = new File("target/nvd-cve-backup", "dc.h2.db");
-if (datasDwl.exists() && !datasSave.exists()){
-    System.out.println("Save NVD-CVE into backup");
-    FileUtils.copyFile(datasDwl, datasSave);    
-}
-
 // Analyse number of "Checking for updates"
 String log = FileUtils.readFileToString(new File(basedir, "build.log"), Charset.defaultCharset().name());
 int count = StringUtils.countMatches(log, "Checking for updates");
 if (count > 1){
     System.out.println(String.format("The update should be unique, it is %s", count));
     return false;
-    //throw new Exception(String.format("The update should be unique, it is %s", count));
 }
+return true;
