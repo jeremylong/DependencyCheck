@@ -27,3 +27,4 @@ if (!StringUtils.contains(log, "Database file purged; local copy of the NVD has 
     System.out.println("The database was not purged.");
     return false;
 }
+return true;

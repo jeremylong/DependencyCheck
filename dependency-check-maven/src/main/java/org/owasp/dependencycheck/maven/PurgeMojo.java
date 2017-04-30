@@ -35,7 +35,7 @@ import org.owasp.dependencycheck.utils.Settings;
 @Mojo(
         name = "purge",
         defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
-        threadSafe = false,
+        threadSafe = true,
         requiresDependencyResolution = ResolutionScope.NONE,
         requiresOnline = true,
         aggregator = true
