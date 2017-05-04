@@ -146,8 +146,8 @@ public class ReportGeneratorIntegrationTest extends BaseDBTestCase {
             
             CveDB cveDB = CveDB.getInstance();
             DatabaseProperties dbProp = cveDB.getDatabaseProperties();
-            
-            ReportGenerator generator = new ReportGenerator("Test Report", engine.getDependencies(), engine.getAnalyzers(), dbProp);
+
+            ReportGenerator generator = new ReportGenerator("Test Report","1.4.7","dependency-check-core","org.owasp", engine.getDependencies(), engine.getAnalyzers(), dbProp);
             generator.generateReport(templateName, writeTo);
             cveDB.close();
             

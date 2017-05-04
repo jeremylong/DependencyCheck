@@ -31,6 +31,9 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     </scanInfo>
     <projectInfo>
         <name>$enc.xml($applicationName)</name>
+        <version>$enc.xml($version)</version>
+        <artifactID>$enc.xml($artifactID)</artifactID>
+        <groupID>$enc.xml($groupID)</groupID>
         <reportDate>$scanDateXML</reportDate>
         <credits>This report contains data retrieved from the National Vulnerability Database: http://nvd.nist.gov</credits>
     </projectInfo>

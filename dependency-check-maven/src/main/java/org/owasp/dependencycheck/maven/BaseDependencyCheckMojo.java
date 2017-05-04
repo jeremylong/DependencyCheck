@@ -1015,7 +1015,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 getLog().debug("Unable to retrieve DB Properties", ex);
             }
         }
-        final ReportGenerator r = new ReportGenerator(p.getName(), engine.getDependencies(), engine.getAnalyzers(), prop);
+        final ReportGenerator r = new ReportGenerator(p.getName(),p.getVersion(),p.getArtifactId(),p.getGroupId(), engine.getDependencies(), engine.getAnalyzers(), prop);
         try {
             r.generateReports(outputDir.getAbsolutePath(), format);
         } catch (ReportException ex) {
