@@ -147,14 +147,14 @@ public class ReportGeneratorIT extends BaseDBTestCase {
             
             CveDB cveDB = CveDB.getInstance();
             DatabaseProperties dbProp = cveDB.getDatabaseProperties();
-            
-            ReportGenerator generator = new ReportGenerator("Test Report", engine.getDependencies(), engine.getAnalyzers(), dbProp);
+
+            ReportGenerator generator = new ReportGenerator("Test Report","1.4.7","dependency-check-core","org.owasp", engine.getDependencies(), engine.getAnalyzers(), dbProp);
             generator.generateReport(templateName, writeTo);
             cveDB.close();
             
             engine.cleanup();
             
-            InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/dependency-check.1.4.xsd");
+            InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/dependency-check.1.5.xsd");
             StreamSource xsdSource = new StreamSource(xsdStream);
             StreamSource xmlSource = new StreamSource(new File(writeTo));
             SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
