@@ -68,8 +68,10 @@ public class CveDBIT extends BaseDBTestCase {
         } catch (DatabaseException | SQLException ex) {
             fail(ex.getMessage());
         } finally {
+            int start = instance.getUsageCount();
             instance.close();
-            assertFalse(instance.isOpen());
+            int end = instance.getUsageCount();
+            assertTrue( end < start);
         }
     }
 

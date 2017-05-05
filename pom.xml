@@ -320,9 +320,6 @@ Copyright (c) 2012 - Jeremy Long
                             <value>${project.build.directory}/temp</value>
                         </property>
                     </systemProperties>
-                    <excludes>
-                        <exclude>**/*MySqlIT.java</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -336,6 +333,9 @@ Copyright (c) 2012 - Jeremy Long
                             <value>${project.build.directory}/temp</value>
                         </property>
                     </systemProperties>
+                    <excludes>
+                        <exclude>**/*MySqlIT.java</exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>

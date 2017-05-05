@@ -49,8 +49,10 @@ public class CveDBMySqlIT extends BaseTest {
             System.out.println("Unable to connect to the My SQL database; verify that the db server is running and that the schema has been generated");
             fail(ex.getMessage());
         } finally {
+            int start = instance.getUsageCount();
             instance.close();
-            assertFalse(instance.isOpen());
+            int end = instance.getUsageCount();
+            assertTrue( end < start);
         }
     }
 
