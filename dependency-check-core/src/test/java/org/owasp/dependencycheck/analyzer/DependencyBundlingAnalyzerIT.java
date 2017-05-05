@@ -24,7 +24,7 @@ import org.owasp.dependencycheck.BaseDBTestCase;
  *
  * @author Jeremy Long
  */
-public class DependencyBundlingAnalyzerIntegrationTest extends BaseDBTestCase {
+public class DependencyBundlingAnalyzerIT extends BaseDBTestCase {
 
     /**
      * Test of analyze method, of class DependencyBundlingAnalyzer.

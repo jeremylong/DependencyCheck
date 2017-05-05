@@ -28,12 +28,14 @@ import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  *
  * @author Jeremy Long
  */
-public class CveDBMySQLTest extends BaseTest {
+public class CveDBMySqlIT extends BaseTest {
 
     /**
      * Pretty useless tests of open, commit, and close methods, of class CveDB.
@@ -47,8 +49,10 @@ public class CveDBMySQLTest extends BaseTest {
             System.out.println("Unable to connect to the My SQL database; verify that the db server is running and that the schema has been generated");
             fail(ex.getMessage());
         } finally {
+            int start = instance.getUsageCount();
             instance.close();
-            assertFalse(instance.isOpen());
+            int end = instance.getUsageCount();
+            assertTrue( end < start);
         }
     }
 

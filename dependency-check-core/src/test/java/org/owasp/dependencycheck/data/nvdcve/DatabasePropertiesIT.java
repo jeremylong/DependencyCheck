@@ -24,12 +24,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.data.update.nvd.NvdCveInfo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
  * @author Jeremy Long
  */
-public class DatabasePropertiesIntegrationTest extends BaseDBTestCase {
+public class DatabasePropertiesIT extends BaseDBTestCase {
 
     /**
      * Test of isEmpty method, of class DatabaseProperties.

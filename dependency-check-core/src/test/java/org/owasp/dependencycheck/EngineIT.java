@@ -29,12 +29,13 @@ import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
  * @author Jeremy Long
  */
-public class EngineIntegrationTest extends BaseDBTestCase {
+public class EngineIT extends BaseDBTestCase {
 
     /**
      * Test running the entire engine.

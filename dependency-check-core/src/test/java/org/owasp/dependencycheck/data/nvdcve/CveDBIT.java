@@ -34,12 +34,27 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  *
  * @author Jeremy Long
  */
-public class CveDBIntegrationTest extends BaseDBTestCase {
+public class CveDBIT extends BaseDBTestCase {
 
     /**
      * Pretty useless tests of open, commit, and close methods, of class CveDB.
@@ -53,8 +68,10 @@ public class CveDBIntegrationTest extends BaseDBTestCase {
         } catch (DatabaseException | SQLException ex) {
             fail(ex.getMessage());
         } finally {
+            int start = instance.getUsageCount();
             instance.close();
-            assertFalse(instance.isOpen());
+            int end = instance.getUsageCount();
+            assertTrue( end < start);
         }
     }
 

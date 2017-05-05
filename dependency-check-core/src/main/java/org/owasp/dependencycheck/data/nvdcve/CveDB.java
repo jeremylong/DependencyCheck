@@ -231,6 +231,16 @@ public final class CveDB implements AutoCloseable {
     }
 
     /**
+     * Method added for testing, returns the current usage count of the CveDB
+     * singleton.
+     *
+     * @return the current usage of the CveDB singleton
+     */
+    protected synchronized int getUsageCount() {
+        return usageCount;
+    }
+
+    /**
      * Opens the database connection. If the database does not exist, it will
      * create a new one.
      *

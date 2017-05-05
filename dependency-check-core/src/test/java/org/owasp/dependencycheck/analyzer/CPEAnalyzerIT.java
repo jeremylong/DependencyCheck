@@ -34,12 +34,14 @@ import org.owasp.dependencycheck.data.cpe.IndexEntry;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
  * @author Jeremy Long
  */
-public class CPEAnalyzerIntegrationTest extends BaseDBTestCase {
+public class CPEAnalyzerIT extends BaseDBTestCase {
 
     /**
      * Tests of buildSearch of class CPEAnalyzer.
