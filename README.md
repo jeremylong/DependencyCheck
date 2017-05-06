@@ -116,7 +116,7 @@ if [ ! -d $DATA_DIRECTORY ]; then
         chmod -R 777 $REPORT_DIRECTORY
 fi
 
-docker pull owasp/dependency-check # Make sure it is the actual version
+docker pull owasp/dependency-check 
 
 docker run --rm \
         --volume $(pwd):/src \
