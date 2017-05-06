@@ -19,4 +19,5 @@ VOLUME ["/src" "/usr/share/dependency-check/data" "/report"]
 
 WORKDIR /report
 
-ENTRYPOINT ["/usr/share/dependency-check/bin/dependency-check.sh", "--scan", "/src"]
+CMD ["--help"]
+ENTRYPOINT ["/usr/share/dependency-check/bin/dependency-check.sh"]

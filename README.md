@@ -111,7 +111,7 @@ if [ ! -d $DATA_DIRECTORY ]; then
 	echo "Initially creating persistent directories"
         mkdir -p $DATA_DIRECTORY
         chmod -R 777 $DATA_DIRECTORY
-    
+
         mkdir -p $REPORT_DIRECTORY
         chmod -R 777 $REPORT_DIRECTORY
 fi
@@ -123,7 +123,8 @@ docker run --rm \
         --volume $DATA_DIRECTORY:/usr/share/dependency-check/data \
         --volume $REPORT_DIRECTORY:/report \
         --name dependency-check \
-        dc \
+        owasp/dependency-check \
+        --scan /src \
         --suppression "/src/security/dependency-check-suppression.xml"\
         --format "ALL" \
         --project "My OWASP Dependency Check Project" \
