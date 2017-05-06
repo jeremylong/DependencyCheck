@@ -2,7 +2,7 @@ FROM java:8
 
 MAINTAINER Timo Pagel <dependencycheckmaintainer@timo-pagel.de>
 
-ENV user=dockeruser
+ENV user=dependencycheck
 
 RUN wget -O /tmp/current.txt http://jeremylong.github.io/DependencyCheck/current.txt && \
  current=$(cat /tmp/current.txt) && \
