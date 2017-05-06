@@ -3,12 +3,15 @@ FROM java:8
 MAINTAINER Timo Pagel <dependencycheckmaintainer@timo-pagel.de>
 
 ENV user=dependencycheck
+ENV version_url=https://jeremylong.github.io/DependencyCheck/current.txt
+ENV download_url=https://dl.bintray.com/jeremy-long/owasp
 
-RUN wget -O /tmp/current.txt http://jeremylong.github.io/DependencyCheck/current.txt && \
- current=$(cat /tmp/current.txt) && \
- wget https://dl.bintray.com/jeremy-long/owasp/dependency-check-$current-release.zip && \
- unzip dependency-check-$current-release.zip && \
- rm dependency-check-$current-release.zip && \
+RUN wget -O /tmp/current.txt ${version_url} && \
+ version=$(cat /tmp/current.txt) && \
+ file="dependency-check-${version}-release.zip" && \
+ wget "$download_url/$file" && \
+ unzip ${file} && \
+ rm ${file} && \
  mv dependency-check /usr/share/
 
 RUN useradd -ms /bin/bash ${user} && \
