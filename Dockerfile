@@ -6,6 +6,7 @@ RUN wget -O /tmp/current.txt http://jeremylong.github.io/DependencyCheck/current
  current=$(cat /tmp/current.txt) && \
  wget https://dl.bintray.com/jeremy-long/owasp/dependency-check-$current-release.zip && \
  unzip dependency-check-$current-release.zip && \
+ rm dependency-check-$current-release.zip && \
  mv dependency-check /usr/share/
 
 RUN useradd -ms /bin/bash dockeruser && \
