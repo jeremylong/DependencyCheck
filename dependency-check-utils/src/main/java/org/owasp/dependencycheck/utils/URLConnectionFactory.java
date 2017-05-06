@@ -67,12 +67,12 @@ public final class URLConnectionFactory {
     @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE", justification = "Just being extra safe")
     public static HttpURLConnection createHttpURLConnection(URL url) throws URLConnectionFailureException {
         HttpURLConnection conn = null;
-        final String proxyUrl = Settings.getString(Settings.KEYS.PROXY_SERVER);
+        final String proxyHost = Settings.getString(Settings.KEYS.PROXY_SERVER);
 
         try {
-            if (proxyUrl != null && !matchNonProxy(url)) {
+            if (proxyHost != null && !matchNonProxy(url)) {
                 final int proxyPort = Settings.getInt(Settings.KEYS.PROXY_PORT);
-                final SocketAddress address = new InetSocketAddress(proxyUrl, proxyPort);
+                final SocketAddress address = new InetSocketAddress(proxyHost, proxyPort);
 
                 final String username = Settings.getString(Settings.KEYS.PROXY_USERNAME);
                 final String password = Settings.getString(Settings.KEYS.PROXY_PASSWORD);
@@ -81,7 +81,8 @@ public final class URLConnectionFactory {
                     final Authenticator auth = new Authenticator() {
                         @Override
                         public PasswordAuthentication getPasswordAuthentication() {
-                            if (getRequestorType().equals(Authenticator.RequestorType.PROXY)) {
+                            if (proxyHost.equals(getRequestingHost()) || getRequestorType().equals(Authenticator.RequestorType.PROXY)) {
+                                LOGGER.debug("Using the configured proxy username and password");
                                 return new PasswordAuthentication(username, password.toCharArray());
                             }
                             return super.getPasswordAuthentication();
