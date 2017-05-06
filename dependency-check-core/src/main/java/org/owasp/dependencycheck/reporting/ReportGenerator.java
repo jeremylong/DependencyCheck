@@ -17,17 +17,14 @@
  */
 package org.owasp.dependencycheck.reporting;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.nio.file.*;
 import java.util.List;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
@@ -78,7 +75,11 @@ public class ReportGenerator {
         /**
          * Generate HTML Vulnerability report.
          */
-        VULN
+        VULN,
+        /**
+         * Generate JSON report.
+         */
+        JSON
     }
     /**
      * The Velocity Engine.
@@ -186,6 +187,9 @@ public class ReportGenerator {
         if (format == Format.VULN || format == Format.ALL) {
             generateReport("VulnerabilityReport", outputStream);
         }
+        if (format == Format.JSON || format == Format.ALL) {
+            generateReport("JsonReport", outputStream);
+        }
     }
 
     /**
@@ -200,12 +204,27 @@ public class ReportGenerator {
         if (format == Format.XML || format == Format.ALL) {
             generateReport("XmlReport", outputDir + File.separator + "dependency-check-report.xml");
         }
+        if (format == Format.JSON || format == Format.ALL) {
+            generateReport("JsonReport", outputDir + File.separator + "dependency-check-report.json");
+            try {
+                Path resultPath = Paths.get(outputDir + File.separator + "dependency-check-report.json");
+                String content = new String(Files.readAllBytes(resultPath));
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                JsonParser jp = new JsonParser();
+                JsonElement je = jp.parse(content);
+                String prettyJson = gson.toJson(je);
+                Files.write(Paths.get(outputDir + File.separator + "dependency-check-report.json"), prettyJson.getBytes(), StandardOpenOption.WRITE);
+            } catch (IOException e) {
+                LOGGER.error("Unable to generate pretty report, got error: ", e.getMessage());
+            }
+        }
         if (format == Format.HTML || format == Format.ALL) {
             generateReport("HtmlReport", outputDir + File.separator + "dependency-check-report.html");
         }
         if (format == Format.VULN || format == Format.ALL) {
             generateReport("VulnerabilityReport", outputDir + File.separator + "dependency-check-vulnerability.html");
         }
+
     }
 
     /**
@@ -220,7 +239,7 @@ public class ReportGenerator {
     public void generateReports(String outputDir, String outputFormat) throws ReportException {
         final String format = outputFormat.toUpperCase();
         final String pathToCheck = outputDir.toLowerCase();
-        if (format.matches("^(XML|HTML|VULN|ALL)$")) {
+        if (format.matches("^(XML|HTML|VULN|JSON|ALL)$")) {
             if ("XML".equalsIgnoreCase(format)) {
                 if (pathToCheck.endsWith(".xml")) {
                     generateReport("XmlReport", outputDir);
@@ -240,6 +259,13 @@ public class ReportGenerator {
                     generateReport("VulnReport", outputDir);
                 } else {
                     generateReports(outputDir, Format.VULN);
+                }
+            }
+            if ("JSON".equalsIgnoreCase(format)) {
+                if (pathToCheck.endsWith(".json")) {
+                    generateReport("JsonReport", outputDir);
+                } else {
+                    generateReports(outputDir, Format.JSON);
                 }
             }
             if ("ALL".equalsIgnoreCase(format)) {

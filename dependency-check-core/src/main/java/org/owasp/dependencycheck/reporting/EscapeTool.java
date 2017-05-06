@@ -80,4 +80,16 @@ public class EscapeTool {
         }
         return StringEscapeUtils.escapeXml11(text);
     }
+
+    /**
+     * JSON Encodes the provded text
+     * @param text the text to encode
+     * @return the JSON encoded text
+     */
+    public String json(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        return StringEscapeUtils.escapeJson(text);
+    }
 }
