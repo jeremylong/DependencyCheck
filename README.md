@@ -101,33 +101,38 @@ Then load the resulting 'DependencyCheck-Report.html' into your favorite browser
 
 ### Docker
 
-In the following example it is assumed that the source to be checked is in the actual directory. A persistent data directory and a persistent report directory is used so that the container can be destroyed after running it to make sure that you use the newest version, always.
+In the following example it is assumed that the source to be checked is in the current working directory. Persistent data and report directories are used, allowing you to destroy the container after running.
+
 ```
-# After the first run, feel free to change the owner of the directories to the owner of the created files and the permissions to 744
-DATA_DIRECTORY=$HOME/OWASP-Dependency-Check/data
-REPORT_DIRECTORY=/$HOME/OWASP-Dependency-Check/reports
+#!/bin/sh
 
-if [ ! -d $DATA_DIRECTORY ]; then
-	echo "Initially creating persistent directories"
-        mkdir -p $DATA_DIRECTORY
-        chmod -R 777 $DATA_DIRECTORY
+OWASPDC_DIRECTORY=$HOME/OWASP-Dependency-Check
+DATA_DIRECTORY="$OWASPDC_DIRECTORY/data"
+REPORT_DIRECTORY="$OWASPDC_DIRECTORY/reports"
 
-        mkdir -p $REPORT_DIRECTORY
-        chmod -R 777 $REPORT_DIRECTORY
+if [ ! -d "$DATA_DIRECTORY" ]; then
+    echo "Initially creating persistent directories"
+    mkdir -p "$DATA_DIRECTORY"
+    chmod -R 777 "$DATA_DIRECTORY"
+
+    mkdir -p "$REPORT_DIRECTORY"
+    chmod -R 777 "$REPORT_DIRECTORY"
 fi
 
-docker pull owasp/dependency-check # Make sure it is the actual version
+# Make sure we are using the latest version
+docker pull owasp/dependency-check
 
 docker run --rm \
-        --volume $(pwd):/src \
-        --volume $DATA_DIRECTORY:/usr/share/dependency-check/data \
-        --volume $REPORT_DIRECTORY:/report \
-        --name dependency-check \
-        owasp/dependency-check \
-        --scan /src \
-        --format "ALL" \
-        --project "My OWASP Dependency Check Project" \
-        --suppression "/src/security/dependency-check-suppression.xml"
+    --volume $(pwd):/src \
+    --volume "$DATA_DIRECTORY":/usr/share/dependency-check/data \
+    --volume "$REPORT_DIRECTORY":/report \
+    owasp/dependency-check \
+    --scan /src \
+    --format "ALL" \
+    --project "My OWASP Dependency Check Project"
+    # Use suppression like this: (/src == $pwd)
+    # --suppression "/src/security/dependency-check-suppression.xml"
+
 ```
 
 
