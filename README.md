@@ -125,9 +125,9 @@ docker run --rm \
         --name dependency-check \
         owasp/dependency-check \
         --scan /src \
-        --suppression "/src/security/dependency-check-suppression.xml"\
         --format "ALL" \
         --project "My OWASP Dependency Check Project" \
+        --suppression "/src/security/dependency-check-suppression.xml"
 ```
 
 
