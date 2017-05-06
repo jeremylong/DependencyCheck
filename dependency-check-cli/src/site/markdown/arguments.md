@@ -4,22 +4,22 @@ Command Line Arguments
 The following table lists the command line arguments:
 
 Short  | Argument&nbsp;Name&nbsp;&nbsp; | Parameter       | Description | Requirement
--------|-----------------------|-----------------|-------------|------------
-       | \-\-project           | \<name\>        | The name of the project being scanned. | Required
- \-s   | \-\-scan              | \<path\>        | The path to scan \- this option can be specified multiple times. It is also possible to specify Ant style paths (e.g. directory/**/*.jar). | Required
-       | \-\-exclude           | \<pattern\>     | The path patterns to exclude from the scan \- this option can be specified multiple times. This accepts Ant style path patterns (e.g. **/exclude/**). | Optional
-       | \-\-symLink           | \<depth\>       | The depth that symbolic links will be followed; the default is 0 meaning symbolic links will not be followed. | Optional
- \-o   | \-\-out               | \<path\>        | The folder to write reports to. This defaults to the current directory. If the format is not set to ALL one could specify a specific file name. | Optional
- \-f   | \-\-format            | \<format\>      | The output format to write to (XML, HTML, VULN, ALL). The default is HTML. | Required
-       | \-\-failOnCvss        | \<score\>       | If the score set between 0 and 10 the exit code from dependency-check will indicate if a vulnerability with a CVSS score equal to or higher was identified. | Optional
- \-l   | \-\-log               | \<file\>        | The file path to write verbose logging information. | Optional
- \-n   | \-\-noupdate          |                 | Disables the automatic updating of the CPE data. | Optional
-       | \-\-suppression       | \<file\>        | The file path to the suppression XML file; used to suppress [false positives](../general/suppression.html). | Optional
- \-h   | \-\-help              |                 | Print the help message. | Optional
-       | \-\-advancedHelp      |                 | Print the advanced help message. | Optional
- \-v   | \-\-version           |                 | Print the version information. | Optional
-       | \-\-cveValidForHours  | \<hours\>       | The number of hours to wait before checking for new updates from the NVD. The default is 4 hours. | Optional
-       | \-\-experimental      |                 | Enable the [experimental analyzers](../analyzers/index.html). If not set the analyzers marked as experimental below will not be loaded or used. | Optional
+-------|------------------------|-----------------|-------------|------------
+       | \-\-project            | \<name\>        | The name of the project being scanned. | Required
+ \-s   | \-\-scan               | \<path\>        | The path to scan \- this option can be specified multiple times. It is also possible to specify Ant style paths (e.g. directory/**/*.jar). | Required
+       | \-\-exclude            | \<pattern\>     | The path patterns to exclude from the scan \- this option can be specified multiple times. This accepts Ant style path patterns (e.g. **/exclude/**). | Optional
+       | \-\-symLink            | \<depth\>       | The depth that symbolic links will be followed; the default is 0 meaning symbolic links will not be followed. | Optional
+ \-o   | \-\-out                | \<path\>        | The folder to write reports to. This defaults to the current directory. If the format is not set to ALL one could specify a specific file name. | Optional
+ \-f   | \-\-format             | \<format\>      | The output format to write to (XML, HTML, VULN, ALL). The default is HTML. | Required
+       | \-\-failOnCvss         | \<score\>       | If the score set between 0 and 10 the exit code from dependency-check will indicate if a vulnerability with a CVSS score equal to or higher was identified. | Optional
+ \-l   | \-\-log                | \<file\>        | The file path to write verbose logging information. | Optional
+ \-n   | \-\-noupdate           |                 | Disables the automatic updating of the CPE data. | Optional
+       | \-\-suppression        | \<file\>        | The file path to the suppression XML file; used to suppress [false positives](../general/suppression.html). | Optional
+ \-h   | \-\-help               |                 | Print the help message. | Optional
+       | \-\-advancedHelp       |                 | Print the advanced help message. | Optional
+ \-v   | \-\-version            |                 | Print the version information. | Optional
+       | \-\-cveValidForHours   | \<hours\>       | The number of hours to wait before checking for new updates from the NVD. The default is 4 hours. | Optional
+       | \-\-enableExperimental |                 | Enable the [experimental analyzers](../analyzers/index.html). If not set the analyzers marked as experimental below will not be loaded or used. | Optional
 
 Advanced Options
 ================
