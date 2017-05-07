@@ -20,16 +20,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import java.nio.charset.Charset;
  
-// Save NVD-CVE for next IT (if not already done)
-File datasDwl = new File("target/local-repo/org/owasp/dependency-check-data/3.0", "dc.h2.db");
-File datasSave = new File("target/nvd-cve-backup", "dc.h2.db");
-if (datasDwl.exists() && !datasSave.exists()){
-    System.out.println("Save NVD-CVE into backup");
-    FileUtils.copyFile(datasDwl, datasSave);    
-}
-
-
-
 
 // Check to see if jackson-dataformat-xml-2.4.5.jar was identified.
 //TODO change this to xpath and check for CVE-2016-3720

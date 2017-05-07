@@ -584,4 +584,13 @@
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
      </suppress>
+     <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #700
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.cloud:spring-cloud-.*$</gav>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:context_project:context</cpe>
+     </suppress>
 </suppressions>
