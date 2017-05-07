@@ -156,20 +156,20 @@
                     #foreach($vuln in $dependency.getSuppressedVulnerabilities())#if($foreach.count > 1),#end {
                     "name": "$enc.json($vuln.name)",
                     "cvssScore": "$vuln.cvssScore",
-                    "cvssAccessVector": "$enc.json"($vuln.cvssAccessVector),
-                    "cvssAccessComplexity": "$enc.json"($vuln.cvssAccessComplexity),
-                    "cvssAuthenticationr": "$enc.json"($vuln.cvssAuthentication),
-                    "cvssConfidentialImpact": "$enc.json"($vuln.cvssConfidentialityImpact),
-                    "cvssIntegrityImpact": "$enc.json"($vuln.cvssIntegrityImpact),
-                    "cvssAvailabilityImpact": "$enc.json"($vuln.cvssAvailabilityImpact),
-                        #if ($vuln.cvssScore<4.0) "severity": "Low",
-                        #elseif ($vuln.cvssScore>=7.0) "severity": "High",
-                        #else "severity": "Medium",
-                        #end
-                        #if ($vuln.cwe)"cwe": "$enc.json($vuln.cwe)",#end
+                    "cvssAccessVector": "$enc.json($vuln.cvssAccessVector)",
+                    "cvssAccessComplexity": "$enc.json($vuln.cvssAccessComplexity)",
+                    "cvssAuthenticationr": "$enc.json($vuln.cvssAuthentication)",
+                    "cvssConfidentialImpact": "$enc.json($vuln.cvssConfidentialityImpact)",
+                    "cvssIntegrityImpact": "$enc.json($vuln.cvssIntegrityImpact)",
+                    "cvssAvailabilityImpact": "$enc.json($vuln.cvssAvailabilityImpact)",
+                    #if ($vuln.cvssScore<4.0) "severity": "Low",
+                    #elseif ($vuln.cvssScore>=7.0) "severity": "High",
+                    #else "severity": "Medium", 
+                    #end
+                    #if ($vuln.cwe)"cwe": "$enc.json($vuln.cwe)",#end
                     "description": "$enc.json($vuln.description)"
                         #if ($vuln.notes),"notes": "$enc.json($vuln.notes)"#end
-                    ,"references" [
+                    ,"references": [
                         #foreach($ref in $vuln.getReferences())
                             #if($foreach.count > 1),#end {
                         "source": "$enc.json($ref.source)",
@@ -181,14 +181,14 @@
                     "vulnerableSoftware": [
                         #foreach($vs in $vuln.getVulnerableSoftware())
                             #if($foreach.count > 1),#end {
-                            #if($vs.hasPreviousVersion()) "allPreviousVersion": "true"#end,
+                            #if($vs.hasPreviousVersion()) "allPreviousVersion": "true",#end
                         "name": "$enc.json($vs.name)"
                         }
                         #end
                     ]
                     }
                     #end
-                }
+                ]
                 #end
 
                 }

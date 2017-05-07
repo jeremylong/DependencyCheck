@@ -561,4 +561,36 @@
         <gav regex="true">^org\.springframework\.boot:spring-boot-starter-data-jpa:.*$</gav>
         <cve>CVE-2016-6652</cve>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #699
+        ]]></notes>
+        <gav regex="true">^com\.splunk:splunk:.*$</gav>
+        <cpe>cpe:/a:splunk:splunk</cpe>
+     </suppress>
+     <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #713
+        ]]></notes>
+        <gav regex="true">^org\.openid4java:openid4java:.*$</gav>
+        <cpe>cpe:/a:openid:openid</cpe>
+        <cpe>cpe:/a:openid:openid4java</cpe>
+     </suppress>
+     <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #700
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.cloud:spring-cloud-netflix-core:.*$</gav>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+     </suppress>
+     <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #700
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.cloud:spring-cloud-.*$</gav>
+        <cpe>cpe:/a:pivotal:spring_framework</cpe>
+        <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+        <cpe>cpe:/a:context_project:context</cpe>
+     </suppress>
 </suppressions>
