@@ -18,13 +18,15 @@
 package org.owasp.dependencycheck.reporting;
 
 import java.io.*;
-import java.nio.file.*;
 import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import static com.google.gson.stream.JsonToken.*;
+import com.google.gson.stream.JsonWriter;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
@@ -138,15 +140,13 @@ public class ReportGenerator {
      * @param properties the database properties (containing timestamps of the
      * NVD CVE data)
      */
+    public ReportGenerator(String applicationName, String applicationVersion, String artifactID, String groupID, List<Dependency> dependencies, List<Analyzer> analyzers, DatabaseProperties properties) {
 
-    public ReportGenerator(String applicationName,String applicationVersion,String artifactID,String groupID, List<Dependency> dependencies, List<Analyzer> analyzers, DatabaseProperties properties) {
-
-        this(applicationName,dependencies,analyzers,properties);
-        context.put("applicationVersion",applicationVersion);
-        context.put("artifactID",artifactID);
-        context.put("groupID",groupID);
+        this(applicationName, dependencies, analyzers, properties);
+        context.put("applicationVersion", applicationVersion);
+        context.put("artifactID", artifactID);
+        context.put("groupID", groupID);
     }
-
 
     /**
      * Creates a new Velocity Engine.
@@ -206,17 +206,7 @@ public class ReportGenerator {
         }
         if (format == Format.JSON || format == Format.ALL) {
             generateReport("JsonReport", outputDir + File.separator + "dependency-check-report.json");
-            try {
-                Path resultPath = Paths.get(outputDir + File.separator + "dependency-check-report.json");
-                String content = new String(Files.readAllBytes(resultPath));
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                JsonParser jp = new JsonParser();
-                JsonElement je = jp.parse(content);
-                String prettyJson = gson.toJson(je);
-                Files.write(Paths.get(outputDir + File.separator + "dependency-check-report.json"), prettyJson.getBytes(), StandardOpenOption.WRITE);
-            } catch (IOException e) {
-                LOGGER.error("Unable to generate pretty report, got error: ", e.getMessage());
-            }
+            pretifyJson(outputDir + File.separator + "dependency-check-report.json");
         }
         if (format == Format.HTML || format == Format.ALL) {
             generateReport("HtmlReport", outputDir + File.separator + "dependency-check-report.html");
@@ -224,7 +214,82 @@ public class ReportGenerator {
         if (format == Format.VULN || format == Format.ALL) {
             generateReport("VulnerabilityReport", outputDir + File.separator + "dependency-check-vulnerability.html");
         }
+    }
 
+    private void pretifyJson(String pathToJson) throws JsonSyntaxException {
+        final String outputPath = pathToJson + ".pretty";
+        final File in = new File(pathToJson);
+        final File out = new File(outputPath);
+        try (JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(in), StandardCharsets.UTF_8));
+                JsonWriter writer = new JsonWriter(new OutputStreamWriter(new FileOutputStream(out), StandardCharsets.UTF_8))) {
+            prettyPrint(reader, writer);
+        } catch (IOException ex) {
+            LOGGER.error("Unable to generate pretty report, caused by: ", ex.getMessage());
+            return;
+        }
+        if (out.isFile() && in.isFile() && in.delete()) {
+            try {
+                org.apache.commons.io.FileUtils.moveFile(out, in);
+            } catch (IOException ex) {
+                LOGGER.error("Unable to generate pretty report, caused by: ", ex.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Streams from a json reader to a json writer and performs pretty printing.
+     *
+     * This function is copied from https://sites.google.com/site/gson/streaming
+     *
+     * @param reader json reader
+     * @param writer json writer
+     * @throws IOException thrown if the json is malformed
+     */
+    private static void prettyPrint(JsonReader reader, JsonWriter writer) throws IOException {
+        writer.setIndent("  ");
+        while (true) {
+            JsonToken token = reader.peek();
+            switch (token) {
+                case BEGIN_ARRAY:
+                    reader.beginArray();
+                    writer.beginArray();
+                    break;
+                case END_ARRAY:
+                    reader.endArray();
+                    writer.endArray();
+                    break;
+                case BEGIN_OBJECT:
+                    reader.beginObject();
+                    writer.beginObject();
+                    break;
+                case END_OBJECT:
+                    reader.endObject();
+                    writer.endObject();
+                    break;
+                case NAME:
+                    String name = reader.nextName();
+                    writer.name(name);
+                    break;
+                case STRING:
+                    String s = reader.nextString();
+                    writer.value(s);
+                    break;
+                case NUMBER:
+                    String n = reader.nextString();
+                    writer.value(new BigDecimal(n));
+                    break;
+                case BOOLEAN:
+                    boolean b = reader.nextBoolean();
+                    writer.value(b);
+                    break;
+                case NULL:
+                    reader.nextNull();
+                    writer.nullValue();
+                    break;
+                case END_DOCUMENT:
+                    return;
+            }
+        }
     }
 
     /**
@@ -264,6 +329,7 @@ public class ReportGenerator {
             if ("JSON".equalsIgnoreCase(format)) {
                 if (pathToCheck.endsWith(".json")) {
                     generateReport("JsonReport", outputDir);
+                    pretifyJson(outputDir);
                 } else {
                     generateReports(outputDir, Format.JSON);
                 }
