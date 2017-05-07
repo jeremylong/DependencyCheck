@@ -117,7 +117,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * The Maven Session.
      */
     @Parameter(defaultValue = "${session}", readonly = true, required = true)
-    protected MavenSession session;
+    private MavenSession session;
 
     /**
      * Remote repositories which will be searched for artifacts.
@@ -627,7 +627,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @return a collection of exceptions that may have occurred while resolving
      * and scanning the dependencies
      */
-    private ExceptionCollection collectDependencies(Engine engine, MavenProject project, List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest) {
+    private ExceptionCollection collectDependencies(Engine engine, MavenProject project,
+            List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest) {
         ExceptionCollection exCol = null;
         for (DependencyNode dependencyNode : nodes) {
             exCol = collectDependencies(engine, project, dependencyNode.getChildren(), buildingRequest);
@@ -1015,7 +1016,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 getLog().debug("Unable to retrieve DB Properties", ex);
             }
         }
-        final ReportGenerator r = new ReportGenerator(p.getName(),p.getVersion(),p.getArtifactId(),p.getGroupId(), engine.getDependencies(), engine.getAnalyzers(), prop);
+        final ReportGenerator r = new ReportGenerator(p.getName(), p.getGroupId(), p.getArtifactId(), p.getVersion(),
+                engine.getDependencies(), engine.getAnalyzers(), prop);
         try {
             r.generateReports(outputDir.getAbsolutePath(), format);
         } catch (ReportException ex) {

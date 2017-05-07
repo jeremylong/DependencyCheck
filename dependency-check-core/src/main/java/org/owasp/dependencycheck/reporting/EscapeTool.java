@@ -24,8 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An extremely simple wrapper around various escape utils to perform URL and HTML encoding within the reports. This class was
- * created to simplify the velocity configuration and avoid using the "built-in" escape tool.
+ * An extremely simple wrapper around various escape utils to perform URL and
+ * HTML encoding within the reports. This class was created to simplify the
+ * velocity configuration and avoid using the "built-in" escape tool.
  *
  * @author Jeremy Long
  */
@@ -82,7 +83,8 @@ public class EscapeTool {
     }
 
     /**
-     * JSON Encodes the provded text
+     * JSON Encodes the provided text.
+     *
      * @param text the text to encode
      * @return the JSON encoded text
      */

@@ -132,18 +132,19 @@ public class ReportGenerator {
      * Constructs a new ReportGenerator.
      *
      * @param applicationName the application name being analyzed
-     * @param applicationVersion the application version being analyzed
-     * @param artifactID the application version being analyzed
-     * @param applicationVersion the application version being analyzed
+     * @param groupID the group id of the project being analyzed
+     * @param artifactID the application id of the project being analyzed
+     * @param version the application version of the project being analyzed
      * @param dependencies the list of dependencies
      * @param analyzers the list of analyzers used
      * @param properties the database properties (containing timestamps of the
      * NVD CVE data)
      */
-    public ReportGenerator(String applicationName, String applicationVersion, String artifactID, String groupID, List<Dependency> dependencies, List<Analyzer> analyzers, DatabaseProperties properties) {
+    public ReportGenerator(String applicationName, String groupID, String artifactID, String version,
+            List<Dependency> dependencies, List<Analyzer> analyzers, DatabaseProperties properties) {
 
         this(applicationName, dependencies, analyzers, properties);
-        context.put("applicationVersion", applicationVersion);
+        context.put("applicationVersion", version);
         context.put("artifactID", artifactID);
         context.put("groupID", groupID);
     }
@@ -216,6 +217,12 @@ public class ReportGenerator {
         }
     }
 
+    /**
+     * Reformats the given JSON file.
+     *
+     * @param pathToJson the path to the JSON file to be reformatted
+     * @throws JsonSyntaxException thrown if the given JSON file is malformed
+     */
     private void pretifyJson(String pathToJson) throws JsonSyntaxException {
         final String outputPath = pathToJson + ".pretty";
         final File in = new File(pathToJson);
@@ -248,7 +255,7 @@ public class ReportGenerator {
     private static void prettyPrint(JsonReader reader, JsonWriter writer) throws IOException {
         writer.setIndent("  ");
         while (true) {
-            JsonToken token = reader.peek();
+            final JsonToken token = reader.peek();
             switch (token) {
                 case BEGIN_ARRAY:
                     reader.beginArray();
@@ -267,19 +274,19 @@ public class ReportGenerator {
                     writer.endObject();
                     break;
                 case NAME:
-                    String name = reader.nextName();
+                    final String name = reader.nextName();
                     writer.name(name);
                     break;
                 case STRING:
-                    String s = reader.nextString();
+                    final String s = reader.nextString();
                     writer.value(s);
                     break;
                 case NUMBER:
-                    String n = reader.nextString();
+                    final String n = reader.nextString();
                     writer.value(new BigDecimal(n));
                     break;
                 case BOOLEAN:
-                    boolean b = reader.nextBoolean();
+                    final boolean b = reader.nextBoolean();
                     writer.value(b);
                     break;
                 case NULL:
@@ -288,6 +295,9 @@ public class ReportGenerator {
                     break;
                 case END_DOCUMENT:
                     return;
+                default:
+                    LOGGER.debug("Unexpected JSON toekn {}", token.toString());
+                    break;
             }
         }
     }
