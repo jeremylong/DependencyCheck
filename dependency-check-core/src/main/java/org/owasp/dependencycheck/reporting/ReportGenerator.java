@@ -81,7 +81,11 @@ public class ReportGenerator {
         /**
          * Generate JSON report.
          */
-        JSON
+        JSON,
+        /**
+         * Generate CSV report.
+         */
+        CSV
     }
     /**
      * The Velocity Engine.
@@ -191,6 +195,9 @@ public class ReportGenerator {
         if (format == Format.JSON || format == Format.ALL) {
             generateReport("JsonReport", outputStream);
         }
+        if (format == Format.CSV || format == Format.ALL) {
+            generateReport("CsvReport", outputStream);
+        }
     }
 
     /**
@@ -208,6 +215,9 @@ public class ReportGenerator {
         if (format == Format.JSON || format == Format.ALL) {
             generateReport("JsonReport", outputDir + File.separator + "dependency-check-report.json");
             pretifyJson(outputDir + File.separator + "dependency-check-report.json");
+        }
+        if (format == Format.CSV || format == Format.ALL) {
+            generateReport("CsvReport", outputDir + File.separator + "dependency-check-report.csv");
         }
         if (format == Format.HTML || format == Format.ALL) {
             generateReport("HtmlReport", outputDir + File.separator + "dependency-check-report.html");
@@ -340,6 +350,13 @@ public class ReportGenerator {
                 if (pathToCheck.endsWith(".json")) {
                     generateReport("JsonReport", outputDir);
                     pretifyJson(outputDir);
+                } else {
+                    generateReports(outputDir, Format.JSON);
+                }
+            }
+            if ("CSV".equalsIgnoreCase(format)) {
+                if (pathToCheck.endsWith(".csv")) {
+                    generateReport("CsvReport", outputDir);
                 } else {
                     generateReports(outputDir, Format.JSON);
                 }

@@ -120,7 +120,7 @@ public final class CliParser {
                     Format.valueOf(format);
                 } catch (IllegalArgumentException ex) {
                     final String msg = String.format("An invalid 'format' of '%s' was specified. "
-                            + "Supported output formats are XML, JSON, HTML, VULN, or ALL", format);
+                            + "Supported output formats are HTML, XML, CSV, JSON, VULN, or ALL", format);
                     throw new ParseException(msg);
                 }
             }
