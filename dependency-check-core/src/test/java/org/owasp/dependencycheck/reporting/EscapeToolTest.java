@@ -19,10 +19,6 @@ package org.owasp.dependencycheck.reporting;
 
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.owasp.dependencycheck.dependency.Identifier;
