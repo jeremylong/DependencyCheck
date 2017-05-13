@@ -23,9 +23,10 @@ format                      | The report format to be generated (HTML, XML, VULN
 name                        | The name of the report in the site. | dependency-check or dependency-check:aggregate
 outputDirectory             | The location to write the report(s). Note, this is not used if generating the report as part of a `mvn site` build. | 'target'
 skip                        | Skips the dependency-check analysis.                       | false
-skipTestScope               | Skip analysis for artifacts with Test Scope.               | true
 skipProvidedScope           | Skip analysis for artifacts with Provided Scope.           | false
 skipRuntimeScope            | Skip analysis for artifacts with Runtime Scope.            | false
+skipSystemScope             | Skip analysis for artifacts with System Scope.             | false
+skipTestScope               | Skip analysis for artifacts with Test Scope.               | true
 suppressionFile             | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html). | &nbsp;
 hintsFile                   | The file path to the XML hints file \- used to resolve [false negatives](../general/hints.html).       | &nbsp;
 enableExperimental          | Enable the [experimental analyzers](../analyzers/index.html). If not enabled the experimental analyzers (see below) will not be loaded or used. | false

@@ -403,6 +403,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "skipProvidedScope", defaultValue = "false", required = false)
     private boolean skipProvidedScope = false;
+
+    /**
+     * Skip Analysis for Provided Scope Dependencies.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "skipSystemScope", defaultValue = "false", required = false)
+    private boolean skipSystemScope = false;
     /**
      * The data directory, hold DC SQL DB.
      */
@@ -631,10 +638,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest) {
         ExceptionCollection exCol = null;
         for (DependencyNode dependencyNode : nodes) {
-            exCol = collectDependencies(engine, project, dependencyNode.getChildren(), buildingRequest);
             if (excludeFromScan(dependencyNode.getArtifact().getScope())) {
                 continue;
             }
+            exCol = collectDependencies(engine, project, dependencyNode.getChildren(), buildingRequest);
             try {
                 final ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
                 final Artifact result = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();
@@ -961,6 +968,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             return true;
         }
         if (skipProvidedScope && org.apache.maven.artifact.Artifact.SCOPE_PROVIDED.equals(scope)) {
+            return true;
+        }
+        if (skipSystemScope && org.apache.maven.artifact.Artifact.SCOPE_SYSTEM.equals(scope)) {
             return true;
         }
         return skipRuntimeScope && !org.apache.maven.artifact.Artifact.SCOPE_RUNTIME.equals(scope);
