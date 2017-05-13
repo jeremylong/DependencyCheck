@@ -19,7 +19,9 @@ package org.owasp.dependencycheck.reporting;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Set;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.owasp.dependencycheck.dependency.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,5 +95,72 @@ public class EscapeTool {
             return text;
         }
         return StringEscapeUtils.escapeJson(text);
+    }
+
+    /**
+     * Formats text for CSV format. This includes trimming whitespace, replace
+     * line breaks with spaces, and if necessary quotes the text and/or escapes
+     * contained quotes.
+     *
+     * @param text the text to escape and quote
+     * @return the escaped and quoted text
+     */
+    public String csv(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        return StringEscapeUtils.escapeCsv(text.trim().replace("\n", " "));
+    }
+
+    /**
+     * Takes a set of Identifiers, filters them to none CPE, and formats them
+     * for display in a CSV.
+     *
+     * @param ids the set of identifiers
+     * @return the formated list of none CPE identifiers
+     */
+    public String csvIdentifiers(Set<Identifier> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return "";
+        }
+        boolean addComma = false;
+        StringBuilder sb = new StringBuilder();
+        for (Identifier id : ids) {
+            if (!"cpe".equals(id.getType())) {
+                if (addComma) {
+                    sb.append(", ");
+                } else {
+                    addComma = true;
+                }
+                sb.append(id.getValue());
+            }
+        }
+        return StringEscapeUtils.escapeCsv(sb.toString());
+    }
+
+    /**
+     * Takes a set of Identifiers, filters them to just CPEs, and formats them
+     * for display in a CSV.
+     *
+     * @param ids the set of identifiers
+     * @return the formated list of CPE identifiers
+     */
+    public String csvCpe(Set<Identifier> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return "";
+        }
+        boolean addComma = false;
+        StringBuilder sb = new StringBuilder();
+        for (Identifier id : ids) {
+            if ("cpe".equals(id.getType())) {
+                if (addComma) {
+                    sb.append(", ");
+                } else {
+                    addComma = true;
+                }
+                sb.append(id.getValue());
+            }
+        }
+        return StringEscapeUtils.escapeCsv(sb.toString());
     }
 }
