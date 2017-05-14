@@ -93,8 +93,8 @@ $ ./dependency-check-cli/target/release/bin/dependency-check.sh --project Testin
 On Windows
 ```
 > mvn install
-> dependency-check-cli/target/release/bin/dependency-check.bat -h
-> dependency-check-cli/target/release/bin/dependency-check.bat --project Testing --out . --scan ./src/test/resources
+> .\dependency-check-cli\target\release\bin\dependency-check.bat -h
+> .\dependency-check-cli\target\release\bin\dependency-check.bat --project Testing --out . --scan ./src/test/resources
 ```
 
 Then load the resulting 'DependencyCheck-Report.html' into your favorite browser.
