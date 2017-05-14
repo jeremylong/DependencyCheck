@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
     <suppress base="true">
+       <notes><![CDATA[
+       This suppresses false positives for EntityFramework.SqlServer.dll.
+       ]]></notes>
+       <filePath regex="true">.*EntityFramework\.SqlServer*\.dll</filePath>
+       <cpe>cpe:/a:microsoft:server:6.0.0.0</cpe>
+       <cpe>cpe:/a:microsoft:sql_server:6.0</cpe>
+    </suppress>
+    <suppress base="true">
         <notes><![CDATA[
         This suppresses false positives identified on spring security.
         ]]></notes>
