@@ -120,7 +120,7 @@ public final class CliParser {
                     Format.valueOf(format);
                 } catch (IllegalArgumentException ex) {
                     final String msg = String.format("An invalid 'format' of '%s' was specified. "
-                            + "Supported output formats are XML, HTML, VULN, or ALL", format);
+                            + "Supported output formats are HTML, XML, CSV, JSON, VULN, or ALL", format);
                     throw new ParseException(msg);
                 }
             }
@@ -262,7 +262,7 @@ public final class CliParser {
                 .build();
 
         final Option outputFormat = Option.builder(ARGUMENT.OUTPUT_FORMAT_SHORT).argName("format").hasArg().longOpt(ARGUMENT.OUTPUT_FORMAT)
-                .desc("The output format to write to (XML, HTML, VULN, ALL). The default is HTML.")
+                .desc("The output format to write to (XML, JSON, HTML, VULN, ALL). The default is HTML.")
                 .build();
 
         final Option verboseLog = Option.builder(ARGUMENT.VERBOSE_LOG_SHORT).argName("file").hasArg().longOpt(ARGUMENT.VERBOSE_LOG)

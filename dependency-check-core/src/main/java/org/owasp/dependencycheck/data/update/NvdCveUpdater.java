@@ -182,8 +182,8 @@ public class NvdCveUpdater implements CachedWebDataSource {
                     LOGGER.trace("Ignorable exception", ex);
                 }
             }
-            if (lockFile != null) {
-                lockFile.delete();
+            if (lockFile != null && lockFile.isFile() && !lockFile.delete()) {
+                LOGGER.error("Lock file '{}' was unable to be deleted. Please manually delete this file.", lockFile.toString());
             }
         }
     }

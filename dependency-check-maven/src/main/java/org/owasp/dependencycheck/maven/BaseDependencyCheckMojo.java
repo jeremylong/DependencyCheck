@@ -55,6 +55,7 @@ import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.exception.DependencyNotFoundException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
@@ -117,7 +118,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * The Maven Session.
      */
     @Parameter(defaultValue = "${session}", readonly = true, required = true)
-    protected MavenSession session;
+    private MavenSession session;
 
     /**
      * Remote repositories which will be searched for artifacts.
@@ -403,6 +404,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "skipProvidedScope", defaultValue = "false", required = false)
     private boolean skipProvidedScope = false;
+
+    /**
+     * Skip Analysis for Provided Scope Dependencies.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "skipSystemScope", defaultValue = "false", required = false)
+    private boolean skipSystemScope = false;
     /**
      * The data directory, hold DC SQL DB.
      */
@@ -627,24 +635,54 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @return a collection of exceptions that may have occurred while resolving
      * and scanning the dependencies
      */
-    private ExceptionCollection collectDependencies(Engine engine, MavenProject project, List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest) {
+    private ExceptionCollection collectDependencies(Engine engine, MavenProject project,
+            List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest) {
         ExceptionCollection exCol = null;
         for (DependencyNode dependencyNode : nodes) {
-            exCol = collectDependencies(engine, project, dependencyNode.getChildren(), buildingRequest);
             if (excludeFromScan(dependencyNode.getArtifact().getScope())) {
                 continue;
             }
+            exCol = collectDependencies(engine, project, dependencyNode.getChildren(), buildingRequest);
             try {
-                final ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
-                final Artifact result = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();
-                if (result.isResolved() && result.getFile() != null) {
-                    final List<Dependency> deps = engine.scan(result.getFile().getAbsoluteFile(),
+                boolean isResolved = false;
+                File artifactFile = null;
+                String artifactId = null;
+                String groupId = null;
+                String version = null;
+                if (org.apache.maven.artifact.Artifact.SCOPE_SYSTEM.equals(dependencyNode.getArtifact().getScope())) {
+                    for (org.apache.maven.model.Dependency d : project.getDependencies()) {
+                        Artifact a = dependencyNode.getArtifact();
+                        if (d.getSystemPath() != null && artifactsMatch(d, a)) {
+
+                            artifactFile = new File(d.getSystemPath());
+                            isResolved = artifactFile.isFile();
+                            groupId = a.getGroupId();
+                            artifactId = a.getArtifactId();
+                            version = a.getVersion();
+                            break;
+                        }
+                    }
+                    if (!isResolved) {
+                        getLog().error("Unable to resolve system scoped dependency: " + dependencyNode.toNodeString());
+                        exCol.addException(new DependencyNotFoundException("Unable to resolve system scoped dependency: " + dependencyNode.toNodeString()));
+                    }
+                } else {
+                    final ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
+                    final Artifact result = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();
+                    isResolved = result.isResolved();
+                    artifactFile = result.getFile();
+                    groupId = result.getGroupId();
+                    artifactId = result.getArtifactId();
+                    version = result.getVersion();
+                }
+                if (isResolved && artifactFile != null) {
+                    final List<Dependency> deps = engine.scan(artifactFile.getAbsoluteFile(),
                             project.getName() + ":" + dependencyNode.getArtifact().getScope());
                     if (deps != null) {
                         if (deps.size() == 1) {
                             final Dependency d = deps.get(0);
                             if (d != null) {
-                                final MavenArtifact ma = new MavenArtifact(result.getGroupId(), result.getArtifactId(), result.getVersion());
+                                final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
                                 d.addAsEvidence("pom", ma, Confidence.HIGHEST);
                                 if (getLog().isDebugEnabled()) {
                                     getLog().debug(String.format("Adding project reference %s on dependency %s",
@@ -680,6 +718,33 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
         }
         return exCol;
+    }
+
+    /**
+     * Determines if the groupId, artifactId, and version of the Maven
+     * dependency and artifact match.
+     *
+     * @param d the Maven dependency
+     * @param a the Maven artifact
+     * @return true if the groupId, artifactId, and version match
+     */
+    private static boolean artifactsMatch(org.apache.maven.model.Dependency d, Artifact a) {
+        return (isEqualOrNull(a.getArtifactId(), d.getArtifactId()))
+                && (isEqualOrNull(a.getGroupId(), d.getGroupId()))
+                && (isEqualOrNull(a.getVersion(), d.getVersion()));
+    }
+
+    /**
+     * Compares two strings for equality; if both strings are null they are
+     * considered equal.
+     *
+     * @param left the first string to compare
+     * @param right the second string to compare
+     * @return true if the strings are equal or if they are both null; otherwise
+     * false.
+     */
+    private static boolean isEqualOrNull(String left, String right) {
+        return (left != null && left.equals(right)) || (left == null && right == null);
     }
 
     /**
@@ -756,6 +821,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             return "dependency-check-report.xml#";
         } else if ("VULN".equalsIgnoreCase(this.format)) {
             return "dependency-check-vulnerability";
+        } else if ("JSON".equalsIgnoreCase(this.format)) {
+            return "dependency-check-report.json";
+        } else if ("CSV".equalsIgnoreCase(this.format)) {
+            return "dependency-check-report.csv";
         } else {
             getLog().warn("Unknown report format used during site generation.");
             return "dependency-check-report";
@@ -962,6 +1031,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         if (skipProvidedScope && org.apache.maven.artifact.Artifact.SCOPE_PROVIDED.equals(scope)) {
             return true;
         }
+        if (skipSystemScope && org.apache.maven.artifact.Artifact.SCOPE_SYSTEM.equals(scope)) {
+            return true;
+        }
         return skipRuntimeScope && !org.apache.maven.artifact.Artifact.SCOPE_RUNTIME.equals(scope);
     }
 
@@ -1015,7 +1087,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 getLog().debug("Unable to retrieve DB Properties", ex);
             }
         }
-        final ReportGenerator r = new ReportGenerator(p.getName(),p.getVersion(),p.getArtifactId(),p.getGroupId(), engine.getDependencies(), engine.getAnalyzers(), prop);
+        final ReportGenerator r = new ReportGenerator(p.getName(), p.getGroupId(), p.getArtifactId(), p.getVersion(),
+                engine.getDependencies(), engine.getAnalyzers(), prop);
         try {
             r.generateReports(outputDir.getAbsolutePath(), format);
         } catch (ReportException ex) {

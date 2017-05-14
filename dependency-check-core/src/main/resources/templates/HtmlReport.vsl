@@ -632,7 +632,7 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                     #foreach($dependency in $dependencies)
                     #set($lnkcnt=$lnkcnt+1)
                     <tr class="#if($dependency.getVulnerabilities().size()==0)notvulnerable#else vulnerable#end">
-                        <td data-sort-value="$enc.html($dependency.DisplayFileName)"><a href="#l${lnkcnt}_$enc.html($enc.url($dependency.Sha1sum))">$enc.html($dependency.DisplayFileName)</a></td>
+                        <td data-sort-value="$enc.html($dependency.DisplayFileName.toUpperCase())"><a href="#l${lnkcnt}_$enc.html($enc.url($dependency.Sha1sum))">$enc.html($dependency.DisplayFileName)</a></td>
                         #set($mavenlink="")
                         #set($cpeIdCount=0)
                         #set($cpeIdConf="")
@@ -673,9 +673,9 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                         #if ($mavenlink=="")
                         <td data-sort-value="">
                         #else
-                        <td data-sort-value="$enc.html($mavenlink.value)">#if( $mavenlink.url )
+                        <td data-sort-value="$enc.html($mavenlink.value.toLowerCase())">#if( $mavenlink.url )
                             ##yes, we are HTML Encoding the href. This is okay. We can't URL encode as we have to trust the analyzer here...
-                            <a href="$enc.html($mavenlink.url)" target="_blank">$enc.html($mavenlink.value)</a>
+                            <a href="$enc.html($mavenlink.url)" target="_blank">$enc.html($mavenlink.value)</a>&nbsp;<span title="verified from repo" style="color:green">&#x2713;</span>
                         #elseif ($mavenlink.value)
                             $enc.html($mavenlink.value)
                         #end
@@ -762,10 +762,10 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                         <li>SHA1:&nbsp;$enc.html($related.Sha1sum)</li>
                                         <li>MD5:&nbsp;$enc.html($related.Md5sum)</li>
                                         #foreach($id in $related.getIdentifiers())
-                                            #if ($id.type=="maven")
-                                                #if( $id.url )
+                                            #if( $id.url )                                                
+                                                #if ($id.type=="maven")
                                                     ##yes, we are HTML Encoding the href. this is okay. We can't URL encode as we have to trust the analyzer here...
-                                                    <li>$enc.html($id.type):&nbsp;<a href="$enc.html($id.url)" target="_blank">$enc.html($id.value)</a>
+                                                    <li>$enc.html($id.type):&nbsp;<a href="$enc.html($id.url)" target="_blank">$enc.html($id.value)</a>&nbsp;<span title="verified from repo" style="color:green">&#x2713;</span>
                                                 #else
                                                     <li>$enc.html($id.type):&nbsp;$enc.html($id.value)
                                                 #end
@@ -800,8 +800,12 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                             #end
                             #foreach($id in $dependency.getIdentifiers())
                                 #if( $id.url )
+                                    #if($id.type=="maven")
                                     ##yes, we are HTML Encoding the href. this is okay. We can't URL encode as we have to trust the analyzer here...
+                                    <li><b>$enc.html($id.type):</b>&nbsp;<a href="$enc.html($id.url)" target="_blank">$enc.html($id.value)</a>&nbsp;<span title="verified from repo" style="color:green">&#x2713;</span>
+                                    #else
                                     <li><b>$enc.html($id.type):</b>&nbsp;<a href="$enc.html($id.url)" target="_blank">$enc.html($id.value)</a>
+                                    #end
                                 #else
                                     <li><b>$enc.html($id.type):</b>&nbsp;$enc.html($id.value)
                                 #end
@@ -949,8 +953,12 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                     <ul>
                                     #foreach($id in $dependency.getSuppressedIdentifiers())
                                         #if( $id.url )
+                                            #if($id.type=="maven")
                                             ##yes, we are HTML Encoding the href. this is okay. We can't URL encode as we have to trust the analyzer here...
+                                            <li><b>$enc.html($id.type):</b>&nbsp;<a href="$enc.html($id.url)" target="_blank">$enc.html($id.value)</a>&nbsp;<span title="verified from repo" style="color:green">&#x2713;</span>&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span>
+                                            #else
                                             <li><b>$enc.html($id.type):</b>&nbsp;<a href="$enc.html($id.url)" target="_blank">$enc.html($id.value)</a>&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span>
+                                            #end
                                         #else
                                             <li><b>$enc.html($id.type):</b>&nbsp;$enc.html($id.value)&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span>
                                         #end

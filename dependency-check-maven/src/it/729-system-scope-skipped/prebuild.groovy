@@ -15,18 +15,3 @@
  *
  * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
  */
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import java.nio.charset.Charset;
- 
-
-// Check to see if jackson-dataformat-xml-2.4.5.jar was identified.
-//TODO change this to xpath and check for CVE-2016-3720
-String log = FileUtils.readFileToString(new File(basedir, "target/dependency-check-report.xml"), Charset.defaultCharset().name());
-int count = StringUtils.countMatches(log, "CVE-2016-9878");
-if (count > 0){
-    System.out.println(String.format("CVE-2016-9878 was identified and should be suppressed"));
-    return false;
-    //throw new Exception(String.format("The update should be unique, it is %s", count));
-}

@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
+ * Copyright (c) 2017 Jeremy Long. All Rights Reserved.
  */
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import java.nio.charset.Charset;
- 
+import groovy.json.JsonSlurper;
 
-// Check to see if jackson-dataformat-xml-2.4.5.jar was identified.
-//TODO change this to xpath and check for CVE-2016-3720
-String log = FileUtils.readFileToString(new File(basedir, "target/dependency-check-report.xml"), Charset.defaultCharset().name());
-int count = StringUtils.countMatches(log, "CVE-2016-9878");
-if (count > 0){
-    System.out.println(String.format("CVE-2016-9878 was identified and should be suppressed"));
-    return false;
-    //throw new Exception(String.format("The update should be unique, it is %s", count));
-}
+def slurper = new JsonSlurper()
+def json = slurper.parse(new File(basedir, "target/dependency-check-report.json"), "UTF-8")
+
+assert json instanceof Map
+assert json.analysis.dependencies instanceof List
+assert json.analysis.dependencies.size()==0
+return true;

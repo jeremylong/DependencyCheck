@@ -108,24 +108,23 @@ public class CheckMojo extends BaseDependencyCheckMojo {
                     }
                     exCol = ex;
                 }
-                if (exCol == null || !exCol.isFatal()) {
-                    try {
-                        writeReports(engine, getProject(), getCorrectOutputDirectory());
-                    } catch (ReportException ex) {
-                        if (this.isFailOnError()) {
-                            if (exCol != null) {
-                                exCol.addException(ex);
-                            } else {
-                                exCol = new ExceptionCollection("Unable to write the dependency-check report", ex);
-                            }
+            }
+            if (exCol == null || !exCol.isFatal()) {
+                try {
+                    writeReports(engine, getProject(), getCorrectOutputDirectory());
+                } catch (ReportException ex) {
+                    if (this.isFailOnError()) {
+                        if (exCol != null) {
+                            exCol.addException(ex);
+                        } else {
+                            exCol = new ExceptionCollection("Unable to write the dependency-check report", ex);
                         }
                     }
-                    //writeDataFile(getProject(), null, engine.getDependencies());
-                    showSummary(getProject(), engine.getDependencies());
-                    checkForFailure(engine.getDependencies());
-                    if (exCol != null && this.isFailOnError()) {
-                        throw new MojoExecutionException("One or more exceptions occurred during dependency-check analysis", exCol);
-                    }
+                }
+                showSummary(getProject(), engine.getDependencies());
+                checkForFailure(engine.getDependencies());
+                if (exCol != null && this.isFailOnError()) {
+                    throw new MojoExecutionException("One or more exceptions occurred during dependency-check analysis", exCol);
                 }
             }
             engine.cleanup();

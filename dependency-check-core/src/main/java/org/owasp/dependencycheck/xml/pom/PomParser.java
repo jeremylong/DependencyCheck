@@ -62,7 +62,7 @@ public class PomParser {
             return parse(fis);
         } catch (IOException ex) {
             LOGGER.debug("", ex);
-            throw new PomParseException(ex);
+            throw new PomParseException(String.format("Unable to parse pom '%s'", file.toString()), ex);
         }
     }
 
