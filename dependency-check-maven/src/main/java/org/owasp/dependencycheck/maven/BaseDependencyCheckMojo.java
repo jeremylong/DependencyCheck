@@ -55,6 +55,7 @@ import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.exception.DependencyNotFoundException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
@@ -643,16 +644,45 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
             exCol = collectDependencies(engine, project, dependencyNode.getChildren(), buildingRequest);
             try {
-                final ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
-                final Artifact result = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();
-                if (result.isResolved() && result.getFile() != null) {
-                    final List<Dependency> deps = engine.scan(result.getFile().getAbsoluteFile(),
+                boolean isResolved = false;
+                File artifactFile = null;
+                String artifactId = null;
+                String groupId = null;
+                String version = null;
+                if (org.apache.maven.artifact.Artifact.SCOPE_SYSTEM.equals(dependencyNode.getArtifact().getScope())) {
+                    for (org.apache.maven.model.Dependency d : project.getDependencies()) {
+                        Artifact a = dependencyNode.getArtifact();
+                        if (d.getSystemPath() != null && artifactsMatch(d, a)) {
+
+                            artifactFile = new File(d.getSystemPath());
+                            isResolved = artifactFile.isFile();
+                            groupId = a.getGroupId();
+                            artifactId = a.getArtifactId();
+                            version = a.getVersion();
+                            break;
+                        }
+                    }
+                    if (!isResolved) {
+                        getLog().error("Unable to resolve system scoped dependency: " + dependencyNode.toNodeString());
+                        exCol.addException(new DependencyNotFoundException("Unable to resolve system scoped dependency: " + dependencyNode.toNodeString()));
+                    }
+                } else {
+                    final ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
+                    final Artifact result = artifactResolver.resolveArtifact(buildingRequest, coordinate).getArtifact();
+                    isResolved = result.isResolved();
+                    artifactFile = result.getFile();
+                    groupId = result.getGroupId();
+                    artifactId = result.getArtifactId();
+                    version = result.getVersion();
+                }
+                if (isResolved && artifactFile != null) {
+                    final List<Dependency> deps = engine.scan(artifactFile.getAbsoluteFile(),
                             project.getName() + ":" + dependencyNode.getArtifact().getScope());
                     if (deps != null) {
                         if (deps.size() == 1) {
                             final Dependency d = deps.get(0);
                             if (d != null) {
-                                final MavenArtifact ma = new MavenArtifact(result.getGroupId(), result.getArtifactId(), result.getVersion());
+                                final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
                                 d.addAsEvidence("pom", ma, Confidence.HIGHEST);
                                 if (getLog().isDebugEnabled()) {
                                     getLog().debug(String.format("Adding project reference %s on dependency %s",
@@ -688,6 +718,33 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
         }
         return exCol;
+    }
+
+    /**
+     * Determines if the groupId, artifactId, and version of the Maven
+     * dependency and artifact match.
+     *
+     * @param d the Maven dependency
+     * @param a the Maven artifact
+     * @return true if the groupId, artifactId, and version match
+     */
+    private static boolean artifactsMatch(org.apache.maven.model.Dependency d, Artifact a) {
+        return (isEqualOrNull(a.getArtifactId(), d.getArtifactId()))
+                && (isEqualOrNull(a.getGroupId(), d.getGroupId()))
+                && (isEqualOrNull(a.getVersion(), d.getVersion()));
+    }
+
+    /**
+     * Compares two strings for equality; if both strings are null they are
+     * considered equal.
+     *
+     * @param left the first string to compare
+     * @param right the second string to compare
+     * @return true if the strings are equal or if they are both null; otherwise
+     * false.
+     */
+    private static boolean isEqualOrNull(String left, String right) {
+        return (left != null && left.equals(right)) || (left == null && right == null);
     }
 
     /**
