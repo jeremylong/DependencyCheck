@@ -821,6 +821,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             return "dependency-check-report.xml#";
         } else if ("VULN".equalsIgnoreCase(this.format)) {
             return "dependency-check-vulnerability";
+        } else if ("JSON".equalsIgnoreCase(this.format)) {
+            return "dependency-check-report.json";
+        } else if ("CSV".equalsIgnoreCase(this.format)) {
+            return "dependency-check-report.csv";
         } else {
             getLog().warn("Unknown report format used during site generation.");
             return "dependency-check-report";

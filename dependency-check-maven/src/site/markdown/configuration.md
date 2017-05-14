@@ -19,7 +19,7 @@ cveValidForHours            | Sets the number of hours to wait before checking f
 failBuildOnCVSS             | Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11 which means since the CVSS scores are 0-10, by default the build will never fail. | 11
 failBuildOnAnyVulnerability | Specific that if any vulnerability is identified, the build will fail. | false
 failOnError                 | Whether the build should fail if there is an error executing the dependency-check analysis. | true
-format                      | The report format to be generated (HTML, XML, VULN, ALL). This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | HTML
+format                      | The report format to be generated (HTML, XML, CSV, JSON, VULN, ALL). This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | HTML
 name                        | The name of the report in the site. | dependency-check or dependency-check:aggregate
 outputDirectory             | The location to write the report(s). Note, this is not used if generating the report as part of a `mvn site` build. | 'target'
 skip                        | Skips the dependency-check analysis.                       | false
