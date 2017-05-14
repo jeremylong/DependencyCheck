@@ -83,6 +83,13 @@ public final class URLConnectionFactory {
                         public PasswordAuthentication getPasswordAuthentication() {
                             if (proxyHost.equals(getRequestingHost()) || getRequestorType().equals(Authenticator.RequestorType.PROXY)) {
                                 LOGGER.debug("Using the configured proxy username and password");
+                                try {
+                                    if (Settings.getBoolean(Settings.KEYS.PROXY_DISABLE_SCHEMAS, true)) {
+                                        System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
+                                    }
+                                } catch (InvalidSettingException ex) {
+                                    LOGGER.trace("This exception can be ignored", ex);
+                                }
                                 return new PasswordAuthentication(username, password.toCharArray());
                             }
                             return super.getPasswordAuthentication();
