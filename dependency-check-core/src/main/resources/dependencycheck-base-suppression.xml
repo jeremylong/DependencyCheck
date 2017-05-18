@@ -2,6 +2,13 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
     <suppress base="true">
        <notes><![CDATA[
+       This suppresses false positives for Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll.
+       ]]></notes>
+       <filePath regex="true">.*Microsoft\.VisualStudio\.QualityTools\.UnitTestFramework*\.dll</filePath>
+       <cve>CVE-2014-3802</cve>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
        This suppresses false positives for EntityFramework.SqlServer.dll.
        ]]></notes>
        <filePath regex="true">.*EntityFramework\.SqlServer*\.dll</filePath>
