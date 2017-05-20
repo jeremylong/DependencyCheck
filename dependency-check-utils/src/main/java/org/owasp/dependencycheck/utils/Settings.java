@@ -186,6 +186,12 @@ public final class Settings {
          */
         public static final String CPE_URL = "cpe.url";
         /**
+         * Whether or not if using basic auth with a proxy the system setting
+         * 'jdk.http.auth.tunneling.disabledSchemes' should be set to an empty
+         * string.
+         */
+        public static final String PROXY_DISABLE_SCHEMAS = "proxy.disableSchemas";
+        /**
          * The properties key for the proxy server.
          *
          * @deprecated use
