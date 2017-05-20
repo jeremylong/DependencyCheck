@@ -568,13 +568,39 @@ public final class CliParser {
     }
 
     /**
+     * Utility method to determine if one of the disable options has been set.
+     * If not set, this method will check the currently configured settings for
+     * the current value to return.
+     *
+     * Example given `--disableArchive` on the command line would cause this
+     * method to return true for the disable archive setting.
+     *
+     * @param argument the command line argument
+     * @param setting the corresponding settings key
+     * @return true if the disable option was set, if not set the currently
+     * configured value will be returned
+     */
+    private boolean hasDisableOption(String argument, String setting) {
+        if (line == null || !line.hasOption(argument)) {
+            try {
+                return !Settings.getBoolean(setting);
+            } catch (InvalidSettingException ise) {
+                LOGGER.warn("Invalid property setting '{}' defaulting to false", setting);
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    /**
      * Returns true if the disableJar command line argument was specified.
      *
      * @return true if the disableJar command line argument was specified;
      * otherwise false
      */
     public boolean isJarDisabled() {
-        return (line != null) && line.hasOption(ARGUMENT.DISABLE_JAR);
+        return hasDisableOption(ARGUMENT.DISABLE_JAR, Settings.KEYS.ANALYZER_JAR_ENABLED);
     }
 
     /**
@@ -584,7 +610,7 @@ public final class CliParser {
      * otherwise false
      */
     public boolean isArchiveDisabled() {
-        return (line != null) && line.hasOption(ARGUMENT.DISABLE_ARCHIVE);
+        return hasDisableOption(ARGUMENT.DISABLE_ARCHIVE, Settings.KEYS.ANALYZER_ARCHIVE_ENABLED);
     }
 
     /**
@@ -594,7 +620,7 @@ public final class CliParser {
      * otherwise false
      */
     public boolean isNuspecDisabled() {
-        return (line != null) && line.hasOption(ARGUMENT.DISABLE_NUSPEC);
+        return hasDisableOption(ARGUMENT.DISABLE_NUSPEC, Settings.KEYS.ANALYZER_NUSPEC_ENABLED);
     }
 
     /**
@@ -604,7 +630,7 @@ public final class CliParser {
      * otherwise false
      */
     public boolean isAssemblyDisabled() {
-        return (line != null) && line.hasOption(ARGUMENT.DISABLE_ASSEMBLY);
+        return hasDisableOption(ARGUMENT.DISABLE_ASSEMBLY, Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED);
     }
 
     /**
@@ -615,7 +641,7 @@ public final class CliParser {
      * specified; otherwise false
      */
     public boolean isBundleAuditDisabled() {
-        return (line != null) && line.hasOption(ARGUMENT.DISABLE_BUNDLE_AUDIT);
+        return hasDisableOption(ARGUMENT.DISABLE_BUNDLE_AUDIT, Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED);
     }
 
     /**
@@ -625,7 +651,7 @@ public final class CliParser {
      * otherwise false
      */
     public boolean isPythonDistributionDisabled() {
-        return (line != null) && line.hasOption(ARGUMENT.DISABLE_PY_DIST);
+        return hasDisableOption(ARGUMENT.DISABLE_PY_DIST, Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED);
     }
 
     /**
@@ -635,7 +661,7 @@ public final class CliParser {
      * otherwise false
      */
     public boolean isPythonPackageDisabled() {
-        return (line != null) && line.hasOption(ARGUMENT.DISABLE_PY_PKG);
+        return hasDisableOption(ARGUMENT.DISABLE_PY_PKG, Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED);
     }
 
     /**
@@ -645,7 +671,7 @@ public final class CliParser {
      * argument was specified; otherwise false
      */
     public boolean isRubyGemspecDisabled() {
-        return (null != line) && line.hasOption(ARGUMENT.DISABLE_RUBYGEMS);
+        return hasDisableOption(ARGUMENT.DISABLE_RUBYGEMS, Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED);
     }
 
     /**
@@ -655,7 +681,7 @@ public final class CliParser {
      * otherwise false
      */
     public boolean isCmakeDisabled() {
-        return (line != null) && line.hasOption(ARGUMENT.DISABLE_CMAKE);
+        return hasDisableOption(ARGUMENT.DISABLE_CMAKE, Settings.KEYS.ANALYZER_CMAKE_ENABLED);
     }
 
     /**
@@ -665,7 +691,7 @@ public final class CliParser {
      * otherwise false
      */
     public boolean isAutoconfDisabled() {
-        return (line != null) && line.hasOption(ARGUMENT.DISABLE_AUTOCONF);
+        return hasDisableOption(ARGUMENT.DISABLE_AUTOCONF, Settings.KEYS.ANALYZER_AUTOCONF_ENABLED);
     }
 
     /**
@@ -675,7 +701,7 @@ public final class CliParser {
      * otherwise false
      */
     public boolean isComposerDisabled() {
-        return (line != null) && line.hasOption(ARGUMENT.DISABLE_COMPOSER);
+        return hasDisableOption(ARGUMENT.DISABLE_COMPOSER, Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED);
     }
 
     /**
@@ -685,7 +711,7 @@ public final class CliParser {
      * otherwise false
      */
     public boolean isNexusDisabled() {
-        return (line != null) && line.hasOption(ARGUMENT.DISABLE_NEXUS);
+        return hasDisableOption(ARGUMENT.DISABLE_NEXUS, Settings.KEYS.ANALYZER_NEXUS_ENABLED);
     }
 
     /**
@@ -695,7 +721,7 @@ public final class CliParser {
      * otherwise false
      */
     public boolean isOpenSSLDisabled() {
-        return (line != null) && line.hasOption(ARGUMENT.DISABLE_OPENSSL);
+        return hasDisableOption(ARGUMENT.DISABLE_OPENSSL, Settings.KEYS.ANALYZER_OPENSSL_ENABLED);
     }
 
     /**
@@ -705,7 +731,7 @@ public final class CliParser {
      * otherwise false
      */
     public boolean isNodeJsDisabled() {
-        return (line != null) && line.hasOption(ARGUMENT.DISABLE_NODE_JS);
+        return hasDisableOption(ARGUMENT.DISABLE_NODE_JS, Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED);
     }
 
     /**
@@ -716,7 +742,7 @@ public final class CliParser {
      * specified; otherwise false
      */
     public boolean isCocoapodsAnalyzerDisabled() {
-        return (line != null) && line.hasOption(ARGUMENT.DISABLE_COCOAPODS);
+        return hasDisableOption(ARGUMENT.DISABLE_COCOAPODS, Settings.KEYS.ANALYZER_COCOAPODS_ENABLED);
     }
 
     /**
@@ -727,7 +753,7 @@ public final class CliParser {
      * argument was specified; otherwise false
      */
     public boolean isSwiftPackageAnalyzerDisabled() {
-        return (line != null) && line.hasOption(ARGUMENT.DISABLE_SWIFT);
+        return hasDisableOption(ARGUMENT.DISABLE_SWIFT, Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED);
     }
 
     /**
@@ -737,7 +763,7 @@ public final class CliParser {
      * otherwise false
      */
     public boolean isCentralDisabled() {
-        return (line != null) && line.hasOption(ARGUMENT.DISABLE_CENTRAL);
+        return hasDisableOption(ARGUMENT.DISABLE_CENTRAL, Settings.KEYS.ANALYZER_CENTRAL_ENABLED);
     }
 
     /**
@@ -1029,10 +1055,10 @@ public final class CliParser {
      * disabled via the command line this will return false.
      *
      * @return <code>true</code> if auto-update is allowed; otherwise
-     * <code>false</code>
+     * <code>null</code>
      */
-    public boolean isAutoUpdate() {
-        return line != null && !line.hasOption(ARGUMENT.DISABLE_AUTO_UPDATE);
+    public Boolean isAutoUpdate() {
+        return (line != null && line.hasOption(ARGUMENT.DISABLE_AUTO_UPDATE)) ? false : null;
     }
 
     /**
@@ -1134,10 +1160,10 @@ public final class CliParser {
     /**
      * Returns true if the experimental analyzers are enabled.
      *
-     * @return true if the experimental analyzers are enabled; otherwise false
+     * @return true if the experimental analyzers are enabled; otherwise null
      */
-    public boolean isExperimentalEnabled() {
-        return line.hasOption(ARGUMENT.EXPERIMENTAL);
+    public Boolean isExperimentalEnabled() {
+        return (line != null && line.hasOption(ARGUMENT.EXPERIMENTAL)) ? true : null;
     }
 
     /**
