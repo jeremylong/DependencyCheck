@@ -96,7 +96,7 @@ public class AppTest {
 
         String[] args7 = {"-P", prop.getAbsolutePath(), "--noupdate"};
         expected.put(Settings.KEYS.AUTO_UPDATE, Boolean.FALSE);
-        expected.put(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, Boolean.TRUE);
+        expected.put(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, Boolean.FALSE);
         assertTrue(testBooleanProperties(args7, expected));
 
         String[] args8 = {"-P", prop.getAbsolutePath(), "--noupdate", "--disableArchive"};
