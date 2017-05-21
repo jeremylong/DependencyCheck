@@ -32,6 +32,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+import static org.junit.Assume.assumeFalse;
+import static org.junit.Assume.assumeTrue;
+import org.owasp.dependencycheck.utils.URLConnectionFailureException;
 
 public class NspSearchTest extends BaseTest {
 
@@ -45,8 +48,7 @@ public class NspSearchTest extends BaseTest {
         searcher = new NspSearch(new URL(url));
     }
 
-    //@Test
-    //todo: this test does not work in Java 7 - UNABLE TO FIND VALID CERTIFICATION PATH TO REQUESTED TARGET
+    @Test
     public void testNspSearchPositive() throws Exception {
         InputStream in = BaseTest.getResourceAsStream(this, "nsp/package.json");
         try (JsonReader jsonReader = Json.createReader(in)) {
@@ -56,17 +58,24 @@ public class NspSearchTest extends BaseTest {
             final JsonObject nspPayload = builder.add("package", sanitizedJson).build();
             final List<Advisory> advisories = searcher.submitPackage(nspPayload);
             Assert.assertTrue(advisories.size() > 0);
+        } catch (Exception ex) {
+           assumeFalse(ex instanceof URLConnectionFailureException
+                    && ex.getMessage().contains("Unable to connect to "));
+           throw ex;
         }
     }
 
-    //@Test(expected = IOException.class)
-    //todo: this test does not work in Java 7 - UNABLE TO FIND VALID CERTIFICATION PATH TO REQUESTED TARGET
+    @Test
     public void testNspSearchNegative() throws Exception {
         InputStream in = BaseTest.getResourceAsStream(this, "nsp/package.json");
         try (JsonReader jsonReader = Json.createReader(in)) {
             final JsonObject packageJson = jsonReader.readObject();
             final JsonObject sanitizedJson = SanitizePackage.sanitize(packageJson);
             searcher.submitPackage(sanitizedJson);
+        } catch (Exception ex) {
+           assumeFalse(ex instanceof URLConnectionFailureException
+                    && ex.getMessage().contains("Unable to connect to "));
+           throw ex;
         }
     }
 

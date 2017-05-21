@@ -18,6 +18,8 @@
 package org.owasp.dependencycheck;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -58,18 +60,23 @@ public class EngineIT extends BaseDBTestCase {
         try {
             instance.analyzeDependencies();
         } catch (ExceptionCollection ex) {
-            if (ex.getExceptions().size() == 1
-                    && (ex.getExceptions().get(0).getMessage().contains("bundle-audit")
-                    || ex.getExceptions().get(0).getMessage().contains("AssemblyAnalyzer"))) {
-                //this is fine to ignore
-            } else if (ex.getExceptions().size() == 2
-                    && ((ex.getExceptions().get(0).getMessage().contains("bundle-audit")
-                    && ex.getExceptions().get(1).getMessage().contains("AssemblyAnalyzer"))
-                    || (ex.getExceptions().get(1).getMessage().contains("bundle-audit")
-                    && ex.getExceptions().get(0).getMessage().contains("AssemblyAnalyzer")))) {
-                //this is fine to ignore
-            } else {
-                throw ex;
+            Set<String> allowedMessages = new HashSet<>();
+            allowedMessages.add("bundle-audit");
+            allowedMessages.add("AssemblyAnalyzer");
+            //allowedMessages.add("Unable to connect to");
+            for (Throwable t : ex.getExceptions()) {
+                boolean isOk = false;
+                if (t.getMessage()!=null) {
+                    for (String msg : allowedMessages) {
+                        if (t.getMessage().contains(msg)) {
+                            isOk=true;
+                            break;
+                        }
+                    }
+                }
+                if (!isOk) {
+                    throw ex;
+                }
             }
         }
         DatabaseProperties prop = null;

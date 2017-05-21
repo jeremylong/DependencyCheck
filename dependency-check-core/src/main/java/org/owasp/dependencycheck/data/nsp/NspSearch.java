@@ -35,6 +35,7 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import org.owasp.dependencycheck.utils.URLConnectionFailureException;
 
 /**
  * Class of methods to search via Node Security Platform.
@@ -75,70 +76,80 @@ public class NspSearch {
     }
 
     /**
-     * Submits the package.json file to the NSP public /check API and returns
-     * a list of zero or more Advisories.
+     * Submits the package.json file to the NSP public /check API and returns a
+     * list of zero or more Advisories.
      *
      * @param packageJson the package.json file retrieved from the Dependency
      * @return a List of zero or more Advisory object
      * @throws IOException if it's unable to connect to Node Security Platform
      */
     public List<Advisory> submitPackage(JsonObject packageJson) throws IOException {
-        List<Advisory> result = new ArrayList<>();
-        byte[] packageDatabytes = packageJson.toString().getBytes(StandardCharsets.UTF_8);
+        try {
+            List<Advisory> result = new ArrayList<>();
+            byte[] packageDatabytes = packageJson.toString().getBytes(StandardCharsets.UTF_8);
 
-        final HttpURLConnection conn = URLConnectionFactory.createHttpURLConnection(nspCheckUrl, useProxy);
-        conn.setDoOutput(true);
-        conn.setDoInput(true);
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("X-NSP-VERSION", "2.6.2");
-        conn.setRequestProperty("Content-Type", "application/json");
-        conn.setRequestProperty("Content-Length", Integer.toString(packageDatabytes.length));
-        conn.connect();
+            final HttpURLConnection conn = URLConnectionFactory.createHttpURLConnection(nspCheckUrl, useProxy);
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("X-NSP-VERSION", "2.6.2");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Content-Length", Integer.toString(packageDatabytes.length));
+            conn.connect();
 
-        try (OutputStream os = new BufferedOutputStream(conn.getOutputStream())) {
-            os.write(packageDatabytes);
-            os.flush();
-        }
+            try (OutputStream os = new BufferedOutputStream(conn.getOutputStream())) {
+                os.write(packageDatabytes);
+                os.flush();
+            }
 
-        if (conn.getResponseCode() == 200) {
-            try (InputStream in = new BufferedInputStream(conn.getInputStream())) {
-                JsonReader jsonReader = Json.createReader(in);
-                JsonArray array = jsonReader.readArray();
-                if (array != null) {
-                    for (int i=0; i<array.size(); i++) {
-                        JsonObject object = array.getJsonObject(i);
-                        Advisory advisory = new Advisory();
-                        advisory.setId(object.getInt("id"));
-                        advisory.setUpdatedAt(object.getString("updated_at", null));
-                        advisory.setCreatedAt(object.getString("created_at", null));
-                        advisory.setPublishDate(object.getString("publish_date", null));
-                        advisory.setOverview(object.getString("overview"));
-                        advisory.setRecommendation(object.getString("recommendation", null));
-                        advisory.setCvssVector(object.getString("cvss_vector", null));
-                        advisory.setCvssScore(Float.parseFloat(object.getJsonNumber("cvss_score").toString()));
-                        advisory.setModule(object.getString("module", null));
-                        advisory.setVersion(object.getString("version", null));
-                        advisory.setVulnerableVersions(object.getString("vulnerable_versions", null));
-                        advisory.setPatchedVersions(object.getString("patched_versions", null));
-                        advisory.setTitle(object.getString("title", null));
-                        advisory.setAdvisory(object.getString("advisory", null));
+            if (conn.getResponseCode() == 200) {
+                try (InputStream in = new BufferedInputStream(conn.getInputStream())) {
+                    JsonReader jsonReader = Json.createReader(in);
+                    JsonArray array = jsonReader.readArray();
+                    if (array != null) {
+                        for (int i = 0; i < array.size(); i++) {
+                            JsonObject object = array.getJsonObject(i);
+                            Advisory advisory = new Advisory();
+                            advisory.setId(object.getInt("id"));
+                            advisory.setUpdatedAt(object.getString("updated_at", null));
+                            advisory.setCreatedAt(object.getString("created_at", null));
+                            advisory.setPublishDate(object.getString("publish_date", null));
+                            advisory.setOverview(object.getString("overview"));
+                            advisory.setRecommendation(object.getString("recommendation", null));
+                            advisory.setCvssVector(object.getString("cvss_vector", null));
+                            advisory.setCvssScore(Float.parseFloat(object.getJsonNumber("cvss_score").toString()));
+                            advisory.setModule(object.getString("module", null));
+                            advisory.setVersion(object.getString("version", null));
+                            advisory.setVulnerableVersions(object.getString("vulnerable_versions", null));
+                            advisory.setPatchedVersions(object.getString("patched_versions", null));
+                            advisory.setTitle(object.getString("title", null));
+                            advisory.setAdvisory(object.getString("advisory", null));
 
-                        JsonArray jsonPath = object.getJsonArray("path");
-                        List<String> stringPath = new ArrayList<>();
-                        for (int j=0; j<jsonPath.size(); j++) {
-                            stringPath.add(jsonPath.getString(j));
+                            JsonArray jsonPath = object.getJsonArray("path");
+                            List<String> stringPath = new ArrayList<>();
+                            for (int j = 0; j < jsonPath.size(); j++) {
+                                stringPath.add(jsonPath.getString(j));
+                            }
+                            advisory.setPath(stringPath.toArray(new String[stringPath.size()]));
+
+                            result.add(advisory);
                         }
-                        advisory.setPath(stringPath.toArray(new String[stringPath.size()]));
-
-                        result.add(advisory);
                     }
                 }
+            } else {
+                LOGGER.debug("Could not connect to Node Security Platform. Received response code: {} {}",
+                        conn.getResponseCode(), conn.getResponseMessage());
+                throw new IOException("Could not connect to Node Security Platform");
             }
-        } else {
-            LOGGER.debug("Could not connect to Node Security Platform. Received response code: {} {}",
-                    conn.getResponseCode(), conn.getResponseMessage());
-            throw new IOException("Could not connect to Node Security Platform");
+            return result;
+        } catch (IOException ex) {
+            if (ex instanceof javax.net.ssl.SSLHandshakeException
+                    && ex.getMessage().contains("unable to find valid certification path to requested target")) {
+                final String msg = String.format("Unable to connect to '%s' - the Java trust store does not contain a trusted root for the cert. "
+                        + " Please see https://github.com/jeremylong/InstallCert for one method of updating the trusted certificates.", nspCheckUrl);
+                throw new URLConnectionFailureException(msg, ex);
+            }
+            throw ex;
         }
-        return result;
     }
 }

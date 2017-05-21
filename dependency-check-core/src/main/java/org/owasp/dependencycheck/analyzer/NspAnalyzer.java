@@ -50,10 +50,11 @@ import javax.json.JsonReader;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.URLConnectionFailureException;
 
 /**
- * Used to analyze Node Package Manager (npm) package.json files via
- * Node Security Platform (nsp).
+ * Used to analyze Node Package Manager (npm) package.json files via Node
+ * Security Platform (nsp).
  *
  * @author Steve Springett
  */
@@ -161,7 +162,7 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
             // Submits the package payload to the nsp check service
             final List<Advisory> advisories = searcher.submitPackage(nspPayload);
 
-            for (Advisory advisory: advisories) {
+            for (Advisory advisory : advisories) {
                 /*
                  * Create a new vulnerability out of the advisory returned by nsp.
                  */
@@ -247,23 +248,27 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
             addToEvidence(packageJson, vendorEvidence, "author");
             addToEvidence(packageJson, dependency.getVersionEvidence(), "version");
             dependency.setDisplayFileName(String.format("%s/%s", file.getParentFile().getName(), file.getName()));
-
+        } catch (URLConnectionFailureException e) {
+            this.setEnabled(false);
+            throw new AnalysisException(e.getMessage(), e);
         } catch (IOException e) {
-            LOGGER.debug("Error reading dependency or connecting to Node Security Platform /check API", e);
+            LOGGER.debug("Error reading dependency or connecting to Node Security Platform - check API", e);
+            this.setEnabled(false);
+            throw new AnalysisException(e.getMessage(), e);
         } catch (JsonException e) {
-            LOGGER.warn("Failed to parse package.json file.", e);
+            throw new AnalysisException(String.format("Failed to parse %s file.", file.getPath()), e);
         }
     }
 
     /**
-     * Processes a part of package.json (as defined by JsobObject) and
-     * update the specified dependency with relevant info.
+     * Processes a part of package.json (as defined by JsobObject) and update
+     * the specified dependency with relevant info.
      *
      * @param dependency the Dependency to update
      * @param jsonObject the jsonObject to parse
      */
     private void processPackage(Dependency dependency, JsonObject jsonObject, String depType) {
-        for (int i=0; i<jsonObject.size(); i++) {
+        for (int i = 0; i < jsonObject.size(); i++) {
             for (Map.Entry<String, JsonValue> entry : jsonObject.entrySet()) {
                 /*
                  * Create identifies that include the npm module and version. Since these are defined,
@@ -273,7 +278,7 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
                 moduleName.setConfidence(Confidence.HIGHEST);
                 String version = "";
                 if (entry.getValue() != null && entry.getValue().getValueType() == JsonValue.ValueType.STRING) {
-                    version = ((JsonString)entry.getValue()).getString();
+                    version = ((JsonString) entry.getValue()).getString();
                 }
                 final Identifier moduleVersion = new Identifier("npm", "Version", null, version);
                 moduleVersion.setConfidence(Confidence.HIGHEST);
