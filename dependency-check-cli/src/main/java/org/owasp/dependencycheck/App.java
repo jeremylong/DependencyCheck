@@ -353,8 +353,7 @@ public class App {
      * @throws InvalidSettingException thrown when a user defined properties
      * file is unable to be loaded.
      */
-    private void populateSettings(CliParser cli) throws InvalidSettingException {
-        final boolean autoUpdate = cli.isAutoUpdate();
+    protected void populateSettings(CliParser cli) throws InvalidSettingException {
         final String connectionTimeout = cli.getConnectionTimeout();
         final String proxyServer = cli.getProxyServer();
         final String proxyPort = cli.getProxyPort();
@@ -377,7 +376,8 @@ public class App {
         final String cveBase12 = cli.getBaseCve12Url();
         final String cveBase20 = cli.getBaseCve20Url();
         final Integer cveValidForHours = cli.getCveValidForHours();
-        final boolean experimentalEnabled = cli.isExperimentalEnabled();
+        final Boolean autoUpdate = cli.isAutoUpdate();
+        final Boolean experimentalEnabled = cli.isExperimentalEnabled();
 
         if (propertiesFile != null) {
             try {
@@ -390,7 +390,7 @@ public class App {
         }
         // We have to wait until we've merged the properties before attempting to set whether we use
         // the proxy for Nexus since it could be disabled in the properties, but not explicitly stated
-        // on the command line
+        // on the command line.  This is true of other boolean values set below not using the setBooleanIfNotNull.
         final boolean nexusUsesProxy = cli.isNexusUsesProxy();
         if (dataDirectory != null) {
             Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
@@ -404,7 +404,7 @@ public class App {
             final File dataDir = new File(base, sub);
             Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());
         }
-        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
+        Settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
         Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);
         Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);
         Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUser);
@@ -415,7 +415,8 @@ public class App {
         Settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
 
         //File Type Analyzer Settings
-        Settings.setBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, experimentalEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, experimentalEnabled);
+
         Settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, !cli.isJarDisabled());
         Settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, !cli.isArchiveDisabled());
         Settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, !cli.isPythonDistributionDisabled());

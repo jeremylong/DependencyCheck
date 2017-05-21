@@ -288,7 +288,7 @@ Copyright (c) 2012 - Jeremy Long
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
-                            <!--destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile-->
+                            <destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
                             <propertyName>surefireArgLine</propertyName>
                         </configuration>
                     </execution>
@@ -299,12 +299,31 @@ Copyright (c) 2012 - Jeremy Long
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
-                            <!--destFile>${project.build.directory}/coverage-reports/jacoco-it.exec</destFile-->
+                            <destFile>${project.build.directory}/coverage-reports/jacoco-it.exec</destFile>
                             <propertyName>failsafeArgLine</propertyName>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>add-dynamic-properties</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>
+                                project.properties['invoker.mavenOpts']=project.properties.failsafeArgLine
+                            </source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -578,6 +597,10 @@ Copyright (c) 2012 - Jeremy Long
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.7.9</version>
                 <configuration>
+                    <dataFileIncludes>
+                        <dataFileInclude>target/coverage-reports/jacoco-ut.exec</dataFileInclude>
+                        <dataFileInclude>target/coverage-reports/jacoco-it.exec</dataFileInclude>
+                    </dataFileIncludes>
                 </configuration>
                 <reportSets>
                     <reportSet>
