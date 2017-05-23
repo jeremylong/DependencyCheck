@@ -21,6 +21,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,12 +29,10 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import static org.junit.Assume.assumeFalse;
-import static org.junit.Assume.assumeTrue;
 import org.owasp.dependencycheck.utils.URLConnectionFailureException;
 
 public class NspSearchTest extends BaseTest {
@@ -59,13 +58,13 @@ public class NspSearchTest extends BaseTest {
             final List<Advisory> advisories = searcher.submitPackage(nspPayload);
             Assert.assertTrue(advisories.size() > 0);
         } catch (Exception ex) {
-           assumeFalse(ex instanceof URLConnectionFailureException
+            assumeFalse(ex instanceof URLConnectionFailureException
                     && ex.getMessage().contains("Unable to connect to "));
-           throw ex;
+            throw ex;
         }
     }
 
-    @Test
+    @Test(expected = AnalysisException.class)
     public void testNspSearchNegative() throws Exception {
         InputStream in = BaseTest.getResourceAsStream(this, "nsp/package.json");
         try (JsonReader jsonReader = Json.createReader(in)) {
@@ -73,9 +72,9 @@ public class NspSearchTest extends BaseTest {
             final JsonObject sanitizedJson = SanitizePackage.sanitize(packageJson);
             searcher.submitPackage(sanitizedJson);
         } catch (Exception ex) {
-           assumeFalse(ex instanceof URLConnectionFailureException
+            assumeFalse(ex instanceof URLConnectionFailureException
                     && ex.getMessage().contains("Unable to connect to "));
-           throw ex;
+            throw ex;
         }
     }
 
