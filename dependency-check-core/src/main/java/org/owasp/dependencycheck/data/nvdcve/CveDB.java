@@ -24,6 +24,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -95,7 +96,7 @@ public final class CveDB implements AutoCloseable {
     private final EnumMap<PreparedStatementCveDb, PreparedStatement> preparedStatements = new EnumMap<>(PreparedStatementCveDb.class);
 
     @SuppressWarnings("unchecked")
-    private final Map<String, List<Vulnerability>> vulnerabilitiesForCpeCache = new ReferenceMap(HARD, SOFT);
+    private final Map<String, List<Vulnerability>> vulnerabilitiesForCpeCache = Collections.synchronizedMap(new ReferenceMap(HARD, SOFT));
 
     /**
      * The enum value names must match the keys of the statements in the
@@ -271,11 +272,11 @@ public final class CveDB implements AutoCloseable {
      */
     @Override
     public synchronized void close() {
-        clearCache();
         if (instance != null) {
             instance.usageCount -= 1;
             if (instance.usageCount <= 0 && instance.isOpen()) {
                 instance.usageCount = 0;
+                clearCache();
                 instance.closeStatements();
                 try {
                     instance.connection.close();
