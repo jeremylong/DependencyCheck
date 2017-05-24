@@ -840,21 +840,15 @@ public class DependencyCheckScanAgent {
      *
      * @param engine a dependency-check engine
      * @param outDirectory the directory to write the reports to
+     * @throw ScanAgentException thrown if there is an error generating the
+     * report
      */
-    private void generateExternalReports(Engine engine, File outDirectory) {
-        DatabaseProperties prop = null;
-        try (CveDB cve = CveDB.getInstance()) {
-            prop = cve.getDatabaseProperties();
-        } catch (DatabaseException ex) {
-            //TODO shouldn't this be a fatal exception
-            LOGGER.debug("Unable to retrieve DB Properties", ex);
-        }
-        final ReportGenerator r = new ReportGenerator(this.applicationName, engine.getDependencies(), engine.getAnalyzers(), prop);
+    private void generateExternalReports(Engine engine, File outDirectory) throws ScanAgentException {
         try {
-            r.generateReports(outDirectory.getCanonicalPath(), this.reportFormat.name());
-        } catch (IOException | ReportException ex) {
-            LOGGER.error("Unexpected exception occurred during analysis; please see the verbose error log for more details.");
-            LOGGER.debug("", ex);
+            engine.writeReports(applicationName, outDirectory, this.reportFormat.name());
+        } catch (ReportException ex) {
+            LOGGER.debug("Unexpected exception occurred during analysis; please see the verbose error log for more details.", ex);
+            throw new ScanAgentException("Error generating the report", ex);
         }
     }
 

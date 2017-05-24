@@ -123,7 +123,8 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
             outputDir = new File(this.getProject().getBuild().getDirectory());
         }
         try {
-            writeReports(engine, this.getProject(), outputDir);
+            final MavenProject p = this.getProject();
+            engine.writeReports(p.getName(), p.getGroupId(), p.getArtifactId(), p.getVersion(), outputDir, getFormat());
         } catch (ReportException ex) {
             if (exCol == null) {
                 exCol = new ExceptionCollection("Error writing aggregate report", ex);

@@ -281,18 +281,9 @@ public class App {
                 }
                 exCol = ex;
             }
-            final List<Dependency> dependencies = engine.getDependencies();
-            DatabaseProperties prop = null;
-            try (CveDB cve = CveDB.getInstance()) {
-                prop = cve.getDatabaseProperties();
-            } catch (DatabaseException ex) {
-                //TODO shouldn't this be a fatal exception
-                LOGGER.debug("Unable to retrieve DB Properties", ex);
-            }
-            final ReportGenerator report = new ReportGenerator(applicationName, dependencies, engine.getAnalyzers(), prop);
 
             try {
-                report.generateReports(reportDirectory, outputFormat);
+                engine.writeReports(applicationName, new File(reportDirectory), outputFormat);
             } catch (ReportException ex) {
                 if (exCol != null) {
                     exCol.addException(ex);
@@ -306,7 +297,7 @@ public class App {
             }
 
             //Set the exit code based on whether we found a high enough vulnerability
-            for (Dependency dep : dependencies) {
+            for (Dependency dep : engine.getDependencies()) {
                 if (!dep.getVulnerabilities().isEmpty()) {
                     for (Vulnerability vuln : dep.getVulnerabilities()) {
                         LOGGER.debug("VULNERABILITY FOUND " + dep.getDisplayFileName());
@@ -316,7 +307,6 @@ public class App {
                     }
                 }
             }
-
             return retCode;
         } finally {
             if (engine != null) {

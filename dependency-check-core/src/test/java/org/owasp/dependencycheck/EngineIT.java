@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck;
 
+import java.io.File;
 import java.io.IOException;
 import static org.junit.Assert.assertTrue;
 
@@ -72,12 +73,7 @@ public class EngineIT extends BaseDBTestCase {
                 throw ex;
             }
         }
-        DatabaseProperties prop = null;
-        try (CveDB cve = CveDB.getInstance()) {
-            prop = cve.getDatabaseProperties();
-        }
-        ReportGenerator rg = new ReportGenerator("DependencyCheck", instance.getDependencies(), instance.getAnalyzers(), prop);
-        rg.generateReports("./target/", "ALL");
+        instance.writeReports("dependency-check sample", new File("./target/"), "ALL");
         instance.cleanup();
     }
 }

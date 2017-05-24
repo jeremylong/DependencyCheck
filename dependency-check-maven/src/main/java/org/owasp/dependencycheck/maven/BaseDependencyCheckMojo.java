@@ -1069,35 +1069,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         return format;
     }
 
-    /**
-     * Generates the reports for a given dependency-check engine.
-     *
-     * @param engine a dependency-check engine
-     * @param p the Maven project
-     * @param outputDir the directory path to write the report(s)
-     * @throws ReportException thrown if there is an error writing the report
-     */
-    protected void writeReports(Engine engine, MavenProject p, File outputDir) throws ReportException {
-        DatabaseProperties prop = null;
-        try (CveDB cve = CveDB.getInstance()) {
-            prop = cve.getDatabaseProperties();
-        } catch (DatabaseException ex) {
-            //TODO shouldn't this throw an exception?
-            if (getLog().isDebugEnabled()) {
-                getLog().debug("Unable to retrieve DB Properties", ex);
-            }
-        }
-        final ReportGenerator r = new ReportGenerator(p.getName(), p.getGroupId(), p.getArtifactId(), p.getVersion(),
-                engine.getDependencies(), engine.getAnalyzers(), prop);
-        try {
-            r.generateReports(outputDir.getAbsolutePath(), format);
-        } catch (ReportException ex) {
-            final String msg = String.format("Error generating the report for %s", p.getName());
-            throw new ReportException(msg, ex);
-        }
-
-    }
-
     //<editor-fold defaultstate="collapsed" desc="Methods to fail build or show summary">
     /**
      * Checks to see if a vulnerability has been identified with a CVSS score

@@ -25,6 +25,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
@@ -99,19 +100,19 @@ public class CheckMojo extends BaseDependencyCheckMojo {
             ExceptionCollection exCol = scanArtifacts(getProject(), engine);
             if (engine.getDependencies().isEmpty()) {
                 getLog().info("No dependencies were identified that could be analyzed by dependency-check");
-            } else {
-                try {
-                    engine.analyzeDependencies();
-                } catch (ExceptionCollection ex) {
-                    if (this.isFailOnError() && ex.isFatal()) {
-                        throw new MojoExecutionException("One or more exceptions occurred during analysis", ex);
-                    }
-                    exCol = ex;
+            }
+            try {
+                engine.analyzeDependencies();
+            } catch (ExceptionCollection ex) {
+                if (this.isFailOnError() && ex.isFatal()) {
+                    throw new MojoExecutionException("One or more exceptions occurred during analysis", ex);
                 }
+                exCol = ex;
             }
             if (exCol == null || !exCol.isFatal()) {
                 try {
-                    writeReports(engine, getProject(), getCorrectOutputDirectory());
+                    final MavenProject p = this.getProject();
+                    engine.writeReports(p.getName(), p.getGroupId(), p.getArtifactId(), p.getVersion(), getCorrectOutputDirectory(), getFormat());
                 } catch (ReportException ex) {
                     if (this.isFailOnError()) {
                         if (exCol != null) {
