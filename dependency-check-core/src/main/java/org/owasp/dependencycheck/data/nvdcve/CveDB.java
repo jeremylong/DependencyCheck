@@ -36,6 +36,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import javax.annotation.concurrent.ThreadSafe;
+import org.apache.commons.collections.map.ReferenceMap;
 import org.owasp.dependencycheck.data.cwe.CweDB;
 import org.owasp.dependencycheck.dependency.Reference;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -48,6 +49,8 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.collections.map.AbstractReferenceMap.HARD;
+import static org.apache.commons.collections.map.AbstractReferenceMap.SOFT;
 import static org.owasp.dependencycheck.data.nvdcve.CveDB.PreparedStatementCveDb.*;
 
 /**
@@ -90,6 +93,9 @@ public final class CveDB implements AutoCloseable {
      * The prepared statements.
      */
     private final EnumMap<PreparedStatementCveDb, PreparedStatement> preparedStatements = new EnumMap<>(PreparedStatementCveDb.class);
+
+    @SuppressWarnings("unchecked")
+    private final Map<String, List<Vulnerability>> vulnerabilitiesForCpeCache = new ReferenceMap(HARD, SOFT);
 
     /**
      * The enum value names must match the keys of the statements in the
@@ -265,6 +271,7 @@ public final class CveDB implements AutoCloseable {
      */
     @Override
     public synchronized void close() {
+        clearCache();
         if (instance != null) {
             instance.usageCount -= 1;
             if (instance.usageCount <= 0 && instance.isOpen()) {
@@ -474,6 +481,7 @@ public final class CveDB implements AutoCloseable {
      * @param value the property value
      */
     public synchronized void saveProperty(String key, String value) {
+        clearCache();
         try {
             try {
                 final PreparedStatement mergeProperty = getPreparedStatement(MERGE_PROPERTY);
@@ -499,6 +507,17 @@ public final class CveDB implements AutoCloseable {
     }
 
     /**
+     * Clears cache. Should be called whenever something is modified. While this is not the optimal cache eviction
+     * strategy, this is good enough for typical usage (update DB and then only read) and it is easier to maintain
+     * the code.
+     *
+     * It should be also called when DB is closed.
+     */
+    private void clearCache() {
+        vulnerabilitiesForCpeCache.clear();
+    }
+
+    /**
      * Retrieves the vulnerabilities associated with the specified CPE.
      *
      * @param cpeStr the CPE name
@@ -506,6 +525,13 @@ public final class CveDB implements AutoCloseable {
      * @throws DatabaseException thrown if there is an exception retrieving data
      */
     public synchronized List<Vulnerability> getVulnerabilities(String cpeStr) throws DatabaseException {
+        final List<Vulnerability> cachedVulnerabilities = vulnerabilitiesForCpeCache.get(cpeStr);
+        if (cachedVulnerabilities != null) {
+            LOGGER.debug("Cache hit for {}", cpeStr);
+            return cachedVulnerabilities;
+        } else {
+            LOGGER.debug("Cache miss for {}", cpeStr);
+        }
         final VulnerableSoftware cpe = new VulnerableSoftware();
         try {
             cpe.parseName(cpeStr);
@@ -554,6 +580,7 @@ public final class CveDB implements AutoCloseable {
         } finally {
             DBUtils.closeResultSet(rs);
         }
+        vulnerabilitiesForCpeCache.put(cpeStr, vulnerabilities);
         return vulnerabilities;
     }
 
@@ -633,6 +660,7 @@ public final class CveDB implements AutoCloseable {
      * @throws DatabaseException is thrown if the database
      */
     public synchronized void updateVulnerability(Vulnerability vuln) throws DatabaseException {
+        clearCache();
         try {
             int vulnerabilityId = 0;
             final PreparedStatement selectVulnerabilityId = getPreparedStatement(SELECT_VULNERABILITY_ID);
@@ -799,6 +827,7 @@ public final class CveDB implements AutoCloseable {
      * ensure orphan entries are removed.
      */
     public synchronized void cleanupDatabase() {
+        clearCache();
         try {
             final PreparedStatement ps = getPreparedStatement(CLEANUP_ORPHANS);
             if (ps != null) {
@@ -934,6 +963,7 @@ public final class CveDB implements AutoCloseable {
      * Deletes unused dictionary entries from the database.
      */
     public synchronized void deleteUnusedCpe() {
+        clearCache();
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement(statementBundle.getString("DELETE_UNUSED_DICT_CPE"));
@@ -956,6 +986,7 @@ public final class CveDB implements AutoCloseable {
      * @param product the CPE product
      */
     public synchronized void addCpe(String cpe, String vendor, String product) {
+        clearCache();
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement(statementBundle.getString("ADD_DICT_CPE"));
