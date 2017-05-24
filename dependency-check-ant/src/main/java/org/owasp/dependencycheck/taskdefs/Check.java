@@ -940,16 +940,7 @@ public class Check extends Update {
                         throw new BuildException(ex);
                     }
                 }
-                DatabaseProperties prop = null;
-                try (CveDB cve = CveDB.getInstance()) {
-                    prop = cve.getDatabaseProperties();
-                } catch (DatabaseException ex) {
-                    //TODO shouldn't this be a fatal exception
-                    log("Unable to retrieve DB Properties", ex, Project.MSG_DEBUG);
-                }
-
-                final ReportGenerator reporter = new ReportGenerator(getProjectName(), engine.getDependencies(), engine.getAnalyzers(), prop);
-                reporter.generateReports(reportOutputDirectory, reportFormat);
+                engine.writeReports(getProjectName(),new File(reportOutputDirectory), reportFormat);
 
                 if (this.failBuildOnCVSS <= 10) {
                     checkForFailure(engine.getDependencies());
