@@ -95,6 +95,9 @@ public final class CveDB implements AutoCloseable {
      */
     private final EnumMap<PreparedStatementCveDb, PreparedStatement> preparedStatements = new EnumMap<>(PreparedStatementCveDb.class);
 
+    /**
+     * Cache for CVE lookups; used to speed up the vulnerability search process.
+     */
     @SuppressWarnings("unchecked")
     private final Map<String, List<Vulnerability>> vulnerabilitiesForCpeCache = Collections.synchronizedMap(new ReferenceMap(HARD, SOFT));
 
@@ -508,8 +511,9 @@ public final class CveDB implements AutoCloseable {
     }
 
     /**
-     * Clears cache. Should be called whenever something is modified. While this is not the optimal cache eviction
-     * strategy, this is good enough for typical usage (update DB and then only read) and it is easier to maintain
+     * Clears cache. Should be called whenever something is modified. While this
+     * is not the optimal cache eviction strategy, this is good enough for
+     * typical usage (update DB and then only read) and it is easier to maintain
      * the code.
      *
      * It should be also called when DB is closed.

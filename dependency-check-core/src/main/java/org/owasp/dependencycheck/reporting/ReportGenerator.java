@@ -169,7 +169,7 @@ public class ReportGenerator {
         final String scanDate = dateFormat.print(dt);
         final String scanDateXML = dateFormatXML.print(dt);
 
-        VelocityContext ctxt = new VelocityContext();
+        final VelocityContext ctxt = new VelocityContext();
         ctxt.put("applicationName", applicationName);
         ctxt.put("dependencies", dependencies);
         ctxt.put("analyzers", analyzers);
@@ -202,7 +202,7 @@ public class ReportGenerator {
         if (reportFormat != null) {
             write(outputLocation, reportFormat);
         } else {
-            File out = getReportFile(outputLocation, null);
+            final File out = getReportFile(outputLocation, null);
             if (out.isDirectory()) {
                 throw new ReportException("Unable to write non-standard VSL output to a directory, please specify a file name");
             }

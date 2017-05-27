@@ -815,7 +815,7 @@ public class Engine implements FileFilter {
     public void writeReports(String applicationName, String groupId, String artifactId,
             String version, File outputDir, String format) throws ReportException {
 
-        DatabaseProperties prop = database.getDatabaseProperties();
+        final DatabaseProperties prop = database.getDatabaseProperties();
         final ReportGenerator r = new ReportGenerator(applicationName, groupId, artifactId, version, dependencies, getAnalyzers(), prop);
         try {
             r.write(outputDir.getAbsolutePath(), format);
