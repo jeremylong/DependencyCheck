@@ -21,11 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -126,10 +121,12 @@ public class XmlInputStreamTest {
         InputStream stream = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
         XmlInputStream instance = new XmlInputStream(stream);
         int r = instance.read();
+        assertEquals('t', r);
         String expResult = "[1]-\"t\" ( 74)";
         String result = instance.toString();
         assertEquals(expResult, result);
         r = instance.read();
+        assertEquals('e', r);
         expResult = "[2]-\"te\" ( 74 65)";
         result = instance.toString();
         assertEquals(expResult, result);

@@ -13,37 +13,12 @@ import java.util.Map;
  * @author https://stackoverflow.com/users/823393/oldcurmudgeon
  */
 public class XmlEntity {
-
-    /**
-     * Private constructor for a utility class.
-     */
-    private XmlEntity() {
-    }
-
-    /**
-     * Converts a named XML entity into its HTML encoded Unicode code point.
-     *
-     * @param s the named entity (note, this should not include the leading '&amp;'
-     * or trailing ';'
-     * @return the HTML encoded Unicode code point representation of the named
-     * entity
-     */
-    public static String fromNamedReference(CharSequence s) {
-        if (s == null) {
-            return null;
-        }
-        final Integer code = SPECIALS.get(s.toString());
-        if (code != null) {
-            return "&#" + code + ";";
-        }
-        return null;
-    }
-
     /**
      * The map of HTML entities.
      */
     private static final Map<String, Integer> SPECIALS;
 
+    //<editor-fold defaultstate="collapsed" desc="Initialize SPECIALS">
     /**
      * Create a map HTML Named Entities to their numeric equivalent. Derived
      * from Wikipedia
@@ -305,5 +280,31 @@ public class XmlEntity {
         map.put("hearts", 9829);
         map.put("diams", 9830);
         SPECIALS = Collections.unmodifiableMap(map);
+    }
+    //</editor-fold>
+
+    /**
+     * Private constructor for a utility class.
+     */
+    private XmlEntity() {
+    }
+
+    /**
+     * Converts a named XML entity into its HTML encoded Unicode code point.
+     *
+     * @param s the named entity (note, this should not include the leading '&amp;'
+     * or trailing ';'
+     * @return the HTML encoded Unicode code point representation of the named
+     * entity
+     */
+    public static String fromNamedReference(CharSequence s) {
+        if (s == null) {
+            return null;
+        }
+        final Integer code = SPECIALS.get(s.toString());
+        if (code != null) {
+            return "&#" + code + ";";
+        }
+        return null;
     }
 }
