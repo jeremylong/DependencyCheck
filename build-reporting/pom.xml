@@ -22,7 +22,7 @@ Copyright (c) 2017 - Jeremy Long. All Rights Reserved.
         <artifactId>dependency-check-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
-
+    <name>Dependency-Check Build-Reporting</name>
     <artifactId>build-reporting</artifactId>
     <packaging>pom</packaging>
     <!-- begin copy from http://minds.coremedia.com/2012/09/11/problem-solved-deploy-multi-module-maven-project-site-as-github-pages/ -->
@@ -80,6 +80,13 @@ Copyright (c) 2017 - Jeremy Long. All Rights Reserved.
                         <goals>
                             <goal>report-aggregate</goal>
                         </goals>
+                        <configuration>
+                            <outputDirectory>target/coverage-reports/</outputDirectory>
+                            <dataFileIncludes>
+                                <dataFileInclude>target/coverage-reports/jacoco-ut.exec</dataFileInclude>
+                                <dataFileInclude>target/coverage-reports/jacoco-it.exec</dataFileInclude>
+                            </dataFileIncludes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
