@@ -19,6 +19,8 @@ package org.owasp.dependencycheck.maven;
 
 import org.owasp.dependencycheck.utils.Filter;
 
+import static org.apache.maven.artifact.Artifact.SCOPE_RUNTIME_PLUS_SYSTEM;
+
 /**
  * Tests is the artifact should be included in the scan (i.e. is the
  * dependency in a scope that is being scanned).
@@ -53,6 +55,9 @@ public class ArtifactScopeExcluded extends Filter<String> {
 			return true;
 		}
 		if (skipRuntimeScope && org.apache.maven.artifact.Artifact.SCOPE_RUNTIME.equals(scope)) {
+			return true;
+		}
+		if (skipRuntimeScope && skipSystemScope && org.apache.maven.artifact.Artifact.SCOPE_COMPILE_PLUS_RUNTIME.equals(SCOPE_RUNTIME_PLUS_SYSTEM)) {
 			return true;
 		}
 
