@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
     <suppress base="true">
-       <notes><![CDATA[
+        <notes><![CDATA[
        This suppresses false positives for Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll.
        ]]></notes>
-       <filePath regex="true">.*Microsoft\.VisualStudio\.QualityTools\.UnitTestFramework*\.dll</filePath>
-       <cve>CVE-2014-3802</cve>
+        <filePath regex="true">.*Microsoft\.VisualStudio\.QualityTools\.UnitTestFramework*\.dll</filePath>
+        <cve>CVE-2014-3802</cve>
     </suppress>
     <suppress base="true">
-       <notes><![CDATA[
+        <notes><![CDATA[
        This suppresses false positives for EntityFramework.SqlServer.dll.
        ]]></notes>
-       <filePath regex="true">.*EntityFramework\.SqlServer*\.dll</filePath>
-       <cpe>cpe:/a:microsoft:server:6.0.0.0</cpe>
-       <cpe>cpe:/a:microsoft:sql_server:6.0</cpe>
+        <filePath regex="true">.*EntityFramework\.SqlServer*\.dll</filePath>
+        <cpe>cpe:/a:microsoft:server:6.0.0.0</cpe>
+        <cpe>cpe:/a:microsoft:sql_server:6.0</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -582,24 +582,24 @@
         ]]></notes>
         <gav regex="true">^com\.splunk:splunk:.*$</gav>
         <cpe>cpe:/a:splunk:splunk</cpe>
-     </suppress>
-     <suppress base="true">
+    </suppress>
+    <suppress base="true">
         <notes><![CDATA[
         False positive per issue #713
         ]]></notes>
         <gav regex="true">^org\.openid4java:openid4java:.*$</gav>
         <cpe>cpe:/a:openid:openid</cpe>
         <cpe>cpe:/a:openid:openid4java</cpe>
-     </suppress>
-     <suppress base="true">
+    </suppress>
+    <suppress base="true">
         <notes><![CDATA[
         False positive per issue #700
         ]]></notes>
         <gav regex="true">^org\.springframework\.cloud:spring-cloud-netflix-core:.*$</gav>
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
-     </suppress>
-     <suppress base="true">
+    </suppress>
+    <suppress base="true">
         <notes><![CDATA[
         False positive per issue #700
         ]]></notes>
@@ -607,5 +607,20 @@
         <cpe>cpe:/a:pivotal:spring_framework</cpe>
         <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
         <cpe>cpe:/a:context_project:context</cpe>
-     </suppress>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False Positive per issue #746
+        ]]></notes>
+        <gav regex="true">^com\.artofsolving:jodconverter:.*$</gav>
+        <cpe>cpe:/a:openoffice:openoffice.org</cpe>
+        <cpe>cpe:/a:openoffice:openoffice</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False Positive per issue #743
+        ]]></notes>
+        <gav regex="true">^org\.xerial:sqlite-jdbc:.*$</gav>
+        <cve>CVE-2015-3717</cve>
+    </suppress>
 </suppressions>

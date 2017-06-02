@@ -54,6 +54,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
+import org.owasp.dependencycheck.exception.ReportException;
+import org.owasp.dependencycheck.reporting.ReportGenerator;
 
 /**
  * Scans files, directories, etc. for Dependencies. Analyzers are loaded and
@@ -795,5 +798,43 @@ public class Engine implements FileFilter {
         LOGGER.debug("", throwable);
         exceptions.add(throwable);
         throw new ExceptionCollection(message, exceptions, true);
+    }
+
+    /**
+     * Writes the report to the given output directory.
+     *
+     * @param applicationName the name of the application/project
+     * @param groupId the Maven groupId
+     * @param artifactId the Maven artifactId
+     * @param version the Maven version
+     * @param outputDir the path to the output directory (can include the full
+     * file name if the format is not ALL)
+     * @param format the report format (ALL, HTML, CSV, JSON, etc.)
+     * @throws ReportException thrown if there is an error generating the report
+     */
+    public void writeReports(String applicationName, String groupId, String artifactId,
+            String version, File outputDir, String format) throws ReportException {
+
+        final DatabaseProperties prop = database.getDatabaseProperties();
+        final ReportGenerator r = new ReportGenerator(applicationName, groupId, artifactId, version, dependencies, getAnalyzers(), prop);
+        try {
+            r.write(outputDir.getAbsolutePath(), format);
+        } catch (ReportException ex) {
+            final String msg = String.format("Error generating the report for %s", applicationName);
+            throw new ReportException(msg, ex);
+        }
+    }
+
+    /**
+     * Writes the report to the given output directory.
+     *
+     * @param applicationName the name of the application/project
+     * @param outputDir the path to the output directory (can include the full
+     * file name if the format is not ALL)
+     * @param format the report format (ALL, HTML, CSV, JSON, etc.)
+     * @throws ReportException thrown if there is an error generating the report
+     */
+    public void writeReports(String applicationName, File outputDir, String format) throws ReportException {
+        writeReports(applicationName, null, null, null, outputDir, format);
     }
 }

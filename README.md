@@ -29,8 +29,8 @@ $ ./bin/dependency-check.sh --project Testing --out . --scan [path to jar files 
 ```
 On Windows
 ```
-> bin/dependency-check.bat -h
-> bin/dependency-check.bat --project Testing --out . --scan [path to jar files to be scanned]
+> .\bin\dependency-check.bat -h
+> .\bin\dependency-check.bat --project Testing --out . --scan [path to jar files to be scanned]
 ```
 On Mac with [Homebrew](http://brew.sh)
 ```

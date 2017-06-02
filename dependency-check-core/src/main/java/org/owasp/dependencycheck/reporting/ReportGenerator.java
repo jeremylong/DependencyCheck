@@ -107,29 +107,8 @@ public class ReportGenerator {
      */
     public ReportGenerator(String applicationName, List<Dependency> dependencies, List<Analyzer> analyzers, DatabaseProperties properties) {
         velocityEngine = createVelocityEngine();
-        context = createContext();
-
         velocityEngine.init();
-        final EscapeTool enc = new EscapeTool();
-
-        final DateTime dt = new DateTime();
-        final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("MMM d, yyyy 'at' HH:mm:ss z");
-        final DateTimeFormatter dateFormatXML = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-
-//        final Date d = new Date();
-//        final DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy 'at' HH:mm:ss z");
-//        final DateFormat dateFormatXML = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-        final String scanDate = dateFormat.print(dt);
-        final String scanDateXML = dateFormatXML.print(dt);
-
-        context.put("applicationName", applicationName);
-        context.put("dependencies", dependencies);
-        context.put("analyzers", analyzers);
-        context.put("properties", properties);
-        context.put("scanDate", scanDate);
-        context.put("scanDateXML", scanDateXML);
-        context.put("enc", enc);
-        context.put("version", Settings.getString(Settings.KEYS.APPLICATION_VERSION, "Unknown"));
+        context = createContext(applicationName, dependencies, analyzers, properties);
     }
 
     /**
@@ -148,9 +127,15 @@ public class ReportGenerator {
             List<Dependency> dependencies, List<Analyzer> analyzers, DatabaseProperties properties) {
 
         this(applicationName, dependencies, analyzers, properties);
-        context.put("applicationVersion", version);
-        context.put("artifactID", artifactID);
-        context.put("groupID", groupID);
+        if (version != null) {
+            context.put("applicationVersion", version);
+        }
+        if (artifactID != null) {
+            context.put("artifactID", artifactID);
+        }
+        if (groupID != null) {
+            context.put("groupID", groupID);
+        }
     }
 
     /**
@@ -166,67 +151,235 @@ public class ReportGenerator {
     }
 
     /**
-     * Creates a new Velocity Context.
+     * Constructs the velocity context used to generate the dependency-check
+     * reports.
      *
-     * @return a Velocity Context
+     * @param applicationName the application name being analyzed
+     * @param dependencies the list of dependencies
+     * @param analyzers the list of analyzers used
+     * @param properties the database properties (containing timestamps of the
+     * NVD CVE data)
+     * @return the velocity context
      */
-    private Context createContext() {
-        return new VelocityContext();
+    private VelocityContext createContext(String applicationName, List<Dependency> dependencies, List<Analyzer> analyzers, DatabaseProperties properties) {
+        final DateTime dt = new DateTime();
+        final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("MMM d, yyyy 'at' HH:mm:ss z");
+        final DateTimeFormatter dateFormatXML = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
+        final String scanDate = dateFormat.print(dt);
+        final String scanDateXML = dateFormatXML.print(dt);
+
+        final VelocityContext ctxt = new VelocityContext();
+        ctxt.put("applicationName", applicationName);
+        ctxt.put("dependencies", dependencies);
+        ctxt.put("analyzers", analyzers);
+        ctxt.put("properties", properties);
+        ctxt.put("scanDate", scanDate);
+        ctxt.put("scanDateXML", scanDateXML);
+        ctxt.put("enc", new EscapeTool());
+        ctxt.put("version", Settings.getString(Settings.KEYS.APPLICATION_VERSION, "Unknown"));
+        return ctxt;
     }
 
     /**
-     * Generates the Dependency Reports for the identified dependencies.
+     * Writes the dependency-check report to the given output location.
      *
-     * @param outputStream the OutputStream to send the generated report to
-     * @param format the format the report should be written in
-     * @throws IOException is thrown when the template file does not exist
-     * @throws Exception is thrown if there is an error writing out the reports
-     */
-    public void generateReports(OutputStream outputStream, Format format) throws IOException, Exception {
-        if (format == Format.XML || format == Format.ALL) {
-            generateReport("XmlReport", outputStream);
-        }
-        if (format == Format.HTML || format == Format.ALL) {
-            generateReport("HtmlReport", outputStream);
-        }
-        if (format == Format.VULN || format == Format.ALL) {
-            generateReport("VulnerabilityReport", outputStream);
-        }
-        if (format == Format.JSON || format == Format.ALL) {
-            generateReport("JsonReport", outputStream);
-        }
-        if (format == Format.CSV || format == Format.ALL) {
-            generateReport("CsvReport", outputStream);
-        }
-    }
-
-    /**
-     * Generates the Dependency Reports for the identified dependencies.
-     *
-     * @param outputDir the path where the reports should be written
-     * @param format the format the report should be written in
-     * @throws ReportException is thrown if there is an error writing out the
+     * @param outputLocation the path where the reports should be written
+     * @param format the format the report should be written in (XML, HTML,
+     * JSON, CSV, ALL) or even the path to a custom velocity template (either
+     * fully qualified or the template name on the class path).
+     * @throws ReportException is thrown if there is an error creating out the
      * reports
      */
-    public void generateReports(String outputDir, Format format) throws ReportException {
-        if (format == Format.XML || format == Format.ALL) {
-            generateReport("XmlReport", outputDir + File.separator + "dependency-check-report.xml");
+    public void write(String outputLocation, String format) throws ReportException {
+        Format reportFormat = null;
+        try {
+            reportFormat = Format.valueOf(format.toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            LOGGER.trace("ignore this exception", ex);
         }
-        if (format == Format.JSON || format == Format.ALL) {
-            generateReport("JsonReport", outputDir + File.separator + "dependency-check-report.json");
-            pretifyJson(outputDir + File.separator + "dependency-check-report.json");
+
+        if (reportFormat != null) {
+            write(outputLocation, reportFormat);
+        } else {
+            final File out = getReportFile(outputLocation, null);
+            if (out.isDirectory()) {
+                throw new ReportException("Unable to write non-standard VSL output to a directory, please specify a file name");
+            }
+            processTemplate(format, out);
         }
-        if (format == Format.CSV || format == Format.ALL) {
-            generateReport("CsvReport", outputDir + File.separator + "dependency-check-report.csv");
-        }
-        if (format == Format.HTML || format == Format.ALL) {
-            generateReport("HtmlReport", outputDir + File.separator + "dependency-check-report.html");
-        }
-        if (format == Format.VULN || format == Format.ALL) {
-            generateReport("VulnerabilityReport", outputDir + File.separator + "dependency-check-vulnerability.html");
+
+    }
+
+    /**
+     * Writes the dependency-check report(s).
+     *
+     * @param outputLocation the path where the reports should be written
+     * @param format the format the report should be written in (XML, HTML, ALL)
+     * @throws ReportException is thrown if there is an error creating out the
+     * reports
+     */
+    public void write(String outputLocation, Format format) throws ReportException {
+        if (format == Format.ALL) {
+            for (Format f : Format.values()) {
+                if (f != Format.ALL) {
+                    write(outputLocation, f);
+                }
+            }
+        } else {
+            final File out = getReportFile(outputLocation, format);
+            final String templateName = format.toString().toLowerCase() + "Report";
+            processTemplate(templateName, out);
+            if (format == Format.JSON) {
+                pretifyJson(out.getPath());
+            }
         }
     }
 
+//    /**
+//     * Writes the dependency-check report(s).
+//     *
+//     * @param outputStream the OutputStream to send the generated report to
+//     * @param format the format the report should be written in
+//     * @throws ReportException thrown if the report format is ALL
+//     * @throws IOException is thrown when the template file does not exist
+//     * @throws Exception is thrown if there is an error writing out the reports
+//     */
+//    public void write(OutputStream outputStream, Format format) throws ReportException, IOException, Exception {
+//        if (format == Format.ALL) {
+//            throw new ReportException("Unable to write ALL reports to a single output stream, please check the API");
+//        }
+//        final String templateName = format.toString().toLowerCase() + "Report";
+//        processTemplate(templateName, outputStream);
+//    }
+
+    /**
+     * Determines the report file name based on the give output location and
+     * format. If the output location contains a full file name that has the
+     * correct extension for the given report type then the output location is
+     * returned. However, if the output location is a directory, this method
+     * will generate the correct name for the given output format.
+     *
+     * @param outputLocation the specified output location
+     * @param format the report format
+     * @return the report File
+     */
+    protected File getReportFile(String outputLocation, Format format) {
+        File outFile = new File(outputLocation);
+        if (outFile.getParentFile() == null) {
+            outFile = new File(".", outputLocation);
+        }
+        final String pathToCheck = outputLocation.toLowerCase();
+        if (format == Format.XML && !pathToCheck.endsWith(".xml")) {
+            return new File(outFile, "dependency-check-report.xml");
+        }
+        if (format == Format.HTML && !pathToCheck.endsWith(".html") && !pathToCheck.endsWith(".htm")) {
+            return new File(outFile, "dependency-check-report.html");
+        }
+        if (format == Format.VULN && !pathToCheck.endsWith(".html") && !pathToCheck.endsWith(".htm")) {
+            return new File(outFile, "dependency-check-vulnerability.html");
+        }
+        if (format == Format.JSON && !pathToCheck.endsWith(".json")) {
+            return new File(outFile, "dependency-check-report.json");
+        }
+        if (format == Format.CSV && !pathToCheck.endsWith(".csv")) {
+            return new File(outFile, "dependency-check-report.csv");
+        }
+        return outFile;
+    }
+
+    /**
+     * Generates a report from a given Velocity Template. The template name
+     * provided can be the name of a template contained in the jar file, such as
+     * 'XmlReport' or 'HtmlReport', or the template name can be the path to a
+     * template file.
+     *
+     * @param template the name of the template to load
+     * @param file the output file to write the report to
+     * @throws ReportException is thrown when the report cannot be generated
+     */
+    protected void processTemplate(String template, File file) throws ReportException {
+        ensureParentDirectoryExists(file);
+        try (OutputStream output = new FileOutputStream(file)) {
+            processTemplate(template, output);
+        } catch (IOException ex) {
+            throw new ReportException(String.format("Unable to write to file: %s", file), ex);
+        }
+    }
+
+    /**
+     * Generates a report from a given Velocity Template. The template name
+     * provided can be the name of a template contained in the jar file, such as
+     * 'XmlReport' or 'HtmlReport', or the template name can be the path to a
+     * template file.
+     *
+     * @param templateName the name of the template to load
+     * @param outputStream the OutputStream to write the report to
+     * @throws ReportException is thrown when an exception occurs
+     */
+    protected void processTemplate(String templateName, OutputStream outputStream) throws ReportException {
+        InputStream input = null;
+        String logTag = null;
+        final File f = new File(templateName);
+        try {
+            if (f.isFile()) {
+                try {
+                    logTag = templateName;
+                    input = new FileInputStream(f);
+                } catch (FileNotFoundException ex) {
+                    throw new ReportException("Unable to locate template file: " + templateName, ex);
+                }
+            } else {
+                logTag = "templates/" + templateName + ".vsl";
+                input = this.getClass().getClassLoader().getResourceAsStream(logTag);
+            }
+            if (input == null) {
+                logTag = templateName;
+                input = this.getClass().getClassLoader().getResourceAsStream(templateName);
+            }
+            if (input == null) {
+                throw new ReportException("Template file doesn't exist: " + logTag);
+            }
+
+            try (InputStreamReader reader = new InputStreamReader(input, "UTF-8");
+                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8")) {
+                if (!velocityEngine.evaluate(context, writer, logTag, reader)) {
+                    throw new ReportException("Failed to convert the template into html.");
+                }
+                writer.flush();
+            } catch (UnsupportedEncodingException ex) {
+                throw new ReportException("Unable to generate the report using UTF-8", ex);
+            } catch (IOException ex) {
+                throw new ReportException("Unable to write the report", ex);
+            }
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException ex) {
+                    LOGGER.trace("Error closing input", ex);
+                }
+            }
+        }
+    }
+    /**
+     * Validates that the given file's parent directory exists. If the directory
+     * does not exist an attempt to create the necessary path is made; if that
+     * fails a ReportException will be raised.
+     *
+     * @param file the file or directory directory
+     * @throws ReportException thrown if the parent directory does not exist and
+     * cannot be created
+     */
+    private void ensureParentDirectoryExists(File file) throws ReportException {
+        if (!file.getParentFile().exists()) {
+            final boolean created = file.getParentFile().mkdirs();
+            if (!created) {
+                final String msg = String.format("Unable to create directory '%s'.", file.getParentFile().getAbsolutePath());
+                throw new ReportException(msg);
+            }
+        }
+    }
     /**
      * Reformats the given JSON file.
      *
@@ -309,141 +462,6 @@ public class ReportGenerator {
                     LOGGER.debug("Unexpected JSON toekn {}", token.toString());
                     break;
             }
-        }
-    }
-
-    /**
-     * Generates the Dependency Reports for the identified dependencies.
-     *
-     * @param outputDir the path where the reports should be written
-     * @param outputFormat the format the report should be written in (XML,
-     * HTML, ALL)
-     * @throws ReportException is thrown if there is an error creating out the
-     * reports
-     */
-    public void generateReports(String outputDir, String outputFormat) throws ReportException {
-        final String format = outputFormat.toUpperCase();
-        final String pathToCheck = outputDir.toLowerCase();
-        if (format.matches("^(XML|HTML|VULN|JSON|ALL)$")) {
-            if ("XML".equalsIgnoreCase(format)) {
-                if (pathToCheck.endsWith(".xml")) {
-                    generateReport("XmlReport", outputDir);
-                } else {
-                    generateReports(outputDir, Format.XML);
-                }
-            }
-            if ("HTML".equalsIgnoreCase(format)) {
-                if (pathToCheck.endsWith(".html") || pathToCheck.endsWith(".htm")) {
-                    generateReport("HtmlReport", outputDir);
-                } else {
-                    generateReports(outputDir, Format.HTML);
-                }
-            }
-            if ("VULN".equalsIgnoreCase(format)) {
-                if (pathToCheck.endsWith(".html") || pathToCheck.endsWith(".htm")) {
-                    generateReport("VulnReport", outputDir);
-                } else {
-                    generateReports(outputDir, Format.VULN);
-                }
-            }
-            if ("JSON".equalsIgnoreCase(format)) {
-                if (pathToCheck.endsWith(".json")) {
-                    generateReport("JsonReport", outputDir);
-                    pretifyJson(outputDir);
-                } else {
-                    generateReports(outputDir, Format.JSON);
-                }
-            }
-            if ("CSV".equalsIgnoreCase(format)) {
-                if (pathToCheck.endsWith(".csv")) {
-                    generateReport("CsvReport", outputDir);
-                } else {
-                    generateReports(outputDir, Format.JSON);
-                }
-            }
-            if ("ALL".equalsIgnoreCase(format)) {
-                generateReports(outputDir, Format.ALL);
-            }
-        }
-    }
-
-    /**
-     * Generates a report from a given Velocity Template. The template name
-     * provided can be the name of a template contained in the jar file, such as
-     * 'XmlReport' or 'HtmlReport', or the template name can be the path to a
-     * template file.
-     *
-     * @param templateName the name of the template to load
-     * @param outputStream the OutputStream to write the report to
-     * @throws ReportException is thrown when an exception occurs
-     */
-    protected void generateReport(String templateName, OutputStream outputStream) throws ReportException {
-        InputStream input = null;
-        String templatePath = null;
-        final File f = new File(templateName);
-        try {
-            if (f.exists() && f.isFile()) {
-                try {
-                    templatePath = templateName;
-                    input = new FileInputStream(f);
-                } catch (FileNotFoundException ex) {
-                    throw new ReportException("Unable to locate template file: " + templateName, ex);
-                }
-            } else {
-                templatePath = "templates/" + templateName + ".vsl";
-                input = this.getClass().getClassLoader().getResourceAsStream(templatePath);
-            }
-            if (input == null) {
-                throw new ReportException("Template file doesn't exist: " + templatePath);
-            }
-
-            try (InputStreamReader reader = new InputStreamReader(input, "UTF-8");
-                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8")) {
-                if (!velocityEngine.evaluate(context, writer, templatePath, reader)) {
-                    throw new ReportException("Failed to convert the template into html.");
-                }
-                writer.flush();
-            } catch (UnsupportedEncodingException ex) {
-                throw new ReportException("Unable to generate the report using UTF-8", ex);
-            } catch (IOException ex) {
-                throw new ReportException("Unable to write the report", ex);
-            }
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("Error closing input", ex);
-                }
-            }
-        }
-    }
-
-    /**
-     * Generates a report from a given Velocity Template. The template name
-     * provided can be the name of a template contained in the jar file, such as
-     * 'XmlReport' or 'HtmlReport', or the template name can be the path to a
-     * template file.
-     *
-     * @param templateName the name of the template to load
-     * @param outFileName the filename and path to write the report to
-     * @throws ReportException is thrown when the report cannot be generated
-     */
-    protected void generateReport(String templateName, String outFileName) throws ReportException {
-        File outFile = new File(outFileName);
-        if (outFile.getParentFile() == null) {
-            outFile = new File(".", outFileName);
-        }
-        if (!outFile.getParentFile().exists()) {
-            final boolean created = outFile.getParentFile().mkdirs();
-            if (!created) {
-                throw new ReportException("Unable to create directory '" + outFile.getParentFile().getAbsolutePath() + "'.");
-            }
-        }
-        try (OutputStream outputSteam = new FileOutputStream(outFile)) {
-            generateReport(templateName, outputSteam);
-        } catch (IOException ex) {
-            throw new ReportException("Unable to write to file: " + outFile, ex);
         }
     }
 }

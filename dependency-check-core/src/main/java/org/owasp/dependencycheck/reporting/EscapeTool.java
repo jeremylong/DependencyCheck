@@ -124,7 +124,7 @@ public class EscapeTool {
             return "";
         }
         boolean addComma = false;
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         for (Identifier id : ids) {
             if (!"cpe".equals(id.getType())) {
                 if (addComma) {
@@ -150,7 +150,7 @@ public class EscapeTool {
             return "";
         }
         boolean addComma = false;
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         for (Identifier id : ids) {
             if ("cpe".equals(id.getType())) {
                 if (addComma) {

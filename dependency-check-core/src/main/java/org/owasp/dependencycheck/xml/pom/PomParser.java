@@ -29,6 +29,7 @@ import javax.xml.parsers.SAXParser;
 import org.apache.commons.io.ByteOrderMark;
 import org.apache.commons.io.input.BOMInputStream;
 import org.owasp.dependencycheck.utils.XmlUtils;
+import org.owasp.dependencycheck.xml.XmlInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +81,8 @@ public class PomParser {
             final SAXParser saxParser = XmlUtils.buildSecureSaxParser();
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setContentHandler(handler);
-            final BOMInputStream bomStream = new BOMInputStream(inputStream);
+
+            final BOMInputStream bomStream = new BOMInputStream(new XmlInputStream(inputStream));
             final ByteOrderMark bom = bomStream.getBOM();
             final String defaultEncoding = "UTF-8";
             final String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();

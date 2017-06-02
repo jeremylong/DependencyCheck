@@ -12,4 +12,6 @@
     <suppress checks=".*" files=".*[\\/]maven-plugin-plugin-sources[\\/].*.properties" />
     <!--suppress checks=".*" files=".*[\\/]org[\\/]owasp[\\/]dependencycheck[\\/]org[\\/]apache[\\/].*.java" /-->
     <suppress checks="RegexpHeader" files=".*[\\/]org[\\/]owasp[\\/]dependencycheck[\\/]utils[\\/]SSLSocketFactoryEx.java" />
+    <suppress checks="RegexpHeader" files=".*[\\/]org[\\/]owasp[\\/]dependencycheck[\\/]xml[\\/]XmlInputStream.java" />
+    <suppress checks="RegexpHeader" files=".*[\\/]org[\\/]owasp[\\/]dependencycheck[\\/]xml[\\/]XmlEntity.java" />
 </suppressions>

@@ -49,7 +49,7 @@ public class PomUtilsTest extends BaseTest {
         assertEquals(expResult, result.getOrganizationUrl());
 
         file = BaseTest.getResourceAsFile(this, "jmockit-1.26.pom");
-        expResult = "Main";
+        expResult = "Main ø modified to test issue #710";
         result = PomUtils.readPom(file);
         assertEquals(expResult, result.getName());
     }
