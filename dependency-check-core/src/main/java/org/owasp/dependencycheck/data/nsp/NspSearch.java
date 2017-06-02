@@ -27,6 +27,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.URLConnectionFactory;
 import org.slf4j.Logger;
@@ -81,9 +82,10 @@ public class NspSearch {
      *
      * @param packageJson the package.json file retrieved from the Dependency
      * @return a List of zero or more Advisory object
+     * @throws AnalysisException if Node Security Platform is unable to analyze the package
      * @throws IOException if it's unable to connect to Node Security Platform
      */
-    public List<Advisory> submitPackage(JsonObject packageJson) throws IOException {
+    public List<Advisory> submitPackage(JsonObject packageJson) throws AnalysisException, IOException {
         try {
             List<Advisory> result = new ArrayList<>();
             byte[] packageDatabytes = packageJson.toString().getBytes(StandardCharsets.UTF_8);
@@ -136,6 +138,10 @@ public class NspSearch {
                         }
                     }
                 }
+            } else if (conn.getResponseCode() == 400) {
+                LOGGER.debug("Invalid payload submitted to Node Security Platform. Received response code: {} {}",
+                        conn.getResponseCode(), conn.getResponseMessage());
+                throw new AnalysisException("Could not perform NSP analysis. Invalid payload submitted to Node Security Platform.");
             } else {
                 LOGGER.debug("Could not connect to Node Security Platform. Received response code: {} {}",
                         conn.getResponseCode(), conn.getResponseMessage());
