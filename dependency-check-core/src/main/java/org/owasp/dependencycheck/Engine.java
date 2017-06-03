@@ -812,7 +812,7 @@ public class Engine implements FileFilter {
      * @param format the report format (ALL, HTML, CSV, JSON, etc.)
      * @throws ReportException thrown if there is an error generating the report
      */
-    public void writeReports(String applicationName, String groupId, String artifactId,
+    public synchronized void writeReports(String applicationName, String groupId, String artifactId,
             String version, File outputDir, String format) throws ReportException {
 
         final DatabaseProperties prop = database.getDatabaseProperties();
