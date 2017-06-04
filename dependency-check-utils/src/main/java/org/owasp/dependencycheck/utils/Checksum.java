@@ -17,9 +17,6 @@
  */
 package org.owasp.dependencycheck.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -36,10 +33,6 @@ import java.security.NoSuchAlgorithmException;
  */
 public final class Checksum {
 
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Checksum.class);
     /**
      * Hex code characters used in getHex.
      */

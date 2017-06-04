@@ -106,6 +106,11 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     private static final FileFilter PY_FILTER = new SuffixFileFilter(".py");
 
     /**
+     * The file filter used to determine which files this analyzer supports.
+     */
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
+
+    /**
      * Returns the name of the Python Package Analyzer.
      *
      * @return the name of the analyzer
@@ -124,11 +129,6 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     public AnalysisPhase getAnalysisPhase() {
         return AnalysisPhase.INFORMATION_COLLECTION;
     }
-
-    /**
-     * The file filter used to determine which files this analyzer supports.
-     */
-    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
 
     /**
      * Returns the FileFilter

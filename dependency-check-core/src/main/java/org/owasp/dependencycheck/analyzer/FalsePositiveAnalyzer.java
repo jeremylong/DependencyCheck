@@ -50,11 +50,30 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      * The Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(FalsePositiveAnalyzer.class);
-
     /**
      * The file filter used to find DLL and EXE.
      */
     private static final FileFilter DLL_EXE_FILTER = FileFilterBuilder.newInstance().addExtensions("dll", "exe").build();
+    /**
+     * Regex to identify core java libraries and a few other commonly
+     * misidentified ones.
+     */
+    public static final Pattern CORE_JAVA = Pattern.compile("^cpe:/a:(sun|oracle|ibm):(j2[ems]e|"
+            + "java(_platform_micro_edition|_runtime_environment|_se|virtual_machine|se_development_kit|fx)?|"
+            + "jdk|jre|jsse)($|:.*)");
+    /**
+     * Regex to identify core jsf libraries.
+     */
+    public static final Pattern CORE_JAVA_JSF = Pattern.compile("^cpe:/a:(sun|oracle|ibm):jsf($|:.*)");
+    /**
+     * Regex to identify core java library files. This is currently incomplete.
+     */
+    public static final Pattern CORE_FILES = Pattern.compile("(^|/)((alt[-])?rt|jsse|jfxrt|jfr|jce|javaws|deploy|charsets)\\.jar$");
+    /**
+     * Regex to identify core jsf java library files. This is currently
+     * incomplete.
+     */
+    public static final Pattern CORE_JSF_FILES = Pattern.compile("(^|/)jsf[-][^/]*\\.jar$");
 
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
@@ -214,27 +233,6 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
             }
         }
     }
-    /**
-     * Regex to identify core java libraries and a few other commonly
-     * misidentified ones.
-     */
-    public static final Pattern CORE_JAVA = Pattern.compile("^cpe:/a:(sun|oracle|ibm):(j2[ems]e|"
-            + "java(_platform_micro_edition|_runtime_environment|_se|virtual_machine|se_development_kit|fx)?|"
-            + "jdk|jre|jsse)($|:.*)");
-
-    /**
-     * Regex to identify core jsf libraries.
-     */
-    public static final Pattern CORE_JAVA_JSF = Pattern.compile("^cpe:/a:(sun|oracle|ibm):jsf($|:.*)");
-    /**
-     * Regex to identify core java library files. This is currently incomplete.
-     */
-    public static final Pattern CORE_FILES = Pattern.compile("(^|/)((alt[-])?rt|jsse|jfxrt|jfr|jce|javaws|deploy|charsets)\\.jar$");
-    /**
-     * Regex to identify core jsf java library files. This is currently
-     * incomplete.
-     */
-    public static final Pattern CORE_JSF_FILES = Pattern.compile("(^|/)jsf[-][^/]*\\.jar$");
 
     /**
      * Removes any CPE entries for the JDK/JRE unless the filename ends with

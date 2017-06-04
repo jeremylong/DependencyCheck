@@ -162,7 +162,7 @@ public class XmlInputStream extends FilterInputStream {
                 throw new IOException("Invalid/Unknown reference '&" + reference + ";'");
             }
         } else {
-            // Did not terminate properly! 
+            // Did not terminate properly!
             // Perhaps an & on its own or a malformed reference.
             // Either way, escape the &
             pushBack.append("&#38;").append(reference).append((char) ch);
