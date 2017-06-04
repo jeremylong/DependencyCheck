@@ -17,14 +17,22 @@
  */
 package org.owasp.dependencycheck.reporting;
 
-import java.io.*;
 import java.util.List;
 
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
-import static com.google.gson.stream.JsonToken.*;
 import com.google.gson.stream.JsonWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import org.apache.velocity.VelocityContext;

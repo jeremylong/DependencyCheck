@@ -465,7 +465,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Deprecated
     private String externalReport = null;
 
-    protected Filter<String> artifactScopeExcluded;
+    /**
+     * The artifact scope filter.
+     */
+    private Filter<String> artifactScopeExcluded;
 
     // </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Base Maven implementation">
@@ -650,7 +653,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 String version = null;
                 if (org.apache.maven.artifact.Artifact.SCOPE_SYSTEM.equals(dependencyNode.getArtifact().getScope())) {
                     for (org.apache.maven.model.Dependency d : project.getDependencies()) {
-                        Artifact a = dependencyNode.getArtifact();
+                        final Artifact a = dependencyNode.getArtifact();
                         if (d.getSystemPath() != null && artifactsMatch(d, a)) {
 
                             artifactFile = new File(d.getSystemPath());
@@ -1046,6 +1049,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     protected String getFormat() {
         return format;
+    }
+
+    /**
+     * Returns the artifact scope excluded filter.
+     *
+     * @return the artifact scope excluded filter
+     */
+    protected Filter<String> getArtifactScopeExcluded() {
+        return artifactScopeExcluded;
     }
 
     //<editor-fold defaultstate="collapsed" desc="Methods to fail build or show summary">

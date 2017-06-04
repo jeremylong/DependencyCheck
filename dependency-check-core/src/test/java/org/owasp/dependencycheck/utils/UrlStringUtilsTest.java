@@ -66,7 +66,7 @@ public class UrlStringUtilsTest {
         assertEquals(expResult, result);
         
         text = "http://github.com/jeremylong/DependencyCheck/something";
-        expResult = Arrays.asList("github", "jeremylong", "DependencyCheck", "something");;
+        expResult = Arrays.asList("github", "jeremylong", "DependencyCheck", "something");
         result = UrlStringUtils.extractImportantUrlData(text);
         assertEquals(expResult, result);
     }

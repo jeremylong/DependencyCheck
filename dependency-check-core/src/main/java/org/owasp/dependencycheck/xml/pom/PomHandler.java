@@ -74,11 +74,22 @@ public class PomHandler extends DefaultHandler {
      * The url element.
      */
     public static final String URL = "url";
-
     /**
      * The pom model.
      */
     private final Model model = new Model();
+    /**
+     * The stack of elements processed; used to determine the parent node.
+     */
+    private final Deque<String> stack = new ArrayDeque<>();
+    /**
+     * The license object.
+     */
+    private License license = null;
+    /**
+     * The current node text being extracted from the element.
+     */
+    private StringBuilder currentText;
 
     /**
      * Returns the model obtained from the pom.xml.
@@ -88,19 +99,6 @@ public class PomHandler extends DefaultHandler {
     public Model getModel() {
         return model;
     }
-    /**
-     * The stack of elements processed; used to determine the parent node.
-     */
-    private final Deque<String> stack = new ArrayDeque<>();
-    /**
-     * The license object.
-     */
-    private License license = null;
-
-    /**
-     * The current node text being extracted from the element.
-     */
-    private StringBuilder currentText;
 
     /**
      * Handles the start element event.
@@ -194,10 +192,8 @@ public class PomHandler extends DefaultHandler {
                     }
                     break;
                 case LICENSES:
-                    if (LICENSE.equals(qName)) {
-                        if (license != null) {
-                            model.addLicense(license);
-                        }
+                    if (LICENSE.equals(qName) && license != null) {
+                        model.addLicense(license);
                     }
                     break;
                 default:

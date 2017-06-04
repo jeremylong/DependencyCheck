@@ -28,13 +28,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.cli.ParseException;
-import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
-import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.apache.tools.ant.DirectoryScanner;
 import org.owasp.dependencycheck.dependency.Vulnerability;
-import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -220,56 +217,11 @@ public class App {
             String[] excludes, int symLinkDepth, int cvssFailScore) throws InvalidScanPathException, DatabaseException,
             ExceptionCollection, ReportException {
         Engine engine = null;
-        int retCode = 0;
         try {
+            final List<String> antStylePaths = getPaths(files);
+            final Set<File> paths = scanAntStylePaths(antStylePaths, symLinkDepth, excludes);
+
             engine = new Engine();
-            final List<String> antStylePaths = new ArrayList<>();
-            for (String file : files) {
-                final String antPath = ensureCanonicalPath(file);
-                antStylePaths.add(antPath);
-            }
-
-            final Set<File> paths = new HashSet<>();
-            for (String file : antStylePaths) {
-                LOGGER.debug("Scanning {}", file);
-                final DirectoryScanner scanner = new DirectoryScanner();
-                String include = file.replace('\\', '/');
-                File baseDir;
-
-                if (include.startsWith("//")) {
-                    throw new InvalidScanPathException("Unable to scan paths specified by //");
-                } else {
-                    final int pos = getLastFileSeparator(include);
-                    final String tmpBase = include.substring(0, pos);
-                    final String tmpInclude = include.substring(pos + 1);
-                    if (tmpInclude.indexOf('*') >= 0 || tmpInclude.indexOf('?') >= 0
-                            || (new File(include)).isFile()) {
-                        baseDir = new File(tmpBase);
-                        include = tmpInclude;
-                    } else {
-                        baseDir = new File(tmpBase, tmpInclude);
-                        include = "**/*";
-                    }
-                }
-                scanner.setBasedir(baseDir);
-                final String[] includes = {include};
-                scanner.setIncludes(includes);
-                scanner.setMaxLevelsOfSymlinks(symLinkDepth);
-                if (symLinkDepth <= 0) {
-                    scanner.setFollowSymlinks(false);
-                }
-                if (excludes != null && excludes.length > 0) {
-                    scanner.addExcludes(excludes);
-                }
-                scanner.scan();
-                if (scanner.getIncludedFilesCount() > 0) {
-                    for (String s : scanner.getIncludedFiles()) {
-                        final File f = new File(baseDir, s);
-                        LOGGER.debug("Found file {}", f.toString());
-                        paths.add(f);
-                    }
-                }
-            }
             engine.scan(paths);
 
             ExceptionCollection exCol = null;
@@ -295,24 +247,108 @@ public class App {
             if (exCol != null && exCol.getExceptions().size() > 0) {
                 throw exCol;
             }
-
-            //Set the exit code based on whether we found a high enough vulnerability
-            for (Dependency dep : engine.getDependencies()) {
-                if (!dep.getVulnerabilities().isEmpty()) {
-                    for (Vulnerability vuln : dep.getVulnerabilities()) {
-                        LOGGER.debug("VULNERABILITY FOUND " + dep.getDisplayFileName());
-                        if (vuln.getCvssScore() > cvssFailScore) {
-                            retCode = 1;
-                        }
-                    }
-                }
-            }
-            return retCode;
+            return determineReturnCode(engine, cvssFailScore);
         } finally {
             if (engine != null) {
                 engine.cleanup();
             }
         }
+    }
+
+    /**
+     * Determines the return code based on if one of the dependencies scanned
+     * has a vulnerability with a CVSS score above the cvssFailScore.
+     *
+     * @param engine the engine used during analysis
+     * @param cvssFailScore the max allowed CVSS score
+     * @return returns <code>1</code> if a severe enough vulnerability is
+     * identified; otherwise <code>0</code>
+     */
+    private int determineReturnCode(Engine engine, int cvssFailScore) {
+        int retCode = 0;
+        //Set the exit code based on whether we found a high enough vulnerability
+        for (Dependency dep : engine.getDependencies()) {
+            if (!dep.getVulnerabilities().isEmpty()) {
+                for (Vulnerability vuln : dep.getVulnerabilities()) {
+                    LOGGER.debug("VULNERABILITY FOUND " + dep.getDisplayFileName());
+                    if (vuln.getCvssScore() > cvssFailScore) {
+                        retCode = 1;
+                    }
+                }
+            }
+        }
+        return retCode;
+    }
+
+    /**
+     * Scans the give Ant Style paths and collects the actual files.
+     *
+     * @param antStylePaths a list of ant style paths to scan for actual files
+     * @param symLinkDepth the depth to traverse symbolic links
+     * @param excludes an array of ant style excludes
+     * @return returns the set of identified files
+     * @throws InvalidScanPathException thrown when the scan path is invalid
+     * @throws IllegalStateException
+     */
+    private Set<File> scanAntStylePaths(List<String> antStylePaths, int symLinkDepth, String[] excludes)
+            throws InvalidScanPathException {
+        final Set<File> paths = new HashSet<>();
+        for (String file : antStylePaths) {
+            LOGGER.debug("Scanning {}", file);
+            final DirectoryScanner scanner = new DirectoryScanner();
+            String include = file.replace('\\', '/');
+            File baseDir;
+
+            if (include.startsWith("//")) {
+                throw new InvalidScanPathException("Unable to scan paths specified by //");
+            } else {
+                final int pos = getLastFileSeparator(include);
+                final String tmpBase = include.substring(0, pos);
+                final String tmpInclude = include.substring(pos + 1);
+                if (tmpInclude.indexOf('*') >= 0 || tmpInclude.indexOf('?') >= 0
+                        || (new File(include)).isFile()) {
+                    baseDir = new File(tmpBase);
+                    include = tmpInclude;
+                } else {
+                    baseDir = new File(tmpBase, tmpInclude);
+                    include = "**/*";
+                }
+            }
+            scanner.setBasedir(baseDir);
+            final String[] includes = {include};
+            scanner.setIncludes(includes);
+            scanner.setMaxLevelsOfSymlinks(symLinkDepth);
+            if (symLinkDepth <= 0) {
+                scanner.setFollowSymlinks(false);
+            }
+            if (excludes != null && excludes.length > 0) {
+                scanner.addExcludes(excludes);
+            }
+            scanner.scan();
+            if (scanner.getIncludedFilesCount() > 0) {
+                for (String s : scanner.getIncludedFiles()) {
+                    final File f = new File(baseDir, s);
+                    LOGGER.debug("Found file {}", f.toString());
+                    paths.add(f);
+                }
+            }
+        }
+        return paths;
+    }
+
+    /**
+     * Determines the ant style paths from the given array of files.
+     *
+     * @param files an array of file paths
+     * @return a list containing ant style paths
+     */
+    private List<String> getPaths(String[] files) {
+        final List<String> antStylePaths = new ArrayList<>();
+        for (String file : files) {
+            final String antPath = ensureCanonicalPath(file);
+            antStylePaths.add(antPath);
+        }
+        return antStylePaths;
     }
 
     /**
