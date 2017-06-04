@@ -28,16 +28,13 @@ import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.FileProvider;
 import org.apache.tools.ant.types.resources.Resources;
 import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
-import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
-import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.reporting.ReportGenerator.Format;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.impl.StaticLoggerBinder;
@@ -146,8 +143,8 @@ public class Check extends Update {
     private boolean updateOnly = false;
 
     /**
-     * The report format to be generated (HTML, XML, VULN, CSV, JSON, ALL). Default is
-     * HTML.
+     * The report format to be generated (HTML, XML, VULN, CSV, JSON, ALL).
+     * Default is HTML.
      */
     private String reportFormat = "HTML";
     /**
@@ -940,7 +937,7 @@ public class Check extends Update {
                         throw new BuildException(ex);
                     }
                 }
-                engine.writeReports(getProjectName(),new File(reportOutputDirectory), reportFormat);
+                engine.writeReports(getProjectName(), new File(reportOutputDirectory), reportFormat);
 
                 if (this.failBuildOnCVSS <= 10) {
                     checkForFailure(engine.getDependencies());
@@ -1093,8 +1090,8 @@ public class Check extends Update {
     }
 
     /**
-     * An enumeration of supported report formats: "ALL", "HTML", "XML", "CSV", "JSON", "VULN",
-     * etc..
+     * An enumeration of supported report formats: "ALL", "HTML", "XML", "CSV",
+     * "JSON", "VULN", etc..
      */
     public static class ReportFormats extends EnumeratedAttribute {
 

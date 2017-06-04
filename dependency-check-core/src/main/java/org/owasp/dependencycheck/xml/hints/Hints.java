@@ -32,6 +32,11 @@ public class Hints {
     private List<HintRule> hintRules;
 
     /**
+     * The duplicating hint rules.
+     */
+    private List<VendorDuplicatingHintRule> vendorDuplicatingHintRules;
+
+    /**
      * Get the value of hintRules.
      *
      * @return the value of hintRules
@@ -48,11 +53,6 @@ public class Hints {
     public void setHintRules(List<HintRule> hintRules) {
         this.hintRules = hintRules;
     }
-
-    /**
-     * The duplicating hint rules.
-     */
-    private List<VendorDuplicatingHintRule> vendorDuplicatingHintRules;
 
     /**
      * Get the value of vendorDuplicatingHintRules.

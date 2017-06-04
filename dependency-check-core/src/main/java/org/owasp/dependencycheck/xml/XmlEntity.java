@@ -12,7 +12,8 @@ import java.util.Map;
  *
  * @author https://stackoverflow.com/users/823393/oldcurmudgeon
  */
-public class XmlEntity {
+public final class XmlEntity {
+
     /**
      * The map of HTML entities.
      */
@@ -292,8 +293,8 @@ public class XmlEntity {
     /**
      * Converts a named XML entity into its HTML encoded Unicode code point.
      *
-     * @param s the named entity (note, this should not include the leading '&amp;'
-     * or trailing ';'
+     * @param s the named entity (note, this should not include the leading
+     * '&amp;' or trailing ';'
      * @return the HTML encoded Unicode code point representation of the named
      * entity
      */

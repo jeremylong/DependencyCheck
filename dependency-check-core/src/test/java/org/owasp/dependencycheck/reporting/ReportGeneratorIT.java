@@ -47,14 +47,10 @@ public class ReportGeneratorIT extends BaseDBTestCase {
     /**
      * Generates an XML report containing known vulnerabilities and realistic
      * data and validates the generated XML document against the XSD.
-     *
-     * @throws Exception
      */
     @Test
     public void testGenerateReport() {
         try {
-            String templateName = "XmlReport";
-
             File f = new File("target/test-reports");
             if (!f.exists()) {
                 f.mkdir();

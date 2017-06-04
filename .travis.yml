@@ -12,5 +12,4 @@ before_install:
 
 after_success:
   - java -cp ~/codacy-coverage-reporter-assembly.jar com.codacy.CodacyCoverageReporter -l Java -r build-reporting/target/coverage-reports/jacoco.xml
-  - chmod +x coverity_scan.sh
   - ./coverity_scan.sh

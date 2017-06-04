@@ -18,49 +18,77 @@
 package org.owasp.dependencycheck.maven;
 
 import org.owasp.dependencycheck.utils.Filter;
-
-import static org.apache.maven.artifact.Artifact.SCOPE_RUNTIME_PLUS_SYSTEM;
+import static org.apache.maven.artifact.Artifact.SCOPE_COMPILE_PLUS_RUNTIME;
+import static org.apache.maven.artifact.Artifact.SCOPE_RUNTIME;
+import static org.apache.maven.artifact.Artifact.SCOPE_SYSTEM;
+import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
+import static org.apache.maven.artifact.Artifact.SCOPE_PROVIDED;
 
 /**
- * Tests is the artifact should be included in the scan (i.e. is the
- * dependency in a scope that is being scanned).
+ * Utility class to determine if an artifact should be excluded.
  *
- * @param scope the scope of the artifact to test
- * @return <code>true</code> if the artifact is in an excluded scope;
- * otherwise <code>false</code>
+ * @author Josh Cain
  */
 public class ArtifactScopeExcluded extends Filter<String> {
 
-	private final boolean skipTestScope;
-	private final boolean skipProvidedScope;
-	private final boolean skipSystemScope;
-	private final boolean skipRuntimeScope;
+    /**
+     * Whether or not to skip the test scope.
+     */
+    private final boolean skipTestScope;
+    /**
+     * Whether or not to skip the provided scope.
+     */
+    private final boolean skipProvidedScope;
+    /**
+     * Whether or not to skip the system scope.
+     */
+    private final boolean skipSystemScope;
+    /**
+     * Whether or not to skip the runtime scope.
+     */
+    private final boolean skipRuntimeScope;
 
-	public ArtifactScopeExcluded(final boolean skipTestScope, final boolean skipProvidedScope, final boolean skipSystemScope, final boolean skipRuntimeScope) {
-		this.skipTestScope = skipTestScope;
-		this.skipProvidedScope = skipProvidedScope;
-		this.skipSystemScope = skipSystemScope;
-		this.skipRuntimeScope = skipRuntimeScope;
-	}
+    /**
+     * Constructs a new ArtifactScopeExcluded object.
+     *
+     * @param skipTestScope whether or not to skip the test scope
+     * @param skipProvidedScope whether or not to skip the provided scope
+     * @param skipSystemScope whether or not to skip the system scope
+     * @param skipRuntimeScope whether or not to skip the runtime scope
+     */
+    public ArtifactScopeExcluded(final boolean skipTestScope, final boolean skipProvidedScope,
+            final boolean skipSystemScope, final boolean skipRuntimeScope) {
+        this.skipTestScope = skipTestScope;
+        this.skipProvidedScope = skipProvidedScope;
+        this.skipSystemScope = skipSystemScope;
+        this.skipRuntimeScope = skipRuntimeScope;
+    }
 
-	@Override
-	public boolean passes(final String scope) {
-		if (skipTestScope && org.apache.maven.artifact.Artifact.SCOPE_TEST.equals(scope)) {
-			return true;
-		}
-		if (skipProvidedScope && org.apache.maven.artifact.Artifact.SCOPE_PROVIDED.equals(scope)) {
-			return true;
-		}
-		if (skipSystemScope && org.apache.maven.artifact.Artifact.SCOPE_SYSTEM.equals(scope)) {
-			return true;
-		}
-		if (skipRuntimeScope && org.apache.maven.artifact.Artifact.SCOPE_RUNTIME.equals(scope)) {
-			return true;
-		}
-		if (skipRuntimeScope && skipSystemScope && org.apache.maven.artifact.Artifact.SCOPE_COMPILE_PLUS_RUNTIME.equals(SCOPE_RUNTIME_PLUS_SYSTEM)) {
-			return true;
-		}
-
-		return false;
-	}
+    /**
+     * Tests is the artifact should be included in the scan (i.e. is the
+     * dependency in a scope that is being scanned).
+     *
+     * @param scope the scope of the artifact to test
+     * @return <code>true</code> if the artifact is in an excluded scope;
+     * otherwise <code>false</code>
+     */
+    @Override
+    public boolean passes(final String scope) {
+        if (skipTestScope && SCOPE_TEST.equals(scope)) {
+            return true;
+        }
+        if (skipProvidedScope && SCOPE_PROVIDED.equals(scope)) {
+            return true;
+        }
+        if (skipSystemScope && SCOPE_SYSTEM.equals(scope)) {
+            return true;
+        }
+        if (skipRuntimeScope && SCOPE_RUNTIME.equals(scope)) {
+            return true;
+        }
+        if (skipRuntimeScope && skipSystemScope && SCOPE_COMPILE_PLUS_RUNTIME.equals(scope)) {
+            return true;
+        }
+        return false;
+    }
 }

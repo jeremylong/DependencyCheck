@@ -64,7 +64,7 @@ public class CheckMojo extends BaseDependencyCheckMojo {
     public boolean canGenerateReport() {
         boolean isCapable = false;
         for (Artifact a : getProject().getArtifacts()) {
-            if (!artifactScopeExcluded.passes(a.getScope())) {
+            if (!getArtifactScopeExcluded().passes(a.getScope())) {
                 isCapable = true;
                 break;
             }

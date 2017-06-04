@@ -58,7 +58,7 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
 
         String vendor = "apache software foundation";
         String product = "struts 2 core";
-        String version = "2.1.2";
+        
         CPEAnalyzer instance = new CPEAnalyzer();
 
         String queryText = instance.buildSearch(vendor, product, null, null);
