@@ -802,10 +802,8 @@ public final class CveDB implements AutoCloseable {
         try {
             final PreparedStatement cs = getPreparedStatement(COUNT_CPE);
             rs = cs.executeQuery();
-            if (rs.next()) {
-                if (rs.getInt(1) > 0) {
-                    return true;
-                }
+            if (rs.next() && rs.getInt(1) > 0) {
+                return true;
             }
         } catch (Exception ex) {
             String dd;
@@ -911,10 +909,9 @@ public final class CveDB implements AutoCloseable {
                 }
                 //this can't dereference a null 'identifiedVersion' because if it was null we would have exited
                 //in the above loop or just after loop (if matchesAnyPrevious return null).
-                if (entry.getValue() && identifiedVersion != null && identifiedVersion.compareTo(v) <= 0) {
-                    if (!(isVersionTwoADifferentProduct && !identifiedVersion.getVersionParts().get(0).equals(v.getVersionParts().get(0)))) {
-                        return entry;
-                    }
+                if (entry.getValue() && identifiedVersion != null && identifiedVersion.compareTo(v) <= 0
+                        && !(isVersionTwoADifferentProduct && !identifiedVersion.getVersionParts().get(0).equals(v.getVersionParts().get(0)))) {
+                    return entry;
                 }
             }
         }

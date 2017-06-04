@@ -73,6 +73,7 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void initializeFileTypeAnalyzer() throws InitializationException {
+        //nothing to initialize
     }
 
     /**
