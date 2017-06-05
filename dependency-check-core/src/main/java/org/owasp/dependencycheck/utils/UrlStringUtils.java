@@ -31,12 +31,6 @@ import java.util.regex.Pattern;
  * @author Jeremy Long
  */
 public final class UrlStringUtils {
-
-    /**
-     * Private constructor for a utility class.
-     */
-    private UrlStringUtils() {
-    }
     /**
      * A regular expression to test if a string contains a URL.
      */
@@ -45,7 +39,18 @@ public final class UrlStringUtils {
      * A regular expression to test if a string is a URL.
      */
     private static final Pattern IS_URL_TEST = Pattern.compile("^(ht|f)tps?://.*", Pattern.CASE_INSENSITIVE);
+    /**
+     * A listing of domain parts that should not be used as evidence. Yes, this
+     * is an incomplete list.
+     */
+    private static final Set<String> IGNORE_LIST = new HashSet<>(
+            Arrays.asList("www", "com", "org", "gov", "info", "name", "net", "pro", "tel", "mobi", "xxx"));
 
+    /**
+     * Private constructor for a utility class.
+     */
+    private UrlStringUtils() {
+    }
     /**
      * Tests if the text provided contains a URL. This is somewhat limited
      * search in that it only looks for (ftp|http|https)://
@@ -66,12 +71,6 @@ public final class UrlStringUtils {
     public static boolean isUrl(String text) {
         return IS_URL_TEST.matcher(text).matches();
     }
-    /**
-     * A listing of domain parts that should not be used as evidence. Yes, this
-     * is an incomplete list.
-     */
-    private static final Set<String> IGNORE_LIST = new HashSet<>(
-            Arrays.asList("www", "com", "org", "gov", "info", "name", "net", "pro", "tel", "mobi", "xxx"));
 
     /**
      * <p>

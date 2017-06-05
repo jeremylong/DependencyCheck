@@ -37,6 +37,16 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 public class FileNameAnalyzer extends AbstractAnalyzer {
 
+    /**
+     * Python init files
+     */
+    //CSOFF: WhitespaceAfter
+    private static final NameFileFilter IGNORED_FILES = new NameFileFilter(new String[]{
+        "__init__.py",
+        "__init__.pyc",
+        "__init__.pyo",});
+    //CSON: WhitespaceAfter
+
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
      * The name of the analyzer.
@@ -77,16 +87,6 @@ public class FileNameAnalyzer extends AbstractAnalyzer {
         return Settings.KEYS.ANALYZER_FILE_NAME_ENABLED;
     }
     //</editor-fold>
-
-    /**
-     * Python init files
-     */
-    //CSOFF: WhitespaceAfter
-    private static final NameFileFilter IGNORED_FILES = new NameFileFilter(new String[]{
-        "__init__.py",
-        "__init__.pyc",
-        "__init__.pyo",});
-    //CSON: WhitespaceAfter
 
     /**
      * Collects information about the file name.

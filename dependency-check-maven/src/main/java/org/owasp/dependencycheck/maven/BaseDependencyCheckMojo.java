@@ -48,17 +48,14 @@ import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
-import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
-import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.exception.DependencyNotFoundException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
-import org.owasp.dependencycheck.exception.ReportException;
-import org.owasp.dependencycheck.reporting.ReportGenerator;
+import org.owasp.dependencycheck.utils.Filter;
 import org.owasp.dependencycheck.utils.Settings;
 import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
@@ -468,6 +465,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Deprecated
     private String externalReport = null;
 
+    /**
+     * The artifact scope filter.
+     */
+    private Filter<String> artifactScopeExcluded;
+
     // </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Base Maven implementation">
     /**
@@ -639,7 +641,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest) {
         ExceptionCollection exCol = null;
         for (DependencyNode dependencyNode : nodes) {
-            if (excludeFromScan(dependencyNode.getArtifact().getScope())) {
+            if (artifactScopeExcluded.passes(dependencyNode.getArtifact().getScope())) {
                 continue;
             }
             exCol = collectDependencies(engine, project, dependencyNode.getChildren(), buildingRequest);
@@ -651,7 +653,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 String version = null;
                 if (org.apache.maven.artifact.Artifact.SCOPE_SYSTEM.equals(dependencyNode.getArtifact().getScope())) {
                     for (org.apache.maven.model.Dependency d : project.getDependencies()) {
-                        Artifact a = dependencyNode.getArtifact();
+                        final Artifact a = dependencyNode.getArtifact();
                         if (d.getSystemPath() != null && artifactsMatch(d, a)) {
 
                             artifactFile = new File(d.getSystemPath());
@@ -987,6 +989,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         Settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
         Settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
 
+        artifactScopeExcluded = new ArtifactScopeExcluded(skipTestScope, skipProvidedScope, skipSystemScope, skipRuntimeScope);
     }
 
     /**
@@ -1014,27 +1017,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
         }
         return null;
-    }
-
-    /**
-     * Tests is the artifact should be included in the scan (i.e. is the
-     * dependency in a scope that is being scanned).
-     *
-     * @param scope the scope of the artifact to test
-     * @return <code>true</code> if the artifact is in an excluded scope;
-     * otherwise <code>false</code>
-     */
-    protected boolean excludeFromScan(String scope) {
-        if (skipTestScope && org.apache.maven.artifact.Artifact.SCOPE_TEST.equals(scope)) {
-            return true;
-        }
-        if (skipProvidedScope && org.apache.maven.artifact.Artifact.SCOPE_PROVIDED.equals(scope)) {
-            return true;
-        }
-        if (skipSystemScope && org.apache.maven.artifact.Artifact.SCOPE_SYSTEM.equals(scope)) {
-            return true;
-        }
-        return skipRuntimeScope && !org.apache.maven.artifact.Artifact.SCOPE_RUNTIME.equals(scope);
     }
 
     /**
@@ -1067,6 +1049,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     protected String getFormat() {
         return format;
+    }
+
+    /**
+     * Returns the artifact scope excluded filter.
+     *
+     * @return the artifact scope excluded filter
+     */
+    protected Filter<String> getArtifactScopeExcluded() {
+        return artifactScopeExcluded;
     }
 
     //<editor-fold defaultstate="collapsed" desc="Methods to fail build or show summary">

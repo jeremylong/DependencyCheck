@@ -61,6 +61,10 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
      * The types of files on which this will work.
      */
     private static final String SUPPORTED_EXTENSIONS = "nuspec";
+    /**
+     * The file filter used to determine which files this analyzer supports.
+     */
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(SUPPORTED_EXTENSIONS).build();
 
     /**
      * Initializes the analyzer once before any analysis is performed.
@@ -69,6 +73,7 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void initializeFileTypeAnalyzer() throws InitializationException {
+        //nothing to initialize
     }
 
     /**
@@ -101,12 +106,6 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
-
-    /**
-     * The file filter used to determine which files this analyzer supports.
-     */
-    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(
-            SUPPORTED_EXTENSIONS).build();
 
     /**
      * Returns the FileFilter

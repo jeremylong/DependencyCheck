@@ -471,10 +471,11 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-            This CVE only affects jackson-dataformat-xml. See issue #517.
+            These CVEs only affect jackson-dataformat-xml. See issue #517 and #751.
       ]]></notes>
         <gav regex="true">(org\.codehaus\.jackson|com\.fasterxml\.jackson\.core):jackson.*</gav>
         <cve>CVE-2016-3720</cve>
+        <cve>CVE-2016-7051</cve>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
