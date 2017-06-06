@@ -408,6 +408,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "skipSystemScope", defaultValue = "false", required = false)
     private boolean skipSystemScope = false;
+
+    /**
+     * Skip analysis for dependencies which type matches this regular expression.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "skipArtifactType", required = false)
+    private String skipArtifactType;
+
     /**
      * The data directory, hold DC SQL DB.
      */
@@ -469,6 +477,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * The artifact scope filter.
      */
     private Filter<String> artifactScopeExcluded;
+
+    /**
+     * Filter for artifact type.
+     */
+    private Filter<String> artifactTypeExcluded;
+
 
     // </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Base Maven implementation">
@@ -641,7 +655,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest) {
         ExceptionCollection exCol = null;
         for (DependencyNode dependencyNode : nodes) {
-            if (artifactScopeExcluded.passes(dependencyNode.getArtifact().getScope())) {
+            if (artifactScopeExcluded.passes(dependencyNode.getArtifact().getScope()) ||
+                artifactTypeExcluded.passes(dependencyNode.getArtifact().getType())) {
                 continue;
             }
             exCol = collectDependencies(engine, project, dependencyNode.getChildren(), buildingRequest);
@@ -990,6 +1005,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         Settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
 
         artifactScopeExcluded = new ArtifactScopeExcluded(skipTestScope, skipProvidedScope, skipSystemScope, skipRuntimeScope);
+        artifactTypeExcluded = new ArtifactTypeExcluded(skipArtifactType);
     }
 
     /**
