@@ -199,10 +199,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "connectionTimeout", defaultValue = "", required = false)
     private String connectionTimeout;
     /**
-     * The path to the suppression file.
+     * The paths to the suppression files.
      */
-    @Parameter(property = "suppressionFile", defaultValue = "", required = false)
-    private String suppressionFile;
+    @Parameter(required = false)
+    private String[] suppressionFiles;
 
     /**
      * The path to the hints file.
@@ -920,8 +920,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             Settings.setStringIfNotNull(Settings.KEYS.PROXY_NON_PROXY_HOSTS, proxy.getNonProxyHosts());
         }
 
+        Settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFiles);
+
         Settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
-        Settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
         Settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);
 
         //File Type Analyzer Settings

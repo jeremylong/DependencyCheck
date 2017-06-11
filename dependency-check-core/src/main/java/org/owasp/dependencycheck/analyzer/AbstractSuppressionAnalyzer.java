@@ -117,66 +117,67 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
             return;
         }
 
-        // TODO support more than one file
-        final String suppressionFilePath = suppressionFilePaths[0];
+        for (final String suppressionFilePath : suppressionFilePaths) {
+            LOGGER.debug("Loading suppression rules from '{}'", suppressionFilePath);
 
-        boolean deleteTempFile = false;
-        try {
-            final Pattern uriRx = Pattern.compile("^(https?|file)\\:.*", Pattern.CASE_INSENSITIVE);
-            if (uriRx.matcher(suppressionFilePath).matches()) {
-                deleteTempFile = true;
-                file = FileUtils.getTempFile("suppression", "xml");
-                final URL url = new URL(suppressionFilePath);
-                try {
-                    Downloader.fetchFile(url, file, false);
-                } catch (DownloadFailedException ex) {
-                    Downloader.fetchFile(url, file, true);
-                }
-            } else {
-                file = new File(suppressionFilePath);
+            boolean deleteTempFile = false;
+            try {
+                final Pattern uriRx = Pattern.compile("^(https?|file)\\:.*", Pattern.CASE_INSENSITIVE);
+                if (uriRx.matcher(suppressionFilePath).matches()) {
+                    deleteTempFile = true;
+                    file = FileUtils.getTempFile("suppression", "xml");
+                    final URL url = new URL(suppressionFilePath);
+                    try {
+                        Downloader.fetchFile(url, file, false);
+                    } catch (DownloadFailedException ex) {
+                        Downloader.fetchFile(url, file, true);
+                    }
+                } else {
+                    file = new File(suppressionFilePath);
 
-                if (!file.exists()) {
-                    try (InputStream suppressionsFromClasspath = this.getClass().getClassLoader().getResourceAsStream(suppressionFilePath)) {
-                        if (suppressionsFromClasspath != null) {
-                            deleteTempFile = true;
-                            file = FileUtils.getTempFile("suppression", "xml");
-                            try {
-                                org.apache.commons.io.FileUtils.copyInputStreamToFile(suppressionsFromClasspath, file);
-                            } catch (IOException ex) {
-                                throwSuppressionParseException("Unable to locate suppressions file in classpath", ex);
+                    if (!file.exists()) {
+                        try (InputStream suppressionsFromClasspath = this.getClass().getClassLoader().getResourceAsStream(suppressionFilePath)) {
+                            if (suppressionsFromClasspath != null) {
+                                deleteTempFile = true;
+                                file = FileUtils.getTempFile("suppression", "xml");
+                                try {
+                                    org.apache.commons.io.FileUtils.copyInputStreamToFile(suppressionsFromClasspath, file);
+                                } catch (IOException ex) {
+                                    throwSuppressionParseException("Unable to locate suppressions file in classpath", ex);
+                                }
                             }
                         }
                     }
                 }
-            }
-            if (file != null) {
-                if (!file.exists()) {
-                    final String msg = String.format("Suppression file '%s' does not exists", file.getPath());
-                    LOGGER.warn(msg);
-                    throw new SuppressionParseException(msg);
+                if (file != null) {
+                    if (!file.exists()) {
+                        final String msg = String.format("Suppression file '%s' does not exists", file.getPath());
+                        LOGGER.warn(msg);
+                        throw new SuppressionParseException(msg);
+                    }
+                    try {
+                        rules.addAll(parser.parseSuppressionRules(file));
+                    } catch (SuppressionParseException ex) {
+                        LOGGER.warn("Unable to parse suppression xml file '{}'", file.getPath());
+                        LOGGER.warn(ex.getMessage());
+                        throw ex;
+                    }
                 }
-                try {
-                    rules.addAll(parser.parseSuppressionRules(file));
-                    LOGGER.debug("{} suppression rules were loaded.", rules.size());
-                } catch (SuppressionParseException ex) {
-                    LOGGER.warn("Unable to parse suppression xml file '{}'", file.getPath());
-                    LOGGER.warn(ex.getMessage());
-                    throw ex;
+            } catch (DownloadFailedException ex) {
+                throwSuppressionParseException("Unable to fetch the configured suppression file", ex);
+            } catch (MalformedURLException ex) {
+                throwSuppressionParseException("Configured suppression file has an invalid URL", ex);
+            } catch (SuppressionParseException ex) {
+                throw ex;
+            } catch (IOException ex) {
+                throwSuppressionParseException("Unable to create temp file for suppressions", ex);
+            } finally {
+                if (deleteTempFile && file != null) {
+                    FileUtils.delete(file);
                 }
-            }
-        } catch (DownloadFailedException ex) {
-            throwSuppressionParseException("Unable to fetch the configured suppression file", ex);
-        } catch (MalformedURLException ex) {
-            throwSuppressionParseException("Configured suppression file has an invalid URL", ex);
-        } catch (SuppressionParseException ex) {
-            throw ex;
-        } catch (IOException ex) {
-            throwSuppressionParseException("Unable to create temp file for suppressions", ex);
-        } finally {
-            if (deleteTempFile && file != null) {
-                FileUtils.delete(file);
             }
         }
+        LOGGER.debug("{} suppression rules were loaded.", rules.size());
     }
 
     /**
