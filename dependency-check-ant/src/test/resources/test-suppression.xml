@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Test suppression file for the DependencyCheckTaskTest#testSuppressingCVE() test -->
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+    <suppress>
+        <notes><![CDATA[
+      file name: axis-1.4.jar
+      ]]></notes>
+        <gav regex="true">^org\.apache\.axis:axis:.*$</gav>
+        <cpe>cpe:/a:apache:axis</cpe>
+    </suppress>
+</suppressions>

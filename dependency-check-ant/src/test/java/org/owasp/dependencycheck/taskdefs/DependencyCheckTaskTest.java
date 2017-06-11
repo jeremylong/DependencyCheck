@@ -114,4 +114,18 @@ public class DependencyCheckTaskTest {
         expectedException.expect(BuildException.class);
         buildFileRule.executeTarget("failCVSS");
     }
+
+    /**
+     * Test the DependencyCheckTask where a CVE is suppressed.
+     */
+    @Test
+    public void testSuppressingCVE() {
+        // GIVEN an ant task with a vulnerability
+        final String antTaskName = "suppression";
+
+        // WHEN executing the ant task
+        buildFileRule.executeTarget(antTaskName);
+
+        // THEN the ant task executed without error
+    }
 }
