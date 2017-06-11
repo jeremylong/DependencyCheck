@@ -18,7 +18,9 @@
 package org.owasp.dependencycheck.taskdefs;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.EnumeratedAttribute;
@@ -148,9 +150,10 @@ public class Check extends Update {
      */
     private String reportFormat = "HTML";
     /**
-     * The path to the suppression file.
+     * Suppression file paths.
      */
-    private String suppressionFile;
+    private List<String> suppressionFiles = new ArrayList<>();
+
     /**
      * The path to the suppression file.
      */
@@ -223,6 +226,17 @@ public class Check extends Update {
             throw new BuildException("Nested elements are not allowed when using the refId attribute.");
         }
         getPath().add(rc);
+    }
+
+    /**
+     * Add a suppression file.
+     *
+     * This is called by Ant with the configured {@link SuppressionFile}.
+     *
+     * @param suppressionFile the suppression file to add.
+     */
+    public void addConfiguredSuppressionFile(final SuppressionFile suppressionFile) {
+        suppressionFiles.add(suppressionFile.getPath());
     }
 
     /**
@@ -431,21 +445,23 @@ public class Check extends Update {
     }
 
     /**
-     * Get the value of suppressionFile.
+     * Gets suppression file paths.
      *
-     * @return the value of suppressionFile
+     * @return the suppression files.
      */
-    public String getSuppressionFile() {
-        return suppressionFile;
+    public List<String> getSuppressionFiles() {
+        return suppressionFiles;
     }
 
     /**
      * Set the value of suppressionFile.
      *
      * @param suppressionFile new value of suppressionFile
+     * @deprecated property form of suppressionFile has been replaced by a child element
      */
+    @Deprecated
     public void setSuppressionFile(String suppressionFile) {
-        this.suppressionFile = suppressionFile;
+        throw new BuildException("Property form of suppressionFile has been replaced by a nested element, please update your configuration.");
     }
 
     /**
@@ -992,7 +1008,7 @@ public class Check extends Update {
     protected void populateSettings() throws BuildException {
         super.populateSettings();
         Settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
-        Settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
+        Settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFiles.toArray(new String[suppressionFiles.size()]));
         Settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, enableExperimental);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);

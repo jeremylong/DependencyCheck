@@ -71,7 +71,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         try {
             loadSuppressionData();
         } catch (SuppressionParseException ex) {
-            throw new InitializationException("Error initializing the suppression analyzer", ex);
+            throw new InitializationException("Error initializing the suppression analyzer: " + ex.getLocalizedMessage(), ex);
         }
     }
 
@@ -112,10 +112,14 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         } catch (SAXException ex) {
             throw new SuppressionParseException("Unable to parse the base suppression data file", ex);
         }
-        final String suppressionFilePath = Settings.getString(Settings.KEYS.SUPPRESSION_FILE);
-        if (suppressionFilePath == null) {
+        final String[] suppressionFilePaths = Settings.getArray(Settings.KEYS.SUPPRESSION_FILE);
+        if (suppressionFilePaths == null || suppressionFilePaths.length == 0) {
             return;
         }
+
+        // TODO support more than one file
+        final String suppressionFilePath = suppressionFilePaths[0];
+
         boolean deleteTempFile = false;
         try {
             final Pattern uriRx = Pattern.compile("^(https?|file)\\:.*", Pattern.CASE_INSENSITIVE);

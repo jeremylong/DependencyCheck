@@ -822,6 +822,22 @@ public final class Settings {
     }
 
     /**
+     * Returns a list with the given key.
+     *
+     * If the propery is not set then {@code null} will be returned.
+     *
+     * @param key the key to get from this {@link Settings} singleton.
+     * @return the list or {@code null} if the key wasn't present.
+     */
+    public static String[] getArray(final String key) {
+        final String string = getString(key);
+        if (string != null) {
+            return string.split(ARRAY_SEP);
+        }
+        return null;
+    }
+
+    /**
      * Removes a property from the local properties collection. This is mainly
      * used in test cases.
      *

@@ -128,4 +128,19 @@ public class DependencyCheckTaskTest {
 
         // THEN the ant task executed without error
     }
+
+    /**
+     * Test the DependencyCheckTask deprecated suppression property throws an exception with a warning.
+     */
+    @Test
+    public void testDeprecatedSuppressingCVE() {
+        // GIVEN an ant task with a vulnerability using the legacy property
+        final String antTaskName = "deprecated-suppression";
+
+        // WHEN executing the ant task
+        // THEN an exception with a warning is thrown
+        expectedException.expect(BuildException.class);
+        expectedException.expectMessage("Property form of suppressionFile has been replaced by a nested element, please update your configuration.");
+        buildFileRule.executeTarget(antTaskName);
+    }
 }

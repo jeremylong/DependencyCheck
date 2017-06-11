@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.utils;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
@@ -242,6 +243,37 @@ public class SettingsTest extends BaseTest {
     public void testGetTempDirectory() throws Exception {
         File tmp = Settings.getTempDirectory();
         Assert.assertTrue(tmp.exists());
+    }
+
+    /**
+     * Assert {@link Settings#getArray(String)} from a delimited string returns multiple values in an array.
+     */
+    @Test
+    public void testGetArrayFromADelimitedString() {
+        // GIVEN a delimited string
+        final String delimitedString = "value1,value2";
+        Settings.setString("key", delimitedString);
+
+        // WHEN getting the array
+        final String[] array = Settings.getArray("key");
+
+        // THEN the split array is returned
+        assertThat("Expected the array to be non-null", array, notNullValue());
+        assertThat("Expected the array to have two values", array.length, is(2));
+        assertThat("Expected the first array value to be value1", array[0], is("value1"));
+        assertThat("Expected the second array value to be value2", array[1], is("value2"));
+    }
+
+    /**
+     * Assert {@link Settings#getArray(String)} returns {@code null} if the property is not set.
+     */
+    @Test
+    public void testGetArrayWhereThePropertyIsNotSet() {
+        // WHEN getting the array
+        final String[] array = Settings.getArray("key");
+
+        // THEN null is returned
+        assertThat("Expected the array to be null", array, nullValue());
     }
 
     /**

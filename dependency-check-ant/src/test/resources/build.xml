@@ -72,13 +72,23 @@
         </dependency-check>
     </target>
 
-    <target name="suppression">
+    <target name="deprecated-suppression">
         <dependency-check
                 applicationName="test suppression"
                 reportOutputDirectory="${project.build.directory}"
                 autoupdate="false"
                 failBuildOnCVSS="3"
-                suppressionFile="${project.build.directory}/test-classes/test-suppression.xml">
+                suppressionFile="${project.build.directory}/test-classes/test-suppression1.xml"/>
+    </target>
+
+    <target name="suppression">
+        <dependency-check
+                applicationName="test suppression"
+                reportOutputDirectory="${project.build.directory}"
+                autoupdate="false"
+                failBuildOnCVSS="3">
+            <suppressionfile>${project.build.directory}/test-classes/test-suppression1.xml</suppressionfile>
+            <suppressionfile>${project.build.directory}/test-classes/test-suppression2.xml</suppressionfile>
             <fileset dir="${project.build.directory}/test-classes/jars">
                 <include name="axis-1.4.jar"/>
             </fileset>
