@@ -32,6 +32,8 @@ import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * A simple settings container that wraps the dependencycheck.properties file.
  *
@@ -47,6 +49,10 @@ public final class Settings {
      * The properties file location.
      */
     private static final String PROPERTIES_FILE = "dependencycheck.properties";
+    /**
+     * Array separator.
+     */
+    private static final String ARRAY_SEP = ",";
     /**
      * Thread local settings.
      */
@@ -559,6 +565,18 @@ public final class Settings {
     }
 
     /**
+     * Sets a property value from an array.
+     * <p>
+     * Note: each value of the array will be joined by the delimiter {@link Settings#ARRAY_SEP}.
+     *
+     * @param key the key for the property
+     * @param value the value for the property
+     */
+    static void setArray(String key, String[] value) {
+        setString(key, StringUtils.join(value, ARRAY_SEP));
+    }
+
+    /**
      * Sets a property value only if the value is not null.
      *
      * @param key the key for the property
@@ -579,6 +597,18 @@ public final class Settings {
     public static void setStringIfNotEmpty(String key, String value) {
         if (null != value && !value.isEmpty()) {
             setString(key, value);
+        }
+    }
+
+    /**
+     * Sets a property value only if the array value is not null and not empty.
+     *
+     * @param key the key for the property
+     * @param value the value for the property
+     */
+    public static void setArrayIfNotEmpty(String key, String[] value) {
+        if (null != value && value.length > 0) {
+            setArray(key, value);
         }
     }
 

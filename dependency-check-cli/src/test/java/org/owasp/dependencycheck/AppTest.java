@@ -153,7 +153,7 @@ public class AppTest {
      * @throws Exception the unexpected {@link Exception}.
      */
     @Test
-    public void testPopulatingSuppressionSettings() throws Exception {
+    public void testPopulatingSuppressionSettingsWithASingleFile() throws Exception {
         // GIVEN CLI properties with the mandatory arguments
         File prop = new File(this.getClass().getClassLoader().getResource("sample.properties").toURI().getPath());
 
@@ -168,6 +168,29 @@ public class AppTest {
 
         // THEN the suppression file is set in the settings singleton for use in the application core
         assertThat("Expected the suppression file to be set in the Settings singleton", Settings.getString(KEYS.SUPPRESSION_FILE), is("another-file.xml"));
+    }
+
+    /**
+     * Assert that multiple suppression files can be set using the CLI.
+     *
+     * @throws Exception the unexpected {@link Exception}.
+     */
+    @Test
+    public void testPopulatingSuppressionSettingsWithMultipleFiles() throws Exception {
+        // GIVEN CLI properties with the mandatory arguments
+        File prop = new File(this.getClass().getClassLoader().getResource("sample.properties").toURI().getPath());
+
+        // AND a single suppression file
+        String[] args = { "-P", prop.getAbsolutePath(), "--suppression", "first-file.xml", "another-file.xml" };
+
+        // WHEN parsing the CLI arguments
+        final CliParser cli = new CliParser();
+        cli.parse(args);
+        final App classUnderTest = new App();
+        classUnderTest.populateSettings(cli);
+
+        // THEN the suppression file is set in the settings singleton for use in the application core
+        assertThat("Expected the suppression files to be set in the Settings singleton with a separator", Settings.getString(KEYS.SUPPRESSION_FILE), is("first-file.xml,another-file.xml"));
     }
 
     private boolean testBooleanProperties(String[] args, Map<String, Boolean> expected) throws URISyntaxException, FileNotFoundException, ParseException, InvalidSettingException {

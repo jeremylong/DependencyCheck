@@ -17,10 +17,17 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -28,6 +35,22 @@ import org.junit.Test;
  * @author Jeremy Long
  */
 public class SettingsTest extends BaseTest {
+
+    /**
+     * Initialize the {@link Settings} singleton.
+     */
+    @Before
+    public void setUp() {
+        Settings.initialize();
+    }
+
+    /**
+     * Clean the {@link Settings} singleton.
+     */
+    @After
+    public void tearDown() {
+        Settings.cleanup();
+    }
 
     /**
      * Test of getString method, of class Settings.
@@ -220,4 +243,80 @@ public class SettingsTest extends BaseTest {
         File tmp = Settings.getTempDirectory();
         Assert.assertTrue(tmp.exists());
     }
+
+    /**
+     * Assert {@link Settings#setArrayIfNotEmpty(String, String[])} with an empty array is ignored.
+     */
+    @Test
+    public void testSetArrayNotEmptyIgnoresAnEmptyArray() {
+        // GIVEN an empty array
+        final String[] array = {};
+
+        // WHEN setting the array
+        Settings.setArrayIfNotEmpty("key", array);
+
+        // THEN the property was not set
+        assertThat("Expected the property to not be set", Settings.getString("key"), nullValue());
+    }
+
+    /**
+     * Assert {@link Settings#setArrayIfNotEmpty(String, String[])} with a null array is ignored.
+     */
+    @Test
+    public void testSetArrayNotEmptyIgnoresAnNullArray() {
+        // GIVEN a null array
+        final String[] array = null;
+
+        // WHEN setting the array
+        Settings.setArrayIfNotEmpty("key", array);
+
+        // THEN the property was not set
+        assertThat("Expected the property to not be set", Settings.getString("key"), nullValue());
+    }
+
+    /**
+     * Assert {@link Settings#setArrayIfNotEmpty(String, String[])} with multiple values sets a delimited string.
+     */
+    @Test
+    public void testSetArrayNotEmptySetsADelimitedString() {
+        // GIVEN an array with values
+        final String[] array = { "value1", "value2" };
+
+        // WHEN setting the array
+        Settings.setArrayIfNotEmpty("key", array);
+
+        // THEN the property is set
+        assertThat("Expected the property to be set", Settings.getString("key"), is("value1,value2"));
+    }
+
+    /**
+     * Assert {@link Settings#setArrayIfNotEmpty(String, String[])} with a single values sets a string.
+     */
+    @Test
+    public void testSetArrayNotEmptyWithSingleValueSetsAString() {
+        // GIVEN an array with a value
+        final String[] array = { "value1" };
+
+        // WHEN setting the array
+        Settings.setArrayIfNotEmpty("key", array);
+
+        // THEN the property is set
+        assertThat("Expected the property to be set", Settings.getString("key"), is("value1"));
+    }
+
+    /**
+     * Assert {@link Settings#setArray(String, String[])} with multiple values sets a delimited string.
+     */
+    @Test
+    public void testSetArraySetsADelimitedString() {
+        // GIVEN an array with values
+        final String[] array = { "value1", "value2" };
+
+        // WHEN setting the array
+        Settings.setArray("key", array);
+
+        // THEN the property is set
+        assertThat("Expected the property to be set", Settings.getString("key"), is("value1,value2"));
+    }
+
 }
