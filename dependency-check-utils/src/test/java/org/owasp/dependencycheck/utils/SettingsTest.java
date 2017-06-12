@@ -336,19 +336,4 @@ public class SettingsTest extends BaseTest {
         assertThat("Expected the property to be set", Settings.getString("key"), is("value1"));
     }
 
-    /**
-     * Assert {@link Settings#setArray(String, String[])} with multiple values sets a delimited string.
-     */
-    @Test
-    public void testSetArraySetsADelimitedString() {
-        // GIVEN an array with values
-        final String[] array = { "value1", "value2" };
-
-        // WHEN setting the array
-        Settings.setArray("key", array);
-
-        // THEN the property is set
-        assertThat("Expected the property to be set", Settings.getString("key"), is("value1,value2"));
-    }
-
 }

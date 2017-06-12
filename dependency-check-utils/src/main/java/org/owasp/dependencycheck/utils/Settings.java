@@ -565,18 +565,6 @@ public final class Settings {
     }
 
     /**
-     * Sets a property value from an array.
-     * <p>
-     * Note: each value of the array will be joined by the delimiter {@link Settings#ARRAY_SEP}.
-     *
-     * @param key the key for the property
-     * @param value the value for the property
-     */
-    static void setArray(String key, String[] value) {
-        setString(key, StringUtils.join(value, ARRAY_SEP));
-    }
-
-    /**
      * Sets a property value only if the value is not null.
      *
      * @param key the key for the property
@@ -608,7 +596,7 @@ public final class Settings {
      */
     public static void setArrayIfNotEmpty(String key, String[] value) {
         if (null != value && value.length > 0) {
-            setArray(key, value);
+            setString(key, StringUtils.join(value, ARRAY_SEP));
         }
     }
 

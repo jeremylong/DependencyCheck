@@ -127,6 +127,8 @@ public class DependencyCheckTaskTest {
         buildFileRule.executeTarget(antTaskName);
 
         // THEN the ant task executed without error
+        final File report = new File("target/dependency-check-report.html");
+        assertTrue("Expected the DependencyCheck report to be generated", report.exists());
     }
 
     /**
