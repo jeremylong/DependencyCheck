@@ -461,7 +461,7 @@ public class Check extends Update {
      */
     @Deprecated
     public void setSuppressionFile(String suppressionFile) {
-        throw new BuildException("Property form of suppressionFile has been replaced by a nested element, please update your configuration.");
+        throw new BuildException("Definition of a suppression file via a property has been deprecated. Suppression files are now defined as a nested element, please update your configuration.");
     }
 
     /**

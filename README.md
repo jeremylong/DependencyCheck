@@ -136,6 +136,69 @@ docker run --rm \
 ```
 
 
+Upgrade Notes
+-------------
+
+### Upgrading from **1.x.x** to **2.x.x**
+
+Note that when upgrading from version 1.x.x that the following changes will need to be made to your configuration.
+
+#### Suppression file
+
+In order to support multiple suppression files, the mechanism for configuring suppression files has changed.
+As such, users that have defined a suppression file in their configuration will need to update.
+
+See the examples below:
+
+##### Ant
+
+Old:
+
+```xml
+<dependency-check
+  failBuildOnCVSS="3"
+  suppressionFile="suppression.xml">
+</dependency-check>
+```
+
+New:
+
+```xml
+<dependency-check
+  failBuildOnCVSS="3">
+  <suppressionFile>suppression.xml</suppressionFile>
+</dependency-check>
+```
+
+##### Maven
+
+Old:
+
+```xml
+<plugin>
+  <groupId>org.owasp</groupId>
+  <artifactId>dependency-check-maven</artifactId>
+  <configuration>
+    <suppressionFile>suppression.xml</suppressionFile>
+  </configuration>
+</plugin>
+```
+
+New:
+
+```xml
+<plugin>
+  <groupId>org.owasp</groupId>
+  <artifactId>dependency-check-maven</artifactId>
+  <configuration>
+    <suppressionFiles>
+      <suppressionFile>suppression.xml</suppressionFile>
+    </suppressionFiles>
+  </configuration>
+</plugin>
+```
+
+
 Mailing List
 ------------
 

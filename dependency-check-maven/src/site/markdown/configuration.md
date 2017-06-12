@@ -28,7 +28,7 @@ skipRuntimeScope            | Skip analysis for artifacts with Runtime Scope.   
 skipSystemScope             | Skip analysis for artifacts with System Scope.             | false
 skipTestScope               | Skip analysis for artifacts with Test Scope.               | true
 skipArtifactType            | A regular expression used to filter/skip artifact types.   | &nbsp;
-suppressionFile             | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html). | &nbsp;
+suppressionFiles            | The file paths to the XML suppression files \- used to suppress [false positives](../general/suppression.html). | &nbsp;
 hintsFile                   | The file path to the XML hints file \- used to resolve [false negatives](../general/hints.html).       | &nbsp;
 enableExperimental          | Enable the [experimental analyzers](../analyzers/index.html). If not enabled the experimental analyzers (see below) will not be loaded or used. | false
 

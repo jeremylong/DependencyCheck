@@ -140,7 +140,7 @@ public class DependencyCheckTaskTest {
         // WHEN executing the ant task
         // THEN an exception with a warning is thrown
         expectedException.expect(BuildException.class);
-        expectedException.expectMessage("Property form of suppressionFile has been replaced by a nested element, please update your configuration.");
+        expectedException.expectMessage("Definition of a suppression file via a property has been deprecated. Suppression files are now defined as a nested element, please update your configuration.");
         buildFileRule.executeTarget(antTaskName);
     }
 }

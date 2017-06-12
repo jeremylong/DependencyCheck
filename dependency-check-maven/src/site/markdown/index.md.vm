@@ -204,3 +204,39 @@ Update the local cache of the NVD data from NIST without analyzing the dependenc
     ...
 </project>
 ```
+
+$H$H$H Example 7:
+Suppress false positives using multiple suppression files (E.g. a company-wide suppression file and a local project file).
+
+```xml
+<project>
+    ...
+    <build>
+        ...
+        <plugins>
+            ...
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <suppressionFiles>
+                        <suppressionFile>http://example.org/suppression.xml</suppressionFile>
+                        <suppressionFile>project-suppression.xml</suppressionFile>
+                    </suppressionFiles>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            ...
+        </plugins>
+        ...
+    </build>
+    ...
+</project>
+```

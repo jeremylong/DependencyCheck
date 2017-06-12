@@ -17,29 +17,33 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.xml.suppression.SuppressionRule;
-import org.owasp.dependencycheck.utils.Settings;
-import org.slf4j.LoggerFactory;
-
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Set;
-
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.Settings.KEYS;
 
 /**
  * @author Jeremy Long
  */
 public class AbstractSuppressionAnalyzerTest extends BaseTest {
+
+    /** A second suppression file to test with. */
+    private static final String OTHER_SUPPRESSIONS_FILE = "other-suppressions.xml";
+
+    /** Suppression file to test with. */
+    private static final String SUPPRESSIONS_FILE = "suppressions.xml";
 
     private AbstractSuppressionAnalyzer instance;
 
@@ -64,24 +68,42 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
      */
     @Test
     public void testGetRulesFromSuppressionFileFromURL() throws Exception {
-        setSupressionFileFromURL();
-        instance.initialize();
-        int expCount = 5;
-        List<SuppressionRule> result = instance.getRules();
-        assertTrue(expCount <= result.size());
+        final String fileUrl = getClass().getClassLoader().getResource(SUPPRESSIONS_FILE).toURI().toURL().toString();
+        final int numberOfExtraLoadedRules = getNumberOfRulesLoadedFromPath(fileUrl) - getNumberOfRulesLoadedInCoreFile();
+        assertEquals("Expected 5 extra rules in the given path", 5, numberOfExtraLoadedRules);
     }
 
     /**
      * Test of getRules method, of class AbstractSuppressionAnalyzer for
-     * suppression file declared as URL.
+     * suppression file on the classpath.
      */
     @Test
     public void testGetRulesFromSuppressionFileInClasspath() throws Exception {
-        Settings.setString(Settings.KEYS.SUPPRESSION_FILE, "suppressions.xml");
+        final int numberOfExtraLoadedRules = getNumberOfRulesLoadedFromPath(SUPPRESSIONS_FILE) - getNumberOfRulesLoadedInCoreFile();
+        assertEquals("Expected 5 extra rules in the given file", 5, numberOfExtraLoadedRules);
+    }
+
+    /**
+     * Assert that rules are loaded from multiple files if multiple files are denfined in the {@link Settings} singleton.
+     */
+    @Test
+    public void testGetRulesFromMultipleSuppressionFiles() throws Exception {
+        final int rulesInCoreFile = getNumberOfRulesLoadedInCoreFile();
+
+        // GIVEN suppression rules from one file
+        final int rulesInFirstFile = getNumberOfRulesLoadedFromPath(SUPPRESSIONS_FILE) - rulesInCoreFile;
+
+        // AND suppression rules from another file
+        final int rulesInSecondFile = getNumberOfRulesLoadedFromPath(OTHER_SUPPRESSIONS_FILE) - rulesInCoreFile;
+
+        // WHEN initializing with both suppression files
+        final String[] suppressionFiles = { SUPPRESSIONS_FILE, OTHER_SUPPRESSIONS_FILE };
+        Settings.setArrayIfNotEmpty(KEYS.SUPPRESSION_FILE, suppressionFiles);
         instance.initialize();
-        int expCount = 5;
-        int currentSize = instance.getRules().size();
-        assertTrue(expCount <= currentSize);
+
+        // THEN rules from both files were loaded
+        final int expectedSize = rulesInFirstFile + rulesInSecondFile + rulesInCoreFile;
+        assertThat("Expected suppressions from both files", instance.getRules().size(), is(expectedSize));
     }
 
     @Test(expected = InitializationException.class)
@@ -90,15 +112,33 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
         instance.initialize();
     }
 
-    private void setSupressionFileFromURL() throws Exception {
-        try {
-            final String uri = this.getClass().getClassLoader().getResource("suppressions.xml").toURI().toURL().toString();
-            Settings.setString(Settings.KEYS.SUPPRESSION_FILE, uri);
-        } catch (URISyntaxException ex) {
-            LoggerFactory.getLogger(AbstractSuppressionAnalyzerTest.class).error("", ex);
-        } catch (MalformedURLException ex) {
-            LoggerFactory.getLogger(AbstractSuppressionAnalyzerTest.class).error("", ex);
-        }
+    /**
+     * Return the number of rules that are loaded from the core suppression file.
+     *
+     * @return the number of rules defined in the core suppresion file.
+     * @throws Exception if loading the rules fails.
+     */
+    private int getNumberOfRulesLoadedInCoreFile() throws Exception {
+        Settings.removeProperty(KEYS.SUPPRESSION_FILE);
+
+        final AbstractSuppressionAnalyzerImpl coreFileAnalyzer = new AbstractSuppressionAnalyzerImpl();
+        coreFileAnalyzer.initialize();
+        return coreFileAnalyzer.getRules().size();
+    }
+
+    /**
+     * Load a file into the {@link AbstractSuppressionAnalyzer} and return the number of rules loaded.
+     *
+     * @param path the path to load.
+     * @return the number of rules that were loaded (including the core rules).
+     * @throws Exception if loading the rules fails.
+     */
+    private int getNumberOfRulesLoadedFromPath(final String path) throws Exception {
+        Settings.setString(KEYS.SUPPRESSION_FILE, path);
+
+        final AbstractSuppressionAnalyzerImpl fileAnalyzer = new AbstractSuppressionAnalyzerImpl();
+        fileAnalyzer.initialize();
+        return fileAnalyzer.getRules().size();
     }
 
     public class AbstractSuppressionAnalyzerImpl extends AbstractSuppressionAnalyzer {
