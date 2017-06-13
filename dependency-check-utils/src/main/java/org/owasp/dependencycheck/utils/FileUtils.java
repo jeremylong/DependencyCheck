@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
 import org.apache.commons.lang3.SystemUtils;
 
@@ -147,5 +148,14 @@ public final class FileUtils {
                 LOGGER.trace("", ex);
             }
         }
+    }
+    
+    /**
+     * Gets the {@link InputStream} for this resource
+     * @param resource path
+     * @return
+     */
+    public static InputStream getResourceAsStream(String resource) {
+    	return FileUtils.class.getClassLoader()!=null?FileUtils.class.getClassLoader().getResourceAsStream(resource):ClassLoader.getSystemResourceAsStream(resource);
     }
 }

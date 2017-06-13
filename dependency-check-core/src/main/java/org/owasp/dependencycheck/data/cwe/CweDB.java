@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.cwe;
 
+import org.owasp.dependencycheck.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +56,7 @@ public final class CweDB {
      */
     private static Map<String, String> loadData() {
         final String filePath = "data/cwe.hashmap.serialized";
-        try (InputStream input = CweDB.class.getClassLoader().getResourceAsStream(filePath);
+        try (InputStream input = FileUtils.getResourceAsStream(filePath);
                 ObjectInputStream oin = new ObjectInputStream(input)) {
 
             final Map<String, String> ret = (HashMap<String, String>) oin.readObject();
