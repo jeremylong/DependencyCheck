@@ -1,8 +1,7 @@
-sudo: false
 language: java
 jdk: oraclejdk7
 script: 
-  - if [ ! -z "$TRAVIS_TAG" ]; then mvn install site site:stage -DreleaseTesting; else mvn install -DreleaseTesting; fi
+  - if [ ! -z "$TRAVIS_TAG" ]; then mvn install source:jar javadoc:jar site site:stage -DreleaseTesting; else mvn install -DreleaseTesting; fi
 
 env:
   global:
