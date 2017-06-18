@@ -837,7 +837,7 @@ public class DependencyCheckScanAgent {
      *
      * @param engine a dependency-check engine
      * @param outDirectory the directory to write the reports to
-     * @throw ScanAgentException thrown if there is an error generating the
+     * @throws ScanAgentException thrown if there is an error generating the
      * report
      */
     private void generateExternalReports(Engine engine, File outDirectory) throws ScanAgentException {
