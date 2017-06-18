@@ -20,7 +20,7 @@ after_success:
 
 deploy:
   - provider: script
-    script: "mvn --settings .travis.settings.xml mvn deploy"
+    script: "mvn --settings .travis.settings.xml deploy"
     skip_cleanup: true
     on:
       branch: master
