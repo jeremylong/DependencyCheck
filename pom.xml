@@ -136,11 +136,11 @@ Copyright (c) 2012 - Jeremy Long
     <distributionManagement>
         <snapshotRepository>
             <id>snapshot</id>
-            <url>https://dependencycheck.jfrog.io/dependencycheck/libs-snapshot</url>
+            <url>https://dependencycheck.jfrog.io/dependencycheck/libs-snapshot-local</url>
         </snapshotRepository>
         <repository>
             <name>release</name>
-            <url>https://dependencycheck.jfrog.io/dependencycheck/libs-release</url>
+            <url>https://dependencycheck.jfrog.io/dependencycheck/libs-release-local</url>
         </repository>
         <site>
             <id>gh-pages</id>
