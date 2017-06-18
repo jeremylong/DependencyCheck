@@ -1,7 +1,7 @@
 language: java
 jdk: oraclejdk7
 script: 
-  - if [ ! -z "$TRAVIS_TAG" ]; then mvn install source:jar javadoc:jar site site:stage -DreleaseTesting; else mvn install -DreleaseTesting; fi
+  - travis_wait 30 if [ ! -z "$TRAVIS_TAG" ]; then mvn install source:jar javadoc:jar site site:stage -DreleaseTesting; else mvn install -DreleaseTesting; fi
 
 env:
   global:
