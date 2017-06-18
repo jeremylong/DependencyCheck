@@ -1,14 +1,14 @@
 language: java
 jdk: oraclejdk7
 script: 
-  - if [ ! -z "$TRAVIS_TAG" ]; then travis_wait 30 mvn install source:jar javadoc:jar site site:stage -DreleaseTesting; else travis_wait 30 mvn install -DreleaseTesting; fi
+  - if [ ! -z "$TRAVIS_TAG" ]; then travis_wait 20 mvn install site site:stage -DreleaseTesting; else travis_wait 15 mvn install -DreleaseTesting; fi
 
 env:
   global:
   - secure: ZUzhWfpXJw/oAeDlUkDFkEJMT0T7kCN3d7ah8urkL2B0KFfKOqQagkbXkgvDa1SYud8VdcnoGa69LfkEr5IrdqW7R4bEYZAiN5swm4Z0iO8t53szVspm2f+O9jQ44O/sfOfpfLxWUUuhdc7Vbrszp+tSszxdPmssWL+f5a/mfWs=
   - secure: pmFymoI7qH0Kna3NkcHrqLiTVWKmrhwqA4Z9U6XLhWDQxcs5g94wCCKpGB6Lkz9mkvRxBRFpZZelnXJa9W9mnuVOMIa5tQfS5gBuaNXOe7AXXdc+Y2975OR9sSfvf16FxLFvNJILmZq+bpMLs+EXaQvjYQHW2O6OWZdLhAPVG6A=
-  - secure: GgpxZNu8kY4fmn/5+NismK0bLgcBhowBuQmpjcOUti/MCCa0yurKdTnELQxYWaufokq1+XgyHwnPfpLaQbSlW/eOcu6D1sfyqZvtK6DMkyO7DWX1s5PXizdHIugh51HmlwQAhnlT5ka8aJam0qtPlUdFhe9tuXjZw6VEbUnxq2Q=
-  - secure: P1iVppoVvH+tdhgdyaON7BNAUvI7ocUECKJ2q6IYn9kLXOXhcym4vz2z3gA+aEQAeB5QUn1mPrl6/i0BWV7O6NgyZijE01Hu42QU5UuBbuUSoyedF9vWEC21n9LiEZtK2H9SMNUUknX2IZwZAZzYcnPfZtURS85KDdE50VxEVA8=
+  - secure: POs1Icgp59RdhkzzCdDwVeAk+rUC2Vz0PeFw0lDZgSZ5oTHVQfS7GO3BjLSUUJOoD+ZZy/rQo8AeqgcVAtAzrx1SlDsf45EFY2VuZ4bXNe0Hw8sfA3TNyhiI2DrUXkNL0L3uReytqwbH32tza6RFgK4n920BI6hruu1Yjwz1TS0=
+  - secure: PenNjCgxC86fIqhPQvY2O0yNfknXpsLWVH0EX0gtnR6iHJVCtrTO/RNkizcEYQtTNzfUfdw4C6cyL3Et0hF6pN64Q+4yhYsZF7W04A80sGvPkQD375cUAkMcIaf6pQImm1nhdtwtFBhW1kCGOLPpvTr0/f/HtrgGyX38T0nYXlI=
   - secure: Bh5LAk8XQnJ885jc/Lli2fhPKDx0TNZRxcJMnNo96EgwOnD+Zhw+v3u/DMCgyyrRToM8Bkca/HktrlZaRTk2htsdKZZ3RHFMCXO0fXCgpcf+wkaSYDF/lnErpSJG3Lrz8ILxJPODsrGhjaIg2++79lwhsBYtpujc6UdxFhgpffc=
 
 before_install:
@@ -20,7 +20,7 @@ after_success:
 
 deploy:
   - provider: script
-    script: mvn --settings .travis.settings.xml -X deploy
+    script: mvn --settings .travis.settings.xml source:jar javadoc:jar deploy -DskipTests=true
     skip_cleanup: true
     on:
       branch: master
