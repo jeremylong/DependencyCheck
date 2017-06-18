@@ -1,6 +1,8 @@
+sudo: false
 language: java
 jdk: oraclejdk7
-script: mvn install -DreleaseTesting
+script: 
+  - if [ ! -z "$TRAVIS_TAG" ]; then mvn install site site:stage -DreleaseTesting; else mvn install -DreleaseTesting; fi
 
 env:
   global:
@@ -18,19 +20,16 @@ after_success:
   - ./coverity_scan.sh
 
 deploy:
-  provider: script
-  script: "mvn --settings .travis.settings.xml mvn deploy"
-  skip_cleanup: true
-  on:
-    branch: master
-#    tags: true
-
-deploy:
-  provider: pages
-  skip_cleanup: true
-  local_dir: target
-  github_token: $GITHUB_TOKEN
-  on:
-    tags: true
-    branch: master
+  - provider: script
+    script: "mvn --settings .travis.settings.xml mvn deploy"
+    skip_cleanup: true
+    on:
+      branch: master
+  - provider: pages
+    skip_cleanup: true
+    local_dir: target/staging
+    github_token: $GITHUB_TOKEN
+    on:
+      tags: true
+      branch: master
  
