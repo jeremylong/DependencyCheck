@@ -6,6 +6,9 @@ env:
   global:
   - secure: ZUzhWfpXJw/oAeDlUkDFkEJMT0T7kCN3d7ah8urkL2B0KFfKOqQagkbXkgvDa1SYud8VdcnoGa69LfkEr5IrdqW7R4bEYZAiN5swm4Z0iO8t53szVspm2f+O9jQ44O/sfOfpfLxWUUuhdc7Vbrszp+tSszxdPmssWL+f5a/mfWs=
   - secure: pmFymoI7qH0Kna3NkcHrqLiTVWKmrhwqA4Z9U6XLhWDQxcs5g94wCCKpGB6Lkz9mkvRxBRFpZZelnXJa9W9mnuVOMIa5tQfS5gBuaNXOe7AXXdc+Y2975OR9sSfvf16FxLFvNJILmZq+bpMLs+EXaQvjYQHW2O6OWZdLhAPVG6A=
+  - secure: GgpxZNu8kY4fmn/5+NismK0bLgcBhowBuQmpjcOUti/MCCa0yurKdTnELQxYWaufokq1+XgyHwnPfpLaQbSlW/eOcu6D1sfyqZvtK6DMkyO7DWX1s5PXizdHIugh51HmlwQAhnlT5ka8aJam0qtPlUdFhe9tuXjZw6VEbUnxq2Q=
+  - secure: P1iVppoVvH+tdhgdyaON7BNAUvI7ocUECKJ2q6IYn9kLXOXhcym4vz2z3gA+aEQAeB5QUn1mPrl6/i0BWV7O6NgyZijE01Hu42QU5UuBbuUSoyedF9vWEC21n9LiEZtK2H9SMNUUknX2IZwZAZzYcnPfZtURS85KDdE50VxEVA8=
+  - secure: Bh5LAk8XQnJ885jc/Lli2fhPKDx0TNZRxcJMnNo96EgwOnD+Zhw+v3u/DMCgyyrRToM8Bkca/HktrlZaRTk2htsdKZZ3RHFMCXO0fXCgpcf+wkaSYDF/lnErpSJG3Lrz8ILxJPODsrGhjaIg2++79lwhsBYtpujc6UdxFhgpffc=
 
 before_install:
   - wget -O ~/codacy-coverage-reporter-assembly.jar https://oss.sonatype.org/service/local/repositories/releases/content/com/codacy/codacy-coverage-reporter/1.0.13/codacy-coverage-reporter-1.0.13-assembly.jar
@@ -13,3 +16,21 @@ before_install:
 after_success:
   - java -cp ~/codacy-coverage-reporter-assembly.jar com.codacy.CodacyCoverageReporter -l Java -r build-reporting/target/coverage-reports/jacoco.xml
   - ./coverity_scan.sh
+
+deploy:
+  provider: script
+  script: "mvn --settings .travis.settings.xml mvn deploy"
+  skip_cleanup: true
+  on:
+    branch: master
+#    tags: true
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  local_dir: target
+  github_token: $GITHUB_TOKEN
+  on:
+    tags: true
+    branch: master
+ 

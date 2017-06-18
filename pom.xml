@@ -135,12 +135,12 @@ Copyright (c) 2012 - Jeremy Long
     </properties>
     <distributionManagement>
         <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>snapshot</id>
+            <url>https://dependencycheck.jfrog.io/dependencycheck/libs-snapshot</url>
         </snapshotRepository>
         <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <name>release</name>
+            <url>https://dependencycheck.jfrog.io/dependencycheck/libs-release</url>
         </repository>
         <site>
             <id>gh-pages</id>
@@ -535,7 +535,7 @@ Copyright (c) 2012 - Jeremy Long
                 <version>2.10.4</version>
                 <configuration>
                     <failOnError>false</failOnError>
-                    <bottom>Copyright© 2012-15 Jeremy Long. All Rights Reserved.</bottom>
+                    <bottom>Copyright© 2012-17 Jeremy Long. All Rights Reserved.</bottom>
                 </configuration>
                 <reportSets>
                     <reportSet>
