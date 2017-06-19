@@ -269,6 +269,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     @Parameter(property = "nodeAnalyzerEnabled", required = false)
     private Boolean nodeAnalyzerEnabled;
+    /**
+     * Sets whether or not the Node Security Project Analyzer should be used.
+     */
+    @Parameter(property = "nspAnalyzerEnabled", required = false)
+    private Boolean nspAnalyzerEnabled;
 
     /**
      * Whether or not the .NET Assembly Analyzer is enabled.
@@ -944,6 +949,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, autoconfAnalyzerEnabled);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED, nspAnalyzerEnabled);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);
         Settings.setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, bundleAuditPath);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, cocoapodsAnalyzerEnabled);

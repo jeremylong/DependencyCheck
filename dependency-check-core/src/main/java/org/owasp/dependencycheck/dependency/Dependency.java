@@ -139,6 +139,11 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     private List<String> availableVersions = new ArrayList<>();
 
     /**
+     * Defines an actual or virtual dependency.
+     */
+    private boolean isVirtual = false;
+
+    /**
      * Returns the package path.
      *
      * @return the package path
@@ -175,7 +180,18 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * @param file the File to create the dependency object from.
      */
     public Dependency(File file) {
+        this(file, false);
+    }
+
+    /**
+     * Constructs a new Dependency object.
+     *
+     * @param file the File to create the dependency object from.
+     * @param isVirtual specifies if the dependency is virtual indicating the file doesn't actually exist.
+     */
+    public Dependency(File file, boolean isVirtual) {
         this();
+        this.isVirtual = isVirtual;
         this.actualFilePath = file.getAbsolutePath();
         this.filePath = this.actualFilePath;
         this.fileName = file.getName();
@@ -591,6 +607,9 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     private void determineHashes(File file) {
         String md5 = null;
         String sha1 = null;
+        if (isVirtual) {
+            return;
+        }
         try {
             md5 = Checksum.getMD5Checksum(file);
             sha1 = Checksum.getSHA1Checksum(file);
