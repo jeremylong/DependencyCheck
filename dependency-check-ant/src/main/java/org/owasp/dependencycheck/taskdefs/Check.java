@@ -61,6 +61,11 @@ public class Check extends Update {
      */
     private Boolean nodeAnalyzerEnabled;
     /**
+     * Whether or not the NSP Analyzer is enabled.
+     */
+    private Boolean nspAnalyzerEnabled;
+    
+    /**
      * Whether or not the Ruby Bundle Audit Analyzer is enabled.
      */
     private Boolean bundleAuditAnalyzerEnabled;
@@ -753,6 +758,22 @@ public class Check extends Update {
     public void setNodeAnalyzerEnabled(Boolean nodeAnalyzerEnabled) {
         this.nodeAnalyzerEnabled = nodeAnalyzerEnabled;
     }
+    /**
+     * Get the value of nspAnalyzerEnabled.
+     *
+     * @return the value of nspAnalyzerEnabled
+     */
+    public Boolean isNspAnalyzerEnabled() {
+        return nspAnalyzerEnabled;
+    }
+    /**
+     * Set the value of nspAnalyzerEnabled.
+     *
+     * @param nspAnalyzerEnabled new value of nspAnalyzerEnabled
+     */
+    public void setNspAnalyzerEnabled(Boolean nspAnalyzerEnabled) {
+        this.nspAnalyzerEnabled = nspAnalyzerEnabled;
+    }
 
     /**
      * Get the value of rubygemsAnalyzerEnabled.
@@ -1024,6 +1045,7 @@ public class Check extends Update {
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, autoconfAnalyzerEnabled);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
+        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED, nspAnalyzerEnabled);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);

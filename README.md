@@ -211,7 +211,7 @@ Archive: [google group](https://groups.google.com/forum/#!forum/dependency-check
 Copyright & License
 -
 
-Dependency-Check is Copyright (c) 2012-2016 Jeremy Long. All Rights Reserved.
+Dependency-Check is Copyright (c) 2012-2017 Jeremy Long. All Rights Reserved.
 
 Permission to modify and redistribute is granted under the terms of the Apache 2.0 license. See the [LICENSE.txt](https://raw.githubusercontent.com/jeremylong/DependencyCheck/master/LICENSE.txt) file for the full license.
 

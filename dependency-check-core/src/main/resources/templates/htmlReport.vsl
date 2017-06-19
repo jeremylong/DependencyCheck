@@ -759,8 +759,8 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                 <li>$enc.html($related.DisplayFileName)
                                     <ul>
                                         <li>File Path:&nbsp;$enc.html($related.FilePath)</li>
-                                        <li>SHA1:&nbsp;$enc.html($related.Sha1sum)</li>
-                                        <li>MD5:&nbsp;$enc.html($related.Md5sum)</li>
+                                        <li>SHA1:&nbsp;#if($related.Sha1sum)$enc.html($related.Sha1sum)#end</li>
+                                        <li>MD5:&nbsp;#if($related.Md5sum)$enc.html($related.Md5sum)#end</li>
                                         #foreach($id in $related.getIdentifiers())
                                             #if( $id.url )                                                
                                                 #if ($id.type=="maven")
@@ -770,6 +770,9 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                                     <li>$enc.html($id.type):&nbsp;$enc.html($id.value)
                                                 #end
                                                 </li>
+                                            #end
+                                            #if ($id.type=="npm")
+                                                <li>$enc.html($id.value): $enc.html($id.description)</li>
                                             #end
                                         #end
                                      </ul>
@@ -837,7 +840,11 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                     <div id="content$cnt" class="subsectioncontent standardsubsection">
                         #foreach($vuln in $dependency.getVulnerabilities())
                             #set($vsctr=$vsctr+1)
-                            <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CCE for this file" onclick="copyText('$enc.html($dependency.FileNameForJavaScript)', '$enc.html($dependency.Sha1sum)', '$enc.html($suppressGav)', 'cve', '$enc.html($vuln.name)')">suppress</button></p>
+                            #if($vuln.getSource().name().equals("NVD"))
+                                <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CCE for this file" onclick="copyText('$enc.html($dependency.FileNameForJavaScript)', '$enc.html($dependency.Sha1sum)', '$enc.html($suppressGav)', 'cve', '$enc.html($vuln.name)')">suppress</button></p>
+                            #elseif($vuln.getSource().name().equals("NSP"))
+                                <p><b><a target="_blank" href="https://nodesecurity.io/advisories/$enc.url($vuln.name)">NSP-$enc.html($vuln.name)</a></b></p>
+                            #end
                             <p>Severity:
                             #if ($vuln.cvssScore<4.0)
                                 Low
@@ -846,7 +853,11 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                             #else
                                 Medium
                             #end
-                            <br/>CVSS Score: $vuln.cvssScore (AV:$enc.html($vuln.cvssAccessVector.substring(0,1))/AC:$enc.html($vuln.cvssAccessComplexity.substring(0,1))/Au:$enc.html($vuln.cvssAuthentication.substring(0,1))/C:$enc.html($vuln.cvssConfidentialityImpact.substring(0,1))/I:$enc.html($vuln.cvssIntegrityImpact.substring(0,1))/A:$enc.html($vuln.cvssAvailabilityImpact.substring(0,1)))
+                            <br/>CVSS Score: $vuln.cvssScore
+                            #if ($vuln.getSource().name().equals("NVD"))
+                                <!-- todo: temp workaround as NSP uses CVSSv3 and supplies the full vector -->
+                                (AV:$enc.html($vuln.cvssAccessVector.substring(0,1))/AC:$enc.html($vuln.cvssAccessComplexity.substring(0,1))/Au:$enc.html($vuln.cvssAuthentication.substring(0,1))/C:$enc.html($vuln.cvssConfidentialityImpact.substring(0,1))/I:$enc.html($vuln.cvssIntegrityImpact.substring(0,1))/A:$enc.html($vuln.cvssAvailabilityImpact.substring(0,1)))
+                            #end
                             #if ($vuln.cwe)
                                 <br/>CWE: $vuln.cwe
                             #end
@@ -863,18 +874,28 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                             #end
                             </p>
 
-                            #if ($vuln.getVulnerableSoftware().size()<2)
-                                <p>Vulnerable Software &amp; Versions:<ul>
-                                    <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedCPE)">$enc.html($vuln.matchedCPE)</a> #if($vuln.hasMatchedAllPreviousCPE()) and all previous versions#end</li>
-                                </ul></p>
-                            #else
-                                <p>Vulnerable Software &amp; Versions:&nbsp;(<a href="#" onclick="return toggleDisplay(this,'.vs$vsctr', 'show all', 'show less');">show all</a>)<ul>
-                                    <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedCPE)">$enc.html($vuln.matchedCPE)</a> #if($vuln.hasMatchedAllPreviousCPE()) and all previous versions#end</li>
-                                    <li class="vs$vsctr">...</li>
-                                #foreach($vs in $vuln.getVulnerableSoftware(true))
-                                    <li class="vs$vsctr hidden"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vs.name)">$enc.html($vs.name)</a> #if($vs.hasPreviousVersion()) and all previous versions#end</li>
+                            #if ($vuln.getSource().name().equals("NVD"))
+                                #if ($vuln.getVulnerableSoftware().size()<2)
+                                    <p>Vulnerable Software &amp; Versions:<ul>
+                                        <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedCPE)">$enc.html($vuln.matchedCPE)</a> #if($vuln.hasMatchedAllPreviousCPE()) and all previous versions#end</li>
+                                    </ul></p>
+                                #else
+                                    <p>Vulnerable Software &amp; Versions:&nbsp;(<a href="#" onclick="return toggleDisplay(this,'.vs$vsctr', 'show all', 'show less');">show all</a>)<ul>
+                                        <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedCPE)">$enc.html($vuln.matchedCPE)</a> #if($vuln.hasMatchedAllPreviousCPE()) and all previous versions#end</li>
+                                        <li class="vs$vsctr">...</li>
+                                    #foreach($vs in $vuln.getVulnerableSoftware(true))
+                                        <li class="vs$vsctr hidden"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vs.name)">$enc.html($vs.name)</a> #if($vs.hasPreviousVersion()) and all previous versions#end</li>
+                                    #end
+                                    </ul></p>
                                 #end
-                                </ul></p>
+                            #elseif ($vuln.getSource().name().equals("NSP"))
+                                <p>Vulnerable Software &amp; Versions:
+                                    <ul>
+                                    #foreach($vs in $vuln.getVulnerableSoftware())
+                                        <li class="vs$vsctr">$enc.html($vs.name)</li>
+                                    #end
+                                    </ul>
+                                </p>
                             #end
                         #end
                     </div>
@@ -929,8 +950,8 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                         <li>$enc.html($related.DisplayFileName)
                                             <ul>
                                                 <li>File Path:&nbsp;$enc.html($related.FilePath)</li>
-                                                <li>SHA1:&nbsp;$enc.html($related.Sha1sum)</li>
-                                                <li>MD5:&nbsp;$enc.html($related.Md5sum)</li>
+                                                <li>SHA1:&nbsp;#if($related.Sha1sum)$enc.html($related.Sha1sum)#end</li>
+                                                <li>MD5:&nbsp;#if($related.Md5sum)$enc.html($related.Md5sum)#end</li>
                                              </ul>
                                         </li>
                                     #end
@@ -986,7 +1007,11 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                             <div id="content$cnt" class="subsectioncontent standardsubsection">
                                 #foreach($vuln in $dependency.getSuppressedVulnerabilities())
                                     #set($vsctr=$vsctr+1)
-                                    <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span></p>
+                                    #if($vuln.getSource().name().equals("NVD"))
+                                        <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span></p>
+                                    #elseif($vuln.getSource().name().equals("NSP"))
+                                        <p><b><a target="_blank" href="https://nodesecurity.io/advisories/$enc.url($vuln.name)">NSP-$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span></p>
+                                    #end
                                     <p>Severity:
                                     #if ($vuln.cvssScore<4.0)
                                         Low
@@ -1035,6 +1060,11 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
 ## END SUPPRESSED VULNERABILITIES
             </div>
         </div>
-        <div><br/><br/>This report contains data retrieved from the <a href="http://nvd.nist.gov">National Vulnerability Database</a>.</div>
+        <div>
+            <br/><br/>
+            This report contains data retrieved from the <a href="https://nvd.nist.gov">National Vulnerability Database</a>.
+            <br/>
+            This report may contain data retrieved from the <a href="https://nodesecurity.io">Node Security Platform</a>.
+        </div>
     </body>
 </html>

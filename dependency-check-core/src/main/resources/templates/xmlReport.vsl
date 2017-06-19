@@ -41,7 +41,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         <version>$enc.xml($version)</version>
 #end
         <reportDate>$scanDateXML</reportDate>
-        <credits>This report contains data retrieved from the National Vulnerability Database: http://nvd.nist.gov</credits>
+        <credits>This report contains data retrieved from the National Vulnerability Database: https://nvd.nist.gov and from the Node Security Platform: https://nodesecurity.io</credits>
     </projectInfo>
     <dependencies>
 #foreach($dependency in $dependencies)
@@ -61,14 +61,17 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
 #foreach($related in $dependency.getRelatedDependencies())
                 <relatedDependency>
                     <filePath>$enc.xml($related.FilePath)</filePath>
-                    <sha1>$enc.xml($related.Sha1sum)</sha1>
-                    <md5>$enc.xml($related.Md5sum)</md5>
+                    <sha1>#if($related.Sha1sum)$enc.xml($related.Sha1sum)#end</sha1>
+                    <md5>#if($related.Md5sum)$enc.xml($related.Md5sum)#end</md5>
 #foreach($id in $related.getIdentifiers())
-#if ($id.type=="maven")
+#if ($id.type=="maven" || $id.type=="npm")
                     <identifier type="$enc.xml($id.type)">
-                        <name>($id.value)</name>
+                        <name>$enc.xml($id.value)</name>
 #if( $id.url )
                         <url>$enc.xml($id.url)</url>
+#end
+#if( $id.description )
+                        <description>$enc.xml($id.description)</description>
 #end
 #if ($id.notes)
                         <notes>$enc.xml($id.notes)</notes>
@@ -139,14 +142,14 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <vulnerabilities>
 #foreach($vuln in $dependency.getVulnerabilities())
                 <vulnerability>
-                    <name>$enc.xml($vuln.name)</name>
+                    <name>#if($vuln.getSource().name().equals("NSP"))NSP-#end$enc.xml($vuln.name)</name>
                     <cvssScore>$vuln.cvssScore</cvssScore>
-                    <cvssAccessVector>$enc.xml($vuln.cvssAccessVector)</cvssAccessVector>
-                    <cvssAccessComplexity>$enc.xml($vuln.cvssAccessComplexity)</cvssAccessComplexity>
-                    <cvssAuthenticationr>$enc.xml($vuln.cvssAuthentication)</cvssAuthenticationr>
-                    <cvssConfidentialImpact>$enc.xml($vuln.cvssConfidentialityImpact)</cvssConfidentialImpact>
-                    <cvssIntegrityImpact>$enc.xml($vuln.cvssIntegrityImpact)</cvssIntegrityImpact>
-                    <cvssAvailabilityImpact>$enc.xml($vuln.cvssAvailabilityImpact)</cvssAvailabilityImpact>
+                    <cvssAccessVector>#if($vuln.cvssAccessVector)$enc.xml($vuln.cvssAccessVector)#end</cvssAccessVector>
+                    <cvssAccessComplexity>#if($vuln.cvssAccessComplexity)$enc.xml($vuln.cvssAccessComplexity)#end</cvssAccessComplexity>
+                    <cvssAuthenticationr>#if($vuln.cvssAuthentication)$enc.xml($vuln.cvssAuthentication)#end</cvssAuthenticationr>
+                    <cvssConfidentialImpact>#if($vuln.cvssConfidentialityImpact)$enc.xml($vuln.cvssConfidentialityImpact)#end</cvssConfidentialImpact>
+                    <cvssIntegrityImpact>#if($vuln.cvssIntegrityImpact)$enc.xml($vuln.cvssIntegrityImpact)#end</cvssIntegrityImpact>
+                    <cvssAvailabilityImpact>#if($vuln.cvssAvailabilityImpact)$enc.xml($vuln.cvssAvailabilityImpact)#end</cvssAvailabilityImpact>
 #if ($vuln.cvssScore<4.0)
                     <severity>Low</severity>
 #elseif ($vuln.cvssScore>=7.0)

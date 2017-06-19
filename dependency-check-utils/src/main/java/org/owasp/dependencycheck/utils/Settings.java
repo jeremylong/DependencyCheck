@@ -29,6 +29,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.security.ProtectionDomain;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -265,6 +266,15 @@ public final class Settings {
          */
         public static final String ANALYZER_NODE_PACKAGE_ENABLED = "analyzer.node.package.enabled";
         /**
+         * The properties key for whether the Node Security Platform (nsp)
+         * analyzer is enabled.
+         */
+        public static final String ANALYZER_NSP_PACKAGE_ENABLED = "analyzer.nsp.package.enabled";
+        /**
+         * The properties key for whether the Nexus analyzer is enabled.
+         */
+        public static final String ANALYZER_NSP_URL = "analyzer.nsp.url";
+        /**
          * The properties key for whether the composer lock file analyzer is
          * enabled.
          */
@@ -446,7 +456,7 @@ public final class Settings {
      */
     private Settings(String propertiesFilePath) {
         props = new Properties();
-        try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(propertiesFilePath)) {
+        try (InputStream in = FileUtils.getResourceAsStream(propertiesFilePath)) {
             props.load(in);
         } catch (NullPointerException ex) {
             LOGGER.error("Did not find settings file '{}'.", propertiesFilePath);
@@ -751,8 +761,12 @@ public final class Settings {
      * @return a File object
      */
     private static File getJarPath() {
-        final String jarPath = Settings.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         String decodedPath = ".";
+        String jarPath = "";
+        ProtectionDomain domain = Settings.class.getProtectionDomain();
+        if (domain != null && domain.getCodeSource() != null && domain.getCodeSource().getLocation() != null) {
+            jarPath = Settings.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        }
         try {
             decodedPath = URLDecoder.decode(jarPath, "UTF-8");
         } catch (UnsupportedEncodingException ex) {

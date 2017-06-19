@@ -27,6 +27,8 @@ import java.io.Reader;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
+
+import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.XmlUtils;
 
 import org.slf4j.Logger;
@@ -104,7 +106,7 @@ public class SuppressionParser {
      * @throws SAXException thrown if the XML cannot be parsed
      */
     private List<SuppressionRule> parseSuppressionRules(InputStream inputStream, String schema) throws SuppressionParseException, SAXException {
-        try (InputStream schemaStream = this.getClass().getClassLoader().getResourceAsStream(schema)) {
+        try (InputStream schemaStream = FileUtils.getResourceAsStream(schema)) {
             final SuppressionHandler handler = new SuppressionHandler();
             final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream);
             final XMLReader xmlReader = saxParser.getXMLReader();

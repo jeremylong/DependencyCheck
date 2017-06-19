@@ -106,7 +106,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     private void loadSuppressionData() throws SuppressionParseException {
         final SuppressionParser parser = new SuppressionParser();
         try {
-            final InputStream in = this.getClass().getClassLoader().getResourceAsStream("dependencycheck-base-suppression.xml");
+            final InputStream in = FileUtils.getResourceAsStream("dependencycheck-base-suppression.xml");
             rules = parser.parseSuppressionRules(in);
         } catch (SAXException ex) {
             throw new SuppressionParseException("Unable to parse the base suppression data file", ex);
@@ -150,7 +150,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                 file = new File(suppressionFilePath);
 
                 if (!file.exists()) {
-                    try (InputStream suppressionsFromClasspath = this.getClass().getClassLoader().getResourceAsStream(suppressionFilePath)) {
+                    try (InputStream suppressionsFromClasspath = FileUtils.getResourceAsStream(suppressionFilePath)) {
                         if (suppressionsFromClasspath != null) {
                             deleteTempFile = true;
                             file = FileUtils.getTempFile("suppression", "xml");

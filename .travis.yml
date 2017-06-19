@@ -1,11 +1,15 @@
 language: java
 jdk: oraclejdk7
-script: mvn install -DreleaseTesting
+script: 
+  - if [ ! -z "$TRAVIS_TAG" ]; then travis_wait 20 mvn install site site:stage -DreleaseTesting; else travis_wait 15 mvn install -DreleaseTesting; fi
 
 env:
   global:
-  - secure: ZUzhWfpXJw/oAeDlUkDFkEJMT0T7kCN3d7ah8urkL2B0KFfKOqQagkbXkgvDa1SYud8VdcnoGa69LfkEr5IrdqW7R4bEYZAiN5swm4Z0iO8t53szVspm2f+O9jQ44O/sfOfpfLxWUUuhdc7Vbrszp+tSszxdPmssWL+f5a/mfWs=
-  - secure: pmFymoI7qH0Kna3NkcHrqLiTVWKmrhwqA4Z9U6XLhWDQxcs5g94wCCKpGB6Lkz9mkvRxBRFpZZelnXJa9W9mnuVOMIa5tQfS5gBuaNXOe7AXXdc+Y2975OR9sSfvf16FxLFvNJILmZq+bpMLs+EXaQvjYQHW2O6OWZdLhAPVG6A=
+  - secure: "ZUzhWfpXJw/oAeDlUkDFkEJMT0T7kCN3d7ah8urkL2B0KFfKOqQagkbXkgvDa1SYud8VdcnoGa69LfkEr5IrdqW7R4bEYZAiN5swm4Z0iO8t53szVspm2f+O9jQ44O/sfOfpfLxWUUuhdc7Vbrszp+tSszxdPmssWL+f5a/mfWs="
+  - secure: "pmFymoI7qH0Kna3NkcHrqLiTVWKmrhwqA4Z9U6XLhWDQxcs5g94wCCKpGB6Lkz9mkvRxBRFpZZelnXJa9W9mnuVOMIa5tQfS5gBuaNXOe7AXXdc+Y2975OR9sSfvf16FxLFvNJILmZq+bpMLs+EXaQvjYQHW2O6OWZdLhAPVG6A="
+  - secure: "omj5HP2wKdegLYp8/a24Wsoryb92+XYWheEkxp7CzHGDJB1Y4SSr315n/na/mdgd7lr1Ac+m4stYfCrclG7be71xWs6ApF+6I5QSzplJ1fyIF5piHrmhgw6ymIf/HBdeevggJM8igD8agCOwEETYFKfPEj5wFWhNQfxYwANbpl0="
+  - secure: "FqPcda7a6rEvGVYEyWeaFP+mIhZeJ6FGSdHvVRlBL0H9I3bz6eZg50g6DH3yo1bkmTPQ94eXdDpoKihk9+CDLl0TS+Sg9W8HplG3B2U1/6Yi3vd0T8yjKZC7xf0VZO6t8AT9vpFvzQBRZe24n+6kDtp2OiBzawJhgU5t09zH6is="
+  - secure: "Bh5LAk8XQnJ885jc/Lli2fhPKDx0TNZRxcJMnNo96EgwOnD+Zhw+v3u/DMCgyyrRToM8Bkca/HktrlZaRTk2htsdKZZ3RHFMCXO0fXCgpcf+wkaSYDF/lnErpSJG3Lrz8ILxJPODsrGhjaIg2++79lwhsBYtpujc6UdxFhgpffc="
 
 before_install:
   - wget -O ~/codacy-coverage-reporter-assembly.jar https://oss.sonatype.org/service/local/repositories/releases/content/com/codacy/codacy-coverage-reporter/1.0.13/codacy-coverage-reporter-1.0.13-assembly.jar
@@ -13,3 +17,18 @@ before_install:
 after_success:
   - java -cp ~/codacy-coverage-reporter-assembly.jar com.codacy.CodacyCoverageReporter -l Java -r build-reporting/target/coverage-reports/jacoco.xml
   - ./coverity_scan.sh
+
+deploy:
+  - provider: script
+    script: mvn --settings .travis.settings.xml source:jar javadoc:jar deploy -DskipTests=true
+    skip_cleanup: true
+    on:
+      branch: master
+  - provider: pages
+    skip_cleanup: true
+    local_dir: target/staging
+    github_token: $GITHUB_TOKEN
+    on:
+      tags: true
+      branch: master
+ 

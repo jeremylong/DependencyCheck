@@ -490,6 +490,8 @@ public final class CliParser {
                 .addOption(swiftPackageManagerAnalyzerEnabled)
                 .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_NODE_JS)
                         .desc("Disable the Node.js Package Analyzer.").build())
+                .addOption(Option.builder().longOpt(ARGUMENT.DISABLE_NSP)
+                        .desc("Disable the NSP Package Analyzer.").build())
                 .addOption(nexusUrl)
                 .addOption(nexusUsesProxy)
                 .addOption(additionalZipExtensions)
@@ -732,6 +734,15 @@ public final class CliParser {
      */
     public boolean isNodeJsDisabled() {
         return hasDisableOption(ARGUMENT.DISABLE_NODE_JS, Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED);
+    }
+/**
+     * Returns true if the disableNSP command line argument was specified.
+     *
+     * @return true if the disableNSP command line argument was specified;
+     * otherwise false
+     */
+    public boolean isNspDisabled() {
+        return hasDisableOption(ARGUMENT.DISABLE_NSP, Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED);
     }
 
     /**
@@ -1443,6 +1454,10 @@ public final class CliParser {
          * Disables the Node.js Package Analyzer.
          */
         public static final String DISABLE_NODE_JS = "disableNodeJS";
+        /**
+         * Disables the NSP Analyzer.
+         */
+        public static final String DISABLE_NSP = "disableNSP";
         /**
          * The URL of the nexus server.
          */

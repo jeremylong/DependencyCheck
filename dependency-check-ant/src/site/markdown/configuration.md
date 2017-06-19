@@ -61,23 +61,24 @@ Note, that specific analyzers will automatically disable themselves if no file
 types that they support are detected - so specifically disabling them may not
 be needed.
 
-Property                      | Description                                                                       | Default Value
-------------------------------|-----------------------------------------------------------------------------------|------------------
-archiveAnalyzerEnabled        | Sets whether the Archive Analyzer will be used.                                   | true
+Property                      | Description                                                                                                | Default Value
+------------------------------|------------------------------------------------------------------------------------------------------------|------------------
+archiveAnalyzerEnabled        | Sets whether the Archive Analyzer will be used.                                                            | true
 zipExtensions                 | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
-jarAnalyzer                   | Sets whether the Jar Analyzer will be used.                                       | true
+jarAnalyzer                   | Sets whether the Jar Analyzer will be used.                                                                | true
 centralAnalyzerEnabled        | Sets whether the Central Analyzer will be used. **Disabling this analyzer is not recommended as it could lead to false negatives (e.g. libraries that have vulnerabilities may not be reported correctly).** If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer (see below).                                  | true
 nexusAnalyzerEnabled          | Sets whether Nexus Analyzer will be used. This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
 nexusUrl                      | Defines the Nexus web service endpoint (example http://domain.enterprise/nexus/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
-nexusUsesProxy                | Whether or not the defined proxy should be used when connecting to Nexus.         | true
+nexusUsesProxy                | Whether or not the defined proxy should be used when connecting to Nexus.                                  | true
 pyDistributionAnalyzerEnabled | Sets whether the [experimental](../analyzers/index.html) Python Distribution Analyzer will be used.        | true
 pyPackageAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) Python Package Analyzer will be used.             | true
 rubygemsAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used.               | true
-opensslAnalyzerEnabled        | Sets whether the openssl Analyzer should be used.                                 | true
+opensslAnalyzerEnabled        | Sets whether the openssl Analyzer should be used.                                                          | true
 cmakeAnalyzerEnabled          | Sets whether the [experimental](../analyzers/index.html) CMake Analyzer should be used.                    | true
 autoconfAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) autoconf Analyzer should be used.                 | true
 composerAnalyzerEnabled       | Sets whether the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.   | true
 nodeAnalyzerEnabled           | Sets whether the [experimental](../analyzers/index.html) Node.js Analyzer should be used.                  | true
+nspAnalyzerEnabled            | Sets whether the NSP Analyzer should be used.                                                              | true
 nuspecAnalyzerEnabled         | Sets whether the .NET Nuget Nuspec Analyzer will be used.                                                  | true
 cocoapodsAnalyzerEnabled      | Sets whether the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used.                | true
 bundleAuditAnalyzerEnabled    | Sets whether the [experimental](../analyzers/index.html) Bundle Audit Analyzer should be used.             | true
@@ -98,8 +99,8 @@ cveUrl20Modified     | URL for the modified CVE 2.0.                            
 cveUrl12Base         | Base URL for each year's CVE 1.2, the %d will be replaced with the year. | http://nvd.nist.gov/download/nvdcve-%d.xml
 cveUrl20Base         | Base URL for each year's CVE 2.0, the %d will be replaced with the year. | http://static.nvd.nist.gov/feeds/xml/cve/nvdcve-2.0-%d.xml
 dataDirectory        | Data directory that is used to store the local copy of the NVD. This should generally not be changed. | data
-databaseDriverName   | The name of the database driver. Example: org.h2.Driver.                                    | &nbsp;
+databaseDriverName   | The name of the database driver. Example: org.h2.Driver.                 | &nbsp;
 databaseDriverPath   | The path to the database driver JAR file; only used if the driver is not in the class path. | &nbsp;
-connectionString     | The connection string used to connect to the database.                                      | &nbsp;
-databaseUser         | The username used when connecting to the database.                                          | &nbsp;
-databasePassword     | The password used when connecting to the database.                                          | &nbsp;
+connectionString     | The connection string used to connect to the database.                   | &nbsp;
+databaseUser         | The username used when connecting to the database.                       | &nbsp;
+databasePassword     | The password used when connecting to the database.                       | &nbsp;
