@@ -8,7 +8,7 @@ env:
   - secure: "ZUzhWfpXJw/oAeDlUkDFkEJMT0T7kCN3d7ah8urkL2B0KFfKOqQagkbXkgvDa1SYud8VdcnoGa69LfkEr5IrdqW7R4bEYZAiN5swm4Z0iO8t53szVspm2f+O9jQ44O/sfOfpfLxWUUuhdc7Vbrszp+tSszxdPmssWL+f5a/mfWs="
   - secure: "pmFymoI7qH0Kna3NkcHrqLiTVWKmrhwqA4Z9U6XLhWDQxcs5g94wCCKpGB6Lkz9mkvRxBRFpZZelnXJa9W9mnuVOMIa5tQfS5gBuaNXOe7AXXdc+Y2975OR9sSfvf16FxLFvNJILmZq+bpMLs+EXaQvjYQHW2O6OWZdLhAPVG6A="
   - secure: "omj5HP2wKdegLYp8/a24Wsoryb92+XYWheEkxp7CzHGDJB1Y4SSr315n/na/mdgd7lr1Ac+m4stYfCrclG7be71xWs6ApF+6I5QSzplJ1fyIF5piHrmhgw6ymIf/HBdeevggJM8igD8agCOwEETYFKfPEj5wFWhNQfxYwANbpl0="
-  - secure: "dgWpUwVKsW6e5sjVKnNfyHjri4cpgSEO2SqS6Udo12F0fuwnTXWciCjOz+L9UVnd4cV0DKHRbU592syZDeexCfPJIOIFS8n5VUOC3Cs86NzJ4Aw1sy2yBoEyOJrzc+5GbSrWC/+7wGUhv5PPMEgFgEIbkJ4UalbLpKjQVloK6PA="
+  - secure: "FqPcda7a6rEvGVYEyWeaFP+mIhZeJ6FGSdHvVRlBL0H9I3bz6eZg50g6DH3yo1bkmTPQ94eXdDpoKihk9+CDLl0TS+Sg9W8HplG3B2U1/6Yi3vd0T8yjKZC7xf0VZO6t8AT9vpFvzQBRZe24n+6kDtp2OiBzawJhgU5t09zH6is="
   - secure: "Bh5LAk8XQnJ885jc/Lli2fhPKDx0TNZRxcJMnNo96EgwOnD+Zhw+v3u/DMCgyyrRToM8Bkca/HktrlZaRTk2htsdKZZ3RHFMCXO0fXCgpcf+wkaSYDF/lnErpSJG3Lrz8ILxJPODsrGhjaIg2++79lwhsBYtpujc6UdxFhgpffc="
 
 before_install:
