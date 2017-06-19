@@ -1,7 +1,8 @@
 language: java
 jdk: oraclejdk7
 script: 
-  - if [ ! -z "$TRAVIS_TAG" ]; then travis_wait 20 mvn install site site:stage -DreleaseTesting; else travis_wait 15 mvn install -DreleaseTesting; fi
+  - mvn package -DskipTests=true
+# if [ ! -z "$TRAVIS_TAG" ]; then travis_wait 20 mvn install site site:stage -DreleaseTesting; else travis_wait 15 mvn install -DreleaseTesting; fi
 
 env:
   global:
@@ -12,11 +13,11 @@ env:
   - secure: "Bh5LAk8XQnJ885jc/Lli2fhPKDx0TNZRxcJMnNo96EgwOnD+Zhw+v3u/DMCgyyrRToM8Bkca/HktrlZaRTk2htsdKZZ3RHFMCXO0fXCgpcf+wkaSYDF/lnErpSJG3Lrz8ILxJPODsrGhjaIg2++79lwhsBYtpujc6UdxFhgpffc="
 
 before_install:
-  - wget -O ~/codacy-coverage-reporter-assembly.jar https://oss.sonatype.org/service/local/repositories/releases/content/com/codacy/codacy-coverage-reporter/1.0.13/codacy-coverage-reporter-1.0.13-assembly.jar
+#  - wget -O ~/codacy-coverage-reporter-assembly.jar https://oss.sonatype.org/service/local/repositories/releases/content/com/codacy/codacy-coverage-reporter/1.0.13/codacy-coverage-reporter-1.0.13-assembly.jar
 
 after_success:
-  - java -cp ~/codacy-coverage-reporter-assembly.jar com.codacy.CodacyCoverageReporter -l Java -r build-reporting/target/coverage-reports/jacoco.xml
-  - ./coverity_scan.sh
+#  - java -cp ~/codacy-coverage-reporter-assembly.jar com.codacy.CodacyCoverageReporter -l Java -r build-reporting/target/coverage-reports/jacoco.xml
+#  - ./coverity_scan.sh
 
 deploy:
   - provider: script
