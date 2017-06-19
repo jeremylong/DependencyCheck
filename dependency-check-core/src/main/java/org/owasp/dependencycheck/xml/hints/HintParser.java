@@ -26,6 +26,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
+
+import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.XmlUtils;
 
 import org.slf4j.Logger;
@@ -120,7 +122,7 @@ public class HintParser {
      * @throws SAXException thrown if the XML cannot be parsed
      */
     private Hints parseHints(InputStream inputStream, String schema) throws HintParseException, SAXException {
-        try (InputStream schemaStream = this.getClass().getClassLoader().getResourceAsStream(schema)) {
+        try (InputStream schemaStream = FileUtils.getResourceAsStream(schema)) {
             final HintHandler handler = new HintHandler();
             final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream);
             final XMLReader xmlReader = saxParser.getXMLReader();

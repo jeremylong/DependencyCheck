@@ -31,6 +31,7 @@ import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.utils.DBUtils;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
+import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -277,7 +278,7 @@ public final class ConnectionFactory {
         LOGGER.debug("Creating database structure");
         InputStream is = null;
         try {
-            is = ConnectionFactory.class.getClassLoader().getResourceAsStream(DB_STRUCTURE_RESOURCE);
+            is = FileUtils.getResourceAsStream(DB_STRUCTURE_RESOURCE);
             final String dbStructure = IOUtils.toString(is, "UTF-8");
 
             Statement statement = null;
@@ -325,7 +326,7 @@ public final class ConnectionFactory {
             String updateFile = null;
             try {
                 updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, currentDbVersion.toString());
-                is = ConnectionFactory.class.getClassLoader().getResourceAsStream(updateFile);
+                is = FileUtils.getResourceAsStream(updateFile);
                 if (is == null) {
                     throw new DatabaseException(String.format("Unable to load update file '%s'", updateFile));
                 }

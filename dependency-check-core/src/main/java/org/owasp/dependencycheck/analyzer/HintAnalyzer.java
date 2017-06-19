@@ -219,7 +219,7 @@ public class HintAnalyzer extends AbstractAnalyzer {
         final HintParser parser = new HintParser();
         File file = null;
         try {
-            hints = parser.parseHints(this.getClass().getClassLoader().getResourceAsStream(HINT_RULE_FILE_NAME));
+            hints = parser.parseHints(FileUtils.getResourceAsStream(HINT_RULE_FILE_NAME));
         } catch (HintParseException | SAXException ex) {
             LOGGER.error("Unable to parse the base hint data file");
             LOGGER.debug("Unable to parse the base hint data file", ex);
@@ -243,7 +243,7 @@ public class HintAnalyzer extends AbstractAnalyzer {
             } else {
                 file = new File(filePath);
                 if (!file.exists()) {
-                    try (InputStream fromClasspath = this.getClass().getClassLoader().getResourceAsStream(filePath)) {
+                    try (InputStream fromClasspath = FileUtils.getResourceAsStream(filePath)) {
                         if (fromClasspath != null) {
                             deleteTempFile = true;
                             file = FileUtils.getTempFile("hint", "xml");
