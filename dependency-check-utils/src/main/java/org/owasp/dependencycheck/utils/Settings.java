@@ -260,7 +260,8 @@ public final class Settings {
          */
         public static final String ANALYZER_NODE_PACKAGE_ENABLED = "analyzer.node.package.enabled";
         /**
-         * The properties key for whether the Node Security Platform (nsp) analyzer is enabled.
+         * The properties key for whether the Node Security Platform (nsp)
+         * analyzer is enabled.
          */
         public static final String ANALYZER_NSP_PACKAGE_ENABLED = "analyzer.nsp.package.enabled";
         /**
@@ -745,8 +746,8 @@ public final class Settings {
         String decodedPath = ".";
         String jarPath = "";
         ProtectionDomain domain = Settings.class.getProtectionDomain();
-        if(domain!=null&& domain.getCodeSource()!=null && domain.getCodeSource().getLocation()!=null) {
-        	 jarPath = Settings.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        if (domain != null && domain.getCodeSource() != null && domain.getCodeSource().getLocation() != null) {
+            jarPath = Settings.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         }
         try {
             decodedPath = URLDecoder.decode(jarPath, "UTF-8");

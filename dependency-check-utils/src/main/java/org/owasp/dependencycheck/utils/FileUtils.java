@@ -149,13 +149,16 @@ public final class FileUtils {
             }
         }
     }
-    
+
     /**
      * Gets the {@link InputStream} for this resource
+     *
      * @param resource path
      * @return
      */
     public static InputStream getResourceAsStream(String resource) {
-    	return FileUtils.class.getClassLoader()!=null?FileUtils.class.getClassLoader().getResourceAsStream(resource):ClassLoader.getSystemResourceAsStream(resource);
+        return FileUtils.class.getClassLoader() != null
+                ? FileUtils.class.getClassLoader().getResourceAsStream(resource)
+                : ClassLoader.getSystemResourceAsStream(resource);
     }
 }
