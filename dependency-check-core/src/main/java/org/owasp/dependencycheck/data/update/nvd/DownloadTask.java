@@ -203,8 +203,8 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
      * Attempts to delete the files that were downloaded.
      */
     public void cleanup() {
-        if (first != null && first.exists() && first.delete()) {
-            LOGGER.debug("Failed to delete first temporary file {}", second.toString());
+        if (first != null && first.exists() && !first.delete()) {
+            LOGGER.debug("Failed to delete first temporary file {}", first.toString());
             first.deleteOnExit();
         }
         if (second != null && second.exists() && !second.delete()) {

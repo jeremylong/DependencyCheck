@@ -46,6 +46,7 @@ import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.exception.ReportException;
+import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -339,11 +340,11 @@ public class ReportGenerator {
                 }
             } else {
                 logTag = "templates/" + templateName + ".vsl";
-                input = this.getClass().getClassLoader().getResourceAsStream(logTag);
+                input = FileUtils.getResourceAsStream(logTag);
             }
             if (input == null) {
                 logTag = templateName;
-                input = this.getClass().getClassLoader().getResourceAsStream(templateName);
+                input = FileUtils.getResourceAsStream(templateName);
             }
             if (input == null) {
                 throw new ReportException("Template file doesn't exist: " + logTag);
