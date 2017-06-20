@@ -246,7 +246,8 @@ public class SettingsTest extends BaseTest {
     }
 
     /**
-     * Assert {@link Settings#getArray(String)} from a delimited string returns multiple values in an array.
+     * Assert {@link Settings#getArray(String)} from a delimited string returns
+     * multiple values in an array.
      */
     @Test
     public void testGetArrayFromADelimitedString() {
@@ -265,7 +266,8 @@ public class SettingsTest extends BaseTest {
     }
 
     /**
-     * Assert {@link Settings#getArray(String)} returns {@code null} if the property is not set.
+     * Assert {@link Settings#getArray(String)} returns {@code null} if the
+     * property is not set.
      */
     @Test
     public void testGetArrayWhereThePropertyIsNotSet() {
@@ -277,7 +279,8 @@ public class SettingsTest extends BaseTest {
     }
 
     /**
-     * Assert {@link Settings#setArrayIfNotEmpty(String, String[])} with an empty array is ignored.
+     * Assert {@link Settings#setArrayIfNotEmpty(String, String[])} with an
+     * empty array is ignored.
      */
     @Test
     public void testSetArrayNotEmptyIgnoresAnEmptyArray() {
@@ -292,7 +295,8 @@ public class SettingsTest extends BaseTest {
     }
 
     /**
-     * Assert {@link Settings#setArrayIfNotEmpty(String, String[])} with a null array is ignored.
+     * Assert {@link Settings#setArrayIfNotEmpty(String, String[])} with a null
+     * array is ignored.
      */
     @Test
     public void testSetArrayNotEmptyIgnoresAnNullArray() {
@@ -307,12 +311,13 @@ public class SettingsTest extends BaseTest {
     }
 
     /**
-     * Assert {@link Settings#setArrayIfNotEmpty(String, String[])} with multiple values sets a delimited string.
+     * Assert {@link Settings#setArrayIfNotEmpty(String, String[])} with
+     * multiple values sets a delimited string.
      */
     @Test
     public void testSetArrayNotEmptySetsADelimitedString() {
         // GIVEN an array with values
-        final String[] array = { "value1", "value2" };
+        final String[] array = {"value1", "value2"};
 
         // WHEN setting the array
         Settings.setArrayIfNotEmpty("key", array);
@@ -322,12 +327,13 @@ public class SettingsTest extends BaseTest {
     }
 
     /**
-     * Assert {@link Settings#setArrayIfNotEmpty(String, String[])} with a single values sets a string.
+     * Assert {@link Settings#setArrayIfNotEmpty(String, String[])} with a
+     * single values sets a string.
      */
     @Test
     public void testSetArrayNotEmptyWithSingleValueSetsAString() {
         // GIVEN an array with a value
-        final String[] array = { "value1" };
+        final String[] array = {"value1"};
 
         // WHEN setting the array
         Settings.setArrayIfNotEmpty("key", array);
@@ -335,5 +341,4 @@ public class SettingsTest extends BaseTest {
         // THEN the property is set
         assertThat("Expected the property to be set", Settings.getString("key"), is("value1"));
     }
-
 }

@@ -44,7 +44,9 @@ import org.owasp.dependencycheck.utils.Settings.KEYS;
  */
 public class AppTest {
 
-    /** Test rule for asserting exceptions and their contents. */
+    /**
+     * Test rule for asserting exceptions and their contents.
+     */
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
@@ -82,65 +84,67 @@ public class AppTest {
     }
 
     /**
-     * Assert that boolean properties can be set on the CLI and parsed into the {@link Settings} singleton.
+     * Assert that boolean properties can be set on the CLI and parsed into the
+     * {@link Settings} singleton.
      *
      * @throws Exception the unexpected {@link Exception}.
      */
     @Test
     public void testPopulateSettings() throws Exception {
         File prop = new File(this.getClass().getClassLoader().getResource("sample.properties").toURI().getPath());
-        String[] args = { "-P", prop.getAbsolutePath() };
+        String[] args = {"-P", prop.getAbsolutePath()};
         Map<String, Boolean> expected = new HashMap<>();
         expected.put(Settings.KEYS.AUTO_UPDATE, Boolean.FALSE);
         expected.put(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, Boolean.TRUE);
 
         assertTrue(testBooleanProperties(args, expected));
 
-        String[] args2 = { "-n" };
+        String[] args2 = {"-n"};
         expected.put(Settings.KEYS.AUTO_UPDATE, Boolean.FALSE);
         expected.put(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, Boolean.TRUE);
         assertTrue(testBooleanProperties(args2, expected));
 
-        String[] args3 = { "-h" };
+        String[] args3 = {"-h"};
         expected.put(Settings.KEYS.AUTO_UPDATE, Boolean.TRUE);
         expected.put(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, Boolean.TRUE);
         assertTrue(testBooleanProperties(args3, expected));
 
-        String[] args4 = { "--disableArchive" };
+        String[] args4 = {"--disableArchive"};
         expected.put(Settings.KEYS.AUTO_UPDATE, Boolean.TRUE);
         expected.put(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, Boolean.FALSE);
         assertTrue(testBooleanProperties(args4, expected));
 
-        String[] args5 = { "-P", prop.getAbsolutePath(), "--disableArchive" };
+        String[] args5 = {"-P", prop.getAbsolutePath(), "--disableArchive"};
         expected.put(Settings.KEYS.AUTO_UPDATE, Boolean.FALSE);
         expected.put(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, Boolean.FALSE);
         assertTrue(testBooleanProperties(args5, expected));
 
         prop = new File(this.getClass().getClassLoader().getResource("sample2.properties").toURI().getPath());
-        String[] args6 = { "-P", prop.getAbsolutePath(), "--disableArchive" };
+        String[] args6 = {"-P", prop.getAbsolutePath(), "--disableArchive"};
         expected.put(Settings.KEYS.AUTO_UPDATE, Boolean.TRUE);
         expected.put(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, Boolean.FALSE);
         assertTrue(testBooleanProperties(args6, expected));
 
-        String[] args7 = { "-P", prop.getAbsolutePath(), "--noupdate" };
+        String[] args7 = {"-P", prop.getAbsolutePath(), "--noupdate"};
         expected.put(Settings.KEYS.AUTO_UPDATE, Boolean.FALSE);
         expected.put(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, Boolean.FALSE);
         assertTrue(testBooleanProperties(args7, expected));
 
-        String[] args8 = { "-P", prop.getAbsolutePath(), "--noupdate", "--disableArchive" };
+        String[] args8 = {"-P", prop.getAbsolutePath(), "--noupdate", "--disableArchive"};
         expected.put(Settings.KEYS.AUTO_UPDATE, Boolean.FALSE);
         expected.put(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, Boolean.FALSE);
         assertTrue(testBooleanProperties(args8, expected));
     }
 
     /**
-     * Assert that an {@link UnrecognizedOptionException} is thrown when a property that is not supported is specified on the CLI.
+     * Assert that an {@link UnrecognizedOptionException} is thrown when a
+     * property that is not supported is specified on the CLI.
      *
      * @throws Exception the unexpected {@link Exception}.
      */
     @Test
     public void testPopulateSettingsException() throws Exception {
-        String[] args = { "-invalidPROPERTY" };
+        String[] args = {"-invalidPROPERTY"};
 
         expectedException.expect(UnrecognizedOptionException.class);
         expectedException.expectMessage("Unrecognized option: -invalidPROPERTY");
@@ -158,7 +162,7 @@ public class AppTest {
         File prop = new File(this.getClass().getClassLoader().getResource("sample.properties").toURI().getPath());
 
         // AND a single suppression file
-        String[] args = { "-P", prop.getAbsolutePath(), "--suppression", "another-file.xml" };
+        String[] args = {"-P", prop.getAbsolutePath(), "--suppression", "another-file.xml"};
 
         // WHEN parsing the CLI arguments
         final CliParser cli = new CliParser();
@@ -181,7 +185,7 @@ public class AppTest {
         File prop = new File(this.getClass().getClassLoader().getResource("sample.properties").toURI().getPath());
 
         // AND a single suppression file
-        String[] args = { "-P", prop.getAbsolutePath(), "--suppression", "first-file.xml", "another-file.xml" };
+        String[] args = {"-P", prop.getAbsolutePath(), "--suppression", "first-file.xml", "another-file.xml"};
 
         // WHEN parsing the CLI arguments
         final CliParser cli = new CliParser();

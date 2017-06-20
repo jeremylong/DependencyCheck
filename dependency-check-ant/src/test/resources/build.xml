@@ -61,11 +61,11 @@
 
     <target name="failCVSS">
         <dependency-check
-                applicationName="test failCVSS"
-                reportOutputDirectory="${project.build.directory}"
-                reportFormat="XML"
-                autoupdate="false"
-                failBuildOnCVSS="3">
+            applicationName="test failCVSS"
+            reportOutputDirectory="${project.build.directory}"
+            reportFormat="XML"
+            autoupdate="false"
+            failBuildOnCVSS="3">
             <fileset dir="${project.build.directory}/test-classes/jars">
                 <include name="axis-1.4.jar"/>
             </fileset>
@@ -74,27 +74,27 @@
 
     <target name="deprecated-suppression">
         <dependency-check
-                applicationName="test suppression"
-                reportOutputDirectory="${project.build.directory}"
-                autoupdate="false"
-                failBuildOnCVSS="3"
-                suppressionFile="${project.build.directory}/test-classes/test-suppression1.xml"/>
+            applicationName="test suppression"
+            reportOutputDirectory="${project.build.directory}"
+            autoupdate="false"
+            failBuildOnCVSS="3"
+            suppressionFile="${project.build.directory}/test-classes/test-suppression1.xml"/>
     </target>
 
     <target name="suppression">
         <dependency-check
-                applicationName="test suppression"
-                reportOutputDirectory="${project.build.directory}"
-                autoupdate="false"
-                failBuildOnCVSS="3">
+            applicationName="test suppression"
+            reportOutputDirectory="${project.build.directory}"
+            autoupdate="false"
+            failBuildOnCVSS="3">
             <suppressionfile>${project.build.directory}/test-classes/test-suppression1.xml</suppressionfile>
             <suppressionfile>${project.build.directory}/test-classes/test-suppression2.xml</suppressionfile>
             <fileset dir="${project.build.directory}/test-classes/jars">
                 <include name="axis-1.4.jar"/>
             </fileset>
             <filelist
-                    dir="${project.build.directory}/test-classes/list"
-                    files="jetty-6.1.0.jar,org.mortbay.jetty.jar"/>
+                dir="${project.build.directory}/test-classes/list"
+                files="jetty-6.1.0.jar,org.mortbay.jetty.jar"/>
         </dependency-check>
     </target>
 </project>
