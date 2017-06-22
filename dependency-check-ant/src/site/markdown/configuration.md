@@ -18,6 +18,7 @@ the project's dependencies.
                       reportoutputdirectory="${basedir}"
                       reportformat="ALL">
 
+        <suppressionfile>path/to/suppression.xml</suppressionfile>
         <fileset dir="lib">
             <include name="**/*.jar"/>
         </fileset>
@@ -38,14 +39,19 @@ failOnError           | Whether the build should fail if there is an error execu
 projectName           | The name of the project being scanned.                                                                                                                                                             | Dependency-Check
 reportFormat          | The report format to be generated (HTML, XML, CSV, JSON, VULN, ALL). This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true.        | HTML
 reportOutputDirectory | The location to write the report(s). Note, this is not used if generating the report as part of a `mvn site` build                                                                                 | 'target'
-suppressionFile       | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html)                                                                                       | &nbsp;
 hintsFile             | The file path to the XML hints file \- used to resolve [false negatives](../general/hints.html)                                                                                                    | &nbsp;
 proxyServer           | The Proxy Server; see the [proxy configuration](../data/proxy.html) page for more information.                                                                                                     | &nbsp;
 proxyPort             | The Proxy Port.                                                                                                                                                                                    | &nbsp;
 proxyUsername         | Defines the proxy user name.                                                                                                                                                                       | &nbsp;
 proxyPassword         | Defines the proxy password.                                                                                                                                                                        | &nbsp;
 connectionTimeout     | The URL Connection Timeout.                                                                                                                                                                        | &nbsp;
-enableExperimental    | Enable the [experimental analyzers](../analyzers/index.html). If not enabled the experimental analyzers (see below) will not be loaded or used.                                                                             | false
+enableExperimental    | Enable the [experimental analyzers](../analyzers/index.html). If not enabled the experimental analyzers (see below) will not be loaded or used.                                                    | false
+
+The following nested elements can be set on the dependency-check task.
+
+Property              | Description                                                                                                                                                                                        | Default Value
+----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------
+suppressionFile       | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html). Element can be specified multiple times.                                             | &nbsp;
 
 Analyzer Configuration
 ====================

@@ -33,6 +33,8 @@ import java.security.ProtectionDomain;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * A simple settings container that wraps the dependencycheck.properties file.
  *
@@ -48,6 +50,10 @@ public final class Settings {
      * The properties file location.
      */
     private static final String PROPERTIES_FILE = "dependencycheck.properties";
+    /**
+     * Array separator.
+     */
+    private static final String ARRAY_SEP = ",";
     /**
      * Thread local settings.
      */
@@ -593,6 +599,18 @@ public final class Settings {
     }
 
     /**
+     * Sets a property value only if the array value is not null and not empty.
+     *
+     * @param key the key for the property
+     * @param value the value for the property
+     */
+    public static void setArrayIfNotEmpty(String key, String[] value) {
+        if (null != value && value.length > 0) {
+            setString(key, StringUtils.join(value, ARRAY_SEP));
+        }
+    }
+
+    /**
      * Sets a property value.
      *
      * @param key the key for the property
@@ -745,7 +763,7 @@ public final class Settings {
     private static File getJarPath() {
         String decodedPath = ".";
         String jarPath = "";
-        ProtectionDomain domain = Settings.class.getProtectionDomain();
+        final ProtectionDomain domain = Settings.class.getProtectionDomain();
         if (domain != null && domain.getCodeSource() != null && domain.getCodeSource().getLocation() != null) {
             jarPath = Settings.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         }
@@ -803,6 +821,22 @@ public final class Settings {
      */
     public static String getString(String key) {
         return System.getProperty(key, LOCAL_SETTINGS.get().props.getProperty(key));
+    }
+
+    /**
+     * Returns a list with the given key.
+     *
+     * If the propery is not set then {@code null} will be returned.
+     *
+     * @param key the key to get from this {@link Settings} singleton.
+     * @return the list or {@code null} if the key wasn't present.
+     */
+    public static String[] getArray(final String key) {
+        final String string = getString(key);
+        if (string != null) {
+            return string.split(ARRAY_SEP);
+        }
+        return null;
     }
 
     /**

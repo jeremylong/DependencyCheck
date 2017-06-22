@@ -114,4 +114,54 @@ public class DependencyCheckTaskTest {
         expectedException.expect(BuildException.class);
         buildFileRule.executeTarget("failCVSS");
     }
+
+    /**
+     * Test the DependencyCheckTask where a CVE is suppressed.
+     */
+    @Test
+    public void testSuppressingCVE() {
+        // GIVEN an ant task with a vulnerability
+        final String antTaskName = "suppression";
+
+        // WHEN executing the ant task
+        buildFileRule.executeTarget(antTaskName);
+
+        // THEN the ant task executed without error
+        final File report = new File("target/suppression-report.html");
+        assertTrue("Expected the DependencyCheck report to be generated", report.exists());
+    }
+
+    /**
+     * Test the DependencyCheckTask deprecated suppression property throws an
+     * exception with a warning.
+     */
+    @Test
+    public void testSuppressingSingle() {
+        // GIVEN an ant task with a vulnerability using the legacy property
+        final String antTaskName = "suppression-single";
+        
+        // WHEN executing the ant task
+        buildFileRule.executeTarget(antTaskName);
+
+        // THEN the ant task executed without error
+        final File report = new File("target/suppression-single-report.html");
+        assertTrue("Expected the DependencyCheck report to be generated", report.exists());
+    }
+
+    /**
+     * Test the DependencyCheckTask deprecated suppression property throws an
+     * exception with a warning.
+     */
+    @Test
+    public void testSuppressingMultiple() {
+        // GIVEN an ant task with a vulnerability using multiple was to configure the suppression file
+        final String antTaskName = "suppression-multiple";
+
+         // WHEN executing the ant task
+        buildFileRule.executeTarget(antTaskName);
+        
+        // THEN the ant task executed without error
+        final File report = new File("target/suppression-multiple-report.html");
+        assertTrue("Expected the DependencyCheck report to be generated", report.exists());
+    }
 }

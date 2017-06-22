@@ -13,27 +13,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2017 The OWASP Foundatio. All Rights Reserved.
+ * Copyright (c) 2017 The OWASP Foundation. All Rights Reserved.
  */
 package org.owasp.dependencycheck;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.UnrecognizedOptionException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.rules.ExpectedException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.Settings.KEYS;
 
 /**
- *
- * @author jeremy
+ * Tests for the {@link AppTest} class.
  */
 public class AppTest {
+
+    /**
+     * Test rule for asserting exceptions and their contents.
+     */
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
+    /**
+     * Initialize the {@link Settings} singleton.
+     */
+    @Before
+    public void setUp() {
+        Settings.initialize();
+    }
+
+    /**
+     * Clean the {@link Settings} singleton.
+     */
+    @After
+    public void tearDown() {
+        Settings.cleanup();
+    }
 
     /**
      * Test of ensureCanonicalPath method, of class App.
@@ -52,20 +83,20 @@ public class AppTest {
         assertTrue("result=" + result, result.endsWith(expResult));
     }
 
-    @Test(expected = UnrecognizedOptionException.class)
-    public void testPopulateSettingsException() throws FileNotFoundException, ParseException, InvalidSettingException, URISyntaxException {
-        String[] args = {"-invalidPROPERTY"};
-        assertTrue(testBooleanProperties(args, null));
-    }
-
+    /**
+     * Assert that boolean properties can be set on the CLI and parsed into the
+     * {@link Settings} singleton.
+     *
+     * @throws Exception the unexpected {@link Exception}.
+     */
     @Test
-    public void testPopulateSettings() throws FileNotFoundException, ParseException, InvalidSettingException, URISyntaxException {
+    public void testPopulateSettings() throws Exception {
         File prop = new File(this.getClass().getClassLoader().getResource("sample.properties").toURI().getPath());
         String[] args = {"-P", prop.getAbsolutePath()};
         Map<String, Boolean> expected = new HashMap<>();
         expected.put(Settings.KEYS.AUTO_UPDATE, Boolean.FALSE);
         expected.put(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, Boolean.TRUE);
-        
+
         assertTrue(testBooleanProperties(args, expected));
 
         String[] args2 = {"-n"};
@@ -103,8 +134,67 @@ public class AppTest {
         expected.put(Settings.KEYS.AUTO_UPDATE, Boolean.FALSE);
         expected.put(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, Boolean.FALSE);
         assertTrue(testBooleanProperties(args8, expected));
+    }
 
-        
+    /**
+     * Assert that an {@link UnrecognizedOptionException} is thrown when a
+     * property that is not supported is specified on the CLI.
+     *
+     * @throws Exception the unexpected {@link Exception}.
+     */
+    @Test
+    public void testPopulateSettingsException() throws Exception {
+        String[] args = {"-invalidPROPERTY"};
+
+        expectedException.expect(UnrecognizedOptionException.class);
+        expectedException.expectMessage("Unrecognized option: -invalidPROPERTY");
+        testBooleanProperties(args, null);
+    }
+
+    /**
+     * Assert that a single suppression file can be set using the CLI.
+     *
+     * @throws Exception the unexpected {@link Exception}.
+     */
+    @Test
+    public void testPopulatingSuppressionSettingsWithASingleFile() throws Exception {
+        // GIVEN CLI properties with the mandatory arguments
+        File prop = new File(this.getClass().getClassLoader().getResource("sample.properties").toURI().getPath());
+
+        // AND a single suppression file
+        String[] args = {"-P", prop.getAbsolutePath(), "--suppression", "another-file.xml"};
+
+        // WHEN parsing the CLI arguments
+        final CliParser cli = new CliParser();
+        cli.parse(args);
+        final App classUnderTest = new App();
+        classUnderTest.populateSettings(cli);
+
+        // THEN the suppression file is set in the settings singleton for use in the application core
+        assertThat("Expected the suppression file to be set in the Settings singleton", Settings.getString(KEYS.SUPPRESSION_FILE), is("another-file.xml"));
+    }
+
+    /**
+     * Assert that multiple suppression files can be set using the CLI.
+     *
+     * @throws Exception the unexpected {@link Exception}.
+     */
+    @Test
+    public void testPopulatingSuppressionSettingsWithMultipleFiles() throws Exception {
+        // GIVEN CLI properties with the mandatory arguments
+        File prop = new File(this.getClass().getClassLoader().getResource("sample.properties").toURI().getPath());
+
+        // AND a single suppression file
+        String[] args = {"-P", prop.getAbsolutePath(), "--suppression", "first-file.xml", "another-file.xml"};
+
+        // WHEN parsing the CLI arguments
+        final CliParser cli = new CliParser();
+        cli.parse(args);
+        final App classUnderTest = new App();
+        classUnderTest.populateSettings(cli);
+
+        // THEN the suppression file is set in the settings singleton for use in the application core
+        assertThat("Expected the suppression files to be set in the Settings singleton with a separator", Settings.getString(KEYS.SUPPRESSION_FILE), is("first-file.xml,another-file.xml"));
     }
 
     private boolean testBooleanProperties(String[] args, Map<String, Boolean> expected) throws URISyntaxException, FileNotFoundException, ParseException, InvalidSettingException {
@@ -124,4 +214,5 @@ public class AppTest {
             Settings.cleanup();
         }
     }
+
 }

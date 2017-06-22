@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import org.apache.maven.artifact.Artifact;
@@ -199,11 +200,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "connectionTimeout", defaultValue = "", required = false)
     private String connectionTimeout;
     /**
-     * The path to the suppression file.
+     * The paths to the suppression files.
      */
-    @Parameter(property = "suppressionFile", defaultValue = "", required = false)
+    @Parameter(required = false)
+    private String[] suppressionFiles;
+    /**
+     * The paths to the suppression file.
+     */
+    @Parameter(required = false)
     private String suppressionFile;
-
     /**
      * The path to the hints file.
      */
@@ -415,7 +420,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private boolean skipSystemScope = false;
 
     /**
-     * Skip analysis for dependencies which type matches this regular expression.
+     * Skip analysis for dependencies which type matches this regular
+     * expression.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "skipArtifactType", required = false)
@@ -487,7 +493,6 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Filter for artifact type.
      */
     private Filter<String> artifactTypeExcluded;
-
 
     // </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Base Maven implementation">
@@ -660,8 +665,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             List<DependencyNode> nodes, ProjectBuildingRequest buildingRequest) {
         ExceptionCollection exCol = null;
         for (DependencyNode dependencyNode : nodes) {
-            if (artifactScopeExcluded.passes(dependencyNode.getArtifact().getScope()) ||
-                artifactTypeExcluded.passes(dependencyNode.getArtifact().getType())) {
+            if (artifactScopeExcluded.passes(dependencyNode.getArtifact().getScope())
+                    || artifactTypeExcluded.passes(dependencyNode.getArtifact().getType())) {
                 continue;
             }
             exCol = collectDependencies(engine, project, dependencyNode.getChildren(), buildingRequest);
@@ -686,7 +691,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     }
                     if (!isResolved) {
                         getLog().error("Unable to resolve system scoped dependency: " + dependencyNode.toNodeString());
-                        exCol.addException(new DependencyNotFoundException("Unable to resolve system scoped dependency: " + dependencyNode.toNodeString()));
+                        exCol.addException(new DependencyNotFoundException("Unable to resolve system scoped dependency: " 
+                                + dependencyNode.toNodeString()));
                     }
                 } else {
                     final ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate(dependencyNode.getArtifact());
@@ -924,9 +930,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             Settings.setStringIfNotNull(Settings.KEYS.PROXY_PASSWORD, password);
             Settings.setStringIfNotNull(Settings.KEYS.PROXY_NON_PROXY_HOSTS, proxy.getNonProxyHosts());
         }
+        final String[] suppressions = determineSuppressions();
+        Settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressions);
 
         Settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
-        Settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
         Settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);
 
         //File Type Analyzer Settings
@@ -1012,6 +1019,25 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
         artifactScopeExcluded = new ArtifactScopeExcluded(skipTestScope, skipProvidedScope, skipSystemScope, skipRuntimeScope);
         artifactTypeExcluded = new ArtifactTypeExcluded(skipArtifactType);
+    }
+
+    /**
+     * Combines the configured suppressionFile and suppressionFiles into a
+     * single array.
+     *
+     * @return an array of suppression file paths
+     */
+    private String[] determineSuppressions() {
+        String[] suppressions = suppressionFiles;
+        if (suppressionFile != null) {
+            if (suppressions == null) {
+                suppressions = new String[]{suppressionFile};
+            } else {
+                suppressions = Arrays.copyOf(suppressions, suppressions.length + 1);
+                suppressions[suppressions.length - 1] = suppressionFile;
+            }
+        }
+        return suppressions;
     }
 
     /**

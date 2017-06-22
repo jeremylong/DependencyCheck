@@ -18,7 +18,9 @@
 package org.owasp.dependencycheck.taskdefs;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.EnumeratedAttribute;
@@ -62,7 +64,7 @@ public class Check extends Update {
      * Whether or not the NSP Analyzer is enabled.
      */
     private Boolean nspAnalyzerEnabled;
-    
+
     /**
      * Whether or not the Ruby Bundle Audit Analyzer is enabled.
      */
@@ -153,9 +155,14 @@ public class Check extends Update {
      */
     private String reportFormat = "HTML";
     /**
-     * The path to the suppression file.
+     * Suppression file path.
      */
-    private String suppressionFile;
+    private String suppressionFile = null;
+    /**
+     * Suppression file paths.
+     */
+    private List<String> suppressionFiles = new ArrayList<>();
+
     /**
      * The path to the suppression file.
      */
@@ -228,6 +235,17 @@ public class Check extends Update {
             throw new BuildException("Nested elements are not allowed when using the refId attribute.");
         }
         getPath().add(rc);
+    }
+
+    /**
+     * Add a suppression file.
+     *
+     * This is called by Ant with the configured {@link SuppressionFile}.
+     *
+     * @param suppressionFile the suppression file to add.
+     */
+    public void addConfiguredSuppressionFile(final SuppressionFile suppressionFile) {
+        suppressionFiles.add(suppressionFile.getPath());
     }
 
     /**
@@ -436,12 +454,12 @@ public class Check extends Update {
     }
 
     /**
-     * Get the value of suppressionFile.
+     * Gets suppression file paths.
      *
-     * @return the value of suppressionFile
+     * @return the suppression files.
      */
-    public String getSuppressionFile() {
-        return suppressionFile;
+    public List<String> getSuppressionFiles() {
+        return suppressionFiles;
     }
 
     /**
@@ -451,6 +469,7 @@ public class Check extends Update {
      */
     public void setSuppressionFile(String suppressionFile) {
         this.suppressionFile = suppressionFile;
+        suppressionFiles.add(suppressionFile);
     }
 
     /**
@@ -742,6 +761,7 @@ public class Check extends Update {
     public void setNodeAnalyzerEnabled(Boolean nodeAnalyzerEnabled) {
         this.nodeAnalyzerEnabled = nodeAnalyzerEnabled;
     }
+
     /**
      * Get the value of nspAnalyzerEnabled.
      *
@@ -750,6 +770,7 @@ public class Check extends Update {
     public Boolean isNspAnalyzerEnabled() {
         return nspAnalyzerEnabled;
     }
+
     /**
      * Set the value of nspAnalyzerEnabled.
      *
@@ -1013,7 +1034,7 @@ public class Check extends Update {
     protected void populateSettings() throws BuildException {
         super.populateSettings();
         Settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
-        Settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
+        Settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFiles.toArray(new String[suppressionFiles.size()]));
         Settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, enableExperimental);
         Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);

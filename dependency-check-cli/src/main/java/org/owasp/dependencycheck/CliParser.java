@@ -273,8 +273,9 @@ public final class CliParser {
                 .desc("Sets how deep nested symbolic links will be followed; 0 indicates symbolic links will not be followed.")
                 .build();
 
-        final Option suppressionFile = Option.builder().argName("file").hasArg().longOpt(ARGUMENT.SUPPRESSION_FILE)
-                .desc("The file path to the suppression XML file.")
+        final Option suppressionFile = Option.builder().argName("file").hasArgs().longOpt(ARGUMENT.SUPPRESSION_FILES)
+                .desc("The file path to the suppression XML file. This can be specified more then once to utilize multiple "
+                        + "suppression files")
                 .build();
 
         final Option hintsFile = Option.builder().argName("file").hasArg().longOpt(ARGUMENT.HINTS_FILE)
@@ -735,7 +736,8 @@ public final class CliParser {
     public boolean isNodeJsDisabled() {
         return hasDisableOption(ARGUMENT.DISABLE_NODE_JS, Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED);
     }
-/**
+
+    /**
      * Returns true if the disableNSP command line argument was specified.
      *
      * @return true if the disableNSP command line argument was specified;
@@ -1031,12 +1033,12 @@ public final class CliParser {
     }
 
     /**
-     * Returns the path to the suppression file.
+     * Returns the paths to the suppression files.
      *
-     * @return the path to the suppression file
+     * @return the paths to the suppression files.
      */
-    public String getSuppressionFile() {
-        return line.getOptionValue(ARGUMENT.SUPPRESSION_FILE);
+    public String[] getSuppressionFiles() {
+        return line.getOptionValues(ARGUMENT.SUPPRESSION_FILES);
     }
 
     /**
@@ -1374,9 +1376,9 @@ public final class CliParser {
         public static final String SYM_LINK_DEPTH = "symLink";
         /**
          * The CLI argument name for setting the location of the suppression
-         * file.
+         * file(s).
          */
-        public static final String SUPPRESSION_FILE = "suppression";
+        public static final String SUPPRESSION_FILES = "suppression";
         /**
          * The CLI argument name for setting the location of the hint file.
          */

@@ -151,10 +151,10 @@ public final class FileUtils {
     }
 
     /**
-     * Gets the {@link InputStream} for this resource
+     * Gets the {@link InputStream} for this resource.
      *
      * @param resource path
-     * @return
+     * @return the input stream for the given resource
      */
     public static InputStream getResourceAsStream(String resource) {
         return FileUtils.class.getClassLoader() != null
