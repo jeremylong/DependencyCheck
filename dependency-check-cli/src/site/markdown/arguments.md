@@ -11,7 +11,7 @@ Short  | Argument&nbsp;Name&nbsp;&nbsp; | Parameter       | Description | Requir
        | \-\-symLink            | \<depth\>       | The depth that symbolic links will be followed; the default is 0 meaning symbolic links will not be followed. | Optional
  \-o   | \-\-out                | \<path\>        | The folder to write reports to. This defaults to the current directory. If the format is not set to ALL one could specify a specific file name. | Optional
  \-f   | \-\-format             | \<format\>      | The output format to write to (XML, HTML, CSV, JSON, VULN, ALL). The default is HTML. | Required
-       | \-\-failOnCvss         | \<score\>       | If the score set between 0 and 10 the exit code from dependency-check will indicate if a vulnerability with a CVSS score equal to or higher was identified. | Optional
+       | \-\-failOnCVSS         | \<score\>       | If the score set between 0 and 10 the exit code from dependency-check will indicate if a vulnerability with a CVSS score equal to or higher was identified. | Optional
  \-l   | \-\-log                | \<file\>        | The file path to write verbose logging information. | Optional
  \-n   | \-\-noupdate           |                 | Disables the automatic updating of the CPE data. | Optional
        | \-\-suppression        | \<files\>       | The file paths to the suppression XML files; used to suppress [false positives](../general/suppression.html). This can be specified more then once to utilize multiple suppression files. | Optional
