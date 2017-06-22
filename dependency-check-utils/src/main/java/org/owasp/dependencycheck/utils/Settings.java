@@ -763,7 +763,7 @@ public final class Settings {
     private static File getJarPath() {
         String decodedPath = ".";
         String jarPath = "";
-        ProtectionDomain domain = Settings.class.getProtectionDomain();
+        final ProtectionDomain domain = Settings.class.getProtectionDomain();
         if (domain != null && domain.getCodeSource() != null && domain.getCodeSource().getLocation() != null) {
             jarPath = Settings.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         }

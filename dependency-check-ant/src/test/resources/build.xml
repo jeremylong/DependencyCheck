@@ -72,19 +72,10 @@
         </dependency-check>
     </target>
 
-    <target name="deprecated-suppression">
-        <dependency-check
-            applicationName="test suppression"
-            reportOutputDirectory="${project.build.directory}"
-            autoupdate="false"
-            failBuildOnCVSS="3"
-            suppressionFile="${project.build.directory}/test-classes/test-suppression1.xml"/>
-    </target>
-
     <target name="suppression">
         <dependency-check
             applicationName="test suppression"
-            reportOutputDirectory="${project.build.directory}"
+            reportOutputDirectory="${project.build.directory}/suppression-report.html"
             autoupdate="false"
             failBuildOnCVSS="3">
             <suppressionfile>${project.build.directory}/test-classes/test-suppression1.xml</suppressionfile>
@@ -97,4 +88,30 @@
                 files="jetty-6.1.0.jar,org.mortbay.jetty.jar"/>
         </dependency-check>
     </target>
+    <target name="suppression-single">
+        <dependency-check
+            applicationName="test suppression"
+            reportOutputDirectory="${project.build.directory}/suppression-single-report.html"
+            autoupdate="false"
+            failBuildOnCVSS="3"
+            suppressionFile="${project.build.directory}/test-classes/test-suppression1.xml">
+            <fileset dir="${project.build.directory}/test-classes/jars">
+                <include name="axis-1.4.jar"/>
+            </fileset>
+        </dependency-check>
+    </target>
+    <target name="suppression-multiple">
+        <dependency-check
+            applicationName="test suppression"
+            reportOutputDirectory="${project.build.directory}/suppression-multiple-report.html"
+            autoupdate="false"
+            failBuildOnCVSS="3"
+            suppressionFile="${project.build.directory}/test-classes/test-suppression1.xml">
+            <suppressionfile>${project.build.directory}/test-classes/test-suppression2.xml</suppressionfile>
+            <fileset dir="${project.build.directory}/test-classes/jars">
+                <include name="axis-1.4.jar"/>
+            </fileset>
+        </dependency-check>
+    </target>
+    
 </project>

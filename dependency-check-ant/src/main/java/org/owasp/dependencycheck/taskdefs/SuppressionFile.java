@@ -18,8 +18,10 @@
 package org.owasp.dependencycheck.taskdefs;
 
 /**
- * Class          : {@link SuppressionFile}
- * Responsibility : Models a suppression file nested XML element where the simple content is its location.
+ * Class : {@link SuppressionFile} Responsibility : Models a suppression file
+ * nested XML element where the simple content is its location.
+ *
+ * @author Phillip Whittlesea
  */
 public class SuppressionFile {
 

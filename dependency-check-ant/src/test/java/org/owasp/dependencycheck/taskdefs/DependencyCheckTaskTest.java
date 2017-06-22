@@ -127,22 +127,41 @@ public class DependencyCheckTaskTest {
         buildFileRule.executeTarget(antTaskName);
 
         // THEN the ant task executed without error
-        final File report = new File("target/dependency-check-report.html");
+        final File report = new File("target/suppression-report.html");
         assertTrue("Expected the DependencyCheck report to be generated", report.exists());
     }
 
     /**
-     * Test the DependencyCheckTask deprecated suppression property throws an exception with a warning.
+     * Test the DependencyCheckTask deprecated suppression property throws an
+     * exception with a warning.
      */
     @Test
-    public void testDeprecatedSuppressingCVE() {
+    public void testSuppressingSingle() {
         // GIVEN an ant task with a vulnerability using the legacy property
-        final String antTaskName = "deprecated-suppression";
-
+        final String antTaskName = "suppression-single";
+        
         // WHEN executing the ant task
-        // THEN an exception with a warning is thrown
-        expectedException.expect(BuildException.class);
-        expectedException.expectMessage("Definition of a suppression file via a property has been deprecated. Suppression files are now defined as a nested element, please update your configuration.");
         buildFileRule.executeTarget(antTaskName);
+
+        // THEN the ant task executed without error
+        final File report = new File("target/suppression-single-report.html");
+        assertTrue("Expected the DependencyCheck report to be generated", report.exists());
+    }
+
+    /**
+     * Test the DependencyCheckTask deprecated suppression property throws an
+     * exception with a warning.
+     */
+    @Test
+    public void testSuppressingMultiple() {
+        // GIVEN an ant task with a vulnerability using multiple was to configure the suppression file
+        final String antTaskName = "suppression-multiple";
+
+         // WHEN executing the ant task
+        buildFileRule.executeTarget(antTaskName);
+        
+        // THEN the ant task executed without error
+        final File report = new File("target/suppression-multiple-report.html");
+        assertTrue("Expected the DependencyCheck report to be generated", report.exists());
     }
 }

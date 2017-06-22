@@ -64,7 +64,7 @@ public class Check extends Update {
      * Whether or not the NSP Analyzer is enabled.
      */
     private Boolean nspAnalyzerEnabled;
-    
+
     /**
      * Whether or not the Ruby Bundle Audit Analyzer is enabled.
      */
@@ -154,6 +154,10 @@ public class Check extends Update {
      * Default is HTML.
      */
     private String reportFormat = "HTML";
+    /**
+     * Suppression file path.
+     */
+    private String suppressionFile = null;
     /**
      * Suppression file paths.
      */
@@ -462,11 +466,10 @@ public class Check extends Update {
      * Set the value of suppressionFile.
      *
      * @param suppressionFile new value of suppressionFile
-     * @deprecated property form of suppressionFile has been replaced by a child element
      */
-    @Deprecated
     public void setSuppressionFile(String suppressionFile) {
-        throw new BuildException("Definition of a suppression file via a property has been deprecated. Suppression files are now defined as a nested element, please update your configuration.");
+        this.suppressionFile = suppressionFile;
+        suppressionFiles.add(suppressionFile);
     }
 
     /**
@@ -758,6 +761,7 @@ public class Check extends Update {
     public void setNodeAnalyzerEnabled(Boolean nodeAnalyzerEnabled) {
         this.nodeAnalyzerEnabled = nodeAnalyzerEnabled;
     }
+
     /**
      * Get the value of nspAnalyzerEnabled.
      *
@@ -766,6 +770,7 @@ public class Check extends Update {
     public Boolean isNspAnalyzerEnabled() {
         return nspAnalyzerEnabled;
     }
+
     /**
      * Set the value of nspAnalyzerEnabled.
      *

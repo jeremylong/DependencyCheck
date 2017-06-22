@@ -274,7 +274,8 @@ public final class CliParser {
                 .build();
 
         final Option suppressionFile = Option.builder().argName("file").hasArgs().longOpt(ARGUMENT.SUPPRESSION_FILES)
-                .desc("The file path to the suppression XML file.")
+                .desc("The file path to the suppression XML file. This can be specified more then once to utilize multiple "
+                        + "suppression files")
                 .build();
 
         final Option hintsFile = Option.builder().argName("file").hasArg().longOpt(ARGUMENT.HINTS_FILE)
@@ -735,7 +736,8 @@ public final class CliParser {
     public boolean isNodeJsDisabled() {
         return hasDisableOption(ARGUMENT.DISABLE_NODE_JS, Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED);
     }
-/**
+
+    /**
      * Returns true if the disableNSP command line argument was specified.
      *
      * @return true if the disableNSP command line argument was specified;
