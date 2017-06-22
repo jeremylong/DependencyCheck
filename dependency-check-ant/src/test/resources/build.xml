@@ -94,7 +94,7 @@
             reportOutputDirectory="${project.build.directory}/suppression-single-report.html"
             autoupdate="false"
             failBuildOnCVSS="3"
-            suppressionFile="${project.build.directory}/test-classes/test-suppression1.xml">
+            suppressionFile="${project.build.directory}/test-classes/test-suppression.xml">
             <fileset dir="${project.build.directory}/test-classes/jars">
                 <include name="axis-1.4.jar"/>
             </fileset>
