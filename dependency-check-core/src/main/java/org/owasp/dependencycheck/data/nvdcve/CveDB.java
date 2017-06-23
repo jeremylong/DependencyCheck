@@ -561,8 +561,10 @@ public final class CveDB implements AutoCloseable {
                     final Entry<String, Boolean> matchedCPE = getMatchingSoftware(vulnSoftware, cpe.getVendor(), cpe.getProduct(), detectedVersion);
                     if (matchedCPE != null) {
                         final Vulnerability v = getVulnerability(currentCVE);
-                        v.setMatchedCPE(matchedCPE.getKey(), matchedCPE.getValue() ? "Y" : null);
-                        vulnerabilities.add(v);
+                        if (v != null) {
+                            v.setMatchedCPE(matchedCPE.getKey(), matchedCPE.getValue() ? "Y" : null);
+                            vulnerabilities.add(v);
+                        }
                     }
                     vulnSoftware.clear();
                     currentCVE = cveId;
@@ -577,8 +579,10 @@ public final class CveDB implements AutoCloseable {
             final Entry<String, Boolean> matchedCPE = getMatchingSoftware(vulnSoftware, cpe.getVendor(), cpe.getProduct(), detectedVersion);
             if (matchedCPE != null) {
                 final Vulnerability v = getVulnerability(currentCVE);
-                v.setMatchedCPE(matchedCPE.getKey(), matchedCPE.getValue() ? "Y" : null);
-                vulnerabilities.add(v);
+                if (v != null) {
+                    v.setMatchedCPE(matchedCPE.getKey(), matchedCPE.getValue() ? "Y" : null);
+                    vulnerabilities.add(v);
+                }
             }
         } catch (SQLException ex) {
             throw new DatabaseException("Exception retrieving vulnerability for " + cpeStr, ex);
@@ -666,11 +670,12 @@ public final class CveDB implements AutoCloseable {
      */
     public synchronized void updateVulnerability(Vulnerability vuln) throws DatabaseException {
         clearCache();
+        ResultSet rs = null;
         try {
             int vulnerabilityId = 0;
             final PreparedStatement selectVulnerabilityId = getPreparedStatement(SELECT_VULNERABILITY_ID);
             selectVulnerabilityId.setString(1, vuln.getName());
-            ResultSet rs = selectVulnerabilityId.executeQuery();
+            rs = selectVulnerabilityId.executeQuery();
             if (rs.next()) {
                 vulnerabilityId = rs.getInt(1);
                 // first delete any existing vulnerability info. We don't know what was updated. yes, slower but atm easier.
@@ -789,6 +794,8 @@ public final class CveDB implements AutoCloseable {
             final String msg = String.format("Error updating '%s'", vuln.getName());
             LOGGER.debug(msg, ex);
             throw new DatabaseException(msg, ex);
+        } finally {
+            DBUtils.closeResultSet(rs);
         }
     }
 

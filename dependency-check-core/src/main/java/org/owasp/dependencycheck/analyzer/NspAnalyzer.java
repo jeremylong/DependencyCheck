@@ -266,6 +266,7 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @param dependency the Dependency to update
      * @param jsonObject the jsonObject to parse
+     * @param depType the dependency type
      */
     private void processPackage(Dependency dependency, JsonObject jsonObject, String depType) {
         for (int i = 0; i < jsonObject.size(); i++) {
@@ -291,7 +292,7 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
                  * dependency will not actually exist but needs to be unique (due to the use of Set in Dependency).
                  * The use of related dependencies is a way to specify the actual software BOM in package.json.
                  */
-                Dependency nodeModule = new Dependency(new File(dependency.getActualFile() + "#" + entry.getKey()), true);
+                final Dependency nodeModule = new Dependency(new File(dependency.getActualFile() + "#" + entry.getKey()), true);
                 nodeModule.setDisplayFileName(entry.getKey());
                 nodeModule.setIdentifiers(new HashSet<>(Arrays.asList(moduleName, moduleVersion, moduleDepType)));
                 dependency.addRelatedDependency(nodeModule);

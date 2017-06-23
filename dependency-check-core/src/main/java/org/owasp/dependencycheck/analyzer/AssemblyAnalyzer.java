@@ -138,6 +138,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
             try {
                 rc = proc.waitFor();
             } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
                 return;
             }
             if (rc == 3) {

@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -163,9 +164,9 @@ public final class Downloader {
             }
 
             final String encoding = conn.getContentEncoding();
-            BufferedOutputStream writer = null;
             InputStream reader = null;
-            try {
+            try (OutputStream out = new FileOutputStream(outputPath);
+                    BufferedOutputStream writer = new BufferedOutputStream(out)) {
                 if (encoding != null && "gzip".equalsIgnoreCase(encoding)) {
                     reader = new GZIPInputStream(conn.getInputStream());
                 } else if (encoding != null && "deflate".equalsIgnoreCase(encoding)) {
@@ -173,8 +174,7 @@ public final class Downloader {
                 } else {
                     reader = conn.getInputStream();
                 }
-
-                writer = new BufferedOutputStream(new FileOutputStream(outputPath));
+                
                 final byte[] buffer = new byte[4096];
                 int bytesRead;
                 while ((bytesRead = reader.read(buffer)) > 0) {
@@ -191,13 +191,6 @@ public final class Downloader {
                         url.toString(), outputPath.getAbsolutePath(), conn.getConnectTimeout(), encoding);
                 throw new DownloadFailedException(msg, ex);
             } finally {
-                if (writer != null) {
-                    try {
-                        writer.close();
-                    } catch (IOException ex) {
-                        LOGGER.trace("Error closing the writer in Downloader.", ex);
-                    }
-                }
                 if (reader != null) {
                     try {
                         reader.close();

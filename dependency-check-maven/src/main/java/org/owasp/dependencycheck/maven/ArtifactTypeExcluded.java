@@ -1,5 +1,5 @@
 /*
- * This file is part of dependency-check-maven.
+ * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,6 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Copyright (c) 2017 The OWASP Foundation. All Rights Reserved.
  */
 package org.owasp.dependencycheck.maven;
 
@@ -19,15 +21,23 @@ import org.apache.commons.lang.StringUtils;
 import org.owasp.dependencycheck.utils.Filter;
 
 /**
- * {@link Filter} implementation to exclude artifacts whose type matches a regular expression
+ * {@link Filter} implementation to exclude artifacts whose type matches a
+ * regular expression.
+ *
+ * @author ercpe
  */
 public class ArtifactTypeExcluded extends Filter<String> {
 
+    /**
+     * The regular expression for the exclusion filter.
+     */
     private final String regex;
 
     /**
-     * Creates a new instance
-     * @param excludeRegex The regular expression to match the artifacts type against
+     * Creates a new instance.
+     *
+     * @param excludeRegex The regular expression to match the artifacts type
+     * against
      */
     public ArtifactTypeExcluded(final String excludeRegex) {
         this.regex = excludeRegex;

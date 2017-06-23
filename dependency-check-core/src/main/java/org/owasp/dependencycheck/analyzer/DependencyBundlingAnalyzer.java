@@ -439,6 +439,10 @@ public class DependencyBundlingAnalyzer extends AbstractAnalyzer {
      * between the two collections match; otherwise false
      */
     private boolean isShadedJar(Dependency dependency, Dependency nextDependency) {
+        if (dependency == null || dependency.getFileName() == null
+                || nextDependency == null || nextDependency.getFileName() == null) {
+            return false;
+        }
         final String mainName = dependency.getFileName().toLowerCase();
         final String nextName = nextDependency.getFileName().toLowerCase();
         if (mainName.endsWith(".jar") && nextName.endsWith("pom.xml")) {

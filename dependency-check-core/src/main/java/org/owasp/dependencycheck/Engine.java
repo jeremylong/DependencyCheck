@@ -193,11 +193,9 @@ public class Engine implements FileFilter {
      *
      * @param dependencies the dependencies
      */
-    public void setDependencies(List<Dependency> dependencies) {
-        synchronized (this.dependencies) {
-            this.dependencies.clear();
-            this.dependencies.addAll(dependencies);
-        }
+    public synchronized void setDependencies(List<Dependency> dependencies) {
+        this.dependencies.clear();
+        this.dependencies.addAll(dependencies);
     }
 
     /**
@@ -612,6 +610,7 @@ public class Engine implements FileFilter {
                 }
             }
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throwFatalExceptionCollection("Analysis has been interrupted.", e, exceptions);
         } finally {
             executorService.shutdown();

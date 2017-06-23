@@ -115,7 +115,8 @@ public class NvdCveUpdater implements CachedWebDataSource {
                 final File dir = Settings.getDataDirectory();
                 lockFile = new File(dir, "odc.update.lock");
                 if (lockFile.isFile() && getFileAge(lockFile) > 5 && !lockFile.delete()) {
-                    LOGGER.warn("An old db update lock file was found but the system was unable to delete the file. Consider manually deleting " + lockFile.getAbsolutePath());
+                    LOGGER.warn("An old db update lock file was found but the system was unable to delete "
+                            + "the file. Consider manually deleting {}", lockFile.getAbsolutePath());
                 }
                 int ctr = 0;
                 do {
@@ -126,13 +127,19 @@ public class NvdCveUpdater implements CachedWebDataSource {
                         }
                     } catch (IOException ex) {
                         LOGGER.trace("Expected error as another thread has likely locked the file", ex);
+                    } finally {
+                        if (lock==null && ulFile!=null) {
+                            ulFile.close();
+                        }
                     }
                     if (lock == null || !lock.isValid()) {
                         try {
-                            LOGGER.debug(String.format("Sleeping thread %s for 5 seconds because we could not obtain the update lock.", Thread.currentThread().getName()));
+                            LOGGER.debug(String.format("Sleeping thread %s for 5 seconds because we could not obtain the update lock.",
+                                    Thread.currentThread().getName()));
                             Thread.sleep(5000);
                         } catch (InterruptedException ex) {
                             LOGGER.trace("ignorable error, sleep was interrupted.", ex);
+                            Thread.currentThread().interrupt();
                         }
                     }
                 } while (++ctr < 60 && (lock == null || !lock.isValid()));
@@ -328,6 +335,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
                 task = future.get();
             } catch (InterruptedException ex) {
                 LOGGER.debug("Thread was interrupted during download", ex);
+                Thread.currentThread().interrupt();
                 throw new UpdateException("The download was interrupted", ex);
             } catch (ExecutionException ex) {
                 LOGGER.debug("Thread was interrupted during download execution", ex);
@@ -349,6 +357,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
                 }
             } catch (InterruptedException ex) {
                 LOGGER.debug("Thread was interrupted during processing", ex);
+                Thread.currentThread().interrupt();
                 throw new UpdateException(ex);
             } catch (ExecutionException ex) {
                 LOGGER.debug("Execution Exception during process", ex);
@@ -520,7 +529,10 @@ public class NvdCveUpdater implements CachedWebDataSource {
             final long timestamp;
             try {
                 timestamp = timestampFuture.get(60, TimeUnit.SECONDS);
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new DownloadFailedException(e);
+            } catch (ExecutionException | TimeoutException e) {
                 throw new DownloadFailedException(e);
             }
             lastModifiedDates.put(url, timestamp);

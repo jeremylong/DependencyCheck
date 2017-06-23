@@ -27,15 +27,22 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class used to create a Sanitized version of package.json
- * suitable for submission to the nsp/check service.
+ * Class used to create a Sanitized version of package.json suitable for
+ * submission to the nsp/check service.
  *
  * @author Steve Springett
  */
-public class SanitizePackage {
+public final class SanitizePackage {
 
     /**
-     * Specifies a whitelist of allowable objects that package.json should contain.
+     * Private constructor for utility class.
+     */
+    private SanitizePackage() {
+        //empty
+    }
+    /**
+     * Specifies a whitelist of allowable objects that package.json should
+     * contain.
      */
     private static final List<String> WHITELIST = new ArrayList<>(Arrays.asList(
             "name",
@@ -50,17 +57,17 @@ public class SanitizePackage {
     ));
 
     /**
-     * The NSP API only accepts a subset of objects typically found in package.json.
-     * This method accepts a JsonObject of a raw package.json file and  returns a
-     * new 'sanitized' version based on a pre-defined whitelist of allowable object
-     * NSP accepts.
+     * The NSP API only accepts a subset of objects typically found in
+     * package.json. This method accepts a JsonObject of a raw package.json file
+     * and returns a new 'sanitized' version based on a pre-defined whitelist of
+     * allowable object NSP accepts.
      *
      * @param rawPackage a raw package.json file
      * @return a sanitized version of the package.json file
      */
     public static JsonObject sanitize(JsonObject rawPackage) {
-        JsonObjectBuilder builder = Json.createObjectBuilder();
-        for (Map.Entry<String, JsonValue> entry: rawPackage.entrySet()) {
+        final JsonObjectBuilder builder = Json.createObjectBuilder();
+        for (Map.Entry<String, JsonValue> entry : rawPackage.entrySet()) {
             if (WHITELIST.contains(entry.getKey())) {
                 builder.add(entry.getKey(), entry.getValue());
             }

@@ -170,7 +170,8 @@ public class ReportGenerator {
      * NVD CVE data)
      * @return the velocity context
      */
-    private VelocityContext createContext(String applicationName, List<Dependency> dependencies, List<Analyzer> analyzers, DatabaseProperties properties) {
+    private VelocityContext createContext(String applicationName, List<Dependency> dependencies,
+            List<Analyzer> analyzers, DatabaseProperties properties) {
         final DateTime dt = new DateTime();
         final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("MMM d, yyyy 'at' HH:mm:ss z");
         final DateTimeFormatter dateFormatXML = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -261,7 +262,6 @@ public class ReportGenerator {
 //        final String templateName = format.toString().toLowerCase() + "Report";
 //        processTemplate(templateName, outputStream);
 //    }
-
     /**
      * Determines the report file name based on the give output location and
      * format. If the output location contains a full file name that has the
@@ -371,6 +371,7 @@ public class ReportGenerator {
             }
         }
     }
+
     /**
      * Validates that the given file's parent directory exists. If the directory
      * does not exist an attempt to create the necessary path is made; if that
@@ -389,6 +390,7 @@ public class ReportGenerator {
             }
         }
     }
+
     /**
      * Reformats the given JSON file.
      *

@@ -82,13 +82,14 @@ public class NspSearch {
      *
      * @param packageJson the package.json file retrieved from the Dependency
      * @return a List of zero or more Advisory object
-     * @throws AnalysisException if Node Security Platform is unable to analyze the package
+     * @throws AnalysisException if Node Security Platform is unable to analyze
+     * the package
      * @throws IOException if it's unable to connect to Node Security Platform
      */
     public List<Advisory> submitPackage(JsonObject packageJson) throws AnalysisException, IOException {
         try {
-            List<Advisory> result = new ArrayList<>();
-            byte[] packageDatabytes = packageJson.toString().getBytes(StandardCharsets.UTF_8);
+            final List<Advisory> result = new ArrayList<>();
+            final byte[] packageDatabytes = packageJson.toString().getBytes(StandardCharsets.UTF_8);
 
             final HttpURLConnection conn = URLConnectionFactory.createHttpURLConnection(nspCheckUrl, useProxy);
             conn.setDoOutput(true);
@@ -104,48 +105,50 @@ public class NspSearch {
                 os.flush();
             }
 
-            if (conn.getResponseCode() == 200) {
-                try (InputStream in = new BufferedInputStream(conn.getInputStream())) {
-                    JsonReader jsonReader = Json.createReader(in);
-                    JsonArray array = jsonReader.readArray();
-                    if (array != null) {
-                        for (int i = 0; i < array.size(); i++) {
-                            JsonObject object = array.getJsonObject(i);
-                            Advisory advisory = new Advisory();
-                            advisory.setId(object.getInt("id"));
-                            advisory.setUpdatedAt(object.getString("updated_at", null));
-                            advisory.setCreatedAt(object.getString("created_at", null));
-                            advisory.setPublishDate(object.getString("publish_date", null));
-                            advisory.setOverview(object.getString("overview"));
-                            advisory.setRecommendation(object.getString("recommendation", null));
-                            advisory.setCvssVector(object.getString("cvss_vector", null));
-                            advisory.setCvssScore(Float.parseFloat(object.getJsonNumber("cvss_score").toString()));
-                            advisory.setModule(object.getString("module", null));
-                            advisory.setVersion(object.getString("version", null));
-                            advisory.setVulnerableVersions(object.getString("vulnerable_versions", null));
-                            advisory.setPatchedVersions(object.getString("patched_versions", null));
-                            advisory.setTitle(object.getString("title", null));
-                            advisory.setAdvisory(object.getString("advisory", null));
+            switch (conn.getResponseCode()) {
+                case 200:
+                    try (InputStream in = new BufferedInputStream(conn.getInputStream());
+                            JsonReader jsonReader = Json.createReader(in)) {
+                        final JsonArray array = jsonReader.readArray();
+                        if (array != null) {
+                            for (int i = 0; i < array.size(); i++) {
+                                final JsonObject object = array.getJsonObject(i);
+                                final Advisory advisory = new Advisory();
+                                advisory.setId(object.getInt("id"));
+                                advisory.setUpdatedAt(object.getString("updated_at", null));
+                                advisory.setCreatedAt(object.getString("created_at", null));
+                                advisory.setPublishDate(object.getString("publish_date", null));
+                                advisory.setOverview(object.getString("overview"));
+                                advisory.setRecommendation(object.getString("recommendation", null));
+                                advisory.setCvssVector(object.getString("cvss_vector", null));
+                                advisory.setCvssScore(Float.parseFloat(object.getJsonNumber("cvss_score").toString()));
+                                advisory.setModule(object.getString("module", null));
+                                advisory.setVersion(object.getString("version", null));
+                                advisory.setVulnerableVersions(object.getString("vulnerable_versions", null));
+                                advisory.setPatchedVersions(object.getString("patched_versions", null));
+                                advisory.setTitle(object.getString("title", null));
+                                advisory.setAdvisory(object.getString("advisory", null));
 
-                            JsonArray jsonPath = object.getJsonArray("path");
-                            List<String> stringPath = new ArrayList<>();
-                            for (int j = 0; j < jsonPath.size(); j++) {
-                                stringPath.add(jsonPath.getString(j));
+                                final JsonArray jsonPath = object.getJsonArray("path");
+                                final List<String> stringPath = new ArrayList<>();
+                                for (int j = 0; j < jsonPath.size(); j++) {
+                                    stringPath.add(jsonPath.getString(j));
+                                }
+                                advisory.setPath(stringPath.toArray(new String[stringPath.size()]));
+
+                                result.add(advisory);
                             }
-                            advisory.setPath(stringPath.toArray(new String[stringPath.size()]));
-
-                            result.add(advisory);
                         }
                     }
-                }
-            } else if (conn.getResponseCode() == 400) {
-                LOGGER.debug("Invalid payload submitted to Node Security Platform. Received response code: {} {}",
-                        conn.getResponseCode(), conn.getResponseMessage());
-                throw new AnalysisException("Could not perform NSP analysis. Invalid payload submitted to Node Security Platform.");
-            } else {
-                LOGGER.debug("Could not connect to Node Security Platform. Received response code: {} {}",
-                        conn.getResponseCode(), conn.getResponseMessage());
-                throw new IOException("Could not connect to Node Security Platform");
+                    break;
+                case 400:
+                    LOGGER.debug("Invalid payload submitted to Node Security Platform. Received response code: {} {}",
+                            conn.getResponseCode(), conn.getResponseMessage());
+                    throw new AnalysisException("Could not perform NSP analysis. Invalid payload submitted to Node Security Platform.");
+                default:
+                    LOGGER.debug("Could not connect to Node Security Platform. Received response code: {} {}",
+                            conn.getResponseCode(), conn.getResponseMessage());
+                    throw new IOException("Could not connect to Node Security Platform");
             }
             return result;
         } catch (IOException ex) {

@@ -1015,7 +1015,7 @@ public class Check extends Update {
      * @throws BuildException if the task was not configured correctly.
      */
     private void validateConfiguration() throws BuildException {
-        if (getPath() == null) {
+        if (path == null) {
             throw new BuildException("No project dependencies have been defined to analyze.");
         }
         if (failBuildOnCVSS < 0 || failBuildOnCVSS > 11) {
