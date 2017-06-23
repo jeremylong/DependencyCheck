@@ -128,14 +128,14 @@ public class NvdCveUpdater implements CachedWebDataSource {
                     } catch (IOException ex) {
                         LOGGER.trace("Expected error as another thread has likely locked the file", ex);
                     } finally {
-                        if (lock==null && ulFile!=null) {
+                        if (lock == null && ulFile != null) {
                             ulFile.close();
                         }
                     }
                     if (lock == null || !lock.isValid()) {
                         try {
-                            LOGGER.debug(String.format("Sleeping thread %s for 5 seconds because we could not obtain the update lock.",
-                                    Thread.currentThread().getName()));
+                            LOGGER.debug("Sleeping thread {} for 5 seconds because we could not obtain the update lock.",
+                                    Thread.currentThread().getName());
                             Thread.sleep(5000);
                         } catch (InterruptedException ex) {
                             LOGGER.trace("ignorable error, sleep was interrupted.", ex);
@@ -161,11 +161,9 @@ public class NvdCveUpdater implements CachedWebDataSource {
         } catch (MalformedURLException ex) {
             throw new UpdateException("NVD CVE properties files contain an invalid URL, unable to update the data to use the most current data.", ex);
         } catch (DownloadFailedException ex) {
-            LOGGER.warn(
-                    "Unable to download the NVD CVE data; the results may not include the most recent CPE/CVEs from the NVD.");
+            LOGGER.warn("Unable to download the NVD CVE data; the results may not include the most recent CPE/CVEs from the NVD.");
             if (Settings.getString(Settings.KEYS.PROXY_SERVER) == null) {
-                LOGGER.info(
-                        "If you are behind a proxy you may need to configure dependency-check to use the proxy.");
+                LOGGER.info("If you are behind a proxy you may need to configure dependency-check to use the proxy.");
             }
             throw new UpdateException("Unable to download the NVD CVE data.", ex);
         } catch (DatabaseException ex) {

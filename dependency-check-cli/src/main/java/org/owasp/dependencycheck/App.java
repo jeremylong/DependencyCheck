@@ -65,7 +65,7 @@ public class App {
             Settings.initialize();
             final App app = new App();
             exitCode = app.run(args);
-            LOGGER.debug("Exit code: " + exitCode);
+            LOGGER.debug("Exit code: {}", exitCode);
         } finally {
             Settings.cleanup(true);
         }
@@ -244,7 +244,7 @@ public class App {
                     throw ex;
                 }
             }
-            if (exCol != null && exCol.getExceptions().size() > 0) {
+            if (exCol != null && !exCol.getExceptions().isEmpty()) {
                 throw exCol;
             }
             return determineReturnCode(engine, cvssFailScore);
@@ -270,7 +270,7 @@ public class App {
         for (Dependency dep : engine.getDependencies()) {
             if (!dep.getVulnerabilities().isEmpty()) {
                 for (Vulnerability vuln : dep.getVulnerabilities()) {
-                    LOGGER.debug("VULNERABILITY FOUND " + dep.getDisplayFileName());
+                    LOGGER.debug("VULNERABILITY FOUND {}", dep.getDisplayFileName());
                     if (vuln.getCvssScore() > cvssFailScore) {
                         retCode = 1;
                     }

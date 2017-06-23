@@ -119,7 +119,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         if (bundleAuditPath != null) {
             bundleAudit = new File(bundleAuditPath);
             if (!bundleAudit.isFile()) {
-                LOGGER.warn("Supplied `bundleAudit` path is incorrect: " + bundleAuditPath);
+                LOGGER.warn("Supplied `bundleAudit` path is incorrect: {}", bundleAuditPath);
                 bundleAudit = null;
             }
         }
@@ -129,7 +129,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         final ProcessBuilder builder = new ProcessBuilder(args);
         builder.directory(folder);
         try {
-            LOGGER.info("Launching: " + args + " from " + folder);
+            LOGGER.info("Launching: {} from {}",args, folder);
             return builder.start();
         } catch (IOException ioe) {
             throw new AnalysisException("bundle-audit initialization failure; this error can be ignored if you are not analyzing Ruby. "
@@ -183,7 +183,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         } else {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"))) {
                 if (!reader.ready()) {
-                    LOGGER.warn("Bundle-audit error stream unexpectedly not ready. Disabling " + ANALYZER_NAME);
+                    LOGGER.warn("Bundle-audit error stream unexpectedly not ready. Disabling {}", ANALYZER_NAME);
                     setEnabled(false);
                     throw new InitializationException("Bundle-audit error stream unexpectedly not ready.");
                 } else {
@@ -204,8 +204,8 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         if (isEnabled()) {
-            LOGGER.info(ANALYZER_NAME + " is enabled. It is necessary to manually run \"bundle-audit update\" "
-                    + "occasionally to keep its database up to date.");
+            LOGGER.info("{} is enabled. It is necessary to manually run \"bundle-audit update\" "
+                    + "occasionally to keep its database up to date.",ANALYZER_NAME);
         }
     }
 
@@ -274,15 +274,15 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             for (FileTypeAnalyzer analyzer : engine.getFileTypeAnalyzers()) {
                 if (analyzer instanceof RubyBundlerAnalyzer) {
                     ((RubyBundlerAnalyzer) analyzer).setEnabled(false);
-                    LOGGER.info("Disabled " + RubyBundlerAnalyzer.class.getName() + " to avoid noisy duplicate results.");
+                    LOGGER.info("Disabled {} to avoid noisy duplicate results.",RubyBundlerAnalyzer.class.getName());
                 } else if (analyzer instanceof RubyGemspecAnalyzer) {
                     ((RubyGemspecAnalyzer) analyzer).setEnabled(false);
-                    LOGGER.info("Disabled " + className + " to avoid noisy duplicate results.");
+                    LOGGER.info("Disabled {} to avoid noisy duplicate results.",className);
                     failed = false;
                 }
             }
             if (failed) {
-                LOGGER.warn("Did not find " + className + '.');
+                LOGGER.warn("Did not find {}.",className);
             }
             needToDisableGemspecAnalyzer = false;
         }
@@ -342,7 +342,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
                     map.put(gem, createDependencyForGem(engine, parentName, fileName, filePath, gem));
                 }
                 dependency = map.get(gem);
-                LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
+                LOGGER.debug("bundle-audit ({}): {}", parentName, nextLine);
             } else if (nextLine.startsWith(VERSION)) {
                 vulnerability = createVulnerability(parentName, dependency, gem, nextLine);
             } else if (nextLine.startsWith(ADVISORY)) {
@@ -380,7 +380,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         if (null != dependency) {
             dependency.getVulnerabilities().add(vulnerability); // needed to wait for vulnerability name to avoid NPE
         }
-        LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
+        LOGGER.debug("bundle-audit ({}): {}", parentName, nextLine);
     }
 
     /**
@@ -399,7 +399,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             ref.setUrl(url);
             vulnerability.getReferences().add(ref);
         }
-        LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
+        LOGGER.debug("bundle-audit ({}): {}", parentName, nextLine);
     }
 
     /**
@@ -430,7 +430,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             }
             vulnerability.setCvssScore(score);
         }
-        LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
+        LOGGER.debug("bundle-audit ({}): {}", parentName, nextLine);
     }
 
     /**
@@ -462,7 +462,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             vulnerability.setCvssConfidentialityImpact("-");
             vulnerability.setCvssIntegrityImpact("-");
         }
-        LOGGER.debug(String.format("bundle-audit (%s): %s", parentName, nextLine));
+        LOGGER.debug("bundle-audit ({}): {}", parentName, nextLine);
         return vulnerability;
     }
 

@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
  * @author Jeremy Long
  */
 public final class UrlStringUtils {
+
     /**
      * A regular expression to test if a string contains a URL.
      */
@@ -51,6 +52,7 @@ public final class UrlStringUtils {
      */
     private UrlStringUtils() {
     }
+
     /**
      * Tests if the text provided contains a URL. This is somewhat limited
      * search in that it only looks for (ftp|http|https)://

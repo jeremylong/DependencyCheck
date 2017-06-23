@@ -263,9 +263,12 @@ public class EvidenceCollection implements Serializable, Iterable<Evidence> {
             //TODO consider changing the regex to only compare alpha-numeric (i.e. strip everything else)
             String item = e.getValue();
             if (item != null) {
-                final String value = urlCorrection(item.toLowerCase()).replaceAll("[\\s_-]", "");
-                if (value.contains(textToTest)) {
-                    return true;
+                final String uc = urlCorrection(item.toLowerCase());
+                if (uc != null) {
+                    final String value = uc.replaceAll("[\\s_-]", "");
+                    if (value.contains(textToTest)) {
+                        return true;
+                    }
                 }
             }
         }

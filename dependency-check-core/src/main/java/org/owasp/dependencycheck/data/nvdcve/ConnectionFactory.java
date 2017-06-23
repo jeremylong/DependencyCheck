@@ -154,8 +154,7 @@ public final class ConnectionFactory {
                     try {
                         conn = DriverManager.getConnection(connectionString, userName, password);
                         Settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
-                        LOGGER.debug(
-                                "Unable to start the database in server mode; reverting to single user mode");
+                        LOGGER.debug("Unable to start the database in server mode; reverting to single user mode");
                     } catch (SQLException sqlex) {
                         LOGGER.debug("Unable to connect to the database", ex);
                         throw new DatabaseException("Unable to connect to the database");

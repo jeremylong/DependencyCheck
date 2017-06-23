@@ -170,7 +170,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                         "Found project command match with %d groups: %s",
                         m.groupCount(), m.group(0)));
                 final String group = m.group(1);
-                LOGGER.debug("Group 1: " + group);
+                LOGGER.debug("Group 1: {}", group);
                 dependency.getProductEvidence().addEvidence(name, "Project",
                         group, Confidence.HIGH);
             }
@@ -202,8 +202,8 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                     m.groupCount(), m.group(0));
             String product = m.group(1);
             final String version = m.group(2);
-            LOGGER.debug("Group 1: " + product);
-            LOGGER.debug("Group 2: " + version);
+            LOGGER.debug("Group 1: {}", product);
+            LOGGER.debug("Group 2: {}", version);
             final String aliasPrefix = "ALIASOF_";
             if (product.startsWith(aliasPrefix)) {
                 product = product.replaceFirst(aliasPrefix, "");
@@ -231,7 +231,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
             currentDep.getVersionEvidence().addEvidence(source, "Version",
                     version, Confidence.MEDIUM);
         }
-        LOGGER.debug(String.format("Found %d matches.", count));
+        LOGGER.debug("Found {} matches.", count);
     }
 
     @Override

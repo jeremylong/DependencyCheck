@@ -103,7 +103,7 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void initializeFileTypeAnalyzer() throws InitializationException {
-        LOGGER.debug("Initializing " + getName());
+        LOGGER.debug("Initializing {}", getName());
         final String searchUrl = Settings.getString(Settings.KEYS.ANALYZER_NSP_URL, DEFAULT_URL);
         try {
             searcher = new NspSearch(new URL(searchUrl));

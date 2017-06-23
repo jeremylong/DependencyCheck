@@ -139,7 +139,7 @@ public class DependencyCheckTaskTest {
     public void testSuppressingSingle() {
         // GIVEN an ant task with a vulnerability using the legacy property
         final String antTaskName = "suppression-single";
-        
+
         // WHEN executing the ant task
         buildFileRule.executeTarget(antTaskName);
 
@@ -157,9 +157,9 @@ public class DependencyCheckTaskTest {
         // GIVEN an ant task with a vulnerability using multiple was to configure the suppression file
         final String antTaskName = "suppression-multiple";
 
-         // WHEN executing the ant task
+        // WHEN executing the ant task
         buildFileRule.executeTarget(antTaskName);
-        
+
         // THEN the ant task executed without error
         final File report = new File("target/suppression-multiple-report.html");
         assertTrue("Expected the DependencyCheck report to be generated", report.exists());
