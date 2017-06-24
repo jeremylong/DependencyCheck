@@ -36,8 +36,8 @@ matrix:
         - if [ ! -z "$TRAVIS_TAG" ]; then travis_wait 20 mvn install sonar:sonar -DreleaseTesting; else travis_wait 15 mvn install sonar:sonar -DreleaseTesting; fi
 
 after_success:
-  - java -cp ~/codacy-coverage-reporter-assembly.jar com.codacy.CodacyCoverageReporter -l Java -r build-reporting/target/coverage-reports/jacoco.xml
-  - ./coverity_scan.sh
+  - if [ "$JDK" == "JDK7" ]; then java -cp ~/codacy-coverage-reporter-assembly.jar com.codacy.CodacyCoverageReporter -l Java -r build-reporting/target/coverage-reports/jacoco.xml; fi;
+  - if [ "$JDK" == "JDK7" ]; then ./coverity_scan.sh; fi;
 
 deploy:
   - provider: script
