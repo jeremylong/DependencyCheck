@@ -75,6 +75,27 @@ Copyright (c) 2017 - Jeremy Long. All Rights Reserved.
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>report-merge</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>merge</goal>
+                        </goals>
+                        <configuration>
+                            <fileSets>
+                                <fileSet implementation="org.apache.maven.shared.model.fileset.FileSet">
+                                    <directory>${project.basedir}/../</directory>
+                                    <includes>
+                                        <include>dependency-check-utils/target/coverage-reports/*.exec</include>
+                                        <include>dependency-check-core/target/coverage-reports/*.exec</include>
+                                        <include>dependency-check-cli/target/coverage-reports/*.exec</include>
+                                        <include>dependency-check-ant/target/coverage-reports/*.exec</include>
+                                        <include>dependency-check-maven/target/coverage-reports/*.exec</include>
+                                    </includes>
+                                </fileSet>
+                            </fileSets>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>report-aggregate</id>
                         <phase>verify</phase>
                         <goals>
