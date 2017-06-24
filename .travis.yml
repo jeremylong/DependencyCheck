@@ -33,6 +33,8 @@ matrix:
     - jdk: oraclejdk8
       env:
         - JDK="JDK8"
+        - sonar.java.coveragePlugin=jacoco
+        - sonar.jacoco.reportPath=build-reporting/target/coverage-reports/jacoco.xml
       script:
         - if [ ! -z "$TRAVIS_TAG" ]; then travis_wait 20 mvn install sonar:sonar -DreleaseTesting; else travis_wait 15 mvn install sonar:sonar -DreleaseTesting; fi
 
