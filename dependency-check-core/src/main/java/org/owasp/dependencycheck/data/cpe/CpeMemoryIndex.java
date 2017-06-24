@@ -137,7 +137,7 @@ public final class CpeMemoryIndex {
      *
      * @return whether or not the index is open
      */
-    public boolean isOpen() {
+    public synchronized boolean isOpen() {
         return openState;
     }
 
@@ -274,7 +274,7 @@ public final class CpeMemoryIndex {
      * @return the Document
      * @throws IOException thrown if there is an IOException
      */
-    public Document getDocument(int documentId) throws IOException {
+    public synchronized Document getDocument(int documentId) throws IOException {
         return indexSearcher.doc(documentId);
     }
 
@@ -283,7 +283,7 @@ public final class CpeMemoryIndex {
      *
      * @return the number of CPE entries stored in the index
      */
-    public int numDocs() {
+    public synchronized int numDocs() {
         if (indexReader == null) {
             return -1;
         }
