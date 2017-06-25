@@ -36,10 +36,11 @@ matrix:
         - sonar.java.coveragePlugin=jacoco
         - sonar.jacoco.reportPath=build-reporting/target/jacoco.xml
       script:
-        - if [ ! -z "$TRAVIS_TAG" ]; then travis_wait 20 mvn install sonar:sonar -DreleaseTesting; else travis_wait 15 mvn install sonar:sonar -DreleaseTesting; fi
+        - travis_wait 15 mvn install -DreleaseTesting
 
 after_success:
   - if [ "$JDK" == "JDK8" ]; then java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r build-reporting/target/coverage-reports/jacoco.xml; fi;
+  - if [ "$JDK" == "JDK8" ]; then mvn sonar:sonar fi;
   - if [ "$JDK" == "JDK8" ]; then ./coverity_scan.sh; fi;
 
 deploy:
