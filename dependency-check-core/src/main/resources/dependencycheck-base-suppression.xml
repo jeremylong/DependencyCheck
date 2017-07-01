@@ -457,6 +457,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        false positive per issue #777
+        ]]></notes>
+        <gav regex="true">^org\.glassfish\.jersey\.ext:jersey-metainf-services:.*$</gav>
+        <cpe>cpe:/a:services_project:services:</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         file name: smiley-http-proxy-servlet-1.7.jar
         ]]></notes>
         <gav regex="true">^org\.mitre\.dsmiley\.httpproxy:smiley-http-proxy-servlet:.*$</gav>
