@@ -145,7 +145,7 @@ Copyright (c) 2012 - Jeremy Long
         <site>
             <id>gh-pages</id>
             <name>gh-pages</name>
-            <url>${project.build.directory}/site/${project.version}</url>
+            <url>https://jeremylong.github.io/DependencyCheck/</url>
         </site>
     </distributionManagement>
     <prerequisites>

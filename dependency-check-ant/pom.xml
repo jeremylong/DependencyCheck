@@ -28,15 +28,6 @@ Copyright (c) 2013 - Jeremy Long. All Rights Reserved.
 
     <name>Dependency-Check Ant Task</name>
     <description>dependency-check-ant is an Ant Task that uses dependency-check-core to detect publicly disclosed vulnerabilities associated with the project's dependencies. The task will generate a report listing the dependency, any identified Common Platform Enumeration (CPE) identifiers, and the associated Common Vulnerability and Exposure (CVE) entries.</description>
-    <!-- begin copy from http://minds.coremedia.com/2012/09/11/problem-solved-deploy-multi-module-maven-project-site-as-github-pages/ -->
-    <distributionManagement>
-        <site>
-            <id>github-pages-site</id>
-            <name>Deployment through GitHub's site deployment plugin</name>
-            <url>${basedir}/../target/site/${project.version}/dependency-check-ant</url>
-        </site>
-    </distributionManagement>
-    <!-- end copy -->
     <build>
         <resources>
             <resource>

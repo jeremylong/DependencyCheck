@@ -25,15 +25,6 @@ Copyright (c) 2017 - Jeremy Long. All Rights Reserved.
     <name>Dependency-Check Build-Reporting</name>
     <artifactId>build-reporting</artifactId>
     <packaging>pom</packaging>
-    <!-- begin copy from http://minds.coremedia.com/2012/09/11/problem-solved-deploy-multi-module-maven-project-site-as-github-pages/ -->
-    <distributionManagement>
-        <site>
-            <id>github-pages-site</id>
-            <name>Deployment through GitHub's site deployment plugin</name>
-            <url>${basedir}/../target/site/${project.version}/build-reporting</url>
-        </site>
-    </distributionManagement>
-    <!-- end copy -->
     <dependencies>
         <dependency>
             <groupId>org.owasp</groupId>
