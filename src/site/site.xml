@@ -161,7 +161,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 </item>
                 <item collapse="true" name="Gradle Plugin" href="./dependency-check-gradle/index.html">
                     <description>Gradle plugin for OWASP dependency-check.</description>
-                    <item name="Check Task" href="./dependency-check-gradle/configuration.html" />
+                    <item name="Analyze Task" href="./dependency-check-gradle/configuration.html" />
                     <item name="Update Task" href="./dependency-check-gradle/configuration-update.html" />
                     <item name="Purge Task" href="./dependency-check-gradle/configuration-purge.html" />
                 </item>

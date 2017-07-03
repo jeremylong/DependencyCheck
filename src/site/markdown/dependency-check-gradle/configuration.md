@@ -3,13 +3,26 @@ Tasks
 
 Task                                               | Description
 ---------------------------------------------------|-----------------------
-dependencyCheck                                    | Runs dependency-check against the project and generates a report.
+dependencyCheckAnalyze                             | Runs dependency-check against the project and generates a report.
 [dependencyCheckUpdate](configuration-update.html) | Updates the local cache of the NVD data from NIST.
 [dependencyCheckPurge](configuration-purge.html)   | Deletes the local copy of the NVD. This is used to force a refresh of the data.
 
-Configuration: dependencyCheck
+Configuration:
 ====================
-The following properties can be configured for the dependencyCheck task:
+
+```groovy
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.owasp:dependency-check-gradle:${project.version}'
+    }
+}
+apply plugin: 'org.owasp.dependencycheck'
+
+check.dependsOn dependencyCheckAnalyze
+```
 
 Property             | Description                        | Default Value
 ---------------------|------------------------------------|------------------

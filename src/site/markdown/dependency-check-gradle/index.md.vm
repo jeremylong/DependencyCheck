@@ -30,20 +30,20 @@ buildscript {
 apply plugin: 'org.owasp.dependencycheck'
 ```
 
-$H$H$H Step 2, Run the dependencyCheck task
+$H$H$H Step 2, Run the dependencyCheckAnalyze task
 
 Once the dependency-check plugin is applied, if the [Java plugin](https://docs.gradle.org/current/userguide/java_plugin.html)
 is being used dependency-check will automatically be added to the `check` task.
 Alternatively, you can run dependency-check directly:
 
 ```bash
-gradle dependencyCheck --info
+gradle dependencyCheckAnalyze --info
 ```
 
 The reports will be generated automatically under `build/reports` folder.
 
 $H$H Task Configuration
-The OWASP dependency-check-gradle plugin contains three tasks: [dependencyCheck](configuration.html),
+The OWASP dependency-check-gradle plugin contains three tasks: [dependencyCheckAnalyze](configuration.html),
 [dependencyCheckUpdate](configuration-update.html), and [dependencyCheckPurge](configuration-purge.html).
 Please see each tasks configuration page for more information.
 
