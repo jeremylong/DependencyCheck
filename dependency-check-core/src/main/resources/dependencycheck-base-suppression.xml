@@ -631,4 +631,11 @@
         <gav regex="true">^org\.xerial:sqlite-jdbc:.*$</gav>
         <cve>CVE-2015-3717</cve>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        newrelic-agent false positives due to the instrumentation package (see issue #781)
+        ]]></notes>
+        <filePath regex="true">.*newrelic-agent-.*\.jar[\\\/]instrumentation.*\.jar</filePath>
+        <cpe regex="true">.*</cpe>
+    </suppress>
 </suppressions>
