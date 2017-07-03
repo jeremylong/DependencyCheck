@@ -198,6 +198,47 @@ New:
 </plugin>
 ```
 
+### Gradle
+
+In addition to the changes to the suppression file, the task `dependencyCheck` has been
+renamed to `dependencyCheckAnalyze`.
+
+Old:
+
+```groovy
+buildscript {
+    repositories {
+		mavenLocal()
+    }
+    dependencies {
+        classpath 'org.owasp:dependency-check-gradle:2.0.1-SNAPSHOT'
+    }
+}
+apply plugin: 'org.owasp.dependencycheck'
+
+dependencyCheck {
+	suppressionFile='path/to/suppression.xml'
+}
+check.dependsOn dependencyCheckAnalyze
+```
+
+New:
+```groovy
+buildscript {
+    repositories {
+		mavenLocal()
+    }
+    dependencies {
+        classpath 'org.owasp:dependency-check-gradle:2.0.1-SNAPSHOT'
+    }
+}
+apply plugin: 'org.owasp.dependencycheck'
+
+dependencyCheck {
+	suppressionFiles = ['path/to/suppression1.xml', 'path/to/suppression2.xml']
+}
+check.dependsOn dependencyCheckAnalyze
+```
 
 Mailing List
 ------------
