@@ -173,7 +173,7 @@ public class AssemblyAnalyzerTest extends BaseTest {
             analyzer.analyze(d, null);
             fail("Expected an AnalysisException");
         } catch (AnalysisException ae) {
-            assertEquals("File does not exist", ae.getMessage());
+            assertTrue(ae.getMessage().contains("nonexistent.dll does not exist and cannot be analyzed by dependency-check"));
         } finally {
             System.setProperty(LOG_KEY, oldProp);
         }

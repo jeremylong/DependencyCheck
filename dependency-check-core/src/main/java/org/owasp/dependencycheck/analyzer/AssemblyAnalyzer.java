@@ -113,6 +113,13 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
+
+        File test = new File(dependency.getActualFilePath());
+        if (!test.isFile()) {
+            throw new AnalysisException(String.format("%s does not exist and cannot be analyzed by dependency-check",
+                    dependency.getActualFilePath()));
+        }
+
         if (grokAssemblyExe == null) {
             LOGGER.warn("GrokAssembly didn't get deployed");
             return;
