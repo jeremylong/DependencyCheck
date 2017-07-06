@@ -18,8 +18,16 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.commons.io.IOUtils;
 import org.junit.After;
+
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Assume;
@@ -33,6 +41,7 @@ import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +60,10 @@ public class AssemblyAnalyzerTest extends BaseTest {
 
     private AssemblyAnalyzer analyzer;
 
+	private File grokAssemblyExeFile;
+
+	private File grokAssemblyConfigFile;
+
     /**
      * Sets up the analyzer.
      *
@@ -62,7 +75,7 @@ public class AssemblyAnalyzerTest extends BaseTest {
             analyzer = new AssemblyAnalyzer();
             analyzer.accept(new File("test.dll")); // trick into "thinking it is active"
             analyzer.initialize();
-            Assume.assumeTrue("Mono is not installed, skipping tests.", analyzer.buildArgumentList() == null);
+            assertGrokAssembly();
         } catch (Exception e) {
             if (e.getMessage().contains("Could not execute .NET AssemblyAnalyzer")) {
                 LOGGER.warn("Exception setting up AssemblyAnalyzer. Tests will be incomplete");
@@ -70,6 +83,36 @@ public class AssemblyAnalyzerTest extends BaseTest {
                 LOGGER.warn("Exception setting up AssemblyAnalyzer. Tests will be incomplete");
             }
             Assume.assumeNoException("Is mono installed? TESTS WILL BE INCOMPLETE", e);
+        }
+    }
+
+    private void assertGrokAssembly() throws IOException {
+        // There must be an .exe and a .config files created in the temp
+        // directory and they must match the resources they were created from.
+        File tempDirectory = Settings.getTempDirectory();
+        for (File file : tempDirectory.listFiles()) {
+            String filename = file.getName();
+            if (filename.startsWith("GKA") && filename.endsWith(".exe")) {
+                grokAssemblyExeFile = file;
+                break;
+            }
+        }
+        assertTrue("The GrokAssembly executable was not created.", grokAssemblyExeFile.isFile());
+        grokAssemblyConfigFile = new File(grokAssemblyExeFile.getPath() + ".config");
+        assertTrue("The GrokAssembly config was not created.", grokAssemblyConfigFile.isFile());
+
+        assertFileContent("The GrokAssembly executable has incorrect content.", "GrokAssembly.exe",
+                grokAssemblyExeFile);
+        assertFileContent("The GrokAssembly config has incorrect content.", "GrokAssembly.exe.config",
+                grokAssemblyConfigFile);
+    }
+
+    private void assertFileContent(String message, String expectedResourceName, File actualFile) throws IOException {
+        try (InputStream expectedStream = FileUtils.getResourceAsStream(expectedResourceName);
+                InputStream actualStream = new FileInputStream(actualFile)) {
+            byte[] expectedBytes = IOUtils.toByteArray(expectedStream);
+            byte[] actualBytes = IOUtils.toByteArray(actualStream);
+            assertArrayEquals(message, expectedBytes, actualBytes);
         }
     }
 
@@ -180,5 +223,11 @@ public class AssemblyAnalyzerTest extends BaseTest {
     @After
     public void tearDown() throws Exception {
         analyzer.close();
+        if (grokAssemblyExeFile != null) {
+            assertFalse(grokAssemblyExeFile.exists());
+        }
+        if (grokAssemblyConfigFile != null) {
+            assertFalse(grokAssemblyConfigFile.exists());
+        }
     }
 }
