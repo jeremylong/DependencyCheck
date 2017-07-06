@@ -27,7 +27,6 @@ import org.junit.After;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Assume;
@@ -60,10 +59,6 @@ public class AssemblyAnalyzerTest extends BaseTest {
 
     private AssemblyAnalyzer analyzer;
 
-	private File grokAssemblyExeFile;
-
-	private File grokAssemblyConfigFile;
-
     /**
      * Sets up the analyzer.
      *
@@ -89,6 +84,9 @@ public class AssemblyAnalyzerTest extends BaseTest {
     private void assertGrokAssembly() throws IOException {
         // There must be an .exe and a .config files created in the temp
         // directory and they must match the resources they were created from.
+        File grokAssemblyExeFile = null;
+        File grokAssemblyConfigFile = null;
+        
         File tempDirectory = Settings.getTempDirectory();
         for (File file : tempDirectory.listFiles()) {
             String filename = file.getName();
