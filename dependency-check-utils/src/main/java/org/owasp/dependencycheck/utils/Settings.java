@@ -469,18 +469,41 @@ public final class Settings {
     }
 
     /**
+     * <p>
      * Initializes the thread local settings object. Note, to use the settings
      * object you must call this method. However, you must also call
-     * Settings.cleanup() to properly release resources.
+     * Settings.cleanup() to properly release resources.</p>
+     *
+     * <p>
+     * <b>Note</b> - Only an end user interface such as the CLI, Maven Plugin,
+     * etc. should call initialize. When called `initialize` will over-write any
+     * configured settings (i.e. configured via the maven plugin) and the
+     * default values from dependency-check-core will be used. If you are
+     * running into issues with the settings not being initialized it is likely
+     * due to multi-threading and you should use the `Settings.setInstance`
+     * method instead. See the `TimestampRetriever` class within NvdCveUpdater
+     * as an example.</p>
+     *
      */
     public static void initialize() {
         LOCAL_SETTINGS.set(new Settings(PROPERTIES_FILE));
     }
 
     /**
+     * <p>
      * Initializes the thread local settings object. Note, to use the settings
      * object you must call this method. However, you must also call
-     * Settings.cleanup() to properly release resources.
+     * Settings.cleanup() to properly release resources.</p>
+     *
+     * <p>
+     * <b>Note</b> - Only an end user interface such as the CLI, Maven Plugin,
+     * etc. should call initialize. When called `initialize` will over-write any
+     * configured settings (i.e. configured via the maven plugin) and the
+     * default values from dependency-check-core will be used. If you are
+     * running into issues with the settings not being initialized it is likely
+     * due to multi-threading and you should use the `Settings.setInstance`
+     * method instead. See the `TimestampRetriever` class within NvdCveUpdater
+     * as an example.</p>
      *
      * @param propertiesFilePath the path to the base properties file to load
      */
@@ -524,7 +547,12 @@ public final class Settings {
     }
 
     /**
-     * Sets the instance of the Settings object to use in this thread.
+     * <p>
+     * Sets the instance of the Settings object to use in this thread.</p>
+     * <p>
+     * <b>Note</b> - if using this method to enable multi-threading one must
+     * call `Settings.cleanup(false)`. See the `TimestampRetriever` class within
+     * NvdCveUpdater as an example.</p>
      *
      * @param instance the instance of the settings object to use in this thread
      */
