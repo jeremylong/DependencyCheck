@@ -516,7 +516,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
 
         final Map<String, Future<Long>> timestampFutures = new HashMap<>();
         for (String url : urls) {
-            final TimestampRetriever timestampRetriever = new TimestampRetriever(url);
+            final TimestampRetriever timestampRetriever = new TimestampRetriever(url, Settings.getInstance());
             final Future<Long> future = downloadExecutorService.submit(timestampRetriever);
             timestampFutures.put(url, future);
         }
@@ -545,6 +545,10 @@ public class NvdCveUpdater implements CachedWebDataSource {
     private static class TimestampRetriever implements Callable<Long> {
 
         /**
+         * A reference to the global settings object.
+         */
+        private final Settings settings;
+        /**
          * The URL to obtain the timestamp from.
          */
         private final String url;
@@ -553,16 +557,18 @@ public class NvdCveUpdater implements CachedWebDataSource {
          * Instantiates a new timestamp retriever object.
          *
          * @param url the URL to hit
+         * @param settings the global settings
          */
-        TimestampRetriever(String url) {
+        TimestampRetriever(String url, Settings settings) {
             this.url = url;
+            this.settings = settings;
         }
 
         @Override
         public Long call() throws Exception {
             LOGGER.debug("Checking for updates from: {}", url);
             try {
-                Settings.initialize();
+                Settings.setInstance(settings);
                 return Downloader.getLastModified(new URL(url));
             } finally {
                 Settings.cleanup(false);
