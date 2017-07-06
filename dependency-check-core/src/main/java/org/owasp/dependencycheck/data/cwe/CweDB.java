@@ -54,6 +54,7 @@ public final class CweDB {
      *
      * @return a HashMap of CWE data
      */
+    @SuppressWarnings("unchecked")
     private static Map<String, String> loadData() {
         final String filePath = "data/cwe.hashmap.serialized";
         try (InputStream input = FileUtils.getResourceAsStream(filePath);
