@@ -12,6 +12,16 @@
       <password>${env.JFROG_PASSWORD}</password>
       <id>snapshot</id>
     </server>
+    <server>
+      <username>${env.JFROG_USER}</username>
+      <password>${env.JFROG_PASSWORD}</password>
+      <id>plugins-release</id>
+    </server>
+    <server>
+      <username>${env.JFROG_USER}</username>
+      <password>${env.JFROG_PASSWORD}</password>
+      <id>plugins-snapshot</id>
+    </server>
   </servers>
   <profiles>
     <profile>
@@ -36,13 +46,13 @@
           <snapshots>
             <enabled>false</enabled>
           </snapshots>
-          <id>release</id>
+          <id>plugins-release</id>
           <name>plugins-release</name>
           <url>https://dependencycheck.jfrog.io/dependencycheck/plugins-release</url>
         </pluginRepository>
         <pluginRepository>
           <snapshots />
-          <id>snapshot</id>
+          <id>plugins-snapshot</id>
           <name>plugins-snapshot</name>
           <url>https://dependencycheck.jfrog.io/dependencycheck/plugins-snapshot</url>
         </pluginRepository>
