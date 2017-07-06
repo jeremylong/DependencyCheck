@@ -74,6 +74,10 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private File grokAssemblyExe = null;
     /**
+     * The temp value for GrokAssembly.exe.config
+     */
+    private File grokAssemblyConfig = null;
+    /**
      * Logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(AssemblyAnalyzer.class);
@@ -109,6 +113,13 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
+
+        File test = new File(dependency.getActualFilePath());
+        if (!test.isFile()) {
+            throw new AnalysisException(String.format("%s does not exist and cannot be analyzed by dependency-check",
+                    dependency.getActualFilePath()));
+        }
+
         if (grokAssemblyExe == null) {
             LOGGER.warn("GrokAssembly didn't get deployed");
             return;
@@ -201,22 +212,24 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public void initializeFileTypeAnalyzer() throws InitializationException {
         final File tempFile;
-        final String cfg;
+        final File cfgFile;
         try {
             tempFile = File.createTempFile("GKA", ".exe", Settings.getTempDirectory());
-            cfg = tempFile.getPath() + ".config";
+            cfgFile = new File(tempFile.getPath() + ".config");
         } catch (IOException ex) {
             setEnabled(false);
             throw new InitializationException("Unable to create temporary file for the assembly analyzer", ex);
         }
         try (FileOutputStream fos = new FileOutputStream(tempFile);
-            InputStream is = FileUtils.getResourceAsStream("GrokAssembly.exe");
-            FileOutputStream fosCfg = new FileOutputStream(cfg);
-            InputStream isCfg = FileUtils.getResourceAsStream("GrokAssembly.exe.config")) {
+                InputStream is = FileUtils.getResourceAsStream("GrokAssembly.exe");
+                FileOutputStream fosCfg = new FileOutputStream(cfgFile);
+                InputStream isCfg = FileUtils.getResourceAsStream("GrokAssembly.exe.config")) {
+            IOUtils.copy(is, fos);
             grokAssemblyExe = tempFile;
             LOGGER.debug("Extracted GrokAssembly.exe to {}", grokAssemblyExe.getPath());
             IOUtils.copy(isCfg, fosCfg);
-            LOGGER.debug("Extracted GrokAssembly.exe.config to {}", cfg);
+            grokAssemblyConfig = cfgFile;
+            LOGGER.debug("Extracted GrokAssembly.exe.config to {}", cfgFile);
         } catch (IOException ioe) {
             this.setEnabled(false);
             LOGGER.warn("Could not extract GrokAssembly.exe: {}", ioe.getMessage());
@@ -286,6 +299,15 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (SecurityException se) {
             LOGGER.debug("Can't delete temporary GrokAssembly.exe");
             grokAssemblyExe.deleteOnExit();
+        }
+        try {
+            if (grokAssemblyConfig != null && !grokAssemblyConfig.delete()) {
+                LOGGER.debug("Unable to delete temporary GrokAssembly.exe.config; attempting delete on exit");
+                grokAssemblyConfig.deleteOnExit();
+            }
+        } catch (SecurityException se) {
+            LOGGER.debug("Can't delete temporary GrokAssembly.exe.config");
+            grokAssemblyConfig.deleteOnExit();
         }
     }
 
