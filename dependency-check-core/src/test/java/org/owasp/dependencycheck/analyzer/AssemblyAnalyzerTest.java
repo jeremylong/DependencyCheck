@@ -223,11 +223,5 @@ public class AssemblyAnalyzerTest extends BaseTest {
     @After
     public void tearDown() throws Exception {
         analyzer.closeAnalyzer();
-        if (grokAssemblyExeFile != null) {
-            assertFalse(grokAssemblyExeFile.exists());
-        }
-        if (grokAssemblyConfigFile != null) {
-            assertFalse(grokAssemblyConfigFile.exists());
-        }
     }
 }
