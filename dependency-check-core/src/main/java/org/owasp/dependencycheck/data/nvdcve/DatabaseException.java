@@ -22,7 +22,7 @@ package org.owasp.dependencycheck.data.nvdcve;
  *
  * @author Jeremy Long
  */
-public class DatabaseException extends Exception {
+public class DatabaseException extends RuntimeException {
 
     /**
      * the serial version uid.
