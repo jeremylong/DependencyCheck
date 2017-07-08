@@ -136,9 +136,11 @@ Copyright (c) 2012 - Jeremy Long
     <distributionManagement>
         <snapshotRepository>
             <id>snapshot</id>
+            <name>snapshot</name>
             <url>https://dependencycheck.jfrog.io/dependencycheck/libs-snapshot-local</url>
         </snapshotRepository>
         <repository>
+            <id>release</id>
             <name>release</name>
             <url>https://dependencycheck.jfrog.io/dependencycheck/libs-release-local</url>
         </repository>
