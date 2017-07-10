@@ -583,7 +583,7 @@ public class Engine implements FileFilter, AutoCloseable {
                 }
             }
         }
-        for (AnalysisPhase phase : AnalysisPhase.values()) {
+        for (AnalysisPhase phase : mode.phases) {
             final List<Analyzer> analyzerList = analyzers.get(phase);
 
             for (Analyzer a : analyzerList) {
@@ -788,7 +788,7 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     public List<Analyzer> getAnalyzers() {
         final List<Analyzer> ret = new ArrayList<>();
-        for (AnalysisPhase phase : AnalysisPhase.values()) {
+        for (AnalysisPhase phase : mode.phases) {
             final List<Analyzer> analyzerList = analyzers.get(phase);
             ret.addAll(analyzerList);
         }
