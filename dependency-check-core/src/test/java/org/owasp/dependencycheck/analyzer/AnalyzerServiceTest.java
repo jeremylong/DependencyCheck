@@ -17,12 +17,17 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.util.List;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.utils.Settings;
+
+import java.util.List;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.owasp.dependencycheck.analyzer.AnalysisPhase.FINAL;
+import static org.owasp.dependencycheck.analyzer.AnalysisPhase.INITIAL;
 
 /**
  *
@@ -46,7 +51,22 @@ public class AnalyzerServiceTest extends BaseDBTestCase {
         }
         assertTrue("JarAnalyzer loaded", found);
     }
-    
+
+    /**
+     * Test of getAnalyzers method, of class AnalyzerService.
+     */
+    @Test
+    public void testGetAnalyzers_SpecificPhases() throws Exception {
+        AnalyzerService instance = new AnalyzerService(Thread.currentThread().getContextClassLoader());
+        List<Analyzer> result = instance.getAnalyzers(INITIAL, FINAL);
+
+        for (Analyzer a : result) {
+            if (a.getAnalysisPhase() != INITIAL && a.getAnalysisPhase() != FINAL) {
+                fail("Only expecting analyzers for phases " + INITIAL + " and " + FINAL);
+            }
+        }
+    }
+
     /**
      * Test of getAnalyzers method, of class AnalyzerService.
      */

@@ -57,7 +57,14 @@ import static org.owasp.dependencycheck.analyzer.AnalysisPhase.*;
  */
 public class Engine implements FileFilter {
 
+    /**
+     * {@link Engine} execution modes.
+     */
     public enum Mode {
+        /**
+         * In evidence collection mode the {@link Engine} only collect evidence from the scan targets,
+         * and doesn't require a database.
+         */
         EVIDENCE_COLLECTION(
             false,
             INITIAL,
@@ -65,6 +72,11 @@ public class Engine implements FileFilter {
             INFORMATION_COLLECTION,
             POST_INFORMATION_COLLECTION
         ),
+        /**
+         * In evidence processing mode the {@link Engine} processes the evidence collected using the
+         * {@link #EVIDENCE_COLLECTION} mode. Dependencies should be injected into the {@link Engine}
+         * using {@link Engine#setDependencies(List)}.
+         */
         EVIDENCE_PROCESSING(
             true,
             PRE_IDENTIFIER_ANALYSIS,
@@ -75,6 +87,9 @@ public class Engine implements FileFilter {
             POST_FINDING_ANALYSIS,
             FINAL
         ),
+        /**
+         * In standalone mode the {@link Engine} will collect and process evidence in a single execution.
+         */
         STANDALONE(true, AnalysisPhase.values());
 
         public final boolean requiresDatabase;
@@ -117,18 +132,21 @@ public class Engine implements FileFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(Engine.class);
 
     /**
-     * Creates a new Engine.
+     * Creates a new {@link Mode#STANDALONE} Engine.
      */
     public Engine() {
         this(Mode.STANDALONE);
     }
 
+    /**
+     * Creates a new Engine.
+     */
     public Engine(Mode mode) {
        this(Thread.currentThread().getContextClassLoader(), mode);
     }
 
     /**
-     * Creates a new Engine.
+     * Creates a new {@link Mode#STANDALONE} Engine.
      *
      * @param serviceClassLoader a reference the class loader being used
      */
@@ -140,6 +158,7 @@ public class Engine implements FileFilter {
      * Creates a new Engine.
      *
      * @param serviceClassLoader a reference the class loader being used
+     * @param mode the mode of the engine
      */
     public Engine(ClassLoader serviceClassLoader, Mode mode) {
         this.serviceClassLoader = serviceClassLoader;
