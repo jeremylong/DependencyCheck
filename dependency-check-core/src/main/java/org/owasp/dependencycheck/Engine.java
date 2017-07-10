@@ -62,7 +62,7 @@ public class Engine implements FileFilter {
      */
     public enum Mode {
         /**
-         * In evidence collection mode the {@link Engine} only collect evidence from the scan targets,
+         * In evidence collection mode the {@link Engine} only collects evidence from the scan targets,
          * and doesn't require a database.
          */
         EVIDENCE_COLLECTION(
