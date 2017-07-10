@@ -1,6 +1,5 @@
 package org.owasp.dependencycheck;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,48 +25,45 @@ public class EngineModeTest extends BaseTest {
     public TemporaryFolder tempDir = new TemporaryFolder();
     @Rule
     public TestName testName = new TestName();
-    private Engine engine;
 
     @Before
     public void setUp() throws Exception {
         Settings.setString(Settings.KEYS.DATA_DIRECTORY, tempDir.newFolder().getAbsolutePath());
     }
 
-    @After
-    public void tearDown() throws Exception {
-        engine.cleanup();
-    }
-
     @Test
     public void testEvidenceCollectionMode() throws Exception {
-        engine = new Engine(Engine.Mode.EVIDENCE_COLLECTION);
-        assertDatabase(false);
-        for (AnalysisPhase phase : Engine.Mode.EVIDENCE_COLLECTION.phases) {
-            assertThat(engine.getAnalyzers(phase), is(notNullValue()));
-        }
-        for (AnalysisPhase phase : Engine.Mode.EVIDENCE_PROCESSING.phases) {
-            assertThat(engine.getAnalyzers(phase), is(nullValue()));
+        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_COLLECTION)) {
+            assertDatabase(false);
+            for (AnalysisPhase phase : Engine.Mode.EVIDENCE_COLLECTION.phases) {
+                assertThat(engine.getAnalyzers(phase), is(notNullValue()));
+            }
+            for (AnalysisPhase phase : Engine.Mode.EVIDENCE_PROCESSING.phases) {
+                assertThat(engine.getAnalyzers(phase), is(nullValue()));
+            }
         }
     }
 
     @Test
     public void testEvidenceProcessingMode() throws Exception {
-        engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING);
-        assertDatabase(true);
-        for (AnalysisPhase phase : Engine.Mode.EVIDENCE_PROCESSING.phases) {
-            assertThat(engine.getAnalyzers(phase), is(notNullValue()));
-        }
-        for (AnalysisPhase phase : Engine.Mode.EVIDENCE_COLLECTION.phases) {
-            assertThat(engine.getAnalyzers(phase), is(nullValue()));
+        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING)) {
+            assertDatabase(true);
+            for (AnalysisPhase phase : Engine.Mode.EVIDENCE_PROCESSING.phases) {
+                assertThat(engine.getAnalyzers(phase), is(notNullValue()));
+            }
+            for (AnalysisPhase phase : Engine.Mode.EVIDENCE_COLLECTION.phases) {
+                assertThat(engine.getAnalyzers(phase), is(nullValue()));
+            }
         }
     }
 
     @Test
     public void testStandaloneMode() throws Exception {
-        engine = new Engine(Engine.Mode.STANDALONE);
-        assertDatabase(true);
-        for (AnalysisPhase phase : Engine.Mode.STANDALONE.phases) {
-            assertThat(engine.getAnalyzers(phase), is(notNullValue()));
+        try (Engine engine = new Engine(Engine.Mode.STANDALONE)) {
+            assertDatabase(true);
+            for (AnalysisPhase phase : Engine.Mode.STANDALONE.phases) {
+                assertThat(engine.getAnalyzers(phase), is(notNullValue()));
+            }
         }
     }
 
