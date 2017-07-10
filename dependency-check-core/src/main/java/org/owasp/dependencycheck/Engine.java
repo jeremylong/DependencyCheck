@@ -194,7 +194,7 @@ public class Engine implements FileFilter, AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         cleanup();
     }
 
