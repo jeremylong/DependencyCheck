@@ -115,6 +115,9 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     private final Set<FileTypeAnalyzer> fileTypeAnalyzers = new HashSet<>();
 
+    /**
+     * The engine execution mode indicating it will either collect evidence or process evidence or both.
+     */
     private final Mode mode;
 
     /**
