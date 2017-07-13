@@ -231,7 +231,7 @@ public final class CveDB implements AutoCloseable {
      */
     private static String determineDatabaseProductName(Connection conn) {
         try {
-            final String databaseProductName = conn.getMetaData().getDatabaseProductName();
+            final String databaseProductName = conn.getMetaData().getDatabaseProductName().toLowerCase();
             LOGGER.debug("Database product: {}", databaseProductName);
             return databaseProductName;
         } catch (SQLException se) {
