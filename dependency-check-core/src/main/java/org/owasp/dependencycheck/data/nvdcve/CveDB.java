@@ -258,14 +258,19 @@ public final class CveDB implements AutoCloseable {
      * database connection
      */
     private synchronized void open() throws DatabaseException {
-        if (!instance.isOpen()) {
-            instance.connection = ConnectionFactory.getConnection();
-            final String databaseProductName = determineDatabaseProductName(instance.connection);
-            instance.statementBundle = databaseProductName != null
-                    ? ResourceBundle.getBundle("data/dbStatements", new Locale(databaseProductName))
-                    : ResourceBundle.getBundle("data/dbStatements");
-            instance.prepareStatements();
-            instance.databaseProperties = new DatabaseProperties(instance);
+        try {
+            if (!instance.isOpen()) {
+                instance.connection = ConnectionFactory.getConnection();
+                final String databaseProductName = determineDatabaseProductName(instance.connection);
+                instance.statementBundle = databaseProductName != null
+                        ? ResourceBundle.getBundle("data/dbStatements", new Locale(databaseProductName))
+                        : ResourceBundle.getBundle("data/dbStatements");
+                instance.prepareStatements();
+                instance.databaseProperties = new DatabaseProperties(instance);
+            }
+        } catch(DatabaseException e) {
+            releaseResources();
+            throw e;
         }
     }
 
@@ -290,12 +295,16 @@ public final class CveDB implements AutoCloseable {
                     LOGGER.error("There was an exception attempting to close the CveDB, see the log for more details.");
                     LOGGER.debug("", ex);
                 }
-                instance.statementBundle = null;
-                instance.preparedStatements.clear();
-                instance.databaseProperties = null;
-                instance.connection = null;
+                releaseResources();
             }
         }
+    }
+
+    private synchronized void releaseResources() {
+        instance.statementBundle = null;
+        instance.preparedStatements.clear();
+        instance.databaseProperties = null;
+        instance.connection = null;
     }
 
     /**
@@ -315,15 +324,15 @@ public final class CveDB implements AutoCloseable {
      */
     private void prepareStatements() throws DatabaseException {
         for (PreparedStatementCveDb key : values()) {
-            final String statementString = statementBundle.getString(key.name());
             final PreparedStatement preparedStatement;
             try {
+                final String statementString = statementBundle.getString(key.name());
                 if (key == INSERT_VULNERABILITY || key == INSERT_CPE) {
                     preparedStatement = connection.prepareStatement(statementString, new String[]{"id"});
                 } else {
                     preparedStatement = connection.prepareStatement(statementString);
                 }
-            } catch (SQLException exception) {
+            } catch (SQLException | MissingResourceException exception) {
                 throw new DatabaseException(exception);
             }
             preparedStatements.put(key, preparedStatement);
@@ -492,7 +501,7 @@ public final class CveDB implements AutoCloseable {
                 mergeProperty.setString(1, key);
                 mergeProperty.setString(2, value);
                 mergeProperty.executeUpdate();
-            } catch (MissingResourceException mre) {
+            } catch (SQLException e) {
                 // No Merge statement, so doing an Update/Insert...
                 final PreparedStatement updateProperty = getPreparedStatement(UPDATE_PROPERTY);
                 updateProperty.setString(1, value);
