@@ -117,7 +117,7 @@ public final class ConnectionFactory {
                     }
                 } catch (DriverLoadException ex) {
                     LOGGER.debug("Unable to load database driver", ex);
-                    throw new DatabaseException("Unable to load database driver");
+                    throw new DatabaseException("Unable to load database driver", ex);
                 }
             }
             userName = Settings.getString(Settings.KEYS.DB_USER, "dcuser");
@@ -130,7 +130,7 @@ public final class ConnectionFactory {
             } catch (IOException ex) {
                 LOGGER.debug(
                         "Unable to retrieve the database connection string", ex);
-                throw new DatabaseException("Unable to retrieve the database connection string");
+                throw new DatabaseException("Unable to retrieve the database connection string", ex);
             }
             boolean shouldCreateSchema = false;
             try {
@@ -140,7 +140,7 @@ public final class ConnectionFactory {
                 }
             } catch (IOException ioex) {
                 LOGGER.debug("Unable to verify database exists", ioex);
-                throw new DatabaseException("Unable to verify database exists");
+                throw new DatabaseException("Unable to verify database exists", ioex);
             }
             LOGGER.debug("Loading database connection");
             LOGGER.debug("Connection String: {}", connectionString);
@@ -157,11 +157,11 @@ public final class ConnectionFactory {
                         LOGGER.debug("Unable to start the database in server mode; reverting to single user mode");
                     } catch (SQLException sqlex) {
                         LOGGER.debug("Unable to connect to the database", ex);
-                        throw new DatabaseException("Unable to connect to the database");
+                        throw new DatabaseException("Unable to connect to the database", ex);
                     }
                 } else {
                     LOGGER.debug("Unable to connect to the database", ex);
-                    throw new DatabaseException("Unable to connect to the database");
+                    throw new DatabaseException("Unable to connect to the database", ex);
                 }
             }
 
@@ -170,7 +170,7 @@ public final class ConnectionFactory {
                     createTables(conn);
                 } catch (DatabaseException dex) {
                     LOGGER.debug("", dex);
-                    throw new DatabaseException("Unable to create the database structure");
+                    throw new DatabaseException("Unable to create the database structure", dex);
                 }
             }
             try {
@@ -228,7 +228,7 @@ public final class ConnectionFactory {
             conn = DriverManager.getConnection(connectionString, userName, password);
         } catch (SQLException ex) {
             LOGGER.debug("", ex);
-            throw new DatabaseException("Unable to connect to the database");
+            throw new DatabaseException("Unable to connect to the database", ex);
         }
         return conn;
     }
@@ -317,7 +317,7 @@ public final class ConnectionFactory {
         try {
             databaseProductName = conn.getMetaData().getDatabaseProductName();
         } catch (SQLException ex) {
-            throw new DatabaseException("Unable to get the database product name");
+            throw new DatabaseException("Unable to get the database product name", ex);
         }
         if ("h2".equalsIgnoreCase(databaseProductName)) {
             LOGGER.debug("Updating database structure");
@@ -412,7 +412,7 @@ public final class ConnectionFactory {
             }
         } catch (SQLException ex) {
             LOGGER.debug("", ex);
-            throw new DatabaseException("Unable to check the database schema version");
+            throw new DatabaseException("Unable to check the database schema version", ex);
         } finally {
             DBUtils.closeResultSet(rs);
             DBUtils.closeStatement(ps);
