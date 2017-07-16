@@ -202,12 +202,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * The paths to the suppression files.
      */
-    @Parameter(required = false)
+    @Parameter(property = "suppressionFiles", required = false)
     private String[] suppressionFiles;
     /**
      * The paths to the suppression file.
      */
-    @Parameter(required = false)
+    @Parameter(property = "suppressionFile", required = false)
     private String suppressionFile;
     /**
      * The path to the hints file.
