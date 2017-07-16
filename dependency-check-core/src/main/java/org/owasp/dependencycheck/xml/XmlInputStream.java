@@ -159,7 +159,8 @@ public class XmlInputStream extends FilterInputStream {
                 // Keep it.
                 pushBack.append(code);
             } else {
-                throw new IOException("Invalid/Unknown reference '&" + reference + ";'");
+                // invalid entity. Encode the & and append the sequence of chars.
+                pushBack.append("&#38;").append(reference).append((char) ch);
             }
         } else {
             // Did not terminate properly!

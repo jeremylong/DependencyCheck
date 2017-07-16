@@ -7,7 +7,7 @@
    <groupId>org.jmockit</groupId><artifactId>jmockit</artifactId><version>1.26</version>
    <packaging>jar</packaging>
 
-   <name>Main &oslash; modified to test issue #710</name>
+   <name>Main &oslash; modified to test issue #710 and #801 (&amps;)</name>
    <description>
       JMockit is a Java toolkit for automated developer testing.
       It contains mocking and faking APIs and a code coverage tool, supporting both JUnit and TestNG.
