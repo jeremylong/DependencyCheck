@@ -487,18 +487,19 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-            These CVEs only affect jackson-dataformat-xml. See issue #517 and #751.
+            These CVEs only affect jackson-dataformat-xml. See issue #517, #751, and #792.
       ]]></notes>
-        <gav regex="true">(org\.codehaus\.jackson|com\.fasterxml\.jackson\.core):jackson.*</gav>
+        <gav regex="true">(org\.codehaus\.jackson|com\.fasterxml\.jackson\.(core|module|datatype|jaxrs)):jackson.*</gav>
         <cve>CVE-2016-3720</cve>
         <cve>CVE-2016-7051</cve>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-            This CVE only affects jackson-dataformat-xml. See issue #517.
+            These CVE only affects jackson-dataformat-xml. See issue #517.
         ]]></notes>
         <gav regex="true">com\.fasterxml\.jackson\.dataformat:jackson(?!\-dataformat\-xml).*</gav>
         <cve>CVE-2016-3720</cve>
+        <cve>CVE-2016-7051</cve>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
