@@ -268,7 +268,7 @@ public final class CveDB implements AutoCloseable {
                 instance.prepareStatements();
                 instance.databaseProperties = new DatabaseProperties(instance);
             }
-        } catch(DatabaseException e) {
+        } catch (DatabaseException e) {
             releaseResources();
             throw e;
         }
@@ -324,7 +324,7 @@ public final class CveDB implements AutoCloseable {
      */
     private void prepareStatements() throws DatabaseException {
         for (PreparedStatementCveDb key : values()) {
-            final PreparedStatement preparedStatement;
+            PreparedStatement preparedStatement = null;
             try {
                 final String statementString = statementBundle.getString(key.name());
                 if (key == INSERT_VULNERABILITY || key == INSERT_CPE) {
@@ -332,10 +332,16 @@ public final class CveDB implements AutoCloseable {
                 } else {
                     preparedStatement = connection.prepareStatement(statementString);
                 }
-            } catch (SQLException | MissingResourceException exception) {
-                throw new DatabaseException(exception);
+            } catch (SQLException ex) {
+                throw new DatabaseException(ex);
+            } catch (MissingResourceException ex) {
+                if (!ex.getMessage().contains("key MERGE_PROPERTY")) {
+                    throw new DatabaseException(ex);
+                }
             }
-            preparedStatements.put(key, preparedStatement);
+            if (preparedStatement != null) {
+                preparedStatements.put(key, preparedStatement);
+            }
         }
     }
 
@@ -357,6 +363,9 @@ public final class CveDB implements AutoCloseable {
      * @throws SQLException thrown if a SQL Exception occurs
      */
     private synchronized PreparedStatement getPreparedStatement(PreparedStatementCveDb key) throws SQLException {
+        if (!preparedStatements.containsKey(key)) {
+            return null;
+        }
         final PreparedStatement preparedStatement = preparedStatements.get(key);
         preparedStatement.clearParameters();
         return preparedStatement;
@@ -496,12 +505,12 @@ public final class CveDB implements AutoCloseable {
     public synchronized void saveProperty(String key, String value) {
         clearCache();
         try {
-            try {
-                final PreparedStatement mergeProperty = getPreparedStatement(MERGE_PROPERTY);
+            final PreparedStatement mergeProperty = getPreparedStatement(MERGE_PROPERTY);
+            if (mergeProperty != null) {
                 mergeProperty.setString(1, key);
                 mergeProperty.setString(2, value);
                 mergeProperty.executeUpdate();
-            } catch (SQLException e) {
+            } else {
                 // No Merge statement, so doing an Update/Insert...
                 final PreparedStatement updateProperty = getPreparedStatement(UPDATE_PROPERTY);
                 updateProperty.setString(1, value);
