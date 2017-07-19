@@ -17,13 +17,13 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ServiceLoader;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
+
+import static java.util.Arrays.asList;
 
 /**
  * The Analyzer Service Loader. This class loads all services that implement
@@ -57,6 +57,24 @@ public class AnalyzerService {
      * @return a list of Analyzers.
      */
     public List<Analyzer> getAnalyzers() {
+        return getAnalyzers(AnalysisPhase.values());
+    }
+
+    /**
+     * Returns a list of all instances of the Analyzer interface that are bound to one of the given phases.
+     *
+     * @return a list of Analyzers.
+     */
+    public List<Analyzer> getAnalyzers(AnalysisPhase... phases) {
+        return getAnalyzers(asList(phases));
+    }
+
+    /**
+     * Returns a list of all instances of the Analyzer interface that are bound to one of the given phases.
+     *
+     * @return a list of Analyzers.
+     */
+    private List<Analyzer> getAnalyzers(List<AnalysisPhase> phases) {
         final List<Analyzer> analyzers = new ArrayList<>();
         final Iterator<Analyzer> iterator = service.iterator();
         boolean experimentalEnabled = false;
@@ -67,6 +85,9 @@ public class AnalyzerService {
         }
         while (iterator.hasNext()) {
             final Analyzer a = iterator.next();
+            if (!phases.contains(a.getAnalysisPhase())) {
+                continue;
+            }
             if (!experimentalEnabled && a.getClass().isAnnotationPresent(Experimental.class)) {
                 continue;
             }
