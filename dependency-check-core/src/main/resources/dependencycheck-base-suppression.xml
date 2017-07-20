@@ -56,14 +56,14 @@
         <notes><![CDATA[
         Sandbox is a php blog platform and should not be flagged as a CPE for java or .net dependencies.
         ]]></notes>
-        <filePath regex="true">.*\.(jar|dll|exe|ear|war|pom)</filePath>
+        <filePath regex="true">.*(\.(dll|jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
         Suppress false positives around dash.
         ]]></notes>
-        <filePath regex="true">.*\.(jar|ear|war|pom)</filePath>
+        <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:dash:dash</cpe>
     </suppress>
     <suppress base="true">
@@ -337,21 +337,21 @@
         <notes><![CDATA[
         false positive in drop wizard
         ]]></notes>
-        <filePath regex="true">.*\.(jar|ear|war|pom)</filePath>
+        <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)</filePath>
         <cpe>cpe:/a:tiger:tiger</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
         php cpe
         ]]></notes>
-        <filePath regex="true">.*\.(jar|exe|dll|ear|war|pom)</filePath>
+        <filePath regex="true">.*(\.(dll|jar|ear|war|pom)|pom\.xml)</filePath>
         <cpe>cpe:/a:class:class</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
         Linux ssh False Positives
         ]]></notes>
-        <filePath regex="true">.*\.(jar|ear|war|pom)</filePath>
+        <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)</filePath>
         <cpe>cpe:/a:pam:pam</cpe>
         <cpe>cpe:/a:pam_ssh:pam_ssh</cpe>
         <cpe>cpe:/a:sun:linux</cpe>
@@ -440,7 +440,7 @@
         <notes><![CDATA[
         Drupal services false positive.
         ]]></notes>
-        <filePath regex="true">.*\.(jar|ear|war|pom)</filePath>
+        <filePath regex="true">.*(\.(jar|ear|war|pom)|pom\.xml)</filePath>
         <cpe>cpe:/a:services_project:services</cpe>
     </suppress>
     <suppress base="true">
