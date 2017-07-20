@@ -54,10 +54,12 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Sandbox is a php blog platform and should not be flagged as a CPE for java or .net dependencies.
+        1. Sandbox is a php blog platform and should not be flagged as a CPE for java or .net dependencies.
+        2. Open media is php and won't be in a jar, dll, etc. See issue #814.
         ]]></notes>
         <filePath regex="true">.*(\.(dll|jar|ear|war|pom)|pom\.xml)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
+        <cpe>cpe:/a:openmedia:openmedia</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
