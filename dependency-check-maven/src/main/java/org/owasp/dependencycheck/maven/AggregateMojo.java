@@ -86,6 +86,14 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
                 exCol.getExceptions().addAll(ex.getExceptions());
                 if (ex.isFatal()) {
                     exCol.setFatal(true);
+                    final String msg = String.format("Fatal exception(s) analyzing %s", childProject.getName());
+                    if (this.isFailOnError()) {
+                        throw new MojoExecutionException(msg, exCol);
+                    }
+                    getLog().error(msg);
+                    if (getLog().isDebugEnabled()) {
+                        getLog().debug(exCol);
+                    }
                 }
             }
         }
