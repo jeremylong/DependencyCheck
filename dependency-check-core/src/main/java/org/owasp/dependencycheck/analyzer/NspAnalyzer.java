@@ -149,6 +149,12 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
         final File file = dependency.getActualFile();
         try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {
 
+            // Do not scan the node_modules directory
+            if (file.getCanonicalPath().contains(File.separator + "node_modules" + File.separator )) {
+                LOGGER.debug("Skipping analysis of node module: " + file.getCanonicalPath());
+                return;
+            }
+
             // Retrieves the contents of package.json from the Dependency
             final JsonObject packageJson = jsonReader.readObject();
 
