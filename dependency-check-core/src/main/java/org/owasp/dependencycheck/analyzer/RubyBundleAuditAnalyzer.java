@@ -50,7 +50,6 @@ import org.slf4j.LoggerFactory;
  *
  * @author Dale Visser
  */
-@Experimental
 public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
