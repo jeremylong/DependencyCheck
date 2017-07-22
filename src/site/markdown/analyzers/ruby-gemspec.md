@@ -14,6 +14,8 @@ evidence to identify any Common Platform Enumeration (CPE) identifiers that
 apply.
 
 *Note*: It is highly recommended that Ruby projects use
-[bundler-audit](https://github.com/rubysec/bundler-audit#readme).
+[bundler-audit](https://github.com/rubysec/bundler-audit#readme). It is possible
+to incorporate the results of bundle-audit into the dependency-check report(s) by
+using the [bundle-audit analyzer](./bundle-audit.html).
 
 Files Types Scanned: Rakefile, \*.gemspec
