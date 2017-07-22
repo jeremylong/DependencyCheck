@@ -172,7 +172,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
             throw new UpdateException("Database Exception", ex);
         } finally {
             shutdownExecutorServices();
-            if(cveDb != null) {
+            if (cveDb != null) {
                 cveDb.close();
             }
             if (lock != null) {

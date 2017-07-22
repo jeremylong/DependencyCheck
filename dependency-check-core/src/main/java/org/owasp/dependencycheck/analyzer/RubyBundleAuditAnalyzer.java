@@ -128,7 +128,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         final ProcessBuilder builder = new ProcessBuilder(args);
         builder.directory(folder);
         try {
-            LOGGER.info("Launching: {} from {}",args, folder);
+            LOGGER.info("Launching: {} from {}", args, folder);
             return builder.start();
         } catch (IOException ioe) {
             throw new AnalysisException("bundle-audit initialization failure; this error can be ignored if you are not analyzing Ruby. "
@@ -204,7 +204,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
 
         if (isEnabled()) {
             LOGGER.info("{} is enabled. It is necessary to manually run \"bundle-audit update\" "
-                    + "occasionally to keep its database up to date.",ANALYZER_NAME);
+                    + "occasionally to keep its database up to date.", ANALYZER_NAME);
         }
     }
 
@@ -273,15 +273,15 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             for (FileTypeAnalyzer analyzer : engine.getFileTypeAnalyzers()) {
                 if (analyzer instanceof RubyBundlerAnalyzer) {
                     ((RubyBundlerAnalyzer) analyzer).setEnabled(false);
-                    LOGGER.info("Disabled {} to avoid noisy duplicate results.",RubyBundlerAnalyzer.class.getName());
+                    LOGGER.info("Disabled {} to avoid noisy duplicate results.", RubyBundlerAnalyzer.class.getName());
                 } else if (analyzer instanceof RubyGemspecAnalyzer) {
                     ((RubyGemspecAnalyzer) analyzer).setEnabled(false);
-                    LOGGER.info("Disabled {} to avoid noisy duplicate results.",className);
+                    LOGGER.info("Disabled {} to avoid noisy duplicate results.", className);
                     failed = false;
                 }
             }
             if (failed) {
-                LOGGER.warn("Did not find {}.",className);
+                LOGGER.warn("Did not find {}.", className);
             }
             needToDisableGemspecAnalyzer = false;
         }

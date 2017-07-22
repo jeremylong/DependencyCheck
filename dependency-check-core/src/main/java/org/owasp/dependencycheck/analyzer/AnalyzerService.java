@@ -32,6 +32,7 @@ import static java.util.Arrays.asList;
  * @author Jeremy Long
  */
 public class AnalyzerService {
+
     /**
      * The Logger for use throughout the class.
      */
@@ -45,7 +46,8 @@ public class AnalyzerService {
     /**
      * Creates a new instance of AnalyzerService.
      *
-     * @param classLoader the ClassLoader to use when dynamically loading Analyzer and Update services
+     * @param classLoader the ClassLoader to use when dynamically loading
+     * Analyzer and Update services
      */
     public AnalyzerService(ClassLoader classLoader) {
         service = ServiceLoader.load(Analyzer.class, classLoader);
@@ -61,8 +63,10 @@ public class AnalyzerService {
     }
 
     /**
-     * Returns a list of all instances of the Analyzer interface that are bound to one of the given phases.
+     * Returns a list of all instances of the Analyzer interface that are bound
+     * to one of the given phases.
      *
+     * @param phases the phases to obtain analyzers for
      * @return a list of Analyzers.
      */
     public List<Analyzer> getAnalyzers(AnalysisPhase... phases) {
@@ -70,9 +74,11 @@ public class AnalyzerService {
     }
 
     /**
-     * Returns a list of all instances of the Analyzer interface that are bound to one of the given phases.
+     * Returns a list of all instances of the Analyzer interface that are bound
+     * to one of the given phases.
      *
-     * @return a list of Analyzers.
+     * @param phases the phases to obtain analyzers for
+     * @return a list of Analyzers
      */
     private List<Analyzer> getAnalyzers(List<AnalysisPhase> phases) {
         final List<Analyzer> analyzers = new ArrayList<>();

@@ -150,7 +150,7 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
         try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {
 
             // Do not scan the node_modules directory
-            if (file.getCanonicalPath().contains(File.separator + "node_modules" + File.separator )) {
+            if (file.getCanonicalPath().contains(File.separator + "node_modules" + File.separator)) {
                 LOGGER.debug("Skipping analysis of node module: " + file.getCanonicalPath());
                 return;
             }

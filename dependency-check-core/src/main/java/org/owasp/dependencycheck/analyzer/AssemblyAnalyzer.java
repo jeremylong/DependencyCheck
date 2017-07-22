@@ -114,7 +114,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     public void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
 
-        File test = new File(dependency.getActualFilePath());
+        final File test = new File(dependency.getActualFilePath());
         if (!test.isFile()) {
             throw new AnalysisException(String.format("%s does not exist and cannot be analyzed by dependency-check",
                     dependency.getActualFilePath()));

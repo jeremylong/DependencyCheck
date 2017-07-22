@@ -62,39 +62,53 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     public enum Mode {
         /**
-         * In evidence collection mode the {@link Engine} only collects evidence from the scan targets,
-         * and doesn't require a database.
+         * In evidence collection mode the {@link Engine} only collects evidence
+         * from the scan targets, and doesn't require a database.
          */
         EVIDENCE_COLLECTION(
-            false,
-            INITIAL,
-            PRE_INFORMATION_COLLECTION,
-            INFORMATION_COLLECTION,
-            POST_INFORMATION_COLLECTION
+                false,
+                INITIAL,
+                PRE_INFORMATION_COLLECTION,
+                INFORMATION_COLLECTION,
+                POST_INFORMATION_COLLECTION
         ),
         /**
-         * In evidence processing mode the {@link Engine} processes the evidence collected using the
-         * {@link #EVIDENCE_COLLECTION} mode. Dependencies should be injected into the {@link Engine}
-         * using {@link Engine#setDependencies(List)}.
+         * In evidence processing mode the {@link Engine} processes the evidence
+         * collected using the {@link #EVIDENCE_COLLECTION} mode. Dependencies
+         * should be injected into the {@link Engine} using
+         * {@link Engine#setDependencies(List)}.
          */
         EVIDENCE_PROCESSING(
-            true,
-            PRE_IDENTIFIER_ANALYSIS,
-            IDENTIFIER_ANALYSIS,
-            POST_IDENTIFIER_ANALYSIS,
-            PRE_FINDING_ANALYSIS,
-            FINDING_ANALYSIS,
-            POST_FINDING_ANALYSIS,
-            FINAL
+                true,
+                PRE_IDENTIFIER_ANALYSIS,
+                IDENTIFIER_ANALYSIS,
+                POST_IDENTIFIER_ANALYSIS,
+                PRE_FINDING_ANALYSIS,
+                FINDING_ANALYSIS,
+                POST_FINDING_ANALYSIS,
+                FINAL
         ),
         /**
-         * In standalone mode the {@link Engine} will collect and process evidence in a single execution.
+         * In standalone mode the {@link Engine} will collect and process
+         * evidence in a single execution.
          */
         STANDALONE(true, AnalysisPhase.values());
 
+        /**
+         * Whether the database is required in this mode.
+         */
         public final boolean requiresDatabase;
+        /**
+         * The analysis phases included in the mode.
+         */
         public final AnalysisPhase[] phases;
 
+        /**
+         * Constructs a new mode.
+         *
+         * @param requiresDatabase if the database is required for the mode
+         * @param phases the analysis phases to include in the mode
+         */
         Mode(boolean requiresDatabase, AnalysisPhase... phases) {
             this.requiresDatabase = requiresDatabase;
             this.phases = phases;
@@ -116,7 +130,8 @@ public class Engine implements FileFilter, AutoCloseable {
     private final Set<FileTypeAnalyzer> fileTypeAnalyzers = new HashSet<>();
 
     /**
-     * The engine execution mode indicating it will either collect evidence or process evidence or both.
+     * The engine execution mode indicating it will either collect evidence or
+     * process evidence or both.
      */
     private final Mode mode;
 
@@ -143,9 +158,11 @@ public class Engine implements FileFilter, AutoCloseable {
 
     /**
      * Creates a new Engine.
+     *
+     * @param mode the mode of operation
      */
     public Engine(Mode mode) {
-       this(Thread.currentThread().getContextClassLoader(), mode);
+        this(Thread.currentThread().getContextClassLoader(), mode);
     }
 
     /**

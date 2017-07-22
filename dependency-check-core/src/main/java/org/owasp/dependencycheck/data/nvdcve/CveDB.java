@@ -300,6 +300,9 @@ public final class CveDB implements AutoCloseable {
         }
     }
 
+    /**
+     * Releases the resources used by CveDB.
+     */
     private synchronized void releaseResources() {
         instance.statementBundle = null;
         instance.preparedStatements.clear();

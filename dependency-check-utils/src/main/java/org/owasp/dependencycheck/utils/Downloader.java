@@ -174,7 +174,7 @@ public final class Downloader {
                 } else {
                     reader = conn.getInputStream();
                 }
-                
+
                 final byte[] buffer = new byte[4096];
                 int bytesRead;
                 while ((bytesRead = reader.read(buffer)) > 0) {
