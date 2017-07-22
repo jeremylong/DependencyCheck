@@ -147,6 +147,9 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         }
         showSummary(this.getProject(), engine.getDependencies());
         checkForFailure(engine.getDependencies());
+        if (exCol != null && this.isFailOnError()) {
+            throw new MojoExecutionException("One or more exceptions occurred during dependency-check analysis", exCol);
+        }
         engine.cleanup();
         Settings.cleanup();
     }
