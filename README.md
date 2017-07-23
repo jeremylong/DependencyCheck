@@ -166,7 +166,7 @@ New:
 ```xml
 <dependency-check
   failBuildOnCVSS="3">
-  <suppressionFile>suppression.xml</suppressionFile>
+  <suppressionFile path="suppression.xml" />
 </dependency-check>
 ```
 
