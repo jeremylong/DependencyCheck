@@ -42,8 +42,21 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.*;
 
@@ -97,20 +110,38 @@ public class Engine implements FileFilter, AutoCloseable {
         /**
          * Whether the database is required in this mode.
          */
-        public final boolean requiresDatabase;
+        private final boolean databaseRequired;
         /**
          * The analysis phases included in the mode.
          */
-        public final AnalysisPhase[] phases;
+        private final AnalysisPhase[] phases;
+
+        /**
+         * Returns true if the database is required; otherwise false.
+         *
+         * @return whether or not the database is required
+         */
+        public boolean isDatabseRequired() {
+            return databaseRequired;
+        }
+
+        /**
+         * Returns the phases for this mode.
+         *
+         * @return the phases for this mode
+         */
+        public AnalysisPhase[] getPhases() {
+            return phases;
+        }
 
         /**
          * Constructs a new mode.
          *
-         * @param requiresDatabase if the database is required for the mode
+         * @param databaseRequired if the database is required for the mode
          * @param phases the analysis phases to include in the mode
          */
-        Mode(boolean requiresDatabase, AnalysisPhase... phases) {
-            this.requiresDatabase = requiresDatabase;
+        Mode(boolean databaseRequired, AnalysisPhase... phases) {
+            this.databaseRequired = databaseRequired;
             this.phases = phases;
         }
     }
@@ -194,7 +225,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * database
      */
     protected final void initializeEngine() {
-        if (mode.requiresDatabase) {
+        if (mode.isDatabseRequired()) {
             ConnectionFactory.initialize();
         }
         loadAnalyzers();
@@ -204,7 +235,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * Properly cleans up resources allocated during analysis.
      */
     public void cleanup() {
-        if (mode.requiresDatabase) {
+        if (mode.isDatabseRequired()) {
             if (database != null) {
                 database.close();
                 database = null;
@@ -226,12 +257,12 @@ public class Engine implements FileFilter, AutoCloseable {
         if (!analyzers.isEmpty()) {
             return;
         }
-        for (AnalysisPhase phase : mode.phases) {
+        for (AnalysisPhase phase : mode.getPhases()) {
             analyzers.put(phase, new ArrayList<Analyzer>());
         }
 
         final AnalyzerService service = new AnalyzerService(serviceClassLoader);
-        final List<Analyzer> iterator = service.getAnalyzers(mode.phases);
+        final List<Analyzer> iterator = service.getAnalyzers(mode.getPhases());
         for (Analyzer a : iterator) {
             analyzers.get(a.getAnalysisPhase()).add(a);
             if (a instanceof FileTypeAnalyzer) {
@@ -580,7 +611,7 @@ public class Engine implements FileFilter, AutoCloseable {
         final long analysisStart = System.currentTimeMillis();
 
         // analysis phases
-        for (AnalysisPhase phase : mode.phases) {
+        for (AnalysisPhase phase : mode.getPhases()) {
             final List<Analyzer> analyzerList = analyzers.get(phase);
 
             for (final Analyzer analyzer : analyzerList) {
@@ -603,7 +634,7 @@ public class Engine implements FileFilter, AutoCloseable {
                 }
             }
         }
-        for (AnalysisPhase phase : mode.phases) {
+        for (AnalysisPhase phase : mode.getPhases()) {
             final List<Analyzer> analyzerList = analyzers.get(phase);
 
             for (Analyzer a : analyzerList) {
@@ -626,7 +657,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @throws ExceptionCollection thrown if fatal exceptions occur
      */
     private void initializeAndUpdateDatabase(final List<Throwable> exceptions) throws ExceptionCollection {
-        if (!mode.requiresDatabase) {
+        if (!mode.isDatabseRequired()) {
             return;
         }
         boolean autoUpdate = true;
@@ -785,7 +816,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @throws UpdateException thrown if the operation fails
      */
     public void doUpdates() throws UpdateException {
-        if (mode.requiresDatabase) {
+        if (mode.isDatabseRequired()) {
             LOGGER.info("Checking for updates");
             final long updateStart = System.currentTimeMillis();
             final UpdateService service = new UpdateService(serviceClassLoader);
@@ -808,7 +839,7 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     public List<Analyzer> getAnalyzers() {
         final List<Analyzer> ret = new ArrayList<>();
-        for (AnalysisPhase phase : mode.phases) {
+        for (AnalysisPhase phase : mode.getPhases()) {
             final List<Analyzer> analyzerList = analyzers.get(phase);
             ret.addAll(analyzerList);
         }
@@ -862,7 +893,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @throws NoDataException thrown if no data exists in the CPE Index
      */
     private void ensureDataExists() throws NoDataException {
-        if (mode.requiresDatabase && (database == null || !database.dataExists())) {
+        if (mode.isDatabseRequired() && (database == null || !database.dataExists())) {
             throw new NoDataException("No documents exist");
         }
     }

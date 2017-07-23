@@ -41,10 +41,10 @@ public class EngineModeIT extends BaseTest {
         List<Dependency> dependencies;
         try (Engine engine = new Engine(Engine.Mode.EVIDENCE_COLLECTION)) {
             assertDatabase(false);
-            for (AnalysisPhase phase : Engine.Mode.EVIDENCE_COLLECTION.phases) {
+            for (AnalysisPhase phase : Engine.Mode.EVIDENCE_COLLECTION.getPhases()) {
                 assertThat(engine.getAnalyzers(phase), is(notNullValue()));
             }
-            for (AnalysisPhase phase : Engine.Mode.EVIDENCE_PROCESSING.phases) {
+            for (AnalysisPhase phase : Engine.Mode.EVIDENCE_PROCESSING.getPhases()) {
                 assertThat(engine.getAnalyzers(phase), is(nullValue()));
             }
             File file = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
@@ -60,10 +60,10 @@ public class EngineModeIT extends BaseTest {
 
         try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING)) {
             assertDatabase(true);
-            for (AnalysisPhase phase : Engine.Mode.EVIDENCE_PROCESSING.phases) {
+            for (AnalysisPhase phase : Engine.Mode.EVIDENCE_PROCESSING.getPhases()) {
                 assertThat(engine.getAnalyzers(phase), is(notNullValue()));
             }
-            for (AnalysisPhase phase : Engine.Mode.EVIDENCE_COLLECTION.phases) {
+            for (AnalysisPhase phase : Engine.Mode.EVIDENCE_COLLECTION.getPhases()) {
                 assertThat(engine.getAnalyzers(phase), is(nullValue()));
             }
             engine.setDependencies(dependencies);
@@ -77,7 +77,7 @@ public class EngineModeIT extends BaseTest {
     public void testStandaloneMode() throws Exception {
         try (Engine engine = new Engine(Engine.Mode.STANDALONE)) {
             assertDatabase(true);
-            for (AnalysisPhase phase : Engine.Mode.STANDALONE.phases) {
+            for (AnalysisPhase phase : Engine.Mode.STANDALONE.getPhases()) {
                 assertThat(engine.getAnalyzers(phase), is(notNullValue()));
             }
             File file = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");

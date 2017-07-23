@@ -17,13 +17,15 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.util.ArrayList;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-
 import static java.util.Arrays.asList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ServiceLoader;
 
 /**
  * The Analyzer Service Loader. This class loads all services that implement

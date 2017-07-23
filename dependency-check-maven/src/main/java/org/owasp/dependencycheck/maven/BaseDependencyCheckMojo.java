@@ -763,9 +763,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
         // Define the default FileSets
         if (scanSet == null || scanSet.length == 0) {
-            FileSet resourcesSet = new FileSet();
-            FileSet filtersSet = new FileSet();
-            FileSet webappSet = new FileSet();
+            final FileSet resourcesSet = new FileSet();
+            final FileSet filtersSet = new FileSet();
+            final FileSet webappSet = new FileSet();
             try {
                 resourcesSet.setDirectory(new File(project.getBasedir(), "src/main/resources").getCanonicalPath());
                 filtersSet.setDirectory(new File(project.getBasedir(), "src/main/filters").getCanonicalPath());
@@ -779,14 +779,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             scanSet = new FileSet[] {resourcesSet, filtersSet, webappSet};
         }
         // Iterate through FileSets and scan included files
-        FileSetManager fileSetManager = new FileSetManager();
+        final FileSetManager fileSetManager = new FileSetManager();
         for (FileSet fileSet: scanSet) {
-            String[] includedFiles = fileSetManager.getIncludedFiles(fileSet);
+            final String[] includedFiles = fileSetManager.getIncludedFiles(fileSet);
             for (String include: includedFiles) {
-                File includeFile = new File(fileSet.getDirectory(), include).getAbsoluteFile();
+                final File includeFile = new File(fileSet.getDirectory(), include).getAbsoluteFile();
                 if (includeFile.exists()) {
                     engine.scan(includeFile, project.getName());
                 }
+                //TODO - should we add an exception/error reporting for files that do not exist?
             }
         }
 
