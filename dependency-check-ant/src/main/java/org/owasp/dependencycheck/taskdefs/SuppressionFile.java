@@ -35,8 +35,17 @@ public class SuppressionFile {
      *
      * @param text the simple content.
      */
-    public final void addText(String text) {
-        this.path = text;
+    //public final void addConfigured(String text) {
+    //    this.path = text;
+    //}
+
+    /**
+     * Sets the path to the suppression file.
+     *
+     * @param path
+     */
+    public void setPath(String path) {
+        this.path = path;
     }
 
     /**

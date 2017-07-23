@@ -17,8 +17,7 @@ the project's dependencies.
     <dependency-check projectname="Hello World"
                       reportoutputdirectory="${basedir}"
                       reportformat="ALL">
-
-        <suppressionfile>path/to/suppression.xml</suppressionfile>
+        <suppressionfile path="${basedir}/path/to/suppression.xml" />
         <fileset dir="lib">
             <include name="**/*.jar"/>
         </fileset>
@@ -46,12 +45,13 @@ proxyUsername         | Defines the proxy user name.                            
 proxyPassword         | Defines the proxy password.                                                                                                                                                                        | &nbsp;
 connectionTimeout     | The URL Connection Timeout.                                                                                                                                                                        | &nbsp;
 enableExperimental    | Enable the [experimental analyzers](../analyzers/index.html). If not enabled the experimental analyzers (see below) will not be loaded or used.                                                    | false
+suppressionFile       | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html).                                                                                      | &nbsp;
 
 The following nested elements can be set on the dependency-check task.
 
-Property              | Description                                                                                                                                                                                        | Default Value
-----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------
-suppressionFile       | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html). Element can be specified multiple times.                                             | &nbsp;
+Element           | Property | Description                                                                                                                                                                                        | Default Value
+------------------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------
+suppressionFile   | path     | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html). Element can be specified multiple times.                                             | &nbsp;
 
 Analyzer Configuration
 ====================
