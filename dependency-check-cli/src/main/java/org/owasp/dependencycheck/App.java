@@ -359,14 +359,8 @@ public class App {
      * connection to the database could not be established
      */
     private void runUpdateOnly() throws UpdateException, DatabaseException {
-        Engine engine = null;
-        try {
-            engine = new Engine();
+        try (Engine engine = new Engine()) {
             engine.doUpdates();
-        } finally {
-            if (engine != null) {
-                engine.cleanup();
-            }
         }
     }
 

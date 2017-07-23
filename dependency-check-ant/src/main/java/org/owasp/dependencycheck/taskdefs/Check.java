@@ -948,9 +948,7 @@ public class Check extends Update {
         dealWithReferences();
         validateConfiguration();
         populateSettings();
-        Engine engine = null;
-        try {
-            engine = new Engine(Check.class.getClassLoader());
+        try (Engine engine = new Engine(Check.class.getClassLoader())) {
             if (isUpdateOnly()) {
                 log("Deprecated 'UpdateOnly' property set; please use the UpdateTask instead", Project.MSG_WARN);
                 try {
@@ -1002,9 +1000,6 @@ public class Check extends Update {
             log(msg, ex, Project.MSG_ERR);
         } finally {
             Settings.cleanup(true);
-            if (engine != null) {
-                engine.cleanup();
-            }
         }
     }
 

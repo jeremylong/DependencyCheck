@@ -65,9 +65,7 @@ public class UpdateMojo extends BaseDependencyCheckMojo {
      */
     @Override
     public void runCheck() throws MojoExecutionException, MojoFailureException {
-        Engine engine = null;
-        try {
-            engine = initializeEngine();
+        try (Engine engine = initializeEngine()) {
             engine.doUpdates();
         } catch (DatabaseException ex) {
             if (getLog().isDebugEnabled()) {
@@ -84,11 +82,9 @@ public class UpdateMojo extends BaseDependencyCheckMojo {
                 throw new MojoExecutionException(msg, ex);
             }
             getLog().error(msg);
+        } finally {
+            Settings.cleanup();
         }
-        if (engine != null) {
-            engine.cleanup();
-        }
-        Settings.cleanup();
     }
 
     /**

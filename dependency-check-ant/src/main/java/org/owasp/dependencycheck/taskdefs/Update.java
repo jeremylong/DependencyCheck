@@ -385,9 +385,7 @@ public class Update extends Purge {
     @Override
     public void execute() throws BuildException {
         populateSettings();
-        Engine engine = null;
-        try {
-            engine = new Engine(Update.class.getClassLoader());
+        try (Engine engine = new Engine(Update.class.getClassLoader())) {
             try {
                 engine.doUpdates();
             } catch (UpdateException ex) {
@@ -404,9 +402,6 @@ public class Update extends Purge {
             log(msg, Project.MSG_ERR);
         } finally {
             Settings.cleanup(true);
-            if (engine != null) {
-                engine.cleanup();
-            }
         }
     }
 
