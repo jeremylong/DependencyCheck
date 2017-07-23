@@ -47,6 +47,8 @@ import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
+import org.apache.maven.shared.model.fileset.FileSet;
+import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -494,6 +496,16 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      */
     private Filter<String> artifactTypeExcluded;
 
+    /**
+     * An array of <code>fileSet</code>s that specify additional files and/or directories
+     * (from the basedir) to analyze as part of the scan. If not specified, defaults to
+     * Maven conventions of:
+     * src/main/resources, src/main/filters, and src/main/webapp
+     */
+    @Parameter(property = "scanSet", required = false)
+    private FileSet[] scanSet;
+
+
     // </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Base Maven implementation">
     /**
@@ -748,6 +760,36 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 exCol.addException(ex);
             }
         }
+
+        // Define the default FileSets
+        if (scanSet == null || scanSet.length == 0) {
+            FileSet resourcesSet = new FileSet();
+            FileSet filtersSet = new FileSet();
+            FileSet webappSet = new FileSet();
+            try {
+                resourcesSet.setDirectory(new File(project.getBasedir(), "src/main/resources").getCanonicalPath());
+                filtersSet.setDirectory(new File(project.getBasedir(), "src/main/filters").getCanonicalPath());
+                webappSet.setDirectory(new File(project.getBasedir(), "src/main/webapp").getCanonicalPath());
+            } catch (IOException ex) {
+                if (exCol == null) {
+                    exCol = new ExceptionCollection();
+                }
+                exCol.addException(ex);
+            }
+            scanSet = new FileSet[] {resourcesSet, filtersSet, webappSet};
+        }
+        // Iterate through FileSets and scan included files
+        FileSetManager fileSetManager = new FileSetManager();
+        for (FileSet fileSet: scanSet) {
+            String[] includedFiles = fileSetManager.getIncludedFiles(fileSet);
+            for (String include: includedFiles) {
+                File includeFile = new File(fileSet.getDirectory(), include).getAbsoluteFile();
+                if (includeFile.exists()) {
+                    engine.scan(includeFile, project.getName());
+                }
+            }
+        }
+
         return exCol;
     }
 
