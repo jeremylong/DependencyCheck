@@ -37,7 +37,7 @@
                     "sha1": "#if($related.Sha1sum)$enc.json($related.Sha1sum)#end",
                     "md5": "#if($related.Md5sum)$enc.json($related.Md5sum)#end"#if($related.getIdentifiers()),
                     "identifiers": [
-                        #foreach($id in $related.getIdentifiers())
+                        #foreach($id in $related.getIdentifiers())#if($foreach.count > 1),#end
                             #if ($id.type=="maven")
                                 {
                                     "type": "$enc.json($id.type)",
@@ -47,8 +47,10 @@
                                 }
                             #end
                             #if ($id.type=="npm")
-                                ,"id":"$enc.json($id.value)"
-                                ,"description":"$enc.json($id.description)"
+                                {
+                                    "id":"$enc.json($id.value)"
+                                    ,"description":"$enc.json($id.description)"
+                                }
                             #end
                         #end
                     ]#end
@@ -90,8 +92,9 @@
                     }
                     #end
                 ]
-            },
-            "identifiers": [
+            }
+            #if($dependency.getIdentifiers() && $dependency.getIdentifiers().size()>0)
+                ,"identifiers": [
                 #foreach($id in $dependency.getIdentifiers())#if($foreach.count > 1),#end{
                     "name": "$id.value",
                     "type": "$enc.json($id.type)",
@@ -99,22 +102,23 @@
                     #if($id.url)"url": "$enc.json($id.url)",#end
                     #if($id.description )"description": "$enc.json($id.description)",#end
                     #if ($id.notes)"notes": "$enc.json($id.notes)",#end
-                    "suppressedIdentifiers": [
-                        #foreach($id in $dependency.getSuppressedIdentifiers())
-                            #if($foreach.count > 1),#end{
-                                "type": "$enc.json($id.type)",
-                                #if($id.confidence)"confidence": "$id.confidence",#end
-                                "name": "$id.value",
-                                #if($id.url)"url": "$enc.json($id.url),"#end
-                                #if($id.description)"description": "$enc.json($id.description)",#end
-                                #if ($id.notes)"notes": "$enc.json($id.notes)"#end
-                        }
-                        #end
-                    ]
                 }
                 #end
-            ]
-            #if($dependency.getVulnerabilities().size()>0 || $dependency.getSuppressedVulnerabilities().size()>0)
+            ]#end
+            #if($dependency.getSuppressedIdentifiers() && $dependency.getSuppressedIdentifiers().size()>0)
+                ,"suppressedIdentifiers": [
+                #foreach($id in $dependency.getSuppressedIdentifiers())#if($foreach.count > 1),#end{
+                        "name": "$id.value",
+                        "type": "$enc.json($id.type)",
+                        #if($id.confidence)"confidence": "$id.confidence",#end
+                        #if($id.url)"url": "$enc.json($id.url),"#end
+                        #if($id.description)"description": "$enc.json($id.description)",#end
+                        #if ($id.notes)"notes": "$enc.json($id.notes)"#end
+                    }
+                #end
+            ]#end
+
+            #if($dependency.getVulnerabilities().size()>0)
             ,"vulnerabilities": [
             #foreach($vuln in $dependency.getVulnerabilities())#if($foreach.count > 1),#end {
                 "name": "$enc.json($vuln.name)",
