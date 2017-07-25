@@ -650,4 +650,11 @@
         <filePath regex="true">.*newrelic-?agent.*\.jar[\\\/]instrumentation.*\.jar</filePath>
         <cpe regex="true">.*</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False Positices per issue #823
+        ]]></notes>
+        <gav regex="true">^io\.swagger:.*$</gav>
+        <cpe>cpe:/a:sonatype:nexus</cpe>
+    </suppress>
 </suppressions>
