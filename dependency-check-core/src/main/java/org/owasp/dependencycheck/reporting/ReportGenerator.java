@@ -395,9 +395,9 @@ public class ReportGenerator {
      * Reformats the given JSON file.
      *
      * @param pathToJson the path to the JSON file to be reformatted
-     * @throws JsonSyntaxException thrown if the given JSON file is malformed
+     * @throws ReportException thrown if the given JSON file is malformed
      */
-    private void pretifyJson(String pathToJson) throws JsonSyntaxException {
+    private void pretifyJson(String pathToJson) throws ReportException {
         final String outputPath = pathToJson + ".pretty";
         final File in = new File(pathToJson);
         final File out = new File(outputPath);
@@ -405,8 +405,8 @@ public class ReportGenerator {
                 JsonWriter writer = new JsonWriter(new OutputStreamWriter(new FileOutputStream(out), StandardCharsets.UTF_8))) {
             prettyPrint(reader, writer);
         } catch (IOException ex) {
-            LOGGER.error("Unable to generate pretty report, caused by: ", ex.getMessage());
-            return;
+            LOGGER.debug("Malformed JSON?", ex);
+            throw new ReportException("Unable to generate json report", ex);
         }
         if (out.isFile() && in.isFile() && in.delete()) {
             try {
