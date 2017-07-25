@@ -1,6 +1,7 @@
 package org.owasp.dependencycheck;
 
 import org.junit.Before;
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -31,9 +32,20 @@ public class EngineModeIT extends BaseTest {
     @Rule
     public TestName testName = new TestName();
 
+    private String originalDataDir = null;
+
     @Before
     public void setUp() throws Exception {
-        Settings.setString(Settings.KEYS.DATA_DIRECTORY, tempDir.newFolder().getAbsolutePath());
+        // Have to use System properties as the Settings object pulls from the 
+        // system properties before configured properties
+        originalDataDir = Settings.getString(Settings.KEYS.DATA_DIRECTORY);
+        System.setProperty(Settings.KEYS.DATA_DIRECTORY, tempDir.newFolder().getAbsolutePath());
+    }
+
+    @After
+    public void tearDown() {
+        //Reset system property to original value just to be safe for other tests.
+        System.setProperty(Settings.KEYS.DATA_DIRECTORY, originalDataDir);
     }
 
     @Test
