@@ -11,6 +11,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.Settings;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -21,6 +22,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import org.junit.Assume;
+import org.owasp.dependencycheck.utils.FileUtils;
 
 /**
  * @author Mark Rekveld
@@ -43,9 +46,12 @@ public class EngineModeIT extends BaseTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws IOException {
+        //delete temp files
+        FileUtils.delete(Settings.getDataDirectory());
         //Reset system property to original value just to be safe for other tests.
         System.setProperty(Settings.KEYS.DATA_DIRECTORY, originalDataDir);
+
     }
 
     @Test
@@ -105,6 +111,7 @@ public class EngineModeIT extends BaseTest {
     }
 
     private void assertDatabase(boolean exists) throws Exception {
+        Assume.assumeThat(Settings.getString(Settings.KEYS.DB_DRIVER_NAME), is("org.h2.Driver"));
         Path directory = Settings.getDataDirectory().toPath();
         assertThat(Files.exists(directory), is(true));
         assertThat(Files.isDirectory(directory), is(true));
