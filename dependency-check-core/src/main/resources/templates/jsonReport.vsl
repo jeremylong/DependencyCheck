@@ -37,8 +37,11 @@
                     "sha1": "#if($related.Sha1sum)$enc.json($related.Sha1sum)#end",
                     "md5": "#if($related.Md5sum)$enc.json($related.Md5sum)#end"#if($related.getIdentifiers()),
                     "identifiers": [
-                        #foreach($id in $related.getIdentifiers())#if($foreach.count > 1),#end
+                        #set($loopCount=0)
+                        #foreach($id in $related.getIdentifiers())
                             #if ($id.type=="maven")
+                                #set($loopCount=$loopCount+1)
+                                #if($loopCount>1),#end
                                 {
                                     "type": "$enc.json($id.type)",
                                     "name": "$id.value"
@@ -47,6 +50,8 @@
                                 }
                             #end
                             #if ($id.type=="npm")
+                                #set($loopCount=$loopCount+1)
+                                #if($loopCount>1),#end
                                 {
                                     "id":"$enc.json($id.value)"
                                     ,"description":"$enc.json($id.description)"
@@ -83,37 +88,43 @@
                 ],
                 "versionEvidence": [
                     #foreach($evidence in $dependency.getVersionEvidence())
-                    #if($foreach.count > 1),#end{
-                    "type": "version",
-                    "confidence": "$enc.json($evidence.getConfidence().toString())",
-                    "source": "$enc.json($evidence.getSource())",
-                    "name": "$enc.json($evidence.getName())",
-                    "value": "$enc.json($evidence.getValue().trim())"
+                    #if($foreach.count > 1),#end
+                    {
+                        "type": "version",
+                        "confidence": "$enc.json($evidence.getConfidence().toString())",
+                        "source": "$enc.json($evidence.getSource())",
+                        "name": "$enc.json($evidence.getName())",
+                        "value": "$enc.json($evidence.getValue().trim())"
                     }
                     #end
                 ]
             }
             #if($dependency.getIdentifiers() && $dependency.getIdentifiers().size()>0)
                 ,"identifiers": [
-                #foreach($id in $dependency.getIdentifiers())#if($foreach.count > 1),#end{
-                    "name": "$id.value",
-                    "type": "$enc.json($id.type)",
-                    #if($id.confidence)"confidence": "$id.confidence",#end
-                    #if($id.url)"url": "$enc.json($id.url)",#end
-                    #if($id.description )"description": "$enc.json($id.description)",#end
-                    #if ($id.notes)"notes": "$enc.json($id.notes)",#end
-                }
+                #foreach($id in $dependency.getIdentifiers())
+                    #if($foreach.count > 1),#end
+                    {
+                        "count": "$loopCount",
+                        "name": "$id.value",
+                        "type": "$enc.json($id.type)"
+                        #if($id.confidence),"confidence": "$id.confidence"#end
+                        #if($id.url),"url": "$enc.json($id.url)"#end
+                        #if($id.description),"description": "$enc.json($id.description)"#end
+                        #if($id.notes),"notes": "$enc.json($id.notes)"#end
+                    }
                 #end
             ]#end
             #if($dependency.getSuppressedIdentifiers() && $dependency.getSuppressedIdentifiers().size()>0)
                 ,"suppressedIdentifiers": [
-                #foreach($id in $dependency.getSuppressedIdentifiers())#if($foreach.count > 1),#end{
+                #foreach($id in $dependency.getSuppressedIdentifiers())
+                    #if($foreach.count > 1),#end
+                    {
                         "name": "$id.value",
-                        "type": "$enc.json($id.type)",
-                        #if($id.confidence)"confidence": "$id.confidence",#end
-                        #if($id.url)"url": "$enc.json($id.url),"#end
-                        #if($id.description)"description": "$enc.json($id.description)",#end
-                        #if ($id.notes)"notes": "$enc.json($id.notes)"#end
+                        "type": "$enc.json($id.type)"
+                        #if($id.confidence),"confidence": "$id.confidence"#end
+                        #if($id.url),"url": "$enc.json($id.url)"#end
+                        #if($id.description),"description": "$enc.json($id.description)"#end
+                        #if($id.notes),"notes": "$enc.json($id.notes)"#end
                     }
                 #end
             ]#end
