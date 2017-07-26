@@ -17,21 +17,17 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.utils.Settings;
-import org.owasp.dependencycheck.xml.suppression.SuppressionRule;
 
 /**
- * The suppression analyzer processes an externally defined XML document that complies with the suppressions.xsd schema.
- * Any identified CPE entries within the dependencies that match will be removed.
+ * The suppression analyzer processes an externally defined XML document that
+ * complies with the suppressions.xsd schema. Any identified CPE entries within
+ * the dependencies that match will be removed.
  *
  * @author Jeremy Long
  */
 public class CpeSuppressionAnalyzer extends AbstractSuppressionAnalyzer {
 
-    //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
      * The name of the analyzer.
      */
@@ -59,19 +55,6 @@ public class CpeSuppressionAnalyzer extends AbstractSuppressionAnalyzer {
     @Override
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
-    }
-    //</editor-fold>
-
-    @Override
-    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-
-        if (getRules() == null || getRules().size() <= 0) {
-            return;
-        }
-
-        for (final SuppressionRule rule : getRules()) {
-            rule.process(dependency);
-        }
     }
 
     /**

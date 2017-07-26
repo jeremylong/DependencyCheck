@@ -103,7 +103,7 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
 
         // THEN rules from both files were loaded
         final int expectedSize = rulesInFirstFile + rulesInSecondFile + rulesInCoreFile;
-        assertThat("Expected suppressions from both files", instance.getRules().size(), is(expectedSize));
+        assertThat("Expected suppressions from both files", instance.getRuleCount(), is(expectedSize));
     }
 
     @Test(expected = InitializationException.class)
@@ -123,7 +123,7 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
 
         final AbstractSuppressionAnalyzerImpl coreFileAnalyzer = new AbstractSuppressionAnalyzerImpl();
         coreFileAnalyzer.initialize();
-        return coreFileAnalyzer.getRules().size();
+        return coreFileAnalyzer.getRuleCount();
     }
 
     /**
@@ -138,7 +138,7 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
 
         final AbstractSuppressionAnalyzerImpl fileAnalyzer = new AbstractSuppressionAnalyzerImpl();
         fileAnalyzer.initialize();
-        return fileAnalyzer.getRules().size();
+        return fileAnalyzer.getRuleCount();
     }
 
     public class AbstractSuppressionAnalyzerImpl extends AbstractSuppressionAnalyzer {

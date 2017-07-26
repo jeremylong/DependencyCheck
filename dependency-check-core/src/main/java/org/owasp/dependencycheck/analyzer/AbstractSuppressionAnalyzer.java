@@ -22,9 +22,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.xml.suppression.SuppressionParseException;
 import org.owasp.dependencycheck.xml.suppression.SuppressionParser;
@@ -49,8 +53,20 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
      * The Logger for use throughout the class
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSuppressionAnalyzer.class);
+    /**
+     * The list of suppression rules
+     */
+    private List<SuppressionRule> rules;
 
-    //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
+    /**
+     * Get the number of suppression rules.
+     *
+     * @return the number of suppression rules
+     */
+    protected synchronized int getRuleCount() {
+        return rules.size();
+    }
+
     /**
      * Returns a list of file EXTENSIONS supported by this analyzer.
      *
@@ -60,7 +76,6 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         return null;
     }
 
-    //</editor-fold>
     /**
      * The initialize method loads the suppression XML file.
      *
@@ -75,39 +90,27 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         }
     }
 
-    /**
-     * The list of suppression rules
-     */
-    private List<SuppressionRule> rules;
-
-    /**
-     * Get the value of rules.
-     *
-     * @return the value of rules
-     */
-    public List<SuppressionRule> getRules() {
-        return rules;
+    @Override
+    protected synchronized void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+        if (rules == null || rules.size() <= 0) {
+            return;
+        }
+        for (final SuppressionRule rule : rules) {
+            rule.process(dependency);
+        }
     }
 
     /**
-     * Set the value of rules.
-     *
-     * @param rules new value of rules
-     */
-    public void setRules(List<SuppressionRule> rules) {
-        this.rules = rules;
-    }
-
-    /**
-     * Loads all the suppression rules files configured in the {@link Settings} singleton.
+     * Loads all the suppression rules files configured in the {@link Settings}
+     * singleton.
      *
      * @throws SuppressionParseException thrown if the XML cannot be parsed.
      */
-    private void loadSuppressionData() throws SuppressionParseException {
+    private synchronized void loadSuppressionData() throws SuppressionParseException {
         final SuppressionParser parser = new SuppressionParser();
         try {
             final InputStream in = FileUtils.getResourceAsStream("dependencycheck-base-suppression.xml");
-            rules = parser.parseSuppressionRules(in);
+            rules = Collections.synchronizedList(parser.parseSuppressionRules(in));
         } catch (SAXException ex) {
             throw new SuppressionParseException("Unable to parse the base suppression data file", ex);
         }
@@ -124,13 +127,15 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Load a single suppression rules file from the path provided using the parser provided.
+     * Load a single suppression rules file from the path provided using the
+     * parser provided.
      *
      * @param parser the parser to use for loading the file.
      * @param suppressionFilePath the path to load.
-     * @throws SuppressionParseException thrown if the suppression file cannot be loaded and parsed.
+     * @throws SuppressionParseException thrown if the suppression file cannot
+     * be loaded and parsed.
      */
-    private void loadSuppressionFile(final SuppressionParser parser, final String suppressionFilePath) throws SuppressionParseException {
+    private synchronized void loadSuppressionFile(final SuppressionParser parser, final String suppressionFilePath) throws SuppressionParseException {
         LOGGER.debug("Loading suppression rules from '{}'", suppressionFilePath);
 
         File file = null;
