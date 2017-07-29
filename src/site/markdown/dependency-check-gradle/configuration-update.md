@@ -44,7 +44,6 @@ server            | The proxy server.                  | &nbsp;
 port              | The proxy port.                    | &nbsp;
 username          | Defines the proxy user name.       | &nbsp;
 password          | Defines the proxy password.        | &nbsp;
-connectionTimeout | The URL Connection Timeout.        | &nbsp;
 
 #### Example
 ```groovy

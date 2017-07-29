@@ -55,7 +55,6 @@ server            | The proxy server; see the [proxy configuration](../data/prox
 port              | The proxy port.                    | &nbsp;
 username          | Defines the proxy user name.       | &nbsp;
 password          | Defines the proxy password.        | &nbsp;
-connectionTimeout | The URL Connection Timeout.        | &nbsp;
 
 #### Example
 ```groovy
