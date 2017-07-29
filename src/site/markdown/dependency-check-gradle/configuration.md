@@ -49,12 +49,12 @@ dependencyCheck {
 
 ### Proxy Configuration
 
-Property          | Description                        | Default Value
-------------------|------------------------------------|------------------
-server            | The proxy server; see the [proxy configuration](../data/proxy.html) page for more information. | &nbsp;
-port              | The proxy port.                    | &nbsp;
-username          | Defines the proxy user name.       | &nbsp;
-password          | Defines the proxy password.        | &nbsp;
+Config Group | Property          | Description                        | Default Value
+-------------|-------------------|------------------------------------|------------------
+proxy        | server            | The proxy server; see the [proxy configuration](../data/proxy.html) page for more information. | &nbsp;
+proxy        | port              | The proxy port.                    | &nbsp;
+proxy        | username          | Defines the proxy user name.       | &nbsp;
+proxy        | password          | Defines the proxy password.        | &nbsp;
 
 #### Example
 ```groovy
