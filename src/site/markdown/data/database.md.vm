@@ -27,7 +27,7 @@ To setup a centralized database the following generalized steps can be used:
 </li><li>Dependency-check clients running scans will need to be configured to use the central database:
    <ul><li>The database driver will need to be specified using the dbDriver and if the driver is not
          already in the classpath the dbDriverPath options will need to be set (see the specific configuration
-         options for Maven, Ant, CLI, and Jenkins).</li>
+         options for Maven, Gradle, Ant, CLI, and Jenkins).</li>
        <li>The connection string, database user name, and the database user's password will also need to be configured.</li>
    </ul>
 </li></ol>
