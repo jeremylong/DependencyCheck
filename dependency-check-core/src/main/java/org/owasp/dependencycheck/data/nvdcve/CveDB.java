@@ -512,7 +512,7 @@ public final class CveDB implements AutoCloseable {
             if (mergeProperty != null) {
                 mergeProperty.setString(1, key);
                 mergeProperty.setString(2, value);
-                mergeProperty.executeUpdate();
+                mergeProperty.execute();
             } else {
                 // No Merge statement, so doing an Update/Insert...
                 final PreparedStatement updateProperty = getPreparedStatement(UPDATE_PROPERTY);
