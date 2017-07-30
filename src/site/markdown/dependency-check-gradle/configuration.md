@@ -49,13 +49,12 @@ dependencyCheck {
 
 ### Proxy Configuration
 
-Property          | Description                        | Default Value
-------------------|------------------------------------|------------------
-server            | The proxy server; see the [proxy configuration](../data/proxy.html) page for more information. | &nbsp;
-port              | The proxy port.                    | &nbsp;
-username          | Defines the proxy user name.       | &nbsp;
-password          | Defines the proxy password.        | &nbsp;
-connectionTimeout | The URL Connection Timeout.        | &nbsp;
+Config Group | Property          | Description                        | Default Value
+-------------|-------------------|------------------------------------|------------------
+proxy        | server            | The proxy server; see the [proxy configuration](../data/proxy.html) page for more information. | &nbsp;
+proxy        | port              | The proxy port.                    | &nbsp;
+proxy        | username          | Defines the proxy user name.       | &nbsp;
+proxy        | password          | Defines the proxy password.        | &nbsp;
 
 #### Example
 ```groovy
@@ -102,32 +101,32 @@ analyzers by configuring the `analyzers` section. Note, specific file type analy
 disable themselves if no file types that they support are detected - so specifically disabling the
 analyzers is likely not needed.
 
-Property              | Description                                                                                                       | Default Value
-----------------------|-------------------------------------------------------------------------------------------------------------------|------------------
-experimentalEnabled   | Sets whether the [experimental analyzers](../analyzers/index.html) will be used. If not set to true the analyzers marked as experimental (see below) will not be used | false
-archiveEnabled        | Sets whether the Archive Analyzer will be used.                                                                   | true
-zipExtensions         | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
-jarEnabled            | Sets whether Jar Analyzer will be used.                                                                           | true
-centralEnabled        | Sets whether Central Analyzer will be used. If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer (see below). | true
-nexusEnabled          | Sets whether Nexus Analyzer will be used. This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
-nexusUrl              | Defines the Nexus Server's web service end point (example http://domain.enterprise/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
-nexusUsesProxy        | Whether or not the defined proxy should be used when connecting to Nexus.                                         | true
-pyDistributionEnabled | Sets whether the [experimental](../analyzers/index.html) Python Distribution Analyzer will be used.               | true
-pyPackageEnabled      | Sets whether the [experimental](../analyzers/index.html) Python Package Analyzer will be used.                    | true
-rubygemsEnabled       | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used.                      | true
-opensslEnabled        | Sets whether or not the openssl Analyzer should be used.                                                          | true
-nuspecEnabled         | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.                                                  | true
-assemblyEnabled       | Sets whether or not the .NET Assembly Analyzer should be used.                                                    | true
-pathToMono            | The path to Mono for .NET assembly analysis on non-windows systems.                                               | &nbsp;
-cmakeEnabled          | Sets whether or not the [experimental](../analyzers/index.html) CMake Analyzer should be used.                    | true
-autoconfEnabled       | Sets whether or not the [experimental](../analyzers/index.html) autoconf Analyzer should be used.                 | true
-composerEnabled       | Sets whether or not the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.   | true
-nodeEnabled           | Sets whether or not the [experimental](../analyzers/index.html) Node.js Analyzer should be used.                  | true
-nspEnabled            | Sets whether the NSP Analyzer should be used.                                                                     | true
-cocoapodsEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used.                | true
-swiftEnabled          | Sets whether or not the [experimental](../analyzers/index.html) Swift Package Manager Analyzer should be used.    | true
-bundleAuditEnabled    | Sets whether or not the [experimental](../analyzers/index.html) Ruby Bundle Audit Analyzer should be used.        | true
-pathToBundleAudit     | The path to bundle audit.                                                                                         | &nbsp;
+Config Group | Property              | Description                                                                                                       | Default Value
+-------------|-----------------------|-------------------------------------------------------------------------------------------------------------------|------------------
+analyzers    | experimentalEnabled   | Sets whether the [experimental analyzers](../analyzers/index.html) will be used. If not set to true the analyzers marked as experimental (see below) will not be used | false
+analyzers    | archiveEnabled        | Sets whether the Archive Analyzer will be used.                                                                   | true
+analyzers    | zipExtensions         | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
+analyzers    | jarEnabled            | Sets whether Jar Analyzer will be used.                                                                           | true
+analyzers    | centralEnabled        | Sets whether Central Analyzer will be used. If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer (see below). | true
+analyzers    | nexusEnabled          | Sets whether Nexus Analyzer will be used. This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
+analyzers    | nexusUrl              | Defines the Nexus Server's web service end point (example http://domain.enterprise/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
+analyzers    | nexusUsesProxy        | Whether or not the defined proxy should be used when connecting to Nexus.                                         | true
+analyzers    | pyDistributionEnabled | Sets whether the [experimental](../analyzers/index.html) Python Distribution Analyzer will be used.               | true
+analyzers    | pyPackageEnabled      | Sets whether the [experimental](../analyzers/index.html) Python Package Analyzer will be used.                    | true
+analyzers    | rubygemsEnabled       | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used.                      | true
+analyzers    | opensslEnabled        | Sets whether or not the openssl Analyzer should be used.                                                          | true
+analyzers    | nuspecEnabled         | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.                                                  | true
+analyzers    | assemblyEnabled       | Sets whether or not the .NET Assembly Analyzer should be used.                                                    | true
+analyzers    | pathToMono            | The path to Mono for .NET assembly analysis on non-windows systems.                                               | &nbsp;
+analyzers    | cmakeEnabled          | Sets whether or not the [experimental](../analyzers/index.html) CMake Analyzer should be used.                    | true
+analyzers    | autoconfEnabled       | Sets whether or not the [experimental](../analyzers/index.html) autoconf Analyzer should be used.                 | true
+analyzers    | composerEnabled       | Sets whether or not the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used.   | true
+analyzers    | nodeEnabled           | Sets whether or not the [experimental](../analyzers/index.html) Node.js Analyzer should be used.                  | true
+analyzers    | nspEnabled            | Sets whether the NSP Analyzer should be used.                                                                     | true
+analyzers    | cocoapodsEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used.                | true
+analyzers    | swiftEnabled          | Sets whether or not the [experimental](../analyzers/index.html) Swift Package Manager Analyzer should be used.    | true
+analyzers    | bundleAuditEnabled    | Sets whether or not the [experimental](../analyzers/index.html) Ruby Bundle Audit Analyzer should be used.        | true
+analyzers    | pathToBundleAudit     | The path to bundle audit.                                                                                         | &nbsp;
 
 #### Example
 ```groovy
