@@ -573,7 +573,7 @@ public class Engine implements FileFilter, AutoCloseable {
                     }
                 }
             } else {
-                LOGGER.debug("Path passed to scanFile(File) is not a file: {}. Skipping the file.", file);
+                LOGGER.debug("Path passed to scanFile(File) is not a file that can be scanned by dependency-check: {}. Skipping the file.", file);
             }
         }
         return dependency;
