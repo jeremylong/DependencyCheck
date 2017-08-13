@@ -737,13 +737,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                                     dependencyNode.getArtifact().getId(), project.getName());
                             getLog().debug(msg);
                         }
+                    } else if ("import".equals(dependencyNode.getArtifact().getScope())) {
+                        final String msg = String.format("Skipping '%s:%s' in project %s as it uses an `import` scope",
+                                dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
+                        getLog().debug(msg);
                     } else {
-                        final String msg = String.format("Error resolving '%s' in project %s",
-                                dependencyNode.getArtifact().getId(), project.getName());
-                        if (exCol == null) {
-                            exCol = new ExceptionCollection();
-                        }
-                        getLog().error(msg);
+                        final String msg = String.format("No analzer could be found for '%s:%s' in project %s",
+                                dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
+                        getLog().warn(msg);
                     }
                 } else {
                     final String msg = String.format("Unable to resolve '%s' in project %s",
