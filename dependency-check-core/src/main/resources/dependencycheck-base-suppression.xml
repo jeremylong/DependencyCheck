@@ -657,4 +657,11 @@
         <gav regex="true">^io\.swagger:.*$</gav>
         <cpe>cpe:/a:sonatype:nexus</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #838
+        ]]></notes>
+        <gav regex="true">^org\.springframework\.boot:.*$</gav>
+        <cpe>cpe:/a:pivotal_software:spring_data_jpa</cpe>
+    </suppress>
 </suppressions>
