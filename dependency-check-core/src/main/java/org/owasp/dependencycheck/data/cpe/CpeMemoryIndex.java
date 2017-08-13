@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
-public final class CpeMemoryIndex {
+public final class CpeMemoryIndex implements AutoCloseable {
 
     /**
      * The logger.
@@ -160,6 +160,7 @@ public final class CpeMemoryIndex {
     /**
      * Closes the CPE Index.
      */
+    @Override
     public synchronized void close() {
         if (searchingAnalyzer != null) {
             searchingAnalyzer.close();
@@ -206,7 +207,6 @@ public final class CpeMemoryIndex {
                     v.setStringValue(pair.getLeft());
                     p.setStringValue(pair.getRight());
                     indexWriter.addDocument(doc);
-                    resetFieldAnalyzer();
                 }
             }
             indexWriter.commit();
@@ -218,18 +218,6 @@ public final class CpeMemoryIndex {
             throw new IndexException("Unable to close an in-memory index", ex);
         } catch (IOException ex) {
             throw new IndexException("Unable to close an in-memory index", ex);
-        }
-    }
-
-    /**
-     * Resets the product and vendor field analyzers.
-     */
-    private void resetFieldAnalyzer() {
-        if (productFieldAnalyzer != null) {
-            productFieldAnalyzer.clear();
-        }
-        if (vendorFieldAnalyzer != null) {
-            vendorFieldAnalyzer.clear();
         }
     }
 
@@ -248,7 +236,6 @@ public final class CpeMemoryIndex {
             throw new ParseException("Query is null or empty");
         }
         LOGGER.debug(searchString);
-        resetFieldAnalyzer();
         final Query query = queryParser.parse(searchString);
         return search(query, maxQueryResults);
     }
@@ -263,7 +250,6 @@ public final class CpeMemoryIndex {
      * @throws IOException thrown if there is an IOException
      */
     public synchronized TopDocs search(Query query, int maxQueryResults) throws CorruptIndexException, IOException {
-        resetFieldAnalyzer();
         return indexSearcher.search(query, maxQueryResults);
     }
 
