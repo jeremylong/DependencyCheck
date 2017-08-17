@@ -223,23 +223,19 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        try {
-            final List<ClassNameInformation> classNames = collectClassNames(dependency);
-            final String fileName = dependency.getFileName().toLowerCase();
-            if (classNames.isEmpty()
-                    && (fileName.endsWith("-sources.jar")
-                    || fileName.endsWith("-javadoc.jar")
-                    || fileName.endsWith("-src.jar")
-                    || fileName.endsWith("-doc.jar"))) {
-                engine.getDependencies().remove(dependency);
-            }
-            final boolean hasManifest = parseManifest(dependency, classNames);
-            final boolean hasPOM = analyzePOM(dependency, classNames, engine);
-            final boolean addPackagesAsEvidence = !(hasManifest && hasPOM);
-            analyzePackageNames(classNames, dependency, addPackagesAsEvidence);
-        } catch (IOException ex) {
-            throw new AnalysisException("Exception occurred reading the JAR file (" + dependency.getFileName() + ").", ex);
+        final List<ClassNameInformation> classNames = collectClassNames(dependency);
+        final String fileName = dependency.getFileName().toLowerCase();
+        if (classNames.isEmpty()
+            && (fileName.endsWith("-sources.jar")
+            || fileName.endsWith("-javadoc.jar")
+            || fileName.endsWith("-src.jar")
+            || fileName.endsWith("-doc.jar"))) {
+            engine.getDependencies().remove(dependency);
         }
+        final boolean hasManifest = parseManifest(dependency, classNames);
+        final boolean hasPOM = analyzePOM(dependency, classNames, engine);
+        final boolean addPackagesAsEvidence = !(hasManifest && hasPOM);
+        analyzePackageNames(classNames, dependency, addPackagesAsEvidence);
     }
 
     /**
@@ -587,10 +583,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @param dependency A reference to the dependency
      * @param classInformation a collection of class information
      * @return whether evidence was identified parsing the manifest
-     * @throws IOException if there is an issue reading the JAR file
      */
-    protected boolean parseManifest(Dependency dependency, List<ClassNameInformation> classInformation)
-            throws IOException {
+    protected boolean parseManifest(Dependency dependency, List<ClassNameInformation> classInformation) {
         boolean foundSomething = false;
         try (JarFile jar = new JarFile(dependency.getActualFilePath())) {
             final Manifest manifest = jar.getManifest();
@@ -747,6 +741,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 foundSomething = true;
                 versionEvidence.addEvidence(source, "specification-version", specificationVersion, Confidence.HIGH);
             }
+        } catch (IOException ex) {
+            LOGGER.warn("Unable to read JarFile '{}'.", dependency.getActualFilePath());
+            LOGGER.trace("", ex);
         }
         return foundSomething;
     }

@@ -17,23 +17,21 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.analyzer.JarAnalyzer.ClassNameInformation;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.utils.Settings;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Jeremy Long
@@ -175,5 +173,12 @@ public class JarAnalyzerTest extends BaseTest {
         List<String> expected = Arrays.asList("owasp", "dependencycheck", "analyzer", "jaranalyzer");
         List<String> results = instance.getPackageStructure();
         assertEquals(expected, results);
+    }
+
+    @Test
+    public void testParseManifest_CatchesIOException() {
+        Dependency dependency = new Dependency();
+        dependency.setActualFilePath("doesNotExist");
+        assertFalse(new JarAnalyzer().parseManifest(dependency, new ArrayList<ClassNameInformation>()));
     }
 }
