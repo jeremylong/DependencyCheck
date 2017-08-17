@@ -154,7 +154,7 @@ public final class Downloader {
                 }
                 if ("Connection reset".equalsIgnoreCase(ex.getMessage())) {
                     final String msg = format("TLS Connection Reset%nPlease see "
-                            + "http://jeremylong.github.io/DependencyCheck/general/tlsfailures.html "
+                            + "http://jeremylong.github.io/DependencyCheck/data/tlsfailure.html "
                             + "for more information regarding how to resolve the issue.");
                     LOGGER.error(msg);
                     throw new DownloadFailedException(msg, ex);
