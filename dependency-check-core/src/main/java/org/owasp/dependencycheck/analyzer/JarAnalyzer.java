@@ -742,7 +742,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 versionEvidence.addEvidence(source, "specification-version", specificationVersion, Confidence.HIGH);
             }
         } catch (IOException ex) {
-            LOGGER.warn("Unable to read JarFile '{}'.", dependency.getActualFilePath());
+            LOGGER.warn("Unable to read dependency file '{}'", dependency.getActualFilePath());
             LOGGER.trace("", ex);
         }
         return foundSomething;
