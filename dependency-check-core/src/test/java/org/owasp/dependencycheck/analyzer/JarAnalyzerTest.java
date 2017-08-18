@@ -179,6 +179,7 @@ public class JarAnalyzerTest extends BaseTest {
     public void testParseManifest_CatchesIOException() {
         Dependency dependency = new Dependency();
         dependency.setActualFilePath("doesNotExist");
+        assertFalse(new File(dependency.getActualFilePath()).exists());
         assertFalse(new JarAnalyzer().parseManifest(dependency, new ArrayList<ClassNameInformation>()));
     }
 }
