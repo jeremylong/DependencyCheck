@@ -52,7 +52,7 @@ public class FieldAnalyzerTest extends BaseTest {
     @Test
     public void testAnalyzers() throws Exception {
 
-        Analyzer analyzer = new FieldAnalyzer(LuceneUtils.CURRENT_VERSION);
+        Analyzer analyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
         Directory index = new RAMDirectory();
 
         String field1 = "product";
@@ -93,12 +93,10 @@ public class FieldAnalyzerTest extends BaseTest {
         assertEquals("springframework", searcher.doc(hits[0].doc).get(field1));
         assertEquals("springsource", searcher.doc(hits[0].doc).get(field2));
 
-        searchAnalyzerProduct.clear(); //ensure we don't have anything left over from the previous search.
-        searchAnalyzerVendor.clear();
         querystr = "product:(Apache Struts) vendor:(Apache)";
         Query q2 = parser.parse(querystr);
         assertFalse("second parsing contains previousWord from the TokenPairConcatenatingFilter", q2.toString().contains("core"));
-        
+
         querystr = "product:(  x-stream^5 )  AND  vendor:(  thoughtworks.xstream )";
         Query q3 = parser.parse(querystr);
         collector = TopScoreDocCollector.create(hitsPerPage, true);
