@@ -123,6 +123,9 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         final File file = dependency.getActualFile();
+        if (!file.isFile() || file.length()==0) {
+            return;
+        }
         try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {
             final JsonObject json = jsonReader.readObject();
             final EvidenceCollection productEvidence = dependency.getProductEvidence();

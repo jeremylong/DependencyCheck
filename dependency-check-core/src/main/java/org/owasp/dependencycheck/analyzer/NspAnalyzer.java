@@ -148,6 +148,9 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         final File file = dependency.getActualFile();
+        if (!file.isFile() || file.length()==0) {
+            return;
+        }
         try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {
 
             // Do not scan the node_modules directory

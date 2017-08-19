@@ -47,6 +47,15 @@ public class NspAnalyzerTest extends BaseTest {
         assertEquals(result.getProductEvidence().toString(), "A tool to learn OWASP Top 10 for node.js developers owasp-nodejs-goat ");
         assertEquals(result.getVersionEvidence().toString(), "1.3.0 ");
     }
+    @Test
+    public void testAnalyzeEmpty() throws AnalysisException {
+        final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "nsp/empty.json"));
+        analyzer.analyze(result, null);
+
+        assertEquals(result.getVendorEvidence().size(), 0);
+        assertEquals(result.getProductEvidence().size(), 0);
+        assertEquals(result.getVersionEvidence().size(), 0);
+    }
 
     @Test
     public void testAnalyzePackageJsonWithBundledDeps() throws AnalysisException {
