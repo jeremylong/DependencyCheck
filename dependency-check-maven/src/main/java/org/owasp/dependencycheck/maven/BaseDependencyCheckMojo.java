@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -497,14 +498,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private Filter<String> artifactTypeExcluded;
 
     /**
-     * An array of <code>fileSet</code>s that specify additional files and/or directories
-     * (from the basedir) to analyze as part of the scan. If not specified, defaults to
-     * Maven conventions of:
-     * src/main/resources, src/main/filters, and src/main/webapp
+     * An array of <code>fileSet</code>s that specify additional files and/or
+     * directories (from the basedir) to analyze as part of the scan. If not
+     * specified, defaults to Maven conventions of: src/main/resources,
+     * src/main/filters, and src/main/webapp
      */
     @Parameter(property = "scanSet", required = false)
     private FileSet[] scanSet;
-
 
     // </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Base Maven implementation">
@@ -688,6 +688,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 String artifactId = null;
                 String groupId = null;
                 String version = null;
+                List<ArtifactVersion> availableVersions = null;
                 if (org.apache.maven.artifact.Artifact.SCOPE_SYSTEM.equals(dependencyNode.getArtifact().getScope())) {
                     for (org.apache.maven.model.Dependency d : project.getDependencies()) {
                         final Artifact a = dependencyNode.getArtifact();
@@ -698,6 +699,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                             groupId = a.getGroupId();
                             artifactId = a.getArtifactId();
                             version = a.getVersion();
+                            availableVersions = a.getAvailableVersions();
                             break;
                         }
                     }
@@ -717,6 +719,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     groupId = result.getGroupId();
                     artifactId = result.getArtifactId();
                     version = result.getVersion();
+                    availableVersions = result.getAvailableVersions();
                 }
                 if (isResolved && artifactFile != null) {
                     final List<Dependency> deps = engine.scan(artifactFile.getAbsoluteFile(),
@@ -727,10 +730,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                             if (d != null) {
                                 final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
                                 d.addAsEvidence("pom", ma, Confidence.HIGHEST);
-                                if (getLog().isDebugEnabled()) {
-                                    getLog().debug(String.format("Adding project reference %s on dependency %s",
-                                            project.getName(), d.getDisplayFileName()));
+                                if (availableVersions != null) {
+                                    for (ArtifactVersion av : availableVersions) {
+                                        d.addAvailableVersion(av.toString());
+                                    }
                                 }
+                                getLog().debug(String.format("Adding project reference %s on dependency %s",
+                                        project.getName(), d.getDisplayFileName()));
                             }
                         } else if (getLog().isDebugEnabled()) {
                             final String msg = String.format("More than 1 dependency was identified in first pass scan of '%s' in project %s",
@@ -777,13 +783,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 }
                 exCol.addException(ex);
             }
-            scanSet = new FileSet[] {resourcesSet, filtersSet, webappSet};
+            scanSet = new FileSet[]{resourcesSet, filtersSet, webappSet};
         }
         // Iterate through FileSets and scan included files
         final FileSetManager fileSetManager = new FileSetManager();
-        for (FileSet fileSet: scanSet) {
+        for (FileSet fileSet : scanSet) {
             final String[] includedFiles = fileSetManager.getIncludedFiles(fileSet);
-            for (String include: includedFiles) {
+            for (String include : includedFiles) {
                 final File includeFile = new File(fileSet.getDirectory(), include).getAbsoluteFile();
                 if (includeFile.exists()) {
                     engine.scan(includeFile, project.getName());
