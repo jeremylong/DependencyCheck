@@ -26,7 +26,6 @@ import org.apache.lucene.analysis.core.WhitespaceTokenizer;
 import org.junit.After;
 
 import org.junit.Before;
-import org.junit.Test;
 
 /**
  *
@@ -54,23 +53,5 @@ public class TokenPairConcatenatingFilterTest extends BaseTokenStreamTestCase {
         TokenStream filter = new TokenPairConcatenatingFilter(wsTokenizer);
         assertTokenStreamContents(filter,
                 new String[]{"one", "onetwo", "two", "twothree", "three"});
-    }
-
-    /**
-     * Test of clear method, of class TokenPairConcatenatingFilter.
-     *
-     * @throws java.io.IOException
-     */
-    @Test
-    public void testClear() throws IOException {
-
-        TokenStream ts = new WhitespaceTokenizer(LuceneUtils.CURRENT_VERSION, new StringReader("one two three"));
-        TokenPairConcatenatingFilter filter = new TokenPairConcatenatingFilter(ts);
-        assertTokenStreamContents(filter, new String[]{"one", "onetwo", "two", "twothree", "three"});
-
-        assertNotNull(filter.getPreviousWord());
-        filter.clear();
-        assertNull(filter.getPreviousWord());
-        assertTrue(filter.getWords().isEmpty());
     }
 }

@@ -25,9 +25,11 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
 /**
  * <p>
- * Takes a TokenStream and adds additional tokens by concatenating pairs of words.</p>
+ * Takes a TokenStream and adds additional tokens by concatenating pairs of
+ * words.</p>
  * <p>
- * <b>Example:</b> "Spring Framework Core" -&gt; "Spring SpringFramework Framework FrameworkCore Core".</p>
+ * <b>Example:</b> "Spring Framework Core" -&gt; "Spring SpringFramework
+ * Framework FrameworkCore Core".</p>
  *
  * @author Jeremy Long
  */
@@ -47,24 +49,6 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
     private final LinkedList<String> words;
 
     /**
-     * Returns the previous word. This is needed in the test cases.
-     *
-     * @return te previous word
-     */
-    protected String getPreviousWord() {
-        return previousWord;
-    }
-
-    /**
-     * Returns the words list. This is needed in the test cases.
-     *
-     * @return the words list
-     */
-    protected LinkedList<String> getWords() {
-        return words;
-    }
-
-    /**
      * Constructs a new TokenPairConcatenatingFilter.
      *
      * @param stream the TokenStream that this filter will process
@@ -75,8 +59,9 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
     }
 
     /**
-     * Increments the underlying TokenStream and sets CharTermAttributes to construct an expanded set of tokens by concatenating
-     * tokens with the previous token.
+     * Increments the underlying TokenStream and sets CharTermAttributes to
+     * construct an expanded set of tokens by concatenating tokens with the
+     * previous token.
      *
      * @return whether or not we have hit the end of the TokenStream
      * @throws IOException is thrown when an IOException occurs
@@ -112,11 +97,18 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
 
     /**
      * <p>
-     * Resets the Filter and clears any internal state data that may have been left-over from previous uses of the Filter.</p>
+     * Resets the Filter and clears any internal state data that may have been
+     * left-over from previous uses of the Filter.</p>
      * <p>
-     * <b>If this Filter is re-used this method must be called between uses.</b></p>
+     * <b>If this Filter is re-used this method must be called between
+     * uses.</b></p>
+     *
+     * @throws java.io.IOException thrown if there is an error resetting the
+     * filter
      */
-    public void clear() {
+    @Override
+    public void end() throws IOException {
+        super.end();
         previousWord = null;
         words.clear();
     }
@@ -158,5 +150,4 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
         }
         return !(this.words != other.words && (this.words == null || !this.words.equals(other.words)));
     }
-
 }
