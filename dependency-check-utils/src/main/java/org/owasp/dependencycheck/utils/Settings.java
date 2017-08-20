@@ -1010,7 +1010,7 @@ public final class Settings {
             // yes, for H2 this path won't actually exists - but this is sufficient to get the value needed
             final File dbFile = new File(directory, fileName);
             final String cString = String.format(connStr, dbFile.getCanonicalPath());
-            LOGGER.error("Connection String: '{}'", cString);
+            LOGGER.debug("Connection String: '{}'", cString);
             return cString;
         }
         return connStr;
