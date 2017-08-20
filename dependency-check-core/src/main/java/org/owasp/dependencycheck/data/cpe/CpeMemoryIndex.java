@@ -47,7 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An in memory lucene index that contains the vendor/product combinations from
+ * An in memory Lucene index that contains the vendor/product combinations from
  * the CPE (application) identifiers within the NVD CVE data.
  *
  * @author Jeremy Long
@@ -91,9 +91,10 @@ public final class CpeMemoryIndex implements AutoCloseable {
      */
     private SearchFieldAnalyzer vendorFieldAnalyzer;
     /**
-     * A flag indicating whether or not the index is open.
+     * Track the number of current users of the Lucene index; used to track it
+     * it is okay to actually close the index.
      */
-    private boolean openState = false;
+    private int usageCount = 0;
 
     /**
      * private constructor for singleton.
@@ -117,7 +118,8 @@ public final class CpeMemoryIndex implements AutoCloseable {
      * @throws IndexException thrown if there is an error creating the index
      */
     public synchronized void open(CveDB cve) throws IndexException {
-        if (!openState) {
+        if (INSTANCE.usageCount <= 0) {
+            INSTANCE.usageCount = 0;
             index = new RAMDirectory();
             buildIndex(cve);
             try {
@@ -128,8 +130,8 @@ public final class CpeMemoryIndex implements AutoCloseable {
             indexSearcher = new IndexSearcher(indexReader);
             searchingAnalyzer = createSearchingAnalyzer();
             queryParser = new QueryParser(LuceneUtils.CURRENT_VERSION, Fields.DOCUMENT_KEY, searchingAnalyzer);
-            openState = true;
         }
+        INSTANCE.usageCount += 1;
     }
 
     /**
@@ -138,7 +140,7 @@ public final class CpeMemoryIndex implements AutoCloseable {
      * @return whether or not the index is open
      */
     public synchronized boolean isOpen() {
-        return openState;
+        return INSTANCE.usageCount > 0;
     }
 
     /**
@@ -162,25 +164,27 @@ public final class CpeMemoryIndex implements AutoCloseable {
      */
     @Override
     public synchronized void close() {
-        if (searchingAnalyzer != null) {
-            searchingAnalyzer.close();
-            searchingAnalyzer = null;
-        }
-        if (indexReader != null) {
-            try {
-                indexReader.close();
-            } catch (IOException ex) {
-                LOGGER.trace("", ex);
+        INSTANCE.usageCount -= 1;
+        if (INSTANCE.usageCount <= 0) {
+            if (searchingAnalyzer != null) {
+                searchingAnalyzer.close();
+                searchingAnalyzer = null;
             }
-            indexReader = null;
+            if (indexReader != null) {
+                try {
+                    indexReader.close();
+                } catch (IOException ex) {
+                    LOGGER.trace("", ex);
+                }
+                indexReader = null;
+            }
+            queryParser = null;
+            indexSearcher = null;
+            if (index != null) {
+                index.close();
+                index = null;
+            }
         }
-        queryParser = null;
-        indexSearcher = null;
-        if (index != null) {
-            index.close();
-            index = null;
-        }
-        openState = false;
     }
 
     /**
