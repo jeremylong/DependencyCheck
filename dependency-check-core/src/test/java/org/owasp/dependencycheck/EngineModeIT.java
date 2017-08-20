@@ -116,6 +116,11 @@ public class EngineModeIT extends BaseTest {
         assertThat(Files.exists(directory), is(true));
         assertThat(Files.isDirectory(directory), is(true));
         Path database = directory.resolve(Settings.getString(Settings.KEYS.DB_FILE_NAME));
+        System.err.println(database.toString());
+        for (String f : directory.toFile().list()) {
+            System.err.println(f);
+        }
+
         assertThat(Files.exists(database), is(exists));
     }
 }

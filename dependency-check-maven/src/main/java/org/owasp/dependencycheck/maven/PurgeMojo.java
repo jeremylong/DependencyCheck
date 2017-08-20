@@ -73,7 +73,7 @@ public class PurgeMojo extends BaseDependencyCheckMojo {
             populateSettings();
             File db;
             try {
-                db = new File(Settings.getDataDirectory(), "dc.h2.db");
+                db = new File(Settings.getDataDirectory(), Settings.getString(Settings.KEYS.DB_FILE_NAME, "dc.h2.db"));
                 if (db.exists()) {
                     if (db.delete()) {
                         getLog().info("Database file purged; local copy of the NVD has been removed");

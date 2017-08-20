@@ -82,6 +82,11 @@ public final class ConnectionFactory {
      * The password for the database.
      */
     private static String password = null;
+    /**
+     * Counter to ensure that calls to ensureSchemaVersion does not end up in an
+     * endless loop.
+     */
+    private static int callDepth = 0;
 
     /**
      * Private constructor for this factory class; no instance is ever needed.
@@ -368,12 +373,6 @@ public final class ConnectionFactory {
             }
         }
     }
-
-    /**
-     * Counter to ensure that calls to ensureSchemaVersion does not end up in an
-     * endless loop.
-     */
-    private static int callDepth = 0;
 
     /**
      * Uses the provided connection to check the specified schema version within

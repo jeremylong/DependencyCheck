@@ -70,9 +70,10 @@ public abstract class BaseDBTestCase extends BaseTest {
                         d.mkdir();
                         continue;
                     }
-                    File o = new File(dataPath, entry.getName());
-                    o.createNewFile();
-                    try (FileOutputStream fos = new FileOutputStream(o, false);
+                    //File o = new File(dataPath, entry.getName());
+                    //o.createNewFile();
+                    dataFile.createNewFile();
+                    try (FileOutputStream fos = new FileOutputStream(dataFile, false);
                             BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER_SIZE)) {
                         IOUtils.copy(zin, dest);
                     } catch (Throwable ex) {
