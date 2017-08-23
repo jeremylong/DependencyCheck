@@ -17,23 +17,22 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.utils.Settings;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Jeremy Long
@@ -175,5 +174,32 @@ public class JarAnalyzerTest extends BaseTest {
         List<String> expected = Arrays.asList("owasp", "dependencycheck", "analyzer", "jaranalyzer");
         List<String> results = instance.getPackageStructure();
         assertEquals(expected, results);
+    }
+
+    @Test
+    public void testAnalyzeDependency_SkipsMacOSMetaDataFile() throws Exception {
+        JarAnalyzer instance = new JarAnalyzer();
+        Dependency macOSMetaDataFile = new Dependency();
+        macOSMetaDataFile
+            .setActualFilePath(FileUtils.getFile("src", "test", "resources", "._avro-ipc-1.5.0.jar").getAbsolutePath());
+        macOSMetaDataFile.setFileName("._avro-ipc-1.5.0.jar");
+        Dependency actualJarFile = new Dependency();
+        actualJarFile.setActualFilePath(BaseTest.getResourceAsFile(this, "avro-ipc-1.5.0.jar").getAbsolutePath());
+        actualJarFile.setFileName("avro-ipc-1.5.0.jar");
+        Engine engine = new Engine();
+        engine.setDependencies(Arrays.asList(macOSMetaDataFile, actualJarFile));
+        instance.analyzeDependency(macOSMetaDataFile, engine);
+    }
+
+    @Test
+    public void testAnalyseDependency_SkipsNonZipFile() throws Exception {
+        JarAnalyzer instance = new JarAnalyzer();
+        Dependency textFileWithJarExtension = new Dependency();
+        textFileWithJarExtension
+            .setActualFilePath(BaseTest.getResourceAsFile(this, "textFileWithJarExtension.jar").getAbsolutePath());
+        textFileWithJarExtension.setFileName("textFileWithJarExtension.jar");
+        Engine engine = new Engine();
+        engine.setDependencies(Collections.singletonList(textFileWithJarExtension));
+        instance.analyzeDependency(textFileWithJarExtension, engine);
     }
 }
