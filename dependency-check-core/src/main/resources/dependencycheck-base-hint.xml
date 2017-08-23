@@ -143,6 +143,18 @@
             <evidence type="vendor" source="pom" name="parent-groupid" value="org.springframework.boot" confidence="LOW"/>
         </remove>
     </hint>
+    <!-- 
+    The following hint is from the google group discussion found here: https://mail.google.com/mail/u/0/?zx=trb89qxxa4e5#inbox/15defe7b224506a2
+    -->
+    <hint>
+        <given>
+            <fileName contains="mysql-connector.*" regex="true"/>
+        </given>
+        <add>
+            <evidence type="product" source="hint analyzer" name="product" value="mysql_connectors" confidence="HIGHEST"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="oracle" confidence="HIGHEST"/>
+        </add>
+    </hint>
     <vendorDuplicatingHint value="sun" duplicate="oracle"/>	
     <vendorDuplicatingHint value="oracle" duplicate="sun"/>	
 </hints>
