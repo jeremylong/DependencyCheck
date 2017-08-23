@@ -19,12 +19,14 @@ package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -42,6 +44,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
+
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -53,11 +56,11 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
-import org.owasp.dependencycheck.xml.pom.License;
-import org.owasp.dependencycheck.xml.pom.PomUtils;
-import org.owasp.dependencycheck.xml.pom.Model;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.xml.pom.License;
+import org.owasp.dependencycheck.xml.pom.Model;
+import org.owasp.dependencycheck.xml.pom.PomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -168,6 +171,21 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
 
+    /**
+     * The expected first bytes when reading a zip file.
+     */
+    private static final byte[] ZIP_FIRST_BYTES = new byte[]{0x50, 0x4B, 0x03, 0x04};
+
+    /**
+     * The expected first bytes when reading an empty zip file.
+     */
+    private static final byte[] ZIP_EMPTY_FIRST_BYTES = new byte[]{0x50, 0x4B, 0x05, 0x06};
+
+    /**
+     * The expected first bytes when reading a spanned zip file.
+     */
+    private static final byte[] ZIP_SPANNED_FIRST_BYTES = new byte[]{0x50, 0x4B, 0x07, 0x08};
+
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="All standard implmentation details of Analyzer">
     /**
@@ -230,8 +248,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     && (fileName.endsWith("-sources.jar")
                     || fileName.endsWith("-javadoc.jar")
                     || fileName.endsWith("-src.jar")
-                    || fileName.endsWith("-doc.jar"))) {
+                    || fileName.endsWith("-doc.jar")
+                    || isMacOSMetaDataFile(dependency, engine))
+                    || !isZipFile(dependency)) {
                 engine.getDependencies().remove(dependency);
+                return;
             }
             final boolean hasManifest = parseManifest(dependency, classNames);
             final boolean hasPOM = analyzePOM(dependency, classNames, engine);
@@ -240,6 +261,62 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (IOException ex) {
             throw new AnalysisException("Exception occurred reading the JAR file (" + dependency.getFileName() + ").", ex);
         }
+    }
+
+    /**
+     * Checks if the given dependency appears to be a macOS metadata file, returning true if its filename starts with a
+     * ._ prefix and if there is another dependency with the same filename minus the ._ prefix, otherwise it returns
+     * false.
+     *
+     * @param dependency the dependency to check if it's a macOS metadata file
+     * @param engine     the engine that is scanning the dependencies
+     * @return whether or not the given dependency appears to be a macOS metadata file
+     */
+    private boolean isMacOSMetaDataFile(final Dependency dependency, final Engine engine) {
+        final String fileName = Paths.get(dependency.getActualFilePath()).getFileName().toString();
+        return fileName.startsWith("._") && hasDependencyWithFilename(engine.getDependencies(), fileName.substring(2));
+    }
+
+    /**
+     * Iterates through the given list of dependencies and returns true when it finds a dependency with a filename
+     * matching the given filename, otherwise returns false.
+     *
+     * @param dependencies the dependencies to search within
+     * @param fileName     the filename to search for
+     * @return whether or not the given dependencies contain a dependency with the given filename
+     */
+    private boolean hasDependencyWithFilename(final List<Dependency> dependencies, final String fileName) {
+        for (final Dependency dependency : dependencies) {
+            if (Paths.get(dependency.getActualFilePath()).getFileName().toString().toLowerCase()
+                .equals(fileName.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Attempts to read the first bytes of the given dependency (using its actual file path) and returns true if they
+     * match the expected first bytes of a zip file, which may be empty or spanned. If they don't match, or if the file
+     * could not be read, then it returns false.
+     *
+     * @param dependency the dependency to check if it's a zip file
+     * @return whether or not the given dependency appears to be a zip file from its first bytes
+     */
+    private boolean isZipFile(final Dependency dependency) {
+        final byte[] buffer = new byte[4];
+        try (final FileInputStream fileInputStream = new FileInputStream(dependency.getActualFilePath())) {
+            fileInputStream.read(buffer);
+            if (Arrays.equals(buffer, ZIP_FIRST_BYTES) || Arrays.equals(buffer, ZIP_EMPTY_FIRST_BYTES) ||
+                Arrays.equals(buffer, ZIP_SPANNED_FIRST_BYTES)) {
+                return true;
+            }
+        }
+        catch (Exception e) {
+            LOGGER.warn("Unable to check if '{}' is a zip file", dependency.getActualFilePath());
+            LOGGER.trace("", e);
+        }
+        return false;
     }
 
     /**
