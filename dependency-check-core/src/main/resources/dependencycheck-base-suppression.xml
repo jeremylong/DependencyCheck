@@ -664,4 +664,11 @@
         <gav regex="true">^org\.springframework\.boot:.*$</gav>
         <cpe>cpe:/a:pivotal_software:spring_data_jpa</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #851
+        ]]></notes>
+        <gav regex="true">^com\.ibm\.icu:icu4j:.*$</gav>
+        <cpe>cpe:/a:icu_project:international_components_for_unicode</cpe>
+    </suppress>
 </suppressions>
