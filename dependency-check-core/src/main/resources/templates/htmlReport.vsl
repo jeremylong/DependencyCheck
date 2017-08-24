@@ -578,8 +578,8 @@ the reporting provided constitutes acceptance for use in an AS IS condition, and
 implied or otherwise, with regard to the analysis or its use. Any use of the tool and the reporting provided
 is at the user’s risk. In no event shall the copyright holder or OWASP be held liable for any damages whatsoever
 arising out of or in connection with the use of this tool, the analysis performed, or the resulting report.</p>
-<h3><a href="http://jeremylong.github.io/DependencyCheck/general/thereport.html" target="_bank">How&nbsp;to&nbsp;read&nbsp;the&nbsp;report</a> | 
-<a href="http://jeremylong.github.io/DependencyCheck/general/suppression.html" target="_bank">Suppressing false positives</a> |
+<h3><a href="http://jeremylong.github.io/DependencyCheck/general/thereport.html" target="_blank">How&nbsp;to&nbsp;read&nbsp;the&nbsp;report</a> | 
+<a href="http://jeremylong.github.io/DependencyCheck/general/suppression.html" target="_blank">Suppressing false positives</a> |
 Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check" target="_blank">google group</a> | 
 <a href="https://github.com/jeremylong/DependencyCheck/issues" target="_blank">github issues</a></h3>
 ]]#
