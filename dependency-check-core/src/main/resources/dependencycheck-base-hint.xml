@@ -152,6 +152,8 @@
         </given>
         <add>
             <evidence type="product" source="hint analyzer" name="product" value="mysql_connectors" confidence="HIGHEST"/>
+            <evidence type="product" source="hint analyzer" name="product" value="mysql_connector_j" confidence="HIGHEST"/>
+            <evidence type="product" source="hint analyzer" name="product" value="mysql_connector/j" confidence="HIGHEST"/>
             <evidence type="vendor" source="hint analyzer" name="vendor" value="oracle" confidence="HIGHEST"/>
         </add>
     </hint>
