@@ -671,4 +671,11 @@
         <gav regex="true">^com\.ibm\.icu:icu4j:.*$</gav>
         <cpe>cpe:/a:icu_project:international_components_for_unicode</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        False positive per issue #854
+        ]]></notes>
+        <gav regex="true">^com\.vaadin\.external\.google:android-json:.*$</gav>
+        <cpe>cpe:/a:google:android</cpe>
+    </suppress>
 </suppressions>
