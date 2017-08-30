@@ -17,8 +17,10 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
+import org.junit.After;
 
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
@@ -26,6 +28,7 @@ import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import org.junit.Before;
 
 /**
  *
@@ -33,22 +36,32 @@ import static org.junit.Assert.fail;
  */
 public class CveDBMySqlIT extends BaseTest {
 
+    CveDB instance = null;
+
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        instance = new CveDB(getSettings());
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        instance.close();
+        super.tearDown();
+    }
+
     /**
      * Pretty useless tests of open, commit, and close methods, of class CveDB.
      */
     @Test
     public void testOpen() {
-        CveDB instance = null;
         try {
-            instance = CveDB.getInstance();
-        } catch (DatabaseException ex) {
+            instance.commit();
+        } catch (SQLException | DatabaseException ex) {
             System.out.println("Unable to connect to the My SQL database; verify that the db server is running and that the schema has been generated");
             fail(ex.getMessage());
-        } finally {
-            int start = instance.getUsageCount();
-            instance.close();
-            int end = instance.getUsageCount();
-            assertTrue( end < start);
         }
     }
 
@@ -57,7 +70,6 @@ public class CveDBMySqlIT extends BaseTest {
      */
     @Test
     public void testGetCPEs() throws Exception {
-        CveDB instance = CveDB.getInstance();
         try {
             String vendor = "apache";
             String product = "struts";
@@ -66,8 +78,6 @@ public class CveDBMySqlIT extends BaseTest {
         } catch (Exception ex) {
             System.out.println("Unable to access the My SQL database; verify that the db server is running and that the schema has been generated");
             throw ex;
-        } finally {
-            instance.close();
         }
     }
 
@@ -77,15 +87,12 @@ public class CveDBMySqlIT extends BaseTest {
     @Test
     public void testGetVulnerabilities() throws Exception {
         String cpeStr = "cpe:/a:apache:struts:2.1.2";
-        CveDB instance = CveDB.getInstance();
         try {
             List<Vulnerability> result = instance.getVulnerabilities(cpeStr);
             assertTrue(result.size() > 5);
         } catch (Exception ex) {
             System.out.println("Unable to access the My SQL database; verify that the db server is running and that the schema has been generated");
             throw ex;
-        } finally {
-            instance.close();
         }
     }
 }

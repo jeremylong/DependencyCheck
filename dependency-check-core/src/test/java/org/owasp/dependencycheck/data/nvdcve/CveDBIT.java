@@ -27,51 +27,47 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.Before;
 
 /**
  *
  * @author Jeremy Long
  */
 public class CveDBIT extends BaseDBTestCase {
+    
+    CveDB instance = null;
+        
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        instance = new CveDB(getSettings());
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        instance.close();
+        super.tearDown();
+    }
 
     /**
      * Pretty useless tests of open, commit, and close methods, of class CveDB.
      */
     @Test
     public void testOpen() {
-        CveDB instance = null;
+
         try {
-            instance = CveDB.getInstance();
             instance.commit();
         } catch (DatabaseException | SQLException ex) {
             fail(ex.getMessage());
-        } finally {
-            int start = instance.getUsageCount();
-            instance.close();
-            int end = instance.getUsageCount();
-            assertTrue( end < start);
         }
     }
 
@@ -80,12 +76,10 @@ public class CveDBIT extends BaseDBTestCase {
      */
     @Test
     public void testGetCPEs() throws Exception {
-        CveDB instance = CveDB.getInstance();
         String vendor = "apache";
         String product = "struts";
         Set<VulnerableSoftware> result = instance.getCPEs(vendor, product);
         assertTrue(result.size() > 5);
-        instance.close();
     }
 
     /**
@@ -93,10 +87,8 @@ public class CveDBIT extends BaseDBTestCase {
      */
     @Test
     public void testgetVulnerability() throws Exception {
-        CveDB instance = CveDB.getInstance();
         Vulnerability result = instance.getVulnerability("CVE-2014-0094");
         assertEquals("The ParametersInterceptor in Apache Struts before 2.3.16.1 allows remote attackers to \"manipulate\" the ClassLoader via the class parameter, which is passed to the getClass method.", result.getDescription());
-        instance.close();
     }
 
     /**
@@ -105,7 +97,6 @@ public class CveDBIT extends BaseDBTestCase {
     @Test
     public void testGetVulnerabilities() throws Exception {
         String cpeStr = "cpe:/a:apache:struts:2.1.2";
-        CveDB instance = CveDB.getInstance();
         List<Vulnerability> results;
 
         results = instance.getVulnerabilities(cpeStr);
@@ -133,7 +124,6 @@ public class CveDBIT extends BaseDBTestCase {
             }
         }
         assertTrue("Expected " + expected + ", but was not identified", found);
-        instance.close();
     }
 
     /**
@@ -141,7 +131,6 @@ public class CveDBIT extends BaseDBTestCase {
      */
     @Test
     public void testGetMatchingSoftware() throws Exception {
-        CveDB instance = CveDB.getInstance();
         Map<String, Boolean> versions = new HashMap<>();
         DependencyVersion identifiedVersion = new DependencyVersion("1.0.1o");
         versions.put("cpe:/a:openssl:openssl:1.0.1e", Boolean.FALSE);
@@ -189,6 +178,5 @@ public class CveDBIT extends BaseDBTestCase {
         identifiedVersion = new DependencyVersion("1.6.3");
         results = instance.getMatchingSoftware(versions, "springsource", "spring_framework", identifiedVersion);
         assertNotNull(results);
-        instance.close();
     }
 }

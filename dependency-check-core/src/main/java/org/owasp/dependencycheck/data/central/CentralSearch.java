@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.data.central;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,16 +61,25 @@ public class CentralSearch {
      * Used for logging.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(CentralSearch.class);
+    /**
+     * The configured settings.
+     */
+    private final Settings settings;
 
     /**
      * Creates a NexusSearch for the given repository URL.
      *
-     * @param rootURL the URL of the repository on which searches should
-     * execute. Only parameters are added to this (so it should end in /select)
+     * @param settings the configured settings
+     * @throws java.net.MalformedURLException thrown if the configured URL is
+     * invalid
      */
-    public CentralSearch(URL rootURL) {
-        this.rootURL = rootURL;
-        if (null != Settings.getString(Settings.KEYS.PROXY_SERVER)) {
+    public CentralSearch(Settings settings) throws MalformedURLException {
+        this.settings = settings;
+
+        final String searchUrl = settings.getString(Settings.KEYS.ANALYZER_CENTRAL_URL);
+        LOGGER.debug("Central Search URL: {}", searchUrl);
+        this.rootURL = new URL(searchUrl);
+        if (null != settings.getString(Settings.KEYS.PROXY_SERVER)) {
             useProxy = true;
             LOGGER.debug("Using proxy");
         } else {
@@ -101,7 +111,8 @@ public class CentralSearch {
         // 1) If the proxy is set, AND the setting is set to true, use the proxy
         // 2) Otherwise, don't use the proxy (either the proxy isn't configured,
         // or proxy is specifically set to false)
-        final HttpURLConnection conn = URLConnectionFactory.createHttpURLConnection(url, useProxy);
+        final URLConnectionFactory factory = new URLConnectionFactory(settings);
+        final HttpURLConnection conn = factory.createHttpURLConnection(url, useProxy);
 
         conn.setDoOutput(true);
 

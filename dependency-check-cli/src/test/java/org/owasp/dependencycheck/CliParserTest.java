@@ -33,17 +33,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author Jeremy Long
  */
-public class CliParserTest {
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        Settings.initialize();
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        Settings.cleanup(true);
-    }
+public class CliParserTest extends BaseTest {
 
     /**
      * Test of parse method, of class CliParser.
@@ -59,7 +49,7 @@ public class CliParserTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         System.setOut(new PrintStream(baos));
 
-        CliParser instance = new CliParser();
+        CliParser instance = new CliParser(getSettings());
         instance.parse(args);
 
         Assert.assertFalse(instance.isGetVersion());
@@ -78,7 +68,7 @@ public class CliParserTest {
         String[] args = {"-help"};
         PrintStream out = System.out;
 
-        CliParser instance = new CliParser();
+        CliParser instance = new CliParser(getSettings());
         instance.parse(args);
 
         Assert.assertFalse(instance.isGetVersion());
@@ -96,7 +86,7 @@ public class CliParserTest {
 
         String[] args = {"-version"};
 
-        CliParser instance = new CliParser();
+        CliParser instance = new CliParser(getSettings());
         instance.parse(args);
         Assert.assertTrue(instance.isGetVersion());
         Assert.assertFalse(instance.isGetHelp());
@@ -114,7 +104,7 @@ public class CliParserTest {
 
         String[] args = {"--failOnCVSS"};
 
-        CliParser instance = new CliParser();
+        CliParser instance = new CliParser(getSettings());
         try {
             instance.parse(args);
         } catch (ParseException ex) {
@@ -135,7 +125,7 @@ public class CliParserTest {
 
         String[] args = {"--failOnCVSS","bad"};
 
-        CliParser instance = new CliParser();
+        CliParser instance = new CliParser(getSettings());
         instance.parse(args);
         Assert.assertEquals("Default should be 11", 11, instance.getFailOnCVSS());
         Assert.assertFalse(instance.isGetVersion());
@@ -153,7 +143,7 @@ public class CliParserTest {
 
         String[] args = {"--failOnCVSS","6"};
 
-        CliParser instance = new CliParser();
+        CliParser instance = new CliParser(getSettings());
         instance.parse(args);
         Assert.assertEquals(6, instance.getFailOnCVSS());
         Assert.assertFalse(instance.isGetVersion());
@@ -178,7 +168,7 @@ public class CliParserTest {
         System.setOut(new PrintStream(baos_out));
         System.setErr(new PrintStream(baos_err));
 
-        CliParser instance = new CliParser();
+        CliParser instance = new CliParser(getSettings());
 
         try {
             instance.parse(args);
@@ -200,7 +190,7 @@ public class CliParserTest {
 
         String[] args = {"-scan"};
 
-        CliParser instance = new CliParser();
+        CliParser instance = new CliParser(getSettings());
 
         try {
             instance.parse(args);
@@ -223,7 +213,7 @@ public class CliParserTest {
 
         String[] args = {"-scan", "jar.that.does.not.exist", "-app", "test"};
 
-        CliParser instance = new CliParser();
+        CliParser instance = new CliParser(getSettings());
         try {
             instance.parse(args);
         } catch (FileNotFoundException ex) {
@@ -245,7 +235,7 @@ public class CliParserTest {
         File path = new File(this.getClass().getClassLoader().getResource("checkSumTest.file").toURI().getPath());
         String[] args = {"-scan", path.getCanonicalPath(), "-out", "./", "-app", "test"};
 
-        CliParser instance = new CliParser();
+        CliParser instance = new CliParser(getSettings());
         instance.parse(args);
 
         Assert.assertEquals(path.getCanonicalPath(), instance.getScanFiles()[0]);
@@ -267,7 +257,7 @@ public class CliParserTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         System.setOut(new PrintStream(baos));
 
-        CliParser instance = new CliParser();
+        CliParser instance = new CliParser(getSettings());
         instance.printVersionInfo();
         try {
             baos.flush();
@@ -296,7 +286,7 @@ public class CliParserTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         System.setOut(new PrintStream(baos));
 
-        CliParser instance = new CliParser();
+        CliParser instance = new CliParser(getSettings());
         String[] args = {"-h"};
         instance.parse(args);
         instance.printHelp();

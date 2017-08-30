@@ -35,7 +35,9 @@ public class ComposerLockParserTest extends BaseTest  {
     private InputStream inputStream;
 
     @Before
-    public void setUp() {
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
         inputStream = this.getClass().getClassLoader().getResourceAsStream("composer.lock");
     }
 

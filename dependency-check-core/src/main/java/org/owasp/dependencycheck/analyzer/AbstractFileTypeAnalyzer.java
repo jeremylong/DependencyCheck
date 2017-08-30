@@ -25,6 +25,7 @@ import java.io.FileFilter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
@@ -70,13 +71,14 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     /**
      * Initializes the analyzer.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException thrown if there is an exception during
      * initialization
      */
     @Override
-    protected final void initializeAnalyzer() throws InitializationException {
+    protected final void initializeAnalyzer(Engine engine) throws InitializationException {
         if (filesMatched) {
-            initializeFileTypeAnalyzer();
+            initializeFileTypeAnalyzer(engine);
         } else {
             this.setEnabled(false);
         }
@@ -101,10 +103,11 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     /**
      * Initializes the file type analyzer.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException thrown if there is an exception during
      * initialization
      */
-    protected abstract void initializeFileTypeAnalyzer() throws InitializationException;
+    protected abstract void initializeFileTypeAnalyzer(Engine engine) throws InitializationException;
 
     //</editor-fold>
     /**

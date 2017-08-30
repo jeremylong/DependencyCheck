@@ -83,7 +83,7 @@ public class UpdateMojo extends BaseDependencyCheckMojo {
             }
             getLog().error(msg);
         } finally {
-            Settings.cleanup();
+            getSettings().cleanup();
         }
     }
 

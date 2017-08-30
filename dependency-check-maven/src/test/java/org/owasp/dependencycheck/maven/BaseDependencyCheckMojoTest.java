@@ -90,10 +90,10 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
                 }
             }.getMockInstance();
 
-            boolean autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
-            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
-            Engine engine = new Engine();
-            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
+            boolean autoUpdate = getSettings().getBoolean(Settings.KEYS.AUTO_UPDATE);
+            getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            Engine engine = new Engine(getSettings());
+            getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
 
             assertTrue(engine.getDependencies().isEmpty());
             BaseDependencyCheckMojoImpl instance = new BaseDependencyCheckMojoImpl();

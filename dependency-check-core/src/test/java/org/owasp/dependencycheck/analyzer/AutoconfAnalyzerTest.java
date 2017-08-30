@@ -30,11 +30,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Unit tests for AutoconfAnalyzer. The test resources under autoconf/ were obtained from outside open source software projects.
- * Links to those projects are given below.
+ * Unit tests for AutoconfAnalyzer. The test resources under autoconf/ were
+ * obtained from outside open source software projects. Links to those projects
+ * are given below.
  *
  * @author Dale Visser
- * @see <a href="http://readable.sourceforge.net/">Readable Lisp S-expressions Project</a>
+ * @see <a href="http://readable.sourceforge.net/">Readable Lisp S-expressions
+ * Project</a>
  * @see <a href="https://gnu.org/software/binutils/">GNU Binutils</a>
  * @see <a href="https://gnu.org/software/ghostscript/">GNU Ghostscript</a>
  */
@@ -66,10 +68,13 @@ public class AutoconfAnalyzerTest extends BaseTest {
      * @throws Exception thrown if there is a problem
      */
     @Before
+    @Override
     public void setUp() throws Exception {
+        super.setUp();
         analyzer = new AutoconfAnalyzer();
+        analyzer.initializeSettings(getSettings());
         analyzer.setFilesMatched(true);
-        analyzer.initialize();
+        analyzer.initialize(null);
     }
 
     /**
@@ -78,13 +83,16 @@ public class AutoconfAnalyzerTest extends BaseTest {
      * @throws Exception thrown if there is a problem
      */
     @After
+    @Override
     public void tearDown() throws Exception {
         analyzer.close();
         analyzer = null;
+        super.tearDown();
     }
 
     /**
-     * Test whether expected evidence is gathered from Ghostscript's configure.ac.
+     * Test whether expected evidence is gathered from Ghostscript's
+     * configure.
      *
      * @throws AnalysisException is thrown when an exception occurs.
      */
@@ -130,7 +138,8 @@ public class AutoconfAnalyzerTest extends BaseTest {
     }
 
     /**
-     * Test whether expected evidence is gathered from GNU Ghostscript's configure.
+     * Test whether expected evidence is gathered from GNU Ghostscript's
+     * configure.
      *
      * @throws AnalysisException is thrown when an exception occurs.
      */

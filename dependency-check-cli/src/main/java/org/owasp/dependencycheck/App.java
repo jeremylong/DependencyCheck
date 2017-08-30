@@ -53,6 +53,10 @@ public class App {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
+    /**
+     * The configured settings.
+     */
+    private Settings settings = null;
 
     /**
      * The main method for the application.
@@ -61,15 +65,26 @@ public class App {
      */
     public static void main(String[] args) {
         int exitCode = 0;
-        try {
-            Settings.initialize();
-            final App app = new App();
-            exitCode = app.run(args);
-            LOGGER.debug("Exit code: {}", exitCode);
-        } finally {
-            Settings.cleanup(true);
-        }
+        final App app = new App();
+        exitCode = app.run(args);
+        LOGGER.debug("Exit code: {}", exitCode);
         System.exit(exitCode);
+    }
+
+    /**
+     * Builds the App object.
+     */
+    public App() {
+        settings = new Settings();
+    }
+
+    /**
+     * Builds the App object; this method is used for testing.
+     *
+     * @param settings the configured settings
+     */
+    protected App(Settings settings) {
+        this.settings = settings;
     }
 
     /**
@@ -80,7 +95,7 @@ public class App {
      */
     public int run(String[] args) {
         int exitCode = 0;
-        final CliParser cli = new CliParser();
+        final CliParser cli = new CliParser(settings);
 
         try {
             cli.parse(args);
@@ -109,10 +124,11 @@ public class App {
                     LOGGER.error(ex.getMessage());
                     LOGGER.debug("Error loading properties file", ex);
                     exitCode = -4;
+                    return exitCode;
                 }
                 File db;
                 try {
-                    db = new File(Settings.getDataDirectory(), Settings.getString(Settings.KEYS.DB_FILE_NAME, "dc.h2.db"));
+                    db = new File(settings.getDataDirectory(), settings.getString(Settings.KEYS.DB_FILE_NAME, "dc.h2.db"));
                     if (db.exists()) {
                         if (db.delete()) {
                             LOGGER.info("Database file purged; local copy of the NVD has been removed");
@@ -127,6 +143,8 @@ public class App {
                 } catch (IOException ex) {
                     LOGGER.error("Unable to delete the database");
                     exitCode = -7;
+                } finally {
+                    settings.cleanup();
                 }
             }
         } else if (cli.isGetVersion()) {
@@ -138,6 +156,7 @@ public class App {
                 LOGGER.error(ex.getMessage());
                 LOGGER.debug("Error loading properties file", ex);
                 exitCode = -4;
+                return exitCode;
             }
             try {
                 runUpdateOnly();
@@ -147,6 +166,8 @@ public class App {
             } catch (DatabaseException ex) {
                 LOGGER.error(ex.getMessage());
                 exitCode = -9;
+            } finally {
+                settings.cleanup();
             }
         } else if (cli.isRunScan()) {
             try {
@@ -155,6 +176,7 @@ public class App {
                 LOGGER.error(ex.getMessage());
                 LOGGER.debug("Error loading properties file", ex);
                 exitCode = -4;
+                return exitCode;
             }
             try {
                 final String[] scanFiles = cli.getScanFiles();
@@ -183,6 +205,8 @@ public class App {
                 for (Throwable e : ex.getExceptions()) {
                     LOGGER.error(e.getMessage());
                 }
+            } finally {
+                settings.cleanup();
             }
         } else {
             cli.printHelp();
@@ -221,7 +245,7 @@ public class App {
             final List<String> antStylePaths = getPaths(files);
             final Set<File> paths = scanAntStylePaths(antStylePaths, symLinkDepth, excludes);
 
-            engine = new Engine();
+            engine = new Engine(settings);
             engine.scan(paths);
 
             ExceptionCollection exCol = null;
@@ -359,7 +383,7 @@ public class App {
      * connection to the database could not be established
      */
     private void runUpdateOnly() throws UpdateException, DatabaseException {
-        try (Engine engine = new Engine()) {
+        try (Engine engine = new Engine(settings)) {
             engine.doUpdates();
         }
     }
@@ -401,7 +425,7 @@ public class App {
 
         if (propertiesFile != null) {
             try {
-                Settings.mergeProperties(propertiesFile);
+                settings.mergeProperties(propertiesFile);
             } catch (FileNotFoundException ex) {
                 throw new InvalidSettingException("Unable to find properties file '" + propertiesFile.getPath() + "'", ex);
             } catch (IOException ex) {
@@ -413,65 +437,65 @@ public class App {
         // on the command line.  This is true of other boolean values set below not using the setBooleanIfNotNull.
         final boolean nexusUsesProxy = cli.isNexusUsesProxy();
         if (dataDirectory != null) {
-            Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
+            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
         } else if (System.getProperty("basedir") != null) {
             final File dataDir = new File(System.getProperty("basedir"), "data");
-            Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());
+            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());
         } else {
             final File jarPath = new File(App.class.getProtectionDomain().getCodeSource().getLocation().getPath());
             final File base = jarPath.getParentFile();
-            final String sub = Settings.getString(Settings.KEYS.DATA_DIRECTORY);
+            final String sub = settings.getString(Settings.KEYS.DATA_DIRECTORY);
             final File dataDir = new File(base, sub);
-            Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());
+            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());
         }
-        Settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
-        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);
-        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);
-        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUser);
-        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPass);
-        Settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
-        Settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);
-        Settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
+        settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, autoUpdate);
+        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);
+        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);
+        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUser);
+        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPass);
+        settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
+        settings.setStringIfNotEmpty(Settings.KEYS.HINTS_FILE, hintsFile);
+        settings.setIntIfNotNull(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
 
-        Settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFiles);
+        settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFiles);
 
         //File Type Analyzer Settings
-        Settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, experimentalEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, experimentalEnabled);
 
-        Settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, !cli.isJarDisabled());
-        Settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, !cli.isArchiveDisabled());
-        Settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, !cli.isPythonDistributionDisabled());
-        Settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED, !cli.isPythonPackageDisabled());
-        Settings.setBoolean(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, !cli.isAutoconfDisabled());
-        Settings.setBoolean(Settings.KEYS.ANALYZER_CMAKE_ENABLED, !cli.isCmakeDisabled());
-        Settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, !cli.isNuspecDisabled());
-        Settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, !cli.isAssemblyDisabled());
-        Settings.setBoolean(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, !cli.isBundleAuditDisabled());
-        Settings.setBoolean(Settings.KEYS.ANALYZER_OPENSSL_ENABLED, !cli.isOpenSSLDisabled());
-        Settings.setBoolean(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, !cli.isComposerDisabled());
-        Settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, !cli.isNodeJsDisabled());
-        Settings.setBoolean(Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED, !cli.isNspDisabled());
-        Settings.setBoolean(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, !cli.isSwiftPackageAnalyzerDisabled());
-        Settings.setBoolean(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, !cli.isCocoapodsAnalyzerDisabled());
-        Settings.setBoolean(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, !cli.isRubyGemspecDisabled());
-        Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, !cli.isCentralDisabled());
-        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, !cli.isNexusDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED, !cli.isJarDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, !cli.isArchiveDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED, !cli.isPythonDistributionDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED, !cli.isPythonPackageDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED, !cli.isAutoconfDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_CMAKE_ENABLED, !cli.isCmakeDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, !cli.isNuspecDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, !cli.isAssemblyDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, !cli.isBundleAuditDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_OPENSSL_ENABLED, !cli.isOpenSSLDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, !cli.isComposerDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, !cli.isNodeJsDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_NSP_PACKAGE_ENABLED, !cli.isNspDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, !cli.isSwiftPackageAnalyzerDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, !cli.isCocoapodsAnalyzerDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_RUBY_GEMSPEC_ENABLED, !cli.isRubyGemspecDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, !cli.isCentralDisabled());
+        settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, !cli.isNexusDisabled());
 
-        Settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, cli.getPathToBundleAudit());
-        Settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
-        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
-        Settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, additionalZipExtensions);
-        Settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, cli.getPathToBundleAudit());
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
+        settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
+        settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, additionalZipExtensions);
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
         if (cveBase12 != null && !cveBase12.isEmpty()) {
-            Settings.setString(Settings.KEYS.CVE_SCHEMA_1_2, cveBase12);
-            Settings.setString(Settings.KEYS.CVE_SCHEMA_2_0, cveBase20);
-            Settings.setString(Settings.KEYS.CVE_MODIFIED_12_URL, cveMod12);
-            Settings.setString(Settings.KEYS.CVE_MODIFIED_20_URL, cveMod20);
+            settings.setString(Settings.KEYS.CVE_SCHEMA_1_2, cveBase12);
+            settings.setString(Settings.KEYS.CVE_SCHEMA_2_0, cveBase20);
+            settings.setString(Settings.KEYS.CVE_MODIFIED_12_URL, cveMod12);
+            settings.setString(Settings.KEYS.CVE_MODIFIED_20_URL, cveMod20);
         }
     }
 

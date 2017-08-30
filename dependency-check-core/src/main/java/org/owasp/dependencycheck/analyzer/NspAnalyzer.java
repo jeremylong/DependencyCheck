@@ -100,17 +100,17 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Initializes the analyzer once before any analysis is performed.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException if there's an error during initialization
      */
     @Override
-    public void initializeFileTypeAnalyzer() throws InitializationException {
+    public void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
         LOGGER.debug("Initializing {}", getName());
-        final String searchUrl = Settings.getString(Settings.KEYS.ANALYZER_NSP_URL, DEFAULT_URL);
         try {
-            searcher = new NspSearch(new URL(searchUrl));
+            searcher = new NspSearch(getSettings());
         } catch (MalformedURLException ex) {
             setEnabled(false);
-            throw new InitializationException("The configured URL to Node Security Platform is malformed: " + searchUrl, ex);
+            throw new InitializationException("The configured URL to Node Security Platform is malformed", ex);
         }
     }
 
@@ -148,7 +148,7 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         final File file = dependency.getActualFile();
-        if (!file.isFile() || file.length()==0) {
+        if (!file.isFile() || file.length() == 0) {
             return;
         }
         try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {
@@ -276,8 +276,8 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Processes a part of package.json (as defined by JsonArray) and update
-     * the specified dependency with relevant info.
+     * Processes a part of package.json (as defined by JsonArray) and update the
+     * specified dependency with relevant info.
      *
      * @param dependency the Dependency to update
      * @param jsonArray the jsonArray to parse

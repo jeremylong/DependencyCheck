@@ -50,7 +50,7 @@ public class FileUtilsTest extends BaseTest {
     @Test
     public void testDelete() throws Exception {
 
-        File file = File.createTempFile("tmp", "deleteme", Settings.getTempDirectory());
+        File file = File.createTempFile("tmp", "deleteme", getSettings().getTempDirectory());
         if (!file.exists()) {
             fail("Unable to create a temporary file.");
         }

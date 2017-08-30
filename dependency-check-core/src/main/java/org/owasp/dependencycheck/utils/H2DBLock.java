@@ -23,6 +23,7 @@ import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
 import java.util.Date;
 import org.owasp.dependencycheck.data.nvdcve.ConnectionFactory;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.exception.H2DBLockException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,19 @@ public class H2DBLock {
      * The lock file.
      */
     private File lockFile = null;
+    /**
+     * The configured settings.
+     */
+    private final Settings settings;
+    /**
+     * Whether the database connection is using H2.
+     */
+    private final boolean isH2Connection;
+
+    public H2DBLock(Settings settings, boolean isH2Connection) {
+        this.settings = settings;
+        this.isH2Connection = isH2Connection;
+    }
 
     /**
      * Determine if the lock is currently held.
@@ -65,9 +79,9 @@ public class H2DBLock {
      * @throws H2DBLockException thrown if a lock could not be obtained
      */
     public void lock() throws H2DBLockException {
-        if (ConnectionFactory.isH2Connection()) {
+        if (isH2Connection) {
             try {
-                final File dir = Settings.getDataDirectory();
+                final File dir = settings.getDataDirectory();
                 lockFile = new File(dir, "dc.update.lock");
                 if (lockFile.isFile() && getFileAge(lockFile) > 5 && !lockFile.delete()) {
                     LOGGER.warn("An old db update lock file was found but the system was unable to delete "

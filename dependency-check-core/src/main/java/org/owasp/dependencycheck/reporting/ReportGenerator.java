@@ -104,6 +104,10 @@ public class ReportGenerator {
      * The Velocity Engine Context.
      */
     private final Context context;
+    /**
+     * The configured settings.
+     */
+    private final Settings settings;
 
     /**
      * Constructs a new ReportGenerator.
@@ -113,8 +117,11 @@ public class ReportGenerator {
      * @param analyzers the list of analyzers used
      * @param properties the database properties (containing timestamps of the
      * NVD CVE data)
+     * @param settings a reference to the database settings
      */
-    public ReportGenerator(String applicationName, List<Dependency> dependencies, List<Analyzer> analyzers, DatabaseProperties properties) {
+    public ReportGenerator(String applicationName, List<Dependency> dependencies, List<Analyzer> analyzers,
+            DatabaseProperties properties, Settings settings) {
+        this.settings = settings;
         velocityEngine = createVelocityEngine();
         velocityEngine.init();
         context = createContext(applicationName, dependencies, analyzers, properties);
@@ -131,11 +138,11 @@ public class ReportGenerator {
      * @param analyzers the list of analyzers used
      * @param properties the database properties (containing timestamps of the
      * NVD CVE data)
+     * @param settings a reference to the database settings
      */
     public ReportGenerator(String applicationName, String groupID, String artifactID, String version,
-            List<Dependency> dependencies, List<Analyzer> analyzers, DatabaseProperties properties) {
-
-        this(applicationName, dependencies, analyzers, properties);
+            List<Dependency> dependencies, List<Analyzer> analyzers, DatabaseProperties properties, Settings settings) {
+        this(applicationName, dependencies, analyzers, properties, settings);
         if (version != null) {
             context.put("applicationVersion", version);
         }
@@ -187,7 +194,7 @@ public class ReportGenerator {
         ctxt.put("scanDate", scanDate);
         ctxt.put("scanDateXML", scanDateXML);
         ctxt.put("enc", new EscapeTool());
-        ctxt.put("version", Settings.getString(Settings.KEYS.APPLICATION_VERSION, "Unknown"));
+        ctxt.put("version", settings.getString(Settings.KEYS.APPLICATION_VERSION, "Unknown"));
         return ctxt;
     }
 
@@ -246,22 +253,6 @@ public class ReportGenerator {
         }
     }
 
-//    /**
-//     * Writes the dependency-check report(s).
-//     *
-//     * @param outputStream the OutputStream to send the generated report to
-//     * @param format the format the report should be written in
-//     * @throws ReportException thrown if the report format is ALL
-//     * @throws IOException is thrown when the template file does not exist
-//     * @throws Exception is thrown if there is an error writing out the reports
-//     */
-//    public void write(OutputStream outputStream, Format format) throws ReportException, IOException, Exception {
-//        if (format == Format.ALL) {
-//            throw new ReportException("Unable to write ALL reports to a single output stream, please check the API");
-//        }
-//        final String templateName = format.toString().toLowerCase() + "Report";
-//        processTemplate(templateName, outputStream);
-//    }
     /**
      * Determines the report file name based on the give output location and
      * format. If the output location contains a full file name that has the

@@ -114,12 +114,11 @@ public class ProcessTask implements Callable<ProcessTask> {
     @Override
     public ProcessTask call() throws Exception {
         try {
-            Settings.setInstance(settings);
             processFiles();
         } catch (UpdateException ex) {
             this.exception = ex;
         } finally {
-            Settings.cleanup(false);
+            settings.cleanup(false);
         }
         return this;
     }

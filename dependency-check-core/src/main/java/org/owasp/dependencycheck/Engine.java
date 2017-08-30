@@ -179,30 +179,38 @@ public class Engine implements FileFilter, AutoCloseable {
      * The Logger for use throughout the class.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Engine.class);
+    /**
+     * The configured settings.
+     */
+    private final Settings settings;
 
     /**
      * Creates a new {@link Mode#STANDALONE} Engine.
+     *
+     * @param settings reference to the configured settings
      */
-    public Engine() {
-        this(Mode.STANDALONE);
+    public Engine(Settings settings) {
+        this(Mode.STANDALONE, settings);
     }
 
     /**
      * Creates a new Engine.
      *
      * @param mode the mode of operation
+     * @param settings reference to the configured settings
      */
-    public Engine(Mode mode) {
-        this(Thread.currentThread().getContextClassLoader(), mode);
+    public Engine(Mode mode, Settings settings) {
+        this(Thread.currentThread().getContextClassLoader(), mode, settings);
     }
 
     /**
      * Creates a new {@link Mode#STANDALONE} Engine.
      *
      * @param serviceClassLoader a reference the class loader being used
+     * @param settings reference to the configured settings
      */
-    public Engine(ClassLoader serviceClassLoader) {
-        this(serviceClassLoader, Mode.STANDALONE);
+    public Engine(ClassLoader serviceClassLoader, Settings settings) {
+        this(serviceClassLoader, Mode.STANDALONE, settings);
     }
 
     /**
@@ -210,8 +218,10 @@ public class Engine implements FileFilter, AutoCloseable {
      *
      * @param serviceClassLoader a reference the class loader being used
      * @param mode the mode of the engine
+     * @param settings reference to the configured settings
      */
-    public Engine(ClassLoader serviceClassLoader, Mode mode) {
+    public Engine(ClassLoader serviceClassLoader, Mode mode, Settings settings) {
+        this.settings = settings;
         this.serviceClassLoader = serviceClassLoader;
         this.mode = mode;
         initializeEngine();
@@ -225,9 +235,6 @@ public class Engine implements FileFilter, AutoCloseable {
      * database
      */
     protected final void initializeEngine() {
-        if (mode.isDatabseRequired()) {
-            ConnectionFactory.initialize();
-        }
         loadAnalyzers();
     }
 
@@ -240,7 +247,6 @@ public class Engine implements FileFilter, AutoCloseable {
                 database.close();
                 database = null;
             }
-            ConnectionFactory.cleanup();
         }
     }
 
@@ -260,10 +266,16 @@ public class Engine implements FileFilter, AutoCloseable {
         for (AnalysisPhase phase : mode.getPhases()) {
             analyzers.put(phase, new ArrayList<Analyzer>());
         }
-
-        final AnalyzerService service = new AnalyzerService(serviceClassLoader);
+        boolean loadExperimental = false;
+        try {
+            loadExperimental = settings.getBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, false);
+        } catch (InvalidSettingException ex) {
+            LOGGER.trace("Experimenal setting not configured; defaulting to false");
+        }
+        final AnalyzerService service = new AnalyzerService(serviceClassLoader, loadExperimental);
         final List<Analyzer> iterator = service.getAnalyzers(mode.getPhases());
         for (Analyzer a : iterator) {
+            a.initializeSettings(this.settings);
             analyzers.get(a.getAnalysisPhase()).add(a);
             if (a instanceof FileTypeAnalyzer) {
                 this.fileTypeAnalyzers.add((FileTypeAnalyzer) a);
@@ -662,14 +674,13 @@ public class Engine implements FileFilter, AutoCloseable {
         }
         boolean autoUpdate = true;
         try {
-            autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
+            autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
         } catch (InvalidSettingException ex) {
             LOGGER.debug("Invalid setting for auto-update; using true.");
             exceptions.add(ex);
         }
         if (autoUpdate) {
             try {
-                database = CveDB.getInstance();
                 doUpdates();
             } catch (UpdateException ex) {
                 exceptions.add(ex);
@@ -681,10 +692,10 @@ public class Engine implements FileFilter, AutoCloseable {
             }
         } else {
             try {
-                if (ConnectionFactory.isH2Connection() && !ConnectionFactory.h2DataFileExists()) {
+                if (ConnectionFactory.isH2Connection(settings) && !ConnectionFactory.h2DataFileExists(settings)) {
                     throw new ExceptionCollection(new NoDataException("Autoupdate is disabled and the database does not exist"), true);
                 } else {
-                    database = CveDB.getInstance();
+                    openDatabase();
                 }
             } catch (IOException ex) {
                 throw new ExceptionCollection(new DatabaseException("Autoupdate is disabled and unable to connect to the database"), true);
@@ -739,7 +750,7 @@ public class Engine implements FileFilter, AutoCloseable {
         final List<AnalysisTask> result = new ArrayList<>();
         synchronized (dependencies) {
             for (final Dependency dependency : dependencies) {
-                final AnalysisTask task = new AnalysisTask(analyzer, dependency, this, exceptions, Settings.getInstance());
+                final AnalysisTask task = new AnalysisTask(analyzer, dependency, this, exceptions, settings);
                 result.add(task);
             }
         }
@@ -773,7 +784,7 @@ public class Engine implements FileFilter, AutoCloseable {
     protected void initializeAnalyzer(Analyzer analyzer) throws InitializationException {
         try {
             LOGGER.debug("Initializing {}", analyzer.getName());
-            analyzer.initialize();
+            analyzer.initialize(this);
         } catch (InitializationException ex) {
             LOGGER.error("Exception occurred initializing {}.", analyzer.getName());
             LOGGER.debug("", ex);
@@ -817,18 +828,37 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     public void doUpdates() throws UpdateException {
         if (mode.isDatabseRequired()) {
+            openDatabase();
             LOGGER.info("Checking for updates");
             final long updateStart = System.currentTimeMillis();
             final UpdateService service = new UpdateService(serviceClassLoader);
             final Iterator<CachedWebDataSource> iterator = service.getDataSources();
             while (iterator.hasNext()) {
                 final CachedWebDataSource source = iterator.next();
-                source.update();
+                source.update(this);
             }
             LOGGER.info("Check for updates complete ({} ms)", System.currentTimeMillis() - updateStart);
         } else {
             LOGGER.info("Skipping update check in evidence collection mode.");
         }
+    }
+
+    /**
+     * Opens the database connection.
+     */
+    public void openDatabase() {
+        if (mode.isDatabseRequired() && database == null) {
+            database = new CveDB(settings);
+        }
+    }
+
+    /**
+     * Returns a reference to the database.
+     *
+     * @return a reference to the database
+     */
+    public CveDB getDatabase() {
+        return this.database;
     }
 
     /**
@@ -874,6 +904,15 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     public Set<FileTypeAnalyzer> getFileTypeAnalyzers() {
         return this.fileTypeAnalyzers;
+    }
+
+    /**
+     * Returns
+     *
+     * @return
+     */
+    public Settings getSettings() {
+        return settings;
     }
 
     /**
@@ -932,7 +971,7 @@ public class Engine implements FileFilter, AutoCloseable {
             throw new UnsupportedOperationException("Cannot generate report in evidence collection mode.");
         }
         final DatabaseProperties prop = database.getDatabaseProperties();
-        final ReportGenerator r = new ReportGenerator(applicationName, groupId, artifactId, version, dependencies, getAnalyzers(), prop);
+        final ReportGenerator r = new ReportGenerator(applicationName, groupId, artifactId, version, dependencies, getAnalyzers(), prop, settings);
         try {
             r.write(outputDir.getAbsolutePath(), format);
         } catch (ReportException ex) {

@@ -36,6 +36,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.ConnectionFactory;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -85,7 +86,10 @@ public class NvdCveUpdater implements CachedWebDataSource {
      * very CPU-intense, e.g. downloading files.
      */
     private ExecutorService downloadExecutorService = null;
-
+    /**
+     * The configured settings.
+     */
+    private Settings settings;
     /**
      * Reference to the DAO.
      */
@@ -101,19 +105,21 @@ public class NvdCveUpdater implements CachedWebDataSource {
      * prevent more then one thread/JVM from updating the database at the same
      * time. This method may sleep upto 5 minutes.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws UpdateException is thrown if there is an error updating the
      * database
      */
     @Override
-    public synchronized void update() throws UpdateException {
+    public synchronized void update(Engine engine) throws UpdateException {
+        this.settings = engine.getSettings();
+        this.cveDb = engine.getDatabase();
         if (isUpdateConfiguredFalse()) {
             return;
         }
-        H2DBLock dbupdate = new H2DBLock();
+        H2DBLock dbupdate = new H2DBLock(settings, ConnectionFactory.isH2Connection(settings));
         try {
             dbupdate.lock();
             initializeExecutorServices();
-            cveDb = CveDB.getInstance();
             dbProperties = cveDb.getDatabaseProperties();
 
             if (checkUpdate()) {
@@ -127,7 +133,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
             throw new UpdateException("NVD CVE properties files contain an invalid URL, unable to update the data to use the most current data.", ex);
         } catch (DownloadFailedException ex) {
             LOGGER.warn("Unable to download the NVD CVE data; the results may not include the most recent CPE/CVEs from the NVD.");
-            if (Settings.getString(Settings.KEYS.PROXY_SERVER) == null) {
+            if (settings.getString(Settings.KEYS.PROXY_SERVER) == null) {
                 LOGGER.info("If you are behind a proxy you may need to configure dependency-check to use the proxy.");
             }
             throw new UpdateException("Unable to download the NVD CVE data.", ex);
@@ -136,9 +142,6 @@ public class NvdCveUpdater implements CachedWebDataSource {
         } catch (H2DBLockException ex) {
             throw new UpdateException("Unable to obtain an exclusive lock on the H2 database to perform updates", ex);
         } finally {
-            if (cveDb != null) {
-                cveDb.close();
-            }
             dbupdate.release();
             shutdownExecutorServices();
         }
@@ -152,7 +155,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
      */
     private boolean isUpdateConfiguredFalse() {
         try {
-            if (!Settings.getBoolean(Settings.KEYS.UPDATE_NVDCVE_ENABLED, true)) {
+            if (!settings.getBoolean(Settings.KEYS.UPDATE_NVDCVE_ENABLED, true)) {
                 return true;
             }
         } catch (InvalidSettingException ex) {
@@ -160,7 +163,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
         }
         boolean autoUpdate = true;
         try {
-            autoUpdate = Settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
+            autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE);
         } catch (InvalidSettingException ex) {
             LOGGER.debug("Invalid setting for auto-update; using true.");
         }
@@ -204,7 +207,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
     private boolean checkUpdate() throws UpdateException {
         boolean proceed = true;
         // If the valid setting has not been specified, then we proceed to check...
-        final int validForHours = Settings.getInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, 0);
+        final int validForHours = settings.getInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, 0);
         if (dataExists() && 0 < validForHours) {
             // ms Valid = valid (hours) x 60 min/hour x 60 sec/min x 1000 ms/sec
             final long msValid = validForHours * 60L * 60L * 1000L;
@@ -213,8 +216,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
             proceed = (now - lastChecked) > msValid;
             if (!proceed) {
                 LOGGER.info("Skipping NVD check since last check was within {} hours.", validForHours);
-                LOGGER.debug("Last NVD was at {}, and now {} is within {} ms.",
-                        lastChecked, now, msValid);
+                LOGGER.debug("Last NVD was at {}, and now {} is within {} ms.", lastChecked, now, msValid);
             }
         }
         return proceed;
@@ -226,11 +228,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
      * @return true if the database contains data
      */
     private boolean dataExists() {
-        try (CveDB cve = CveDB.getInstance()) {
-            return cve.dataExists();
-        } catch (DatabaseException ex) {
-            return false;
-        }
+        return cveDb.dataExists();
     }
 
     /**
@@ -259,7 +257,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
         final Set<Future<Future<ProcessTask>>> downloadFutures = new HashSet<>(maxUpdates);
         for (NvdCveInfo cve : updateable) {
             if (cve.getNeedsUpdate()) {
-                final DownloadTask call = new DownloadTask(cve, processingExecutorService, cveDb, Settings.getInstance());
+                final DownloadTask call = new DownloadTask(cve, processingExecutorService, cveDb, settings);
                 downloadFutures.add(downloadExecutorService.submit(call));
             }
         }
@@ -343,7 +341,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
         }
         if (dbProperties != null && !dbProperties.isEmpty()) {
             try {
-                final int startYear = Settings.getInt(Settings.KEYS.CVE_START_YEAR, 2002);
+                final int startYear = settings.getInt(Settings.KEYS.CVE_START_YEAR, 2002);
                 final int endYear = Calendar.getInstance().get(Calendar.YEAR);
                 boolean needsFullUpdate = false;
                 for (int y = startYear; y <= endYear; y++) {
@@ -355,7 +353,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
 
                 final long lastUpdated = Long.parseLong(dbProperties.getProperty(DatabaseProperties.LAST_UPDATED, "0"));
                 final long now = System.currentTimeMillis();
-                final int days = Settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS, 7);
+                final int days = settings.getInt(Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS, 7);
                 if (!needsFullUpdate && lastUpdated == updates.getTimeStamp(MODIFIED)) {
                     updates.clear(); //we don't need to update anything.
                 } else if (!needsFullUpdate && DateUtil.withinDateRange(lastUpdated, now, days)) {
@@ -408,25 +406,24 @@ public class NvdCveUpdater implements CachedWebDataSource {
     private UpdateableNvdCve retrieveCurrentTimestampsFromWeb()
             throws MalformedURLException, DownloadFailedException, InvalidDataException, InvalidSettingException {
 
-        final int start = Settings.getInt(Settings.KEYS.CVE_START_YEAR);
+        final int start = settings.getInt(Settings.KEYS.CVE_START_YEAR);
         final int end = Calendar.getInstance().get(Calendar.YEAR);
 
         final Map<String, Long> lastModifiedDates = retrieveLastModifiedDates(start, end);
 
         final UpdateableNvdCve updates = new UpdateableNvdCve();
 
-        final String baseUrl20 = Settings.getString(Settings.KEYS.CVE_SCHEMA_2_0);
-        final String baseUrl12 = Settings.getString(Settings.KEYS.CVE_SCHEMA_1_2);
+        final String baseUrl20 = settings.getString(Settings.KEYS.CVE_SCHEMA_2_0);
+        final String baseUrl12 = settings.getString(Settings.KEYS.CVE_SCHEMA_1_2);
         for (int i = start; i <= end; i++) {
             final String url = String.format(baseUrl20, i);
             updates.add(Integer.toString(i), url, String.format(baseUrl12, i),
                     lastModifiedDates.get(url), true);
         }
 
-        final String url = Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL);
-        updates.add(MODIFIED, url, Settings.getString(Settings.KEYS.CVE_MODIFIED_12_URL),
+        final String url = settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL);
+        updates.add(MODIFIED, url, settings.getString(Settings.KEYS.CVE_MODIFIED_12_URL),
                 lastModifiedDates.get(url), false);
-
         return updates;
     }
 
@@ -446,16 +443,16 @@ public class NvdCveUpdater implements CachedWebDataSource {
             throws MalformedURLException, DownloadFailedException {
 
         final Set<String> urls = new HashSet<>();
-        final String baseUrl20 = Settings.getString(Settings.KEYS.CVE_SCHEMA_2_0);
+        final String baseUrl20 = settings.getString(Settings.KEYS.CVE_SCHEMA_2_0);
         for (int i = startYear; i <= endYear; i++) {
             final String url = String.format(baseUrl20, i);
             urls.add(url);
         }
-        urls.add(Settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL));
+        urls.add(settings.getString(Settings.KEYS.CVE_MODIFIED_20_URL));
 
         final Map<String, Future<Long>> timestampFutures = new HashMap<>();
         for (String url : urls) {
-            final TimestampRetriever timestampRetriever = new TimestampRetriever(url, Settings.getInstance());
+            final TimestampRetriever timestampRetriever = new TimestampRetriever(url, settings);
             final Future<Long> future = downloadExecutorService.submit(timestampRetriever);
             timestampFutures.put(url, future);
         }
@@ -476,6 +473,15 @@ public class NvdCveUpdater implements CachedWebDataSource {
         }
 
         return lastModifiedDates;
+    }
+
+    /**
+     * Sets the settings object; this is used during testing.
+     *
+     * @param settings the configured settings
+     */
+    protected void setSettings(Settings settings) {
+        this.settings = settings;
     }
 
     /**
@@ -507,10 +513,10 @@ public class NvdCveUpdater implements CachedWebDataSource {
         public Long call() throws Exception {
             LOGGER.debug("Checking for updates from: {}", url);
             try {
-                Settings.setInstance(settings);
-                return Downloader.getLastModified(new URL(url));
+                Downloader downloader = new Downloader(settings);
+                return downloader.getLastModified(new URL(url));
             } finally {
-                Settings.cleanup(false);
+                settings.cleanup(false);
             }
         }
     }

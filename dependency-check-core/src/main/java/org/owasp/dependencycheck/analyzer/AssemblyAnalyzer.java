@@ -91,8 +91,8 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         // Use file.separator as a wild guess as to whether this is Windows
         final List<String> args = new ArrayList<>();
         if (!SystemUtils.IS_OS_WINDOWS) {
-            if (Settings.getString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH) != null) {
-                args.add(Settings.getString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH));
+            if (getSettings().getString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH) != null) {
+                args.add(getSettings().getString(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH));
             } else if (isInPath("mono")) {
                 args.add("mono");
             } else {
@@ -207,14 +207,15 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      * Initialize the analyzer. In this case, extract GrokAssembly.exe to a
      * temporary location.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException thrown if anything goes wrong
      */
     @Override
-    public void initializeFileTypeAnalyzer() throws InitializationException {
+    public void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
         final File tempFile;
         final File cfgFile;
         try {
-            tempFile = File.createTempFile("GKA", ".exe", Settings.getTempDirectory());
+            tempFile = File.createTempFile("GKA", ".exe", getSettings().getTempDirectory());
             cfgFile = new File(tempFile.getPath() + ".config");
         } catch (IOException ex) {
             setEnabled(false);

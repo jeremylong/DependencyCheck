@@ -32,14 +32,18 @@ public class SwiftAnalyzersTest extends BaseTest {
      * @throws Exception thrown if there is a problem
      */
     @Before
+    @Override
     public void setUp() throws Exception {
+        super.setUp();
         podsAnalyzer = new CocoaPodsAnalyzer();
+        podsAnalyzer.initializeSettings(getSettings());
         podsAnalyzer.setFilesMatched(true);
-        podsAnalyzer.initialize();
+        podsAnalyzer.initialize(null);
 
         spmAnalyzer = new SwiftPackageManagerAnalyzer();
+        spmAnalyzer.initializeSettings(getSettings());
         spmAnalyzer.setFilesMatched(true);
-        spmAnalyzer.initialize();
+        spmAnalyzer.initialize(null);
     }
 
     /**
@@ -48,12 +52,15 @@ public class SwiftAnalyzersTest extends BaseTest {
      * @throws Exception thrown if there is a problem
      */
     @After
+    @Override
     public void tearDown() throws Exception {
         podsAnalyzer.close();
         podsAnalyzer = null;
 
         spmAnalyzer.close();
         spmAnalyzer = null;
+        
+        super.tearDown();
     }
 
     /**

@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
@@ -65,18 +66,13 @@ import static org.owasp.dependencycheck.data.nvdcve.CveDB.PreparedStatementCveDb
 public final class CveDB implements AutoCloseable {
 
     /**
-     * Singleton instance of the CveDB.
-     */
-    private static CveDB instance = null;
-    /**
-     * Track the number of current users of the CveDB; so that if someone is
-     * using database another user cannot close the connection on them.
-     */
-    private int usageCount = 0;
-    /**
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(CveDB.class);
+    /**
+     * The database connection factory.
+     */
+    private final ConnectionFactory connectionFactory;
     /**
      * Database connection
      */
@@ -100,6 +96,10 @@ public final class CveDB implements AutoCloseable {
      */
     @SuppressWarnings("unchecked")
     private final Map<String, List<Vulnerability>> vulnerabilitiesForCpeCache = Collections.synchronizedMap(new ReferenceMap(HARD, SOFT));
+    /**
+     * The configured settings
+     */
+    private final Settings settings;
 
     /**
      * The enum value names must match the keys of the statements in the
@@ -197,30 +197,18 @@ public final class CveDB implements AutoCloseable {
     }
 
     /**
-     * Gets the CveDB singleton object.
-     *
-     * @return the CveDB singleton
-     * @throws DatabaseException thrown if there is a database error
-     */
-    public static synchronized CveDB getInstance() throws DatabaseException {
-        if (instance == null) {
-            instance = new CveDB();
-        }
-        if (!instance.isOpen()) {
-            instance.open();
-        }
-        instance.usageCount += 1;
-        return instance;
-    }
-
-    /**
      * Creates a new CveDB object and opens the database connection. Note, the
      * connection must be closed by the caller by calling the close method.
      *
+     * @param settings the configured settings
      * @throws DatabaseException thrown if there is an exception opening the
      * database.
      */
-    private CveDB() throws DatabaseException {
+    public CveDB(Settings settings) throws DatabaseException {
+        this.settings = settings;
+        connectionFactory = new ConnectionFactory(settings);
+        connectionFactory.initialize();
+        open();
     }
 
     /**
@@ -229,7 +217,7 @@ public final class CveDB implements AutoCloseable {
      * @param conn the database connection
      * @return the product name of the database if successful, {@code null} else
      */
-    private static String determineDatabaseProductName(Connection conn) {
+    private String determineDatabaseProductName(Connection conn) {
         try {
             final String databaseProductName = conn.getMetaData().getDatabaseProductName().toLowerCase();
             LOGGER.debug("Database product: {}", databaseProductName);
@@ -241,16 +229,6 @@ public final class CveDB implements AutoCloseable {
     }
 
     /**
-     * Method added for testing, returns the current usage count of the CveDB
-     * singleton.
-     *
-     * @return the current usage of the CveDB singleton
-     */
-    protected synchronized int getUsageCount() {
-        return usageCount;
-    }
-
-    /**
      * Opens the database connection. If the database does not exist, it will
      * create a new one.
      *
@@ -259,14 +237,14 @@ public final class CveDB implements AutoCloseable {
      */
     private synchronized void open() throws DatabaseException {
         try {
-            if (!instance.isOpen()) {
-                instance.connection = ConnectionFactory.getConnection();
-                final String databaseProductName = determineDatabaseProductName(instance.connection);
-                instance.statementBundle = databaseProductName != null
+            if (!isOpen()) {
+                connection = connectionFactory.getConnection();
+                final String databaseProductName = determineDatabaseProductName(this.connection);
+                statementBundle = databaseProductName != null
                         ? ResourceBundle.getBundle("data/dbStatements", new Locale(databaseProductName))
                         : ResourceBundle.getBundle("data/dbStatements");
-                instance.prepareStatements();
-                instance.databaseProperties = new DatabaseProperties(instance);
+                prepareStatements();
+                databaseProperties = new DatabaseProperties(this);
             }
         } catch (DatabaseException e) {
             releaseResources();
@@ -280,23 +258,20 @@ public final class CveDB implements AutoCloseable {
      */
     @Override
     public synchronized void close() {
-        if (instance != null) {
-            instance.usageCount -= 1;
-            if (instance.usageCount <= 0 && instance.isOpen()) {
-                instance.usageCount = 0;
-                clearCache();
-                instance.closeStatements();
-                try {
-                    instance.connection.close();
-                } catch (SQLException ex) {
-                    LOGGER.error("There was an error attempting to close the CveDB, see the log for more details.");
-                    LOGGER.debug("", ex);
-                } catch (Throwable ex) {
-                    LOGGER.error("There was an exception attempting to close the CveDB, see the log for more details.");
-                    LOGGER.debug("", ex);
-                }
-                releaseResources();
+        if (isOpen()) {
+            clearCache();
+            closeStatements();
+            try {
+                connection.close();
+            } catch (SQLException ex) {
+                LOGGER.error("There was an error attempting to close the CveDB, see the log for more details.");
+                LOGGER.debug("", ex);
+            } catch (Throwable ex) {
+                LOGGER.error("There was an exception attempting to close the CveDB, see the log for more details.");
+                LOGGER.debug("", ex);
             }
+            releaseResources();
+            connectionFactory.cleanup();
         }
     }
 
@@ -304,10 +279,10 @@ public final class CveDB implements AutoCloseable {
      * Releases the resources used by CveDB.
      */
     private synchronized void releaseResources() {
-        instance.statementBundle = null;
-        instance.preparedStatements.clear();
-        instance.databaseProperties = null;
-        instance.connection = null;
+        statementBundle = null;
+        preparedStatements.clear();
+        databaseProperties = null;
+        connection = null;
     }
 
     /**
@@ -836,15 +811,15 @@ public final class CveDB implements AutoCloseable {
         } catch (Exception ex) {
             String dd;
             try {
-                dd = Settings.getDataDirectory().getAbsolutePath();
+                dd = settings.getDataDirectory().getAbsolutePath();
             } catch (IOException ex1) {
-                dd = Settings.getString(Settings.KEYS.DATA_DIRECTORY);
+                dd = settings.getString(Settings.KEYS.DATA_DIRECTORY);
             }
             LOGGER.error("Unable to access the local database.\n\nEnsure that '{}' is a writable directory. "
                     + "If the problem persist try deleting the files in '{}' and running {} again. If the problem continues, please "
                     + "create a log file (see documentation at http://jeremylong.github.io/DependencyCheck/) and open a ticket at "
                     + "https://github.com/jeremylong/DependencyCheck/issues and include the log file.\n\n",
-                    dd, dd, Settings.getString(Settings.KEYS.APPLICATION_NAME));
+                    dd, dd, settings.getString(Settings.KEYS.APPLICATION_NAME));
             LOGGER.debug("", ex);
         } finally {
             DBUtils.closeResultSet(rs);

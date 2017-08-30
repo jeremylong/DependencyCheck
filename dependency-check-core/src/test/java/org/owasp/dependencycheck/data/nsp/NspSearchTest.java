@@ -22,7 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.json.Json;
@@ -30,7 +29,6 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 import static org.junit.Assume.assumeFalse;
 import org.owasp.dependencycheck.utils.URLConnectionFailureException;
@@ -41,10 +39,10 @@ public class NspSearchTest extends BaseTest {
     private NspSearch searcher;
 
     @Before
+    @Override
     public void setUp() throws Exception {
-        String url = Settings.getString(Settings.KEYS.ANALYZER_NSP_URL);
-        LOGGER.debug(url);
-        searcher = new NspSearch(new URL(url));
+        super.setUp();
+        searcher = new NspSearch(getSettings());
     }
 
     @Test

@@ -207,6 +207,10 @@ public class DependencyCheckScanAgent {
      * The path to Mono for .NET assembly analysis on non-windows systems.
      */
     private String pathToMono;
+    /**
+     * The configured settings.
+     */
+    private Settings settings;
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="getters/setters">
 
@@ -823,7 +827,7 @@ public class DependencyCheckScanAgent {
         populateSettings();
         final Engine engine;
         try {
-            engine = new Engine();
+            engine = new Engine(settings);
         } catch (DatabaseException ex) {
             throw new ExceptionCollection(ex, true);
         }
@@ -855,40 +859,40 @@ public class DependencyCheckScanAgent {
      * proxy server, port, and connection timeout.
      */
     private void populateSettings() {
-        Settings.initialize();
+        settings = new Settings();
         if (dataDirectory != null) {
-            Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
+            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
         } else {
             final File jarPath = new File(DependencyCheckScanAgent.class.getProtectionDomain().getCodeSource().getLocation().getPath());
             final File base = jarPath.getParentFile();
-            final String sub = Settings.getString(Settings.KEYS.DATA_DIRECTORY);
+            final String sub = settings.getString(Settings.KEYS.DATA_DIRECTORY);
             final File dataDir = new File(base, sub);
-            Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());
+            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());
         }
 
-        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
-        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);
-        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);
-        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUsername);
-        Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPassword);
-        Settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
-        Settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
-        Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
-        Settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_CENTRAL_URL, centralUrl);
-        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
-        Settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
-        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
-        Settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
-        Settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
-        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_12_URL, cveUrl12Modified);
-        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_20_URL, cveUrl20Modified);
-        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_1_2, cveUrl12Base);
-        Settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
-        Settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
+        settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
+        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);
+        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);
+        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUsername);
+        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPassword);
+        settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);
+        settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);
+        settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_CENTRAL_URL, centralUrl);
+        settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
+        settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
+        settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
+        settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
+        settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_12_URL, cveUrl12Modified);
+        settings.setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_20_URL, cveUrl20Modified);
+        settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_1_2, cveUrl12Base);
+        settings.setStringIfNotEmpty(Settings.KEYS.CVE_SCHEMA_2_0, cveUrl20Base);
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_MONO_PATH, pathToMono);
     }
 
     /**
@@ -918,7 +922,7 @@ public class DependencyCheckScanAgent {
             }
             throw new ScanAgentException("One or more exceptions occurred during analysis; please see the debug log for more details.", ex);
         } finally {
-            Settings.cleanup(true);
+            settings.cleanup(true);
             if (engine != null) {
                 engine.cleanup();
             }

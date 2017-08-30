@@ -42,6 +42,10 @@ public abstract class AbstractAnalyzer implements Analyzer {
      * A flag indicating whether or not the analyzer is enabled.
      */
     private volatile boolean enabled = true;
+    /**
+     * The configured settings.
+     */
+    private Settings settings;
 
     /**
      * Get the value of enabled.
@@ -60,6 +64,25 @@ public abstract class AbstractAnalyzer implements Analyzer {
      */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    /**
+     * Returns the configured settings.
+     *
+     * @return the configured settings
+     */
+    protected Settings getSettings() {
+        return settings;
+    }
+
+    /**
+     * Initializes the analyzer with the configured settings.
+     *
+     * @param settings the configured settings to use
+     */
+    @Override
+    public void initializeSettings(Settings settings) {
+        this.settings = settings;
     }
 
     /**
@@ -85,9 +108,11 @@ public abstract class AbstractAnalyzer implements Analyzer {
      * Initializes a given Analyzer. This will be skipped if the analyzer is
      * disabled.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException thrown if there is an exception
      */
-    protected void initializeAnalyzer() throws InitializationException {
+    protected void initializeAnalyzer(Engine engine) throws InitializationException {
+        // Intentionally empty, analyzer will override this if they must initialize anything.
     }
 
     /**
@@ -117,22 +142,24 @@ public abstract class AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * The initialize method does nothing for this Analyzer.
+     * Initialize the abstract analyzer.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException thrown if there is an exception
      */
     @Override
-    public final void initialize() throws InitializationException {
+    public final void initialize(Engine engine) throws InitializationException {
         final String key = getAnalyzerEnabledSettingKey();
         try {
-            this.setEnabled(Settings.getBoolean(key, true));
+            this.setEnabled(settings.getBoolean(key, true));
         } catch (InvalidSettingException ex) {
-            LOGGER.warn("Invalid setting for property '{}'", key);
-            LOGGER.debug("", ex);
+            String msg = String.format("Invalid setting for property '{}'", key);
+            LOGGER.warn(msg);
+            LOGGER.debug(msg, ex);
         }
 
         if (isEnabled()) {
-            initializeAnalyzer();
+            initializeAnalyzer(engine);
         } else {
             LOGGER.debug("{} has been disabled", getName());
         }

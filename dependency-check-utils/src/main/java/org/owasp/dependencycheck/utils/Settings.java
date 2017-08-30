@@ -32,6 +32,7 @@ import java.net.URLDecoder;
 import java.security.ProtectionDomain;
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -55,10 +56,6 @@ public final class Settings {
      */
     private static final String ARRAY_SEP = ",";
     /**
-     * Thread local settings.
-     */
-    private static final ThreadLocal<Settings> LOCAL_SETTINGS = new ThreadLocal<>();
-    /**
      * The properties.
      */
     private Properties props = null;
@@ -67,7 +64,7 @@ public final class Settings {
      * A reference to the temporary directory; used in case it needs to be
      * deleted during cleanup.
      */
-    private static File tempDirectory = null;
+    private File tempDirectory = null;
 
     //<editor-fold defaultstate="collapsed" desc="KEYS used to access settings">
     /**
@@ -448,13 +445,25 @@ public final class Settings {
     }
     //</editor-fold>
 
+    public Settings() {
+        initialize(PROPERTIES_FILE);
+    }
+
     /**
-     * Private constructor for the Settings class. This class loads the
-     * properties files.
+     * This class loads the settings from the given properties file.
      *
      * @param propertiesFilePath the path to the base properties file to load
      */
-    private Settings(String propertiesFilePath) {
+    public Settings(String propertiesFilePath) {
+        initialize(propertiesFilePath);
+    }
+
+    /**
+     * Initializes the settings object from the given file.
+     *
+     * @param propertiesFilePath the path to the settings property file
+     */
+    private final void initialize(String propertiesFilePath) {
         props = new Properties();
         try (InputStream in = FileUtils.getResourceAsStream(propertiesFilePath)) {
             props.load(in);
@@ -469,53 +478,10 @@ public final class Settings {
     }
 
     /**
-     * <p>
-     * Initializes the thread local settings object. Note, to use the settings
-     * object you must call this method. However, you must also call
-     * Settings.cleanup() to properly release resources.</p>
-     *
-     * <p>
-     * <b>Note</b> - Only an end user interface such as the CLI, Maven Plugin,
-     * etc. should call initialize. When called `initialize` will over-write any
-     * configured settings (i.e. configured via the maven plugin) and the
-     * default values from dependency-check-core will be used. If you are
-     * running into issues with the settings not being initialized it is likely
-     * due to multi-threading and you should use the `Settings.setInstance`
-     * method instead. See the `TimestampRetriever` class within NvdCveUpdater
-     * as an example.</p>
-     *
-     */
-    public static void initialize() {
-        LOCAL_SETTINGS.set(new Settings(PROPERTIES_FILE));
-    }
-
-    /**
-     * <p>
-     * Initializes the thread local settings object. Note, to use the settings
-     * object you must call this method. However, you must also call
-     * Settings.cleanup() to properly release resources.</p>
-     *
-     * <p>
-     * <b>Note</b> - Only an end user interface such as the CLI, Maven Plugin,
-     * etc. should call initialize. When called `initialize` will over-write any
-     * configured settings (i.e. configured via the maven plugin) and the
-     * default values from dependency-check-core will be used. If you are
-     * running into issues with the settings not being initialized it is likely
-     * due to multi-threading and you should use the `Settings.setInstance`
-     * method instead. See the `TimestampRetriever` class within NvdCveUpdater
-     * as an example.</p>
-     *
-     * @param propertiesFilePath the path to the base properties file to load
-     */
-    public static void initialize(String propertiesFilePath) {
-        LOCAL_SETTINGS.set(new Settings(propertiesFilePath));
-    }
-
-    /**
      * Cleans up resources to prevent memory leaks.
      *
      */
-    public static void cleanup() {
+    public void cleanup() {
         cleanup(true);
     }
 
@@ -525,39 +491,11 @@ public final class Settings {
      * @param deleteTemporary flag indicating whether any temporary directories
      * generated should be removed
      */
-    public static synchronized void cleanup(boolean deleteTemporary) {
+    public synchronized void cleanup(boolean deleteTemporary) {
         if (deleteTemporary && tempDirectory != null && tempDirectory.exists()) {
             FileUtils.delete(tempDirectory);
             tempDirectory = null;
         }
-        try {
-            LOCAL_SETTINGS.remove();
-        } catch (Throwable ex) {
-            LOGGER.debug("Error cleaning up Settings", ex);
-        }
-    }
-
-    /**
-     * Gets the underlying instance of the Settings object.
-     *
-     * @return the Settings object
-     */
-    public static Settings getInstance() {
-        return LOCAL_SETTINGS.get();
-    }
-
-    /**
-     * <p>
-     * Sets the instance of the Settings object to use in this thread.</p>
-     * <p>
-     * <b>Note</b> - if using this method to enable multi-threading one must
-     * call `Settings.cleanup(false)`. See the `TimestampRetriever` class within
-     * NvdCveUpdater as an example.</p>
-     *
-     * @param instance the instance of the settings object to use in this thread
-     */
-    public static void setInstance(Settings instance) {
-        LOCAL_SETTINGS.set(instance);
     }
 
     /**
@@ -567,7 +505,7 @@ public final class Settings {
      * @param header the header to print with the log message
      * @param properties the properties to log
      */
-    private static void logProperties(String header, Properties properties) {
+    private void logProperties(String header, Properties properties) {
         if (LOGGER.isDebugEnabled()) {
             final StringWriter sw = new StringWriter();
             try (PrintWriter pw = new PrintWriter(sw)) {
@@ -597,8 +535,8 @@ public final class Settings {
      * @param key the key for the property
      * @param value the value for the property
      */
-    public static void setString(String key, String value) {
-        LOCAL_SETTINGS.get().props.setProperty(key, value);
+    public void setString(String key, String value) {
+        props.setProperty(key, value);
         LOGGER.debug("Setting: {}='{}'", key, value);
     }
 
@@ -608,7 +546,7 @@ public final class Settings {
      * @param key the key for the property
      * @param value the value for the property
      */
-    public static void setStringIfNotNull(String key, String value) {
+    public void setStringIfNotNull(String key, String value) {
         if (null != value) {
             setString(key, value);
         }
@@ -620,7 +558,7 @@ public final class Settings {
      * @param key the key for the property
      * @param value the value for the property
      */
-    public static void setStringIfNotEmpty(String key, String value) {
+    public void setStringIfNotEmpty(String key, String value) {
         if (null != value && !value.isEmpty()) {
             setString(key, value);
         }
@@ -632,7 +570,7 @@ public final class Settings {
      * @param key the key for the property
      * @param value the value for the property
      */
-    public static void setArrayIfNotEmpty(String key, String[] value) {
+    public void setArrayIfNotEmpty(String key, String[] value) {
         if (null != value && value.length > 0) {
             setString(key, StringUtils.join(value, ARRAY_SEP));
         }
@@ -644,7 +582,7 @@ public final class Settings {
      * @param key the key for the property
      * @param value the value for the property
      */
-    public static void setBoolean(String key, boolean value) {
+    public void setBoolean(String key, boolean value) {
         setString(key, Boolean.toString(value));
     }
 
@@ -654,7 +592,7 @@ public final class Settings {
      * @param key the key for the property
      * @param value the value for the property
      */
-    public static void setBooleanIfNotNull(String key, Boolean value) {
+    public void setBooleanIfNotNull(String key, Boolean value) {
         if (null != value) {
             setBoolean(key, value);
         }
@@ -666,8 +604,8 @@ public final class Settings {
      * @param key the key for the property
      * @param value the value for the property
      */
-    public static void setInt(String key, int value) {
-        LOCAL_SETTINGS.get().props.setProperty(key, String.valueOf(value));
+    public void setInt(String key, int value) {
+        props.setProperty(key, String.valueOf(value));
         LOGGER.debug("Setting: {}='{}'", key, value);
     }
 
@@ -677,7 +615,7 @@ public final class Settings {
      * @param key the key for the property
      * @param value the value for the property
      */
-    public static void setIntIfNotNull(String key, Integer value) {
+    public void setIntIfNotNull(String key, Integer value) {
         if (null != value) {
             setInt(key, value);
         }
@@ -695,7 +633,7 @@ public final class Settings {
      * @throws IOException is thrown when there is an exception loading/merging
      * the properties
      */
-    public static void mergeProperties(File filePath) throws FileNotFoundException, IOException {
+    public void mergeProperties(File filePath) throws FileNotFoundException, IOException {
         try (FileInputStream fis = new FileInputStream(filePath)) {
             mergeProperties(fis);
         }
@@ -713,7 +651,7 @@ public final class Settings {
      * @throws IOException is thrown when there is an exception loading/merging
      * the properties
      */
-    public static void mergeProperties(String filePath) throws FileNotFoundException, IOException {
+    public void mergeProperties(String filePath) throws FileNotFoundException, IOException {
         try (FileInputStream fis = new FileInputStream(filePath)) {
             mergeProperties(fis);
         }
@@ -729,9 +667,9 @@ public final class Settings {
      * @throws IOException is thrown when there is an exception loading/merging
      * the properties
      */
-    public static void mergeProperties(InputStream stream) throws IOException {
-        LOCAL_SETTINGS.get().props.load(stream);
-        logProperties("Properties updated via merge", LOCAL_SETTINGS.get().props);
+    public void mergeProperties(InputStream stream) throws IOException {
+        props.load(stream);
+        logProperties("Properties updated via merge", props);
     }
 
     /**
@@ -743,7 +681,7 @@ public final class Settings {
      * @param key the key to lookup within the properties file
      * @return the property from the properties file converted to a File object
      */
-    public static File getFile(String key) {
+    public File getFile(String key) {
         final String file = getString(key);
         if (file == null) {
             return null;
@@ -765,7 +703,7 @@ public final class Settings {
      * @param key the key to lookup within the properties file
      * @return the property from the properties file converted to a File object
      */
-    protected static File getDataFile(String key) {
+    protected File getDataFile(String key) {
         final String file = getString(key);
         LOGGER.debug("Settings.getDataFile() - file: '{}'", file);
         if (file == null) {
@@ -788,7 +726,7 @@ public final class Settings {
      *
      * @return a File object
      */
-    private static File getJarPath() {
+    private File getJarPath() {
         String decodedPath = ".";
         String jarPath = "";
         final ProtectionDomain domain = Settings.class.getProtectionDomain();
@@ -819,8 +757,8 @@ public final class Settings {
      * @param defaultValue the default value for the requested property
      * @return the property from the properties file
      */
-    public static String getString(String key, String defaultValue) {
-        return System.getProperty(key, LOCAL_SETTINGS.get().props.getProperty(key, defaultValue));
+    public String getString(String key, String defaultValue) {
+        return System.getProperty(key, props.getProperty(key, defaultValue));
     }
 
     /**
@@ -830,9 +768,9 @@ public final class Settings {
      * @throws java.io.IOException thrown if the temporary directory does not
      * exist and cannot be created
      */
-    public static synchronized File getTempDirectory() throws IOException {
+    public synchronized File getTempDirectory() throws IOException {
         if (tempDirectory == null) {
-            final File baseTemp = new File(Settings.getString(Settings.KEYS.TEMP_DIRECTORY, System.getProperty("java.io.tmpdir")));
+            final File baseTemp = new File(getString(Settings.KEYS.TEMP_DIRECTORY, System.getProperty("java.io.tmpdir")));
             tempDirectory = FileUtils.createTempDirectory(baseTemp);
         }
         return tempDirectory;
@@ -847,19 +785,19 @@ public final class Settings {
      * @param key the key to lookup within the properties file
      * @return the property from the properties file
      */
-    public static String getString(String key) {
-        return System.getProperty(key, LOCAL_SETTINGS.get().props.getProperty(key));
+    public String getString(String key) {
+        return System.getProperty(key, props.getProperty(key));
     }
 
     /**
      * Returns a list with the given key.
      *
-     * If the propery is not set then {@code null} will be returned.
+     * If the property is not set then {@code null} will be returned.
      *
-     * @param key the key to get from this {@link Settings} singleton.
+     * @param key the key to get from this {@link Settings}.
      * @return the list or {@code null} if the key wasn't present.
      */
-    public static String[] getArray(final String key) {
+    public String[] getArray(final String key) {
         final String string = getString(key);
         if (string != null) {
             return string.split(ARRAY_SEP);
@@ -873,8 +811,8 @@ public final class Settings {
      *
      * @param key the property key to remove
      */
-    public static void removeProperty(String key) {
-        LOCAL_SETTINGS.get().props.remove(key);
+    public void removeProperty(String key) {
+        props.remove(key);
     }
 
     /**
@@ -888,9 +826,9 @@ public final class Settings {
      * @throws InvalidSettingException is thrown if there is an error retrieving
      * the setting
      */
-    public static int getInt(String key) throws InvalidSettingException {
+    public int getInt(String key) throws InvalidSettingException {
         try {
-            return Integer.parseInt(Settings.getString(key));
+            return Integer.parseInt(getString(key));
         } catch (NumberFormatException ex) {
             throw new InvalidSettingException("Could not convert property '" + key + "' to an int.", ex);
         }
@@ -907,13 +845,13 @@ public final class Settings {
      * @return the property from the properties file or the defaultValue if the
      * property does not exist or cannot be converted to an integer
      */
-    public static int getInt(String key, int defaultValue) {
+    public int getInt(String key, int defaultValue) {
         int value;
         try {
-            value = Integer.parseInt(Settings.getString(key));
+            value = Integer.parseInt(getString(key));
         } catch (NumberFormatException ex) {
-            if (!Settings.getString(key, "").isEmpty()) {
-                LOGGER.debug("Could not convert property '{}={}' to an int; using {} instead.", key, Settings.getString(key), defaultValue);
+            if (!getString(key, "").isEmpty()) {
+                LOGGER.debug("Could not convert property '{}={}' to an int; using {} instead.", key, getString(key), defaultValue);
             }
             value = defaultValue;
         }
@@ -931,9 +869,9 @@ public final class Settings {
      * @throws InvalidSettingException is thrown if there is an error retrieving
      * the setting
      */
-    public static long getLong(String key) throws InvalidSettingException {
+    public long getLong(String key) throws InvalidSettingException {
         try {
-            return Long.parseLong(Settings.getString(key));
+            return Long.parseLong(getString(key));
         } catch (NumberFormatException ex) {
             throw new InvalidSettingException("Could not convert property '" + key + "' to a long.", ex);
         }
@@ -951,8 +889,8 @@ public final class Settings {
      * @throws InvalidSettingException is thrown if there is an error retrieving
      * the setting
      */
-    public static boolean getBoolean(String key) throws InvalidSettingException {
-        return Boolean.parseBoolean(Settings.getString(key));
+    public boolean getBoolean(String key) throws InvalidSettingException {
+        return Boolean.parseBoolean(getString(key));
     }
 
     /**
@@ -969,8 +907,8 @@ public final class Settings {
      * @throws InvalidSettingException is thrown if there is an error retrieving
      * the setting
      */
-    public static boolean getBoolean(String key, boolean defaultValue) throws InvalidSettingException {
-        return Boolean.parseBoolean(Settings.getString(key, Boolean.toString(defaultValue)));
+    public boolean getBoolean(String key, boolean defaultValue) throws InvalidSettingException {
+        return Boolean.parseBoolean(getString(key, Boolean.toString(defaultValue)));
     }
 
     /**
@@ -986,9 +924,9 @@ public final class Settings {
      * @throws IOException thrown the data directory cannot be created
      * @throws InvalidSettingException thrown if there is an invalid setting
      */
-    public static String getConnectionString(String connectionStringKey, String dbFileNameKey)
+    public String getConnectionString(String connectionStringKey, String dbFileNameKey)
             throws IOException, InvalidSettingException {
-        final String connStr = Settings.getString(connectionStringKey);
+        final String connStr = getString(connectionStringKey);
         if (connStr == null) {
             final String msg = String.format("Invalid properties file; %s is missing.", connectionStringKey);
             throw new InvalidSettingException(msg);
@@ -997,7 +935,7 @@ public final class Settings {
             final File directory = getDataDirectory();
             String fileName = null;
             if (dbFileNameKey != null) {
-                fileName = Settings.getString(dbFileNameKey);
+                fileName = getString(dbFileNameKey);
             }
             if (fileName == null) {
                 final String msg = String.format("Invalid properties file to get a file based connection string; '%s' must be defined.",
@@ -1024,12 +962,32 @@ public final class Settings {
      * @return the data directory to store data files
      * @throws IOException is thrown if an IOException occurs of course...
      */
-    public static File getDataDirectory() throws IOException {
-        final File path = Settings.getDataFile(Settings.KEYS.DATA_DIRECTORY);
+    public File getDataDirectory() throws IOException {
+        final File path = getDataFile(Settings.KEYS.DATA_DIRECTORY);
         if (path != null && (path.exists() || path.mkdirs())) {
             return path;
         }
         throw new IOException(String.format("Unable to create the data directory '%s'",
                 (path == null) ? "unknown" : path.getAbsolutePath()));
+    }
+    
+    
+    /**
+     * Generates a new temporary file name that is guaranteed to be unique.
+     *
+     * @param prefix the prefix for the file name to generate
+     * @param extension the extension of the generated file name
+     * @return a temporary File
+     * @throws java.io.IOException thrown if the temporary folder could not be
+     * created
+     */
+    public File getTempFile(String prefix, String extension) throws IOException {
+        final File dir = getTempDirectory();
+        final String tempFileName = String.format("%s%s.%s", prefix, UUID.randomUUID().toString(), extension);
+        final File tempFile = new File(dir, tempFileName);
+        if (tempFile.exists()) {
+            return getTempFile(prefix, extension);
+        }
+        return tempFile;
     }
 }

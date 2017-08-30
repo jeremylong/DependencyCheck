@@ -40,13 +40,14 @@ public class AnalyzerServiceTest extends BaseDBTestCase {
      */
     @Test
     public void testGetAnalyzers() {
-        AnalyzerService instance = new AnalyzerService(Thread.currentThread().getContextClassLoader());
+        AnalyzerService instance = new AnalyzerService(Thread.currentThread().getContextClassLoader(), false);
         List<Analyzer> result = instance.getAnalyzers();
 
         boolean found = false;
         for (Analyzer a : result) {
             if ("Jar Analyzer".equals(a.getName())) {
                 found = true;
+                break;
             }
         }
         assertTrue("JarAnalyzer loaded", found);
@@ -57,7 +58,7 @@ public class AnalyzerServiceTest extends BaseDBTestCase {
      */
     @Test
     public void testGetAnalyzers_SpecificPhases() throws Exception {
-        AnalyzerService instance = new AnalyzerService(Thread.currentThread().getContextClassLoader());
+        AnalyzerService instance = new AnalyzerService(Thread.currentThread().getContextClassLoader(), false);
         List<Analyzer> result = instance.getAnalyzers(INITIAL, FINAL);
 
         for (Analyzer a : result) {
@@ -72,8 +73,7 @@ public class AnalyzerServiceTest extends BaseDBTestCase {
      */
     @Test
     public void testGetExperimentalAnalyzers() {
-        Settings.setBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, false);
-        AnalyzerService instance = new AnalyzerService(Thread.currentThread().getContextClassLoader());
+        AnalyzerService instance = new AnalyzerService(Thread.currentThread().getContextClassLoader(), false);
         List<Analyzer> result = instance.getAnalyzers();
         String experimental = "CMake Analyzer";
         boolean found = false;
@@ -83,8 +83,8 @@ public class AnalyzerServiceTest extends BaseDBTestCase {
             }
         }
         assertFalse("Experimental analyzer loaded when set to false", found);
-        
-        Settings.setBoolean(Settings.KEYS.ANALYZER_EXPERIMENTAL_ENABLED, true);
+
+        instance = new AnalyzerService(Thread.currentThread().getContextClassLoader(), true);
         result = instance.getAnalyzers();
         found = false;
         for (Analyzer a : result) {

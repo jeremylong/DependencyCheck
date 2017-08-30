@@ -16,16 +16,20 @@ public class NspAnalyzerTest extends BaseTest {
     private NspAnalyzer analyzer;
 
     @Before
+    @Override
     public void setUp() throws Exception {
+        super.setUp();
         analyzer = new NspAnalyzer();
         analyzer.setFilesMatched(true);
-        analyzer.initialize();
+        analyzer.initializeSettings(getSettings());
+        analyzer.initialize(null);
     }
 
     @After
+    @Override
     public void tearDown() throws Exception {
         analyzer.close();
-        analyzer = null;
+        super.tearDown();
     }
 
     @Test

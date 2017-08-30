@@ -30,8 +30,6 @@ import java.util.Map;
 
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.UnrecognizedOptionException;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -42,7 +40,7 @@ import org.owasp.dependencycheck.utils.Settings.KEYS;
 /**
  * Tests for the {@link AppTest} class.
  */
-public class AppTest {
+public class AppTest extends BaseTest {
 
     /**
      * Test rule for asserting exceptions and their contents.
@@ -51,28 +49,12 @@ public class AppTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     /**
-     * Initialize the {@link Settings} singleton.
-     */
-    @Before
-    public void setUp() {
-        Settings.initialize();
-    }
-
-    /**
-     * Clean the {@link Settings} singleton.
-     */
-    @After
-    public void tearDown() {
-        Settings.cleanup();
-    }
-
-    /**
      * Test of ensureCanonicalPath method, of class App.
      */
     @Test
     public void testEnsureCanonicalPath() {
         String file = "../*.jar";
-        App instance = new App();
+        App instance = new App(getSettings());
         String result = instance.ensureCanonicalPath(file);
         assertFalse(result.contains(".."));
         assertTrue(result.endsWith("*.jar"));
@@ -85,7 +67,7 @@ public class AppTest {
 
     /**
      * Assert that boolean properties can be set on the CLI and parsed into the
-     * {@link Settings} singleton.
+     * {@link Settings}.
      *
      * @throws Exception the unexpected {@link Exception}.
      */
@@ -165,13 +147,13 @@ public class AppTest {
         String[] args = {"-P", prop.getAbsolutePath(), "--suppression", "another-file.xml"};
 
         // WHEN parsing the CLI arguments
-        final CliParser cli = new CliParser();
+        final CliParser cli = new CliParser(getSettings());
         cli.parse(args);
-        final App classUnderTest = new App();
+        final App classUnderTest = new App(getSettings());
         classUnderTest.populateSettings(cli);
 
-        // THEN the suppression file is set in the settings singleton for use in the application core
-        assertThat("Expected the suppression file to be set in the Settings singleton", Settings.getString(KEYS.SUPPRESSION_FILE), is("another-file.xml"));
+        // THEN the suppression file is set in the settings for use in the application core
+        assertThat("Expected the suppression file to be set in the Settings", getSettings().getString(KEYS.SUPPRESSION_FILE), is("another-file.xml"));
     }
 
     /**
@@ -188,31 +170,25 @@ public class AppTest {
         String[] args = {"-P", prop.getAbsolutePath(), "--suppression", "first-file.xml", "another-file.xml"};
 
         // WHEN parsing the CLI arguments
-        final CliParser cli = new CliParser();
+        final CliParser cli = new CliParser(getSettings());
         cli.parse(args);
-        final App classUnderTest = new App();
+        final App classUnderTest = new App(getSettings());
         classUnderTest.populateSettings(cli);
 
-        // THEN the suppression file is set in the settings singleton for use in the application core
-        assertThat("Expected the suppression files to be set in the Settings singleton with a separator", Settings.getString(KEYS.SUPPRESSION_FILE), is("first-file.xml,another-file.xml"));
+        // THEN the suppression file is set in the settings for use in the application core
+        assertThat("Expected the suppression files to be set in the Settings with a separator", getSettings().getString(KEYS.SUPPRESSION_FILE), is("first-file.xml,another-file.xml"));
     }
 
     private boolean testBooleanProperties(String[] args, Map<String, Boolean> expected) throws URISyntaxException, FileNotFoundException, ParseException, InvalidSettingException {
-        Settings.initialize();
-        try {
-            final CliParser cli = new CliParser();
-            cli.parse(args);
-            App instance = new App();
-            instance.populateSettings(cli);
-            boolean results = true;
-            for (Map.Entry<String, Boolean> entry : expected.entrySet()) {
-                results &= Settings.getBoolean(entry.getKey()) == entry.getValue();
-            }
-
-            return results;
-        } finally {
-            Settings.cleanup();
+        this.reloadSettings();
+        final CliParser cli = new CliParser(getSettings());
+        cli.parse(args);
+        App instance = new App(getSettings());
+        instance.populateSettings(cli);
+        boolean results = true;
+        for (Map.Entry<String, Boolean> entry : expected.entrySet()) {
+            results &= getSettings().getBoolean(entry.getKey()) == entry.getValue();
         }
+        return results;
     }
-
 }

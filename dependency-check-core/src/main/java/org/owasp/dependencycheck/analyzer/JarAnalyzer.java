@@ -264,13 +264,15 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Checks if the given dependency appears to be a macOS metadata file, returning true if its filename starts with a
-     * ._ prefix and if there is another dependency with the same filename minus the ._ prefix, otherwise it returns
-     * false.
+     * Checks if the given dependency appears to be a macOS metadata file,
+     * returning true if its filename starts with a ._ prefix and if there is
+     * another dependency with the same filename minus the ._ prefix, otherwise
+     * it returns false.
      *
      * @param dependency the dependency to check if it's a macOS metadata file
-     * @param engine     the engine that is scanning the dependencies
-     * @return whether or not the given dependency appears to be a macOS metadata file
+     * @param engine the engine that is scanning the dependencies
+     * @return whether or not the given dependency appears to be a macOS
+     * metadata file
      */
     private boolean isMacOSMetaDataFile(final Dependency dependency, final Engine engine) {
         final String fileName = Paths.get(dependency.getActualFilePath()).getFileName().toString();
@@ -278,17 +280,19 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Iterates through the given list of dependencies and returns true when it finds a dependency with a filename
-     * matching the given filename, otherwise returns false.
+     * Iterates through the given list of dependencies and returns true when it
+     * finds a dependency with a filename matching the given filename, otherwise
+     * returns false.
      *
      * @param dependencies the dependencies to search within
-     * @param fileName     the filename to search for
-     * @return whether or not the given dependencies contain a dependency with the given filename
+     * @param fileName the filename to search for
+     * @return whether or not the given dependencies contain a dependency with
+     * the given filename
      */
     private boolean hasDependencyWithFilename(final List<Dependency> dependencies, final String fileName) {
         for (final Dependency dependency : dependencies) {
             if (Paths.get(dependency.getActualFilePath()).getFileName().toString().toLowerCase()
-                .equals(fileName.toLowerCase())) {
+                    .equals(fileName.toLowerCase())) {
                 return true;
             }
         }
@@ -296,23 +300,24 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Attempts to read the first bytes of the given dependency (using its actual file path) and returns true if they
-     * match the expected first bytes of a zip file, which may be empty or spanned. If they don't match, or if the file
-     * could not be read, then it returns false.
+     * Attempts to read the first bytes of the given dependency (using its
+     * actual file path) and returns true if they match the expected first bytes
+     * of a zip file, which may be empty or spanned. If they don't match, or if
+     * the file could not be read, then it returns false.
      *
      * @param dependency the dependency to check if it's a zip file
-     * @return whether or not the given dependency appears to be a zip file from its first bytes
+     * @return whether or not the given dependency appears to be a zip file from
+     * its first bytes
      */
     private boolean isZipFile(final Dependency dependency) {
         final byte[] buffer = new byte[4];
         try (final FileInputStream fileInputStream = new FileInputStream(dependency.getActualFilePath())) {
             fileInputStream.read(buffer);
-            if (Arrays.equals(buffer, ZIP_FIRST_BYTES) || Arrays.equals(buffer, ZIP_EMPTY_FIRST_BYTES) ||
-                Arrays.equals(buffer, ZIP_SPANNED_FIRST_BYTES)) {
+            if (Arrays.equals(buffer, ZIP_FIRST_BYTES) || Arrays.equals(buffer, ZIP_EMPTY_FIRST_BYTES)
+                    || Arrays.equals(buffer, ZIP_SPANNED_FIRST_BYTES)) {
                 return true;
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.warn("Unable to check if '{}' is a zip file", dependency.getActualFilePath());
             LOGGER.trace("", e);
         }
@@ -911,13 +916,14 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Initializes the JarAnalyzer.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException is thrown if there is an exception
      * creating a temporary directory
      */
     @Override
-    public void initializeFileTypeAnalyzer() throws InitializationException {
+    public void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
         try {
-            final File baseDir = Settings.getTempDirectory();
+            final File baseDir = getSettings().getTempDirectory();
             tempFileLocation = File.createTempFile("check", "tmp", baseDir);
             if (!tempFileLocation.delete()) {
                 final String msg = String.format("Unable to delete temporary file '%s'.", tempFileLocation.getAbsolutePath());

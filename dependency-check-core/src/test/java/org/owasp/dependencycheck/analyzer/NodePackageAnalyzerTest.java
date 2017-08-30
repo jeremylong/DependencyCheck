@@ -48,10 +48,13 @@ public class NodePackageAnalyzerTest extends BaseTest {
      * @throws Exception thrown if there is a problem
      */
     @Before
+    @Override
     public void setUp() throws Exception {
+        super.setUp();
         analyzer = new NodePackageAnalyzer();
         analyzer.setFilesMatched(true);
-        analyzer.initialize();
+        analyzer.initializeSettings(getSettings());
+        analyzer.initialize(null);
     }
 
     /**
@@ -60,9 +63,10 @@ public class NodePackageAnalyzerTest extends BaseTest {
      * @throws Exception thrown if there is a problem
      */
     @After
+    @Override
     public void tearDown() throws Exception {
         analyzer.close();
-        analyzer = null;
+        super.tearDown();
     }
 
     /**

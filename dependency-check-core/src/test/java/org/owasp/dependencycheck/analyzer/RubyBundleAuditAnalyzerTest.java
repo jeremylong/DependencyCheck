@@ -54,7 +54,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
  * @author Dale Visser
  */
 public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
-
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(RubyBundleAuditAnalyzerTest.class);
 
     /**
@@ -68,11 +68,14 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
      * @throws Exception thrown if there is a problem
      */
     @Before
+    @Override
     public void setUp() throws Exception {
-        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
-        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
-        Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
+        super.setUp();
+        getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+        getSettings().setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
+        getSettings().setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
         analyzer = new RubyBundleAuditAnalyzer();
+        analyzer.initializeSettings(getSettings());
         analyzer.setFilesMatched(true);
     }
 
@@ -82,11 +85,13 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
      * @throws Exception thrown if there is a problem
      */
     @After
+    @Override
     public void tearDown() throws Exception {
         if (analyzer != null) {
             analyzer.close();
             analyzer = null;
         }
+        super.tearDown();
     }
 
     /**
@@ -113,14 +118,14 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
     @Test
     public void testAnalysis() throws AnalysisException, DatabaseException {
         try {
-            analyzer.initialize();
+            analyzer.initialize(null);
             final String resource = "ruby/vulnerable/gems/rails-4.1.15/Gemfile.lock";
             final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, resource));
-            final Engine engine = new Engine();
+            final Engine engine = new Engine(getSettings());
             analyzer.analyze(result, engine);
             int size = engine.getDependencies().size();
             assertTrue(size >= 1);
-
+            
             Dependency dependency = engine.getDependencies().get(0);
             assertTrue(dependency.getProductEvidence().toString().toLowerCase().contains("redcarpet"));
             assertTrue(dependency.getVersionEvidence().toString().toLowerCase().contains("2.2.2"));
@@ -138,17 +143,17 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
     @Test
     public void testAddCriticalityToVulnerability() throws AnalysisException, DatabaseException {
         try {
-            analyzer.initialize();
-
+            analyzer.initialize(null);
+            
             final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                     "ruby/vulnerable/gems/sinatra/Gemfile.lock"));
-            final Engine engine = new Engine();
+            final Engine engine = new Engine(getSettings());
             analyzer.analyze(result, engine);
-
+            
             Dependency dependency = engine.getDependencies().get(0);
             Vulnerability vulnerability = dependency.getVulnerabilities().first();
             assertEquals(vulnerability.getCvssScore(), 5.0f, 0.0);
-
+            
         } catch (InitializationException | DatabaseException | AnalysisException e) {
             LOGGER.warn("Exception setting up RubyBundleAuditAnalyzer. Make sure Ruby gem bundle-audit is installed. You may also need to set property \"analyzer.bundle.audit.path\".");
             Assume.assumeNoException("Exception setting up RubyBundleAuditAnalyzer; bundle audit may not be installed, or property \"analyzer.bundle.audit.path\" may not be set.", e);
@@ -163,10 +168,11 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
     @Test
     public void testMissingBundleAudit() throws AnalysisException, DatabaseException {
         //set a non-exist bundle-audit
-        Settings.setString(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, "phantom-bundle-audit");
+        getSettings().setString(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, "phantom-bundle-audit");
+        analyzer.initializeSettings(getSettings());
         try {
             //initialize should fail.
-            analyzer.initialize();
+            analyzer.initialize(null);
         } catch (Exception e) {
             //expected, so ignore.
             assertNotNull(e);
@@ -184,7 +190,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
      */
     @Test
     public void testDependenciesPath() throws AnalysisException, DatabaseException {
-        final Engine engine = new Engine();
+        final Engine engine = new Engine(getSettings());
         engine.scan(BaseTest.getResourceAsFile(this,
                 "ruby/vulnerable/gems/rails-4.1.15/"));
         try {
@@ -202,14 +208,14 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
         while (dIterator.hasNext()) {
             Dependency dept = dIterator.next();
             LOGGER.info("dept path: {}", dept.getActualFilePath());
-
+            
             Set<Identifier> identifiers = dept.getIdentifiers();
             Iterator<Identifier> idIterator = identifiers.iterator();
             while (idIterator.hasNext()) {
                 Identifier id = idIterator.next();
                 LOGGER.info("  Identifier: {}, type={}, url={}, conf={}", id.getValue(), id.getType(), id.getUrl(), id.getConfidence());
             }
-
+            
             Set<Evidence> prodEv = dept.getProductEvidence().getEvidence();
             Iterator<Evidence> it = prodEv.iterator();
             while (it.hasNext()) {
@@ -222,7 +228,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
                 Evidence e = vIt.next();
                 LOGGER.info("  version: name={}, value={}, source={}, confidence={}", e.getName(), e.getValue(), e.getSource(), e.getConfidence());
             }
-
+            
             Set<Evidence> vendorEv = dept.getVendorEvidence().getEvidence();
             Iterator<Evidence> vendorIt = vendorEv.iterator();
             while (vendorIt.hasNext()) {

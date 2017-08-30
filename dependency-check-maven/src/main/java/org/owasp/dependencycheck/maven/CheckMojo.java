@@ -131,7 +131,7 @@ public class CheckMojo extends BaseDependencyCheckMojo {
             }
             engine.cleanup();
         }
-        Settings.cleanup();
+        getSettings().cleanup();
     }
 
     /**

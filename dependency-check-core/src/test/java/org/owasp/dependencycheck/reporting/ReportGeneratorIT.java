@@ -58,7 +58,7 @@ public class ReportGeneratorIT extends BaseDBTestCase {
             File writeTo = new File("target/test-reports/Report.xml");
             File suppressionFile = BaseTest.getResourceAsFile(this, "incorrectSuppressions.xml");
 
-            Settings.setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile.getAbsolutePath());
+            getSettings().setString(Settings.KEYS.SUPPRESSION_FILE, suppressionFile.getAbsolutePath());
 
             //File struts = new File(this.getClass().getClassLoader().getResource("struts2-core-2.1.2.jar").getPath());
             File struts = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
@@ -67,8 +67,8 @@ public class ReportGeneratorIT extends BaseDBTestCase {
             //File jetty = new File(this.getClass().getClassLoader().getResource("org.mortbay.jetty.jar").getPath());
             File jetty = BaseTest.getResourceAsFile(this, "org.mortbay.jetty.jar");
 
-            Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
-            Engine engine = new Engine();
+            getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+            Engine engine = new Engine(getSettings());
 
             engine.scan(struts);
             engine.scan(axis);

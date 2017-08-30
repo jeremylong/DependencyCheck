@@ -54,7 +54,7 @@ public class EngineTest extends BaseDBTestCase {
      */
     @Test
     public void testScanFile() throws DatabaseException {
-        Engine instance = new Engine();
+        Engine instance = new Engine(getSettings());
         instance.addFileTypeAnalyzer(new JarAnalyzer());
         File file = BaseTest.getResourceAsFile(this, "dwr.jar");
         Dependency dwr = instance.scanFile(file);
@@ -72,7 +72,7 @@ public class EngineTest extends BaseDBTestCase {
     @Test(expected = ExceptionCollection.class)
     public void exceptionDuringAnalysisTaskExecutionIsFatal() throws DatabaseException, ExceptionCollection {
         final ExecutorService executorService = Executors.newFixedThreadPool(3);
-        final Engine instance = new Engine();
+        final Engine instance = new Engine(getSettings());
         final List<Throwable> exceptions = new ArrayList<>();
 
         new Expectations() {
@@ -89,14 +89,11 @@ public class EngineTest extends BaseDBTestCase {
             {
                 instance.getExecutorService(analyzer);
                 result = executorService;
-
                 instance.getAnalysisTasks(analyzer, exceptions);
                 result = failingAnalysisTask;
             }
         };
-
         instance.executeAnalysisTasks(analyzer, exceptions);
-
         assertTrue(executorService.isShutdown());
     }
 }

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import static org.owasp.dependencycheck.analyzer.NspAnalyzer.DEFAULT_URL;
 import org.owasp.dependencycheck.utils.URLConnectionFailureException;
 
 /**
@@ -54,7 +56,10 @@ public class NspSearch {
      * Whether to use the Proxy when making requests.
      */
     private final boolean useProxy;
-
+    /**
+     * The configured settings.
+     */
+    private final Settings settings;
     /**
      * Used for logging.
      */
@@ -63,11 +68,16 @@ public class NspSearch {
     /**
      * Creates a NspSearch for the given repository URL.
      *
-     * @param nspCheckUrl the URL to the public NSP check API
+     * @param settings the configured settings
+     * @throws java.net.MalformedURLException thrown if the configured URL is
+     * invalid
      */
-    public NspSearch(URL nspCheckUrl) {
-        this.nspCheckUrl = nspCheckUrl;
-        if (null != Settings.getString(Settings.KEYS.PROXY_SERVER)) {
+    public NspSearch(Settings settings) throws MalformedURLException {
+        final String searchUrl = settings.getString(Settings.KEYS.ANALYZER_NSP_URL, DEFAULT_URL);
+        LOGGER.debug("NSP Search URL: {}", searchUrl);
+        this.nspCheckUrl = new URL(searchUrl);
+        this.settings = settings;
+        if (null != settings.getString(Settings.KEYS.PROXY_SERVER)) {
             useProxy = true;
             LOGGER.debug("Using proxy");
         } else {
@@ -90,8 +100,8 @@ public class NspSearch {
         try {
             final List<Advisory> result = new ArrayList<>();
             final byte[] packageDatabytes = packageJson.toString().getBytes(StandardCharsets.UTF_8);
-
-            final HttpURLConnection conn = URLConnectionFactory.createHttpURLConnection(nspCheckUrl, useProxy);
+            final URLConnectionFactory factory = new URLConnectionFactory(settings);
+            final HttpURLConnection conn = factory.createHttpURLConnection(nspCheckUrl, useProxy);
             conn.setDoOutput(true);
             conn.setDoInput(true);
             conn.setRequestMethod("POST");

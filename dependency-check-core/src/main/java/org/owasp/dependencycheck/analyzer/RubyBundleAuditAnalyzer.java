@@ -90,7 +90,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The DAL.
      */
-    private CveDB cvedb;
+    private CveDB cvedb = null;
 
     /**
      * @return a filter that accepts files named Gemfile.lock
@@ -113,7 +113,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             throw new AnalysisException(String.format("%s should have been a directory.", folder.getAbsolutePath()));
         }
         final List<String> args = new ArrayList<>();
-        final String bundleAuditPath = Settings.getString(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH);
+        final String bundleAuditPath = getSettings().getString(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH);
         File bundleAudit = null;
         if (bundleAuditPath != null) {
             bundleAudit = new File(bundleAuditPath);
@@ -140,22 +140,18 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      * Initialize the analyzer. In this case, extract GrokAssembly.exe to a
      * temporary location.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException if anything goes wrong
      */
     @Override
-    public void initializeFileTypeAnalyzer() throws InitializationException {
-        try {
-            cvedb = CveDB.getInstance();
-        } catch (DatabaseException ex) {
-            LOGGER.warn("Exception opening the database");
-            LOGGER.debug("error", ex);
-            setEnabled(false);
-            throw new InitializationException("Error connecting to the database", ex);
-        }
+    public void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
         // Now, need to see if bundle-audit actually runs from this location.
+        if (engine != null) {
+            this.cvedb = engine.getDatabase();
+        }
         Process process = null;
         try {
-            process = launchBundleAudit(Settings.getTempDirectory());
+            process = launchBundleAudit(getSettings().getTempDirectory());
         } catch (AnalysisException ae) {
 
             setEnabled(false);
@@ -205,17 +201,6 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         if (isEnabled()) {
             LOGGER.info("{} is enabled. It is necessary to manually run \"bundle-audit update\" "
                     + "occasionally to keep its database up to date.", ANALYZER_NAME);
-        }
-    }
-
-    /**
-     * Closes the data source.
-     */
-    @Override
-    public void closeAnalyzer() {
-        if (cvedb != null) {
-            cvedb.close();
-            cvedb = null;
         }
     }
 
@@ -413,13 +398,21 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             final String criticality = nextLine.substring(CRITICALITY.length()).trim();
             float score = -1.0f;
             Vulnerability v = null;
-            try {
-                v = cvedb.getVulnerability(vulnerability.getName());
-            } catch (DatabaseException ex) {
-                LOGGER.debug("Unable to look up vulnerability {}", vulnerability.getName());
+            if (cvedb != null) {
+                try {
+                    v = cvedb.getVulnerability(vulnerability.getName());
+                } catch (DatabaseException ex) {
+                    LOGGER.debug("Unable to look up vulnerability {}", vulnerability.getName());
+                }
             }
             if (v != null) {
                 score = v.getCvssScore();
+                vulnerability.setCvssAccessComplexity(v.getCvssAccessComplexity());
+                vulnerability.setCvssAccessVector(v.getCvssAccessVector());
+                vulnerability.setCvssAuthentication(v.getCvssAuthentication());
+                vulnerability.setCvssAvailabilityImpact(v.getCvssAvailabilityImpact());
+                vulnerability.setCvssConfidentialityImpact(v.getCvssConfidentialityImpact());
+                vulnerability.setCvssIntegrityImpact(v.getCvssIntegrityImpact());
             } else if ("High".equalsIgnoreCase(criticality)) {
                 score = 8.5f;
             } else if ("Medium".equalsIgnoreCase(criticality)) {
@@ -477,7 +470,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws IOException thrown if a temporary gem file could not be written
      */
     private Dependency createDependencyForGem(Engine engine, String parentName, String fileName, String filePath, String gem) throws IOException {
-        final File gemFile = new File(Settings.getTempDirectory(), gem + "_Gemfile.lock");
+        final File gemFile = new File(getSettings().getTempDirectory(), gem + "_Gemfile.lock");
         if (!gemFile.createNewFile()) {
             throw new IOException("Unable to create temporary gem file");
         }

@@ -110,10 +110,11 @@ public class HintAnalyzer extends AbstractAnalyzer {
     /**
      * The initialize method does nothing for this Analyzer.
      *
+     * @param engine a reference the dependency-check engine
      * @throws InitializationException thrown if there is an exception
      */
     @Override
-    public void initializeAnalyzer() throws InitializationException {
+    public void initializeAnalyzer(Engine engine) throws InitializationException {
         try {
             loadHintRules();
         } catch (HintParseException ex) {
@@ -224,7 +225,7 @@ public class HintAnalyzer extends AbstractAnalyzer {
             LOGGER.error("Unable to parse the base hint data file");
             LOGGER.debug("Unable to parse the base hint data file", ex);
         }
-        final String filePath = Settings.getString(Settings.KEYS.HINTS_FILE);
+        final String filePath = getSettings().getString(Settings.KEYS.HINTS_FILE);
         if (filePath == null) {
             return;
         }
@@ -233,12 +234,13 @@ public class HintAnalyzer extends AbstractAnalyzer {
             final Pattern uriRx = Pattern.compile("^(https?|file)\\:.*", Pattern.CASE_INSENSITIVE);
             if (uriRx.matcher(filePath).matches()) {
                 deleteTempFile = true;
-                file = FileUtils.getTempFile("hint", "xml");
+                file = getSettings().getTempFile("hint", "xml");
                 final URL url = new URL(filePath);
+                Downloader downloader = new Downloader(getSettings());
                 try {
-                    Downloader.fetchFile(url, file, false);
+                    downloader.fetchFile(url, file, false);
                 } catch (DownloadFailedException ex) {
-                    Downloader.fetchFile(url, file, true);
+                    downloader.fetchFile(url, file, true);
                 }
             } else {
                 file = new File(filePath);
@@ -246,7 +248,7 @@ public class HintAnalyzer extends AbstractAnalyzer {
                     try (InputStream fromClasspath = FileUtils.getResourceAsStream(filePath)) {
                         if (fromClasspath != null) {
                             deleteTempFile = true;
-                            file = FileUtils.getTempFile("hint", "xml");
+                            file = getSettings().getTempFile("hint", "xml");
                             try {
                                 org.apache.commons.io.FileUtils.copyInputStreamToFile(fromClasspath, file);
                             } catch (IOException ex) {

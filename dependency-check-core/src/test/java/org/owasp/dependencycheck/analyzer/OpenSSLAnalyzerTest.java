@@ -47,10 +47,13 @@ public class OpenSSLAnalyzerTest extends BaseTest {
      * @throws Exception if there is a problem
      */
     @Before
+    @Override
     public void setUp() throws Exception {
+        super.setUp();
         analyzer = new OpenSSLAnalyzer();
         analyzer.setFilesMatched(true);
-        analyzer.initialize();
+        analyzer.initializeSettings(getSettings());
+        analyzer.initialize(null);
     }
 
     /**
@@ -59,9 +62,10 @@ public class OpenSSLAnalyzerTest extends BaseTest {
      * @throws Exception if there is a problem
      */
     @After
+    @Override
     public void tearDown() throws Exception {
         analyzer.close();
-        analyzer = null;
+        super.tearDown();
     }
 
     /**
@@ -69,8 +73,7 @@ public class OpenSSLAnalyzerTest extends BaseTest {
      */
     @Test
     public void testGetName() {
-        assertEquals("Analyzer name wrong.", "OpenSSL Source Analyzer",
-                analyzer.getName());
+        assertEquals("Analyzer name wrong.", "OpenSSL Source Analyzer", analyzer.getName());
     }
 
     /**

@@ -18,9 +18,11 @@ package org.owasp.dependencycheck;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import org.junit.After;
 
 import org.junit.AfterClass;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -30,9 +32,25 @@ import org.owasp.dependencycheck.utils.Settings;
  */
 public class BaseTest {
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        Settings.initialize();
+    /**
+     * The configured settings.
+     */
+    private Settings settings;
+
+    /**
+     * Initialize the {@link Settings}.
+     */
+    @Before
+    public void setUp() throws Exception {
+        settings = new Settings();
+    }
+
+    /**
+     * Clean the {@link Settings}.
+     */
+    @After
+    public void tearDown() throws Exception {
+        settings.cleanup(true);
     }
 
     @AfterClass
@@ -45,13 +63,12 @@ public class BaseTest {
             System.err.println("------------------------------------------------");
             System.err.println("------------------------------------------------");
         }
-
-        Settings.cleanup(true);
     }
 
     /**
-     * Returns the given resource as an InputStream using the object's class loader. The org.junit.Assume API is used so that test
-     * cases are skipped if the resource is not available.
+     * Returns the given resource as an InputStream using the object's class
+     * loader. The org.junit.Assume API is used so that test cases are skipped
+     * if the resource is not available.
      *
      * @param o the object used to obtain a reference to the class loader
      * @param resource the name of the resource to load
@@ -63,20 +80,30 @@ public class BaseTest {
     }
 
     /**
-     * Returns the given resource as a File using the object's class loader. The org.junit.Assume API is used so that test cases
-     * are skipped if the resource is not available.
+     * Returns the given resource as a File using the object's class loader. The
+     * org.junit.Assume API is used so that test cases are skipped if the
+     * resource is not available.
      *
      * @param o the object used to obtain a reference to the class loader
      * @param resource the name of the resource to load
      * @return the resource as an File
      */
     public static File getResourceAsFile(Object o, String resource) {
-        try{
+        try {
             File f = new File(o.getClass().getClassLoader().getResource(resource).toURI().getPath());
             Assume.assumeTrue(String.format("%n%n[SEVERE] Unable to load resource for test case: %s%n%n", resource), f.exists());
             return f;
-        }catch (URISyntaxException e){
+        } catch (URISyntaxException e) {
             throw new UnsupportedOperationException(e);
         }
+    }
+
+    /**
+     * Returns the settings for the test cases.
+     *
+     * @return
+     */
+    protected Settings getSettings() {
+        return settings;
     }
 }

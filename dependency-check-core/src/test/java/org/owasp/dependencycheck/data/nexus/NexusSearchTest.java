@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.data.nexus;
 
 import java.io.FileNotFoundException;
-import java.net.URL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Assume;
@@ -26,7 +25,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
-import org.owasp.dependencycheck.analyzer.NexusAnalyzer;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,10 +35,12 @@ public class NexusSearchTest extends BaseTest {
     private NexusSearch searcher;
 
     @Before
+    @Override
     public void setUp() throws Exception {
-        String nexusUrl = Settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL);
+        super.setUp();
+        String nexusUrl = getSettings().getString(Settings.KEYS.ANALYZER_NEXUS_URL);
         LOGGER.debug(nexusUrl);
-        searcher = new NexusSearch(new URL(nexusUrl), NexusAnalyzer.useProxy());
+        searcher = new NexusSearch(getSettings(), false);
         Assume.assumeTrue(searcher.preflightRequest());
     }
 
@@ -78,5 +78,3 @@ public class NexusSearchTest extends BaseTest {
         searcher.searchSha1("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     }
 }
-
-// vim: cc=120:sw=4:ts=4:sts=4

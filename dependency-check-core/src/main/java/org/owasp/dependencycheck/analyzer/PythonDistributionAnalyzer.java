@@ -241,13 +241,14 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Makes sure a usable temporary directory is available.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException an AnalyzeException is thrown when the
      * temp directory cannot be created
      */
     @Override
-    protected void initializeFileTypeAnalyzer() throws InitializationException {
+    protected void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
         try {
-            final File baseDir = Settings.getTempDirectory();
+            final File baseDir = getSettings().getTempDirectory();
             tempFileLocation = File.createTempFile("check", "tmp", baseDir);
             if (!tempFileLocation.delete()) {
                 setEnabled(false);

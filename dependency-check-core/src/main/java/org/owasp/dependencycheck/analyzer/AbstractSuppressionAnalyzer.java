@@ -79,10 +79,11 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     /**
      * The initialize method loads the suppression XML file.
      *
+     * @param engine a reference the dependency-check engine
      * @throws InitializationException thrown if there is an exception
      */
     @Override
-    public void initializeAnalyzer() throws InitializationException {
+    public void initializeAnalyzer(Engine engine) throws InitializationException {
         try {
             loadSuppressionData();
         } catch (SuppressionParseException ex) {
@@ -101,8 +102,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * Loads all the suppression rules files configured in the {@link Settings}
-     * singleton.
+     * Loads all the suppression rules files configured in the {@link Settings}.
      *
      * @throws SuppressionParseException thrown if the XML cannot be parsed.
      */
@@ -114,7 +114,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
         } catch (SAXException ex) {
             throw new SuppressionParseException("Unable to parse the base suppression data file", ex);
         }
-        final String[] suppressionFilePaths = Settings.getArray(Settings.KEYS.SUPPRESSION_FILE);
+        final String[] suppressionFilePaths = getSettings().getArray(Settings.KEYS.SUPPRESSION_FILE);
         if (suppressionFilePaths == null || suppressionFilePaths.length == 0) {
             return;
         }
@@ -144,12 +144,14 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
             final Pattern uriRx = Pattern.compile("^(https?|file)\\:.*", Pattern.CASE_INSENSITIVE);
             if (uriRx.matcher(suppressionFilePath).matches()) {
                 deleteTempFile = true;
-                file = FileUtils.getTempFile("suppression", "xml");
+                file = getSettings().getTempFile("suppression", "xml");
                 final URL url = new URL(suppressionFilePath);
+                Downloader downloader = new Downloader(getSettings());
                 try {
-                    Downloader.fetchFile(url, file, false);
+                    downloader.fetchFile(url, file, false);
                 } catch (DownloadFailedException ex) {
-                    Downloader.fetchFile(url, file, true);
+                    LOGGER.trace("Failed download - first attempt", ex);
+                    downloader.fetchFile(url, file, true);
                 }
             } else {
                 file = new File(suppressionFilePath);
@@ -158,7 +160,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                     try (InputStream suppressionsFromClasspath = FileUtils.getResourceAsStream(suppressionFilePath)) {
                         if (suppressionsFromClasspath != null) {
                             deleteTempFile = true;
-                            file = FileUtils.getTempFile("suppression", "xml");
+                            file = getSettings().getTempFile("suppression", "xml");
                             try {
                                 org.apache.commons.io.FileUtils.copyInputStreamToFile(suppressionsFromClasspath, file);
                             } catch (IOException ex) {

@@ -268,11 +268,12 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Initializes the file type analyzer.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException thrown if there is an exception during
      * initialization
      */
     @Override
-    protected void initializeFileTypeAnalyzer() throws InitializationException {
+    protected void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
         // No initialization needed.
     }
 }

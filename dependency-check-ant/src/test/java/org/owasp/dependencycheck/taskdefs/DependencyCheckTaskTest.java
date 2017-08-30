@@ -21,13 +21,11 @@ import java.io.File;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildFileRule;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.owasp.dependencycheck.BaseDBTestCase;
-import org.owasp.dependencycheck.utils.Settings;
 
 import static org.junit.Assert.assertTrue;
 
@@ -35,7 +33,7 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Jeremy Long
  */
-public class DependencyCheckTaskTest {
+public class DependencyCheckTaskTest extends BaseDBTestCase {
 
     @Rule
     public BuildFileRule buildFileRule = new BuildFileRule();
@@ -44,18 +42,11 @@ public class DependencyCheckTaskTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Before
+    @Override
     public void setUp() throws Exception {
-        Settings.initialize();
-        BaseDBTestCase.ensureDBExists();
+        super.setUp();
         final String buildFile = this.getClass().getClassLoader().getResource("build.xml").getPath();
         buildFileRule.configureProject(buildFile);
-    }
-
-    @After
-    public void tearDown() {
-        //no cleanup...
-        //executeTarget("cleanup");
-        Settings.cleanup(true);
     }
 
     /**

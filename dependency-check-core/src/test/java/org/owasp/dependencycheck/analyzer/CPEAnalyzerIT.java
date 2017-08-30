@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Set;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryparser.classic.ParseException;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.BaseDBTestCase;
@@ -58,9 +56,9 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
 
         String vendor = "apache software foundation";
         String product = "struts 2 core";
-        
-        CPEAnalyzer instance = new CPEAnalyzer();
 
+        CPEAnalyzer instance = new CPEAnalyzer();
+        instance.initializeSettings(getSettings());
         String queryText = instance.buildSearch(vendor, product, null, null);
         String expResult = " product:( struts 2 core )  AND  vendor:( apache software foundation ) ";
         assertTrue(expResult.equals(queryText));
@@ -86,21 +84,26 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
     @Test
     public void testDetermineCPE_full() throws Exception {
         //update needs to be performed so that xtream can be tested
-        Engine e = new Engine();
+        Engine e = new Engine(getSettings());
         e.doUpdates();
 
         CPEAnalyzer cpeAnalyzer = new CPEAnalyzer();
         try {
-            cpeAnalyzer.initialize();
+            cpeAnalyzer.initializeSettings(getSettings());
+            cpeAnalyzer.initialize(e);
             FileNameAnalyzer fnAnalyzer = new FileNameAnalyzer();
-            fnAnalyzer.initialize();
+            fnAnalyzer.initializeSettings(getSettings());
+            fnAnalyzer.initialize(e);
             JarAnalyzer jarAnalyzer = new JarAnalyzer();
+            jarAnalyzer.initializeSettings(getSettings());
             jarAnalyzer.accept(new File("test.jar"));//trick analyzer into "thinking it is active"
-            jarAnalyzer.initialize();
+            jarAnalyzer.initialize(e);
             HintAnalyzer hAnalyzer = new HintAnalyzer();
-            hAnalyzer.initialize();
+            hAnalyzer.initializeSettings(getSettings());
+            hAnalyzer.initialize(e);
             FalsePositiveAnalyzer fp = new FalsePositiveAnalyzer();
-            fp.initialize();
+            fp.initializeSettings(getSettings());
+            fp.initialize(e);
 
             callDetermineCPE_full("hazelcast-2.5.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
             callDetermineCPE_full("spring-context-support-2.5.5.jar", "cpe:/a:springsource:spring_framework:2.5.5", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
@@ -159,10 +162,12 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         fnAnalyzer.analyze(struts, null);
 
         HintAnalyzer hintAnalyzer = new HintAnalyzer();
-        hintAnalyzer.initialize();
+        hintAnalyzer.initializeSettings(getSettings());
+        hintAnalyzer.initialize(null);
         JarAnalyzer jarAnalyzer = new JarAnalyzer();
+        jarAnalyzer.initializeSettings(getSettings());
         jarAnalyzer.accept(new File("test.jar"));//trick analyzer into "thinking it is active"
-        jarAnalyzer.initialize();
+        jarAnalyzer.initialize(null);
 
         jarAnalyzer.analyze(struts, null);
         hintAnalyzer.analyze(struts, null);
@@ -185,7 +190,10 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         hintAnalyzer.analyze(spring3, null);
 
         CPEAnalyzer instance = new CPEAnalyzer();
-        instance.open();
+        Engine engine = new Engine(getSettings());
+        engine.openDatabase();
+        instance.initializeSettings(getSettings());
+        instance.initialize(engine);
         instance.determineCPE(commonValidator);
         instance.determineCPE(struts);
         instance.determineCPE(spring);
@@ -204,6 +212,7 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         assertTrue("Incorrect match size - spring3 - " + spring3.getIdentifiers().size(), spring3.getIdentifiers().size() >= 1);
 
         jarAnalyzer.close();
+        engine.cleanup();
     }
 
     /**
@@ -219,7 +228,10 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         openssl.getVersionEvidence().addEvidence("test", "version", "1.0.1c", Confidence.HIGHEST);
 
         CPEAnalyzer instance = new CPEAnalyzer();
-        instance.open();
+        Engine engine = new Engine(getSettings());
+        engine.openDatabase();
+        instance.initializeSettings(getSettings());
+        instance.initialize(engine);
         instance.determineIdentifiers(openssl, "openssl", "openssl", Confidence.HIGHEST);
         instance.close();
 
@@ -227,7 +239,7 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         Identifier expIdentifier = new Identifier("cpe", expResult, expResult);
 
         assertTrue(openssl.getIdentifiers().contains(expIdentifier));
-
+        engine.cleanup();
     }
 
     /**
@@ -243,7 +255,10 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         String expProduct = "struts";
 
         CPEAnalyzer instance = new CPEAnalyzer();
-        instance.open();
+        Engine engine = new Engine(getSettings());
+        engine.openDatabase();
+        instance.initializeSettings(getSettings());
+        instance.initialize(engine);
 
         Set<String> productWeightings = Collections.singleton("struts2");
         Set<String> vendorWeightings = Collections.singleton("apache");

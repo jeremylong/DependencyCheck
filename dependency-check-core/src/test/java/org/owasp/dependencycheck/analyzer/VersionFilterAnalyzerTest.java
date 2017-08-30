@@ -48,6 +48,7 @@ public class VersionFilterAnalyzerTest extends BaseTest {
     @Test
     public void testGetAnalysisPhase() {
         VersionFilterAnalyzer instance = new VersionFilterAnalyzer();
+        instance.initializeSettings(getSettings());
         AnalysisPhase expResult = AnalysisPhase.POST_INFORMATION_COLLECTION;
         AnalysisPhase result = instance.getAnalysisPhase();
         assertEquals(expResult, result);
@@ -60,6 +61,7 @@ public class VersionFilterAnalyzerTest extends BaseTest {
     @Test
     public void testGetAnalyzerEnabledSettingKey() {
         VersionFilterAnalyzer instance = new VersionFilterAnalyzer();
+        instance.initializeSettings(getSettings());
         String expResult = Settings.KEYS.ANALYZER_VERSION_FILTER_ENABLED;
         String result = instance.getAnalyzerEnabledSettingKey();
         assertEquals(expResult, result);
@@ -78,6 +80,7 @@ public class VersionFilterAnalyzerTest extends BaseTest {
         versions.addEvidence("other", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
 
         VersionFilterAnalyzer instance = new VersionFilterAnalyzer();
+        instance.initializeSettings(getSettings());
 
         instance.analyzeDependency(dependency, null);
         assertEquals(3, versions.size());
@@ -119,6 +122,7 @@ public class VersionFilterAnalyzerTest extends BaseTest {
         versions.addEvidence("other", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
 
         VersionFilterAnalyzer instance = new VersionFilterAnalyzer();
+        instance.initializeSettings(getSettings());
 
         instance.analyzeDependency(dependency, null);
         assertEquals(3, versions.size());
@@ -156,6 +160,7 @@ public class VersionFilterAnalyzerTest extends BaseTest {
         versions.addEvidence("other", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
 
         VersionFilterAnalyzer instance = new VersionFilterAnalyzer();
+        instance.initializeSettings(getSettings());
 
         instance.analyzeDependency(dependency, null);
         assertEquals(3, versions.size());
@@ -183,6 +188,7 @@ public class VersionFilterAnalyzerTest extends BaseTest {
         versions.addEvidence("other", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
 
         VersionFilterAnalyzer instance = new VersionFilterAnalyzer();
+        instance.initializeSettings(getSettings());
 
         instance.analyzeDependency(dependency, null);
         assertEquals(3, versions.size());
@@ -206,5 +212,4 @@ public class VersionFilterAnalyzerTest extends BaseTest {
         instance.analyzeDependency(dependency, null);
         assertEquals(4, versions.size());
     }
-
 }

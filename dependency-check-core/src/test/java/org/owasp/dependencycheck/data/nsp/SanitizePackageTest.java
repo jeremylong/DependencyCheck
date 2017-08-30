@@ -61,5 +61,4 @@ public class SanitizePackageTest {
         Assert.assertFalse(sanitized.containsKey("license"));
         Assert.assertFalse(sanitized.containsKey("main"));
     }
-
 }

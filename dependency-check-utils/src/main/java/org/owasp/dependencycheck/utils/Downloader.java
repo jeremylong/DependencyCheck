@@ -62,9 +62,23 @@ public final class Downloader {
     private static final String GET = "GET";
 
     /**
-     * Private constructor for utility class.
+     * The configured settings.
      */
-    private Downloader() {
+    private final Settings settings;
+
+    /**
+     * The URL connection facctory.
+     */
+    private final URLConnectionFactory connFactory;
+
+    /**
+     * Constructs a new downloader object.
+     *
+     * @param settings the configured settings
+     */
+    public Downloader(Settings settings) {
+        this.settings = settings;
+        this.connFactory = new URLConnectionFactory(settings);
     }
 
     /**
@@ -75,7 +89,7 @@ public final class Downloader {
      * @throws DownloadFailedException is thrown if there is an error
      * downloading the file
      */
-    public static void fetchFile(URL url, File outputPath) throws DownloadFailedException {
+    public void fetchFile(URL url, File outputPath) throws DownloadFailedException {
         fetchFile(url, outputPath, true);
     }
 
@@ -89,7 +103,7 @@ public final class Downloader {
      * @throws DownloadFailedException is thrown if there is an error
      * downloading the file
      */
-    public static void fetchFile(URL url, File outputPath, boolean useProxy) throws DownloadFailedException {
+    public void fetchFile(URL url, File outputPath, boolean useProxy) throws DownloadFailedException {
         if ("file".equalsIgnoreCase(url.getProtocol())) {
             File file;
             try {
@@ -113,7 +127,7 @@ public final class Downloader {
             HttpURLConnection conn = null;
             try {
                 LOGGER.debug("Attempting download of {}", url.toString());
-                conn = URLConnectionFactory.createHttpURLConnection(url, useProxy);
+                conn = connFactory.createHttpURLConnection(url, useProxy);
                 conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
                 conn.connect();
                 int status = conn.getResponseCode();
@@ -129,7 +143,7 @@ public final class Downloader {
                         conn = null;
                     }
                     LOGGER.debug("Download is being redirected from {} to {}", url.toString(), location);
-                    conn = URLConnectionFactory.createHttpURLConnection(new URL(location), useProxy);
+                    conn = connFactory.createHttpURLConnection(new URL(location), useProxy);
                     conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
                     conn.connect();
                     status = conn.getResponseCode();
@@ -217,7 +231,7 @@ public final class Downloader {
      * @throws DownloadFailedException is thrown if an exception occurs making
      * the HTTP request
      */
-    public static long getLastModified(URL url) throws DownloadFailedException {
+    public long getLastModified(URL url) throws DownloadFailedException {
         return getLastModified(url, false);
     }
 
@@ -233,7 +247,7 @@ public final class Downloader {
      * @throws DownloadFailedException is thrown if an exception occurs making
      * the HTTP request
      */
-    private static long getLastModified(URL url, boolean isRetry) throws DownloadFailedException {
+    private long getLastModified(URL url, boolean isRetry) throws DownloadFailedException {
         long timestamp = 0;
         //TODO add the FTP protocol?
         if ("file".equalsIgnoreCase(url.getProtocol())) {
@@ -249,7 +263,7 @@ public final class Downloader {
             final String httpMethod = determineHttpMethod();
             HttpURLConnection conn = null;
             try {
-                conn = URLConnectionFactory.createHttpURLConnection(url);
+                conn = connFactory.createHttpURLConnection(url);
                 conn.setRequestMethod(httpMethod);
                 conn.connect();
                 final int t = conn.getResponseCode();
@@ -269,8 +283,8 @@ public final class Downloader {
                 }
                 try {
                     //retry
-                    if (!isRetry && Settings.getBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP)) {
-                        Settings.setBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP, false);
+                    if (!isRetry && settings.getBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP)) {
+                        settings.setBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP, false);
                         return getLastModified(url, true);
                     }
                 } catch (InvalidSettingException ex1) {
@@ -300,7 +314,7 @@ public final class Downloader {
      * @throws DownloadFailedException a wrapper exception that contains the
      * original exception as the cause
      */
-    protected static synchronized void checkForCommonExceptionTypes(IOException ex) throws DownloadFailedException {
+    protected synchronized void checkForCommonExceptionTypes(IOException ex) throws DownloadFailedException {
         Throwable cause = ex;
         while (cause != null) {
             if (cause instanceof java.net.UnknownHostException) {
@@ -328,7 +342,7 @@ public final class Downloader {
      *
      * @return the HTTP method to use
      */
-    private static String determineHttpMethod() {
+    private String determineHttpMethod() {
         return isQuickQuery() ? HEAD : GET;
     }
 
@@ -338,11 +352,11 @@ public final class Downloader {
      *
      * @return true if configured to use HEAD requests
      */
-    private static boolean isQuickQuery() {
+    private boolean isQuickQuery() {
         boolean quickQuery;
 
         try {
-            quickQuery = Settings.getBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP, true);
+            quickQuery = settings.getBoolean(Settings.KEYS.DOWNLOADER_QUICK_QUERY_TIMESTAMP, true);
         } catch (InvalidSettingException e) {
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("Invalid settings : {}", e.getMessage(), e);

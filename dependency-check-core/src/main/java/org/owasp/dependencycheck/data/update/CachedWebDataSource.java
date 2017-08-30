@@ -17,21 +17,25 @@
  */
 package org.owasp.dependencycheck.data.update;
 
+import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 
 /**
- * Defines a data source who's data is retrieved from the Internet. This data can be downloaded and the local cache
- * updated.
+ * Defines a data source who's data is retrieved from the Internet. This data
+ * can be downloaded and the local cache updated.
  *
  * @author Jeremy Long
  */
 public interface CachedWebDataSource {
 
     /**
-     * Determines if an update to the current data store is needed, if it is the new data is downloaded from the
-     * Internet and imported into the current cached data store.
+     * Determines if an update to the current data store is needed, if it is the
+     * new data is downloaded from the Internet and imported into the current
+     * cached data store.
      *
-     * @throws UpdateException is thrown if there is an exception downloading the data or updating the data store.
+     * @param engine a reference to the dependency-check engine
+     * @throws UpdateException is thrown if there is an exception downloading
+     * the data or updating the data store.
      */
-    void update() throws UpdateException;
+    void update(Engine engine) throws UpdateException;
 }

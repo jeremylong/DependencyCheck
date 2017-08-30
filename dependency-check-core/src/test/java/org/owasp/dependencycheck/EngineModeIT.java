@@ -38,26 +38,35 @@ public class EngineModeIT extends BaseTest {
     private String originalDataDir = null;
 
     @Before
+    @Override
     public void setUp() throws Exception {
+        super.setUp();
         // Have to use System properties as the Settings object pulls from the 
         // system properties before configured properties
-        originalDataDir = Settings.getString(Settings.KEYS.DATA_DIRECTORY);
+        originalDataDir = getSettings().getString(Settings.KEYS.DATA_DIRECTORY);
         System.setProperty(Settings.KEYS.DATA_DIRECTORY, tempDir.newFolder().getAbsolutePath());
     }
 
     @After
-    public void tearDown() throws IOException {
-        //delete temp files
-        FileUtils.delete(Settings.getDataDirectory());
-        //Reset system property to original value just to be safe for other tests.
-        System.setProperty(Settings.KEYS.DATA_DIRECTORY, originalDataDir);
-
+    @Override
+    public void tearDown() throws Exception {
+        try {
+            //delete temp files
+            FileUtils.delete(getSettings().getDataDirectory());
+            //Reset system property to original value just to be safe for other tests.
+            System.setProperty(Settings.KEYS.DATA_DIRECTORY, originalDataDir);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        } finally {
+            super.tearDown();
+        }
     }
 
     @Test
     public void testEvidenceCollectionAndEvidenceProcessingModes() throws Exception {
         List<Dependency> dependencies;
-        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_COLLECTION)) {
+        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_COLLECTION, getSettings())) {
+            engine.openDatabase(); //does nothing in the current mode
             assertDatabase(false);
             for (AnalysisPhase phase : Engine.Mode.EVIDENCE_COLLECTION.getPhases()) {
                 assertThat(engine.getAnalyzers(phase), is(notNullValue()));
@@ -76,7 +85,8 @@ public class EngineModeIT extends BaseTest {
             assertTrue(dependency.getVulnerabilities().isEmpty());
         }
 
-        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING)) {
+        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {
+            engine.openDatabase();
             assertDatabase(true);
             for (AnalysisPhase phase : Engine.Mode.EVIDENCE_PROCESSING.getPhases()) {
                 assertThat(engine.getAnalyzers(phase), is(notNullValue()));
@@ -93,7 +103,8 @@ public class EngineModeIT extends BaseTest {
 
     @Test
     public void testStandaloneMode() throws Exception {
-        try (Engine engine = new Engine(Engine.Mode.STANDALONE)) {
+        try (Engine engine = new Engine(Engine.Mode.STANDALONE, getSettings())) {
+            engine.openDatabase();
             assertDatabase(true);
             for (AnalysisPhase phase : Engine.Mode.STANDALONE.getPhases()) {
                 assertThat(engine.getAnalyzers(phase), is(notNullValue()));
@@ -111,16 +122,15 @@ public class EngineModeIT extends BaseTest {
     }
 
     private void assertDatabase(boolean exists) throws Exception {
-        Assume.assumeThat(Settings.getString(Settings.KEYS.DB_DRIVER_NAME), is("org.h2.Driver"));
-        Path directory = Settings.getDataDirectory().toPath();
+        Assume.assumeThat(getSettings().getString(Settings.KEYS.DB_DRIVER_NAME), is("org.h2.Driver"));
+        Path directory = getSettings().getDataDirectory().toPath();
         assertThat(Files.exists(directory), is(true));
         assertThat(Files.isDirectory(directory), is(true));
-        Path database = directory.resolve(Settings.getString(Settings.KEYS.DB_FILE_NAME));
-        System.err.println(database.toString());
-        for (String f : directory.toFile().list()) {
-            System.err.println(f);
-        }
-
+        Path database = directory.resolve(getSettings().getString(Settings.KEYS.DB_FILE_NAME));
+        //System.err.println(database.toString());
+        //for (String f : directory.toFile().list()) {
+        //    System.err.println(f);
+        //}
         assertThat(Files.exists(database), is(exists));
     }
 }

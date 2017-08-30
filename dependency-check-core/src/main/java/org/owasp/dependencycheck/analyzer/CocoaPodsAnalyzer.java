@@ -83,7 +83,7 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     @Override
-    protected void initializeFileTypeAnalyzer() {
+    protected void initializeFileTypeAnalyzer(Engine engine) {
         // NO-OP
     }
 

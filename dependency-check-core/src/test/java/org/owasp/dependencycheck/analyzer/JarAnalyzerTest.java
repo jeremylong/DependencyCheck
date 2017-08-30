@@ -50,7 +50,8 @@ public class JarAnalyzerTest extends BaseTest {
         File file = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
         Dependency result = new Dependency(file);
         JarAnalyzer instance = new JarAnalyzer();
-        instance.initializeFileTypeAnalyzer();
+        instance.initializeSettings(getSettings());
+        instance.initializeFileTypeAnalyzer(null);
         instance.analyze(result, null);
         assertTrue(result.getVendorEvidence().toString().toLowerCase().contains("apache"));
         assertTrue(result.getVendorEvidence().getWeighting().contains("apache"));
@@ -115,7 +116,8 @@ public class JarAnalyzerTest extends BaseTest {
     @Test
     public void testAcceptSupportedExtensions() throws Exception {
         JarAnalyzer instance = new JarAnalyzer();
-        instance.initialize();
+        instance.initializeSettings(getSettings());
+        instance.initialize(null);
         instance.setEnabled(true);
         String[] files = {"test.jar", "test.war"};
         for (String name : files) {
@@ -181,12 +183,12 @@ public class JarAnalyzerTest extends BaseTest {
         JarAnalyzer instance = new JarAnalyzer();
         Dependency macOSMetaDataFile = new Dependency();
         macOSMetaDataFile
-            .setActualFilePath(FileUtils.getFile("src", "test", "resources", "._avro-ipc-1.5.0.jar").getAbsolutePath());
+                .setActualFilePath(FileUtils.getFile("src", "test", "resources", "._avro-ipc-1.5.0.jar").getAbsolutePath());
         macOSMetaDataFile.setFileName("._avro-ipc-1.5.0.jar");
         Dependency actualJarFile = new Dependency();
         actualJarFile.setActualFilePath(BaseTest.getResourceAsFile(this, "avro-ipc-1.5.0.jar").getAbsolutePath());
         actualJarFile.setFileName("avro-ipc-1.5.0.jar");
-        Engine engine = new Engine();
+        Engine engine = new Engine(getSettings());
         engine.setDependencies(Arrays.asList(macOSMetaDataFile, actualJarFile));
         instance.analyzeDependency(macOSMetaDataFile, engine);
     }
@@ -196,9 +198,9 @@ public class JarAnalyzerTest extends BaseTest {
         JarAnalyzer instance = new JarAnalyzer();
         Dependency textFileWithJarExtension = new Dependency();
         textFileWithJarExtension
-            .setActualFilePath(BaseTest.getResourceAsFile(this, "textFileWithJarExtension.jar").getAbsolutePath());
+                .setActualFilePath(BaseTest.getResourceAsFile(this, "textFileWithJarExtension.jar").getAbsolutePath());
         textFileWithJarExtension.setFileName("textFileWithJarExtension.jar");
-        Engine engine = new Engine();
+        Engine engine = new Engine(getSettings());
         engine.setDependencies(Collections.singletonList(textFileWithJarExtension));
         instance.analyzeDependency(textFileWithJarExtension, engine);
     }

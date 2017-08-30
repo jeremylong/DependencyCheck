@@ -69,11 +69,11 @@ public class HintAnalyzerTest extends BaseDBTestCase {
         //File spring = new File(this.getClass().getClassLoader().getResource("spring-core-3.0.0.RELEASE.jar").getPath());
         File spring = BaseTest.getResourceAsFile(this, "spring-core-3.0.0.RELEASE.jar");
         //Dependency spring = new Dependency(files);
-        Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);
-        Settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
-        Settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-        Engine engine = new Engine();
-
+        getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
+        getSettings().setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
+        getSettings().setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
+        Engine engine = new Engine(getSettings());
+        
         engine.scan(guice);
         engine.scan(spring);
         engine.analyzeDependencies();
@@ -91,14 +91,14 @@ public class HintAnalyzerTest extends BaseDBTestCase {
         final Evidence springTest3 = new Evidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
         final Evidence springTest4 = new Evidence("hint analyzer", "product", "springsource_spring_framework", Confidence.HIGH);
         final Evidence springTest5 = new Evidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
-
+        
         Set<Evidence> evidence = gdep.getEvidence().getEvidence();
         assertFalse(evidence.contains(springTest1));
         assertFalse(evidence.contains(springTest2));
         assertFalse(evidence.contains(springTest3));
         assertFalse(evidence.contains(springTest4));
         assertFalse(evidence.contains(springTest5));
-
+        
         evidence = sdep.getEvidence().getEvidence();
         assertTrue(evidence.contains(springTest1));
         assertTrue(evidence.contains(springTest2));
@@ -106,15 +106,17 @@ public class HintAnalyzerTest extends BaseDBTestCase {
         //assertTrue(evidence.contains(springTest4));
         //assertTrue(evidence.contains(springTest5));
     }
+
     /**
      * Test of analyze method, of class HintAnalyzer.
      */
     @Test
     public void testAnalyze_1() throws Exception {
         File path = BaseTest.getResourceAsFile(this, "hints_12.xml");
-        Settings.setString(Settings.KEYS.HINTS_FILE, path.getPath());
+        getSettings().setString(Settings.KEYS.HINTS_FILE, path.getPath());
         HintAnalyzer instance = new HintAnalyzer();
-        instance.initialize();
+        instance.initializeSettings(getSettings());
+        instance.initialize(null);
         Dependency d = new Dependency();
         d.getVersionEvidence().addEvidence("version source", "given version name", "1.2.3", Confidence.HIGH);
         d.getVersionEvidence().addEvidence("hint analyzer", "remove version name", "value", Confidence.HIGH);
@@ -124,14 +126,13 @@ public class HintAnalyzerTest extends BaseDBTestCase {
         d.getVendorEvidence().addEvidence("hint analyzer", "other vendor name", "vendor", Confidence.HIGH);
         d.getProductEvidence().addEvidence("hint analyzer", "other product name", "product", Confidence.HIGH);
         
-        assertEquals("vendor evidence mismatch",2, d.getVendorEvidence().size());
-        assertEquals("product evidence mismatch",2, d.getProductEvidence().size());
-        assertEquals("version evidence mismatch",3, d.getVersionEvidence().size());
+        assertEquals("vendor evidence mismatch", 2, d.getVendorEvidence().size());
+        assertEquals("product evidence mismatch", 2, d.getProductEvidence().size());
+        assertEquals("version evidence mismatch", 3, d.getVersionEvidence().size());
         instance.analyze(d, null);
-        assertEquals("vendor evidence mismatch",1, d.getVendorEvidence().size());
-        assertEquals("product evidence mismatch",1, d.getProductEvidence().size());
-        assertEquals("version evidence mismatch",2, d.getVersionEvidence().size());
-        
+        assertEquals("vendor evidence mismatch", 1, d.getVendorEvidence().size());
+        assertEquals("product evidence mismatch", 1, d.getProductEvidence().size());
+        assertEquals("version evidence mismatch", 2, d.getVersionEvidence().size());
         
     }
 }

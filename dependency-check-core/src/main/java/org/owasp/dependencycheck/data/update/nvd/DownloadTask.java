@@ -91,8 +91,8 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
         final File file2;
 
         try {
-            file1 = File.createTempFile("cve" + nvdCveInfo.getId() + '_', ".xml", Settings.getTempDirectory());
-            file2 = File.createTempFile("cve_1_2_" + nvdCveInfo.getId() + '_', ".xml", Settings.getTempDirectory());
+            file1 = File.createTempFile("cve" + nvdCveInfo.getId() + '_', ".xml", settings.getTempDirectory());
+            file2 = File.createTempFile("cve_1_2_" + nvdCveInfo.getId() + '_', ".xml", settings.getTempDirectory());
         } catch (IOException ex) {
             throw new UpdateException("Unable to create temporary files", ex);
         }
@@ -158,17 +158,17 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
     @Override
     public Future<ProcessTask> call() throws Exception {
         try {
-            Settings.setInstance(settings);
             final URL url1 = new URL(nvdCveInfo.getUrl());
             final URL url2 = new URL(nvdCveInfo.getOldSchemaVersionUrl());
             LOGGER.info("Download Started for NVD CVE - {}", nvdCveInfo.getId());
             final long startDownload = System.currentTimeMillis();
             try {
-                Downloader.fetchFile(url1, first);
-                Downloader.fetchFile(url2, second);
+                Downloader downloader = new Downloader(settings);
+                downloader.fetchFile(url1, first);
+                downloader.fetchFile(url2, second);
             } catch (DownloadFailedException ex) {
                 LOGGER.warn("Download Failed for NVD CVE - {}\nSome CVEs may not be reported.", nvdCveInfo.getId());
-                if (Settings.getString(Settings.KEYS.PROXY_SERVER) == null) {
+                if (settings.getString(Settings.KEYS.PROXY_SERVER) == null) {
                     LOGGER.info("If you are behind a proxy you may need to configure dependency-check to use the proxy.");
                 }
                 LOGGER.debug("", ex);
@@ -193,7 +193,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
             LOGGER.warn("An exception occurred downloading NVD CVE - {}\nSome CVEs may not be reported.", nvdCveInfo.getId());
             LOGGER.debug("Download Task Failed", ex);
         } finally {
-            Settings.cleanup(false);
+            settings.cleanup(false);
         }
         return null;
     }

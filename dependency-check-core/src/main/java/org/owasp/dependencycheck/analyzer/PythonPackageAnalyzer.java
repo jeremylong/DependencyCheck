@@ -143,10 +143,11 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * No-op initializer implementation.
      *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException never thrown
      */
     @Override
-    protected void initializeFileTypeAnalyzer() throws InitializationException {
+    protected void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
         // Nothing to do here.
     }
 

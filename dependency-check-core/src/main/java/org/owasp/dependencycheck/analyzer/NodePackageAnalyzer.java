@@ -85,7 +85,7 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     @Override
-    protected void initializeFileTypeAnalyzer() throws InitializationException {
+    protected void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
         // NO-OP
     }
 
@@ -123,7 +123,7 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         final File file = dependency.getActualFile();
-        if (!file.isFile() || file.length()==0) {
+        if (!file.isFile() || file.length() == 0) {
             return;
         }
         try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {

@@ -138,14 +138,14 @@ public class CPEAnalyzer extends AbstractAnalyzer {
 
     /**
      * Creates the CPE Lucene Index.
-     *
+     * @param engine a reference to the dependency-check engine
      * @throws InitializationException is thrown if there is an issue opening
      * the index.
      */
     @Override
-    public void initializeAnalyzer() throws InitializationException {
+    public void initializeAnalyzer(Engine engine) throws InitializationException {
         try {
-            this.open();
+            this.open(engine.getDatabase());
         } catch (IOException ex) {
             LOGGER.debug("Exception initializing the Lucene Index", ex);
             throw new InitializationException("An exception occurred initializing the Lucene Index", ex);
@@ -158,15 +158,16 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     /**
      * Opens the data source.
      *
+     * @param cve a reference to the NVD CVE database
      * @throws IOException when the Lucene directory to be queried does not
      * exist or is corrupt.
      * @throws DatabaseException when the database throws an exception. This
      * usually occurs when the database is in use by another process.
      */
-    public void open() throws IOException, DatabaseException {
+    public void open(CveDB cve) throws IOException, DatabaseException {
         if (!isOpen()) {
-            cve = CveDB.getInstance();
-            cpe = CpeMemoryIndex.getInstance();
+            this.cve = cve;
+            this.cpe = CpeMemoryIndex.getInstance();
             try {
                 final long creationStart = System.currentTimeMillis();
                 cpe.open(cve);

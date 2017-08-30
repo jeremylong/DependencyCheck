@@ -51,19 +51,6 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
     private CveDB cveDB;
 
     /**
-     * Opens the data source.
-     *
-     * @throws SQLException thrown when there is a SQL Exception
-     * @throws IOException thrown when there is an IO Exception
-     * @throws DatabaseException thrown when there is a database exceptions
-     * @throws ClassNotFoundException thrown if the h2 database driver cannot be
-     * loaded
-     */
-    public void open() throws SQLException, IOException, DatabaseException, ClassNotFoundException {
-        cveDB = CveDB.getInstance();
-    }
-
-    /**
      * Closes the data source.
      */
     @Override
@@ -150,25 +137,12 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
     /**
      * Opens the database used to gather NVD CVE data.
      *
+     * @param engine a reference the dependency-check engine
      * @throws InitializationException is thrown if there is an issue opening
      * the index.
      */
     @Override
-    public void initializeAnalyzer() throws InitializationException {
-        try {
-            this.open();
-        } catch (SQLException ex) {
-            LOGGER.debug("SQL Exception initializing NvdCveAnalyzer", ex);
-            throw new InitializationException(ex);
-        } catch (IOException ex) {
-            LOGGER.debug("IO Exception initializing NvdCveAnalyzer", ex);
-            throw new InitializationException(ex);
-        } catch (DatabaseException ex) {
-            LOGGER.debug("Database Exception initializing NvdCveAnalyzer", ex);
-            throw new InitializationException(ex);
-        } catch (ClassNotFoundException ex) {
-            LOGGER.debug("Exception initializing NvdCveAnalyzer", ex);
-            throw new InitializationException(ex);
-        }
+    public void initializeAnalyzer(Engine engine) throws InitializationException {
+        this.cveDB = engine.getDatabase();
     }
 }

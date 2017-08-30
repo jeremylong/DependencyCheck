@@ -61,21 +61,29 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
      * @throws Exception if there is a problem
      */
     @Before
+    @Override
     public void setUp() throws Exception {
+        super.setUp();
         analyzer = new CMakeAnalyzer();
+        analyzer.initializeSettings(getSettings());
         analyzer.setFilesMatched(true);
-        analyzer.initialize();
+        analyzer.initialize(null);
     }
 
     /**
      * Cleanup any resources used.
      *
-     * @throws Exception if there is a problem
      */
     @After
+    @Override
     public void tearDown() throws Exception {
-        analyzer.close();
-        analyzer = null;
+        try {
+            analyzer.close();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        } finally {
+            super.tearDown();
+        }
     }
 
     /**
@@ -124,14 +132,15 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
         final String product = "zlib";
         assertProductEvidence(result, product);
     }
-
+    
     private void assertProductEvidence(Dependency result, String product) {
         assertTrue("Expected product evidence to contain \"" + product + "\".",
                 result.getProductEvidence().toString().contains(product));
     }
 
     /**
-     * Test whether expected version evidence is gathered from OpenCV's third party cmake files.
+     * Test whether expected version evidence is gathered from OpenCV's third
+     * party cmake files.
      *
      * @throws AnalysisException is thrown when an exception occurs.
      */
@@ -139,7 +148,7 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
     public void testAnalyzeCMakeListsOpenCV3rdParty() throws AnalysisException, DatabaseException {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(
                 this, "cmake/opencv/3rdparty/ffmpeg/ffmpeg_version.cmake"));
-        final Engine engine = new Engine();
+        final Engine engine = new Engine(getSettings());
         analyzer.analyze(result, engine);
         assertProductEvidence(result, "libavcodec");
         assertVersionEvidence(result, "55.18.102");
@@ -151,12 +160,12 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
         assertProductEvidence(last, "libavresample");
         assertVersionEvidence(last, "1.0.1");
     }
-
+    
     private void assertVersionEvidence(Dependency result, String version) {
         assertTrue("Expected version evidence to contain \"" + version + "\".",
                 result.getVersionEvidence().toString().contains(version));
     }
-
+    
     @Test(expected = InitializationException.class)
     public void analyzerIsDisabledInCaseOfMissingMessageDigest() throws InitializationException {
         new MockUp<MessageDigest>() {
@@ -165,12 +174,13 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
                 throw new NoSuchAlgorithmException();
             }
         };
-
+        
         analyzer = new CMakeAnalyzer();
         analyzer.setFilesMatched(true);
         assertTrue(analyzer.isEnabled());
-        analyzer.initialize();
-
+        analyzer.initializeSettings(getSettings());
+        analyzer.initialize(null);
+        
         assertFalse(analyzer.isEnabled());
     }
 }
