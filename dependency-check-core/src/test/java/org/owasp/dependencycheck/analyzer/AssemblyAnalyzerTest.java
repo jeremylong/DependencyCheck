@@ -35,6 +35,7 @@ import static org.junit.Assume.assumeNotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -201,6 +202,7 @@ public class AssemblyAnalyzerTest extends BaseTest {
             System.setProperty(LOG_KEY, "error");
             // Have to make a NEW analyzer because during setUp, it would have gotten the correct one
             AssemblyAnalyzer aanalyzer = new AssemblyAnalyzer();
+            aanalyzer.initializeSettings(getSettings());
             aanalyzer.accept(new File("test.dll")); // trick into "thinking it is active"
             aanalyzer.initialize(null);
             fail("Expected an InitializationException");
