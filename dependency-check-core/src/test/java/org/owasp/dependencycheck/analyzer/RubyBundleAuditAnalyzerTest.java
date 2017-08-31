@@ -117,11 +117,11 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
      */
     @Test
     public void testAnalysis() throws AnalysisException, DatabaseException {
-        try {
-            analyzer.initialize(null);
+        try (Engine engine = new Engine(getSettings())){
+            engine.openDatabase();
+            analyzer.initialize(engine);
             final String resource = "ruby/vulnerable/gems/rails-4.1.15/Gemfile.lock";
             final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, resource));
-            final Engine engine = new Engine(getSettings());
             analyzer.analyze(result, engine);
             int size = engine.getDependencies().size();
             assertTrue(size >= 1);
@@ -142,12 +142,12 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
      */
     @Test
     public void testAddCriticalityToVulnerability() throws AnalysisException, DatabaseException {
-        try {
-            analyzer.initialize(null);
+        try (Engine engine = new Engine(getSettings())) {
+            engine.openDatabase();
+            analyzer.initialize(engine);
             
             final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                     "ruby/vulnerable/gems/sinatra/Gemfile.lock"));
-            final Engine engine = new Engine(getSettings());
             analyzer.analyze(result, engine);
             
             Dependency dependency = engine.getDependencies().get(0);
