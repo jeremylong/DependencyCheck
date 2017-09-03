@@ -187,7 +187,7 @@ public abstract class AbstractAnalyzer implements Analyzer {
     @Override
     public boolean supportsParallelProcessing() {
         //temporarily removing parallel processing from all analyzders until further examination of thread safety occurs.
-        //return true;
-        return false;
+        return true;
+        //return false;
     }
 }
