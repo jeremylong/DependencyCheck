@@ -127,15 +127,6 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         return AnalysisPhase.IDENTIFIER_ANALYSIS;
     }
 
-//    /**
-//     * The default is to support parallel processing.
-//     *
-//     * @return false
-//     */
-//    @Override
-//    public boolean supportsParallelProcessing() {
-//        return false;
-//    }
     /**
      * Creates the CPE Lucene Index.
      *
