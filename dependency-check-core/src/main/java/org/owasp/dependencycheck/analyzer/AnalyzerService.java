@@ -24,13 +24,15 @@ import static java.util.Arrays.asList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * The Analyzer Service Loader. This class loads all services that implement
- * org.owasp.dependencycheck.analyzer.Analyzer.
+ * {@link org.owasp.dependencycheck.analyzer.Analyzer}.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class AnalyzerService {
 
     /**

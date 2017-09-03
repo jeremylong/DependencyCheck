@@ -17,11 +17,14 @@
  */
 package org.owasp.dependencycheck.exception;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * An exception used when trying to obtain a lock on the H2 database.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class H2DBLockException extends Exception {
 
     /**

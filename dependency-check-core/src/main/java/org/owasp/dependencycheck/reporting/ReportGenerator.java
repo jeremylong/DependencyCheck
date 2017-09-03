@@ -19,7 +19,6 @@ package org.owasp.dependencycheck.reporting;
 
 import java.util.List;
 
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
@@ -35,6 +34,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
@@ -59,6 +59,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class ReportGenerator {
 
     /**

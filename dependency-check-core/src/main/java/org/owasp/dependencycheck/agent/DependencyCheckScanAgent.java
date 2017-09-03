@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.agent;
 
 import java.io.File;
 import java.util.List;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -59,6 +60,7 @@ import org.slf4j.LoggerFactory;
  * @author Steve Springett
  */
 @SuppressWarnings("unused")
+@NotThreadSafe
 public class DependencyCheckScanAgent {
 
     //<editor-fold defaultstate="collapsed" desc="private fields">
@@ -938,7 +940,7 @@ public class DependencyCheckScanAgent {
      * @throws org.owasp.dependencycheck.exception.ScanAgentException thrown if
      * there is an exception executing the scan.
      */
-    private void checkForFailure(List<Dependency> dependencies) throws ScanAgentException {
+    private void checkForFailure(Dependency[] dependencies) throws ScanAgentException {
         final StringBuilder ids = new StringBuilder();
         for (Dependency d : dependencies) {
             boolean addName = true;
@@ -969,7 +971,7 @@ public class DependencyCheckScanAgent {
      *
      * @param dependencies a list of dependency objects
      */
-    private void showSummary(List<Dependency> dependencies) {
+    private void showSummary(Dependency[] dependencies) {
         final StringBuilder summary = new StringBuilder();
         for (Dependency d : dependencies) {
             boolean firstEntry = true;

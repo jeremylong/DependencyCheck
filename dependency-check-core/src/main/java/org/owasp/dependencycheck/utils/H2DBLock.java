@@ -22,8 +22,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
 import java.util.Date;
-import org.owasp.dependencycheck.data.nvdcve.ConnectionFactory;
-import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.owasp.dependencycheck.exception.H2DBLockException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +31,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class H2DBLock {
 
     /**
@@ -54,14 +54,14 @@ public class H2DBLock {
      * The configured settings.
      */
     private final Settings settings;
-    /**
-     * Whether the database connection is using H2.
-     */
-    private final boolean isH2Connection;
 
-    public H2DBLock(Settings settings, boolean isH2Connection) {
+    /**
+     * Constructs a new H2DB Lock object with the configured settings.
+     *
+     * @param settings the configured settings
+     */
+    public H2DBLock(Settings settings) {
         this.settings = settings;
-        this.isH2Connection = isH2Connection;
     }
 
     /**
@@ -79,49 +79,47 @@ public class H2DBLock {
      * @throws H2DBLockException thrown if a lock could not be obtained
      */
     public void lock() throws H2DBLockException {
-        if (isH2Connection) {
-            try {
-                final File dir = settings.getDataDirectory();
-                lockFile = new File(dir, "dc.update.lock");
-                if (lockFile.isFile() && getFileAge(lockFile) > 5 && !lockFile.delete()) {
-                    LOGGER.warn("An old db update lock file was found but the system was unable to delete "
-                            + "the file. Consider manually deleting {}", lockFile.getAbsolutePath());
-                }
-                int ctr = 0;
-                do {
-                    try {
-                        if (!lockFile.exists() && lockFile.createNewFile()) {
-                            file = new RandomAccessFile(lockFile, "rw");
-                            lock = file.getChannel().lock();
-                        }
-                    } catch (IOException ex) {
-                        LOGGER.trace("Expected error as another thread has likely locked the file", ex);
-                    } finally {
-                        if (lock == null && file != null) {
-                            try {
-                                file.close();
-                            } catch (IOException ex) {
-                                LOGGER.trace("Unable to close the ulFile", ex);
-                            }
-                        }
-                    }
-                    if (lock == null || !lock.isValid()) {
-                        try {
-                            LOGGER.debug("Sleeping thread {} for 5 seconds because we could not obtain the update lock.",
-                                    Thread.currentThread().getName());
-                            Thread.sleep(5000);
-                        } catch (InterruptedException ex) {
-                            LOGGER.trace("ignorable error, sleep was interrupted.", ex);
-                            Thread.currentThread().interrupt();
-                        }
-                    }
-                } while (++ctr < 60 && (lock == null || !lock.isValid()));
-                if (lock == null || !lock.isValid()) {
-                    throw new H2DBLockException("Unable to obtain the update lock, skipping the database update. Skippinig the database update.");
-                }
-            } catch (IOException ex) {
-                throw new H2DBLockException(ex.getMessage(), ex);
+        try {
+            final File dir = settings.getDataDirectory();
+            lockFile = new File(dir, "dc.update.lock");
+            if (lockFile.isFile() && getFileAge(lockFile) > 5 && !lockFile.delete()) {
+                LOGGER.warn("An old db update lock file was found but the system was unable to delete "
+                        + "the file. Consider manually deleting {}", lockFile.getAbsolutePath());
             }
+            int ctr = 0;
+            do {
+                try {
+                    if (!lockFile.exists() && lockFile.createNewFile()) {
+                        file = new RandomAccessFile(lockFile, "rw");
+                        lock = file.getChannel().lock();
+                    }
+                } catch (IOException ex) {
+                    LOGGER.trace("Expected error as another thread has likely locked the file", ex);
+                } finally {
+                    if (lock == null && file != null) {
+                        try {
+                            file.close();
+                        } catch (IOException ex) {
+                            LOGGER.trace("Unable to close the ulFile", ex);
+                        }
+                    }
+                }
+                if (lock == null || !lock.isValid()) {
+                    try {
+                        LOGGER.debug("Sleeping thread {} for 5 seconds because we could not obtain the update lock.",
+                                Thread.currentThread().getName());
+                        Thread.sleep(5000);
+                    } catch (InterruptedException ex) {
+                        LOGGER.trace("ignorable error, sleep was interrupted.", ex);
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            } while (++ctr < 60 && (lock == null || !lock.isValid()));
+            if (lock == null || !lock.isValid()) {
+                throw new H2DBLockException("Unable to obtain the update lock, skipping the database update. Skippinig the database update.");
+            }
+        } catch (IOException ex) {
+            throw new H2DBLockException(ex.getMessage(), ex);
         }
     }
 

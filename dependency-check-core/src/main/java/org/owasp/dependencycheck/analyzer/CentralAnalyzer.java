@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
@@ -49,6 +50,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author colezlaw
  */
+@ThreadSafe
 public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
@@ -232,7 +234,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                             LOGGER.debug("Unable to delete temp file");
                         }
                         LOGGER.debug("Downloading {}", ma.getPomUrl());
-                        Downloader downloader = new Downloader(getSettings());
+                        final Downloader downloader = new Downloader(getSettings());
                         downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);
                         PomUtils.analyzePOM(dependency, pomFile);
 

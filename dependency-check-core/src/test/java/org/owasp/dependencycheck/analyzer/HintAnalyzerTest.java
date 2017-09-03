@@ -76,7 +76,7 @@ public class HintAnalyzerTest extends BaseDBTestCase {
         
         engine.scan(guice);
         engine.scan(spring);
-        engine.analyzeDependencies();
+            engine.analyzeDependencies();
         Dependency gdep = null;
         Dependency sdep = null;
         for (Dependency d : engine.getDependencies()) {

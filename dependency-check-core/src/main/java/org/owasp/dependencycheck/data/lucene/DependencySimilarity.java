@@ -17,12 +17,14 @@
  */
 package org.owasp.dependencycheck.data.lucene;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import org.apache.lucene.search.similarities.DefaultSimilarity;
 
 /**
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class DependencySimilarity extends DefaultSimilarity {
 
     /**

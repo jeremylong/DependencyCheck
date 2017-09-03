@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.xml.suppression;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -28,6 +29,7 @@ import org.owasp.dependencycheck.dependency.Vulnerability;
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class SuppressionRule {
 
     /**

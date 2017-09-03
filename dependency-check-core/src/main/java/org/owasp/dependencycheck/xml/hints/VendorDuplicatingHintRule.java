@@ -17,6 +17,8 @@
  */
 package org.owasp.dependencycheck.xml.hints;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Used to duplicate vendor evidence within a collection. The intent is if any
  * evidence is found in a collection that matches the value given the evidence
@@ -24,6 +26,7 @@ package org.owasp.dependencycheck.xml.hints;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class VendorDuplicatingHintRule {
 
     /**

@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -38,7 +39,13 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class DependencyVersion implements Iterable<String>, Comparable<DependencyVersion> {
+
+    /**
+     * A list of the version parts.
+     */
+    private List<String> versionParts;
 
     /**
      * Constructor for a empty DependencyVersion.
@@ -78,10 +85,6 @@ public class DependencyVersion implements Iterable<String>, Comparable<Dependenc
             }
         }
     }
-    /**
-     * A list of the version parts.
-     */
-    private List<String> versionParts;
 
     /**
      * Get the value of versionParts.

@@ -22,12 +22,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * Evidence is a piece of information about a Dependency.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class Evidence implements Serializable, Comparable<Evidence> {
 
     /**
@@ -43,6 +45,31 @@ public class Evidence implements Serializable, Comparable<Evidence> {
      * Used as a multiplier for generating the value in {@link #hashCode()}.
      */
     private static final int MAGIC_HASH_MULTIPLIER = 67;
+
+    /**
+     * The name of the evidence.
+     */
+    private String name;
+
+    /**
+     * The source of the evidence.
+     */
+    private String source;
+
+    /**
+     * The value of the evidence.
+     */
+    private String value;
+
+    /**
+     * A value indicating if the Evidence has been "used" (aka read).
+     */
+    private boolean used;
+
+    /**
+     * The confidence level for the evidence.
+     */
+    private Confidence confidence;
 
     /**
      * Creates a new Evidence object.
@@ -66,11 +93,6 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     }
 
     /**
-     * The name of the evidence.
-     */
-    private String name;
-
-    /**
      * Get the value of name.
      *
      * @return the value of name
@@ -89,11 +111,6 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     }
 
     /**
-     * The source of the evidence.
-     */
-    private String source;
-
-    /**
      * Get the value of source.
      *
      * @return the value of source
@@ -110,11 +127,6 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     public void setSource(String source) {
         this.source = source;
     }
-
-    /**
-     * The value of the evidence.
-     */
-    private String value;
 
     /**
      * Get the value of value.
@@ -149,11 +161,6 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     }
 
     /**
-     * A value indicating if the Evidence has been "used" (aka read).
-     */
-    private boolean used;
-
-    /**
      * Get the value of used.
      *
      * @return the value of used
@@ -170,11 +177,6 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     public void setUsed(boolean used) {
         this.used = used;
     }
-
-    /**
-     * The confidence level for the evidence.
-     */
-    private Confidence confidence;
 
     /**
      * Get the value of confidence.

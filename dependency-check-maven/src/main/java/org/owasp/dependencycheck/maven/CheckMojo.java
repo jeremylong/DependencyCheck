@@ -99,7 +99,7 @@ public class CheckMojo extends BaseDependencyCheckMojo {
         }
         if (engine != null) {
             ExceptionCollection exCol = scanArtifacts(getProject(), engine);
-            if (engine.getDependencies().isEmpty()) {
+            if (engine.getDependencies().length == 0) {
                 getLog().info("No dependencies were identified that could be analyzed by dependency-check");
             }
             try {

@@ -176,7 +176,7 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         } else {
-            engine.getDependencies().remove(dependency);
+            engine.removeDependency(dependency);
         }
     }
 

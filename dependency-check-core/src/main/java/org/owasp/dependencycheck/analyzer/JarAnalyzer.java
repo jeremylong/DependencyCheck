@@ -251,7 +251,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     || fileName.endsWith("-doc.jar")
                     || isMacOSMetaDataFile(dependency, engine))
                     || !isZipFile(dependency)) {
-                engine.getDependencies().remove(dependency);
+                engine.removeDependency(dependency);
                 return;
             }
             final boolean hasManifest = parseManifest(dependency, classNames);
@@ -289,7 +289,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @return whether or not the given dependencies contain a dependency with
      * the given filename
      */
-    private boolean hasDependencyWithFilename(final List<Dependency> dependencies, final String fileName) {
+    private boolean hasDependencyWithFilename(final Dependency[] dependencies, final String fileName) {
         for (final Dependency dependency : dependencies) {
             if (Paths.get(dependency.getActualFilePath()).getFileName().toString().toLowerCase()
                     .equals(fileName.toLowerCase())) {
@@ -386,7 +386,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     newDependency.setFileName(displayName);
                     newDependency.setFilePath(displayPath);
                     setPomEvidence(newDependency, pom, null);
-                    engine.getDependencies().add(newDependency);
+                    engine.addDependency(newDependency);
                 } catch (AnalysisException ex) {
                     LOGGER.warn("An error occurred while analyzing '{}'.", dependency.getActualFilePath());
                     LOGGER.trace("", ex);
@@ -700,6 +700,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     value = Jsoup.parse(value).text();
                 }
                 if (IGNORE_VALUES.contains(value)) {
+                    //noinspection UnnecessaryContinue
                     continue;
                 } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {
                     foundSomething = true;
@@ -733,6 +734,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     foundSomething = true;
                     versionEvidence.addEvidence(source, key, value, Confidence.HIGH);
                 } else if (key.equalsIgnoreCase(Attributes.Name.MAIN_CLASS.toString())) {
+                    //noinspection UnnecessaryContinue
                     continue;
                     //skipping main class as if this has important information to add it will be added during class name analysis...
                 } else {

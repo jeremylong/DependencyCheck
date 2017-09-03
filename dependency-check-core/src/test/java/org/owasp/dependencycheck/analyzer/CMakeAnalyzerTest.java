@@ -154,9 +154,9 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
         assertVersionEvidence(result, "55.18.102");
         assertFalse("ALIASOF_ prefix shouldn't be present.",
                 Pattern.compile("\\bALIASOF_\\w+").matcher(result.getProductEvidence().toString()).find());
-        final List<Dependency> dependencies = engine.getDependencies();
-        assertEquals("Number of additional dependencies should be 4.", 4, dependencies.size());
-        final Dependency last = dependencies.get(3);
+        final Dependency[] dependencies = engine.getDependencies();
+        assertEquals("Number of additional dependencies should be 4.", 4, dependencies.length);
+        final Dependency last = dependencies[3];
         assertProductEvidence(last, "libavresample");
         assertVersionEvidence(last, "1.0.1");
     }

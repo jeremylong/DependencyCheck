@@ -312,7 +312,6 @@ public class App {
      * @param excludes an array of ant style excludes
      * @return returns the set of identified files
      * @throws InvalidScanPathException thrown when the scan path is invalid
-     * @throws IllegalStateException
      */
     private Set<File> scanAntStylePaths(List<String> antStylePaths, int symLinkDepth, String[] excludes)
             throws InvalidScanPathException {

@@ -18,19 +18,22 @@
 package org.owasp.dependencycheck.data.lucene;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import javax.annotation.concurrent.ThreadSafe;
 import org.apache.lucene.util.Version;
 
 /**
  * <p>
- * Lucene utils is a set of utilize written to make constructing Lucene queries simpler.</p>
+ * Lucene utils is a set of utilize written to make constructing Lucene queries
+ * simpler.</p>
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public final class LuceneUtils {
 
     /**
-     * The current version of Lucene being used. Declaring this one place so an upgrade doesn't require hunting through the code
-     * base.
+     * The current version of Lucene being used. Declaring this one place so an
+     * upgrade doesn't require hunting through the code base.
      */
     public static final Version CURRENT_VERSION = Version.LUCENE_47;
 
@@ -41,7 +44,8 @@ public final class LuceneUtils {
     }
 
     /**
-     * Appends the text to the supplied StringBuilder escaping Lucene control characters in the process.
+     * Appends the text to the supplied StringBuilder escaping Lucene control
+     * characters in the process.
      *
      * @param buf a StringBuilder to append the escaped text to
      * @param text the data to be escaped
@@ -88,7 +92,8 @@ public final class LuceneUtils {
     }
 
     /**
-     * Escapes the text passed in so that it is treated as data instead of control characters.
+     * Escapes the text passed in so that it is treated as data instead of
+     * control characters.
      *
      * @param text data to be escaped
      * @return the escaped text.

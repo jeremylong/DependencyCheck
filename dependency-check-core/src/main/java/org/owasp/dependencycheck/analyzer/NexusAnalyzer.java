@@ -35,6 +35,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
@@ -59,6 +60,7 @@ import org.owasp.dependencycheck.utils.Settings;
  *
  * @author colezlaw
  */
+@ThreadSafe
 public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
@@ -251,7 +253,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
                         LOGGER.debug("Unable to delete temp file");
                     }
                     LOGGER.debug("Downloading {}", ma.getPomUrl());
-                    Downloader downloader = new Downloader(getSettings());
+                    final Downloader downloader = new Downloader(getSettings());
                     downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);
                     PomUtils.analyzePOM(dependency, pomFile);
                 } catch (DownloadFailedException ex) {

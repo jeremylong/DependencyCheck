@@ -25,12 +25,14 @@ import java.io.ObjectStreamClass;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * An ObjectInputStream that will only deserialize expected classes.
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class ExpectedObjectInputStream extends ObjectInputStream {
 
     /**

@@ -21,15 +21,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public final class UrlStringUtils {
 
     /**
@@ -44,8 +44,11 @@ public final class UrlStringUtils {
      * A listing of domain parts that should not be used as evidence. Yes, this
      * is an incomplete list.
      */
-    private static final Set<String> IGNORE_LIST = new HashSet<>(
-            Arrays.asList("www", "com", "org", "gov", "info", "name", "net", "pro", "tel", "mobi", "xxx"));
+    private static final String[] IGNORE_LIST = {"www", "com", "org", "gov", "info", "name", "net", "pro", "tel", "mobi", "xxx"};
+
+    static {
+        Arrays.sort(IGNORE_LIST);
+    }
 
     /**
      * Private constructor for a utility class.
@@ -96,7 +99,7 @@ public final class UrlStringUtils {
         //add the domain except www and the tld.
         for (int i = 0; i < domain.length - 1; i++) {
             final String sub = domain[i];
-            if (!IGNORE_LIST.contains(sub.toLowerCase())) {
+            if (Arrays.binarySearch(IGNORE_LIST, sub.toLowerCase()) < 0) {
                 importantParts.add(sub);
             }
         }

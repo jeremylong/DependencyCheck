@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.taskdefs;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -46,6 +47,7 @@ import org.slf4j.impl.StaticLoggerBinder;
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class Check extends Update {
 
     /**
@@ -161,6 +163,7 @@ public class Check extends Update {
     /**
      * Suppression file paths.
      */
+    @SuppressWarnings("CanBeFinal")
     private List<String> suppressionFiles = new ArrayList<>();
 
     /**
@@ -1065,7 +1068,7 @@ public class Check extends Update {
      * @throws BuildException thrown if a CVSS score is found that is higher
      * than the threshold set
      */
-    private void checkForFailure(List<Dependency> dependencies) throws BuildException {
+    private void checkForFailure(Dependency[] dependencies) throws BuildException {
         final StringBuilder ids = new StringBuilder();
         for (Dependency d : dependencies) {
             for (Vulnerability v : d.getVulnerabilities()) {
@@ -1092,7 +1095,7 @@ public class Check extends Update {
      *
      * @param dependencies a list of dependency objects
      */
-    private void showSummary(List<Dependency> dependencies) {
+    private void showSummary(Dependency[] dependencies) {
         final StringBuilder summary = new StringBuilder();
         for (Dependency d : dependencies) {
             boolean firstEntry = true;

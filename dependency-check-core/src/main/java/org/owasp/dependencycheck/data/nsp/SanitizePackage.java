@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * Class used to create a Sanitized version of package.json suitable for
@@ -32,6 +33,7 @@ import java.util.Map;
  *
  * @author Steve Springett
  */
+@ThreadSafe
 public final class SanitizePackage {
 
     /**

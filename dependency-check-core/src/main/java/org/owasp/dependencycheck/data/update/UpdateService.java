@@ -19,13 +19,15 @@ package org.owasp.dependencycheck.data.update;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
- * The CachedWebDataSource Service Loader. This class loads all services that implement
- * org.owasp.dependencycheck.data.update.CachedWebDataSource.
+ * The CachedWebDataSource Service Loader. This class loads all services that
+ * implement {@link org.owasp.dependencycheck.data.update.CachedWebDataSource}.
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class UpdateService {
 
     /**
@@ -36,14 +38,16 @@ public class UpdateService {
     /**
      * Creates a new instance of UpdateService.
      *
-     * @param classLoader the ClassLoader to use when dynamically loading Analyzer and Update services
+     * @param classLoader the ClassLoader to use when dynamically loading
+     * Analyzer and Update services
      */
     public UpdateService(ClassLoader classLoader) {
         loader = ServiceLoader.load(CachedWebDataSource.class, classLoader);
     }
 
     /**
-     * Returns an Iterator for all instances of the CachedWebDataSource interface.
+     * Returns an Iterator for all instances of the CachedWebDataSource
+     * interface.
      *
      * @return an iterator of CachedWebDataSource.
      */

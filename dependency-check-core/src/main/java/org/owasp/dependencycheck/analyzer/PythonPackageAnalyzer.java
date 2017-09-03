@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
@@ -44,13 +45,13 @@ import org.owasp.dependencycheck.exception.InitializationException;
  * @author Dale Visser
  */
 @Experimental
+@ThreadSafe
 public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
      * Used when compiling file scanning regex patterns.
      */
-    private static final int REGEX_OPTIONS = Pattern.DOTALL
-            | Pattern.CASE_INSENSITIVE;
+    private static final int REGEX_OPTIONS = Pattern.DOTALL | Pattern.CASE_INSENSITIVE;
 
     /**
      * Filename extensions for files to be analyzed.
@@ -58,16 +59,14 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     private static final String EXTENSIONS = "py";
 
     /**
-     * Pattern for matching the module docstring in a source file.
+     * Pattern for matching the module doc string in a source file.
      */
-    private static final Pattern MODULE_DOCSTRING = Pattern.compile(
-            "^(['\\\"]{3})(.*?)\\1", REGEX_OPTIONS);
+    private static final Pattern MODULE_DOCSTRING = Pattern.compile("^(['\\\"]{3})(.*?)\\1", REGEX_OPTIONS);
 
     /**
      * Matches assignments to version variables in Python source code.
      */
-    private static final Pattern VERSION_PATTERN = Pattern.compile(
-            "\\b(__)?version(__)? *= *(['\"]+)(\\d+\\.\\d+.*?)\\3",
+    private static final Pattern VERSION_PATTERN = Pattern.compile("\\b(__)?version(__)? *= *(['\"]+)(\\d+\\.\\d+.*?)\\3",
             REGEX_OPTIONS);
 
     /**
@@ -128,6 +127,16 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     public AnalysisPhase getAnalysisPhase() {
         return AnalysisPhase.INFORMATION_COLLECTION;
+    }
+
+    /**
+     * Returns the key name for the analyzers enabled setting.
+     *
+     * @return the key name for the analyzers enabled setting
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+        return Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED;
     }
 
     /**
@@ -192,7 +201,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         } else {
-            engine.getDependencies().remove(dependency);
+            engine.removeDependency(dependency);
         }
     }
 
@@ -212,8 +221,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
         try {
             contents = FileUtils.readFileToString(file, Charset.defaultCharset()).trim();
         } catch (IOException e) {
-            throw new AnalysisException(
-                    "Problem occurred while reading dependency file.", e);
+            throw new AnalysisException("Problem occurred while reading dependency file.", e);
         }
         boolean found = false;
         if (!contents.isEmpty()) {
@@ -310,10 +318,5 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
             evidence.addEvidence(source, name, matcher.group(4), confidence);
         }
         return found;
-    }
-
-    @Override
-    protected String getAnalyzerEnabledSettingKey() {
-        return Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED;
     }
 }

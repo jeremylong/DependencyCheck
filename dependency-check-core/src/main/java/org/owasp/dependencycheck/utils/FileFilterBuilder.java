@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * <p>
@@ -43,6 +44,7 @@ import java.util.Set;
  * @author Dale Visser
  * @see <a href="https://en.wikipedia.org/wiki/Builder_pattern">Builder pattern</a>
  */
+@NotThreadSafe
 public class FileFilterBuilder {
 
     /**

@@ -17,6 +17,8 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * A generic pair of elements.
  *
@@ -25,6 +27,7 @@ package org.owasp.dependencycheck.utils;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class Pair<L, R> {
     /**
      * The left element of the pair.

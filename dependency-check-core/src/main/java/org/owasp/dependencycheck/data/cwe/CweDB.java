@@ -26,11 +26,13 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public final class CweDB {
 
     /**
@@ -59,9 +61,7 @@ public final class CweDB {
         final String filePath = "data/cwe.hashmap.serialized";
         try (InputStream input = FileUtils.getResourceAsStream(filePath);
                 ObjectInputStream oin = new ObjectInputStream(input)) {
-
-            final Map<String, String> ret = (HashMap<String, String>) oin.readObject();
-            return ret;
+            return (HashMap<String, String>) oin.readObject();
         } catch (ClassNotFoundException ex) {
             LOGGER.warn("Unable to load CWE data. This should not be an issue.");
             LOGGER.debug("", ex);
@@ -79,7 +79,7 @@ public final class CweDB {
      * @param cweId the CWE ID
      * @return the full name of the CWE
      */
-    public static String getCweName(String cweId) {
+    public static synchronized String getCweName(String cweId) {
         if (cweId != null) {
             return CWE.get(cweId);
         }

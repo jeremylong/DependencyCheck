@@ -445,12 +445,15 @@ public final class Settings {
     }
     //</editor-fold>
 
+    /**
+     * Initialize the settings object.
+     */
     public Settings() {
         initialize(PROPERTIES_FILE);
     }
 
     /**
-     * This class loads the settings from the given properties file.
+     * Initialize the settings object using the given properties file.
      *
      * @param propertiesFilePath the path to the base properties file to load
      */
@@ -463,7 +466,7 @@ public final class Settings {
      *
      * @param propertiesFilePath the path to the settings property file
      */
-    private final void initialize(String propertiesFilePath) {
+    private void initialize(String propertiesFilePath) {
         props = new Properties();
         try (InputStream in = FileUtils.getResourceAsStream(propertiesFilePath)) {
             props.load(in);
@@ -970,8 +973,7 @@ public final class Settings {
         throw new IOException(String.format("Unable to create the data directory '%s'",
                 (path == null) ? "unknown" : path.getAbsolutePath()));
     }
-    
-    
+
     /**
      * Generates a new temporary file name that is guaranteed to be unique.
      *

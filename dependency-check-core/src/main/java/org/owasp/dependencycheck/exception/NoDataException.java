@@ -18,12 +18,14 @@
 package org.owasp.dependencycheck.exception;
 
 import java.io.IOException;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * An exception used when the data needed does not exist to perform analysis.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class NoDataException extends IOException {
 
     /**

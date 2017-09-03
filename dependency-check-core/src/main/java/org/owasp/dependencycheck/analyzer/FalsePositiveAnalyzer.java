@@ -28,6 +28,7 @@ import java.util.ListIterator;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -44,6 +45,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class FalsePositiveAnalyzer extends AbstractAnalyzer {
 
     /**
@@ -155,8 +157,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                 }
             }
         }
-        if (mustContain
-                != null) {
+        if (mustContain                != null) {
             final Iterator<Identifier> itr = dependency.getIdentifiers().iterator();
             while (itr.hasNext()) {
                 final Identifier i = itr.next();
@@ -444,7 +445,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
             String parentPath = dependency.getFilePath().toLowerCase();
             if (parentPath.contains(".jar")) {
                 parentPath = parentPath.substring(0, parentPath.indexOf(".jar") + 4);
-                final List<Dependency> dependencies = engine.getDependencies();
+                final Dependency[] dependencies = engine.getDependencies();
                 final Dependency parent = findDependency(parentPath, dependencies);
                 if (parent != null) {
                     boolean remove = false;
@@ -462,7 +463,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         }
                     }
                     if (remove) {
-                        dependencies.remove(dependency);
+                        engine.removeDependency(dependency);
                     }
                 }
             }
@@ -474,10 +475,10 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      * dependencies.
      *
      * @param dependencyPath the path of the dependency to return
-     * @param dependencies the collection of dependencies to search
+     * @param dependencies the array of dependencies to search
      * @return the dependency object for the given path, otherwise null
      */
-    private Dependency findDependency(String dependencyPath, List<Dependency> dependencies) {
+    private Dependency findDependency(String dependencyPath, Dependency[] dependencies) {
         for (Dependency d : dependencies) {
             if (d.getFilePath().equalsIgnoreCase(dependencyPath)) {
                 return d;

@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
+import javax.annotation.concurrent.ThreadSafe;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.NameFileFilter;
@@ -30,11 +31,11 @@ import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
- *
  * Takes a dependency and analyzes the filename and determines the hashes.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class FileNameAnalyzer extends AbstractAnalyzer {
 
     /**
@@ -76,6 +77,7 @@ public class FileNameAnalyzer extends AbstractAnalyzer {
     public AnalysisPhase getAnalysisPhase() {
         return ANALYSIS_PHASE;
     }
+
     /**
      * <p>
      * Returns the setting key to determine if the analyzer is enabled.</p>

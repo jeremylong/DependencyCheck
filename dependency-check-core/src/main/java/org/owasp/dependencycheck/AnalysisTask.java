@@ -21,12 +21,12 @@ import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.analyzer.FileTypeAnalyzer;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.Callable;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * Task to support parallelism of dependency-check analysis. Analyses a single
@@ -34,6 +34,7 @@ import java.util.concurrent.Callable;
  *
  * @author Stefan Neuhaus
  */
+@ThreadSafe
 public class AnalysisTask implements Callable<Void> {
 
     /**
@@ -57,10 +58,6 @@ public class AnalysisTask implements Callable<Void> {
      * The list of exceptions that may occur during analysis.
      */
     private final List<Throwable> exceptions;
-    /**
-     * A reference to the global settings object.
-     */
-    private final Settings settings;
 
     /**
      * Creates a new analysis task.
@@ -70,16 +67,12 @@ public class AnalysisTask implements Callable<Void> {
      * @param engine the dependency-check engine
      * @param exceptions exceptions that occur during analysis will be added to
      * this collection of exceptions
-     * @param settings a reference to the global settings object; this is
-     * necessary so that when the thread is started the dependencies have a
-     * correct reference to the global settings.
      */
-    AnalysisTask(Analyzer analyzer, Dependency dependency, Engine engine, List<Throwable> exceptions, Settings settings) {
+    AnalysisTask(Analyzer analyzer, Dependency dependency, Engine engine, List<Throwable> exceptions) {
         this.analyzer = analyzer;
         this.dependency = dependency;
         this.engine = engine;
         this.exceptions = exceptions;
-        this.settings = settings;
     }
 
     /**

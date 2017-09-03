@@ -18,8 +18,6 @@
 package org.owasp.dependencycheck.data.lucene;
 
 import java.io.Reader;
-import java.util.Arrays;
-import java.util.List;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
@@ -44,8 +42,8 @@ public class SearchFieldAnalyzer extends Analyzer {
     /**
      * The list of additional stop words to use.
      */
-    private static final List<String> ADDITIONAL_STOP_WORDS = Arrays.asList("software", "framework", "inc",
-            "com", "org", "net", "www", "consulting", "ltd", "foundation", "project");
+    private static final String[] ADDITIONAL_STOP_WORDS = {"software", "framework", "inc",
+        "com", "org", "net", "www", "consulting", "ltd", "foundation", "project"};
     /**
      * The set of stop words to use in the analyzer.
      */
@@ -57,8 +55,8 @@ public class SearchFieldAnalyzer extends Analyzer {
      * @return the set of stop words being used
      */
     public static CharArraySet getStopWords() {
-        CharArraySet words = new CharArraySet(LuceneUtils.CURRENT_VERSION, StopAnalyzer.ENGLISH_STOP_WORDS_SET, true);
-        words.addAll(ADDITIONAL_STOP_WORDS);
+        final CharArraySet words = StopFilter.makeStopSet(LuceneUtils.CURRENT_VERSION, ADDITIONAL_STOP_WORDS, true);
+        words.addAll(StopAnalyzer.ENGLISH_STOP_WORDS_SET);
         return words;
     }
 

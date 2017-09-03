@@ -46,6 +46,7 @@ import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.UrlStringUtils;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * Used to analyze a Wheel or egg distribution files, or their contents in
@@ -55,30 +56,26 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Dale Visser
  */
 @Experimental
+@ThreadSafe
 public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
      * Name of egg metadata files to analyze.
      */
     private static final String PKG_INFO = "PKG-INFO";
-
     /**
      * Name of wheel metadata files to analyze.
      */
     private static final String METADATA = "METADATA";
-
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(PythonDistributionAnalyzer.class);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(PythonDistributionAnalyzer.class);
     /**
      * The count of directories created during analysis. This is used for
      * creating temporary directories.
      */
     private static final AtomicInteger DIR_COUNT = new AtomicInteger(0);
-
     /**
      * The name of the analyzer.
      */
@@ -87,52 +84,39 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
      * The phase that this analyzer is intended to run in.
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
-
     /**
      * The set of file extensions supported by this analyzer.
      */
     private static final String[] EXTENSIONS = {"whl", "egg", "zip"};
-
     /**
      * Used to match on egg archive candidate extensions.
      */
     private static final FileFilter EGG_OR_ZIP = FileFilterBuilder.newInstance().addExtensions("egg", "zip").build();
-
     /**
      * Used to detect files with a .whl extension.
      */
     private static final FileFilter WHL_FILTER = FileFilterBuilder.newInstance().addExtensions("whl").build();
-
     /**
      * The parent directory for the individual directories per archive.
      */
     private File tempFileLocation;
-
     /**
      * Filter that detects *.dist-info files (but doesn't verify they are
      * directories.
      */
-    private static final FilenameFilter DIST_INFO_FILTER = new SuffixFileFilter(
-            ".dist-info");
-
+    private static final FilenameFilter DIST_INFO_FILTER = new SuffixFileFilter(".dist-info");
     /**
      * Filter that detects files named "METADATA".
      */
-    private static final FilenameFilter EGG_INFO_FILTER = new NameFileFilter(
-            "EGG-INFO");
-
+    private static final FilenameFilter EGG_INFO_FILTER = new NameFileFilter("EGG-INFO");
     /**
      * Filter that detects files named "METADATA".
      */
-    private static final NameFileFilter METADATA_FILTER = new NameFileFilter(
-            METADATA);
-
+    private static final NameFileFilter METADATA_FILTER = new NameFileFilter(METADATA);
     /**
      * Filter that detects files named "PKG-INFO".
      */
-    private static final NameFileFilter PKG_INFO_FILTER = new NameFileFilter(
-            PKG_INFO);
-
+    private static final NameFileFilter PKG_INFO_FILTER = new NameFileFilter(PKG_INFO);
     /**
      * The file filter used to determine which files this analyzer supports.
      */
@@ -311,8 +295,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
         addPropertyToEvidence(headers, vendorEvidence, "Author", Confidence.LOW);
         final String summary = headers.getHeader("Summary", null);
         if (StringUtils.isNotBlank(summary)) {
-            JarAnalyzer
-                    .addDescription(dependency, summary, METADATA, "summary");
+            JarAnalyzer.addDescription(dependency, summary, METADATA, "summary");
         }
     }
 

@@ -53,7 +53,7 @@ public class EngineIT extends BaseDBTestCase {
         Engine instance = new Engine(getSettings());
         getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
         instance.scan(testClasses);
-        assertTrue(instance.getDependencies().size() > 0);
+        assertTrue(instance.getDependencies().length > 0);
         try {
             instance.analyzeDependencies();
         } catch (ExceptionCollection ex) {

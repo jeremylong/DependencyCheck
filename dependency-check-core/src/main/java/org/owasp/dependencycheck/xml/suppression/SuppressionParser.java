@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 
@@ -42,6 +43,7 @@ import org.xml.sax.XMLReader;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class SuppressionParser {
 
     /**

@@ -17,12 +17,14 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -125,10 +127,11 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
             final String resource = "ruby/vulnerable/gems/rails-4.1.15/Gemfile.lock";
             final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, resource));
             analyzer.analyze(result, engine);
-            int size = engine.getDependencies().size();
+            final Dependency[] dependencies = engine.getDependencies();
+            final int size = dependencies.length;
             assertTrue(size >= 1);
             boolean found = false;
-            for (Dependency dependency : engine.getDependencies()) {
+            for (Dependency dependency : dependencies) {
                 found = dependency.getProductEvidence().toString().toLowerCase().contains("redcarpet");
                 found &= dependency.getVersionEvidence().toString().toLowerCase().contains("2.2.2");
                 found &= dependency.getFilePath().endsWith(resource);
@@ -157,7 +160,7 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
             final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                     "ruby/vulnerable/gems/sinatra/Gemfile.lock"));
             analyzer.analyze(result, engine);
-            Dependency dependency = engine.getDependencies().get(0);
+            Dependency dependency = engine.getDependencies()[0];
             Vulnerability vulnerability = dependency.getVulnerabilities().first();
             assertEquals(vulnerability.getCvssScore(), 5.0f, 0.0);
 
@@ -211,39 +214,40 @@ public class RubyBundleAuditAnalyzerTest extends BaseDBTestCase {
             Assume.assumeNoException("Exception setting up RubyBundleAuditAnalyzer; bundle audit may not be installed, or property \"analyzer.bundle.audit.path\" may not be set.", ex);
             return;
         }
-        List<Dependency> dependencies = engine.getDependencies();
+        List<Dependency> dependencies = new ArrayList<>(Arrays.asList(engine.getDependencies()));
         LOGGER.info("{} dependencies found.", dependencies.size());
-        Iterator<Dependency> dIterator = dependencies.iterator();
-        while (dIterator.hasNext()) {
-            Dependency dept = dIterator.next();
-            LOGGER.info("dept path: {}", dept.getActualFilePath());
-
-            Set<Identifier> identifiers = dept.getIdentifiers();
-            Iterator<Identifier> idIterator = identifiers.iterator();
-            while (idIterator.hasNext()) {
-                Identifier id = idIterator.next();
-                LOGGER.info("  Identifier: {}, type={}, url={}, conf={}", id.getValue(), id.getType(), id.getUrl(), id.getConfidence());
-            }
-
-            Set<Evidence> prodEv = dept.getProductEvidence().getEvidence();
-            Iterator<Evidence> it = prodEv.iterator();
-            while (it.hasNext()) {
-                Evidence e = it.next();
-                LOGGER.info("  prod: name={}, value={}, source={}, confidence={}", e.getName(), e.getValue(), e.getSource(), e.getConfidence());
-            }
-            Set<Evidence> versionEv = dept.getVersionEvidence().getEvidence();
-            Iterator<Evidence> vIt = versionEv.iterator();
-            while (vIt.hasNext()) {
-                Evidence e = vIt.next();
-                LOGGER.info("  version: name={}, value={}, source={}, confidence={}", e.getName(), e.getValue(), e.getSource(), e.getConfidence());
-            }
-
-            Set<Evidence> vendorEv = dept.getVendorEvidence().getEvidence();
-            Iterator<Evidence> vendorIt = vendorEv.iterator();
-            while (vendorIt.hasNext()) {
-                Evidence e = vendorIt.next();
-                LOGGER.info("  vendor: name={}, value={}, source={}, confidence={}", e.getName(), e.getValue(), e.getSource(), e.getConfidence());
-            }
-        }
+        //TODO before re-enablign the following add actual assertions.
+//        Iterator<Dependency> dIterator = dependencies.iterator();
+//        while (dIterator.hasNext()) {
+//            Dependency dept = dIterator.next();
+//            LOGGER.info("dept path: {}", dept.getActualFilePath());
+//
+//            Set<Identifier> identifiers = dept.getIdentifiers();
+//            Iterator<Identifier> idIterator = identifiers.iterator();
+//            while (idIterator.hasNext()) {
+//                Identifier id = idIterator.next();
+//                LOGGER.info("  Identifier: {}, type={}, url={}, conf={}", id.getValue(), id.getType(), id.getUrl(), id.getConfidence());
+//            }
+//
+//            Set<Evidence> prodEv = dept.getProductEvidence().getEvidence();
+//            Iterator<Evidence> it = prodEv.iterator();
+//            while (it.hasNext()) {
+//                Evidence e = it.next();
+//                LOGGER.info("  prod: name={}, value={}, source={}, confidence={}", e.getName(), e.getValue(), e.getSource(), e.getConfidence());
+//            }
+//            Set<Evidence> versionEv = dept.getVersionEvidence().getEvidence();
+//            Iterator<Evidence> vIt = versionEv.iterator();
+//            while (vIt.hasNext()) {
+//                Evidence e = vIt.next();
+//                LOGGER.info("  version: name={}, value={}, source={}, confidence={}", e.getName(), e.getValue(), e.getSource(), e.getConfidence());
+//            }
+//
+//            Set<Evidence> vendorEv = dept.getVendorEvidence().getEvidence();
+//            Iterator<Evidence> vendorIt = vendorEv.iterator();
+//            while (vendorIt.hasNext()) {
+//                Evidence e = vendorIt.next();
+//                LOGGER.info("  vendor: name={}, value={}, source={}, confidence={}", e.getName(), e.getValue(), e.getSource(), e.getConfidence());
+//            }
+//        }
     }
 }

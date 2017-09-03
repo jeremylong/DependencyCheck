@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.xml.hints;
 
+import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.utils.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,7 @@ import org.xml.sax.SAXParseException;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class HintErrorHandler implements ErrorHandler {
 
     /**

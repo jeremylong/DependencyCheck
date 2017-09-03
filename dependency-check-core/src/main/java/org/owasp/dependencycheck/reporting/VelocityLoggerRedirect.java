@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.reporting;
 
+import javax.annotation.concurrent.ThreadSafe;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.log.LogChute;
 import org.slf4j.Logger;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Steve Springett
  */
+@ThreadSafe
 public class VelocityLoggerRedirect implements LogChute {
 
     /**

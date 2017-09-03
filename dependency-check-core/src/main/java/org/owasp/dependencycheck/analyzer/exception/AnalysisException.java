@@ -17,11 +17,14 @@
  */
 package org.owasp.dependencycheck.analyzer.exception;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * An exception thrown when the analysis of a dependency fails.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class AnalysisException extends Exception {
 
     /**

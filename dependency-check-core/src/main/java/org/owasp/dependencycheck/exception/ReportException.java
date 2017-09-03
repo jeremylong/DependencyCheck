@@ -17,11 +17,14 @@
  */
 package org.owasp.dependencycheck.exception;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * An exception used when generating reports.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class ReportException extends Exception {
 
     /**

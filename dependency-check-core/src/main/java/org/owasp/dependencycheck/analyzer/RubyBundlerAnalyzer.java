@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import javax.annotation.concurrent.ThreadSafe;
 
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -47,6 +48,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
  * @author Bianca Jiang (https://twitter.com/biancajiang)
  */
 @Experimental
+@ThreadSafe
 public class RubyBundlerAnalyzer extends RubyGemspecAnalyzer {
 
     /**

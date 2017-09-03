@@ -21,14 +21,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Collection of utility methods for working with database objects.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public final class DBUtils {
 
     /**

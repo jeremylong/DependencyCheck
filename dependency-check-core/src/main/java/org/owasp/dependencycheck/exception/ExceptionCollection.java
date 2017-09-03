@@ -21,12 +21,14 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * A collection of several exceptions.
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class ExceptionCollection extends Exception {
     /**
      * The serial version uid.

@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.List;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 
@@ -41,6 +43,7 @@ import org.xml.sax.XMLReader;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class HintParser {
 
     /**
@@ -74,24 +77,51 @@ public class HintParser {
     private static final String HINT_SCHEMA_OLD = "schema/dependency-hint.1.1.xsd";
 
     /**
+     * The hint rules.
+     */
+    private HintRule[] hintRules;
+    /**
+     * The vendor duplicating hint rules.
+     */
+    private VendorDuplicatingHintRule[] vendorDuplicatingHintRules;
+
+    /**
+     * Returns the hint rules.
+     *
+     * @return the hint rules
+     */
+    @SuppressWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
+    public HintRule[] getHintRules() {
+        return hintRules;
+    }
+
+    /**
+     * Returns the vendor duplicating hint rules.
+     *
+     * @return the vendor duplicating hint rules
+     */
+    public VendorDuplicatingHintRule[] getVendorDuplicatingHintRules() {
+        return vendorDuplicatingHintRules;
+    }
+
+    /**
      * Parses the given XML file and returns a list of the hints contained.
      *
      * @param file an XML file containing hints
-     * @return a list of hint rules
      * @throws HintParseException thrown if the XML file cannot be parsed
      */
-    public Hints parseHints(File file) throws HintParseException {
+    public void parseHints(File file) throws HintParseException {
         //TODO there must be a better way to determine which schema to use for validation.
         try {
             try (FileInputStream fis = new FileInputStream(file)) {
-                return parseHints(fis);
+                parseHints(fis);
             } catch (IOException ex) {
                 LOGGER.debug("", ex);
                 throw new HintParseException(ex);
             }
         } catch (SAXException ex) {
             try (FileInputStream fis = new FileInputStream(file)) {
-                return parseHints(fis, HINT_SCHEMA_OLD);
+                parseHints(fis, HINT_SCHEMA_OLD);
             } catch (SAXException | IOException ex1) {
                 throw new HintParseException(ex);
             }
@@ -103,12 +133,11 @@ public class HintParser {
      * contained.
      *
      * @param inputStream an InputStream containing hint rules
-     * @return a list of hint rules
      * @throws HintParseException thrown if the XML cannot be parsed
      * @throws SAXException thrown if the XML cannot be parsed
      */
-    public Hints parseHints(InputStream inputStream) throws HintParseException, SAXException {
-        return parseHints(inputStream, HINT_SCHEMA);
+    public void parseHints(InputStream inputStream) throws HintParseException, SAXException {
+        parseHints(inputStream, HINT_SCHEMA);
     }
 
     /**
@@ -117,11 +146,10 @@ public class HintParser {
      *
      * @param inputStream an InputStream containing hint rules
      * @param schema the XSD to use to validate the XML against
-     * @return a list of hint rules
      * @throws HintParseException thrown if the XML cannot be parsed
      * @throws SAXException thrown if the XML cannot be parsed
      */
-    private Hints parseHints(InputStream inputStream, String schema) throws HintParseException, SAXException {
+    private void parseHints(InputStream inputStream, String schema) throws HintParseException, SAXException {
         try (InputStream schemaStream = FileUtils.getResourceAsStream(schema)) {
             final HintHandler handler = new HintHandler();
             final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream);
@@ -131,10 +159,10 @@ public class HintParser {
             try (Reader reader = new InputStreamReader(inputStream, "UTF-8")) {
                 final InputSource in = new InputSource(reader);
                 xmlReader.parse(in);
-                final Hints hints = new Hints();
-                hints.setHintRules(handler.getHintRules());
-                hints.setVendorDuplicatingHintRules(handler.getVendorDuplicatingHintRules());
-                return hints;
+                final List<HintRule> tmpRules = handler.getHintRules();
+                this.hintRules = tmpRules.toArray(new HintRule[tmpRules.size()]);
+                final List<VendorDuplicatingHintRule> tmpVDR = handler.getVendorDuplicatingHintRules();
+                this.vendorDuplicatingHintRules = tmpVDR.toArray(new VendorDuplicatingHintRule[tmpVDR.size()]);
             }
         } catch (ParserConfigurationException | FileNotFoundException ex) {
             LOGGER.debug("", ex);

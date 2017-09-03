@@ -95,14 +95,14 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
             Engine engine = new Engine(getSettings());
             getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
 
-            assertTrue(engine.getDependencies().isEmpty());
+            assertTrue(engine.getDependencies().length == 0);
             BaseDependencyCheckMojoImpl instance = new BaseDependencyCheckMojoImpl();
             try { //the mock above fails under some JDKs
                 instance.scanArtifacts(project, engine);
             } catch (NullPointerException ex) {
                 Assume.assumeNoException(ex);
             }
-            assertFalse(engine.getDependencies().isEmpty());
+            assertFalse(engine.getDependencies().length == 0);
             engine.cleanup();
         }
     }

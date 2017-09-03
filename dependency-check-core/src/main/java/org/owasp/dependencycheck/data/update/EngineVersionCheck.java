@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
@@ -44,6 +45,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class EngineVersionCheck implements CachedWebDataSource {
 
     /**
@@ -115,7 +117,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
     public void update(Engine engine) throws UpdateException {
         this.settings = engine.getSettings();
         try {
-            CveDB db = engine.getDatabase();
+            final CveDB db = engine.getDatabase();
             final boolean autoupdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);
             final boolean enabled = settings.getBoolean(Settings.KEYS.UPDATE_VERSION_CHECK_ENABLED, true);
             final String original = settings.getString(Settings.KEYS.CVE_ORIGINAL_MODIFIED_20_URL);
@@ -208,7 +210,7 @@ public class EngineVersionCheck implements CachedWebDataSource {
         try {
             final String str = settings.getString(Settings.KEYS.ENGINE_VERSION_CHECK_URL, "http://jeremylong.github.io/DependencyCheck/current.txt");
             final URL url = new URL(str);
-            URLConnectionFactory factory = new URLConnectionFactory(settings);
+            final URLConnectionFactory factory = new URLConnectionFactory(settings);
             conn = factory.createHttpURLConnection(url);
             conn.connect();
             if (conn.getResponseCode() != 200) {

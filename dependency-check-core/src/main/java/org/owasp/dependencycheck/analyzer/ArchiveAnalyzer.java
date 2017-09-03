@@ -111,7 +111,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * Detects files with .zip extension.
      */
     private static final FileFilter ZIP_FILTER = FileFilterBuilder.newInstance().addExtensions("zip").build();
-    
+
     //<editor-fold defaultstate="collapsed" desc="All standard implementation details of Analyzer">
     /**
      * The name of the analyzer.
@@ -121,6 +121,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * The phase that this analyzer is intended to run in.
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INITIAL;
+
     /**
      * Initializes the analyzer with the configured settings.
      *
@@ -289,9 +290,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         }
         if (REMOVE_FROM_ANALYSIS.accept(dependency.getActualFile())) {
             addDisguisedJarsToDependencies(dependency, engine);
-            engine.getDependencies().remove(dependency);
+            engine.removeDependency(dependency);
         }
-        Collections.sort(engine.getDependencies());
+        engine.sortDependencies();
     }
 
     /**

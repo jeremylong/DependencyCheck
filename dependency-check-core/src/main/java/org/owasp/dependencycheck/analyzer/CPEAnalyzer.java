@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.lucene.analysis.util.CharArraySet;
 import org.apache.lucene.document.Document;
@@ -63,6 +64,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class CPEAnalyzer extends AbstractAnalyzer {
 
     /**
@@ -93,6 +95,10 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      */
     private static final int STRING_BUILDER_BUFFER = 20;
     /**
+     * The URL to perform a search of the NVD CVE data at NIST.
+     */
+    public static final String NVD_SEARCH_URL = "https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=%s";
+    /**
      * The CPE in memory index.
      */
     private CpeMemoryIndex cpe;
@@ -100,11 +106,6 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * The CVE Database.
      */
     private CveDB cve;
-
-    /**
-     * The URL to perform a search of the NVD CVE data at NIST.
-     */
-    public static final String NVD_SEARCH_URL = "https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=%s";
 
     /**
      * Returns the name of this analyzer.
@@ -126,18 +127,18 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         return AnalysisPhase.IDENTIFIER_ANALYSIS;
     }
 
-    /**
-     * The default is to support parallel processing.
-     *
-     * @return false
-     */
-    @Override
-    public boolean supportsParallelProcessing() {
-        return false;
-    }
-
+//    /**
+//     * The default is to support parallel processing.
+//     *
+//     * @return false
+//     */
+//    @Override
+//    public boolean supportsParallelProcessing() {
+//        return false;
+//    }
     /**
      * Creates the CPE Lucene Index.
+     *
      * @param engine a reference to the dependency-check engine
      * @throws InitializationException is thrown if there is an issue opening
      * the index.
@@ -164,7 +165,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * @throws DatabaseException when the database throws an exception. This
      * usually occurs when the database is in use by another process.
      */
-    public void open(CveDB cve) throws IOException, DatabaseException {
+    public synchronized void open(CveDB cve) throws IOException, DatabaseException {
         if (!isOpen()) {
             this.cve = cve;
             this.cpe = CpeMemoryIndex.getInstance();
@@ -185,10 +186,6 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      */
     @Override
     public void closeAnalyzer() {
-        if (cve != null) {
-            cve.close();
-            cve = null;
-        }
         if (cpe != null) {
             cpe.close();
             cpe = null;
@@ -490,7 +487,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         final String[] words = text.split("[\\s_-]");
         final List<String> list = new ArrayList<>();
         String tempWord = null;
-        CharArraySet stopWords = SearchFieldAnalyzer.getStopWords();
+        final CharArraySet stopWords = SearchFieldAnalyzer.getStopWords();
         for (String word : words) {
             if (stopWords.contains(word)) {
                 continue;

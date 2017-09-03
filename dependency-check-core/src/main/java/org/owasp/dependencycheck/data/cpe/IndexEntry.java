@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.data.cpe;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -27,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class IndexEntry implements Serializable {
 
     /**

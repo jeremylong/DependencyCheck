@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.concurrent.ThreadSafe;
 
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
@@ -41,6 +42,7 @@ import org.owasp.dependencycheck.utils.Settings;
  * @author Bianca Jiang (https://twitter.com/biancajiang)
  */
 @Experimental
+@ThreadSafe
 public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**

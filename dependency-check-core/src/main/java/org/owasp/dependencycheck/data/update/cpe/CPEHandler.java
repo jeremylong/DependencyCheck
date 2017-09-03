@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.data.update.cpe;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.owasp.dependencycheck.data.update.NvdCveUpdater;
 import org.owasp.dependencycheck.data.update.exception.InvalidDataException;
 import org.owasp.dependencycheck.utils.Settings;
@@ -34,6 +35,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class CPEHandler extends DefaultHandler {
 
     /**
@@ -62,6 +64,11 @@ public class CPEHandler extends DefaultHandler {
      */
     private final List<Cpe> data = new ArrayList<>();
 
+    /**
+     * Constructs a new CPE Handler object with the configured settings.
+     *
+     * @param settings the configured settings
+     */
     public CPEHandler(Settings settings) {
         cpeStartsWith = settings.getString(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER, "cpe:/a:");
     }

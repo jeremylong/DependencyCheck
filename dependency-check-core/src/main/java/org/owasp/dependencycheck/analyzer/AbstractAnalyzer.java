@@ -23,6 +23,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
+import javax.annotation.concurrent.ThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public abstract class AbstractAnalyzer implements Analyzer {
 
     /**
@@ -153,7 +155,7 @@ public abstract class AbstractAnalyzer implements Analyzer {
         try {
             this.setEnabled(settings.getBoolean(key, true));
         } catch (InvalidSettingException ex) {
-            String msg = String.format("Invalid setting for property '{}'", key);
+            final String msg = String.format("Invalid setting for property '%s'", key);
             LOGGER.warn(msg);
             LOGGER.debug(msg, ex);
         }

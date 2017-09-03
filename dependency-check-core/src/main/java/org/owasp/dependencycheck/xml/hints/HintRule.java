@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.xml.hints;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.xml.suppression.PropertyType;
@@ -30,6 +31,7 @@ import org.owasp.dependencycheck.xml.suppression.PropertyType;
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class HintRule {
 
     /**

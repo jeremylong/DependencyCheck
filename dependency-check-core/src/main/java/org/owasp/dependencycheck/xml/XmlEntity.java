@@ -3,6 +3,7 @@ package org.owasp.dependencycheck.xml;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * This is a utility class to convert named XML Entities (such as &oslash;) into
@@ -12,6 +13,7 @@ import java.util.Map;
  *
  * @author https://stackoverflow.com/users/823393/oldcurmudgeon
  */
+@ThreadSafe
 public final class XmlEntity {
 
     /**
@@ -20,7 +22,7 @@ public final class XmlEntity {
     private static final Map<String, Integer> SPECIALS;
 
     //<editor-fold defaultstate="collapsed" desc="Initialize SPECIALS">
-    /**
+    /*
      * Create a map HTML Named Entities to their numeric equivalent. Derived
      * from Wikipedia
      * http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references

@@ -27,6 +27,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.utils.DBUtils;
 import org.owasp.dependencycheck.utils.DependencyVersion;
@@ -44,6 +45,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public final class ConnectionFactory {
 
     /**
@@ -245,6 +247,7 @@ public final class ConnectionFactory {
     public boolean h2DataFileExists() throws IOException {
         return h2DataFileExists(settings);
     }
+
     /**
      * Determines if the H2 database file exists. If it does not exist then the
      * data structure will need to be created.

@@ -21,9 +21,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -45,12 +47,13 @@ import org.xml.sax.SAXException;
  *
  * @author colezlaw
  */
+@ThreadSafe
 public class CentralSearch {
 
     /**
      * The URL for the Central service
      */
-    private final URL rootURL;
+    private final String rootURL;
 
     /**
      * Whether to use the Proxy when making requests
@@ -70,7 +73,7 @@ public class CentralSearch {
      * Creates a NexusSearch for the given repository URL.
      *
      * @param settings the configured settings
-     * @throws java.net.MalformedURLException thrown if the configured URL is
+     * @throws MalformedURLException thrown if the configured URL is
      * invalid
      */
     public CentralSearch(Settings settings) throws MalformedURLException {
@@ -78,7 +81,10 @@ public class CentralSearch {
 
         final String searchUrl = settings.getString(Settings.KEYS.ANALYZER_CENTRAL_URL);
         LOGGER.debug("Central Search URL: {}", searchUrl);
-        this.rootURL = new URL(searchUrl);
+        if (isInvalidURL(searchUrl)) {
+            throw new MalformedURLException(String.format("The configured central analyzer URL is invalid: %s", searchUrl));
+        }
+        this.rootURL = searchUrl;
         if (null != settings.getString(Settings.KEYS.PROXY_SERVER)) {
             useProxy = true;
             LOGGER.debug("Using proxy");
@@ -103,7 +109,7 @@ public class CentralSearch {
             throw new IllegalArgumentException("Invalid SHA1 format");
         }
         List<MavenArtifact> result = null;
-        final URL url = new URL(rootURL + String.format("?q=1:\"%s\"&wt=xml", sha1));
+        final URL url = new URL(String.format("%s?q=1:\"%s\"&wt=xml", rootURL, sha1));
 
         LOGGER.debug("Searching Central url {}", url);
 
@@ -177,5 +183,22 @@ public class CentralSearch {
             throw new IOException("Could not connect to Central");
         }
         return result;
+    }
+
+    /**
+     * Tests to determine if the gien URL is <b>invalid</b>.
+     *
+     * @param url the url to evaluate
+     * @return true if the url is malformed; otherwise false
+     */
+    private boolean isInvalidURL(String url) {
+        try {
+            final URL u = new URL(url);
+            u.toURI();
+        } catch (MalformedURLException | URISyntaxException e) {
+            LOGGER.trace("URL is invalid: {}", url);
+            return true;
+        }
+        return false;
     }
 }

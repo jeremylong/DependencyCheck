@@ -17,9 +17,8 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
+import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
@@ -27,9 +26,7 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
-import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.Settings;
-import org.slf4j.LoggerFactory;
 
 /**
  * NvdCveAnalyzer is a utility class that takes a project dependency and
@@ -38,36 +35,13 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class NvdCveAnalyzer extends AbstractAnalyzer {
 
     /**
      * The Logger for use throughout the class
      */
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(NvdCveAnalyzer.class);
-
-    /**
-     * The CVE Index.
-     */
-    private CveDB cveDB;
-
-    /**
-     * Closes the data source.
-     */
-    @Override
-    public void closeAnalyzer() {
-        cveDB.close();
-        cveDB = null;
-    }
-
-    /**
-     * Returns the status of the data source - is the database open.
-     *
-     * @return true or false.
-     */
-    public boolean isOpen() {
-        return cveDB != null;
-    }
-
+    //private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(NvdCveAnalyzer.class);
     /**
      * Analyzes a dependency and attempts to determine if there are any CPE
      * identifiers for this dependency.
@@ -79,6 +53,7 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
      */
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+        final CveDB cveDB = engine.getDatabase();
         for (Identifier id : dependency.getIdentifiers()) {
             if ("cpe".equals(id.getType())) {
                 try {
@@ -132,17 +107,5 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
     @Override
     protected String getAnalyzerEnabledSettingKey() {
         return Settings.KEYS.ANALYZER_NVD_CVE_ENABLED;
-    }
-
-    /**
-     * Opens the database used to gather NVD CVE data.
-     *
-     * @param engine a reference the dependency-check engine
-     * @throws InitializationException is thrown if there is an issue opening
-     * the index.
-     */
-    @Override
-    public void initializeAnalyzer(Engine engine) throws InitializationException {
-        this.cveDB = engine.getDatabase();
     }
 }

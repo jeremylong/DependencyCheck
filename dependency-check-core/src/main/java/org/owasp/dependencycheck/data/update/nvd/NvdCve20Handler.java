@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.data.update.nvd;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.apache.lucene.index.CorruptIndexException;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -40,6 +41,7 @@ import static org.owasp.dependencycheck.data.update.nvd.NvdCve20Handler.Attribut
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class NvdCve20Handler extends DefaultHandler {
 
     /**
@@ -184,9 +186,7 @@ public class NvdCve20Handler extends DefaultHandler {
                 totalNumberOfApplicationEntries += 1;
                 try {
                     saveEntry(vulnerability);
-                } catch (DatabaseException | CorruptIndexException ex) {
-                    throw new SAXException(ex);
-                } catch (IOException ex) {
+                } catch (DatabaseException | IOException ex) {
                     throw new SAXException(ex);
                 }
             }

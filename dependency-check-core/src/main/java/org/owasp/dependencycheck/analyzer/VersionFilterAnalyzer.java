@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.analyzer;
 
 import java.util.Iterator;
 import java.util.Objects;
+import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -37,7 +38,13 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class VersionFilterAnalyzer extends AbstractAnalyzer {
+
+    /**
+     * The Logger for use throughout the class
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(VersionFilterAnalyzer.class);
 
     //<editor-fold defaultstate="collapsed" desc="Constants">
     /**
@@ -112,11 +119,6 @@ public class VersionFilterAnalyzer extends AbstractAnalyzer {
     //</editor-fold>
 
     /**
-     * The Logger for use throughout the class
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(VersionFilterAnalyzer.class);
-
-    /**
      * The HintAnalyzer uses knowledge about a dependency to add additional
      * information to help in identification of identifiers or vulnerabilities.
      *
@@ -126,7 +128,7 @@ public class VersionFilterAnalyzer extends AbstractAnalyzer {
      * the dependency.
      */
     @Override
-    protected synchronized void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         String fileVersion = null;
         String pomVersion = null;
         String manifestVersion = null;

@@ -31,12 +31,14 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * DriverLoader is a utility class that is used to load database drivers.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public final class DriverLoader {
 
     /**
@@ -148,8 +150,6 @@ public final class DriverLoader {
             final Driver driver = (Driver) c.newInstance();
 
             //TODO add usage count so we don't de-register a driver that is in use.
-            
-            
             final Driver shim = new DriverShim(driver);
             //using the DriverShim to get around the fact that the DriverManager won't register a driver not in the base class path
             DriverManager.registerDriver(shim);

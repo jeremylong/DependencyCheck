@@ -58,7 +58,7 @@ public class ArchiveAnalyzerTest extends BaseTest {
 
     private boolean isPreviouslyLoaded(String className) {
         try {
-            Method m = ClassLoader.class.getDeclaredMethod("findLoadedClass", new Class[]{String.class});
+            Method m = ClassLoader.class.getDeclaredMethod("findLoadedClass", String.class);
             m.setAccessible(true);
             Object t = m.invoke(Thread.currentThread().getContextClassLoader(), className);
             return t != null;

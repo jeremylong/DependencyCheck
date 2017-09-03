@@ -26,6 +26,7 @@ import java.io.InputStream;
  *
  */
 public interface NuspecParser {
+
     /**
      * Parse an input stream and return the resulting {@link NugetPackage}.
      *

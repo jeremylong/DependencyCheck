@@ -60,12 +60,12 @@ public class EngineTest extends BaseDBTestCase {
         Dependency dwr = instance.scanFile(file);
         file = BaseTest.getResourceAsFile(this, "org.mortbay.jmx.jar");
         instance.scanFile(file);
-        assertEquals(2, instance.getDependencies().size());
+        assertEquals(2, instance.getDependencies().length);
 
         file = BaseTest.getResourceAsFile(this, "dwr.jar");
         Dependency secondDwr = instance.scanFile(file);
 
-        assertEquals(2, instance.getDependencies().size());
+        assertEquals(2, instance.getDependencies().length);
         assertEquals(dwr, secondDwr);
     }
 

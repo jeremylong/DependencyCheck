@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.concurrent.ThreadSafe;
 
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
@@ -46,6 +47,7 @@ import org.slf4j.LoggerFactory;
  * @author Dale Visser
  */
 @Experimental
+@ThreadSafe
 public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
@@ -130,8 +132,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
     private static final Pattern GEMSPEC_BLOCK_INIT = Pattern.compile("Gem::Specification\\.new\\s+?do\\s+?\\|(.+?)\\|");
 
     @Override
-    protected void analyzeDependency(Dependency dependency, Engine engine)
-            throws AnalysisException {
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         String contents;
         try {
             contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());

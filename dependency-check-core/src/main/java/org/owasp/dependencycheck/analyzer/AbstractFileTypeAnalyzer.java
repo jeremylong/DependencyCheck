@@ -25,6 +25,7 @@ import java.io.FileFilter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.exception.InitializationException;
 
@@ -34,6 +35,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implements FileTypeAnalyzer {
 
     //<editor-fold defaultstate="collapsed" desc="Field definitions, getters, and setters ">
@@ -46,15 +48,6 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
      */
     private boolean filesMatched = false;
 
-    /**
-     * Get the value of filesMatched. A flag indicating whether the scan
-     * included any file types this analyzer supports.
-     *
-     * @return the value of filesMatched
-     */
-    protected boolean isFilesMatched() {
-        return filesMatched;
-    }
 
     /**
      * Set the value of filesMatched. A flag indicating whether the scan

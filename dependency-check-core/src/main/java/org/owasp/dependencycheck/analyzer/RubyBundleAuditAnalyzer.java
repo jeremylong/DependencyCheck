@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.concurrent.ThreadSafe;
 
 import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
@@ -50,6 +51,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Dale Visser
  */
+@ThreadSafe
 public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
@@ -482,7 +484,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         dependency.setDisplayFileName(displayFileName);
         dependency.setFileName(fileName);
         dependency.setFilePath(filePath);
-        engine.getDependencies().add(dependency);
+        engine.addDependency(dependency);
         return dependency;
     }
 }

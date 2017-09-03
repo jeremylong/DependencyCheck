@@ -117,7 +117,7 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
                 d.getProductEvidence().addEvidence(COMPOSER_LOCK, "product", dep.getProject(), Confidence.HIGHEST);
                 d.getVersionEvidence().addEvidence(COMPOSER_LOCK, "version", dep.getVersion(), Confidence.HIGHEST);
                 LOGGER.info("Adding dependency {}", d);
-                engine.getDependencies().add(d);
+                engine.addDependency(d);
             }
         } catch (IOException ex) {
             LOGGER.warn("Error opening dependency {}", dependency.getActualFilePath());

@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
@@ -354,6 +353,7 @@ public final class CveDB implements AutoCloseable {
      *
      * @throws SQLException thrown if a SQL Exception occurs
      */
+    @SuppressWarnings("EmptyMethod")
     public synchronized void commit() throws SQLException {
         //temporary remove this as autocommit is on.
         //if (isOpen()) {
@@ -514,7 +514,7 @@ public final class CveDB implements AutoCloseable {
      *
      * It should be also called when DB is closed.
      */
-    private void clearCache() {
+    private synchronized void clearCache() {
         vulnerabilitiesForCpeCache.clear();
     }
 

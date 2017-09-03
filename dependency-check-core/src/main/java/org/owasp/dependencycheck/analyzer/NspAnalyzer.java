@@ -37,11 +37,11 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonException;
@@ -59,6 +59,7 @@ import org.owasp.dependencycheck.utils.URLConnectionFailureException;
  *
  * @author Steve Springett
  */
+@ThreadSafe
 public class NspAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
@@ -284,11 +285,11 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
      * @param depType the dependency type
      */
     private void processPackage(Dependency dependency, JsonArray jsonArray, String depType) {
-        JsonObjectBuilder builder = Json.createObjectBuilder();
+        final JsonObjectBuilder builder = Json.createObjectBuilder();
         for (JsonString str : jsonArray.getValuesAs(JsonString.class)) {
             builder.add(str.toString(), "");
         }
-        JsonObject jsonObject = builder.build();
+        final JsonObject jsonObject = builder.build();
         processPackage(dependency, jsonObject, depType);
     }
 

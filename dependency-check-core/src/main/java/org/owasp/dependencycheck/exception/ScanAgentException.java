@@ -18,12 +18,15 @@
 package org.owasp.dependencycheck.exception;
 
 import java.io.IOException;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * An exception used when using @{link DependencyCheckScanAgent} to conduct a scan and the scan fails.
+ * An exception used when using @{link DependencyCheckScanAgent} to conduct a
+ * scan and the scan fails.
  *
  * @author Steve Springett
  */
+@ThreadSafe
 public class ScanAgentException extends IOException {
 
     /**

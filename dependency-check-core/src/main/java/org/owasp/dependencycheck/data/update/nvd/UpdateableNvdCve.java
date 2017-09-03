@@ -21,13 +21,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
- * Contains a collection of updateable NvdCveInfo objects. This is used to determine which files need to be downloaded and
- * processed.
+ * Contains a collection of updateable NvdCveInfo objects. This is used to
+ * determine which files need to be downloaded and processed.
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class UpdateableNvdCve implements Iterable<NvdCveInfo>, Iterator<NvdCveInfo> {
 
     /**
@@ -36,7 +38,13 @@ public class UpdateableNvdCve implements Iterable<NvdCveInfo>, Iterator<NvdCveIn
     private final Map<String, NvdCveInfo> collection = new TreeMap<>();
 
     /**
-     * Returns the collection of NvdCveInfo objects. This method is mainly used for testing.
+     * An internal iterator used to implement iterable.
+     */
+    private Iterator<Entry<String, NvdCveInfo>> iterableContent = null;
+
+    /**
+     * Returns the collection of NvdCveInfo objects. This method is mainly used
+     * for testing.
      *
      * @return the collection of NvdCveInfo objects
      */
@@ -63,7 +71,8 @@ public class UpdateableNvdCve implements Iterable<NvdCveInfo>, Iterator<NvdCveIn
      *
      * @param id the key for the item to be added
      * @param url the URL to download the item
-     * @param oldUrl the URL for the old version of the item (the NVD CVE old schema still contains useful data we need).
+     * @param oldUrl the URL for the old version of the item (the NVD CVE old
+     * schema still contains useful data we need).
      * @param timestamp the last modified date of the downloaded item
      * @param needsUpdate whether or not the data needs to be updated
      */
@@ -93,10 +102,6 @@ public class UpdateableNvdCve implements Iterable<NvdCveInfo>, Iterator<NvdCveIn
     public long getTimeStamp(String key) {
         return collection.get(key).getTimestamp();
     }
-    /**
-     * An internal iterator used to implement iterable.
-     */
-    private Iterator<Entry<String, NvdCveInfo>> iterableContent = null;
 
     /**
      * <p>
@@ -118,7 +123,8 @@ public class UpdateableNvdCve implements Iterable<NvdCveInfo>, Iterator<NvdCveIn
      * <p>
      * <b>This method is not thread safe.</b></p>
      *
-     * @return true or false depending on whether or not another item exists in the collection
+     * @return true or false depending on whether or not another item exists in
+     * the collection
      */
     @Override
     public boolean hasNext() {

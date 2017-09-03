@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -43,6 +44,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class Dependency implements Serializable, Comparable<Dependency> {
 
     /**

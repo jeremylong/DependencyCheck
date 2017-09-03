@@ -64,7 +64,7 @@ public class EngineModeIT extends BaseTest {
 
     @Test
     public void testEvidenceCollectionAndEvidenceProcessingModes() throws Exception {
-        List<Dependency> dependencies;
+        Dependency[] dependencies;
         try (Engine engine = new Engine(Engine.Mode.EVIDENCE_COLLECTION, getSettings())) {
             engine.openDatabase(); //does nothing in the current mode
             assertDatabase(false);
@@ -78,8 +78,8 @@ public class EngineModeIT extends BaseTest {
             engine.scan(file);
             engine.analyzeDependencies();
             dependencies = engine.getDependencies();
-            assertThat(dependencies.size(), is(1));
-            Dependency dependency = dependencies.get(0);
+            assertThat(dependencies.length, is(1));
+            Dependency dependency = dependencies[0];
             assertTrue(dependency.getVendorEvidence().toString().toLowerCase().contains("apache"));
             assertTrue(dependency.getVendorEvidence().getWeighting().contains("apache"));
             assertTrue(dependency.getVulnerabilities().isEmpty());
@@ -94,9 +94,9 @@ public class EngineModeIT extends BaseTest {
             for (AnalysisPhase phase : Engine.Mode.EVIDENCE_COLLECTION.getPhases()) {
                 assertThat(engine.getAnalyzers(phase), is(nullValue()));
             }
-            engine.setDependencies(dependencies);
+            engine.addDependency(dependencies[0]);
             engine.analyzeDependencies();
-            Dependency dependency = dependencies.get(0);
+            Dependency dependency = dependencies[0];
             assertFalse(dependency.getVulnerabilities().isEmpty());
         }
     }
@@ -112,9 +112,9 @@ public class EngineModeIT extends BaseTest {
             File file = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
             engine.scan(file);
             engine.analyzeDependencies();
-            List<Dependency> dependencies = engine.getDependencies();
-            assertThat(dependencies.size(), is(1));
-            Dependency dependency = dependencies.get(0);
+            Dependency[] dependencies = engine.getDependencies();
+            assertThat(dependencies.length, is(1));
+            Dependency dependency = dependencies[0];
             assertTrue(dependency.getVendorEvidence().toString().toLowerCase().contains("apache"));
             assertTrue(dependency.getVendorEvidence().getWeighting().contains("apache"));
             assertFalse(dependency.getVulnerabilities().isEmpty());

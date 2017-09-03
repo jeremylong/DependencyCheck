@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -41,6 +42,7 @@ import org.xml.sax.SAXException;
  *
  * @author colezlaw
  */
+@ThreadSafe
 public class NexusSearch {
 
     /**
@@ -66,16 +68,17 @@ public class NexusSearch {
      *
      * @param settings the configured settings
      * @param useProxy flag indicating if the proxy settings should be used
-     * @throws java.net.MalformedURLException thrown if the configured URL is invalid
+     * @throws java.net.MalformedURLException thrown if the configured URL is
+     * invalid
      */
     public NexusSearch(Settings settings, boolean useProxy) throws MalformedURLException {
         this.settings = settings;
         this.useProxy = useProxy;
-        
+
         final String searchUrl = settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL);
         LOGGER.debug("Nexus Search URL: {}", searchUrl);
         this.rootURL = new URL(searchUrl);
-        
+
     }
 
     /**
@@ -103,7 +106,7 @@ public class NexusSearch {
         // 2) Otherwise, don't use the proxy (either the proxy isn't configured,
         // or proxy is specifically set to false
         HttpURLConnection conn;
-        URLConnectionFactory factory = new URLConnectionFactory(settings);
+        final URLConnectionFactory factory = new URLConnectionFactory(settings);
         conn = factory.createHttpURLConnection(url, useProxy);
         conn.setDoOutput(true);
 
@@ -169,7 +172,7 @@ public class NexusSearch {
         HttpURLConnection conn;
         try {
             final URL url = new URL(rootURL, "status");
-            URLConnectionFactory factory = new URLConnectionFactory(settings);
+            final URLConnectionFactory factory = new URLConnectionFactory(settings);
             conn = factory.createHttpURLConnection(url, useProxy);
             conn.addRequestProperty("Accept", "application/xml");
             conn.connect();
@@ -187,9 +190,6 @@ public class NexusSearch {
         } catch (IOException | ParserConfigurationException | SAXException e) {
             return false;
         }
-
         return true;
     }
 }
-
-// vim: cc=120:sw=4:ts=4:sts=4

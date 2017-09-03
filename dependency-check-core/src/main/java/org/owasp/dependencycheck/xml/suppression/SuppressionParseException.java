@@ -18,12 +18,14 @@
 package org.owasp.dependencycheck.xml.suppression;
 
 import java.io.IOException;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * An exception used when parsing a suppression rule file fails.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class SuppressionParseException extends IOException {
 
     /**

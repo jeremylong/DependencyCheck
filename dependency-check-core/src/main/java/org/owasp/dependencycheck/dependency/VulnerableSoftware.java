@@ -20,16 +20,19 @@ package org.owasp.dependencycheck.dependency;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.data.cpe.IndexEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A record containing information about vulnerable software. This is referenced from a vulnerability.
+ * A record containing information about vulnerable software. This is referenced
+ * from a vulnerability.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class VulnerableSoftware extends IndexEntry implements Serializable, Comparable<VulnerableSoftware> {
 
     /**
@@ -40,6 +43,26 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
      * The serial version UID.
      */
     private static final long serialVersionUID = 307319490326651052L;
+
+    /**
+     * If present, indicates that previous version are vulnerable.
+     */
+    private String previousVersion;
+
+    /**
+     * The name of the cpe.
+     */
+    private String name;
+
+    /**
+     * The product version number.
+     */
+    private String version;
+
+    /**
+     * The product update version.
+     */
+    private String update;
 
     /**
      * Parse a CPE entry from the cpe string representation.
@@ -58,7 +81,8 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
 
     /**
      * <p>
-     * Parses a name attribute value, from the cpe.xml, into its corresponding parts: vendor, product, version, update.</p>
+     * Parses a name attribute value, from the cpe.xml, into its corresponding
+     * parts: vendor, product, version, update.</p>
      * <p>
      * Example:</p>
      * <code>&nbsp;&nbsp;&nbsp;cpe:/a:apache:struts:1.1:rc2</code>
@@ -93,10 +117,6 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
             }
         }
     }
-    /**
-     * If present, indicates that previous version are vulnerable.
-     */
-    private String previousVersion;
 
     /**
      * Indicates if previous versions of this software are vulnerable.
@@ -126,7 +146,8 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     }
 
     /**
-     * Standard equals implementation to compare this VulnerableSoftware to another object.
+     * Standard equals implementation to compare this VulnerableSoftware to
+     * another object.
      *
      * @param obj the object to compare
      * @return whether or not the objects are equal
@@ -156,7 +177,8 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     }
 
     /**
-     * Standard toString() implementation display the name and whether or not previous versions are also affected.
+     * Standard toString() implementation display the name and whether or not
+     * previous versions are also affected.
      *
      * @return a string representation of the object
      */
@@ -224,10 +246,9 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     }
 
     /**
-     * Determines if the string passed in is a positive integer.
-     * To be counted as a positive integer, the string must only contain 0-9
-     * and must not have any leading zeros (though "0" is a valid positive
-     * integer).
+     * Determines if the string passed in is a positive integer. To be counted
+     * as a positive integer, the string must only contain 0-9 and must not have
+     * any leading zeros (though "0" is a valid positive integer).
      *
      * @param str the string to test
      * @return true if the string only contains 0-9, otherwise false.
@@ -251,10 +272,6 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
         }
         return true;
     }
-    /**
-     * The name of the cpe.
-     */
-    private String name;
 
     /**
      * Get the value of name.
@@ -273,10 +290,6 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     public void setName(String name) {
         this.name = name;
     }
-    /**
-     * The product version number.
-     */
-    private String version;
 
     /**
      * Get the value of version.
@@ -295,10 +308,6 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     public void setVersion(String version) {
         this.version = version;
     }
-    /**
-     * The product update version.
-     */
-    private String update;
 
     /**
      * Get the value of update.
@@ -341,7 +350,8 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     }
 
     /**
-     * Replaces '+' with '%2B' and then URL Decodes the string attempting first UTF-8, then ASCII, then default.
+     * Replaces '+' with '%2B' and then URL Decodes the string attempting first
+     * UTF-8, then ASCII, then default.
      *
      * @param string the string to URL Decode
      * @return the URL Decoded string
@@ -362,7 +372,8 @@ public class VulnerableSoftware extends IndexEntry implements Serializable, Comp
     }
 
     /**
-     * Call {@link java.net.URLDecoder#decode(String)} to URL decode using the default encoding.
+     * Call {@link java.net.URLDecoder#decode(String)} to URL decode using the
+     * default encoding.
      *
      * @param text www-form-encoded URL to decode
      * @return the newly decoded String

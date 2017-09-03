@@ -17,17 +17,36 @@
  */
 package org.owasp.dependencycheck.data.update.nvd;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * A pojo that contains the Url and timestamp of the current NvdCve XML files.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class NvdCveInfo {
 
     /**
      * an id.
      */
     private String id;
+    /**
+     * a url.
+     */
+    private String url;
+    /**
+     * The 1.2 schema URL.
+     */
+    private String oldSchemaVersionUrl;
+    /**
+     * a timestamp - epoch time.
+     */
+    private long timestamp;
+    /**
+     * indicates whether or not this item should be updated.
+     */
+    private boolean needsUpdate = true;
 
     /**
      * Get the value of id.
@@ -46,10 +65,6 @@ public class NvdCveInfo {
     public void setId(String id) {
         this.id = id;
     }
-    /**
-     * a url.
-     */
-    private String url;
 
     /**
      * Get the value of url.
@@ -68,10 +83,6 @@ public class NvdCveInfo {
     public void setUrl(String url) {
         this.url = url;
     }
-    /**
-     * The 1.2 schema URL.
-     */
-    private String oldSchemaVersionUrl;
 
     /**
      * Get the value of oldSchemaVersionUrl.
@@ -90,10 +101,6 @@ public class NvdCveInfo {
     public void setOldSchemaVersionUrl(String oldSchemaVersionUrl) {
         this.oldSchemaVersionUrl = oldSchemaVersionUrl;
     }
-    /**
-     * a timestamp - epoch time.
-     */
-    private long timestamp;
 
     /**
      * Get the value of timestamp - epoch time.
@@ -112,10 +119,6 @@ public class NvdCveInfo {
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
-    /**
-     * indicates whether or not this item should be updated.
-     */
-    private boolean needsUpdate = true;
 
     /**
      * Get the value of needsUpdate.

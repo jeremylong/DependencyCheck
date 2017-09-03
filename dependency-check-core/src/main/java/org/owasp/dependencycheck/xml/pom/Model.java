@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.xml.pom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import org.apache.commons.lang3.text.StrLookup;
 import org.apache.commons.lang3.text.StrSubstitutor;
@@ -29,6 +30,7 @@ import org.apache.commons.lang3.text.StrSubstitutor;
  *
  * @author jeremy
  */
+@NotThreadSafe
 public class Model {
 
     /**

@@ -224,7 +224,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 }
                 final MessageDigest sha1 = getSha1MessageDigest();
                 currentDep.setSha1sum(Checksum.getHex(sha1.digest(path)));
-                engine.getDependencies().add(currentDep);
+                engine.addDependency(currentDep);
             }
             final String source = currentDep.getDisplayFileName();
             currentDep.getProductEvidence().addEvidence(source, "Product",

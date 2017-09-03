@@ -17,11 +17,14 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * An exception thrown the database driver is unable to be loaded.
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class DriverLoadException extends Exception {
 
     /**

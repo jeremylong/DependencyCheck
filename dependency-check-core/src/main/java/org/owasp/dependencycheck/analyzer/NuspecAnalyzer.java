@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
@@ -40,6 +41,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
  *
  * @author colezlaw
  */
+@ThreadSafe
 public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**

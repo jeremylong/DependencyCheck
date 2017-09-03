@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.xml.suppression;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -28,6 +29,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class SuppressionHandler extends DefaultHandler {
 
     /**

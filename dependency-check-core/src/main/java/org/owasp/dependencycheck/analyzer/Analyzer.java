@@ -27,10 +27,10 @@ import org.owasp.dependencycheck.utils.Settings;
  * <p>
  * An interface that defines an Analyzer that is used to identify Dependencies.
  * An analyzer will collect information about the dependency in the form of
- * Evidence.<p>
+ * Evidence.</p>
  * <p>
  * When the {@link org.owasp.dependencycheck.Engine} executes it will load the
- * analyzers and call the methods in the following order:
+ * analyzers and call the methods in the following order:</p>
  * <ol>
  * <li>{@link #initializeSettings(org.owasp.dependencycheck.utils.Settings)}</li>
  * <li>{@link #initialize(org.owasp.dependencycheck.Engine)}</li>
@@ -75,7 +75,7 @@ public interface Analyzer {
      *
      * @param settings the configured settings
      */
-    public void initializeSettings(Settings settings);
+    void initializeSettings(Settings settings);
 
     /**
      * The initialize method is called (once) prior to the analyze method being

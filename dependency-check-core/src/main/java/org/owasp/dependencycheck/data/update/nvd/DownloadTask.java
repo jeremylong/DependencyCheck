@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
@@ -39,6 +40,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class DownloadTask implements Callable<Future<ProcessTask>> {
 
     /**
@@ -129,30 +131,12 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
     }
 
     /**
-     * Set the value of first.
-     *
-     * @param first new value of first
-     */
-    public void setFirst(File first) {
-        this.first = first;
-    }
-
-    /**
      * Get the value of second.
      *
      * @return the value of second
      */
     public File getSecond() {
         return second;
-    }
-
-    /**
-     * Set the value of second.
-     *
-     * @param second new value of second
-     */
-    public void setSecond(File second) {
-        this.second = second;
     }
 
     @Override
@@ -163,7 +147,7 @@ public class DownloadTask implements Callable<Future<ProcessTask>> {
             LOGGER.info("Download Started for NVD CVE - {}", nvdCveInfo.getId());
             final long startDownload = System.currentTimeMillis();
             try {
-                Downloader downloader = new Downloader(settings);
+                final Downloader downloader = new Downloader(settings);
                 downloader.fetchFile(url1, first);
                 downloader.fetchFile(url2, second);
             } catch (DownloadFailedException ex) {

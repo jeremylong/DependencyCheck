@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.xml.hints;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.xml.suppression.PropertyType;
 import org.xml.sax.Attributes;
@@ -30,6 +31,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class HintHandler extends DefaultHandler {
 
     //<editor-fold defaultstate="collapsed" desc="Element and attribute names">

@@ -57,6 +57,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.*;
 
@@ -68,6 +69,7 @@ import static org.owasp.dependencycheck.analyzer.AnalysisPhase.*;
  *
  * @author Jeremy Long
  */
+@NotThreadSafe
 public class Engine implements FileFilter, AutoCloseable {
 
     /**
@@ -170,7 +172,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * The ClassLoader to use when dynamically loading Analyzer and Update
      * services.
      */
-    private ClassLoader serviceClassLoader;
+    private final ClassLoader serviceClassLoader;
     /**
      * A reference to the database.
      */
@@ -304,8 +306,42 @@ public class Engine implements FileFilter, AutoCloseable {
      * @see Collections#synchronizedList(List)
      * @see Analyzer#supportsParallelProcessing()
      */
-    public synchronized List<Dependency> getDependencies() {
-        return dependencies;
+//    public synchronized List<Dependency> getDependencies() {
+//        return dependencies;
+//    }
+    /**
+     * Adds a dependency.
+     *
+     * @param dependency the dependency to add
+     */
+    public synchronized void addDependency(Dependency dependency) {
+        dependencies.add(dependency);
+    }
+
+    /**
+     * Sorts the dependency list.
+     */
+    public synchronized void sortDependencies() {
+        //TODO - is this actually necassary????
+        Collections.sort(dependencies);
+    }
+
+    /**
+     * Removes the dependency.
+     *
+     * @param dependency the dependency to remove.
+     */
+    public synchronized void removeDependency(Dependency dependency) {
+        dependencies.remove(dependency);
+    }
+
+    /**
+     * Returns a copy of the dependencies as an array.
+     *
+     * @return the dependencies identified
+     */
+    public synchronized Dependency[] getDependencies() {
+        return dependencies.toArray(new Dependency[dependencies.size()]);
     }
 
     /**
@@ -750,7 +786,7 @@ public class Engine implements FileFilter, AutoCloseable {
         final List<AnalysisTask> result = new ArrayList<>();
         synchronized (dependencies) {
             for (final Dependency dependency : dependencies) {
-                final AnalysisTask task = new AnalysisTask(analyzer, dependency, this, exceptions, settings);
+                final AnalysisTask task = new AnalysisTask(analyzer, dependency, this, exceptions);
                 result.add(task);
             }
         }
@@ -907,9 +943,9 @@ public class Engine implements FileFilter, AutoCloseable {
     }
 
     /**
-     * Returns
+     * Returns the configured settings.
      *
-     * @return
+     * @return the configured settings
      */
     public Settings getSettings() {
         return settings;

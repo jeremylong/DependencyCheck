@@ -2,6 +2,7 @@ package org.owasp.dependencycheck.utils;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * This is an abstract filter that can be used to filter iterable list.
@@ -14,6 +15,7 @@ import java.util.NoSuchElementException;
  *
  * @param <T> the type to filter
  */
+@NotThreadSafe
 public abstract class Filter<T> {
 
     /**

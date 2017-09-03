@@ -17,9 +17,6 @@
  */
 package org.owasp.dependencycheck.data.update;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.net.MalformedURLException;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -27,8 +24,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.net.URL;
-import java.nio.channels.FileLock;
-import java.util.Date;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -36,6 +31,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.ConnectionFactory;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
@@ -63,6 +59,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class NvdCveUpdater implements CachedWebDataSource {
 
     /**
@@ -116,9 +113,12 @@ public class NvdCveUpdater implements CachedWebDataSource {
         if (isUpdateConfiguredFalse()) {
             return;
         }
-        H2DBLock dbupdate = new H2DBLock(settings, ConnectionFactory.isH2Connection(settings));
+        H2DBLock dbupdate = null;
         try {
-            dbupdate.lock();
+            if (ConnectionFactory.isH2Connection(settings)) {
+                dbupdate = new H2DBLock(settings);
+                dbupdate.lock();
+            }
             initializeExecutorServices();
             dbProperties = cveDb.getDatabaseProperties();
 
@@ -142,7 +142,9 @@ public class NvdCveUpdater implements CachedWebDataSource {
         } catch (H2DBLockException ex) {
             throw new UpdateException("Unable to obtain an exclusive lock on the H2 database to perform updates", ex);
         } finally {
-            dbupdate.release();
+            if (dbupdate != null) {
+                dbupdate.release();
+            }
             shutdownExecutorServices();
         }
     }
@@ -480,7 +482,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
      *
      * @param settings the configured settings
      */
-    protected void setSettings(Settings settings) {
+    protected synchronized void setSettings(Settings settings) {
         this.settings = settings;
     }
 
@@ -513,7 +515,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
         public Long call() throws Exception {
             LOGGER.debug("Checking for updates from: {}", url);
             try {
-                Downloader downloader = new Downloader(settings);
+                final Downloader downloader = new Downloader(settings);
                 return downloader.getLastModified(new URL(url));
             } finally {
                 settings.cleanup(false);

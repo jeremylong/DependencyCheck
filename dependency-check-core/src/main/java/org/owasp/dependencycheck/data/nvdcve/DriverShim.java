@@ -28,16 +28,19 @@ import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * <p>
- * Driver shim to get around the class loader issue with the DriverManager. The following code is a nearly identical
- * copy (with more comments and a few more methods implemented) of the DriverShim from:</p>
+ * Driver shim to get around the class loader issue with the DriverManager. The
+ * following code is a nearly identical copy (with more comments and a few more
+ * methods implemented) of the DriverShim from:</p>
  * <blockquote>http://www.kfu.com/~nsayer/Java/dyn-jdbc.html</blockquote>
  *
  * @author Jeremy Long
  * @see java.sql.Driver
  */
+@ThreadSafe
 class DriverShim implements Driver {
 
     /**
@@ -59,12 +62,13 @@ class DriverShim implements Driver {
     }
 
     /**
-     * Wraps the underlying driver's call to acceptsURL. Returns whether or not the driver can open a connection to the
-     * given URL.
+     * Wraps the underlying driver's call to acceptsURL. Returns whether or not
+     * the driver can open a connection to the given URL.
      *
      * @param url the URL of the database
      * @return true if the wrapped driver can connect to the specified URL
-     * @throws SQLException thrown if there is an error connecting to the database
+     * @throws SQLException thrown if there is an error connecting to the
+     * database
      * @see java.sql.Driver#acceptsURL(java.lang.String)
      */
     @Override
@@ -78,7 +82,8 @@ class DriverShim implements Driver {
      * @param url the URL of the database
      * @param info a collection of string/value pairs
      * @return a Connection object
-     * @throws SQLException thrown if there is an error connecting to the database
+     * @throws SQLException thrown if there is an error connecting to the
+     * database
      * @see java.sql.Driver#connect(java.lang.String, java.util.Properties)
      */
     @Override
@@ -112,7 +117,8 @@ class DriverShim implements Driver {
      * Wraps the call to the underlying driver's getParentLogger method.
      *
      * @return the parent's Logger
-     * @throws SQLFeatureNotSupportedException thrown if the feature is not supported
+     * @throws SQLFeatureNotSupportedException thrown if the feature is not
+     * supported
      * @see java.sql.Driver#getParentLogger()
      */
     public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
@@ -140,7 +146,8 @@ class DriverShim implements Driver {
      * @param info a collection of string/value pairs
      * @return an array of DriverPropertyInfo objects
      * @throws SQLException thrown if there is an error accessing the database
-     * @see java.sql.Driver#getPropertyInfo(java.lang.String, java.util.Properties)
+     * @see java.sql.Driver#getPropertyInfo(java.lang.String,
+     * java.util.Properties)
      */
     @Override
     public DriverPropertyInfo[] getPropertyInfo(String url, Properties info) throws SQLException {
