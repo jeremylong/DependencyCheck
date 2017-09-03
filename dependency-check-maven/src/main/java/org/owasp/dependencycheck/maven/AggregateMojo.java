@@ -150,7 +150,7 @@ public class AggregateMojo extends BaseDependencyCheckMojo {
         if (exCol != null && this.isFailOnError()) {
             throw new MojoExecutionException("One or more exceptions occurred during dependency-check analysis", exCol);
         }
-        engine.cleanup();
+        engine.close();
         getSettings().cleanup();
     }
 

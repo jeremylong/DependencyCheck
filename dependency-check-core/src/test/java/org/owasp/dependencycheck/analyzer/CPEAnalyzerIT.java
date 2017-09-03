@@ -212,7 +212,7 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         assertTrue("Incorrect match size - spring3 - " + spring3.getIdentifiers().size(), spring3.getIdentifiers().size() >= 1);
 
         jarAnalyzer.close();
-        engine.cleanup();
+        engine.close();
     }
 
     /**
@@ -239,7 +239,7 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         Identifier expIdentifier = new Identifier("cpe", expResult, expResult);
 
         assertTrue(openssl.getIdentifiers().contains(expIdentifier));
-        engine.cleanup();
+        engine.close();
     }
 
     /**

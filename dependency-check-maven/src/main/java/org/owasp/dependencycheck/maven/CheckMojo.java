@@ -129,7 +129,7 @@ public class CheckMojo extends BaseDependencyCheckMojo {
                     throw new MojoExecutionException("One or more exceptions occurred during dependency-check analysis", exCol);
                 }
             }
-            engine.cleanup();
+            engine.close();
         }
         getSettings().cleanup();
     }

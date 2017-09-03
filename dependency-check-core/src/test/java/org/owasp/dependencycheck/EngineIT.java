@@ -63,10 +63,10 @@ public class EngineIT extends BaseDBTestCase {
             //allowedMessages.add("Unable to connect to");
             for (Throwable t : ex.getExceptions()) {
                 boolean isOk = false;
-                if (t.getMessage()!=null) {
+                if (t.getMessage() != null) {
                     for (String msg : allowedMessages) {
                         if (t.getMessage().contains(msg)) {
-                            isOk=true;
+                            isOk = true;
                             break;
                         }
                     }
@@ -77,6 +77,6 @@ public class EngineIT extends BaseDBTestCase {
             }
         }
         instance.writeReports("dependency-check sample", new File("./target/"), "ALL");
-        instance.cleanup();
+        instance.close();
     }
 }

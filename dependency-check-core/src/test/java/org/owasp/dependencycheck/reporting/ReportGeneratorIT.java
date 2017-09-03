@@ -76,7 +76,7 @@ public class ReportGeneratorIT extends BaseDBTestCase {
             engine.analyzeDependencies();
             engine.writeReports("Test Report", "org.owasp", "dependency-check-core", "1.4.7", writeTo, "XML");
 
-            engine.cleanup();
+            engine.close();
 
             InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/dependency-check.1.5.xsd");
             StreamSource xsdSource = new StreamSource(xsdStream);

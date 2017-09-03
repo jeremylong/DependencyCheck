@@ -274,7 +274,7 @@ public class App {
             return determineReturnCode(engine, cvssFailScore);
         } finally {
             if (engine != null) {
-                engine.cleanup();
+                engine.close();
             }
         }
     }

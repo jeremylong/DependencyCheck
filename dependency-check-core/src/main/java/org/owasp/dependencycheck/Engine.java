@@ -243,18 +243,14 @@ public class Engine implements FileFilter, AutoCloseable {
     /**
      * Properly cleans up resources allocated during analysis.
      */
-    public void cleanup() {
+    @Override
+    public void close() {
         if (mode.isDatabseRequired()) {
             if (database != null) {
                 database.close();
                 database = null;
             }
         }
-    }
-
-    @Override
-    public void close() {
-        cleanup();
     }
 
     /**

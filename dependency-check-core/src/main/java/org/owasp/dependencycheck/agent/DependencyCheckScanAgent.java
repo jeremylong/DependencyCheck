@@ -926,7 +926,7 @@ public class DependencyCheckScanAgent {
         } finally {
             settings.cleanup(true);
             if (engine != null) {
-                engine.cleanup();
+                engine.close();
             }
         }
         return engine;

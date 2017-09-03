@@ -103,7 +103,7 @@ public class BaseDependencyCheckMojoTest extends BaseTest {
                 Assume.assumeNoException(ex);
             }
             assertFalse(engine.getDependencies().length == 0);
-            engine.cleanup();
+            engine.close();
         }
     }
 
