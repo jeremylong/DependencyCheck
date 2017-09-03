@@ -17,13 +17,7 @@
  */
 package org.owasp.dependencycheck.data.lucene;
 
-import java.io.Reader;
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.util.CharArraySet;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
