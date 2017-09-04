@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import javax.annotation.concurrent.ThreadSafe;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -61,6 +63,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
+@ThreadSafe
 public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
@@ -71,7 +74,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * The count of directories created during analysis. This is used for
      * creating temporary directories.
      */
-    private static int dirCount = 0;
+    private static final AtomicInteger DIRECTORY_COUNT = new AtomicInteger(0);
     /**
      * The parent directory for the individual directories per archive.
      */
@@ -81,11 +84,6 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * archives.
      */
     private int maxScanDepth;
-    /**
-     * Tracks the current scan/extraction depth for nested archives.
-     */
-    private int scanDepth = 0;
-
     /**
      * The file filter used to filter supported files.
      */
@@ -230,7 +228,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public boolean supportsParallelProcessing() {
-        return false;
+        return true;
     }
 
     /**
@@ -244,6 +242,11 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+        extractAndAnalyze(dependency, engine, 0);
+        engine.sortDependencies();
+    }
+
+    private void extractAndAnalyze(Dependency dependency, Engine engine, int scanDepth) throws AnalysisException {
         final File f = new File(dependency.getActualFilePath());
         final File tmpDir = getNextTempDirectory();
         extractFiles(f, tmpDir, engine);
@@ -268,9 +271,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                     //TODO - can we get more evidence from the parent? EAR contains module name, etc.
                     //analyze the dependency (i.e. extract files) if it is a supported type.
                     if (this.accept(d.getActualFile()) && scanDepth < maxScanDepth) {
-                        scanDepth += 1;
-                        analyze(d, engine);
-                        scanDepth -= 1;
+                        extractAndAnalyze(d, engine, scanDepth + 1);
                     }
                 } else {
                     for (Dependency sub : dependencySet) {
@@ -292,7 +293,6 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             addDisguisedJarsToDependencies(dependency, engine);
             engine.removeDependency(dependency);
         }
-        engine.sortDependencies();
     }
 
     /**
@@ -359,8 +359,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws AnalysisException thrown if unable to create temporary directory
      */
     private File getNextTempDirectory() throws AnalysisException {
-        dirCount += 1;
-        final File directory = new File(tempFileLocation, String.valueOf(dirCount));
+        final File directory = new File(tempFileLocation, String.valueOf(DIRECTORY_COUNT.incrementAndGet()));
         //getting an exception for some directories not being able to be created; might be because the directory already exists?
         if (directory.exists()) {
             return getNextTempDirectory();
