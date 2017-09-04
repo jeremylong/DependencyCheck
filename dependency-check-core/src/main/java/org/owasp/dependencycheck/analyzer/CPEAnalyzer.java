@@ -156,8 +156,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * @throws DatabaseException when the database throws an exception. This
      * usually occurs when the database is in use by another process.
      */
-    public synchronized void open(CveDB cve) throws IOException, DatabaseException {
-        if (!isOpen()) {
+    public void open(CveDB cve) throws IOException, DatabaseException {
             this.cve = cve;
             this.cpe = CpeMemoryIndex.getInstance();
             try {
@@ -169,7 +168,6 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                 LOGGER.debug("IndexException", ex);
                 throw new DatabaseException(ex);
             }
-        }
     }
 
     /**
@@ -181,15 +179,6 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             cpe.close();
             cpe = null;
         }
-    }
-
-    /**
-     * Returns whether or not the analyzer is open.
-     *
-     * @return <code>true</code> if the analyzer is open
-     */
-    public boolean isOpen() {
-        return cpe != null && cpe.isOpen();
     }
 
     /**
@@ -524,7 +513,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * dependency.
      */
     @Override
-    protected synchronized void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         try {
             determineCPE(dependency);
         } catch (CorruptIndexException ex) {
