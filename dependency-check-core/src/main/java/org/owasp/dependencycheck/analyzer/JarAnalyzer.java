@@ -312,9 +312,10 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
     private boolean isZipFile(final Dependency dependency) {
         final byte[] buffer = new byte[4];
         try (final FileInputStream fileInputStream = new FileInputStream(dependency.getActualFilePath())) {
-            fileInputStream.read(buffer);
-            if (Arrays.equals(buffer, ZIP_FIRST_BYTES) || Arrays.equals(buffer, ZIP_EMPTY_FIRST_BYTES)
-                    || Arrays.equals(buffer, ZIP_SPANNED_FIRST_BYTES)) {
+            if (fileInputStream.read(buffer) > 0
+                    && (Arrays.equals(buffer, ZIP_FIRST_BYTES)
+                    || Arrays.equals(buffer, ZIP_EMPTY_FIRST_BYTES)
+                    || Arrays.equals(buffer, ZIP_SPANNED_FIRST_BYTES))) {
                 return true;
             }
         } catch (Exception e) {

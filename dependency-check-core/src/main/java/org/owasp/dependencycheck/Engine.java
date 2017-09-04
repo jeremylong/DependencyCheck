@@ -584,7 +584,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return the scanned dependency
      * @since v1.4.4
      */
-    protected Dependency scanFile(File file, String projectReference) {
+    protected synchronized Dependency scanFile(File file, String projectReference) {
         Dependency dependency = null;
         if (file.isFile()) {
             if (accept(file)) {
@@ -594,31 +594,30 @@ public class Engine implements FileFilter, AutoCloseable {
                 }
                 final String sha1 = dependency.getSha1sum();
                 boolean found = false;
-                synchronized (dependencies) {
-                    if (sha1 != null) {
-                        for (Dependency existing : dependencies) {
-                            if (sha1.equals(existing.getSha1sum())) {
-                                found = true;
-                                if (projectReference != null) {
-                                    existing.addProjectReference(projectReference);
-                                }
-                                if (existing.getActualFilePath() != null && dependency.getActualFilePath() != null
-                                        && !existing.getActualFilePath().equals(dependency.getActualFilePath())) {
-                                    existing.addRelatedDependency(dependency);
-                                } else {
-                                    dependency = existing;
-                                }
-                                break;
+
+                if (sha1 != null) {
+                    for (Dependency existing : dependencies) {
+                        if (sha1.equals(existing.getSha1sum())) {
+                            found = true;
+                            if (projectReference != null) {
+                                existing.addProjectReference(projectReference);
                             }
+                            if (existing.getActualFilePath() != null && dependency.getActualFilePath() != null
+                                    && !existing.getActualFilePath().equals(dependency.getActualFilePath())) {
+                                existing.addRelatedDependency(dependency);
+                            } else {
+                                dependency = existing;
+                            }
+                            break;
                         }
                     }
-                    if (!found) {
-                        dependencies.add(dependency);
-                    }
                 }
-            } else {
-                LOGGER.debug("Path passed to scanFile(File) is not a file that can be scanned by dependency-check: {}. Skipping the file.", file);
+                if (!found) {
+                    dependencies.add(dependency);
+                }
             }
+        } else {
+            LOGGER.debug("Path passed to scanFile(File) is not a file that can be scanned by dependency-check: {}. Skipping the file.", file);
         }
         return dependency;
     }
@@ -778,13 +777,11 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param exceptions the collection of exceptions to collect
      * @return a collection of analysis tasks
      */
-    protected List<AnalysisTask> getAnalysisTasks(Analyzer analyzer, List<Throwable> exceptions) {
+    protected synchronized List<AnalysisTask> getAnalysisTasks(Analyzer analyzer, List<Throwable> exceptions) {
         final List<AnalysisTask> result = new ArrayList<>();
-        synchronized (dependencies) {
-            for (final Dependency dependency : dependencies) {
-                final AnalysisTask task = new AnalysisTask(analyzer, dependency, this, exceptions);
-                result.add(task);
-            }
+        for (final Dependency dependency : dependencies) {
+            final AnalysisTask task = new AnalysisTask(analyzer, dependency, this, exceptions);
+            result.add(task);
         }
         return result;
     }
