@@ -153,6 +153,10 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     private final List<Dependency> dependencies = Collections.synchronizedList(new ArrayList<Dependency>());
     /**
+     * The external view of the dependency list.
+     */
+    private Dependency[] dependenciesExternalView = null;
+    /**
      * A Map of analyzers grouped by Analysis phase.
      */
     private final Map<AnalysisPhase, List<Analyzer>> analyzers = new EnumMap<>(AnalysisPhase.class);
@@ -292,26 +296,13 @@ public class Engine implements FileFilter, AutoCloseable {
     }
 
     /**
-     * Get the dependencies identified. The returned list is a reference to the
-     * engine's synchronized list. <b>You must synchronize on the returned
-     * list</b> when you modify and iterate over it from multiple threads. E.g.
-     * this holds for analyzers supporting parallel processing during their
-     * analysis phase.
-     *
-     * @return the dependencies identified
-     * @see Collections#synchronizedList(List)
-     * @see Analyzer#supportsParallelProcessing()
-     */
-//    public synchronized List<Dependency> getDependencies() {
-//        return dependencies;
-//    }
-    /**
      * Adds a dependency.
      *
      * @param dependency the dependency to add
      */
     public synchronized void addDependency(Dependency dependency) {
         dependencies.add(dependency);
+        dependenciesExternalView = null;
     }
 
     /**
@@ -320,6 +311,7 @@ public class Engine implements FileFilter, AutoCloseable {
     public synchronized void sortDependencies() {
         //TODO - is this actually necassary????
         Collections.sort(dependencies);
+        dependenciesExternalView = null;
     }
 
     /**
@@ -329,6 +321,7 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     public synchronized void removeDependency(Dependency dependency) {
         dependencies.remove(dependency);
+        dependenciesExternalView = null;
     }
 
     /**
@@ -337,7 +330,10 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return the dependencies identified
      */
     public synchronized Dependency[] getDependencies() {
-        return dependencies.toArray(new Dependency[dependencies.size()]);
+        if (dependenciesExternalView == null) {
+            dependenciesExternalView = dependencies.toArray(new Dependency[dependencies.size()]);
+        }
+        return dependenciesExternalView;
     }
 
     /**
@@ -348,6 +344,7 @@ public class Engine implements FileFilter, AutoCloseable {
     public synchronized void setDependencies(List<Dependency> dependencies) {
         this.dependencies.clear();
         this.dependencies.addAll(dependencies);
+        dependenciesExternalView = null;
     }
 
     /**
@@ -614,6 +611,7 @@ public class Engine implements FileFilter, AutoCloseable {
                 }
                 if (!found) {
                     dependencies.add(dependency);
+                    dependenciesExternalView = null;
                 }
             }
         } else {
