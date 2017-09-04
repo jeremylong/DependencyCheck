@@ -71,7 +71,6 @@ public class HintAnalyzer extends AbstractAnalyzer {
      * The array of vendor duplicating hint rules.
      */
     private VendorDuplicatingHintRule[] vendorHints;
-
     /**
      * The name of the analyzer.
      */
@@ -221,21 +220,20 @@ public class HintAnalyzer extends AbstractAnalyzer {
      * @throws HintParseException thrown if the XML cannot be parsed.
      */
     private void loadHintRules() throws HintParseException {
-        if (hints == null) {
-            final HintParser parser = new HintParser();
-            File file = null;
-            try {
-                parser.parseHints(FileUtils.getResourceAsStream(HINT_RULE_FILE_NAME));
-                hints = parser.getHintRules();
-                vendorHints = parser.getVendorDuplicatingHintRules();
-            } catch (HintParseException | SAXException ex) {
-                LOGGER.error("Unable to parse the base hint data file");
-                LOGGER.debug("Unable to parse the base hint data file", ex);
-            }
-            final String filePath = getSettings().getString(Settings.KEYS.HINTS_FILE);
-            if (filePath == null) {
-                return;
-            }
+        List<HintRule> localHints;
+        List<VendorDuplicatingHintRule> localVendorHints;
+        final HintParser parser = new HintParser();
+        File file = null;
+        try {
+            parser.parseHints(FileUtils.getResourceAsStream(HINT_RULE_FILE_NAME));
+        } catch (SAXException ex) {
+            throw new HintParseException("Error parsing hinits: " + ex.getMessage(), ex);
+        }
+        localHints = parser.getHintRules();
+        localVendorHints = parser.getVendorDuplicatingHintRules();
+
+        final String filePath = getSettings().getString(Settings.KEYS.HINTS_FILE);
+        if (filePath != null) {
             boolean deleteTempFile = false;
             try {
                 final Pattern uriRx = Pattern.compile("^(https?|file)\\:.*", Pattern.CASE_INSENSITIVE);
@@ -269,14 +267,12 @@ public class HintAnalyzer extends AbstractAnalyzer {
                 if (file != null) {
                     try {
                         parser.parseHints(file);
-                        if (parser.getHintRules() != null && parser.getHintRules().length > 0) {
-                            hints = (HintRule[]) ArrayUtils.addAll(hints, parser.getHintRules());
+                        if (parser.getHintRules() != null && !parser.getHintRules().isEmpty()) {
+                            localHints.addAll(parser.getHintRules());
                         }
-                        if (parser.getVendorDuplicatingHintRules() != null && parser.getVendorDuplicatingHintRules().length > 0) {
-                            vendorHints = (VendorDuplicatingHintRule[]) ArrayUtils.addAll(vendorHints, parser.getVendorDuplicatingHintRules());
+                        if (parser.getVendorDuplicatingHintRules() != null && !parser.getVendorDuplicatingHintRules().isEmpty()) {
+                            localVendorHints.addAll(parser.getVendorDuplicatingHintRules());
                         }
-                        LOGGER.debug("{} hint rules were loaded.", hints.length);
-                        LOGGER.debug("{} duplicating hint rules were loaded.", vendorHints.length);
                     } catch (HintParseException ex) {
                         LOGGER.warn("Unable to parse hint rule xml file '{}'", file.getPath());
                         LOGGER.warn(ex.getMessage());
@@ -296,5 +292,9 @@ public class HintAnalyzer extends AbstractAnalyzer {
                 }
             }
         }
+        hints = (HintRule[]) localHints.toArray(new HintRule[localHints.size()]);
+        vendorHints = (VendorDuplicatingHintRule[]) localVendorHints.toArray(new VendorDuplicatingHintRule[localVendorHints.size()]);
+        LOGGER.debug("{} hint rules were loaded.", hints.length);
+        LOGGER.debug("{} duplicating hint rules were loaded.", vendorHints.length);
     }
 }

@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
-import javax.annotation.concurrent.ThreadSafe;
+import javax.annotation.concurrent.NotThreadSafe;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 
@@ -43,7 +43,7 @@ import org.xml.sax.XMLReader;
  *
  * @author Jeremy Long
  */
-@ThreadSafe
+@NotThreadSafe
 public class HintParser {
 
     /**
@@ -79,11 +79,11 @@ public class HintParser {
     /**
      * The hint rules.
      */
-    private HintRule[] hintRules;
+    private List<HintRule> hintRules;
     /**
      * The vendor duplicating hint rules.
      */
-    private VendorDuplicatingHintRule[] vendorDuplicatingHintRules;
+    private List<VendorDuplicatingHintRule> vendorDuplicatingHintRules;
 
     /**
      * Returns the hint rules.
@@ -91,7 +91,7 @@ public class HintParser {
      * @return the hint rules
      */
     @SuppressWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
-    public HintRule[] getHintRules() {
+    public List<HintRule> getHintRules() {
         return hintRules;
     }
 
@@ -100,7 +100,7 @@ public class HintParser {
      *
      * @return the vendor duplicating hint rules
      */
-    public VendorDuplicatingHintRule[] getVendorDuplicatingHintRules() {
+    public List<VendorDuplicatingHintRule> getVendorDuplicatingHintRules() {
         return vendorDuplicatingHintRules;
     }
 
@@ -159,10 +159,8 @@ public class HintParser {
             try (Reader reader = new InputStreamReader(inputStream, "UTF-8")) {
                 final InputSource in = new InputSource(reader);
                 xmlReader.parse(in);
-                final List<HintRule> tmpRules = handler.getHintRules();
-                this.hintRules = tmpRules.toArray(new HintRule[tmpRules.size()]);
-                final List<VendorDuplicatingHintRule> tmpVDR = handler.getVendorDuplicatingHintRules();
-                this.vendorDuplicatingHintRules = tmpVDR.toArray(new VendorDuplicatingHintRule[tmpVDR.size()]);
+                this.hintRules = handler.getHintRules();
+                this.vendorDuplicatingHintRules = handler.getVendorDuplicatingHintRules();
             }
         } catch (ParserConfigurationException | FileNotFoundException ex) {
             LOGGER.debug("", ex);
