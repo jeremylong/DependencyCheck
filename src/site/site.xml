@@ -49,13 +49,13 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
     <publishDate position="right" />
     <version position="right" />
     <poweredBy>
-        <logo name="Maven" href="http://maven.apache.org/"
-              title="built with maven"
-              alt="built with maven"
-              img="http://jeremylong.github.io/DependencyCheck/images/logos/maven-feather.png"/>
+        <logo name="JProfiler" href="https://www.ej-technologies.com/products/jprofiler/overview.html"
+              title="JProfiler Java Profiler" width="170px"
+              alt="JProfiler Java Profiler"
+              img="http://jeremylong.github.io/DependencyCheck/images/logos/jprofiler.png"/>
         <logo name="IntelliJ" href="http://www.jetbrains.com/idea/"
-              title="developed using" width="170px"
-              alt="developed using"
+              title="developed using IntelliJ" width="170px"
+              alt="developed using IntelliJ"
               img="http://jeremylong.github.io/DependencyCheck/images/logos/logo_intellij_idea.png"/>
     </poweredBy>
 
