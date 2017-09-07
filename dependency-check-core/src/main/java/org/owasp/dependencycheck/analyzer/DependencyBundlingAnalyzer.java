@@ -184,9 +184,10 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
         if (tmp <= 0) {
             return path;
         }
-        if (tmp > 0) {
+        //below is always true
+        //if (tmp > 0) {
             pos = tmp + 1;
-        }
+        //}
         tmp = path.indexOf(File.separator, pos);
         if (tmp > 0) {
             pos = tmp + 1;

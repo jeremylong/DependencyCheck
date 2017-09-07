@@ -643,6 +643,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @throws MavenReportException if a maven report exception occurs
      */
     public void generate(Sink sink, Locale locale) throws MavenReportException {
+        if (skip) {
+            getLog().info("Skipping report generation " + getName(Locale.US));
+            return;
+        }
+
         generatingSite = true;
         try {
             validateAggregate();
