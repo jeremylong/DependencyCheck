@@ -249,7 +249,8 @@ public final class ExtractionUtil {
             throw new IOException("Unable to rename '" + file.getPath() + "'");
         }
         final File newFile = new File(originalPath);
-        try (GZIPInputStream cin = new GZIPInputStream(new FileInputStream(gzip));
+        try (FileInputStream fis = new FileInputStream(gzip);
+                GZIPInputStream cin = new GZIPInputStream(fis);
                 FileOutputStream out = new FileOutputStream(newFile)) {
             IOUtils.copy(cin, out);
         } finally {
