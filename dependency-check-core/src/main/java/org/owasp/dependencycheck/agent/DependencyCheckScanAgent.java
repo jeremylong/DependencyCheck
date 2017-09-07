@@ -18,9 +18,11 @@
 package org.owasp.dependencycheck.agent;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -100,6 +102,11 @@ public class DependencyCheckScanAgent {
      * recommended that this be turned to false. Default is true.
      */
     private boolean autoUpdate = true;
+    /**
+     * Sets whether the data directory should be updated without performing a scan.
+     * Default is false.
+     */
+    private boolean updateOnly = false;
     /**
      * flag indicating whether or not to generate a report of findings.
      */
@@ -207,6 +214,12 @@ public class DependencyCheckScanAgent {
      * The path to Mono for .NET assembly analysis on non-windows systems.
      */
     private String pathToMono;
+    /**
+     * The path to optional dependency-check properties file. This will be
+     * used to side-load additional user-defined properties.
+     * {@link Settings#mergeProperties(String)}
+     */
+    private String propertiesFilePath;
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="getters/setters">
 
@@ -316,6 +329,24 @@ public class DependencyCheckScanAgent {
      */
     public void setAutoUpdate(boolean autoUpdate) {
         this.autoUpdate = autoUpdate;
+    }
+
+    /**
+     * Get the value of updateOnly.
+     *
+     * @return the value of updateOnly
+     */
+    public boolean isUpdateOnly() {
+        return updateOnly;
+    }
+
+    /**
+     * Set the value of updateOnly.
+     *
+     * @param updateOnly new value of updateOnly
+     */
+    public void setUpdateOnly(boolean updateOnly) {
+        this.updateOnly = updateOnly;
     }
 
     /**
@@ -810,6 +841,24 @@ public class DependencyCheckScanAgent {
     public void setPathToMono(String pathToMono) {
         this.pathToMono = pathToMono;
     }
+
+    /**
+     * Get the value of propertiesFilePath.
+     *
+     * @return the value of propertiesFilePath
+     */
+    public String getPropertiesFilePath() {
+        return propertiesFilePath;
+    }
+
+    /**
+     * Set the value of propertiesFilePath.
+     *
+     * @param propertiesFilePath new value of propertiesFilePath
+     */
+    public void setPropertiesFilePath(String propertiesFilePath) {
+        this.propertiesFilePath = propertiesFilePath;
+    }
     //</editor-fold>
 
     /**
@@ -827,8 +876,16 @@ public class DependencyCheckScanAgent {
         } catch (DatabaseException ex) {
             throw new ExceptionCollection(ex, true);
         }
-        engine.setDependencies(this.dependencies);
-        engine.analyzeDependencies();
+        if (this.updateOnly) {
+            try {
+                engine.doUpdates();
+            } catch (UpdateException ex) {
+                throw new ExceptionCollection("Unable to perform update", ex);
+            }
+        } else {
+            engine.setDependencies(this.dependencies);
+            engine.analyzeDependencies();
+        }
         return engine;
     }
 
@@ -866,6 +923,17 @@ public class DependencyCheckScanAgent {
             Settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());
         }
 
+        if (propertiesFilePath != null) {
+            try {
+                Settings.mergeProperties(propertiesFilePath);
+                LOGGER.info("Successfully loaded user-defined properties");
+            } catch (IOException e) {
+                LOGGER.error("Unable to merge user-defined properties", e);
+                LOGGER.error("Continuing execution");
+            }
+        }
+
+        LOGGER.info("Populating settings");
         Settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
         Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);
         Settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);
@@ -902,14 +970,16 @@ public class DependencyCheckScanAgent {
         Engine engine = null;
         try {
             engine = executeDependencyCheck();
-            if (this.generateReport) {
-                generateExternalReports(engine, new File(this.reportOutputDirectory));
-            }
-            if (this.showSummary) {
-                showSummary(engine.getDependencies());
-            }
-            if (this.failBuildOnCVSS <= 10) {
-                checkForFailure(engine.getDependencies());
+            if (!this.updateOnly) {
+                if (this.generateReport) {
+                    generateExternalReports(engine, new File(this.reportOutputDirectory));
+                }
+                if (this.showSummary) {
+                    showSummary(engine.getDependencies());
+                }
+                if (this.failBuildOnCVSS <= 10) {
+                    checkForFailure(engine.getDependencies());
+                }
             }
         } catch (ExceptionCollection ex) {
             if (ex.isFatal()) {
