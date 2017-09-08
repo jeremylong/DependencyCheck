@@ -2,8 +2,8 @@
 <xs:schema id="analysis"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            elementFormDefault="qualified"
-           targetNamespace="https://jeremylong.github.io/DependencyCheck/dependency-check.1.5.xsd"
-           xmlns:dc="https://jeremylong.github.io/DependencyCheck/dependency-check.1.5.xsd">
+           targetNamespace="https://jeremylong.github.io/DependencyCheck/dependency-check.1.6.xsd"
+           xmlns:dc="https://jeremylong.github.io/DependencyCheck/dependency-check.1.6.xsd">
 
     <xs:complexType name="scanInfo">
         <xs:sequence minOccurs="1" maxOccurs="1">
