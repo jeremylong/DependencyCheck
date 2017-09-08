@@ -739,6 +739,16 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
+     * Returns whether or not this dependency is virtual or not. Virtual
+     * dependencies are specified during object constructor. No setter.
+     *
+     * @return true if Dependency is virtual, false if not
+     */
+    public boolean isVirtual() {
+        return isVirtual;
+    }
+
+    /**
      * Implementation of the Comparable&lt;Dependency&gt; interface. The
      * comparison is solely based on the file path.
      *
