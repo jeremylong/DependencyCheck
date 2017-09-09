@@ -17,11 +17,11 @@ Copyright (c) 2017 Jeremy Long. All Rights Reserved.
 
 @author Jeremy Long <jeremy.long@owasp.org>
 @version 1 *###
-"Project","ScanDate","DependencyName","DependencyPath","Description","License","Md5","Sha1","Identifiers","CPE","CVE","CWE","Vulnerability","Severity","CVSSv2"
+"Project","ScanDate","DependencyName","DependencyPath","Description","License","Md5","Sha1","Identifiers","CPE","CVE","CWE","Vulnerability","Source","Severity","CVSSv2"
 #macro(writeSev $score)#if($score<4.0)"Low"#elseif($score>=7.0)"High"#else"Medium"#end#end
 #foreach($dependency in $dependencies)#if($dependency.getVulnerabilities().size()>0)
 #foreach($vuln in $dependency.getVulnerabilities())
-$enc.csv($applicationName),$enc.csv($scanDate),$enc.csv($dependency.DisplayFileName),#if($dependency.FilePath)$enc.csv($dependency.FilePath)#end,#if($dependency.description)$enc.csv($dependency.description)#end,#if($dependency.license)$enc.csv($dependency.license)#end,#if($dependency.Md5sum)$enc.csv($dependency.Md5sum)#end,#if($dependency.Sha1sum)$enc.csv($dependency.Sha1sum)#end,#if($dependency.identifiers)$enc.csvIdentifiers($dependency.identifiers)#end,#if($dependency.identifiers)$enc.csvCpe($dependency.identifiers)#end,#if($vuln.name)$enc.csv($vuln.name)#end,#if($dependency.cwe)$enc.csv($vuln.cwe)#end,#if($vuln.description)$enc.csv($vuln.description)#end,#writeSev($vuln.cvssScore),$vuln.cvssScore
+$enc.csv($applicationName),$enc.csv($scanDate),$enc.csv($dependency.DisplayFileName),#if($dependency.FilePath)$enc.csv($dependency.FilePath)#end,#if($dependency.description)$enc.csv($dependency.description)#end,#if($dependency.license)$enc.csv($dependency.license)#end,#if($dependency.Md5sum)$enc.csv($dependency.Md5sum)#end,#if($dependency.Sha1sum)$enc.csv($dependency.Sha1sum)#end,#if($dependency.identifiers)$enc.csvIdentifiers($dependency.identifiers)#end,#if($dependency.identifiers)$enc.csvCpe($dependency.identifiers)#end,#if($vuln.name)$enc.csv($vuln.name)#end,#if($dependency.cwe)$enc.csv($vuln.cwe)#end,#if($vuln.description)$enc.csv($vuln.description)#end,#if($vuln.getSource().name())$enc.csv($vuln.getSource().name())#end,#writeSev($vuln.cvssScore),$vuln.cvssScore
 #end
 #end
 #end
