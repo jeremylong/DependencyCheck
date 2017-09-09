@@ -17,14 +17,16 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.Set;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
-import org.owasp.dependencycheck.dependency.EvidenceCollection;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -132,14 +134,14 @@ public class VersionFilterAnalyzer extends AbstractAnalyzer {
         String fileVersion = null;
         String pomVersion = null;
         String manifestVersion = null;
-        for (Evidence e : dependency.getVersionEvidence()) {
+        for (Evidence e : dependency.getEvidence(EvidenceType.VERSION)) {
             if (FILE.equals(e.getSource()) && VERSION.equals(e.getName())) {
-                fileVersion = e.getValue(Boolean.FALSE);
+                fileVersion = e.getValue();
             } else if ((NEXUS.equals(e.getSource()) || CENTRAL.equals(e.getSource())
                     || POM.equals(e.getSource())) && VERSION.equals(e.getName())) {
-                pomVersion = e.getValue(Boolean.FALSE);
+                pomVersion = e.getValue();
             } else if (MANIFEST.equals(e.getSource()) && IMPLEMENTATION_VERSION.equals(e.getName())) {
-                manifestVersion = e.getValue(Boolean.FALSE);
+                manifestVersion = e.getValue();
             }
         }
         //ensure we have at least two not null
@@ -152,16 +154,17 @@ public class VersionFilterAnalyzer extends AbstractAnalyzer {
             final boolean pomMatch = Objects.equals(dvPom, dvFile) || Objects.equals(dvPom, dvManifest);
             if (fileMatch || manifestMatch || pomMatch) {
                 LOGGER.debug("filtering evidence from {}", dependency.getFileName());
-                final EvidenceCollection versionEvidence = dependency.getVersionEvidence();
-                final Iterator<Evidence> itr = versionEvidence.iterator();
-                while (itr.hasNext()) {
-                    final Evidence e = itr.next();
+                Set<Evidence> remove = new HashSet<>();
+                for(Evidence e : dependency.getEvidence(EvidenceType.VERSION)) {
                     if (!(pomMatch && VERSION.equals(e.getName())
                             && (NEXUS.equals(e.getSource()) || CENTRAL.equals(e.getSource()) || POM.equals(e.getSource())))
                             && !(fileMatch && VERSION.equals(e.getName()) && FILE.equals(e.getSource()))
                             && !(manifestMatch && MANIFEST.equals(e.getSource()) && IMPLEMENTATION_VERSION.equals(e.getName()))) {
-                        itr.remove();
+                        remove.add(e);
                     }
+                }
+                for (Evidence e: remove) {
+                    dependency.removeEvidence(EvidenceType.VERSION, e);
                 }
             }
         }

@@ -27,11 +27,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.annotation.concurrent.ThreadSafe;
-import org.apache.commons.lang.ArrayUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.xml.suppression.PropertyType;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
@@ -141,14 +141,14 @@ public class HintAnalyzer extends AbstractAnalyzer {
         for (HintRule hint : hints) {
             boolean matchFound = false;
             for (Evidence given : hint.getGivenVendor()) {
-                if (dependency.getVendorEvidence().getEvidence().contains(given)) {
+                if (dependency.contains(EvidenceType.VENDOR, given)) {
                     matchFound = true;
                     break;
                 }
             }
             if (!matchFound) {
                 for (Evidence given : hint.getGivenProduct()) {
-                    if (dependency.getProductEvidence().getEvidence().contains(given)) {
+                    if (dependency.contains(EvidenceType.PRODUCT, given)) {
                         matchFound = true;
                         break;
                     }
@@ -156,7 +156,7 @@ public class HintAnalyzer extends AbstractAnalyzer {
             }
             if (!matchFound) {
                 for (Evidence given : hint.getGivenVersion()) {
-                    if (dependency.getVersionEvidence().getEvidence().contains(given)) {
+                    if (dependency.contains(EvidenceType.VERSION, given)) {
                         matchFound = true;
                         break;
                     }
@@ -172,45 +172,45 @@ public class HintAnalyzer extends AbstractAnalyzer {
             }
             if (matchFound) {
                 for (Evidence e : hint.getAddVendor()) {
-                    dependency.getVendorEvidence().addEvidence(e);
+                    dependency.addEvidence(EvidenceType.VENDOR, e);
                 }
                 for (Evidence e : hint.getAddProduct()) {
-                    dependency.getProductEvidence().addEvidence(e);
+                    dependency.addEvidence(EvidenceType.PRODUCT, e);
                 }
                 for (Evidence e : hint.getAddVersion()) {
-                    dependency.getVersionEvidence().addEvidence(e);
+                    dependency.addEvidence(EvidenceType.VERSION, e);
                 }
                 for (Evidence e : hint.getRemoveVendor()) {
-                    if (dependency.getVendorEvidence().getEvidence().contains(e)) {
-                        dependency.getVendorEvidence().getEvidence().remove(e);
+                    if (dependency.contains(EvidenceType.VENDOR, e)) {
+                        dependency.removeEvidence(EvidenceType.VENDOR, e);
                     }
                 }
                 for (Evidence e : hint.getRemoveProduct()) {
-                    if (dependency.getProductEvidence().getEvidence().contains(e)) {
-                        dependency.getProductEvidence().getEvidence().remove(e);
+                    if (dependency.contains(EvidenceType.PRODUCT, e)) {
+                        dependency.removeEvidence(EvidenceType.PRODUCT, e);
                     }
                 }
                 for (Evidence e : hint.getRemoveVersion()) {
-                    if (dependency.getVersionEvidence().getEvidence().contains(e)) {
-                        dependency.getVersionEvidence().getEvidence().remove(e);
+                    if (dependency.contains(EvidenceType.VERSION, e)) {
+                        dependency.removeEvidence(EvidenceType.VERSION, e);
                     }
                 }
             }
         }
 
-        final Iterator<Evidence> itr = dependency.getVendorEvidence().iterator();
+        final Iterator<Evidence> itr = dependency.getEvidence(EvidenceType.VENDOR).iterator();
         final List<Evidence> newEntries = new ArrayList<>();
         while (itr.hasNext()) {
             final Evidence e = itr.next();
             for (VendorDuplicatingHintRule dhr : vendorHints) {
-                if (dhr.getValue().equalsIgnoreCase(e.getValue(false))) {
+                if (dhr.getValue().equalsIgnoreCase(e.getValue())) {
                     newEntries.add(new Evidence(e.getSource() + " (hint)",
                             e.getName(), dhr.getDuplicate(), e.getConfidence()));
                 }
             }
         }
         for (Evidence e : newEntries) {
-            dependency.getVendorEvidence().addEvidence(e);
+            dependency.addEvidence(EvidenceType.VENDOR, e);
         }
     }
 

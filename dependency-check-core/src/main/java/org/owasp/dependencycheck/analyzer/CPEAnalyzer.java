@@ -47,7 +47,7 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
-import org.owasp.dependencycheck.dependency.EvidenceCollection;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.exception.InitializationException;
@@ -157,17 +157,17 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * usually occurs when the database is in use by another process.
      */
     public void open(CveDB cve) throws IOException, DatabaseException {
-            this.cve = cve;
-            this.cpe = CpeMemoryIndex.getInstance();
-            try {
-                final long creationStart = System.currentTimeMillis();
-                cpe.open(cve);
-                final long creationSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - creationStart);
-                LOGGER.info("Created CPE Index ({} seconds)", creationSeconds);
-            } catch (IndexException ex) {
-                LOGGER.debug("IndexException", ex);
-                throw new DatabaseException(ex);
-            }
+        this.cve = cve;
+        this.cpe = CpeMemoryIndex.getInstance();
+        try {
+            final long creationStart = System.currentTimeMillis();
+            cpe.open(cve);
+            final long creationSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - creationStart);
+            LOGGER.info("Created CPE Index ({} seconds)", creationSeconds);
+        } catch (IndexException ex) {
+            LOGGER.debug("IndexException", ex);
+            throw new DatabaseException(ex);
+        }
     }
 
     /**
@@ -195,17 +195,17 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         String vendors = "";
         String products = "";
         for (Confidence confidence : Confidence.values()) {
-            if (dependency.getVendorEvidence().contains(confidence)) {
-                vendors = addEvidenceWithoutDuplicateTerms(vendors, dependency.getVendorEvidence(), confidence);
+            if (dependency.contains(EvidenceType.VENDOR, confidence)) {
+                vendors = addEvidenceWithoutDuplicateTerms(vendors, dependency.getIterator(EvidenceType.VENDOR, confidence));
                 LOGGER.debug("vendor search: {}", vendors);
             }
-            if (dependency.getProductEvidence().contains(confidence)) {
-                products = addEvidenceWithoutDuplicateTerms(products, dependency.getProductEvidence(), confidence);
+            if (dependency.contains(EvidenceType.PRODUCT, confidence)) {
+                products = addEvidenceWithoutDuplicateTerms(products, dependency.getIterator(EvidenceType.PRODUCT, confidence));
                 LOGGER.debug("product search: {}", products);
             }
             if (!vendors.isEmpty() && !products.isEmpty()) {
-                final List<IndexEntry> entries = searchCPE(vendors, products, dependency.getVendorEvidence().getWeighting(),
-                        dependency.getProductEvidence().getWeighting());
+                final List<IndexEntry> entries = searchCPE(vendors, products, dependency.getVendorWeightings(),
+                        dependency.getProductWeightings());
                 if (entries == null) {
                     continue;
                 }
@@ -232,26 +232,24 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * attempts to prevent duplicate terms from being added.<br/<br/> Note, if
      * the evidence is longer then 200 characters it will be truncated.
      *
-     * @param text the base text.
-     * @param ec an EvidenceCollection
-     * @param confidenceFilter a Confidence level to filter the evidence by.
+     * @param text the base text
+     * @param evidence an iterable set of evidence to concatenate
      * @return the new evidence text
      */
-    private String addEvidenceWithoutDuplicateTerms(final String text, final EvidenceCollection ec, Confidence confidenceFilter) {
+    private String addEvidenceWithoutDuplicateTerms(final String text, final Iterable<Evidence> evidence) {
         final String txt = (text == null) ? "" : text;
-        final StringBuilder sb = new StringBuilder(txt.length() + (20 * ec.size()));
+        final StringBuilder sb = new StringBuilder();
         sb.append(' ').append(txt).append(' ');
-        for (Evidence e : ec.iterator(confidenceFilter)) {
+        for (Evidence e : evidence) {
             String value = e.getValue();
-
-            //hack to get around the fact that lucene does a really good job of recognizing domains and not
-            // splitting them. TODO - put together a better lucene analyzer specific to the domain.
-            if (value.startsWith("http://")) {
-                value = value.substring(7).replaceAll("\\.", " ");
-            }
-            if (value.startsWith("https://")) {
-                value = value.substring(8).replaceAll("\\.", " ");
-            }
+            //removed as the URLTokenizingFilter was created
+            //hack to get around the fact that lucene does a really good job of recognizing domains and not splitting them. 
+//            if (value.startsWith("http://")) {
+//                value = value.substring(7).replaceAll("\\.", " ");
+//            }
+//            if (value.startsWith("https://")) {
+//                value = value.substring(8).replaceAll("\\.", " ");
+//            }
             if (sb.indexOf(" " + value + " ") < 0) {
                 sb.append(value).append(' ');
             }
@@ -444,8 +442,8 @@ public class CPEAnalyzer extends AbstractAnalyzer {
 
         //TODO - does this nullify some of the fuzzy matching that happens in the lucene search?
         // for instance CPE some-component and in the evidence we have SomeComponent.
-        if (collectionContainsString(dependency.getProductEvidence(), entry.getProduct())
-                && collectionContainsString(dependency.getVendorEvidence(), entry.getVendor())) {
+        if (collectionContainsString(dependency.getEvidence(EvidenceType.PRODUCT), entry.getProduct())
+                && collectionContainsString(dependency.getEvidence(EvidenceType.VENDOR), entry.getVendor())) {
             //&& collectionContainsVersion(dependency.getVersionEvidence(), entry.getVersion())
             isValid = true;
         }
@@ -455,11 +453,11 @@ public class CPEAnalyzer extends AbstractAnalyzer {
     /**
      * Used to determine if the EvidenceCollection contains a specific string.
      *
-     * @param ec an EvidenceCollection
+     * @param evidence an of evidence object to check
      * @param text the text to search for
      * @return whether or not the EvidenceCollection contains the string
      */
-    private boolean collectionContainsString(EvidenceCollection ec, String text) {
+    private boolean collectionContainsString(Set<Evidence> evidence, String text) {
         //TODO - likely need to change the split... not sure if this will work for CPE with special chars
         if (text == null) {
             return false;
@@ -496,11 +494,24 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         if (list.isEmpty()) {
             return false;
         }
-        boolean contains = true;
+        boolean isValid = true;
         for (String word : list) {
-            contains &= ec.containsUsedString(word);
+            boolean found = false;
+            for (Evidence e : evidence) {
+                if (e.getValue().toLowerCase().contains(word.toLowerCase())) {
+                    if ("http".equals(word)&& e.getValue().contains("http:")) {
+                        continue;
+                    }
+                    found = true;
+                    break;
+                }
+            }
+            isValid &= found;
+            if (!isValid) {
+                break;
+            }
         }
-        return contains;
+        return isValid;
     }
 
     /**
@@ -556,7 +567,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         // if there lower confidence evidence when the current (highest) version number
         // is newer then anything in the NVD.
         for (Confidence conf : Confidence.values()) {
-            for (Evidence evidence : dependency.getVersionEvidence().iterator(conf)) {
+            for (Evidence evidence : dependency.getIterator(EvidenceType.VERSION, conf)) {
                 final DependencyVersion evVer = DependencyVersionUtil.parseVersion(evidence.getValue());
                 if (evVer == null) {
                     continue;

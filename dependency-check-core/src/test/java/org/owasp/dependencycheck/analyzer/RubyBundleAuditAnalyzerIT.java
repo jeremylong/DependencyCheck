@@ -45,6 +45,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
  * Unit tests for {@link RubyBundleAuditAnalyzer}.
@@ -127,8 +128,8 @@ public class RubyBundleAuditAnalyzerIT extends BaseDBTestCase {
             assertTrue(size >= 1);
             boolean found = false;
             for (Dependency dependency : dependencies) {
-                found = dependency.getProductEvidence().toString().toLowerCase().contains("redcarpet");
-                found &= dependency.getVersionEvidence().toString().toLowerCase().contains("2.2.2");
+                found = dependency.getEvidence(EvidenceType.PRODUCT).toString().toLowerCase().contains("redcarpet");
+                found &= dependency.getEvidence(EvidenceType.VERSION).toString().toLowerCase().contains("2.2.2");
                 found &= dependency.getFilePath().endsWith(resource);
                 found &= dependency.getFileName().equals("Gemfile.lock");
                 if (found) {

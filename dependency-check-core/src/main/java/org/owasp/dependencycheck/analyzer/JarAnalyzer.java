@@ -53,7 +53,7 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.EvidenceCollection;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.FileUtils;
@@ -527,15 +527,15 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
         if (groupid != null && !groupid.isEmpty()) {
             foundSomething = true;
-            dependency.getVendorEvidence().addEvidence("pom", "groupid", groupid, Confidence.HIGHEST);
-            dependency.getProductEvidence().addEvidence("pom", "groupid", groupid, Confidence.LOW);
-            addMatchingValues(classes, groupid, dependency.getVendorEvidence());
-            addMatchingValues(classes, groupid, dependency.getProductEvidence());
+            dependency.addEvidence(EvidenceType.VENDOR, "pom", "groupid", groupid, Confidence.HIGHEST);
+            dependency.addEvidence(EvidenceType.PRODUCT, "pom", "groupid", groupid, Confidence.LOW);
+            addMatchingVendorValues(classes, groupid, dependency);
+            addMatchingProductValues(classes, groupid, dependency);
             if (parentGroupId != null && !parentGroupId.isEmpty() && !parentGroupId.equals(groupid)) {
-                dependency.getVendorEvidence().addEvidence("pom", "parent-groupid", parentGroupId, Confidence.MEDIUM);
-                dependency.getProductEvidence().addEvidence("pom", "parent-groupid", parentGroupId, Confidence.LOW);
-                addMatchingValues(classes, parentGroupId, dependency.getVendorEvidence());
-                addMatchingValues(classes, parentGroupId, dependency.getProductEvidence());
+                dependency.addEvidence(EvidenceType.VENDOR, "pom", "parent-groupid", parentGroupId, Confidence.MEDIUM);
+                dependency.addEvidence(EvidenceType.PRODUCT, "pom", "parent-groupid", parentGroupId, Confidence.LOW);
+                addMatchingVendorValues(classes, parentGroupId, dependency);
+                addMatchingProductValues(classes, parentGroupId, dependency);
             }
         } else {
             addAsIdentifier = false;
@@ -543,15 +543,15 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
         if (artifactid != null && !artifactid.isEmpty()) {
             foundSomething = true;
-            dependency.getProductEvidence().addEvidence("pom", "artifactid", artifactid, Confidence.HIGHEST);
-            dependency.getVendorEvidence().addEvidence("pom", "artifactid", artifactid, Confidence.LOW);
-            addMatchingValues(classes, artifactid, dependency.getVendorEvidence());
-            addMatchingValues(classes, artifactid, dependency.getProductEvidence());
+            dependency.addEvidence(EvidenceType.PRODUCT, "pom", "artifactid", artifactid, Confidence.HIGHEST);
+            dependency.addEvidence(EvidenceType.VENDOR, "pom", "artifactid", artifactid, Confidence.LOW);
+            addMatchingVendorValues(classes, artifactid, dependency);
+            addMatchingProductValues(classes, artifactid, dependency);
             if (parentArtifactId != null && !parentArtifactId.isEmpty() && !parentArtifactId.equals(artifactid)) {
-                dependency.getProductEvidence().addEvidence("pom", "parent-artifactid", parentArtifactId, Confidence.MEDIUM);
-                dependency.getVendorEvidence().addEvidence("pom", "parent-artifactid", parentArtifactId, Confidence.LOW);
-                addMatchingValues(classes, parentArtifactId, dependency.getVendorEvidence());
-                addMatchingValues(classes, parentArtifactId, dependency.getProductEvidence());
+                dependency.addEvidence(EvidenceType.PRODUCT, "pom", "parent-artifactid", parentArtifactId, Confidence.MEDIUM);
+                dependency.addEvidence(EvidenceType.VENDOR, "pom", "parent-artifactid", parentArtifactId, Confidence.LOW);
+                addMatchingProductValues(classes, parentArtifactId, dependency);
+                addMatchingProductValues(classes, parentArtifactId, dependency);
             }
         } else {
             addAsIdentifier = false;
@@ -559,9 +559,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
 
         if (version != null && !version.isEmpty()) {
             foundSomething = true;
-            dependency.getVersionEvidence().addEvidence("pom", "version", version, Confidence.HIGHEST);
+            dependency.addEvidence(EvidenceType.VERSION, "pom", "version", version, Confidence.HIGHEST);
             if (parentVersion != null && !parentVersion.isEmpty() && !parentVersion.equals(version)) {
-                dependency.getVersionEvidence().addEvidence("pom", "parent-version", version, Confidence.LOW);
+                dependency.addEvidence(EvidenceType.VERSION, "pom", "parent-version", version, Confidence.LOW);
             }
         } else {
             addAsIdentifier = false;
@@ -574,26 +574,26 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         // org name
         final String org = pom.getOrganization();
         if (org != null && !org.isEmpty()) {
-            dependency.getVendorEvidence().addEvidence("pom", "organization name", org, Confidence.HIGH);
-            dependency.getProductEvidence().addEvidence("pom", "organization name", org, Confidence.LOW);
-            addMatchingValues(classes, org, dependency.getVendorEvidence());
-            addMatchingValues(classes, org, dependency.getProductEvidence());
+            dependency.addEvidence(EvidenceType.VENDOR, "pom", "organization name", org, Confidence.HIGH);
+            dependency.addEvidence(EvidenceType.PRODUCT, "pom", "organization name", org, Confidence.LOW);
+            addMatchingVendorValues(classes, org, dependency);
+            addMatchingProductValues(classes, org, dependency);
         }
         // org name
         final String orgUrl = pom.getOrganizationUrl();
         if (orgUrl != null && !orgUrl.isEmpty()) {
-            dependency.getVendorEvidence().addEvidence("pom", "organization url", orgUrl, Confidence.MEDIUM);
-            dependency.getProductEvidence().addEvidence("pom", "organization url", orgUrl, Confidence.LOW);
+            dependency.addEvidence(EvidenceType.VENDOR, "pom", "organization url", orgUrl, Confidence.MEDIUM);
+            dependency.addEvidence(EvidenceType.PRODUCT, "pom", "organization url", orgUrl, Confidence.LOW);
         }
         //pom name
         final String pomName = pom.getName();
         if (pomName
                 != null && !pomName.isEmpty()) {
             foundSomething = true;
-            dependency.getProductEvidence().addEvidence("pom", "name", pomName, Confidence.HIGH);
-            dependency.getVendorEvidence().addEvidence("pom", "name", pomName, Confidence.HIGH);
-            addMatchingValues(classes, pomName, dependency.getVendorEvidence());
-            addMatchingValues(classes, pomName, dependency.getProductEvidence());
+            dependency.addEvidence(EvidenceType.PRODUCT, "pom", "name", pomName, Confidence.HIGH);
+            dependency.addEvidence(EvidenceType.VENDOR, "pom", "name", pomName, Confidence.HIGH);
+            addMatchingVendorValues(classes, pomName, dependency);
+            addMatchingProductValues(classes, pomName, dependency);
         }
 
         //Description
@@ -601,13 +601,13 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         if (description != null && !description.isEmpty() && !description.startsWith("POM was created by")) {
             foundSomething = true;
             final String trimmedDescription = addDescription(dependency, description, "pom", "description");
-            addMatchingValues(classes, trimmedDescription, dependency.getVendorEvidence());
-            addMatchingValues(classes, trimmedDescription, dependency.getProductEvidence());
+            addMatchingVendorValues(classes, trimmedDescription, dependency);
+            addMatchingProductValues(classes, trimmedDescription, dependency);
         }
 
         final String projectURL = pom.getProjectURL();
         if (projectURL != null && !projectURL.trim().isEmpty()) {
-            dependency.getVendorEvidence().addEvidence("pom", "url", projectURL, Confidence.HIGHEST);
+            dependency.addEvidence(EvidenceType.VENDOR, "pom", "url", projectURL, Confidence.HIGHEST);
         }
 
         extractLicense(pom, dependency);
@@ -632,25 +632,24 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         analyzeFullyQualifiedClassNames(classNames, vendorIdentifiers, productIdentifiers);
 
         final int classCount = classNames.size();
-        final EvidenceCollection vendor = dependency.getVendorEvidence();
-        final EvidenceCollection product = dependency.getProductEvidence();
 
         for (Map.Entry<String, Integer> entry : vendorIdentifiers.entrySet()) {
             final float ratio = entry.getValue() / (float) classCount;
             if (ratio > 0.5) {
-                //TODO remove weighting
-                vendor.addWeighting(entry.getKey());
+                //TODO remove weighting?
+                dependency.addVendorWeighting(entry.getKey());
                 if (addPackagesAsEvidence && entry.getKey().length() > 1) {
-                    vendor.addEvidence("jar", "package name", entry.getKey(), Confidence.LOW);
+                    dependency.addEvidence(EvidenceType.VENDOR, "jar", "package name", entry.getKey(), Confidence.LOW);
                 }
             }
         }
         for (Map.Entry<String, Integer> entry : productIdentifiers.entrySet()) {
             final float ratio = entry.getValue() / (float) classCount;
             if (ratio > 0.5) {
-                product.addWeighting(entry.getKey());
+                //todo remove weighting
+                dependency.addProductWeighting(entry.getKey());
                 if (addPackagesAsEvidence && entry.getKey().length() > 1) {
-                    product.addEvidence("jar", "package name", entry.getKey(), Confidence.LOW);
+                    dependency.addEvidence(EvidenceType.PRODUCT, "jar", "package name", entry.getKey(), Confidence.LOW);
                 }
             }
         }
@@ -687,9 +686,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 }
                 return false;
             }
-            final EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
-            final EvidenceCollection productEvidence = dependency.getProductEvidence();
-            final EvidenceCollection versionEvidence = dependency.getVersionEvidence();
             String source = "Manifest";
             String specificationVersion = null;
             boolean hasImplementationVersion = false;
@@ -705,35 +701,35 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     continue;
                 } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {
                     foundSomething = true;
-                    productEvidence.addEvidence(source, key, value, Confidence.HIGH);
-                    addMatchingValues(classInformation, value, productEvidence);
+                    dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.HIGH);
+                    addMatchingProductValues(classInformation, value, dependency);
                 } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VERSION.toString())) {
                     hasImplementationVersion = true;
                     foundSomething = true;
-                    versionEvidence.addEvidence(source, key, value, Confidence.HIGH);
+                    dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.HIGH);
                 } else if ("specification-version".equalsIgnoreCase(key)) {
                     specificationVersion = value;
                 } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VENDOR.toString())) {
                     foundSomething = true;
-                    vendorEvidence.addEvidence(source, key, value, Confidence.HIGH);
-                    addMatchingValues(classInformation, value, vendorEvidence);
+                    dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.HIGH);
+                    addMatchingVendorValues(classInformation, value, dependency);
                 } else if (key.equalsIgnoreCase(IMPLEMENTATION_VENDOR_ID)) {
                     foundSomething = true;
-                    vendorEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
-                    addMatchingValues(classInformation, value, vendorEvidence);
+                    dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.MEDIUM);
+                    addMatchingVendorValues(classInformation, value, dependency);
                 } else if (key.equalsIgnoreCase(BUNDLE_DESCRIPTION)) {
                     foundSomething = true;
                     addDescription(dependency, value, "manifest", key);
-                    addMatchingValues(classInformation, value, productEvidence);
+                    addMatchingProductValues(classInformation, value, dependency);
                 } else if (key.equalsIgnoreCase(BUNDLE_NAME)) {
                     foundSomething = true;
-                    productEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
-                    addMatchingValues(classInformation, value, productEvidence);
+                    dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);
+                    addMatchingProductValues(classInformation, value, dependency);
 //                //the following caused false positives.
 //                } else if (key.equalsIgnoreCase(BUNDLE_VENDOR)) {
                 } else if (key.equalsIgnoreCase(BUNDLE_VERSION)) {
                     foundSomething = true;
-                    versionEvidence.addEvidence(source, key, value, Confidence.HIGH);
+                    dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.HIGH);
                 } else if (key.equalsIgnoreCase(Attributes.Name.MAIN_CLASS.toString())) {
                     //noinspection UnnecessaryContinue
                     continue;
@@ -754,7 +750,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                         foundSomething = true;
                         if (key.contains("version")) {
                             if (!key.contains("specification")) {
-                                versionEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
+                                dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.MEDIUM);
                             }
                         } else if ("build-id".equals(key)) {
                             int pos = value.indexOf('(');
@@ -765,37 +761,37 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                             if (pos > 0) {
                                 value = value.substring(0, pos - 1);
                             }
-                            versionEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
+                            dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.MEDIUM);
                         } else if (key.contains("title")) {
-                            productEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
-                            addMatchingValues(classInformation, value, productEvidence);
+                            dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);
+                            addMatchingProductValues(classInformation, value, dependency);
                         } else if (key.contains("vendor")) {
                             if (key.contains("specification")) {
-                                vendorEvidence.addEvidence(source, key, value, Confidence.LOW);
+                                dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.LOW);
                             } else {
-                                vendorEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
-                                addMatchingValues(classInformation, value, vendorEvidence);
+                                dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.MEDIUM);
+                                addMatchingVendorValues(classInformation, value, dependency);
                             }
                         } else if (key.contains("name")) {
-                            productEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
-                            vendorEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
-                            addMatchingValues(classInformation, value, vendorEvidence);
-                            addMatchingValues(classInformation, value, productEvidence);
+                            dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);
+                            dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.MEDIUM);
+                            addMatchingVendorValues(classInformation, value, dependency);
+                            addMatchingProductValues(classInformation, value, dependency);
                         } else if (key.contains("license")) {
                             addLicense(dependency, value);
                         } else if (key.contains("description")) {
                             addDescription(dependency, value, "manifest", key);
                         } else {
-                            productEvidence.addEvidence(source, key, value, Confidence.LOW);
-                            vendorEvidence.addEvidence(source, key, value, Confidence.LOW);
-                            addMatchingValues(classInformation, value, vendorEvidence);
-                            addMatchingValues(classInformation, value, productEvidence);
+                            dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.LOW);
+                            dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.LOW);
+                            addMatchingVendorValues(classInformation, value, dependency);
+                            addMatchingProductValues(classInformation, value, dependency);
                             if (value.matches(".*\\d.*")) {
                                 final StringTokenizer tokenizer = new StringTokenizer(value, " ");
                                 while (tokenizer.hasMoreElements()) {
                                     final String s = tokenizer.nextToken();
                                     if (s.matches("^[0-9.]+$")) {
-                                        versionEvidence.addEvidence(source, key, s, Confidence.LOW);
+                                        dependency.addEvidence(EvidenceType.VERSION, source, key, s, Confidence.LOW);
                                     }
                                 }
                             }
@@ -812,25 +808,25 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     final String value = atts.getValue(key);
                     if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {
                         foundSomething = true;
-                        productEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
-                        addMatchingValues(classInformation, value, productEvidence);
+                        dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);
+                        addMatchingProductValues(classInformation, value, dependency);
                     } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VERSION.toString())) {
                         foundSomething = true;
-                        versionEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
+                        dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.MEDIUM);
                     } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_VENDOR.toString())) {
                         foundSomething = true;
-                        vendorEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
-                        addMatchingValues(classInformation, value, vendorEvidence);
+                        dependency.addEvidence(EvidenceType.VENDOR, source, key, value, Confidence.MEDIUM);
+                        addMatchingVendorValues(classInformation, value, dependency);
                     } else if (key.equalsIgnoreCase(Attributes.Name.SPECIFICATION_TITLE.toString())) {
                         foundSomething = true;
-                        productEvidence.addEvidence(source, key, value, Confidence.MEDIUM);
-                        addMatchingValues(classInformation, value, productEvidence);
+                        dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);
+                        addMatchingProductValues(classInformation, value, dependency);
                     }
                 }
             }
             if (specificationVersion != null && !hasImplementationVersion) {
                 foundSomething = true;
-                versionEvidence.addEvidence(source, "specification-version", specificationVersion, Confidence.HIGH);
+                dependency.addEvidence(EvidenceType.VERSION, source, "specification-version", specificationVersion, Confidence.HIGH);
             }
         }
         return foundSomething;
@@ -888,11 +884,11 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             if (pos > 0) {
                 desc = desc.substring(0, pos) + "...";
             }
-            dependency.getProductEvidence().addEvidence(source, key, desc, Confidence.LOW);
-            dependency.getVendorEvidence().addEvidence(source, key, desc, Confidence.LOW);
+            dependency.addEvidence(EvidenceType.PRODUCT, source, key, desc, Confidence.LOW);
+            dependency.addEvidence(EvidenceType.VENDOR, source, key, desc, Confidence.LOW);
         } else {
-            dependency.getProductEvidence().addEvidence(source, key, desc, Confidence.MEDIUM);
-            dependency.getVendorEvidence().addEvidence(source, key, desc, Confidence.MEDIUM);
+            dependency.addEvidence(EvidenceType.PRODUCT, source, key, desc, Confidence.MEDIUM);
+            dependency.addEvidence(EvidenceType.VENDOR, source, key, desc, Confidence.MEDIUM);
         }
         return desc;
     }
@@ -1062,9 +1058,9 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @param classes a collection of class name information
      * @param value the value to check to see if it contains a package name
-     * @param evidence the evidence collection to add new entries too
+     * @param dep the dependency to add new entries too
      */
-    private static void addMatchingValues(List<ClassNameInformation> classes, String value, EvidenceCollection evidence) {
+    private static void addMatchingVendorValues(List<ClassNameInformation> classes, String value, Dependency dep) {
         if (value == null || value.isEmpty() || classes == null || classes.isEmpty()) {
             return;
         }
@@ -1074,7 +1070,32 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                 final Pattern p = Pattern.compile("\b" + key + "\b");
                 if (p.matcher(text).find()) {
                     //if (text.contains(key)) { //note, package structure elements are already lowercase.
-                    evidence.addEvidence("jar", "package name", key, Confidence.HIGHEST);
+                    dep.addEvidence(EvidenceType.VENDOR, "jar", "package name", key, Confidence.HIGHEST);
+                }
+            }
+        }
+    }
+    /**
+     * Cycles through the collection of class name information to see if parts
+     * of the package names are contained in the provided value. If found, it
+     * will be added as the HIGHEST confidence evidence because we have more
+     * then one source corroborating the value.
+     *
+     * @param classes a collection of class name information
+     * @param value the value to check to see if it contains a package name
+     * @param dep the dependency to add new entries too
+     */
+    private static void addMatchingProductValues(List<ClassNameInformation> classes, String value, Dependency dep) {
+        if (value == null || value.isEmpty() || classes == null || classes.isEmpty()) {
+            return;
+        }
+        final String text = value.toLowerCase();
+        for (ClassNameInformation cni : classes) {
+            for (String key : cni.getPackageStructure()) {
+                final Pattern p = Pattern.compile("\b" + key + "\b");
+                if (p.matcher(text).find()) {
+                    //if (text.contains(key)) { //note, package structure elements are already lowercase.
+                    dep.addEvidence(EvidenceType.PRODUCT, "jar", "package name", key, Confidence.HIGHEST);
                 }
             }
         }

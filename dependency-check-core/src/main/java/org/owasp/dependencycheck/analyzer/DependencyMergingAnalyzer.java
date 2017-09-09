@@ -21,6 +21,8 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Set;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,10 +122,16 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
     private void mergeDependencies(final Dependency dependency, final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove) {
         LOGGER.debug("Merging '{}' into '{}'", relatedDependency.getFilePath(), dependency.getFilePath());
         dependency.addRelatedDependency(relatedDependency);
-        dependency.getVendorEvidence().getEvidence().addAll(relatedDependency.getVendorEvidence().getEvidence());
-        dependency.getProductEvidence().getEvidence().addAll(relatedDependency.getProductEvidence().getEvidence());
-        dependency.getVersionEvidence().getEvidence().addAll(relatedDependency.getVersionEvidence().getEvidence());
-
+        for (Evidence e : relatedDependency.getEvidence(EvidenceType.VENDOR)) {
+            dependency.addEvidence(EvidenceType.VENDOR, e);
+        }
+        for (Evidence e : relatedDependency.getEvidence(EvidenceType.PRODUCT)) {
+            dependency.addEvidence(EvidenceType.PRODUCT, e);
+        }
+        for (Evidence e : relatedDependency.getEvidence(EvidenceType.VERSION)) {
+            dependency.addEvidence(EvidenceType.VERSION, e);
+        }
+        
         final Iterator<Dependency> i = relatedDependency.getRelatedDependencies().iterator();
         while (i.hasNext()) {
             dependency.addRelatedDependency(i.next());

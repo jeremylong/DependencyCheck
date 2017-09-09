@@ -62,11 +62,6 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     private String value;
 
     /**
-     * A value indicating if the Evidence has been "used" (aka read).
-     */
-    private boolean used;
-
-    /**
      * The confidence level for the evidence.
      */
     private Confidence confidence;
@@ -134,20 +129,6 @@ public class Evidence implements Serializable, Comparable<Evidence> {
      * @return the value of value
      */
     public String getValue() {
-        used = true;
-        return value;
-    }
-
-    /**
-     * Get the value of value. If setUsed is set to false this call to get will
-     * not mark the evidence as used.
-     *
-     * @param setUsed whether or not this call to getValue should cause the used
-     * flag to be updated
-     * @return the value of value
-     */
-    public String getValue(Boolean setUsed) {
-        used = used || setUsed;
         return value;
     }
 
@@ -158,24 +139,6 @@ public class Evidence implements Serializable, Comparable<Evidence> {
      */
     public void setValue(String value) {
         this.value = value;
-    }
-
-    /**
-     * Get the value of used.
-     *
-     * @return the value of used
-     */
-    public boolean isUsed() {
-        return used;
-    }
-
-    /**
-     * Set the value of used.
-     *
-     * @param used new value of used
-     */
-    public void setUsed(boolean used) {
-        this.used = used;
     }
 
     /**

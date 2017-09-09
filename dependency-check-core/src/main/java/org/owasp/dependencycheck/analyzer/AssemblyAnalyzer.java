@@ -47,6 +47,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import javax.xml.parsers.ParserConfigurationException;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.apache.commons.lang3.SystemUtils;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.utils.XmlUtils;
 
 /**
@@ -170,20 +171,17 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
 
             final String version = xpath.evaluate("/assembly/version", doc);
             if (version != null) {
-                dependency.getVersionEvidence().addEvidence(new Evidence("grokassembly", "version",
-                        version, Confidence.HIGHEST));
+                dependency.addEvidence(EvidenceType.VERSION, "grokassembly", "version", version, Confidence.HIGHEST);
             }
 
             final String vendor = xpath.evaluate("/assembly/company", doc);
             if (vendor != null) {
-                dependency.getVendorEvidence().addEvidence(new Evidence("grokassembly", "vendor",
-                        vendor, Confidence.HIGH));
+                dependency.addEvidence(EvidenceType.VENDOR, "grokassembly", "vendor", vendor, Confidence.HIGH);
             }
 
             final String product = xpath.evaluate("/assembly/product", doc);
             if (product != null) {
-                dependency.getProductEvidence().addEvidence(new Evidence("grokassembly", "product",
-                        product, Confidence.HIGH));
+                dependency.addEvidence(EvidenceType.PRODUCT, "grokassembly", "product", product, Confidence.HIGH);
             }
 
         } catch (ParserConfigurationException pce) {

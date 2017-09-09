@@ -30,7 +30,7 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.EvidenceCollection;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 
@@ -136,21 +136,34 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
             contents = contents.substring(matcher.end());
             final String blockVariable = matcher.group(1);
 
-            final EvidenceCollection vendor = dependency.getVendorEvidence();
-            final EvidenceCollection product = dependency.getProductEvidence();
-            final EvidenceCollection version = dependency.getVersionEvidence();
-
-            final String name = addStringEvidence(product, contents, blockVariable, "name", "name", Confidence.HIGHEST);
+            final String name = determineEvidence(contents, blockVariable, "name");
             if (!name.isEmpty()) {
-                vendor.addEvidence(PODSPEC, "name_project", name, Confidence.HIGHEST);
+                dependency.addEvidence(EvidenceType.PRODUCT, PODSPEC, "name_project", name, Confidence.HIGHEST);
+                dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, "name_project", name, Confidence.HIGHEST);
             }
-            addStringEvidence(product, contents, blockVariable, "summary", "summary", Confidence.HIGHEST);
+            String summary = determineEvidence(contents, blockVariable, "summary");
+            if (!summary.isEmpty()) {
+                dependency.addEvidence(EvidenceType.PRODUCT, PODSPEC, "summary", summary, Confidence.HIGHEST);
+            }
 
-            addStringEvidence(vendor, contents, blockVariable, "author", "authors?", Confidence.HIGHEST);
-            addStringEvidence(vendor, contents, blockVariable, "homepage", "homepage", Confidence.HIGHEST);
-            addStringEvidence(vendor, contents, blockVariable, "license", "licen[cs]es?", Confidence.HIGHEST);
+            String author = determineEvidence(contents, blockVariable, "authors?");
+            if (!author.isEmpty()) {
+                dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, "author", author, Confidence.HIGHEST);
+            }
+            String homepage = determineEvidence(contents, blockVariable, "homepage");
+            if (!homepage.isEmpty()) {
+                dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, "homepage", homepage, Confidence.HIGHEST);
+            }
+            String license = determineEvidence(contents, blockVariable, "licen[cs]es?");
+            if (!license.isEmpty()) {
+                dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, "license", license, Confidence.HIGHEST);
+            }
 
-            addStringEvidence(version, contents, blockVariable, "version", "version", Confidence.HIGHEST);
+            String version = determineEvidence(contents, blockVariable, "version");
+            if (!version.isEmpty()) {
+                dependency.addEvidence(EvidenceType.VERSION, PODSPEC, "version", version, Confidence.HIGHEST);
+            }
+
         }
 
         setPackagePath(dependency);
@@ -160,16 +173,12 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
      * Extracts evidence from the contents and adds it to the given evidence
      * collection.
      *
-     * @param evidences the evidence collection to update
      * @param contents the text to extract evidence from
      * @param blockVariable the block variable within the content to search for
-     * @param field the name of the field being searched for
      * @param fieldPattern the field pattern within the contents to search for
-     * @param confidence the confidence level of the evidence if found
-     * @return the string that was added as evidence
+     * @return the evidence
      */
-    private String addStringEvidence(EvidenceCollection evidences, String contents,
-            String blockVariable, String field, String fieldPattern, Confidence confidence) {
+    private String determineEvidence(String contents, String blockVariable, String fieldPattern) {
         String value = "";
 
         //capture array value between [ ]
@@ -185,9 +194,6 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
             if (matcher.find()) {
                 value = matcher.group(2);
             }
-        }
-        if (value.length() > 0) {
-            evidences.addEvidence(PODSPEC, field, value, confidence);
         }
         return value;
     }

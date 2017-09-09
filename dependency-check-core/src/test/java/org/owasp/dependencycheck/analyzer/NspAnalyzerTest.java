@@ -11,8 +11,10 @@ import java.io.File;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 
 public class NspAnalyzerTest extends BaseTest {
+
     private NspAnalyzer analyzer;
 
     @Before
@@ -47,18 +49,19 @@ public class NspAnalyzerTest extends BaseTest {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "nsp/package.json"));
         analyzer.analyze(result, null);
 
-        assertEquals(result.getVendorEvidence().toString(), "owasp-nodejs-goat_project ");
-        assertEquals(result.getProductEvidence().toString(), "A tool to learn OWASP Top 10 for node.js developers owasp-nodejs-goat ");
-        assertEquals(result.getVersionEvidence().toString(), "1.3.0 ");
+        assertTrue(result.getEvidence(EvidenceType.VENDOR).toString().contains("owasp-nodejs-goat_project"));
+        assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains("A tool to learn OWASP Top 10 for node.js developers"));
+        assertTrue(result.getEvidence(EvidenceType.VERSION).toString().contains("1.3.0"));
     }
+
     @Test
     public void testAnalyzeEmpty() throws AnalysisException {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "nsp/empty.json"));
         analyzer.analyze(result, null);
 
-        assertEquals(result.getVendorEvidence().size(), 0);
-        assertEquals(result.getProductEvidence().size(), 0);
-        assertEquals(result.getVersionEvidence().size(), 0);
+        assertEquals(result.getEvidence(EvidenceType.VENDOR).size(), 0);
+        assertEquals(result.getEvidence(EvidenceType.PRODUCT).size(), 0);
+        assertEquals(result.getEvidence(EvidenceType.VERSION).size(), 0);
     }
 
     @Test
@@ -66,9 +69,9 @@ public class NspAnalyzerTest extends BaseTest {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "nsp/bundled.deps.package.json"));
         analyzer.analyze(result, null);
 
-        assertEquals(result.getVendorEvidence().toString(), "Philipp Dunkel <pip@pipobscure.com> fsevents_project ");
-        assertEquals(result.getProductEvidence().toString(), "Native Access to Mac OS-X FSEvents fsevents ");
-        assertEquals(result.getVersionEvidence().toString(), "1.1.1 ");
+        assertTrue(result.getEvidence(EvidenceType.VENDOR).toString().contains("Philipp Dunkel <pip@pipobscure.com>"));
+        assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains("Native Access to Mac OS-X FSEvents"));
+        assertTrue(result.getEvidence(EvidenceType.VERSION).toString().contains("1.1.1"));
     }
 
     @Test
@@ -76,20 +79,16 @@ public class NspAnalyzerTest extends BaseTest {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "nsp/license.obj.package.json"));
         analyzer.analyze(result, null);
 
-        assertEquals(result.getVendorEvidence().toString(), "Twitter, Inc. bootstrap_project ");
-        assertEquals(result.getProductEvidence().toString(), "The most popular front-end framework for developing responsive, mobile first projects on the web. bootstrap ");
-        assertEquals(result.getVersionEvidence().toString(), "3.2.0 ");
+        assertTrue(result.getEvidence(EvidenceType.VENDOR).toString().contains("Twitter, Inc."));
+        assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains("The most popular front-end framework for developing responsive, mobile first projects on the web"));
+        assertTrue(result.getEvidence(EvidenceType.VERSION).toString().contains("3.2.0"));
     }
 
     @Test
     public void testAnalyzePackageJsonInNodeModulesDirectory() throws AnalysisException {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "nodejs/node_modules/dns-sync/package.json"));
         analyzer.analyze(result, null);
-        final String vendorString = result.getVendorEvidence().toString();
-
-        // node modules are not scanned
-        assertTrue(vendorString.isEmpty());
-        assertEquals(result.getProductEvidence().size(), 0);
-        assertEquals(result.getVersionEvidence().size(), 0);
+        // node modules are not scanned - no evidence is collected
+        assertTrue(result.size() == 0);
     }
 }

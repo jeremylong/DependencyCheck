@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * @author Jeremy Long
  */
 @NotThreadSafe
-public class Dependency implements Serializable, Comparable<Dependency> {
+public class Dependency extends EvidenceCollection implements Serializable, Comparable<Dependency> {
 
     /**
      * The serial version UID for serialization.
@@ -55,14 +55,6 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Dependency.class);
-    /**
-     * Used as starting point for generating the value in {@link #hashCode()}.
-     */
-    private static final int MAGIC_HASH_INIT_VALUE = 3;
-    /**
-     * Used as a multiplier for generating the value in {@link #hashCode()}.
-     */
-    private static final int MAGIC_HASH_MULTIPLIER = 47;
     /**
      * The actual file path of the dependency on disk.
      */
@@ -90,19 +82,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     /**
      * A list of Identifiers.
      */
-    private Set<Identifier> identifiers;
-    /**
-     * A collection of vendor evidence.
-     */
-    private final EvidenceCollection vendorEvidence;
-    /**
-     * A collection of product evidence.
-     */
-    private final EvidenceCollection productEvidence;
-    /**
-     * A collection of version evidence.
-     */
-    private final EvidenceCollection versionEvidence;
+    private Set<Identifier> identifiers = new TreeSet<>();
     /**
      * The file name to display in reports.
      */
@@ -110,11 +90,11 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     /**
      * A set of identifiers that have been suppressed.
      */
-    private Set<Identifier> suppressedIdentifiers;
+    private Set<Identifier> suppressedIdentifiers = new TreeSet<>();
     /**
      * A set of vulnerabilities that have been suppressed.
      */
-    private SortedSet<Vulnerability> suppressedVulnerabilities;
+    private SortedSet<Vulnerability> suppressedVulnerabilities = new TreeSet<>(new VulnerabilityComparator());
     /**
      * The description of the JAR file.
      */
@@ -126,7 +106,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     /**
      * A list of vulnerabilities for this dependency.
      */
-    private SortedSet<Vulnerability> vulnerabilities;
+    private SortedSet<Vulnerability> vulnerabilities = new TreeSet<>(new VulnerabilityComparator());
     /**
      * A collection of related dependencies.
      */
@@ -167,13 +147,7 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * Constructs a new Dependency object.
      */
     public Dependency() {
-        vendorEvidence = new EvidenceCollection();
-        productEvidence = new EvidenceCollection();
-        versionEvidence = new EvidenceCollection();
-        identifiers = new TreeSet<>();
-        vulnerabilities = new TreeSet<>(new VulnerabilityComparator());
-        suppressedIdentifiers = new TreeSet<>();
-        suppressedVulnerabilities = new TreeSet<>(new VulnerabilityComparator());
+        //empty contructor
     }
 
     /**
@@ -189,7 +163,8 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * Constructs a new Dependency object.
      *
      * @param file the File to create the dependency object from.
-     * @param isVirtual specifies if the dependency is virtual indicating the file doesn't actually exist.
+     * @param isVirtual specifies if the dependency is virtual indicating the
+     * file doesn't actually exist.
      */
     public Dependency(File file, boolean isVirtual) {
         this();
@@ -401,13 +376,13 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      */
     public void addAsEvidence(String source, MavenArtifact mavenArtifact, Confidence confidence) {
         if (mavenArtifact.getGroupId() != null && !mavenArtifact.getGroupId().isEmpty()) {
-            this.getVendorEvidence().addEvidence(source, "groupid", mavenArtifact.getGroupId(), confidence);
+            this.addEvidence(EvidenceType.VENDOR, source, "groupid", mavenArtifact.getGroupId(), confidence);
         }
         if (mavenArtifact.getArtifactId() != null && !mavenArtifact.getArtifactId().isEmpty()) {
-            this.getProductEvidence().addEvidence(source, "artifactid", mavenArtifact.getArtifactId(), confidence);
+            this.addEvidence(EvidenceType.PRODUCT, source, "artifactid", mavenArtifact.getArtifactId(), confidence);
         }
         if (mavenArtifact.getVersion() != null && !mavenArtifact.getVersion().isEmpty()) {
-            this.getVersionEvidence().addEvidence(source, "version", mavenArtifact.getVersion(), confidence);
+            this.addEvidence(EvidenceType.VERSION, source, "version", mavenArtifact.getVersion(), confidence);
         }
         if (mavenArtifact.getArtifactUrl() != null && !mavenArtifact.getArtifactUrl().isEmpty()) {
             boolean found = false;
@@ -491,60 +466,6 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      */
     public void addSuppressedVulnerability(Vulnerability vulnerability) {
         this.suppressedVulnerabilities.add(vulnerability);
-    }
-
-    /**
-     * Returns the evidence used to identify this dependency.
-     *
-     * @return an EvidenceCollection.
-     */
-    public EvidenceCollection getEvidence() {
-        return EvidenceCollection.merge(this.productEvidence, this.vendorEvidence, this.versionEvidence);
-    }
-
-    /**
-     * Returns the evidence used to identify this dependency.
-     *
-     * @return an EvidenceCollection.
-     */
-    public Set<Evidence> getEvidenceForDisplay() {
-        return EvidenceCollection.mergeForDisplay(this.productEvidence, this.vendorEvidence, this.versionEvidence);
-    }
-
-    /**
-     * Returns the evidence used to identify this dependency.
-     *
-     * @return an EvidenceCollection.
-     */
-    public EvidenceCollection getEvidenceUsed() {
-        return EvidenceCollection.mergeUsed(this.productEvidence, this.vendorEvidence, this.versionEvidence);
-    }
-
-    /**
-     * Gets the Vendor Evidence.
-     *
-     * @return an EvidenceCollection.
-     */
-    public EvidenceCollection getVendorEvidence() {
-        return this.vendorEvidence;
-    }
-
-    /**
-     * Gets the Product Evidence.
-     *
-     * @return an EvidenceCollection.
-     */
-    public EvidenceCollection getProductEvidence() {
-        return this.productEvidence;
-    }
-
-    /**
-     * Gets the Version Evidence.
-     *
-     * @return an EvidenceCollection.
-     */
-    public EvidenceCollection getVersionEvidence() {
-        return this.versionEvidence;
     }
 
     /**
@@ -773,13 +694,9 @@ public class Dependency implements Serializable, Comparable<Dependency> {
                 .append(this.md5sum, other.md5sum)
                 .append(this.sha1sum, other.sha1sum)
                 .append(this.identifiers, other.identifiers)
-                .append(this.vendorEvidence, other.vendorEvidence)
-                .append(this.productEvidence, other.productEvidence)
-                .append(this.versionEvidence, other.versionEvidence)
                 .append(this.description, other.description)
                 .append(this.license, other.license)
                 .append(this.vulnerabilities, other.vulnerabilities)
-                //.append(this.relatedDependencies, other.relatedDependencies)
                 .append(this.projectReferences, other.projectReferences)
                 .append(this.availableVersions, other.availableVersions)
                 .isEquals();
@@ -792,20 +709,17 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(MAGIC_HASH_INIT_VALUE, MAGIC_HASH_MULTIPLIER)
+        return new HashCodeBuilder(3, 47)
+                .appendSuper(super.hashCode())
                 .append(actualFilePath)
                 .append(filePath)
                 .append(fileName)
                 .append(md5sum)
                 .append(sha1sum)
                 .append(identifiers)
-                .append(vendorEvidence)
-                .append(productEvidence)
-                .append(versionEvidence)
                 .append(description)
                 .append(license)
                 .append(vulnerabilities)
-                //.append(relatedDependencies)
                 .append(projectReferences)
                 .append(availableVersions)
                 .toHashCode();

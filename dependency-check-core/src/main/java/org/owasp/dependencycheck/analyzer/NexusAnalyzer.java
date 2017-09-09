@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
@@ -236,7 +237,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
             dependency.addAsEvidence("nexus", ma, Confidence.HIGH);
             boolean pomAnalyzed = false;
             LOGGER.debug("POM URL {}", ma.getPomUrl());
-            for (Evidence e : dependency.getVendorEvidence()) {
+            for (Evidence e : dependency.getEvidence(EvidenceType.VENDOR)) {
                 if ("pom".equals(e.getSource())) {
                     pomAnalyzed = true;
                     break;

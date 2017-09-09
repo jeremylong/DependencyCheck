@@ -37,6 +37,7 @@ import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.Reference;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.exception.InitializationException;
@@ -440,7 +441,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         Vulnerability vulnerability = null;
         if (null != dependency) {
             final String version = nextLine.substring(VERSION.length());
-            dependency.getVersionEvidence().addEvidence(
+            dependency.addEvidence(EvidenceType.VERSION,
                     "bundler-audit",
                     "Version",
                     version,
@@ -480,7 +481,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
 
         FileUtils.write(gemFile, displayFileName, Charset.defaultCharset()); // unique contents to avoid dependency bundling
         final Dependency dependency = new Dependency(gemFile);
-        dependency.getProductEvidence().addEvidence("bundler-audit", "Name", gem, Confidence.HIGHEST);
+        dependency.addEvidence(EvidenceType.PRODUCT, "bundler-audit", "Name", gem, Confidence.HIGHEST);
         dependency.setDisplayFileName(displayFileName);
         dependency.setFileName(fileName);
         dependency.setFilePath(filePath);

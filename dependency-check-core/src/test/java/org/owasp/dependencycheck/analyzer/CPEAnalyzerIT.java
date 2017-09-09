@@ -34,6 +34,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
  *
@@ -137,8 +138,14 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         fp.analyze(dep, null);
 
         if (expResult != null) {
-            Identifier expIdentifier = new Identifier("cpe", expResult, expResult);
-            assertTrue("Incorrect match: { dep:'" + dep.getFileName() + "' }", dep.getIdentifiers().contains(expIdentifier));
+            boolean found = false;
+            for (Identifier i : dep.getIdentifiers()) {
+                if (expResult.equals(i.getValue())) {
+                    found = true;
+                    break;
+                }
+            }
+            assertTrue("Incorrect match: { dep:'" + dep.getFileName() + "' }", found);
         } else {
             for (Identifier i : dep.getIdentifiers()) {
                 assertFalse(String.format("%s - found a CPE identifier when should have been none (found '%s')", dep.getFileName(), i.getValue()), "cpe".equals(i.getType()));
@@ -201,14 +208,20 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         instance.close();
 
         String expResult = "cpe:/a:apache:struts:2.1.2";
-        Identifier expIdentifier = new Identifier("cpe", expResult, expResult);
 
         for (Identifier i : commonValidator.getIdentifiers()) {
             assertFalse("Apache Common Validator - found a CPE identifier?", "cpe".equals(i.getType()));
         }
 
         assertTrue("Incorrect match size - struts", struts.getIdentifiers().size() >= 1);
-        assertTrue("Incorrect match - struts", struts.getIdentifiers().contains(expIdentifier));
+        boolean found = false;
+        for (Identifier i : struts.getIdentifiers()) {
+            if (expResult.equals(i.getValue())) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("Incorrect match - struts", found);
         assertTrue("Incorrect match size - spring3 - " + spring3.getIdentifiers().size(), spring3.getIdentifiers().size() >= 1);
 
         jarAnalyzer.close();
@@ -223,9 +236,9 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
     @Test
     public void testDetermineIdentifiers() throws Exception {
         Dependency openssl = new Dependency();
-        openssl.getVendorEvidence().addEvidence("test", "vendor", "openssl", Confidence.HIGHEST);
-        openssl.getProductEvidence().addEvidence("test", "product", "openssl", Confidence.HIGHEST);
-        openssl.getVersionEvidence().addEvidence("test", "version", "1.0.1c", Confidence.HIGHEST);
+        openssl.addEvidence(EvidenceType.VENDOR, "test", "vendor", "openssl", Confidence.HIGHEST);
+        openssl.addEvidence(EvidenceType.PRODUCT, "test", "product", "openssl", Confidence.HIGHEST);
+        openssl.addEvidence(EvidenceType.VERSION, "test", "version", "1.0.1c", Confidence.HIGHEST);
 
         CPEAnalyzer instance = new CPEAnalyzer();
         Engine engine = new Engine(getSettings());
@@ -234,12 +247,19 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         instance.initialize(engine);
         instance.determineIdentifiers(openssl, "openssl", "openssl", Confidence.HIGHEST);
         instance.close();
+        engine.close();
 
         String expResult = "cpe:/a:openssl:openssl:1.0.1c";
         Identifier expIdentifier = new Identifier("cpe", expResult, expResult);
+        boolean found = false;
+        for (Identifier i : openssl.getIdentifiers()) {
+            if (expResult.equals(i.getValue())) {
+                found = true;
+                break;
+            }
+        }
 
-        assertTrue(openssl.getIdentifiers().contains(expIdentifier));
-        engine.close();
+        assertTrue("OpenSSL identifier not found", found);
     }
 
     /**

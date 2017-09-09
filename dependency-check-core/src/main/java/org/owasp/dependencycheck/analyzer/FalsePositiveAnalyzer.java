@@ -32,6 +32,8 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.Identifier;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
@@ -157,7 +159,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                 }
             }
         }
-        if (mustContain                != null) {
+        if (mustContain != null) {
             final Iterator<Identifier> itr = dependency.getIdentifiers().iterator();
             while (itr.hasNext()) {
                 final Identifier i = itr.next();
@@ -287,7 +289,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      *
      * @param dependency the dependency to analyze
      */
-    private void removeBadMatches(Dependency dependency) {
+    protected void removeBadMatches(Dependency dependency) {
         final Set<Identifier> identifiers = dependency.getIdentifiers();
         final Iterator<Identifier> itr = identifiers.iterator();
 
@@ -346,9 +348,25 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                 } else if (i.getValue().startsWith("cpe:/a:apache:maven")
                         && !dependency.getFileName().toLowerCase().matches("maven-core-[\\d\\.]+\\.jar")) {
                     itr.remove();
-                } else if (i.getValue().startsWith("cpe:/a:m-core:m-core")
-                        && !dependency.getEvidenceUsed().containsUsedString("m-core")) {
-                    itr.remove();
+                } else if (i.getValue().startsWith("cpe:/a:m-core:m-core")) {
+                    boolean found = false;
+                    for (Evidence e : dependency.getEvidence(EvidenceType.PRODUCT)) {
+                        if ("m-core".equalsIgnoreCase(e.getValue())) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        for (Evidence e : dependency.getEvidence(EvidenceType.VENDOR)) {
+                            if ("m-core".equalsIgnoreCase(e.getValue())) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!found) {
+                        itr.remove();
+                    }
                 } else if (i.getValue().startsWith("cpe:/a:jboss:jboss")
                         && !dependency.getFileName().toLowerCase().matches("jboss-?[\\d\\.-]+(GA)?\\.jar")) {
                     itr.remove();

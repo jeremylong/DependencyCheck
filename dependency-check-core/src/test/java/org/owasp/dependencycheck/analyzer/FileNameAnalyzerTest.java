@@ -24,6 +24,7 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
@@ -67,10 +68,10 @@ public class FileNameAnalyzerTest extends BaseTest {
         Dependency resultAxis = new Dependency(axis);
         FileNameAnalyzer instance = new FileNameAnalyzer();
         instance.analyze(resultStruts, null);
-        assertTrue(resultStruts.getVendorEvidence().toString().toLowerCase().contains("struts"));
+        assertTrue(resultStruts.getEvidence(EvidenceType.VENDOR).toString().toLowerCase().contains("struts"));
 
         instance.analyze(resultAxis, null);
-        assertTrue(resultStruts.getVersionEvidence().toString().toLowerCase().contains("2.1.2"));
+        assertTrue(resultStruts.getEvidence(EvidenceType.VERSION).toString().toLowerCase().contains("2.1.2"));
 
     }
 

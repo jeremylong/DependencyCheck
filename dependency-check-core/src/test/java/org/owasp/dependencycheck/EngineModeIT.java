@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -23,6 +22,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Assume;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.utils.FileUtils;
 
 /**
@@ -80,8 +80,8 @@ public class EngineModeIT extends BaseTest {
             dependencies = engine.getDependencies();
             assertThat(dependencies.length, is(1));
             Dependency dependency = dependencies[0];
-            assertTrue(dependency.getVendorEvidence().toString().toLowerCase().contains("apache"));
-            assertTrue(dependency.getVendorEvidence().getWeighting().contains("apache"));
+            assertTrue(dependency.getEvidence(EvidenceType.VENDOR).toString().toLowerCase().contains("apache"));
+            assertTrue(dependency.getVendorWeightings().contains("apache"));
             assertTrue(dependency.getVulnerabilities().isEmpty());
         }
 
@@ -115,8 +115,8 @@ public class EngineModeIT extends BaseTest {
             Dependency[] dependencies = engine.getDependencies();
             assertThat(dependencies.length, is(1));
             Dependency dependency = dependencies[0];
-            assertTrue(dependency.getVendorEvidence().toString().toLowerCase().contains("apache"));
-            assertTrue(dependency.getVendorEvidence().getWeighting().contains("apache"));
+            assertTrue(dependency.getEvidence(EvidenceType.VENDOR).toString().toLowerCase().contains("apache"));
+            assertTrue(dependency.getVendorWeightings().contains("apache"));
             assertFalse(dependency.getVulnerabilities().isEmpty());
         }
     }
@@ -127,10 +127,6 @@ public class EngineModeIT extends BaseTest {
         assertThat(Files.exists(directory), is(true));
         assertThat(Files.isDirectory(directory), is(true));
         Path database = directory.resolve(getSettings().getString(Settings.KEYS.DB_FILE_NAME));
-        //System.err.println(database.toString());
-        //for (String f : directory.toFile().list()) {
-        //    System.err.println(f);
-        //}
         assertThat(Files.exists(database), is(exists));
     }
 }

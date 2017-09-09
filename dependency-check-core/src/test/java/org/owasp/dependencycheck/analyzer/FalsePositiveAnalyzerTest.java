@@ -20,7 +20,10 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.utils.Settings;
 
 /**
  *
@@ -51,10 +54,22 @@ public class FalsePositiveAnalyzerTest extends BaseTest {
     }
 
     /**
-     * Test of analyze method, of class FalsePositiveAnalyzer.
+     * Test of getAnalyzerEnabledSettingKey method, of class
+     * FalsePositiveAnalyzer.
      */
     @Test
-    public void testAnalyze() throws Exception {
+    public void testGetAnalyzerEnabledSettingKey() {
+        FalsePositiveAnalyzer instance = new FalsePositiveAnalyzer();
+        String expResult = Settings.KEYS.ANALYZER_FALSE_POSITIVE_ENABLED;
+        String result = instance.getAnalyzerEnabledSettingKey();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of analyzeDependency method, of class FalsePositiveAnalyzer.
+     */
+    @Test
+    public void testAnalyzeDependency() throws Exception {
         Dependency dependency = new Dependency();
         dependency.setFileName("pom.xml");
         dependency.setFilePath("pom.xml");
@@ -65,6 +80,29 @@ public class FalsePositiveAnalyzerTest extends BaseTest {
         instance.analyze(dependency, engine);
         int after = dependency.getIdentifiers().size();
         assertTrue(before > after);
+    }
+
+    /**
+     * Test of removeBadMatches method, of class FalsePositiveAnalyzer.
+     */
+    @Test
+    public void testRemoveBadMatches() {
+        Dependency dependency = new Dependency();
+        dependency.setFileName("some.jar");
+        dependency.setFilePath("some.jar");
+        dependency.addIdentifier("cpe", "cpe:/a:m-core:m-core", "");
+
+        assertEquals(1, dependency.getIdentifiers().size());
+
+        FalsePositiveAnalyzer instance = new FalsePositiveAnalyzer();
+        instance.removeBadMatches(dependency);
+
+        assertEquals(0, dependency.getIdentifiers().size());
+        dependency.addIdentifier("cpe", "cpe:/a:m-core:m-core", "");
+        dependency.addEvidence(EvidenceType.PRODUCT,"test", "name", "m-core", Confidence.HIGHEST);
+
+        instance.removeBadMatches(dependency);
+        assertEquals(1, dependency.getIdentifiers().size());
     }
 
 }

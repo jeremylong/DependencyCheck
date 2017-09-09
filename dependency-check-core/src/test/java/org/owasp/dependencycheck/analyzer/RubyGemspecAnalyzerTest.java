@@ -29,6 +29,7 @@ import java.io.File;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
  * Unit tests for {@link RubyGemspecAnalyzer}.
@@ -96,13 +97,13 @@ public class RubyGemspecAnalyzerTest extends BaseTest {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                 "ruby/vulnerable/gems/specifications/rest-client-1.7.2.gemspec"));
         analyzer.analyze(result, null);
-        final String vendorString = result.getVendorEvidence().toString();
+        final String vendorString = result.getEvidence(EvidenceType.VENDOR).toString();
         assertThat(vendorString, containsString("REST Client Team"));
         assertThat(vendorString, containsString("rest-client_project"));
         assertThat(vendorString, containsString("rest.client@librelist.com"));
         assertThat(vendorString, containsString("https://github.com/rest-client/rest-client"));
-        assertThat(result.getProductEvidence().toString(), containsString("rest-client"));
-        assertThat(result.getVersionEvidence().toString(), containsString("1.7.2"));
+        assertThat(result.getEvidence(EvidenceType.PRODUCT).toString(), containsString("rest-client"));
+        assertThat(result.getEvidence(EvidenceType.VERSION).toString(), containsString("1.7.2"));
     }
     
     /**
@@ -115,6 +116,6 @@ public class RubyGemspecAnalyzerTest extends BaseTest {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                 "ruby/vulnerable/gems/rails-4.1.15/vendor/bundle/ruby/2.2.0/gems/pg-0.18.4/Rakefile"));
         analyzer.analyze(result, null);
-        assertTrue(result.getEvidence().size()>0);
+        assertTrue(result.size()>0);
     }
 }

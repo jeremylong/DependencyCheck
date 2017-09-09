@@ -32,7 +32,6 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.dependency.EvidenceCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +46,7 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.UrlStringUtils;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
  * Used to analyze a Wheel or egg distribution files, or their contents in
@@ -279,20 +279,15 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static void collectWheelMetadata(Dependency dependency, File file) {
         final InternetHeaders headers = getManifestProperties(file);
-        addPropertyToEvidence(headers, dependency.getVersionEvidence(),
-                "Version", Confidence.HIGHEST);
-        addPropertyToEvidence(headers, dependency.getProductEvidence(), "Name",
-                Confidence.HIGHEST);
+        addPropertyToEvidence(dependency, EvidenceType.VERSION, Confidence.HIGHEST, headers, "Version");
+        addPropertyToEvidence(dependency, EvidenceType.PRODUCT, Confidence.HIGHEST, headers, "Name");
         final String url = headers.getHeader("Home-page", null);
-        final EvidenceCollection vendorEvidence = dependency
-                .getVendorEvidence();
         if (StringUtils.isNotBlank(url)) {
             if (UrlStringUtils.isUrl(url)) {
-                vendorEvidence.addEvidence(METADATA, "vendor", url,
-                        Confidence.MEDIUM);
+                dependency.addEvidence(EvidenceType.VENDOR, METADATA, "vendor", url, Confidence.MEDIUM);
             }
         }
-        addPropertyToEvidence(headers, vendorEvidence, "Author", Confidence.LOW);
+        addPropertyToEvidence(dependency, EvidenceType.VENDOR, Confidence.LOW, headers, "Author");
         final String summary = headers.getHeader("Summary", null);
         if (StringUtils.isNotBlank(summary)) {
             JarAnalyzer.addDescription(dependency, summary, METADATA, "summary");
@@ -302,17 +297,18 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Adds a value to the evidence collection.
      *
+     * @param dependency the dependency being analyzed
+     * @param type the type of evidence to add
      * @param headers the properties collection
      * @param evidence the evidence collection to add the value
      * @param property the property name
-     * @param confidence the confidence of the evidence
      */
-    private static void addPropertyToEvidence(InternetHeaders headers,
-            EvidenceCollection evidence, String property, Confidence confidence) {
+    private static void addPropertyToEvidence(Dependency dependency, EvidenceType type, Confidence confidence,
+            InternetHeaders headers, String property) {
         final String value = headers.getHeader(property, null);
         LOGGER.debug("Property: {}, Value: {}", property, value);
         if (StringUtils.isNotBlank(value)) {
-            evidence.addEvidence(METADATA, property, value, confidence);
+            dependency.addEvidence(type, METADATA, property, value, confidence);
         }
     }
 

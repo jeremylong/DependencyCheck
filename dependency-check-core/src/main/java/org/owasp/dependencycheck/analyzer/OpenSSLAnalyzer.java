@@ -32,6 +32,7 @@ import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
@@ -184,15 +185,15 @@ public class OpenSSLAnalyzer extends AbstractFileTypeAnalyzer {
         if (!contents.isEmpty()) {
             final Matcher matcher = VERSION_PATTERN.matcher(contents);
             if (matcher.find()) {
-                dependency.getVersionEvidence().addEvidence(OPENSSLV_H, "Version Constant",
+                dependency.addEvidence(EvidenceType.VERSION, OPENSSLV_H, "Version Constant",
                         getOpenSSLVersion(Long.parseLong(matcher.group(1), HEXADECIMAL)), Confidence.HIGH);
                 found = true;
             }
         }
         if (found) {
             dependency.setDisplayFileName(parentName + File.separatorChar + OPENSSLV_H);
-            dependency.getVendorEvidence().addEvidence(OPENSSLV_H, "Vendor", "OpenSSL", Confidence.HIGHEST);
-            dependency.getProductEvidence().addEvidence(OPENSSLV_H, "Product", "OpenSSL", Confidence.HIGHEST);
+            dependency.addEvidence(EvidenceType.VENDOR, OPENSSLV_H, "Vendor", "OpenSSL", Confidence.HIGHEST);
+            dependency.addEvidence(EvidenceType.PRODUCT, OPENSSLV_H, "Product", "OpenSSL", Confidence.HIGHEST);
         } else {
             engine.removeDependency(dependency);
         }

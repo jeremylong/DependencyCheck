@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
  * Used to analyze a composer.lock file for a composer PHP app.
@@ -113,9 +114,9 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
                 final MessageDigest sha1 = getSha1MessageDigest();
                 d.setFilePath(filePath);
                 d.setSha1sum(Checksum.getHex(sha1.digest(filePath.getBytes(Charset.defaultCharset()))));
-                d.getVendorEvidence().addEvidence(COMPOSER_LOCK, "vendor", dep.getGroup(), Confidence.HIGHEST);
-                d.getProductEvidence().addEvidence(COMPOSER_LOCK, "product", dep.getProject(), Confidence.HIGHEST);
-                d.getVersionEvidence().addEvidence(COMPOSER_LOCK, "version", dep.getVersion(), Confidence.HIGHEST);
+                d.addEvidence(EvidenceType.VENDOR, COMPOSER_LOCK, "vendor", dep.getGroup(), Confidence.HIGHEST);
+                d.addEvidence(EvidenceType.PRODUCT, COMPOSER_LOCK, "product", dep.getProject(), Confidence.HIGHEST);
+                d.addEvidence(EvidenceType.VERSION, COMPOSER_LOCK, "version", dep.getVersion(), Confidence.HIGHEST);
                 LOGGER.info("Adding dependency {}", d);
                 engine.addDependency(d);
             }

@@ -28,6 +28,7 @@ import java.io.File;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
  * Unit tests for OpenSSLAnalyzerAnalyzer.
@@ -108,8 +109,8 @@ public class OpenSSLAnalyzerTest extends BaseTest {
                 this,
                 "openssl/opensslv.h"));
         analyzer.analyze(result, null);
-        assertThat(result.getProductEvidence().toString(), containsString("OpenSSL"));
-        assertThat(result.getVendorEvidence().toString(), containsString("OpenSSL"));
-        assertThat(result.getVersionEvidence().toString(), containsString("1.0.2c"));
+        assertThat(result.getEvidence(EvidenceType.PRODUCT).toString(), containsString("OpenSSL"));
+        assertThat(result.getEvidence(EvidenceType.VENDOR).toString(), containsString("OpenSSL"));
+        assertThat(result.getEvidence(EvidenceType.VERSION).toString(), containsString("1.0.2c"));
     }
 }

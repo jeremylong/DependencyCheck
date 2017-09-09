@@ -40,6 +40,7 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
@@ -130,21 +131,8 @@ public class AssemblyAnalyzerTest extends BaseTest {
         File f = BaseTest.getResourceAsFile(this, "GrokAssembly.exe");
         Dependency d = new Dependency(f);
         analyzer.analyze(d, null);
-        boolean foundVendor = false;
-        for (Evidence e : d.getVendorEvidence().getEvidence("grokassembly", "vendor")) {
-            if ("OWASP".equals(e.getValue())) {
-                foundVendor = true;
-            }
-        }
-        assertTrue(foundVendor);
-
-        boolean foundProduct = false;
-        for (Evidence e : d.getProductEvidence().getEvidence("grokassembly", "product")) {
-            if ("GrokAssembly".equals(e.getValue())) {
-                foundProduct = true;
-            }
-        }
-        assertTrue(foundProduct);
+        assertTrue(d.contains(EvidenceType.VENDOR, new Evidence("grokassembly", "vendor", "OWASP", Confidence.HIGH)));
+        assertTrue(d.contains(EvidenceType.PRODUCT, new Evidence("grokassembly", "product", "GrokAssembly", Confidence.HIGH)));
     }
 
     @Test
@@ -154,9 +142,9 @@ public class AssemblyAnalyzerTest extends BaseTest {
 
         Dependency d = new Dependency(f);
         analyzer.analyze(d, null);
-        assertTrue(d.getVersionEvidence().getEvidence().contains(new Evidence("grokassembly", "version", "1.2.13.0", Confidence.HIGHEST)));
-        assertTrue(d.getVendorEvidence().getEvidence().contains(new Evidence("grokassembly", "vendor", "The Apache Software Foundation", Confidence.HIGH)));
-        assertTrue(d.getProductEvidence().getEvidence().contains(new Evidence("grokassembly", "product", "log4net", Confidence.HIGH)));
+        assertTrue(d.contains(EvidenceType.VERSION, new Evidence("grokassembly", "version", "1.2.13.0", Confidence.HIGHEST)));
+        assertTrue(d.contains(EvidenceType.VENDOR, new Evidence("grokassembly", "vendor", "The Apache Software Foundation", Confidence.HIGH)));
+        assertTrue(d.contains(EvidenceType.PRODUCT, new Evidence("grokassembly", "product", "log4net", Confidence.HIGH)));
     }
 
     @Test

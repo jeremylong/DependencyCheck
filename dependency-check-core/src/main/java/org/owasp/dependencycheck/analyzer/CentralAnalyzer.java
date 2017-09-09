@@ -37,6 +37,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
@@ -217,7 +218,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.debug("Central analyzer found artifact ({}) for dependency ({})", ma, dependency.getFileName());
                 dependency.addAsEvidence("central", ma, confidence);
                 boolean pomAnalyzed = false;
-                for (Evidence e : dependency.getVendorEvidence()) {
+                for (Evidence e : dependency.getEvidence(EvidenceType.VENDOR)) {
                     if ("pom".equals(e.getSource())) {
                         pomAnalyzed = true;
                         break;

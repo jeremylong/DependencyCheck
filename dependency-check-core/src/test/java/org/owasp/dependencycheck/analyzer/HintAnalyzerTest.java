@@ -28,6 +28,7 @@ import org.owasp.dependencycheck.BaseDBTestCase;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.utils.Settings;
 
 /**
@@ -73,10 +74,10 @@ public class HintAnalyzerTest extends BaseDBTestCase {
         getSettings().setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
         getSettings().setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
         Engine engine = new Engine(getSettings());
-        
+
         engine.scan(guice);
         engine.scan(spring);
-            engine.analyzeDependencies();
+        engine.analyzeDependencies();
         Dependency gdep = null;
         Dependency sdep = null;
         for (Dependency d : engine.getDependencies()) {
@@ -91,18 +92,16 @@ public class HintAnalyzerTest extends BaseDBTestCase {
         final Evidence springTest3 = new Evidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
         final Evidence springTest4 = new Evidence("hint analyzer", "product", "springsource_spring_framework", Confidence.HIGH);
         final Evidence springTest5 = new Evidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
-        
-        Set<Evidence> evidence = gdep.getEvidence().getEvidence();
-        assertFalse(evidence.contains(springTest1));
-        assertFalse(evidence.contains(springTest2));
-        assertFalse(evidence.contains(springTest3));
-        assertFalse(evidence.contains(springTest4));
-        assertFalse(evidence.contains(springTest5));
-        
-        evidence = sdep.getEvidence().getEvidence();
-        assertTrue(evidence.contains(springTest1));
-        assertTrue(evidence.contains(springTest2));
-        assertTrue(evidence.contains(springTest3));
+
+        assertFalse(gdep.contains(EvidenceType.PRODUCT, springTest1));
+        assertFalse(gdep.contains(EvidenceType.VENDOR, springTest2));
+        assertFalse(gdep.contains(EvidenceType.VENDOR, springTest3));
+        assertFalse(gdep.contains(EvidenceType.PRODUCT, springTest4));
+        assertFalse(gdep.contains(EvidenceType.VENDOR, springTest5));
+
+        assertTrue(sdep.contains(EvidenceType.PRODUCT, springTest1));
+        assertTrue(sdep.contains(EvidenceType.VENDOR, springTest2));
+        assertTrue(sdep.contains(EvidenceType.VENDOR, springTest3));
         //assertTrue(evidence.contains(springTest4));
         //assertTrue(evidence.contains(springTest5));
     }
@@ -118,21 +117,21 @@ public class HintAnalyzerTest extends BaseDBTestCase {
         instance.initializeSettings(getSettings());
         instance.initialize(null);
         Dependency d = new Dependency();
-        d.getVersionEvidence().addEvidence("version source", "given version name", "1.2.3", Confidence.HIGH);
-        d.getVersionEvidence().addEvidence("hint analyzer", "remove version name", "value", Confidence.HIGH);
-        d.getVendorEvidence().addEvidence("hint analyzer", "remove vendor name", "vendor", Confidence.HIGH);
-        d.getProductEvidence().addEvidence("hint analyzer", "remove product name", "product", Confidence.HIGH);
-        d.getVersionEvidence().addEvidence("hint analyzer", "other version name", "value", Confidence.HIGH);
-        d.getVendorEvidence().addEvidence("hint analyzer", "other vendor name", "vendor", Confidence.HIGH);
-        d.getProductEvidence().addEvidence("hint analyzer", "other product name", "product", Confidence.HIGH);
-        
-        assertEquals("vendor evidence mismatch", 2, d.getVendorEvidence().size());
-        assertEquals("product evidence mismatch", 2, d.getProductEvidence().size());
-        assertEquals("version evidence mismatch", 3, d.getVersionEvidence().size());
+        d.addEvidence(EvidenceType.VERSION, "version source", "given version name", "1.2.3", Confidence.HIGH);
+        d.addEvidence(EvidenceType.VERSION, "hint analyzer", "remove version name", "value", Confidence.HIGH);
+        d.addEvidence(EvidenceType.VENDOR, "hint analyzer", "remove vendor name", "vendor", Confidence.HIGH);
+        d.addEvidence(EvidenceType.PRODUCT, "hint analyzer", "remove product name", "product", Confidence.HIGH);
+        d.addEvidence(EvidenceType.VERSION, "hint analyzer", "other version name", "value", Confidence.HIGH);
+        d.addEvidence(EvidenceType.VENDOR, "hint analyzer", "other vendor name", "vendor", Confidence.HIGH);
+        d.addEvidence(EvidenceType.PRODUCT, "hint analyzer", "other product name", "product", Confidence.HIGH);
+
+        assertEquals("vendor evidence mismatch", 2, d.getEvidence(EvidenceType.VENDOR).size());
+        assertEquals("product evidence mismatch", 2, d.getEvidence(EvidenceType.PRODUCT).size());
+        assertEquals("version evidence mismatch", 3, d.getEvidence(EvidenceType.VERSION).size());
         instance.analyze(d, null);
-        assertEquals("vendor evidence mismatch", 1, d.getVendorEvidence().size());
-        assertEquals("product evidence mismatch", 1, d.getProductEvidence().size());
-        assertEquals("version evidence mismatch", 2, d.getVersionEvidence().size());
-        
+        assertEquals("vendor evidence mismatch", 1, d.getEvidence(EvidenceType.VENDOR).size());
+        assertEquals("product evidence mismatch", 1, d.getEvidence(EvidenceType.PRODUCT).size());
+        assertEquals("version evidence mismatch", 2, d.getEvidence(EvidenceType.VERSION).size());
+
     }
 }

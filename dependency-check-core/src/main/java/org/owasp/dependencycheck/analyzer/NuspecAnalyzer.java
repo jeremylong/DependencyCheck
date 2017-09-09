@@ -34,6 +34,7 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import javax.annotation.concurrent.ThreadSafe;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
@@ -140,13 +141,13 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
             }
 
             if (np.getOwners() != null) {
-                dependency.getVendorEvidence().addEvidence("nuspec", "owners", np.getOwners(), Confidence.HIGHEST);
+                dependency.addEvidence(EvidenceType.VENDOR,"nuspec", "owners", np.getOwners(), Confidence.HIGHEST);
             }
-            dependency.getVendorEvidence().addEvidence("nuspec", "authors", np.getAuthors(), Confidence.HIGH);
-            dependency.getVersionEvidence().addEvidence("nuspec", "version", np.getVersion(), Confidence.HIGHEST);
-            dependency.getProductEvidence().addEvidence("nuspec", "id", np.getId(), Confidence.HIGHEST);
+            dependency.addEvidence(EvidenceType.VENDOR,"nuspec", "authors", np.getAuthors(), Confidence.HIGH);
+            dependency.addEvidence(EvidenceType.VERSION,"nuspec", "version", np.getVersion(), Confidence.HIGHEST);
+            dependency.addEvidence(EvidenceType.PRODUCT,"nuspec", "id", np.getId(), Confidence.HIGHEST);
             if (np.getTitle() != null) {
-                dependency.getProductEvidence().addEvidence("nuspec", "title", np.getTitle(), Confidence.MEDIUM);
+                dependency.addEvidence(EvidenceType.PRODUCT, "nuspec", "title", np.getTitle(), Confidence.MEDIUM);
             }
         } catch (Throwable e) {
             throw new AnalysisException(e);

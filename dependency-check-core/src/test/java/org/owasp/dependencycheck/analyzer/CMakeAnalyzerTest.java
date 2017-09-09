@@ -42,6 +42,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
  * Unit tests for CmakeAnalyzer.
@@ -132,10 +134,16 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
         final String product = "zlib";
         assertProductEvidence(result, product);
     }
-    
+
     private void assertProductEvidence(Dependency result, String product) {
-        assertTrue("Expected product evidence to contain \"" + product + "\".",
-                result.getProductEvidence().toString().contains(product));
+        boolean found = false;
+        for (Evidence e : result.getEvidence(EvidenceType.PRODUCT)) {
+            if (product.equals(e.getValue())) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("Expected product evidence to contain \"" + product + "\".", found);
     }
 
     /**
@@ -153,19 +161,25 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
         assertProductEvidence(result, "libavcodec");
         assertVersionEvidence(result, "55.18.102");
         assertFalse("ALIASOF_ prefix shouldn't be present.",
-                Pattern.compile("\\bALIASOF_\\w+").matcher(result.getProductEvidence().toString()).find());
+                Pattern.compile("\\bALIASOF_\\w+").matcher(result.getEvidence(EvidenceType.PRODUCT).toString()).find());
         final Dependency[] dependencies = engine.getDependencies();
         assertEquals("Number of additional dependencies should be 4.", 4, dependencies.length);
         final Dependency last = dependencies[3];
         assertProductEvidence(last, "libavresample");
         assertVersionEvidence(last, "1.0.1");
     }
-    
+
     private void assertVersionEvidence(Dependency result, String version) {
-        assertTrue("Expected version evidence to contain \"" + version + "\".",
-                result.getVersionEvidence().toString().contains(version));
+        boolean found = false;
+        for (Evidence e : result.getEvidence(EvidenceType.VERSION)) {
+            if (version.equals(e.getValue())) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("Expected version evidence to contain \"" + version + "\".", found);
     }
-    
+
     @Test(expected = InitializationException.class)
     public void analyzerIsDisabledInCaseOfMissingMessageDigest() throws InitializationException {
         new MockUp<MessageDigest>() {
@@ -174,13 +188,13 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
                 throw new NoSuchAlgorithmException();
             }
         };
-        
+
         analyzer = new CMakeAnalyzer();
         analyzer.setFilesMatched(true);
         assertTrue(analyzer.isEnabled());
         analyzer.initializeSettings(getSettings());
         analyzer.initialize(null);
-        
+
         assertFalse(analyzer.isEnabled());
     }
 }
