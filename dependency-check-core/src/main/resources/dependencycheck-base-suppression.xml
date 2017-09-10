@@ -56,10 +56,25 @@
         <notes><![CDATA[
         1. Sandbox is a php blog platform and should not be flagged as a CPE for java or .net dependencies.
         2. Open media is php and won't be in a jar, dll, etc. See issue #814.
+        3. file and file_project are not assembiles or java libraries
+        4. Shim is *nix and is not an assembly or java lib. 
+        5. date_project is a drupal library
+        6. net dns is a php module
+        7. Even if a node.js package exists - we aren't flagging the entire node.js
+        8. Context project is drupal plugin
         ]]></notes>
-        <filePath regex="true">.*(\.(dll|jar|ear|war|pom)|pom\.xml)$</filePath>
+        <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec)|pom\.xml|package.json)$</filePath>
         <cpe>cpe:/a:sandbox:sandbox</cpe>
-        <cpe>cpe:/a:openmedia:openmedia</cpe>
+        <cpe>cpe:/a:openmedia:openmedia</cpe>        
+        <cpe>cpe:/a:file_project:file</cpe>
+        <cpe>cpe:/a:file:file</cpe>
+        <cpe>cpe:/a:shim:shim</cpe>
+        <cpe>cpe:/a:shim_project:shim</cpe>        
+        <cpe>cpe:/a:date_project:date</cpe>
+        <cpe>cpe:/a:net_dns:net_dns</cpe>
+        <cpe>cpe:/a:nodejs:node.js</cpe>
+        <cpe>cpe:/a:nodejs:nodejs</cpe>
+        <cpe>cpe:/a:context_project:context</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -677,5 +692,21 @@
         ]]></notes>
         <gav regex="true">^com\.vaadin\.external\.google:android-json:.*$</gav>
         <cpe>cpe:/a:google:android</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        json library is not glassfish server.
+        ]]></notes>
+        <gav regex="true">^org\.glassfish:javax\.json:.*$</gav>
+        <cpe>cpe:/a:oracle:glassfish</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        file name: activerecord-oracle_enhanced-adapter-1.1.7.gemspec
+        ]]></notes>
+        <filePath regex="true">.*activerecord.*oracle.*\.gemspec</filePath>
+        <cpe>cpe:/a:ruby-i18n:i18n</cpe>
+        <cpe>cpe:/a:mikel_lindsaar:mail</cpe>
+        <cpe>cpe:/a:rest-client_project:rest-client</cpe>
     </suppress>
 </suppressions>
