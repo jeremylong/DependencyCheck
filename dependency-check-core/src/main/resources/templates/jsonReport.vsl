@@ -106,7 +106,6 @@
                 #foreach($id in $dependency.getIdentifiers())
                     #if($foreach.count > 1),#end
                     {
-                        "count": "$loopCount",
                         "name": "$id.value",
                         "type": "$enc.json($id.type)"
                         #if($id.confidence),"confidence": "$id.confidence"#end
