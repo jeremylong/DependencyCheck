@@ -198,7 +198,7 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
                 vuln.setVulnerableSoftware(new HashSet<>(Arrays.asList(vs)));
 
                 // Add the vulnerability to package.json
-                dependency.getVulnerabilities().add(vuln);
+                dependency.addVulnerability(vuln);
             }
 
             /*
@@ -323,9 +323,12 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
                  * dependency will not actually exist but needs to be unique (due to the use of Set in Dependency).
                  * The use of related dependencies is a way to specify the actual software BOM in package.json.
                  */
+                //TODO is this actually correct?  or should these be transitive dependencies?
                 final Dependency nodeModule = new Dependency(new File(dependency.getActualFile() + "#" + entry.getKey()), true);
                 nodeModule.setDisplayFileName(entry.getKey());
-                nodeModule.setIdentifiers(new HashSet<>(Arrays.asList(moduleName, moduleVersion, moduleDepType)));
+                nodeModule.addIdentifier(moduleName);
+                nodeModule.addIdentifier(moduleVersion);
+                nodeModule.addIdentifier(moduleDepType);
                 dependency.addRelatedDependency(nodeModule);
             }
         }

@@ -59,7 +59,7 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
                 try {
                     final String value = id.getValue();
                     final List<Vulnerability> vulns = cveDB.getVulnerabilities(value);
-                    dependency.getVulnerabilities().addAll(vulns);
+                    dependency.addVulnerabilities(vulns);
                 } catch (DatabaseException ex) {
                     throw new AnalysisException(ex);
                 }
@@ -70,7 +70,7 @@ public class NvdCveAnalyzer extends AbstractAnalyzer {
                 try {
                     final String value = id.getValue();
                     final List<Vulnerability> vulns = cveDB.getVulnerabilities(value);
-                    dependency.getSuppressedVulnerabilities().addAll(vulns);
+                    dependency.addSuppressedVulnerabilities(vulns);
                 } catch (DatabaseException ex) {
                     throw new AnalysisException(ex);
                 }

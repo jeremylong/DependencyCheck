@@ -119,13 +119,13 @@ class EvidenceCollection implements Serializable {
 
             switch (type) {
                 case VENDOR:
-                    list = Collections.unmodifiableSet(vendors);
+                    list = Collections.unmodifiableSet(new HashSet<>(vendors));
                     break;
                 case PRODUCT:
-                    list = Collections.unmodifiableSet(products);
+                    list = Collections.unmodifiableSet(new HashSet<>(products));
                     break;
                 case VERSION:
-                    list = Collections.unmodifiableSet(versions);
+                    list = Collections.unmodifiableSet(new HashSet<>(versions));
                     break;
                 default:
                     return null;
@@ -254,7 +254,7 @@ class EvidenceCollection implements Serializable {
      * @return an unmodifiable set of vendor weighting strings
      */
     public synchronized Set<String> getVendorWeightings() {
-        return Collections.unmodifiableSet(vendorWeightings);
+        return Collections.unmodifiableSet(new HashSet<>(vendorWeightings));
     }
 
     /**
@@ -265,7 +265,7 @@ class EvidenceCollection implements Serializable {
      * @return an unmodifiable set of vendor weighting strings
      */
     public synchronized Set<String> getProductWeightings() {
-        return Collections.unmodifiableSet(productWeightings);
+        return Collections.unmodifiableSet(new HashSet<>(productWeightings));
     }
 
     /**
@@ -278,11 +278,11 @@ class EvidenceCollection implements Serializable {
         if (null != type) {
             switch (type) {
                 case VENDOR:
-                    return Collections.unmodifiableSet(vendors);
+                    return Collections.unmodifiableSet(new HashSet<>(vendors));
                 case PRODUCT:
-                    return Collections.unmodifiableSet(products);
+                    return Collections.unmodifiableSet(new HashSet<>(products));
                 case VERSION:
-                    return Collections.unmodifiableSet(versions);
+                    return Collections.unmodifiableSet(new HashSet<>(versions));
                 default:
                     break;
             }

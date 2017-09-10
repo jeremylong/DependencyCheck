@@ -365,7 +365,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
             vulnerability.setName(advisory);
         }
         if (null != dependency) {
-            dependency.getVulnerabilities().add(vulnerability); // needed to wait for vulnerability name to avoid NPE
+            dependency.addVulnerability(vulnerability);
         }
         LOGGER.debug("bundle-audit ({}): {}", parentName, nextLine);
     }

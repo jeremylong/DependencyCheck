@@ -18,8 +18,10 @@
 package org.owasp.dependencycheck.xml.suppression;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Identifier;
@@ -365,9 +367,8 @@ public class SuppressionRule {
         }
 
         if (this.hasCpe()) {
-            final Iterator<Identifier> itr = dependency.getIdentifiers().iterator();
-            while (itr.hasNext()) {
-                final Identifier i = itr.next();
+            Set<Identifier> removalList = new HashSet<>();
+            for (Identifier i : dependency.getIdentifiers()) {
                 for (PropertyType c : this.cpe) {
                     if (identifierMatches("cpe", c, i)) {
                         if (!isBase()) {
@@ -376,19 +377,22 @@ public class SuppressionRule {
                             }
                             dependency.addSuppressedIdentifier(i);
                         }
-                        itr.remove();
+                        removalList.add(i);
                         break;
                     }
                 }
             }
+            for (Identifier i : removalList) {
+                dependency.removeIdentifier(i);
+            }
         }
         if (hasCve() || hasCwe() || hasCvssBelow()) {
-            final Iterator<Vulnerability> itr = dependency.getVulnerabilities().iterator();
-            while (itr.hasNext()) {
+            Set<Vulnerability> removeVulns = new HashSet<>();
+            for (Vulnerability v : dependency.getVulnerabilities()) {
                 boolean remove = false;
-                final Vulnerability v = itr.next();
                 for (String entry : this.cve) {
                     if (entry.equalsIgnoreCase(v.getName())) {
+                        removeVulns.add(v);
                         remove = true;
                         break;
                     }
@@ -400,6 +404,7 @@ public class SuppressionRule {
                             final String toTest = v.getCwe().substring(0, toMatch.length()).toUpperCase();
                             if (toTest.equals(toMatch)) {
                                 remove = true;
+                                removeVulns.add(v);
                                 break;
                             }
                         }
@@ -409,6 +414,7 @@ public class SuppressionRule {
                     for (float cvss : this.cvssBelow) {
                         if (v.getCvssScore() < cvss) {
                             remove = true;
+                            removeVulns.add(v);
                             break;
                         }
                     }
@@ -420,8 +426,10 @@ public class SuppressionRule {
                         }
                         dependency.addSuppressedVulnerability(v);
                     }
-                    itr.remove();
                 }
+            }
+            for (Vulnerability v : removeVulns) {
+                dependency.removeVulnerability(v);
             }
         }
     }

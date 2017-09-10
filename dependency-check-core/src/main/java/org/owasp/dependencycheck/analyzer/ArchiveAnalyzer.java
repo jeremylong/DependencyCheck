@@ -266,7 +266,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                             d.getFileName());
                     d.setFilePath(displayPath);
                     d.setFileName(displayName);
-                    d.setProjectReferences(dependency.getProjectReferences());
+                    d.addAllProjectReferences(dependency.getProjectReferences());
 
                     //TODO - can we get more evidence from the parent? EAR contains module name, etc.
                     //analyze the dependency (i.e. extract files) if it is a supported type.

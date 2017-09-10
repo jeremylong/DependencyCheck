@@ -177,7 +177,7 @@ public class DependencyTest extends BaseTest {
     public void testSetIdentifiers() {
         Set<Identifier> identifiers = new HashSet<>();
         Dependency instance = new Dependency();
-        instance.setIdentifiers(identifiers);
+        instance.addIdentifiers(identifiers);
         assertNotNull(instance.getIdentifiers());
     }
 
@@ -220,7 +220,7 @@ public class DependencyTest extends BaseTest {
         MavenArtifact mavenArtifact = new MavenArtifact("group", "artifact", "version", "url");
         instance.addAsEvidence("pom", mavenArtifact, Confidence.HIGH);
         assertTrue(instance.contains(EvidenceType.VENDOR, Confidence.HIGH));
-        assertTrue(instance.size()>1);
+        assertTrue(instance.size() > 1);
         assertFalse(instance.getIdentifiers().isEmpty());
     }
 
@@ -233,7 +233,7 @@ public class DependencyTest extends BaseTest {
         MavenArtifact mavenArtifact = new MavenArtifact(null, null, null, null);
         instance.addAsEvidence("pom", mavenArtifact, Confidence.HIGH);
         assertFalse(instance.getEvidence(EvidenceType.VENDOR).contains(Confidence.HIGH));
-        assertTrue(instance.size()==0);
+        assertTrue(instance.size() == 0);
         assertTrue(instance.getIdentifiers().isEmpty());
     }
 }

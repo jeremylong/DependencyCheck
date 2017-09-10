@@ -132,10 +132,9 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
             dependency.addEvidence(EvidenceType.VERSION, e);
         }
         
-        final Iterator<Dependency> i = relatedDependency.getRelatedDependencies().iterator();
-        while (i.hasNext()) {
-            dependency.addRelatedDependency(i.next());
-            i.remove();
+        for (Dependency d : relatedDependency.getRelatedDependencies()) {
+            dependency.addRelatedDependency(d);
+            relatedDependency.removeRelatedDependencies(d);
         }
         if (dependency.getSha1sum().equals(relatedDependency.getSha1sum())) {
             dependency.addAllProjectReferences(relatedDependency.getProjectReferences());

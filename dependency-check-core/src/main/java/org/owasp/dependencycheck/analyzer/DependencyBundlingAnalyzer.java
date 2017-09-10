@@ -120,11 +120,11 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
         } else if (isShadedJar(dependency, nextDependency)) {
             if (dependency.getFileName().toLowerCase().endsWith("pom.xml")) {
                 mergeDependencies(nextDependency, dependency, dependenciesToRemove);
-                nextDependency.getRelatedDependencies().remove(dependency);
+                nextDependency.removeRelatedDependencies(dependency);
                 return true;
             } else {
                 mergeDependencies(dependency, nextDependency, dependenciesToRemove);
-                dependency.getRelatedDependencies().remove(nextDependency);
+                dependency.removeRelatedDependencies(nextDependency);
             }
         } else if (cpeIdentifiersMatch(dependency, nextDependency)
                 && hasSameBasePath(dependency, nextDependency)
@@ -152,10 +152,9 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      */
     private void mergeDependencies(final Dependency dependency, final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove) {
         dependency.addRelatedDependency(relatedDependency);
-        final Iterator<Dependency> i = relatedDependency.getRelatedDependencies().iterator();
-        while (i.hasNext()) {
-            dependency.addRelatedDependency(i.next());
-            i.remove();
+        for (Dependency d : relatedDependency.getRelatedDependencies()) {
+            dependency.addRelatedDependency(d);
+            relatedDependency.removeRelatedDependencies(d);
         }
         if (dependency.getSha1sum().equals(relatedDependency.getSha1sum())) {
             dependency.addAllProjectReferences(relatedDependency.getProjectReferences());

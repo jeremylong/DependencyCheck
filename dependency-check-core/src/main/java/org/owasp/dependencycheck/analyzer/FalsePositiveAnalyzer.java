@@ -22,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -160,16 +161,17 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
             }
         }
         if (mustContain != null) {
-            final Iterator<Identifier> itr = dependency.getIdentifiers().iterator();
-            while (itr.hasNext()) {
-                final Identifier i = itr.next();
+            final Set<Identifier> removalSet = new HashSet<>();
+            for (Identifier i : dependency.getIdentifiers()) {
                 if ("cpe".contains(i.getType())
                         && i.getValue() != null
                         && i.getValue().startsWith("cpe:/a:springsource:")
                         && !i.getValue().toLowerCase().contains(mustContain)) {
-                    itr.remove();
-                    //dependency.getIdentifiers().remove(i);
+                    removalSet.add(i);
                 }
+            }
+            for (Identifier i : removalSet) {
+                dependency.removeIdentifier(i);
             }
         }
     }
@@ -221,15 +223,15 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                             //how did we get here?
                             LOGGER.debug("currentVersion and nextVersion are both null?");
                         } else if (currentVersion == null && nextVersion != null) {
-                            dependency.getIdentifiers().remove(currentId);
+                            dependency.removeIdentifier(currentId);
                         } else if (nextVersion == null && currentVersion != null) {
-                            dependency.getIdentifiers().remove(nextId);
+                            dependency.removeIdentifier(nextId);
                         } else if (currentVersion.length() < nextVersion.length()) {
                             if (nextVersion.startsWith(currentVersion) || "-".equals(currentVersion)) {
-                                dependency.getIdentifiers().remove(currentId);
+                                dependency.removeIdentifier(currentId);
                             }
                         } else if (currentVersion.startsWith(nextVersion) || "-".equals(nextVersion)) {
-                            dependency.getIdentifiers().remove(nextId);
+                            dependency.removeIdentifier(nextId);
                         }
                     }
                 }
@@ -244,20 +246,21 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      * @param dependency the dependency to remove JRE CPEs from
      */
     private void removeJreEntries(Dependency dependency) {
-        final Set<Identifier> identifiers = dependency.getIdentifiers();
-        final Iterator<Identifier> itr = identifiers.iterator();
-        while (itr.hasNext()) {
-            final Identifier i = itr.next();
+        final Set<Identifier> removalSet = new HashSet<>();
+        for (Identifier i : dependency.getIdentifiers()) {
             final Matcher coreCPE = CORE_JAVA.matcher(i.getValue());
             final Matcher coreFiles = CORE_FILES.matcher(dependency.getFileName());
             if (coreCPE.matches() && !coreFiles.matches()) {
-                itr.remove();
+                removalSet.add(i);
             }
             final Matcher coreJsfCPE = CORE_JAVA_JSF.matcher(i.getValue());
             final Matcher coreJsfFiles = CORE_JSF_FILES.matcher(dependency.getFileName());
             if (coreJsfCPE.matches() && !coreJsfFiles.matches()) {
-                itr.remove();
+                removalSet.add(i);
             }
+        }
+        for (Identifier i : removalSet) {
+            dependency.removeIdentifier(i);
         }
     }
 
@@ -290,8 +293,6 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      * @param dependency the dependency to analyze
      */
     protected void removeBadMatches(Dependency dependency) {
-        final Set<Identifier> identifiers = dependency.getIdentifiers();
-        final Iterator<Identifier> itr = identifiers.iterator();
 
         /* TODO - can we utilize the pom's groupid and artifactId to filter??? most of
          * these are due to low quality data.  Other idea would be to say any CPE
@@ -300,8 +301,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
          */
         //Set<Evidence> groupId = dependency.getVendorEvidence().getEvidence("pom", "groupid");
         //Set<Evidence> artifactId = dependency.getVendorEvidence().getEvidence("pom", "artifactid");
-        while (itr.hasNext()) {
-            final Identifier i = itr.next();
+        for (Identifier i : dependency.getIdentifiers()) {
             //TODO move this startsWith expression to the base suppression file
             if ("cpe".equals(i.getType())) {
                 if ((i.getValue().matches(".*c\\+\\+.*")
@@ -325,7 +325,8 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         || dependency.getFileName().toLowerCase().endsWith(".tgz")
                         || dependency.getFileName().toLowerCase().endsWith(".ear")
                         || dependency.getFileName().toLowerCase().endsWith(".war"))) {
-                    itr.remove();
+                    //itr.remove();
+                    dependency.removeIdentifier(i);
                 } else if ((i.getValue().startsWith("cpe:/a:jquery:jquery")
                         || i.getValue().startsWith("cpe:/a:prototypejs:prototype")
                         || i.getValue().startsWith("cpe:/a:yahoo:yui"))
@@ -333,7 +334,8 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         || dependency.getFileName().toLowerCase().endsWith("pom.xml")
                         || dependency.getFileName().toLowerCase().endsWith(".dll")
                         || dependency.getFileName().toLowerCase().endsWith(".exe"))) {
-                    itr.remove();
+                    //itr.remove();
+                    dependency.removeIdentifier(i);
                 } else if ((i.getValue().startsWith("cpe:/a:microsoft:excel")
                         || i.getValue().startsWith("cpe:/a:microsoft:word")
                         || i.getValue().startsWith("cpe:/a:microsoft:visio")
@@ -344,10 +346,12 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         || dependency.getFileName().toLowerCase().endsWith(".ear")
                         || dependency.getFileName().toLowerCase().endsWith(".war")
                         || dependency.getFileName().toLowerCase().endsWith("pom.xml"))) {
-                    itr.remove();
+                    //itr.remove();
+                    dependency.removeIdentifier(i);
                 } else if (i.getValue().startsWith("cpe:/a:apache:maven")
                         && !dependency.getFileName().toLowerCase().matches("maven-core-[\\d\\.]+\\.jar")) {
-                    itr.remove();
+                    //itr.remove();
+                    dependency.removeIdentifier(i);
                 } else if (i.getValue().startsWith("cpe:/a:m-core:m-core")) {
                     boolean found = false;
                     for (Evidence e : dependency.getEvidence(EvidenceType.PRODUCT)) {
@@ -365,11 +369,13 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                         }
                     }
                     if (!found) {
-                        itr.remove();
+                        //itr.remove();
+                        dependency.removeIdentifier(i);
                     }
                 } else if (i.getValue().startsWith("cpe:/a:jboss:jboss")
                         && !dependency.getFileName().toLowerCase().matches("jboss-?[\\d\\.-]+(GA)?\\.jar")) {
-                    itr.remove();
+                    //itr.remove();
+                    dependency.removeIdentifier(i);
                 }
             }
         }
@@ -382,30 +388,29 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
      * @param dependency the dependency to analyze
      */
     private void removeWrongVersionMatches(Dependency dependency) {
-        final Set<Identifier> identifiers = dependency.getIdentifiers();
-        final Iterator<Identifier> itr = identifiers.iterator();
-
+        final Set<Identifier> identifiersToRemove = new HashSet<>();
         final String fileName = dependency.getFileName();
         if (fileName != null && fileName.contains("axis2")) {
-            while (itr.hasNext()) {
-                final Identifier i = itr.next();
+            for (Identifier i : dependency.getIdentifiers()) {
                 if ("cpe".equals(i.getType())) {
                     final String cpe = i.getValue();
                     if (cpe != null && (cpe.startsWith("cpe:/a:apache:axis:") || "cpe:/a:apache:axis".equals(cpe))) {
-                        itr.remove();
+                        identifiersToRemove.add(i);
                     }
                 }
             }
         } else if (fileName != null && fileName.contains("axis")) {
-            while (itr.hasNext()) {
-                final Identifier i = itr.next();
+            for (Identifier i : dependency.getIdentifiers()) {
                 if ("cpe".equals(i.getType())) {
                     final String cpe = i.getValue();
                     if (cpe != null && (cpe.startsWith("cpe:/a:apache:axis2:") || "cpe:/a:apache:axis2".equals(cpe))) {
-                        itr.remove();
+                        identifiersToRemove.add(i);
                     }
                 }
             }
+        }
+        for (Identifier i : identifiersToRemove) {
+            dependency.removeIdentifier(i);
         }
     }
 
@@ -430,17 +435,13 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                 final String newCpe3 = String.format("cpe:/a:sun:opensso:%s", identifier.getValue().substring(22));
                 final String newCpe4 = String.format("cpe:/a:oracle:opensso:%s", identifier.getValue().substring(22));
                 try {
-                    dependency.addIdentifier("cpe",
-                            newCpe,
+                    dependency.addIdentifier("cpe", newCpe,
                             String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe, "UTF-8")));
-                    dependency.addIdentifier("cpe",
-                            newCpe2,
+                    dependency.addIdentifier("cpe", newCpe2,
                             String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe2, "UTF-8")));
-                    dependency.addIdentifier("cpe",
-                            newCpe3,
+                    dependency.addIdentifier("cpe", newCpe3,
                             String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe3, "UTF-8")));
-                    dependency.addIdentifier("cpe",
-                            newCpe4,
+                    dependency.addIdentifier("cpe", newCpe4,
                             String.format(CPEAnalyzer.NVD_SEARCH_URL, URLEncoder.encode(newCpe4, "UTF-8")));
                 } catch (UnsupportedEncodingException ex) {
                     LOGGER.debug("", ex);

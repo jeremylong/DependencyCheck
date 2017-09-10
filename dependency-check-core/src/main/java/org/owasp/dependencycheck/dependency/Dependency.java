@@ -22,12 +22,13 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import javax.annotation.concurrent.NotThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -44,7 +45,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jeremy Long
  */
-@NotThreadSafe
+@ThreadSafe
 public class Dependency extends EvidenceCollection implements Serializable, Comparable<Dependency> {
 
     /**
@@ -82,7 +83,7 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
     /**
      * A list of Identifiers.
      */
-    private Set<Identifier> identifiers = new TreeSet<>();
+    private final Set<Identifier> identifiers = new TreeSet<>();
     /**
      * The file name to display in reports.
      */
@@ -90,11 +91,11 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
     /**
      * A set of identifiers that have been suppressed.
      */
-    private Set<Identifier> suppressedIdentifiers = new TreeSet<>();
+    private final Set<Identifier> suppressedIdentifiers = new TreeSet<>();
     /**
      * A set of vulnerabilities that have been suppressed.
      */
-    private SortedSet<Vulnerability> suppressedVulnerabilities = new TreeSet<>(new VulnerabilityComparator());
+    private final SortedSet<Vulnerability> suppressedVulnerabilities = new TreeSet<>(new VulnerabilityComparator());
     /**
      * The description of the JAR file.
      */
@@ -106,19 +107,19 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
     /**
      * A list of vulnerabilities for this dependency.
      */
-    private SortedSet<Vulnerability> vulnerabilities = new TreeSet<>(new VulnerabilityComparator());
+    private final SortedSet<Vulnerability> vulnerabilities = new TreeSet<>(new VulnerabilityComparator());
     /**
      * A collection of related dependencies.
      */
-    private Set<Dependency> relatedDependencies = new TreeSet<>();
+    private final Set<Dependency> relatedDependencies = new TreeSet<>();
     /**
      * A list of projects that reference this dependency.
      */
-    private Set<String> projectReferences = new HashSet<>();
+    private final Set<String> projectReferences = new HashSet<>();
     /**
      * A list of available versions.
      */
-    private List<String> availableVersions = new ArrayList<>();
+    private final List<String> availableVersions = new ArrayList<>();
 
     /**
      * Defines an actual or virtual dependency.
@@ -322,21 +323,22 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
     }
 
     /**
-     * Returns a List of Identifiers.
+     * Returns an unmodifiable List of Identifiers.
      *
-     * @return an ArrayList of Identifiers
+     * @return an unmodifiable List of Identifiers
      */
-    public Set<Identifier> getIdentifiers() {
-        return this.identifiers;
+    public synchronized Set<Identifier> getIdentifiers() {
+        return Collections.unmodifiableSet(new HashSet<>(identifiers));
     }
 
     /**
-     * Sets a List of Identifiers.
+     * Adds a set of Identifiers to the current list of identifiers. Only used
+     * for testing.
      *
-     * @param identifiers A list of Identifiers
+     * @param identifiers A set of Identifiers
      */
-    public void setIdentifiers(Set<Identifier> identifiers) {
-        this.identifiers = identifiers;
+    protected synchronized void addIdentifiers(Set<Identifier> identifiers) {
+        this.identifiers.addAll(identifiers);
     }
 
     /**
@@ -347,7 +349,7 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
      * @param value the value of the identifier
      * @param url the URL of the identifier
      */
-    public void addIdentifier(String type, String value, String url) {
+    public synchronized void addIdentifier(String type, String value, String url) {
         final Identifier i = new Identifier(type, value, url);
         this.identifiers.add(i);
     }
@@ -361,10 +363,19 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
      * @param url the URL of the identifier
      * @param confidence the confidence in the Identifier being accurate
      */
-    public void addIdentifier(String type, String value, String url, Confidence confidence) {
+    public synchronized void addIdentifier(String type, String value, String url, Confidence confidence) {
         final Identifier i = new Identifier(type, value, url);
         i.setConfidence(confidence);
         this.identifiers.add(i);
+    }
+
+    /**
+     * Removes an identifier from the list of identifiers.
+     *
+     * @param i the identifier to remove
+     */
+    public synchronized void removeIdentifier(Identifier i) {
+        this.identifiers.remove(i);
     }
 
     /**
@@ -386,15 +397,17 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
         }
         if (mavenArtifact.getArtifactUrl() != null && !mavenArtifact.getArtifactUrl().isEmpty()) {
             boolean found = false;
-            for (Identifier i : this.getIdentifiers()) {
-                if ("maven".equals(i.getType()) && i.getValue().equals(mavenArtifact.toString())) {
-                    found = true;
-                    i.setConfidence(Confidence.HIGHEST);
-                    final String url = "http://search.maven.org/#search|ga|1|1%3A%22" + this.getSha1sum() + "%22";
-                    i.setUrl(url);
-                    //i.setUrl(mavenArtifact.getArtifactUrl());
-                    LOGGER.debug("Already found identifier {}. Confidence set to highest", i.getValue());
-                    break;
+            synchronized (this) {
+                for (Identifier i : this.identifiers) {
+                    if ("maven".equals(i.getType()) && i.getValue().equals(mavenArtifact.toString())) {
+                        found = true;
+                        i.setConfidence(Confidence.HIGHEST);
+                        final String url = "http://search.maven.org/#search|ga|1|1%3A%22" + this.getSha1sum() + "%22";
+                        i.setUrl(url);
+                        //i.setUrl(mavenArtifact.getArtifactUrl());
+                        LOGGER.debug("Already found identifier {}. Confidence set to highest", i.getValue());
+                        break;
+                    }
                 }
             }
             if (!found) {
@@ -410,26 +423,17 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
      *
      * @param identifier the identifier to add
      */
-    public void addIdentifier(Identifier identifier) {
+    public synchronized void addIdentifier(Identifier identifier) {
         this.identifiers.add(identifier);
     }
 
     /**
-     * Get the value of suppressedIdentifiers.
+     * Get the unmodifiable set of suppressedIdentifiers.
      *
      * @return the value of suppressedIdentifiers
      */
-    public Set<Identifier> getSuppressedIdentifiers() {
-        return suppressedIdentifiers;
-    }
-
-    /**
-     * Set the value of suppressedIdentifiers.
-     *
-     * @param suppressedIdentifiers new value of suppressedIdentifiers
-     */
-    public void setSuppressedIdentifiers(Set<Identifier> suppressedIdentifiers) {
-        this.suppressedIdentifiers = suppressedIdentifiers;
+    public synchronized Set<Identifier> getSuppressedIdentifiers() {
+        return Collections.unmodifiableSet(new HashSet<>(suppressedIdentifiers));
     }
 
     /**
@@ -437,26 +441,17 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
      *
      * @param identifier an identifier that was suppressed.
      */
-    public void addSuppressedIdentifier(Identifier identifier) {
+    public synchronized void addSuppressedIdentifier(Identifier identifier) {
         this.suppressedIdentifiers.add(identifier);
     }
 
     /**
-     * Get the value of suppressedVulnerabilities.
+     * Get an unmodifiable sorted set of suppressedVulnerabilities.
      *
-     * @return the value of suppressedVulnerabilities
+     * @return the unmodifiable sorted set of suppressedVulnerabilities
      */
-    public SortedSet<Vulnerability> getSuppressedVulnerabilities() {
-        return suppressedVulnerabilities;
-    }
-
-    /**
-     * Set the value of suppressedVulnerabilities.
-     *
-     * @param suppressedVulnerabilities new value of suppressedVulnerabilities
-     */
-    public void setSuppressedVulnerabilities(SortedSet<Vulnerability> suppressedVulnerabilities) {
-        this.suppressedVulnerabilities = suppressedVulnerabilities;
+    public synchronized SortedSet<Vulnerability> getSuppressedVulnerabilities() {
+        return Collections.unmodifiableSortedSet(new TreeSet<>(suppressedVulnerabilities));
     }
 
     /**
@@ -464,7 +459,7 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
      *
      * @param vulnerability the vulnerability that was suppressed
      */
-    public void addSuppressedVulnerability(Vulnerability vulnerability) {
+    public synchronized void addSuppressedVulnerability(Vulnerability vulnerability) {
         this.suppressedVulnerabilities.add(vulnerability);
     }
 
@@ -505,21 +500,12 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
     }
 
     /**
-     * Get the list of vulnerabilities.
+     * Get the unmodifiable sorted set of vulnerabilities.
      *
-     * @return the list of vulnerabilities
+     * @return the unmodifiable sorted set of vulnerabilities
      */
-    public SortedSet<Vulnerability> getVulnerabilities() {
-        return vulnerabilities;
-    }
-
-    /**
-     * Set the value of vulnerabilities.
-     *
-     * @param vulnerabilities new value of vulnerabilities
-     */
-    public void setVulnerabilities(SortedSet<Vulnerability> vulnerabilities) {
-        this.vulnerabilities = vulnerabilities;
+    public synchronized SortedSet<Vulnerability> getVulnerabilities() {
+        return Collections.unmodifiableSortedSet(new TreeSet<>(vulnerabilities));
     }
 
     /**
@@ -550,39 +536,48 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
     /**
      * Adds a vulnerability to the dependency.
      *
-     * @param vulnerability a vulnerability outlining a vulnerability.
+     * @param vulnerability a vulnerability
      */
-    public void addVulnerability(Vulnerability vulnerability) {
+    public synchronized void addVulnerability(Vulnerability vulnerability) {
         this.vulnerabilities.add(vulnerability);
     }
 
     /**
-     * Get the value of {@link #relatedDependencies}. This field is used to
-     * collect other dependencies which really represent the same dependency,
-     * and may be presented as one item in reports.
+     * Adds a list of vulnerabilities to the dependency.
      *
-     * @return the value of relatedDependencies
+     * @param vulnerabilities a list of vulnerabilities
      */
-    public Set<Dependency> getRelatedDependencies() {
-        return relatedDependencies;
+    public synchronized void addVulnerabilities(List<Vulnerability> vulnerabilities) {
+        this.vulnerabilities.addAll(vulnerabilities);
     }
 
     /**
-     * Get the value of projectReferences.
+     * Removes the given vulnerability from the list.
      *
-     * @return the value of projectReferences
+     * @param v the vulnerability to remove
      */
-    public Set<String> getProjectReferences() {
-        return projectReferences;
+    public synchronized void removeVulnerability(Vulnerability v) {
+        this.vulnerabilities.remove(v);
     }
 
     /**
-     * Set the value of projectReferences.
+     * Get the unmodifiable set of {@link #relatedDependencies}. This field is
+     * used to collect other dependencies which really represent the same
+     * dependency, and may be presented as one item in reports.
      *
-     * @param projectReferences new value of projectReferences
+     * @return the unmodifiable set of relatedDependencies
      */
-    public void setProjectReferences(Set<String> projectReferences) {
-        this.projectReferences = projectReferences;
+    public synchronized Set<Dependency> getRelatedDependencies() {
+        return Collections.unmodifiableSet(new HashSet<>(relatedDependencies));
+    }
+
+    /**
+     * Get the unmodifiable set of projectReferences.
+     *
+     * @return the unmodifiable set of projectReferences
+     */
+    public synchronized Set<String> getProjectReferences() {
+        return Collections.unmodifiableSet(new HashSet<>(projectReferences));
     }
 
     /**
@@ -590,7 +585,7 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
      *
      * @param projectReference a project reference
      */
-    public void addProjectReference(String projectReference) {
+    public synchronized void addProjectReference(String projectReference) {
         this.projectReferences.add(projectReference);
     }
 
@@ -599,17 +594,8 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
      *
      * @param projectReferences a set of project references
      */
-    public void addAllProjectReferences(Set<String> projectReferences) {
+    public synchronized void addAllProjectReferences(Set<String> projectReferences) {
         this.projectReferences.addAll(projectReferences);
-    }
-
-    /**
-     * Set the value of relatedDependencies.
-     *
-     * @param relatedDependencies new value of relatedDependencies
-     */
-    public void setRelatedDependencies(Set<Dependency> relatedDependencies) {
-        this.relatedDependencies = relatedDependencies;
     }
 
     /**
@@ -621,7 +607,7 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
      *
      * @param dependency a reference to the related dependency
      */
-    public void addRelatedDependency(Dependency dependency) {
+    public synchronized void addRelatedDependency(Dependency dependency) {
         if (this == dependency) {
             LOGGER.warn("Attempted to add a circular reference - please post the log file to issue #172 here "
                     + "https://github.com/jeremylong/DependencyCheck/issues/172");
@@ -635,21 +621,21 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
     }
 
     /**
+     * Removes a related dependency.
+     *
+     * @param dependency the dependency to remove
+     */
+    public synchronized void removeRelatedDependencies(Dependency dependency) {
+        this.relatedDependencies.remove(dependency);
+    }
+
+    /**
      * Get the value of availableVersions.
      *
      * @return the value of availableVersions
      */
-    public List<String> getAvailableVersions() {
-        return availableVersions;
-    }
-
-    /**
-     * Set the value of availableVersions.
-     *
-     * @param availableVersions new value of availableVersions
-     */
-    public void setAvailableVersions(List<String> availableVersions) {
-        this.availableVersions = availableVersions;
+    public synchronized List<String> getAvailableVersions() {
+        return Collections.unmodifiableList(new ArrayList<>(availableVersions));
     }
 
     /**
@@ -657,7 +643,7 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
      *
      * @param version the version to add to the list
      */
-    public void addAvailableVersion(String version) {
+    public synchronized void addAvailableVersion(String version) {
         this.availableVersions.add(version);
     }
 
@@ -745,5 +731,14 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
     public String toString() {
         return "Dependency{ fileName='" + fileName + "', actualFilePath='" + actualFilePath
                 + "', filePath='" + filePath + "', packagePath='" + packagePath + "'}";
+    }
+
+    /**
+     * Add a list of suppressed vulnerabilities to the collection.
+     *
+     * @param vulns the list of suppressed vulnerabilities to add
+     */
+    public synchronized void addSuppressedVulnerabilities(List<Vulnerability> vulns) {
+        this.suppressedVulnerabilities.addAll(vulns);
     }
 }
