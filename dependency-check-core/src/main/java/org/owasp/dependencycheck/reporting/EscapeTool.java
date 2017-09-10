@@ -100,6 +100,20 @@ public class EscapeTool {
     }
 
     /**
+     * JavaScript encodes the provided text.
+     *
+     * @param text the text to encode
+     * @return the JavaScript encoded text
+     */
+    public String javascript(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        //until lang3 has escapeJavaScript we use this... 
+        return org.apache.commons.lang.StringEscapeUtils.escapeJavaScript(text);
+    }
+
+    /**
      * Formats text for CSV format. This includes trimming whitespace, replace
      * line breaks with spaces, and if necessary quotes the text and/or escapes
      * contained quotes.

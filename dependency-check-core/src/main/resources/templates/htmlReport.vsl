@@ -699,8 +699,8 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                         #end
                         </td>
                         <td>$dependency.getVulnerabilities().size()</td>
-                        <td data-sort-value="$cpeSort">$cpeIdConf</td>
-                        <td>$dependency.getEvidenceForDisplay().size()</td>
+                        <td data-sort-value="$cpeSort">$WordUtils.capitalizeFully($cpeIdConf.toString())</td>
+                        <td>$dependency.size()</td>
                     </tr>
                     #end
                 </table>
@@ -744,9 +744,15 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                         <h4 id="header$cnt" class="subsectionheader expandable expandablesubsection white">Evidence</h4>
                         <div id="content$cnt" class="subsectioncontent standardsubsection hidden">
                             <table class="lined fullwidth" border="0">
-                                <tr><th class="left" style="width:10%;">Source</th><th class="left" style="width:20%;">Name</th><th class="left" style="width:70%;">Value</th></tr>
-                                #foreach($evidence in $dependency.getEvidenceForDisplay())
-                                    <tr><td>$enc.html($evidence.getSource())</td><td>$enc.html($evidence.getName())</td><td>$enc.html($evidence.getValue())</td></tr>
+                                <tr><th class="left" style="width:10%;">Type</th><th class="left" style="width:10%;">Source</th><th class="left" style="width:20%;">Name</th><th class="left" style="width:50%;">Value</th><th class="left" style="width:10%;">Confidence</th></tr>
+                                #foreach($evidence in $dependency.getEvidence($VENDOR))
+                                    <tr><td>Vendor</td><td>$enc.html($evidence.getSource())</td><td>$enc.html($evidence.getName())</td><td>$enc.html($evidence.getValue())</td><td>$WordUtils.capitalizeFully($evidence.getConfidence().toString())</td></tr>
+                                #end
+                                #foreach($evidence in $dependency.getEvidence($PRODUCT))
+                                    <tr><td>Product</td><td>$enc.html($evidence.getSource())</td><td>$enc.html($evidence.getName())</td><td>$enc.html($evidence.getValue())</td><td>$WordUtils.capitalizeFully($evidence.getConfidence().toString())</td></tr>
+                                #end
+                                #foreach($evidence in $dependency.getEvidence($VERSION))
+                                    <tr><td>Version</td><td>$enc.html($evidence.getSource())</td><td>$enc.html($evidence.getName())</td><td>$enc.html($evidence.getValue())</td><td>$WordUtils.capitalizeFully($evidence.getConfidence().toString())</td></tr>
                                 #end
                             </table>
                         </div>
@@ -813,11 +819,10 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                     <li><b>$enc.html($id.type):</b>&nbsp;$enc.html($id.value)
                                 #end
                                 #if ($id.confidence)
-                                    &nbsp;&nbsp;<i>Confidence</i>:$id.confidence
+                                    &nbsp;&nbsp;<i>Confidence</i>:$WordUtils.capitalizeFully($id.confidence.toString())
                                 #end
                                 #if ($id.type=="cpe")
-                                    ##yes, we are HTML Encoding into JavaScript... the escape utils don't have a JS Encode and I haven't written one yet
-                                    &nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CPE for this file" onclick="copyText('$enc.html($dependency.FileNameForJavaScript)', '$enc.html($dependency.Sha1sum)', '$enc.html($suppressGav)', 'cpe', '$enc.html($id.value)')">suppress</button>
+                                    &nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CPE for this file" onclick="copyText('$enc.javascript($dependency.DisplayFileName)', '$enc.javascript($dependency.Sha1sum)', '$enc.javascript($suppressGav)', 'cpe', '$enc.javascript($id.value)')">suppress</button>
                                 #end
                                 #if ($id.description || $id.notes)
                                     <ul>
@@ -841,7 +846,7 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                         #foreach($vuln in $dependency.getVulnerabilities())
                             #set($vsctr=$vsctr+1)
                             #if($vuln.getSource().name().equals("NVD"))
-                                <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CCE for this file" onclick="copyText('$enc.html($dependency.FileNameForJavaScript)', '$enc.html($dependency.Sha1sum)', '$enc.html($suppressGav)', 'cve', '$enc.html($vuln.name)')">suppress</button></p>
+                                <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CCE for this file" onclick="copyText('$enc.javascript($dependency.DisplayFileName)', '$enc.javascript($dependency.Sha1sum)', '$enc.javascript($suppressGav)', 'cve', '$enc.javascript($vuln.name)')">suppress</button></p>
                             #elseif($vuln.getSource().name().equals("NSP"))
                                 <p><b><a target="_blank" href="https://nodesecurity.io/advisories/$enc.url($vuln.name)">NSP-$enc.html($vuln.name)</a></b></p>
                             #end
@@ -862,7 +867,7 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                 <br/>CWE: $vuln.cwe
                             #end
                             #if ($vuln.notes)
-                                <br/>Notes: $enc.xml($vuln.notes)
+                                <br/>Notes: $enc.html($vuln.notes)
                             #end</p>
                             <p>$enc.html($vuln.description)
                             #if ($vuln.getReferences().size()>0)
@@ -935,9 +940,15 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                 <h4 id="header$cnt" class="subsectionheader expandable expandablesubsection white">Evidence</h4>
                                 <div id="content$cnt" class="subsectioncontent standardsubsection hidden">
                                     <table class="lined fullwidth" border="0">
-                                        <tr><th class="left" style="width:10%;">Source</th><th class="left" style="width:20%;">Name</th><th class="left" style="width:70%;">Value</th></tr>
-                                        #foreach($evidence in $dependency.getEvidenceForDisplay())
-                                            <tr><td>$enc.html($evidence.getSource())</td><td>$enc.html($evidence.getName())</td><td>$enc.html($evidence.getValue())</td></tr>
+                                        <tr><th class="left" style="width:10%;">Type</th><th class="left" style="width:10%;">Source</th><th class="left" style="width:20%;">Name</th><th class="left" style="width:50%;">Value</th><th class="left" style="width:10%;">Confidence</th></tr>
+                                        #foreach($evidence in $dependency.getEvidence($VENDOR))
+                                            <tr><td>Vendor</td><td>$enc.html($evidence.getSource())</td><td>$enc.html($evidence.getName())</td><td>$enc.html($evidence.getValue())</td><td>$WordUtils.capitalizeFully($evidence.getConfidence().toString())</td></tr>
+                                        #end
+                                        #foreach($evidence in $dependency.getEvidence($PRODUCT))
+                                            <tr><td>Product</td><td>$enc.html($evidence.getSource())</td><td>$enc.html($evidence.getName())</td><td>$enc.html($evidence.getValue())</td><td>$WordUtils.capitalizeFully($evidence.getConfidence().toString())</td></tr>
+                                        #end
+                                        #foreach($evidence in $dependency.getEvidence($VERSION))
+                                            <tr><td>Version</td><td>$enc.html($evidence.getSource())</td><td>$enc.html($evidence.getName())</td><td>$enc.html($evidence.getValue())</td><td>$WordUtils.capitalizeFully($evidence.getConfidence().toString())</td></tr>
                                         #end
                                     </table>
                                 </div>
@@ -975,7 +986,6 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                     #foreach($id in $dependency.getSuppressedIdentifiers())
                                         #if( $id.url )
                                             #if($id.type=="maven")
-                                            ##yes, we are HTML Encoding the href. this is okay. We can't URL encode as we have to trust the analyzer here...
                                             <li><b>$enc.html($id.type):</b>&nbsp;<a href="$enc.html($id.url)" target="_blank">$enc.html($id.value)</a>&nbsp;<span title="verified from repo" style="color:green">&#x2713;</span>&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span>
                                             #else
                                             <li><b>$enc.html($id.type):</b>&nbsp;<a href="$enc.html($id.url)" target="_blank">$enc.html($id.value)</a>&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span>
@@ -984,7 +994,7 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                             <li><b>$enc.html($id.type):</b>&nbsp;$enc.html($id.value)&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span>
                                         #end
                                         #if ($id.confidence)
-                                            &nbsp;&nbsp;<i>Confidence</i>:$id.confidence
+                                            &nbsp;&nbsp;<i>Confidence</i>:$WordUtils.capitalizeFully($id.confidence.toString())
                                         #end
                                         #if ($id.description || $id.notes)
                                             <ul>
@@ -992,7 +1002,7 @@ Getting Help: <a href="https://groups.google.com/forum/#!forum/dependency-check"
                                                 <li>Description: $enc.html($id.description)</li>
                                             #end
                                             #if ($id.notes)
-                                                <li>Notes: $enc.xml($id.notes)</li>
+                                                <li>Notes: $enc.html($id.notes)</li>
                                             #end
                                             </ul>
                                         #end

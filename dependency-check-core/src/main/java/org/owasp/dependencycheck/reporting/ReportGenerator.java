@@ -35,6 +35,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import javax.annotation.concurrent.NotThreadSafe;
+import org.apache.commons.lang3.text.WordUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
@@ -45,6 +46,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.owasp.dependencycheck.analyzer.Analyzer;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
@@ -195,6 +197,10 @@ public class ReportGenerator {
         ctxt.put("scanDate", scanDate);
         ctxt.put("scanDateXML", scanDateXML);
         ctxt.put("enc", new EscapeTool());
+        ctxt.put("WordUtils", new WordUtils());
+        ctxt.put("VENDOR", EvidenceType.VENDOR);
+        ctxt.put("PRODUCT", EvidenceType.PRODUCT);
+        ctxt.put("VERSION", EvidenceType.VERSION);
         ctxt.put("version", settings.getString(Settings.KEYS.APPLICATION_VERSION, "Unknown"));
         return ctxt;
     }
