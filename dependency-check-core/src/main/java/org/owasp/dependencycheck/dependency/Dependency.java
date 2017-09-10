@@ -187,18 +187,6 @@ public class Dependency extends EvidenceCollection implements Serializable, Comp
     }
 
     /**
-     * Returns the file name of the dependency with the backslash escaped for
-     * use in JavaScript. This is a complete hack as I could not get the replace
-     * to work in the template itself.
-     *
-     * @return the file name of the dependency with the backslash escaped for
-     * use in JavaScript
-     */
-    public String getFileNameForJavaScript() {
-        return this.fileName.replace("\\", "\\\\");
-    }
-
-    /**
      * Sets the file name of the dependency.
      *
      * @param fileName the file name of the dependency
