@@ -46,7 +46,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
  *
  * @author Dale Visser
  */
-@Experimental
+@Retired
 public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
