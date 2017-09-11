@@ -260,7 +260,7 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
      * initialization
      */
     @Override
-    protected void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         // No initialization needed.
     }
 }

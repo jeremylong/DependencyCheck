@@ -48,7 +48,7 @@ public class VersionFilterAnalyzerTest extends BaseTest {
     @Test
     public void testGetAnalysisPhase() {
         VersionFilterAnalyzer instance = new VersionFilterAnalyzer();
-        instance.initializeSettings(getSettings());
+        instance.initialize(getSettings());
         AnalysisPhase expResult = AnalysisPhase.POST_INFORMATION_COLLECTION;
         AnalysisPhase result = instance.getAnalysisPhase();
         assertEquals(expResult, result);
@@ -61,7 +61,7 @@ public class VersionFilterAnalyzerTest extends BaseTest {
     @Test
     public void testGetAnalyzerEnabledSettingKey() {
         VersionFilterAnalyzer instance = new VersionFilterAnalyzer();
-        instance.initializeSettings(getSettings());
+        instance.initialize(getSettings());
         String expResult = Settings.KEYS.ANALYZER_VERSION_FILTER_ENABLED;
         String result = instance.getAnalyzerEnabledSettingKey();
         assertEquals(expResult, result);
@@ -79,7 +79,7 @@ public class VersionFilterAnalyzerTest extends BaseTest {
         dependency.addEvidence(EvidenceType.VERSION, "other", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
 
         VersionFilterAnalyzer instance = new VersionFilterAnalyzer();
-        instance.initializeSettings(getSettings());
+        instance.initialize(getSettings());
 
         instance.analyzeDependency(dependency, null);
         assertEquals(3, dependency.getEvidence(EvidenceType.VERSION).size());
@@ -120,7 +120,7 @@ public class VersionFilterAnalyzerTest extends BaseTest {
         dependency.addEvidence(EvidenceType.VERSION, "other", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
 
         VersionFilterAnalyzer instance = new VersionFilterAnalyzer();
-        instance.initializeSettings(getSettings());
+        instance.initialize(getSettings());
 
         instance.analyzeDependency(dependency, null);
         assertEquals(3, dependency.getEvidence(EvidenceType.VERSION).size());
@@ -157,7 +157,7 @@ public class VersionFilterAnalyzerTest extends BaseTest {
         dependency.addEvidence(EvidenceType.VERSION, "other", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
 
         VersionFilterAnalyzer instance = new VersionFilterAnalyzer();
-        instance.initializeSettings(getSettings());
+        instance.initialize(getSettings());
 
         instance.analyzeDependency(dependency, null);
         assertEquals(3,  dependency.getEvidence(EvidenceType.VERSION).size());
@@ -184,7 +184,7 @@ public class VersionFilterAnalyzerTest extends BaseTest {
         dependency.addEvidence(EvidenceType.VERSION, "other", "Implementation-Version", "1.2.3", Confidence.HIGHEST);
 
         VersionFilterAnalyzer instance = new VersionFilterAnalyzer();
-        instance.initializeSettings(getSettings());
+        instance.initialize(getSettings());
 
         instance.analyzeDependency(dependency, null);
         assertEquals(3,  dependency.getEvidence(EvidenceType.VERSION).size());

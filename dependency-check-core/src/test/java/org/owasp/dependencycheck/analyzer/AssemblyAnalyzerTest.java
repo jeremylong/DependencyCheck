@@ -72,9 +72,9 @@ public class AssemblyAnalyzerTest extends BaseTest {
         super.setUp();
         try {
             analyzer = new AssemblyAnalyzer();
-            analyzer.initializeSettings(getSettings());
+            analyzer.initialize(getSettings());
             analyzer.accept(new File("test.dll")); // trick into "thinking it is active"
-            analyzer.initialize(null);
+            analyzer.prepare(null);
             assertGrokAssembly();
         } catch (Exception e) {
             if (e.getMessage().contains("Could not execute .NET AssemblyAnalyzer")) {
@@ -190,9 +190,9 @@ public class AssemblyAnalyzerTest extends BaseTest {
             System.setProperty(LOG_KEY, "error");
             // Have to make a NEW analyzer because during setUp, it would have gotten the correct one
             AssemblyAnalyzer aanalyzer = new AssemblyAnalyzer();
-            aanalyzer.initializeSettings(getSettings());
+            aanalyzer.initialize(getSettings());
             aanalyzer.accept(new File("test.dll")); // trick into "thinking it is active"
-            aanalyzer.initialize(null);
+            aanalyzer.prepare(null);
             fail("Expected an InitializationException");
         } catch (InitializationException ae) {
             assertEquals("An error occurred with the .NET AssemblyAnalyzer", ae.getMessage());

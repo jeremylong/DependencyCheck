@@ -49,7 +49,7 @@ public class ArchiveAnalyzerTest extends BaseTest {
     public void testZippableExtensions() throws Exception {
         assumeFalse(isPreviouslyLoaded("org.owasp.dependencycheck.analyzer.ArchiveAnalyzer"));
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
-        instance.initializeSettings(getSettings());
+        instance.initialize(getSettings());
         assertTrue(instance.getFileFilter().accept(new File("c:/test.zip")));
         assertTrue(instance.getFileFilter().accept(new File("c:/test.z2")));
         assertTrue(instance.getFileFilter().accept(new File("c:/test.z3")));

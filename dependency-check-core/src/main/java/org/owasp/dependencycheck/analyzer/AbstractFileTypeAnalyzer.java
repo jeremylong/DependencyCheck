@@ -48,7 +48,6 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
      */
     private boolean filesMatched = false;
 
-
     /**
      * Set the value of filesMatched. A flag indicating whether the scan
      * included any file types this analyzer supports.
@@ -69,9 +68,9 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
      * initialization
      */
     @Override
-    protected final void initializeAnalyzer(Engine engine) throws InitializationException {
+    protected final void prepareAnalyzer(Engine engine) throws InitializationException {
         if (filesMatched) {
-            initializeFileTypeAnalyzer(engine);
+            prepareFileTypeAnalyzer(engine);
         } else {
             this.setEnabled(false);
         }
@@ -94,13 +93,13 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
     protected abstract FileFilter getFileFilter();
 
     /**
-     * Initializes the file type analyzer.
+     * Prepares the file type analyzer for dependency analysis.
      *
      * @param engine a reference to the dependency-check engine
      * @throws InitializationException thrown if there is an exception during
      * initialization
      */
-    protected abstract void initializeFileTypeAnalyzer(Engine engine) throws InitializationException;
+    protected abstract void prepareFileTypeAnalyzer(Engine engine) throws InitializationException;
 
     //</editor-fold>
     /**
@@ -131,7 +130,7 @@ public abstract class AbstractFileTypeAnalyzer extends AbstractAnalyzer implemen
      * constructs a new Set that can be used in a final static declaration.</p>
      * <p>
      * This implementation was copied from
-     * http://stackoverflow.com/questions/2041778/initialize-java-hashset-values-by-construction</p>
+     * http://stackoverflow.com/questions/2041778/prepare-java-hashset-values-by-construction</p>
      *
      * @param strings a list of strings to add to the set.
      * @return a Set of strings.

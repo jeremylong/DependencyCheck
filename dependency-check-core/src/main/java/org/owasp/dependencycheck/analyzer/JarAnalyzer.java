@@ -920,7 +920,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * creating a temporary directory
      */
     @Override
-    public void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
+    public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         try {
             final File baseDir = getSettings().getTempDirectory();
             tempFileLocation = File.createTempFile("check", "tmp", baseDir);

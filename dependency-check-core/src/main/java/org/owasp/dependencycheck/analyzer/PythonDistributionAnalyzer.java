@@ -230,7 +230,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
      * temp directory cannot be created
      */
     @Override
-    protected void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         try {
             final File baseDir = getSettings().getTempDirectory();
             tempFileLocation = File.createTempFile("check", "tmp", baseDir);

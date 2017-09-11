@@ -53,9 +53,9 @@ public class RubyGemspecAnalyzerTest extends BaseTest {
     public void setUp() throws Exception {
         super.setUp();
         analyzer = new RubyGemspecAnalyzer();
-        analyzer.initializeSettings(getSettings());
+        analyzer.initialize(getSettings());
         analyzer.setFilesMatched(true);
-        analyzer.initialize(null);
+        analyzer.prepare(null);
     }
 
     /**

@@ -59,9 +59,9 @@ public class ComposerLockAnalyzerTest extends BaseDBTestCase {
     public void setUp() throws Exception {
         super.setUp();
         analyzer = new ComposerLockAnalyzer();
-        analyzer.initializeSettings(getSettings());
+        analyzer.initialize(getSettings());
         analyzer.setFilesMatched(true);
-        analyzer.initialize(null);
+        analyzer.prepare(null);
     }
 
     /**
@@ -116,9 +116,9 @@ public class ComposerLockAnalyzerTest extends BaseDBTestCase {
         
         analyzer = new ComposerLockAnalyzer();
         analyzer.setFilesMatched(true);
-        analyzer.initializeSettings(getSettings());
+        analyzer.initialize(getSettings());
         assertTrue(analyzer.isEnabled());
-        analyzer.initialize(null);
+        analyzer.prepare(null);
         
         assertFalse(analyzer.isEnabled());
     }

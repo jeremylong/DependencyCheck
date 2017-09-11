@@ -277,7 +277,7 @@ public class Engine implements FileFilter, AutoCloseable {
         final AnalyzerService service = new AnalyzerService(serviceClassLoader, loadExperimental);
         final List<Analyzer> iterator = service.getAnalyzers(mode.getPhases());
         for (Analyzer a : iterator) {
-            a.initializeSettings(this.settings);
+            a.initialize(this.settings);
             analyzers.get(a.getAnalysisPhase()).add(a);
             if (a instanceof FileTypeAnalyzer) {
                 this.fileTypeAnalyzers.add((FileTypeAnalyzer) a);
@@ -804,14 +804,14 @@ public class Engine implements FileFilter, AutoCloseable {
     /**
      * Initializes the given analyzer.
      *
-     * @param analyzer the analyzer to initialize
+     * @param analyzer the analyzer to prepare
      * @throws InitializationException thrown when there is a problem
      * initializing the analyzer
      */
     protected void initializeAnalyzer(Analyzer analyzer) throws InitializationException {
         try {
             LOGGER.debug("Initializing {}", analyzer.getName());
-            analyzer.initialize(this);
+            analyzer.prepare(this);
         } catch (InitializationException ex) {
             LOGGER.error("Exception occurred initializing {}.", analyzer.getName());
             LOGGER.debug("", ex);

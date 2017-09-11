@@ -79,13 +79,13 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * The initialize method loads the suppression XML file.
+     * The prepare method loads the suppression XML file.
      *
      * @param engine a reference the dependency-check engine
      * @throws InitializationException thrown if there is an exception
      */
     @Override
-    public synchronized void initializeAnalyzer(Engine engine) throws InitializationException {
+    public synchronized void prepareAnalyzer(Engine engine) throws InitializationException {
         if (rules == null) {
             try {
                 rules = loadSuppressionData();

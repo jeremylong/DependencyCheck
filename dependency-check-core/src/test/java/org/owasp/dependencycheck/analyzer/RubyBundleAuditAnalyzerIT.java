@@ -75,7 +75,7 @@ public class RubyBundleAuditAnalyzerIT extends BaseDBTestCase {
         getSettings().setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
         getSettings().setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
         analyzer = new RubyBundleAuditAnalyzer();
-        analyzer.initializeSettings(getSettings());
+        analyzer.initialize(getSettings());
         analyzer.setFilesMatched(true);
     }
 
@@ -119,7 +119,7 @@ public class RubyBundleAuditAnalyzerIT extends BaseDBTestCase {
     public void testAnalysis() throws AnalysisException, DatabaseException {
         try (Engine engine = new Engine(getSettings())) {
             engine.openDatabase();
-            analyzer.initialize(engine);
+            analyzer.prepare(engine);
             final String resource = "ruby/vulnerable/gems/rails-4.1.15/Gemfile.lock";
             final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, resource));
             analyzer.analyze(result, engine);
@@ -151,7 +151,7 @@ public class RubyBundleAuditAnalyzerIT extends BaseDBTestCase {
     public void testAddCriticalityToVulnerability() throws AnalysisException, DatabaseException {
         try (Engine engine = new Engine(getSettings())) {
             engine.doUpdates();
-            analyzer.initialize(engine);
+            analyzer.prepare(engine);
 
             final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                     "ruby/vulnerable/gems/sinatra/Gemfile.lock"));
@@ -177,10 +177,10 @@ public class RubyBundleAuditAnalyzerIT extends BaseDBTestCase {
         // is still on the path then initialization works and the bundle-audit on the path works.
         //set a non-exist bundle-audit
 //        getSettings().setString(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, "phantom-bundle-audit");
-//        analyzer.initializeSettings(getSettings());
+//        analyzer.initialize(getSettings());
 //        try {
 //            //initialize should fail.
-//            analyzer.initialize(null);
+//            analyzer.prepare(null);
 //        } catch (Exception e) {
 //            //expected, so ignore.
 //            assertNotNull(e);

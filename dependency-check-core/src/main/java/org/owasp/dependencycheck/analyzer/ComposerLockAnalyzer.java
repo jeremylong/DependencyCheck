@@ -85,7 +85,7 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
      * instance of SHA1
      */
     @Override
-    protected void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         try {
             getSha1MessageDigest();
         } catch (IllegalStateException ex) {

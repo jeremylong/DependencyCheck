@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for analyzers to avoid code duplication of initialize and close as
+ * Base class for analyzers to avoid code duplication of prepare and close as
  * most analyzers do not need these methods.
  *
  * @author Jeremy Long
@@ -83,48 +83,43 @@ public abstract class AbstractAnalyzer implements Analyzer {
      * @param settings the configured settings to use
      */
     @Override
-    public void initializeSettings(Settings settings) {
+    public void initialize(Settings settings) {
         this.settings = settings;
     }
 
     /**
-     * <p>
-     * Returns the setting key to determine if the analyzer is enabled.</p>
+     * Initialize the abstract analyzer.
      *
-     * @return the key for the analyzer's enabled property
+     * @param engine a reference to the dependency-check engine
+     * @throws InitializationException thrown if there is an exception
      */
-    protected abstract String getAnalyzerEnabledSettingKey();
+    @Override
+    public final void prepare(Engine engine) throws InitializationException {
+        final String key = getAnalyzerEnabledSettingKey();
+        try {
+            this.setEnabled(settings.getBoolean(key, true));
+        } catch (InvalidSettingException ex) {
+            final String msg = String.format("Invalid setting for property '%s'", key);
+            LOGGER.warn(msg);
+            LOGGER.debug(msg, ex);
+        }
+
+        if (isEnabled()) {
+            prepareAnalyzer(engine);
+        } else {
+            LOGGER.debug("{} has been disabled", getName());
+        }
+    }
 
     /**
-     * Analyzes a given dependency. If the dependency is an archive, such as a
-     * WAR or EAR, the contents are extracted, scanned, and added to the list of
-     * dependencies within the engine.
-     *
-     * @param dependency the dependency to analyze
-     * @param engine the engine scanning
-     * @throws AnalysisException thrown if there is an analysis exception
-     */
-    protected abstract void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException;
-
-    /**
-     * Initializes a given Analyzer. This will be skipped if the analyzer is
+     * Prepares a given Analyzer. This will be skipped if the analyzer is
      * disabled.
      *
      * @param engine a reference to the dependency-check engine
      * @throws InitializationException thrown if there is an exception
      */
-    protected void initializeAnalyzer(Engine engine) throws InitializationException {
-        // Intentionally empty, analyzer will override this if they must initialize anything.
-    }
-
-    /**
-     * Closes a given Analyzer. This will be skipped if the analyzer is
-     * disabled.
-     *
-     * @throws Exception thrown if there is an exception
-     */
-    protected void closeAnalyzer() throws Exception {
-        // Intentionally empty, analyzer will override this if they must close a resource.
+    protected void prepareAnalyzer(Engine engine) throws InitializationException {
+        // Intentionally empty, analyzer will override this if they must prepare anything.
     }
 
     /**
@@ -144,28 +139,15 @@ public abstract class AbstractAnalyzer implements Analyzer {
     }
 
     /**
-     * Initialize the abstract analyzer.
+     * Analyzes a given dependency. If the dependency is an archive, such as a
+     * WAR or EAR, the contents are extracted, scanned, and added to the list of
+     * dependencies within the engine.
      *
-     * @param engine a reference to the dependency-check engine
-     * @throws InitializationException thrown if there is an exception
+     * @param dependency the dependency to analyze
+     * @param engine the engine scanning
+     * @throws AnalysisException thrown if there is an analysis exception
      */
-    @Override
-    public final void initialize(Engine engine) throws InitializationException {
-        final String key = getAnalyzerEnabledSettingKey();
-        try {
-            this.setEnabled(settings.getBoolean(key, true));
-        } catch (InvalidSettingException ex) {
-            final String msg = String.format("Invalid setting for property '%s'", key);
-            LOGGER.warn(msg);
-            LOGGER.debug(msg, ex);
-        }
-
-        if (isEnabled()) {
-            initializeAnalyzer(engine);
-        } else {
-            LOGGER.debug("{} has been disabled", getName());
-        }
-    }
+    protected abstract void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException;
 
     /**
      * The close method does nothing for this Analyzer.
@@ -180,14 +162,31 @@ public abstract class AbstractAnalyzer implements Analyzer {
     }
 
     /**
+     * Closes a given Analyzer. This will be skipped if the analyzer is
+     * disabled.
+     *
+     * @throws Exception thrown if there is an exception
+     */
+    protected void closeAnalyzer() throws Exception {
+        // Intentionally empty, analyzer will override this if they must close a resource.
+    }
+
+    /**
      * The default is to support parallel processing.
      *
      * @return true
      */
     @Override
     public boolean supportsParallelProcessing() {
-        //temporarily removing parallel processing from all analyzders until further examination of thread safety occurs.
         return true;
-        //return false;
     }
+
+    /**
+     * <p>
+     * Returns the setting key to determine if the analyzer is enabled.</p>
+     *
+     * @return the key for the analyzer's enabled property
+     */
+    protected abstract String getAnalyzerEnabledSettingKey();
+
 }

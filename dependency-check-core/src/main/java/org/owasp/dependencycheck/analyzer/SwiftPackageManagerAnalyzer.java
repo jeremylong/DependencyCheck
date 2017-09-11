@@ -82,7 +82,7 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     @Override
-    protected void initializeFileTypeAnalyzer(Engine engine) {
+    protected void prepareFileTypeAnalyzer(Engine engine) {
         // NO-OP
     }
 

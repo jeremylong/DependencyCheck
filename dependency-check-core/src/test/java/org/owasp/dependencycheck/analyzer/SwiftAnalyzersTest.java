@@ -37,14 +37,14 @@ public class SwiftAnalyzersTest extends BaseTest {
     public void setUp() throws Exception {
         super.setUp();
         podsAnalyzer = new CocoaPodsAnalyzer();
-        podsAnalyzer.initializeSettings(getSettings());
+        podsAnalyzer.initialize(getSettings());
         podsAnalyzer.setFilesMatched(true);
-        podsAnalyzer.initialize(null);
+        podsAnalyzer.prepare(null);
 
         spmAnalyzer = new SwiftPackageManagerAnalyzer();
-        spmAnalyzer.initializeSettings(getSettings());
+        spmAnalyzer.initialize(getSettings());
         spmAnalyzer.setFilesMatched(true);
-        spmAnalyzer.initialize(null);
+        spmAnalyzer.prepare(null);
     }
 
     /**

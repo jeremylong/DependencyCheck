@@ -67,9 +67,9 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
     public void setUp() throws Exception {
         super.setUp();
         analyzer = new CMakeAnalyzer();
-        analyzer.initializeSettings(getSettings());
+        analyzer.initialize(getSettings());
         analyzer.setFilesMatched(true);
-        analyzer.initialize(null);
+        analyzer.prepare(null);
     }
 
     /**
@@ -192,8 +192,8 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
         analyzer = new CMakeAnalyzer();
         analyzer.setFilesMatched(true);
         assertTrue(analyzer.isEnabled());
-        analyzer.initializeSettings(getSettings());
-        analyzer.initialize(null);
+        analyzer.initialize(getSettings());
+        analyzer.prepare(null);
 
         assertFalse(analyzer.isEnabled());
     }

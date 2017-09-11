@@ -53,9 +53,9 @@ public class RubyBundlerAnalyzerTest extends BaseTest {
     public void setUp() throws Exception {
         super.setUp();
         analyzer = new RubyBundlerAnalyzer();
-        analyzer.initializeSettings(getSettings());
+        analyzer.initialize(getSettings());
         analyzer.setFilesMatched(true);
-        analyzer.initialize(null);
+        analyzer.prepare(null);
     }
 
     /**

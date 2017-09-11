@@ -156,7 +156,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws InitializationException never thrown
      */
     @Override
-    protected void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         // Nothing to do here.
     }
 

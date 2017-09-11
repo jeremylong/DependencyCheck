@@ -91,7 +91,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     @Override
-    protected void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         // NO-OP
     }
 

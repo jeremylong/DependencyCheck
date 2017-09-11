@@ -205,7 +205,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws InitializationException thrown if anything goes wrong
      */
     @Override
-    public void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
+    public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         final File tempFile;
         final File cfgFile;
         try {

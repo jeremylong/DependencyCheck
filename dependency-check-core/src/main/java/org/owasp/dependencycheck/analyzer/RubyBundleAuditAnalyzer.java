@@ -147,7 +147,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws InitializationException if anything goes wrong
      */
     @Override
-    public void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
+    public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         // Now, need to see if bundle-audit actually runs from this location.
         if (engine != null) {
             this.cvedb = engine.getDatabase();

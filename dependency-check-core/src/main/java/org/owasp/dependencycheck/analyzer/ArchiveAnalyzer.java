@@ -126,8 +126,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * @param settings the configured settings to use
      */
     @Override
-    public void initializeSettings(Settings settings) {
-        super.initializeSettings(settings);
+    public void initialize(Settings settings) {
+        super.initialize(settings);
         initializeSettings();
     }
 
@@ -169,14 +169,14 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * The initialize method does nothing for this Analyzer.
+     * The prepare method does nothing for this Analyzer.
      *
      * @param engine a reference to the dependency-check engine
      * @throws InitializationException is thrown if there is an exception
      * deleting or creating temporary files
      */
     @Override
-    public void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
+    public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         try {
             final File baseDir = getSettings().getTempDirectory();
             tempFileLocation = File.createTempFile("check", "tmp", baseDir);

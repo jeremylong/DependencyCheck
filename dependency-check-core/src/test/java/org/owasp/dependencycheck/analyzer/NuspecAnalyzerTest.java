@@ -35,8 +35,8 @@ public class NuspecAnalyzerTest extends BaseTest {
     public void setUp() throws Exception {
         super.setUp();
         instance = new NuspecAnalyzer();
-        instance.initializeSettings(getSettings());
-        instance.initialize(null);
+        instance.initialize(getSettings());
+        instance.prepare(null);
         instance.setEnabled(true);
     }
 

@@ -59,7 +59,7 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         String product = "struts 2 core";
 
         CPEAnalyzer instance = new CPEAnalyzer();
-        instance.initializeSettings(getSettings());
+        instance.initialize(getSettings());
         String queryText = instance.buildSearch(vendor, product, null, null);
         String expResult = " product:( struts 2 core )  AND  vendor:( apache software foundation ) ";
         assertTrue(expResult.equals(queryText));
@@ -90,21 +90,21 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
 
         CPEAnalyzer cpeAnalyzer = new CPEAnalyzer();
         try {
-            cpeAnalyzer.initializeSettings(getSettings());
-            cpeAnalyzer.initialize(e);
+            cpeAnalyzer.initialize(getSettings());
+            cpeAnalyzer.prepare(e);
             FileNameAnalyzer fnAnalyzer = new FileNameAnalyzer();
-            fnAnalyzer.initializeSettings(getSettings());
-            fnAnalyzer.initialize(e);
+            fnAnalyzer.initialize(getSettings());
+            fnAnalyzer.prepare(e);
             JarAnalyzer jarAnalyzer = new JarAnalyzer();
-            jarAnalyzer.initializeSettings(getSettings());
+            jarAnalyzer.initialize(getSettings());
             jarAnalyzer.accept(new File("test.jar"));//trick analyzer into "thinking it is active"
-            jarAnalyzer.initialize(e);
+            jarAnalyzer.prepare(e);
             HintAnalyzer hAnalyzer = new HintAnalyzer();
-            hAnalyzer.initializeSettings(getSettings());
-            hAnalyzer.initialize(e);
+            hAnalyzer.initialize(getSettings());
+            hAnalyzer.prepare(e);
             FalsePositiveAnalyzer fp = new FalsePositiveAnalyzer();
-            fp.initializeSettings(getSettings());
-            fp.initialize(e);
+            fp.initialize(getSettings());
+            fp.prepare(e);
 
             callDetermineCPE_full("hazelcast-2.5.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
             callDetermineCPE_full("spring-context-support-2.5.5.jar", "cpe:/a:springsource:spring_framework:2.5.5", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
@@ -169,12 +169,12 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         fnAnalyzer.analyze(struts, null);
 
         HintAnalyzer hintAnalyzer = new HintAnalyzer();
-        hintAnalyzer.initializeSettings(getSettings());
-        hintAnalyzer.initialize(null);
+        hintAnalyzer.initialize(getSettings());
+        hintAnalyzer.prepare(null);
         JarAnalyzer jarAnalyzer = new JarAnalyzer();
-        jarAnalyzer.initializeSettings(getSettings());
+        jarAnalyzer.initialize(getSettings());
         jarAnalyzer.accept(new File("test.jar"));//trick analyzer into "thinking it is active"
-        jarAnalyzer.initialize(null);
+        jarAnalyzer.prepare(null);
 
         jarAnalyzer.analyze(struts, null);
         hintAnalyzer.analyze(struts, null);
@@ -199,8 +199,8 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         CPEAnalyzer instance = new CPEAnalyzer();
         Engine engine = new Engine(getSettings());
         engine.openDatabase();
-        instance.initializeSettings(getSettings());
-        instance.initialize(engine);
+        instance.initialize(getSettings());
+        instance.prepare(engine);
         instance.determineCPE(commonValidator);
         instance.determineCPE(struts);
         instance.determineCPE(spring);
@@ -243,8 +243,8 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         CPEAnalyzer instance = new CPEAnalyzer();
         Engine engine = new Engine(getSettings());
         engine.openDatabase();
-        instance.initializeSettings(getSettings());
-        instance.initialize(engine);
+        instance.initialize(getSettings());
+        instance.prepare(engine);
         instance.determineIdentifiers(openssl, "openssl", "openssl", Confidence.HIGHEST);
         instance.close();
         engine.close();
@@ -277,8 +277,8 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         CPEAnalyzer instance = new CPEAnalyzer();
         Engine engine = new Engine(getSettings());
         engine.openDatabase();
-        instance.initializeSettings(getSettings());
-        instance.initialize(engine);
+        instance.initialize(getSettings());
+        instance.prepare(engine);
 
         Set<String> productWeightings = Collections.singleton("struts2");
         Set<String> vendorWeightings = Collections.singleton("apache");

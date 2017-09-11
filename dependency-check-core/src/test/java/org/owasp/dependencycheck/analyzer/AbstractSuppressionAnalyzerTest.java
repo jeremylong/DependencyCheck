@@ -104,8 +104,8 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
         // WHEN initializing with both suppression files
         final String[] suppressionFiles = {SUPPRESSIONS_FILE, OTHER_SUPPRESSIONS_FILE};
         getSettings().setArrayIfNotEmpty(KEYS.SUPPRESSION_FILE, suppressionFiles);
-        instance.initializeSettings(getSettings());
-        instance.initialize(null);
+        instance.initialize(getSettings());
+        instance.prepare(null);
 
         // THEN rules from both files were loaded
         final int expectedSize = rulesInFirstFile + rulesInSecondFile + rulesInCoreFile;
@@ -115,8 +115,8 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
     @Test(expected = InitializationException.class)
     public void testFailureToLocateSuppressionFileAnywhere() throws Exception {
         getSettings().setString(Settings.KEYS.SUPPRESSION_FILE, "doesnotexist.xml");
-        instance.initializeSettings(getSettings());
-        instance.initialize(null);
+        instance.initialize(getSettings());
+        instance.prepare(null);
     }
 
     /**
@@ -129,8 +129,8 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
     private int getNumberOfRulesLoadedInCoreFile() throws Exception {
         getSettings().removeProperty(KEYS.SUPPRESSION_FILE);
         final AbstractSuppressionAnalyzerImpl coreFileAnalyzer = new AbstractSuppressionAnalyzerImpl();
-        coreFileAnalyzer.initializeSettings(getSettings());
-        coreFileAnalyzer.initialize(null);
+        coreFileAnalyzer.initialize(getSettings());
+        coreFileAnalyzer.prepare(null);
         return coreFileAnalyzer.getRuleCount();
     }
 
@@ -145,8 +145,8 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
     private int getNumberOfRulesLoadedFromPath(final String path) throws Exception {
         getSettings().setString(KEYS.SUPPRESSION_FILE, path);
         final AbstractSuppressionAnalyzerImpl fileAnalyzer = new AbstractSuppressionAnalyzerImpl();
-        fileAnalyzer.initializeSettings(getSettings());
-        fileAnalyzer.initialize(null);
+        fileAnalyzer.initialize(getSettings());
+        fileAnalyzer.prepare(null);
         return fileAnalyzer.getRuleCount();
     }
     

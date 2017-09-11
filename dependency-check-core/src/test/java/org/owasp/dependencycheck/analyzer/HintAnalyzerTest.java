@@ -114,8 +114,8 @@ public class HintAnalyzerTest extends BaseDBTestCase {
         File path = BaseTest.getResourceAsFile(this, "hints_12.xml");
         getSettings().setString(Settings.KEYS.HINTS_FILE, path.getPath());
         HintAnalyzer instance = new HintAnalyzer();
-        instance.initializeSettings(getSettings());
-        instance.initialize(null);
+        instance.initialize(getSettings());
+        instance.prepare(null);
         Dependency d = new Dependency();
         d.addEvidence(EvidenceType.VERSION, "version source", "given version name", "1.2.3", Confidence.HIGH);
         d.addEvidence(EvidenceType.VERSION, "hint analyzer", "remove version name", "value", Confidence.HIGH);

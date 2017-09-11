@@ -76,14 +76,14 @@ public class FileNameAnalyzerTest extends BaseTest {
     }
 
     /**
-     * Test of initialize method, of class FileNameAnalyzer.
+     * Test of prepare method, of class FileNameAnalyzer.
      */
     @Test
     public void testInitialize() {
         FileNameAnalyzer instance = new FileNameAnalyzer();
         try {
-            instance.initializeSettings(getSettings());
-            instance.initialize(null);
+            instance.initialize(getSettings());
+            instance.prepare(null);
         } catch (InitializationException ex) {
             fail(ex.getMessage());
         }

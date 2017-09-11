@@ -51,8 +51,8 @@ public class JarAnalyzerTest extends BaseTest {
         File file = BaseTest.getResourceAsFile(this, "struts2-core-2.1.2.jar");
         Dependency result = new Dependency(file);
         JarAnalyzer instance = new JarAnalyzer();
-        instance.initializeSettings(getSettings());
-        instance.initializeFileTypeAnalyzer(null);
+        instance.initialize(getSettings());
+        instance.prepareFileTypeAnalyzer(null);
         instance.analyze(result, null);
         assertTrue(result.getEvidence(EvidenceType.VENDOR).toString().toLowerCase().contains("apache"));
         assertTrue(result.getVendorWeightings().contains("apache"));
@@ -117,8 +117,8 @@ public class JarAnalyzerTest extends BaseTest {
     @Test
     public void testAcceptSupportedExtensions() throws Exception {
         JarAnalyzer instance = new JarAnalyzer();
-        instance.initializeSettings(getSettings());
-        instance.initialize(null);
+        instance.initialize(getSettings());
+        instance.prepare(null);
         instance.setEnabled(true);
         String[] files = {"test.jar", "test.war"};
         for (String name : files) {

@@ -112,13 +112,13 @@ public class HintAnalyzer extends AbstractAnalyzer {
     }
 
     /**
-     * The initialize method does nothing for this Analyzer.
+     * The prepare method does nothing for this Analyzer.
      *
      * @param engine a reference the dependency-check engine
      * @throws InitializationException thrown if there is an exception
      */
     @Override
-    public void initializeAnalyzer(Engine engine) throws InitializationException {
+    public void prepareAnalyzer(Engine engine) throws InitializationException {
         try {
             loadHintRules();
         } catch (HintParseException ex) {

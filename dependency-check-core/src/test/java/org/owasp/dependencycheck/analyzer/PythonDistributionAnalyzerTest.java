@@ -55,8 +55,8 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
         super.setUp();
         analyzer = new PythonDistributionAnalyzer();
         analyzer.setFilesMatched(true);
-        analyzer.initializeSettings(getSettings());
-        analyzer.initialize(null);
+        analyzer.initialize(getSettings());
+        analyzer.prepare(null);
     }
 
     /**

@@ -95,8 +95,8 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      * @param settings the configured settings to use
      */
     @Override
-    public void initializeSettings(Settings settings) {
-        super.initializeSettings(settings);
+    public void initialize(Settings settings) {
+        super.initialize(settings);
         enabled = checkEnabled();
     }
 
@@ -144,7 +144,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws InitializationException if there's an error during initialization
      */
     @Override
-    public void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
+    public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         LOGGER.debug("Initializing Central analyzer");
         LOGGER.debug("Central analyzer enabled: {}", isEnabled());
         if (isEnabled()) {

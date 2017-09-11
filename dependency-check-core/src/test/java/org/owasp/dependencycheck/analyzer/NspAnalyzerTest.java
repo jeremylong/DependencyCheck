@@ -23,8 +23,8 @@ public class NspAnalyzerTest extends BaseTest {
         super.setUp();
         analyzer = new NspAnalyzer();
         analyzer.setFilesMatched(true);
-        analyzer.initializeSettings(getSettings());
-        analyzer.initialize(null);
+        analyzer.initialize(getSettings());
+        analyzer.prepare(null);
     }
 
     @After

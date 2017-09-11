@@ -32,8 +32,8 @@ import org.owasp.dependencycheck.utils.Settings;
  * When the {@link org.owasp.dependencycheck.Engine} executes it will load the
  * analyzers and call the methods in the following order:</p>
  * <ol>
- * <li>{@link #initializeSettings(org.owasp.dependencycheck.utils.Settings)}</li>
- * <li>{@link #initialize(org.owasp.dependencycheck.Engine)}</li>
+ * <li>{@link #initialize(org.owasp.dependencycheck.utils.Settings)}</li>
+ * <li>{@link #prepare(org.owasp.dependencycheck.Engine)}</li>
  * <li>{@link #analyze(org.owasp.dependencycheck.dependency.Dependency, org.owasp.dependencycheck.Engine)}</li>
  * <li>{@link #close()}</li>
  * </ol>
@@ -75,17 +75,17 @@ public interface Analyzer {
      *
      * @param settings the configured settings
      */
-    void initializeSettings(Settings settings);
+    void initialize(Settings settings);
 
     /**
-     * The initialize method is called (once) prior to the analyze method being
+     * The prepare method is called (once) prior to the analyze method being
      * called on all of the dependencies.
      *
      * @param engine a reference to the dependency-check engine
      * @throws InitializationException is thrown if an exception occurs
      * initializing the analyzer.
      */
-    void initialize(Engine engine) throws InitializationException;
+    void prepare(Engine engine) throws InitializationException;
 
     /**
      * The close method is called after all of the dependencies have been

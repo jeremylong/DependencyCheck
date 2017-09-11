@@ -135,7 +135,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * the index.
      */
     @Override
-    public void initializeAnalyzer(Engine engine) throws InitializationException {
+    public void prepareAnalyzer(Engine engine) throws InitializationException {
         try {
             this.open(engine.getDatabase());
         } catch (IOException ex) {

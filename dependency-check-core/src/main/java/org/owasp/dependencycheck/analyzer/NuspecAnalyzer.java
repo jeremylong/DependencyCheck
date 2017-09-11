@@ -76,7 +76,7 @@ public class NuspecAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws InitializationException if there's an error during initialization
      */
     @Override
-    public void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
+    public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         //nothing to initialize
     }
 

@@ -106,8 +106,8 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
      * @param settings the configured settings to use
      */
     @Override
-    public void initializeSettings(Settings settings) {
-        super.initializeSettings(settings);
+    public void initialize(Settings settings) {
+        super.initialize(settings);
         enabled = checkEnabled();
     }
 
@@ -155,7 +155,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws InitializationException if there's an error during initialization
      */
     @Override
-    public void initializeFileTypeAnalyzer(Engine engine) throws InitializationException {
+    public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         LOGGER.debug("Initializing Nexus Analyzer");
         LOGGER.debug("Nexus Analyzer enabled: {}", isEnabled());
         if (isEnabled()) {
