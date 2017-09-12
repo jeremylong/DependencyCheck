@@ -241,9 +241,9 @@ public class CPEAnalyzer extends AbstractAnalyzer {
         final StringBuilder sb = new StringBuilder();
         sb.append(' ').append(txt).append(' ');
         for (Evidence e : evidence) {
-            String value = e.getValue();
+            final String value = e.getValue();
             //removed as the URLTokenizingFilter was created
-            //hack to get around the fact that lucene does a really good job of recognizing domains and not splitting them. 
+            //hack to get around the fact that lucene does a really good job of recognizing domains and not splitting them.
 //            if (value.startsWith("http://")) {
 //                value = value.substring(7).replaceAll("\\.", " ");
 //            }
@@ -499,7 +499,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
             boolean found = false;
             for (Evidence e : evidence) {
                 if (e.getValue().toLowerCase().contains(word.toLowerCase())) {
-                    if ("http".equals(word)&& e.getValue().contains("http:")) {
+                    if ("http".equals(word) && e.getValue().contains("http:")) {
                         continue;
                     }
                     found = true;

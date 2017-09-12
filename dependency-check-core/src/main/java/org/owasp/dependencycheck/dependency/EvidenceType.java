@@ -19,20 +19,21 @@ package org.owasp.dependencycheck.dependency;
 
 /**
  * The types of evidence.
+ *
  * @author jeremy long
  */
 public enum EvidenceType {
-        /**
-         * Vendor evidence.
-         */
-        VENDOR,
-        /**
-         * Product evidence.
-         */
-        PRODUCT,
-        /**
-         * Version evidence.
-         */
-        VERSION
-    
+    /**
+     * Vendor evidence.
+     */
+    VENDOR,
+    /**
+     * Product evidence.
+     */
+    PRODUCT,
+    /**
+     * Version evidence.
+     */
+    VERSION
+
 }

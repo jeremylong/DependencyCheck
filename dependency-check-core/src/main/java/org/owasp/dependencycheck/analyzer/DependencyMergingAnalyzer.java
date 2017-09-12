@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.Set;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
@@ -131,7 +130,7 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
         for (Evidence e : relatedDependency.getEvidence(EvidenceType.VERSION)) {
             dependency.addEvidence(EvidenceType.VERSION, e);
         }
-        
+
         for (Dependency d : relatedDependency.getRelatedDependencies()) {
             dependency.addRelatedDependency(d);
             relatedDependency.removeRelatedDependencies(d);

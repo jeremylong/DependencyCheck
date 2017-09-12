@@ -58,6 +58,11 @@ public final class CliParser {
      */
     private final Settings settings;
 
+    /**
+     * Constructs a new CLI Parser object with the configured settings.
+     *
+     * @param settings the configured settings
+     */
     public CliParser(Settings settings) {
         this.settings = settings;
     }

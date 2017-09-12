@@ -299,8 +299,8 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
      *
      * @param dependency the dependency being analyzed
      * @param type the type of evidence to add
+     * @param confidence the confidence in the evidence being added
      * @param headers the properties collection
-     * @param evidence the evidence collection to add the value
      * @param property the property name
      */
     private static void addPropertyToEvidence(Dependency dependency, EvidenceType type, Confidence confidence,

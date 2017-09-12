@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 import javax.annotation.concurrent.ThreadSafe;
@@ -154,8 +153,8 @@ public class VersionFilterAnalyzer extends AbstractAnalyzer {
             final boolean pomMatch = Objects.equals(dvPom, dvFile) || Objects.equals(dvPom, dvManifest);
             if (fileMatch || manifestMatch || pomMatch) {
                 LOGGER.debug("filtering evidence from {}", dependency.getFileName());
-                Set<Evidence> remove = new HashSet<>();
-                for(Evidence e : dependency.getEvidence(EvidenceType.VERSION)) {
+                final Set<Evidence> remove = new HashSet<>();
+                for (Evidence e : dependency.getEvidence(EvidenceType.VERSION)) {
                     if (!(pomMatch && VERSION.equals(e.getName())
                             && (NEXUS.equals(e.getSource()) || CENTRAL.equals(e.getSource()) || POM.equals(e.getSource())))
                             && !(fileMatch && VERSION.equals(e.getName()) && FILE.equals(e.getSource()))
@@ -163,7 +162,7 @@ public class VersionFilterAnalyzer extends AbstractAnalyzer {
                         remove.add(e);
                     }
                 }
-                for (Evidence e: remove) {
+                for (Evidence e : remove) {
                     dependency.removeEvidence(EvidenceType.VERSION, e);
                 }
             }

@@ -71,7 +71,8 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      * supported
      * @throws KeyManagementException thrown if initialization fails
      */
-    public SSLSocketFactoryEx(KeyManager[] km, TrustManager[] tm, SecureRandom random, Settings settings) throws NoSuchAlgorithmException, KeyManagementException {
+    public SSLSocketFactoryEx(KeyManager[] km, TrustManager[] tm, SecureRandom random, Settings settings)
+            throws NoSuchAlgorithmException, KeyManagementException {
         this.settings = settings;
         initSSLSocketFactoryEx(km, tm, random);
     }

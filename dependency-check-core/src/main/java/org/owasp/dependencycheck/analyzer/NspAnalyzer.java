@@ -209,7 +209,8 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
                 if (value instanceof JsonString) {
                     final String valueString = ((JsonString) value).getString();
                     dependency.addEvidence(EvidenceType.PRODUCT, PACKAGE_JSON, "name", valueString, Confidence.HIGHEST);
-                    dependency.addEvidence(EvidenceType.VENDOR, PACKAGE_JSON, "name_project", String.format("%s_project", valueString), Confidence.LOW);
+                    dependency.addEvidence(EvidenceType.VENDOR, PACKAGE_JSON, "name_project",
+                            String.format("%s_project", valueString), Confidence.LOW);
                 } else {
                     LOGGER.warn("JSON value not string as expected: {}", value);
                 }
@@ -338,8 +339,9 @@ public class NspAnalyzer extends AbstractFileTypeAnalyzer {
      * Adds information to an evidence collection from the node json
      * configuration.
      *
+     * @param dep the dependency to which the evidence will be added
+     * @param type the type of evidence to be added
      * @param json information from node.js
-     * @param collection a set of evidence about a dependency
      * @param key the key to obtain the data from the json information
      */
     private void addToEvidence(Dependency dep, EvidenceType type, JsonObject json, String key) {

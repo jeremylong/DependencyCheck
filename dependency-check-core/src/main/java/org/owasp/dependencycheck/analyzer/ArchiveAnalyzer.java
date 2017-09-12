@@ -246,6 +246,17 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         engine.sortDependencies();
     }
 
+    /**
+     * Extracts the contents of the archive dependency and scans for additional
+     * dependencies.
+     *
+     * @param dependency the dependency being analyzed
+     * @param engine the engine doing the analysis
+     * @param scanDepth the current scan depth; extracctAndAnalyze is recursive
+     * and will, be default, only go 3 levels deep
+     * @throws AnalysisException thrown if there is a problem analyzing the
+     * dependencies
+     */
     private void extractAndAnalyze(Dependency dependency, Engine engine, int scanDepth) throws AnalysisException {
         final File f = new File(dependency.getActualFilePath());
         final File tmpDir = getNextTempDirectory();

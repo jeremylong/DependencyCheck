@@ -30,7 +30,6 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
-import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * Maven Plugin that checks the project dependencies to see if they have any

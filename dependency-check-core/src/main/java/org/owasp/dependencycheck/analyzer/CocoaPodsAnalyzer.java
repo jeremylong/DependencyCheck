@@ -141,25 +141,25 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
                 dependency.addEvidence(EvidenceType.PRODUCT, PODSPEC, "name_project", name, Confidence.HIGHEST);
                 dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, "name_project", name, Confidence.HIGHEST);
             }
-            String summary = determineEvidence(contents, blockVariable, "summary");
+            final String summary = determineEvidence(contents, blockVariable, "summary");
             if (!summary.isEmpty()) {
                 dependency.addEvidence(EvidenceType.PRODUCT, PODSPEC, "summary", summary, Confidence.HIGHEST);
             }
 
-            String author = determineEvidence(contents, blockVariable, "authors?");
+            final String author = determineEvidence(contents, blockVariable, "authors?");
             if (!author.isEmpty()) {
                 dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, "author", author, Confidence.HIGHEST);
             }
-            String homepage = determineEvidence(contents, blockVariable, "homepage");
+            final String homepage = determineEvidence(contents, blockVariable, "homepage");
             if (!homepage.isEmpty()) {
                 dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, "homepage", homepage, Confidence.HIGHEST);
             }
-            String license = determineEvidence(contents, blockVariable, "licen[cs]es?");
+            final String license = determineEvidence(contents, blockVariable, "licen[cs]es?");
             if (!license.isEmpty()) {
                 dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, "license", license, Confidence.HIGHEST);
             }
 
-            String version = determineEvidence(contents, blockVariable, "version");
+            final String version = determineEvidence(contents, blockVariable, "version");
             if (!version.isEmpty()) {
                 dependency.addEvidence(EvidenceType.VERSION, PODSPEC, "version", version, Confidence.HIGHEST);
             }

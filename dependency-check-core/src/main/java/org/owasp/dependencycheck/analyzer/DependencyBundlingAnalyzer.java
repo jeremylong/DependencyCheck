@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -185,7 +184,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
         }
         //below is always true
         //if (tmp > 0) {
-            pos = tmp + 1;
+        pos = tmp + 1;
         //}
         tmp = path.indexOf(File.separator, pos);
         if (tmp > 0) {

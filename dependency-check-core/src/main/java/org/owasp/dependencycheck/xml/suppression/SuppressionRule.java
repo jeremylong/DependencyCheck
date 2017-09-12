@@ -367,7 +367,7 @@ public class SuppressionRule {
         }
 
         if (this.hasCpe()) {
-            Set<Identifier> removalList = new HashSet<>();
+            final Set<Identifier> removalList = new HashSet<>();
             for (Identifier i : dependency.getIdentifiers()) {
                 for (PropertyType c : this.cpe) {
                     if (identifierMatches("cpe", c, i)) {
@@ -387,7 +387,7 @@ public class SuppressionRule {
             }
         }
         if (hasCve() || hasCwe() || hasCvssBelow()) {
-            Set<Vulnerability> removeVulns = new HashSet<>();
+            final Set<Vulnerability> removeVulns = new HashSet<>();
             for (Vulnerability v : dependency.getVulnerabilities()) {
                 boolean remove = false;
                 for (String entry : this.cve) {

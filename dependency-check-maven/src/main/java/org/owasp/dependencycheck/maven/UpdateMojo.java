@@ -26,7 +26,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
-import org.owasp.dependencycheck.utils.Settings;
 
 /**
  * Maven Plugin that checks the project dependencies to see if they have any

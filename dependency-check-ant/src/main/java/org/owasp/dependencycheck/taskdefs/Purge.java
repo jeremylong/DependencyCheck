@@ -50,13 +50,14 @@ public class Purge extends Task {
      * Indicates if dependency-check should fail the build if an exception
      * occurs.
      */
-    private boolean failOnError = true;    
+    private boolean failOnError = true;
+
     /**
      * Construct a new DependencyCheckTask.
      */
     public Purge() {
         super();
-        
+
         // Call this before Dependency Check Core starts logging anything - this way, all SLF4J messages from
         // core end up coming through this tasks logger
         StaticLoggerBinder.getSingleton().setTask(this);
@@ -65,7 +66,7 @@ public class Purge extends Task {
     public Settings getSettings() {
         return settings;
     }
-    
+
     /**
      * Get the value of dataDirectory.
      *

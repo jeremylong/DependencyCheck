@@ -109,7 +109,7 @@ public class EscapeTool {
         if (text == null || text.isEmpty()) {
             return text;
         }
-        //until lang3 has escapeJavaScript we use this... 
+        //until lang3 has escapeJavaScript we use this...
         return org.apache.commons.lang.StringEscapeUtils.escapeJavaScript(text);
     }
 

@@ -1080,6 +1080,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             if (server != null) {
                 databaseUser = server.getUsername();
                 try {
+                    //CSOFF: LineLength
                     //The following fix was copied from:
                     //   https://github.com/bsorrentino/maven-confluence-plugin/blob/master/maven-confluence-reporting-plugin/src/main/java/org/bsc/maven/confluence/plugin/AbstractBaseConfluenceMojo.java
                     //
@@ -1087,6 +1088,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     // org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException:
                     // java.io.FileNotFoundException: ~/.settings-security.xml (No such file or directory)
                     //
+                    //CSON: LineLength
                     if (securityDispatcher instanceof DefaultSecDispatcher) {
                         ((DefaultSecDispatcher) securityDispatcher).setConfigurationFile("~/.m2/settings-security.xml");
                     }

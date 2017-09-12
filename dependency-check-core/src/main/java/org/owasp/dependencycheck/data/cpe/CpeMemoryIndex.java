@@ -151,8 +151,8 @@ public final class CpeMemoryIndex implements AutoCloseable {
     private Analyzer createSearchingAnalyzer() {
         final Map<String, Analyzer> fieldAnalyzers = new HashMap<>();
         fieldAnalyzers.put(Fields.DOCUMENT_KEY, new KeywordAnalyzer());
-        SearchFieldAnalyzer productFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
-        SearchFieldAnalyzer vendorFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
+        final SearchFieldAnalyzer productFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
+        final SearchFieldAnalyzer vendorFieldAnalyzer = new SearchFieldAnalyzer(LuceneUtils.CURRENT_VERSION);
         fieldAnalyzers.put(Fields.PRODUCT, productFieldAnalyzer);
         fieldAnalyzers.put(Fields.VENDOR, vendorFieldAnalyzer);
 

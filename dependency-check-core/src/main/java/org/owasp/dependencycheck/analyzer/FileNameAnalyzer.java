@@ -114,7 +114,7 @@ public class FileNameAnalyzer extends AbstractAnalyzer {
             // a shade. This should hopefully correct for cases like log4j.jar or
             // struts2-core.jar
             if (version.getVersionParts() == null || version.getVersionParts().size() < 2) {
-                dependency.addEvidence(EvidenceType.VERSION, "file", "version",version.toString(), Confidence.MEDIUM);
+                dependency.addEvidence(EvidenceType.VERSION, "file", "version", version.toString(), Confidence.MEDIUM);
             } else {
                 dependency.addEvidence(EvidenceType.VERSION, "file", "version", version.toString(), Confidence.HIGHEST);
             }
