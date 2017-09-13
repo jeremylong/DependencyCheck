@@ -21,6 +21,7 @@ import java.io.File;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildFileRule;
+import org.apache.tools.ant.types.LogLevel;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,7 +47,7 @@ public class DependencyCheckTaskTest extends BaseDBTestCase {
     public void setUp() throws Exception {
         super.setUp();
         final String buildFile = this.getClass().getClassLoader().getResource("build.xml").getPath();
-        buildFileRule.configureProject(buildFile);
+        buildFileRule.configureProject(buildFile, LogLevel.VERBOSE.getLevel());
     }
 
     /**
@@ -116,7 +117,20 @@ public class DependencyCheckTaskTest extends BaseDBTestCase {
 
         // WHEN executing the ant task
         buildFileRule.executeTarget(antTaskName);
-
+        if (buildFileRule.getError() != null && !buildFileRule.getError().isEmpty()) {
+            System.out.println("----------------------------------------------------------");
+            System.out.println("----------------------------------------------------------");
+            System.out.println("----------------------------------------------------------");
+            System.out.println("----------------------------------------------------------");
+            System.out.println(buildFileRule.getError());
+            System.out.println("----------------------------------------------------------");
+            System.out.println("----------------------------------------------------------");
+            System.out.println(buildFileRule.getFullLog());
+            System.out.println("----------------------------------------------------------");
+            System.out.println("----------------------------------------------------------");
+            System.out.println("----------------------------------------------------------");
+            System.out.println("----------------------------------------------------------");
+        }
         // THEN the ant task executed without error
         final File report = new File("target/suppression-report.html");
         assertTrue("Expected the DependencyCheck report to be generated", report.exists());
