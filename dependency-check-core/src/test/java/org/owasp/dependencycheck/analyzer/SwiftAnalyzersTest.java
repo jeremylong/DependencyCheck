@@ -10,6 +10,7 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 import java.io.File;
 
@@ -105,6 +106,7 @@ public class SwiftAnalyzersTest extends BaseTest {
         assertThat(vendorString, containsString("MIT"));
         assertThat(result.getProductEvidence().toString(), containsString("EasyPeasy"));
         assertThat(result.getVersionEvidence().toString(), containsString("0.2.3"));
+        assertThat(result.getDisplayFileName(),equalTo("EasyPeasy.podspec"));
     }
 
     /**
@@ -119,5 +121,6 @@ public class SwiftAnalyzersTest extends BaseTest {
         spmAnalyzer.analyze(result, null);
 
         assertThat(result.getProductEvidence().toString(), containsString("Gloss"));
+        assertThat(result.getDisplayFileName(),equalTo("Gloss/Package.swift"));
     }
 }

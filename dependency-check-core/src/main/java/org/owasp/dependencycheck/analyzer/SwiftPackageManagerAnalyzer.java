@@ -142,6 +142,10 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
             if (name != null && !name.isEmpty()) {
                 vendor.addEvidence(SPM_FILE_NAME, "name_project", name, Confidence.HIGHEST);
             }
+            
+            final File actual = dependency.getActualFile();
+            final String parentName = actual.getParentFile().getName();
+            dependency.setDisplayFileName(parentName + "/" + actual.getName());
         }
         setPackagePath(dependency);
     }
