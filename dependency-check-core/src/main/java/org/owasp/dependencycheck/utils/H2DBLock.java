@@ -82,6 +82,9 @@ public class H2DBLock {
         try {
             final File dir = settings.getDataDirectory();
             lockFile = new File(dir, "dc.update.lock");
+            if (!lockFile.getParentFile().isDirectory() && !lockFile.mkdir()) {
+                throw new H2DBLockException("Unable to create path to data directory.");
+            }
             if (lockFile.isFile() && getFileAge(lockFile) > 5 && !lockFile.delete()) {
                 LOGGER.warn("An old db update lock file was found but the system was unable to delete "
                         + "the file. Consider manually deleting {}", lockFile.getAbsolutePath());
@@ -92,6 +95,7 @@ public class H2DBLock {
                     if (!lockFile.exists() && lockFile.createNewFile()) {
                         file = new RandomAccessFile(lockFile, "rw");
                         lock = file.getChannel().lock();
+                        LOGGER.debug("Lock file created ({})", Thread.currentThread().getName());
                     }
                 } catch (IOException ex) {
                     LOGGER.trace("Expected error as another thread has likely locked the file", ex);
@@ -106,7 +110,7 @@ public class H2DBLock {
                 }
                 if (lock == null || !lock.isValid()) {
                     try {
-                        LOGGER.debug("Sleeping thread {} for 5 seconds because we could not obtain the update lock.",
+                        LOGGER.debug("Sleeping thread {} for 5 seconds because an exclusive lock on the database could not be obtained",
                                 Thread.currentThread().getName());
                         Thread.sleep(5000);
                     } catch (InterruptedException ex) {
@@ -121,6 +125,7 @@ public class H2DBLock {
         } catch (IOException ex) {
             throw new H2DBLockException(ex.getMessage(), ex);
         }
+
     }
 
     /**
@@ -148,6 +153,7 @@ public class H2DBLock {
             lockFile.deleteOnExit();
         }
         lockFile = null;
+        LOGGER.debug("Lock released ({})", Thread.currentThread().getName());
     }
 
     /**

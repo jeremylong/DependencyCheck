@@ -206,7 +206,6 @@ public final class CveDB implements AutoCloseable {
     public CveDB(Settings settings) throws DatabaseException {
         this.settings = settings;
         connectionFactory = new ConnectionFactory(settings);
-        connectionFactory.initialize();
         open();
     }
 

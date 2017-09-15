@@ -113,11 +113,12 @@ public class NvdCveUpdater implements CachedWebDataSource {
         if (isUpdateConfiguredFalse()) {
             return;
         }
-        H2DBLock dbupdate = null;
+        H2DBLock dblock = null;
         try {
             if (ConnectionFactory.isH2Connection(settings)) {
-                dbupdate = new H2DBLock(settings);
-                dbupdate.lock();
+                dblock = new H2DBLock(settings);
+                LOGGER.debug("locking for update");
+                dblock.lock();
             }
             initializeExecutorServices();
             dbProperties = cveDb.getDatabaseProperties();
@@ -142,8 +143,8 @@ public class NvdCveUpdater implements CachedWebDataSource {
         } catch (H2DBLockException ex) {
             throw new UpdateException("Unable to obtain an exclusive lock on the H2 database to perform updates", ex);
         } finally {
-            if (dbupdate != null) {
-                dbupdate.release();
+            if (dblock != null) {
+                dblock.release();
             }
             shutdownExecutorServices();
         }

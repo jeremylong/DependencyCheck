@@ -29,10 +29,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.io.IOUtils;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.exception.H2DBLockException;
 import org.owasp.dependencycheck.utils.DBUtils;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 import org.owasp.dependencycheck.utils.FileUtils;
+import org.owasp.dependencycheck.utils.H2DBLock;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,13 +109,20 @@ public final class ConnectionFactory {
      * @throws DatabaseException thrown if we are unable to connect to the
      * database
      */
-    public void initialize() throws DatabaseException {
+    public synchronized void initialize() throws DatabaseException {
         //this only needs to be called once.
         if (connectionString != null) {
             return;
         }
         Connection conn = null;
+        H2DBLock dblock = null;
         try {
+            if (isH2Connection()) {
+                dblock = new H2DBLock(settings);
+                LOGGER.debug("locking for init");
+                dblock.lock();
+            }
+
             //load the driver if necessary
             final String driverName = settings.getString(Settings.KEYS.DB_DRIVER_NAME, "");
             if (!driverName.isEmpty()) {
@@ -174,7 +184,6 @@ public final class ConnectionFactory {
                     throw new DatabaseException("Unable to connect to the database", ex);
                 }
             }
-
             if (shouldCreateSchema) {
                 try {
                     createTables(conn);
@@ -189,6 +198,8 @@ public final class ConnectionFactory {
                 LOGGER.debug("", dex);
                 throw new DatabaseException("Database schema does not match this version of dependency-check", dex);
             }
+        } catch (H2DBLockException ex) {
+            throw new DatabaseException("Unable to obtain an exclusive lock on the H2 database to perform initializataion", ex);
         } finally {
             if (conn != null) {
                 try {
@@ -196,6 +207,9 @@ public final class ConnectionFactory {
                 } catch (SQLException ex) {
                     LOGGER.debug("An error occurred closing the connection", ex);
                 }
+            }
+            if (dblock != null) {
+                dblock.release();
             }
         }
     }
@@ -206,7 +220,7 @@ public final class ConnectionFactory {
      * finalize method being called as during shutdown the class loader used to
      * load the driver may be unloaded prior to the driver being de-registered.
      */
-    public void cleanup() {
+    public synchronized void cleanup() {
         if (driver != null) {
             DriverLoader.cleanup(driver);
             driver = null;
@@ -224,7 +238,7 @@ public final class ConnectionFactory {
      * @throws DatabaseException thrown if there is an exception loading the
      * database connection
      */
-    public Connection getConnection() throws DatabaseException {
+    public synchronized Connection getConnection() throws DatabaseException {
         initialize();
         Connection conn = null;
         try {
