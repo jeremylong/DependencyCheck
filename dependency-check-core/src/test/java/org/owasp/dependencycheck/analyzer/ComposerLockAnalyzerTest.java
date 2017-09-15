@@ -36,6 +36,8 @@ import java.security.NoSuchAlgorithmException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
  * Unit tests for NodePackageAnalyzer.
@@ -99,6 +101,8 @@ public class ComposerLockAnalyzerTest extends BaseDBTestCase {
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                 "composer.lock"));
         analyzer.analyze(result, engine);
+        assertEquals(30,engine.getDependencies().size());
+        assertThat(engine.getDependencies().get(0).getDisplayFileName(),equalTo("composer.lock:classpreloader/classpreloader/2.0.0"));
     }
 
 

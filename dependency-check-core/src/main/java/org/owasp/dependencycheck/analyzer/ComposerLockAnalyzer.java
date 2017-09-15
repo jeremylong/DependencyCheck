@@ -107,15 +107,15 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
             clp.process();
             for (ComposerDependency dep : clp.getDependencies()) {
                 final Dependency d = new Dependency(dependency.getActualFile());
-                d.setDisplayFileName(String.format("%s:%s/%s", dependency.getDisplayFileName(), dep.getGroup(), dep.getProject()));
-                final String filePath = String.format("%s:%s/%s", dependency.getFilePath(), dep.getGroup(), dep.getProject());
+                d.setDisplayFileName(String.format("%s:%s/%s/%s", dependency.getDisplayFileName(), dep.getGroup(), dep.getProject(), dep.getVersion()));
+                final String filePath = String.format("%s:%s/%s/%s", dependency.getFilePath(), dep.getGroup(), dep.getProject(), dep.getVersion());
                 final MessageDigest sha1 = getSha1MessageDigest();
                 d.setFilePath(filePath);
                 d.setSha1sum(Checksum.getHex(sha1.digest(filePath.getBytes(Charset.defaultCharset()))));
                 d.getVendorEvidence().addEvidence(COMPOSER_LOCK, "vendor", dep.getGroup(), Confidence.HIGHEST);
                 d.getProductEvidence().addEvidence(COMPOSER_LOCK, "product", dep.getProject(), Confidence.HIGHEST);
                 d.getVersionEvidence().addEvidence(COMPOSER_LOCK, "version", dep.getVersion(), Confidence.HIGHEST);
-                LOGGER.info("Adding dependency {}", d);
+                LOGGER.debug("Adding dependency {}", d);
                 engine.getDependencies().add(d);
             }
         } catch (IOException ex) {
