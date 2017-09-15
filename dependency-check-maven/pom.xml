@@ -230,11 +230,11 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                             </dependency>
                         </dependencies>
                         <configuration>
-                            <streamLogs>true</streamLogs>
+                            <!--streamLogs>true</streamLogs-->
                             <parallelThreads>4</parallelThreads>
-                            <setupIncludes>
+                            <!--setupIncludes>
                                 <setupInclude>690-threadsafety/pom.xml</setupInclude>
-                            </setupIncludes>
+                            </setupIncludes-->
                             <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                             <localRepositoryPath>target/local-repo</localRepositoryPath>
                         </configuration>
