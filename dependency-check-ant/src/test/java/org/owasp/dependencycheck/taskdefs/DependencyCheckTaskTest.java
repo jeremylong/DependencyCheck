@@ -117,20 +117,19 @@ public class DependencyCheckTaskTest extends BaseDBTestCase {
 
         // WHEN executing the ant task
         buildFileRule.executeTarget(antTaskName);
-        if (buildFileRule.getError() != null && !buildFileRule.getError().isEmpty()) {
-            System.out.println("----------------------------------------------------------");
-            System.out.println("----------------------------------------------------------");
-            System.out.println("----------------------------------------------------------");
-            System.out.println("----------------------------------------------------------");
-            System.out.println(buildFileRule.getError());
-            System.out.println("----------------------------------------------------------");
-            System.out.println("----------------------------------------------------------");
-            System.out.println(buildFileRule.getFullLog());
-            System.out.println("----------------------------------------------------------");
-            System.out.println("----------------------------------------------------------");
-            System.out.println("----------------------------------------------------------");
-            System.out.println("----------------------------------------------------------");
-        }
+        System.out.println("----------------------------------------------------------");
+        System.out.println("----------------------------------------------------------");
+        System.out.println("----------------------------------------------------------");
+        System.out.println("----------------------------------------------------------");
+        System.out.println(buildFileRule.getError());
+        System.out.println("----------------------------------------------------------");
+        System.out.println("----------------------------------------------------------");
+        System.out.println(buildFileRule.getFullLog());
+        System.out.println("----------------------------------------------------------");
+        System.out.println("----------------------------------------------------------");
+        System.out.println("----------------------------------------------------------");
+        System.out.println("----------------------------------------------------------");
+
         // THEN the ant task executed without error
         final File report = new File("target/suppression-report.html");
         assertTrue("Expected the DependencyCheck report to be generated", report.exists());
