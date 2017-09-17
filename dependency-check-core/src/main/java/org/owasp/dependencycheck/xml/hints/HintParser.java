@@ -66,12 +66,17 @@ public class HintParser {
     /**
      * The schema for the hint XML files.
      */
-    private static final String HINT_SCHEMA = "schema/dependency-hint.1.2.xsd";
+    private static final String HINT_SCHEMA_1_2 = "schema/dependency-hint.1.2.xsd";
 
     /**
      * The schema for the hint XML files.
      */
-    private static final String HINT_SCHEMA_OLD = "schema/dependency-hint.1.1.xsd";
+    private static final String HINT_SCHEMA_1_1 = "schema/dependency-hint.1.1.xsd";
+
+    /**
+     * The schema for the hint XML files.
+     */
+    private static final String HINT_SCHEMA_1_3 = "schema/dependency-hint.1.3.xsd";
 
     /**
      * Parses the given XML file and returns a list of the hints contained.
@@ -82,19 +87,11 @@ public class HintParser {
      */
     public Hints parseHints(File file) throws HintParseException {
         //TODO there must be a better way to determine which schema to use for validation.
-        try {
-            try (FileInputStream fis = new FileInputStream(file)) {
+        try (FileInputStream fis = new FileInputStream(file)) {
                 return parseHints(fis);
-            } catch (IOException ex) {
-                LOGGER.debug("", ex);
-                throw new HintParseException(ex);
-            }
-        } catch (SAXException ex) {
-            try (FileInputStream fis = new FileInputStream(file)) {
-                return parseHints(fis, HINT_SCHEMA_OLD);
-            } catch (SAXException | IOException ex1) {
-                throw new HintParseException(ex);
-            }
+        } catch (SAXException | IOException ex) {
+            LOGGER.debug("", ex);
+            throw new HintParseException(ex);
         }
     }
 
@@ -108,23 +105,13 @@ public class HintParser {
      * @throws SAXException thrown if the XML cannot be parsed
      */
     public Hints parseHints(InputStream inputStream) throws HintParseException, SAXException {
-        return parseHints(inputStream, HINT_SCHEMA);
-    }
-
-    /**
-     * Parses the given XML stream and returns a list of the hint rules
-     * contained.
-     *
-     * @param inputStream an InputStream containing hint rules
-     * @param schema the XSD to use to validate the XML against
-     * @return a list of hint rules
-     * @throws HintParseException thrown if the XML cannot be parsed
-     * @throws SAXException thrown if the XML cannot be parsed
-     */
-    private Hints parseHints(InputStream inputStream, String schema) throws HintParseException, SAXException {
-        try (InputStream schemaStream = FileUtils.getResourceAsStream(schema)) {
+        try (
+                InputStream schemaStream13 = FileUtils.getResourceAsStream(HINT_SCHEMA_1_3);
+                InputStream schemaStream12 = FileUtils.getResourceAsStream(HINT_SCHEMA_1_2);
+                InputStream schemaStream11 = FileUtils.getResourceAsStream(HINT_SCHEMA_1_1);
+                ) {
             final HintHandler handler = new HintHandler();
-            final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream);
+            final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream13, schemaStream12, schemaStream11);
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setErrorHandler(new HintErrorHandler());
             xmlReader.setContentHandler(handler);

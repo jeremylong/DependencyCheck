@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
@@ -36,6 +37,7 @@ import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.xml.hints.EvidenceMatcher;
 import org.owasp.dependencycheck.xml.hints.VendorDuplicatingHintRule;
 import org.owasp.dependencycheck.xml.hints.HintParseException;
 import org.owasp.dependencycheck.xml.hints.HintParser;
@@ -136,23 +138,23 @@ public class HintAnalyzer extends AbstractAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         for (HintRule hint : hints.getHintRules()) {
             boolean matchFound = false;
-            for (Evidence given : hint.getGivenVendor()) {
-                if (dependency.getVendorEvidence().getEvidence().contains(given)) {
+            for (EvidenceMatcher given : hint.getGivenVendor()) {
+                if (hasMatchingEvidence(dependency.getVendorEvidence().getEvidence(),given)) {
                     matchFound = true;
                     break;
                 }
             }
             if (!matchFound) {
-                for (Evidence given : hint.getGivenProduct()) {
-                    if (dependency.getProductEvidence().getEvidence().contains(given)) {
+                for (EvidenceMatcher given : hint.getGivenProduct()) {
+                    if (hasMatchingEvidence(dependency.getProductEvidence().getEvidence(),given)) {
                         matchFound = true;
                         break;
                     }
                 }
             }
             if (!matchFound) {
-                for (Evidence given : hint.getGivenVersion()) {
-                    if (dependency.getVersionEvidence().getEvidence().contains(given)) {
+                for (EvidenceMatcher given : hint.getGivenVersion()) {
+                    if (hasMatchingEvidence(dependency.getVersionEvidence().getEvidence(),given)) {
                         matchFound = true;
                         break;
                     }
@@ -176,20 +178,14 @@ public class HintAnalyzer extends AbstractAnalyzer {
                 for (Evidence e : hint.getAddVersion()) {
                     dependency.getVersionEvidence().addEvidence(e);
                 }
-                for (Evidence e : hint.getRemoveVendor()) {
-                    if (dependency.getVendorEvidence().getEvidence().contains(e)) {
-                        dependency.getVendorEvidence().getEvidence().remove(e);
-                    }
+                for (EvidenceMatcher e : hint.getRemoveVendor()) {
+                    removeMatchingEvidences(dependency.getVendorEvidence().getEvidence(),e);
                 }
-                for (Evidence e : hint.getRemoveProduct()) {
-                    if (dependency.getProductEvidence().getEvidence().contains(e)) {
-                        dependency.getProductEvidence().getEvidence().remove(e);
-                    }
+                for (EvidenceMatcher e : hint.getRemoveProduct()) {
+                    removeMatchingEvidences(dependency.getProductEvidence().getEvidence(),e);
                 }
-                for (Evidence e : hint.getRemoveVersion()) {
-                    if (dependency.getVersionEvidence().getEvidence().contains(e)) {
-                        dependency.getVersionEvidence().getEvidence().remove(e);
-                    }
+                for (EvidenceMatcher e : hint.getRemoveVersion()) {
+                    removeMatchingEvidences(dependency.getVersionEvidence().getEvidence(),e);
                 }
             }
         }
@@ -207,6 +203,24 @@ public class HintAnalyzer extends AbstractAnalyzer {
         }
         for (Evidence e : newEntries) {
             dependency.getVendorEvidence().addEvidence(e);
+        }
+    }
+
+    private boolean hasMatchingEvidence(Set<Evidence> evidences, EvidenceMatcher criterion) {
+        for (Evidence evidence : evidences) {
+            if (criterion.matches(evidence)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void removeMatchingEvidences(Set<Evidence> evidences, EvidenceMatcher e) {
+        for (Iterator<Evidence> it = evidences.iterator();it.hasNext();) {
+            Evidence evidence = it.next();
+            if (e.matches(evidence)) {
+                it.remove();
+            }
         }
     }
 

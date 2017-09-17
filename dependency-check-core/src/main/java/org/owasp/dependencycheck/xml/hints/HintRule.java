@@ -39,15 +39,15 @@ public class HintRule {
     /**
      * The list of vendor evidence that is being matched.
      */
-    private final List<Evidence> givenVendor = new ArrayList<>();
+    private final List<EvidenceMatcher> givenVendor = new ArrayList<>();
     /**
      * The list of product evidence that is being matched.
      */
-    private final List<Evidence> givenProduct = new ArrayList<>();
+    private final List<EvidenceMatcher> givenProduct = new ArrayList<>();
     /**
      * The list of product evidence that is being matched.
      */
-    private final List<Evidence> givenVersion = new ArrayList<>();
+    private final List<EvidenceMatcher> givenVersion = new ArrayList<>();
     /**
      * The list of vendor hints to add.
      */
@@ -62,17 +62,17 @@ public class HintRule {
     private final List<Evidence> addVersion = new ArrayList<>();
 
     /**
-     * The list of vendor hints to add.
+     * The list of vendor hints to remove.
      */
-    private final List<Evidence> removeVendor = new ArrayList<>();
+    private final List<EvidenceMatcher> removeVendor = new ArrayList<>();
     /**
-     * The list of product evidence to add.
+     * The list of product evidence to remove.
      */
-    private final List<Evidence> removeProduct = new ArrayList<>();
+    private final List<EvidenceMatcher> removeProduct = new ArrayList<>();
     /**
-     * The list of version evidence to add.
+     * The list of version evidence to remove.
      */
-    private final List<Evidence> removeVersion = new ArrayList<>();
+    private final List<EvidenceMatcher> removeVersion = new ArrayList<>();
 
     /**
      * Adds the filename evidence to the collection.
@@ -98,10 +98,11 @@ public class HintRule {
      * @param source the source of the evidence
      * @param name the name of the evidence
      * @param value the value of the evidence
+     * @param regex whether value is a regex
      * @param confidence the confidence of the evidence
      */
-    public void addGivenProduct(String source, String name, String value, Confidence confidence) {
-        givenProduct.add(new Evidence(source, name, value, confidence));
+    public void addGivenProduct(String source, String name, String value, boolean regex, Confidence confidence) {
+        givenProduct.add(new EvidenceMatcher(source, name, value, regex, confidence));
     }
 
     /**
@@ -109,7 +110,7 @@ public class HintRule {
      *
      * @return the value of givenProduct
      */
-    public List<Evidence> getGivenProduct() {
+    public List<EvidenceMatcher> getGivenProduct() {
         return givenProduct;
     }
 
@@ -119,10 +120,11 @@ public class HintRule {
      * @param source the source of the evidence
      * @param name the name of the evidence
      * @param value the value of the evidence
+     * @param regex whether value is a regex
      * @param confidence the confidence of the evidence
      */
-    public void addGivenVendor(String source, String name, String value, Confidence confidence) {
-        givenVendor.add(new Evidence(source, name, value, confidence));
+    public void addGivenVendor(String source, String name, String value, boolean regex, Confidence confidence) {
+        givenVendor.add(new EvidenceMatcher(source, name, value, regex, confidence));
     }
 
     /**
@@ -130,7 +132,7 @@ public class HintRule {
      *
      * @return the value of givenVendor
      */
-    public List<Evidence> getGivenVendor() {
+    public List<EvidenceMatcher> getGivenVendor() {
         return givenVendor;
     }
 
@@ -203,17 +205,18 @@ public class HintRule {
      * @param source the source of the evidence
      * @param name the name of the evidence
      * @param value the value of the evidence
+     * @param regex whether value is a regex
      * @param confidence the confidence of the evidence
      */
-    public void addRemoveVendor(String source, String name, String value, Confidence confidence) {
-        removeVendor.add(new Evidence(source, name, value, confidence));
+    public void addRemoveVendor(String source, String name, String value, boolean regex, Confidence confidence) {
+        removeVendor.add(new EvidenceMatcher(source, name, value, regex, confidence));
     }
     /**
      * Get the value of removeVendor.
      *
      * @return the value of removeVendor
      */
-    public List<Evidence> getRemoveVendor() {
+    public List<EvidenceMatcher> getRemoveVendor() {
         return removeVendor;
     }
     /**
@@ -222,17 +225,18 @@ public class HintRule {
      * @param source the source of the evidence
      * @param name the name of the evidence
      * @param value the value of the evidence
+     * @param regex whether value is a regex
      * @param confidence the confidence of the evidence
      */
-    public void addRemoveProduct(String source, String name, String value, Confidence confidence) {
-        removeProduct.add(new Evidence(source, name, value, confidence));
+    public void addRemoveProduct(String source, String name, String value, boolean regex, Confidence confidence) {
+        removeProduct.add(new EvidenceMatcher(source, name, value, regex, confidence));
     }
     /**
      * Get the value of removeProduct.
      *
      * @return the value of removeProduct
      */
-    public List<Evidence> getRemoveProduct() {
+    public List<EvidenceMatcher> getRemoveProduct() {
         return removeProduct;
     }
     /**
@@ -241,17 +245,18 @@ public class HintRule {
      * @param source the source of the evidence
      * @param name the name of the evidence
      * @param value the value of the evidence
+     * @param regex whether value is a regex
      * @param confidence the confidence of the evidence
      */
-    public void addRemoveVersion(String source, String name, String value, Confidence confidence) {
-        removeVersion.add(new Evidence(source, name, value, confidence));
+    public void addRemoveVersion(String source, String name, String value, boolean regex, Confidence confidence) {
+        removeVersion.add(new EvidenceMatcher(source, name, value, regex, confidence));
     }
     /**
      * Get the value of removeVersion.
      *
      * @return the value of removeVersion
      */
-    public List<Evidence> getRemoveVersion() {
+    public List<EvidenceMatcher> getRemoveVersion() {
         return removeVersion;
     }
     /**
@@ -260,17 +265,18 @@ public class HintRule {
      * @param source the source of the evidence
      * @param name the name of the evidence
      * @param value the value of the evidence
+     * @param regex whether value is a regex
      * @param confidence the confidence of the evidence
      */
-    public void addGivenVersion(String source, String name, String value, Confidence confidence) {
-        givenVersion.add(new Evidence(source, name, value, confidence));
+    public void addGivenVersion(String source, String name, String value, boolean regex, Confidence confidence) {
+        givenVersion.add(new EvidenceMatcher(source, name, value, regex, confidence));
     }
     /**
      * Get the value of givenVersion.
      *
      * @return the value of givenVersion
      */
-    public List<Evidence> getGivenVersion() {
+    public List<EvidenceMatcher> getGivenVersion() {
         return givenVersion;
     }
 }
