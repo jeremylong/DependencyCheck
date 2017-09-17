@@ -34,6 +34,13 @@ public class EvidenceMatcherTest {
     private static final Evidence EVIDENCE_MEDIUM_SECOND_SOURCE = new Evidence("source 2", "name", "value", Confidence.MEDIUM);
     private static final Evidence EVIDENCE_LOW = new Evidence("source", "name", "value", Confidence.LOW);
 
+    private static final Evidence REGEX_EVIDENCE_HIGHEST = new Evidence("source", "name", "value 1", Confidence.HIGHEST);
+    private static final Evidence REGEX_EVIDENCE_HIGH = new Evidence("source", "name", "value 2", Confidence.HIGH);
+    private static final Evidence REGEX_EVIDENCE_MEDIUM = new Evidence("source", "name", "Value will not match because of case", Confidence.MEDIUM);
+    private static final Evidence REGEX_EVIDENCE_MEDIUM_SECOND_SOURCE = new Evidence("source 2", "name", "yet another value that will match", Confidence.MEDIUM);
+    private static final Evidence REGEX_EVIDENCE_MEDIUM_THIRD_SOURCE = new Evidence("source 3", "name", "and even more values to match", Confidence.MEDIUM);
+    private static final Evidence REGEX_EVIDENCE_LOW = new Evidence("source", "name", "val that should not match", Confidence.LOW);
+
     @Test
     public void testExactMatching() throws Exception {
         final EvidenceMatcher exactMatcherHighest = new EvidenceMatcher("source", "name", "value", false, Confidence.HIGHEST);
@@ -63,13 +70,6 @@ public class EvidenceMatcherTest {
         assertTrue("wildcard source matcher should match EVIDENCE_MEDIUM_SECOND_SOURCE", wildcardSourceMatcher.matches(EVIDENCE_MEDIUM_SECOND_SOURCE));
         assertFalse("wildcard source matcher should not match EVIDENCE_LOW", wildcardSourceMatcher.matches(EVIDENCE_LOW));
     }
-
-    private static final Evidence REGEX_EVIDENCE_HIGHEST = new Evidence("source", "name", "value 1", Confidence.HIGHEST);
-    private static final Evidence REGEX_EVIDENCE_HIGH = new Evidence("source", "name", "value 2", Confidence.HIGH);
-    private static final Evidence REGEX_EVIDENCE_MEDIUM = new Evidence("source", "name", "Value will not match because of case", Confidence.MEDIUM);
-    private static final Evidence REGEX_EVIDENCE_MEDIUM_SECOND_SOURCE = new Evidence("source 2", "name", "yet another value that will match", Confidence.MEDIUM);
-    private static final Evidence REGEX_EVIDENCE_MEDIUM_THIRD_SOURCE = new Evidence("source 3", "name", "and even more values to match", Confidence.MEDIUM);
-    private static final Evidence REGEX_EVIDENCE_LOW = new Evidence("source", "name", "val that should not match", Confidence.LOW);
 
     @Test
     public void testRegExMatching() throws Exception {

@@ -36,23 +36,6 @@ import org.owasp.dependencycheck.dependency.Evidence;
 public class EvidenceMatcher {
 
     /**
-     * Creates a new EvidenceMatcher objects.
-     *
-     * @param source the source of the evidence, a source that is {@code null} indicates any source should match.
-     * @param name the non-{@code null} name of the evidence.
-     * @param value the non-{@code null} value of the evidence.
-     * @param regex whether value is a regex.
-     * @param confidence the confidence of the evidence, a confidence that is {@code null} indicates any confidence should match.
-     */
-    public EvidenceMatcher(String source, String name, String value, boolean regex, Confidence confidence) {
-        this.source = source;
-        this.name = name;
-        this.value = value;
-        this.confidence = confidence;
-        this.regex = regex;
-    }
-
-    /**
      * The name that the {@link Evidence} should have for a match.
      */
     private String name;
@@ -80,6 +63,23 @@ public class EvidenceMatcher {
      * A {@code null}-value is allowed and functions as a wildcard.
      */
     private Confidence confidence;
+
+    /**
+     * Creates a new EvidenceMatcher objects.
+     *
+     * @param source the source of the evidence, a source that is {@code null} indicates any source should match.
+     * @param name the non-{@code null} name of the evidence.
+     * @param value the non-{@code null} value of the evidence.
+     * @param regex whether value is a regex.
+     * @param confidence the confidence of the evidence, a confidence that is {@code null} indicates any confidence should match.
+     */
+    public EvidenceMatcher(String source, String name, String value, boolean regex, Confidence confidence) {
+        this.source = source;
+        this.name = name;
+        this.value = value;
+        this.confidence = confidence;
+        this.regex = regex;
+    }
 
     /**
      * Tests whether the given Evidence matches this EvidenceMatcher.
