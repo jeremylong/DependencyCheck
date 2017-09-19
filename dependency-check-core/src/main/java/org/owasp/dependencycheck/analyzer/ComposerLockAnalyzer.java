@@ -103,20 +103,34 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         try (FileInputStream fis = new FileInputStream(dependency.getActualFile())) {
             final ComposerLockParser clp = new ComposerLockParser(fis);
-            LOGGER.info("Checking composer.lock file {}", dependency.getActualFilePath());
+            LOGGER.debug("Checking composer.lock file {}", dependency.getActualFilePath());
             clp.process();
+            //if dependencies are found in the lock, then there is always an empty shell dependency left behind for the
+    	    		//composer.lock. The first pass through, reuse the top level dependency, and add new ones for the rest.
+            boolean processedAtLeastOneDep = false;
             for (ComposerDependency dep : clp.getDependencies()) {
                 final Dependency d = new Dependency(dependency.getActualFile());
                 d.setDisplayFileName(String.format("%s:%s/%s/%s", dependency.getDisplayFileName(), dep.getGroup(), dep.getProject(), dep.getVersion()));
-                final String filePath = String.format("%s:%s/%s/%s", dependency.getFilePath(), dep.getGroup(), dep.getProject(), dep.getVersion());
+                final String filePath = String.format("%s:%s/%s/%s", dependency.getFilePath(), dep.getGroup(), dep.getProject(), dep.getVersion());        			
+       
                 final MessageDigest sha1 = getSha1MessageDigest();
                 d.setFilePath(filePath);
                 d.setSha1sum(Checksum.getHex(sha1.digest(filePath.getBytes(Charset.defaultCharset()))));
                 d.getVendorEvidence().addEvidence(COMPOSER_LOCK, "vendor", dep.getGroup(), Confidence.HIGHEST);
                 d.getProductEvidence().addEvidence(COMPOSER_LOCK, "product", dep.getProject(), Confidence.HIGHEST);
                 d.getVersionEvidence().addEvidence(COMPOSER_LOCK, "version", dep.getVersion(), Confidence.HIGHEST);
-                LOGGER.debug("Adding dependency {}", d);
+                LOGGER.debug("Adding dependency {}", d.getDisplayFileName());
                 engine.getDependencies().add(d);
+                
+                //make sure we only remove the main dependency if we went through this loop at least once.
+                	processedAtLeastOneDep = true;
+                }
+            //remove the dependency at the end because it's referenced in the loop itself.
+            //double check the name to be sure we only remove the generic entry.
+            if (processedAtLeastOneDep && dependency.getDisplayFileName().equalsIgnoreCase("composer.lock")) {
+            		LOGGER.debug("Removing main redundant dependency {}",dependency.getDisplayFileName());
+            		engine.getDependencies().remove(dependency);   
+
             }
         } catch (IOException ex) {
             LOGGER.warn("Error opening dependency {}", dependency.getActualFilePath());
