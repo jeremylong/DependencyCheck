@@ -57,6 +57,11 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
     private static final String ANALYZER_NAME = "Composer.lock analyzer";
 
     /**
+     * The dependency Ecosystem
+     */
+     static final String DEPENDENCY_ECOSYSTEM = "Composer";
+    
+    /**
      * composer.json.
      */
     private static final String COMPOSER_LOCK = "composer.lock";
@@ -110,9 +115,12 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
             boolean processedAtLeastOneDep = false;
             for (ComposerDependency dep : clp.getDependencies()) {
                 final Dependency d = new Dependency(dependency.getActualFile());
-                d.setDisplayFileName(String.format("%s:%s/%s/%s", dependency.getDisplayFileName(), dep.getGroup(), dep.getProject(), dep.getVersion()));
                 final String filePath = String.format("%s:%s/%s/%s", dependency.getFilePath(), dep.getGroup(), dep.getProject(), dep.getVersion());        			
-       
+                d.setName(dep.getProject());
+                d.setVersion(dep.getVersion());
+                
+                d.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);
+                
                 final MessageDigest sha1 = getSha1MessageDigest();
                 d.setFilePath(filePath);
                 d.setSha1sum(Checksum.getHex(sha1.digest(filePath.getBytes(Charset.defaultCharset()))));

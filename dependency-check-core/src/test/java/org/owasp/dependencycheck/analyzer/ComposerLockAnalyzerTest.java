@@ -126,7 +126,11 @@ public class ComposerLockAnalyzerTest extends BaseDBTestCase {
         //make sure the redundant composer.lock is removed
         assertFalse(engine.getDependencies().contains(result));
         assertEquals(30,engine.getDependencies().size());
-        assertThat(engine.getDependencies().get(0).getDisplayFileName(),equalTo("composer.lock:classpreloader/classpreloader/2.0.0"));
+        Dependency d = engine.getDependencies().get(0);
+        assertEquals("classpreloader",d.getName());
+        assertEquals("2.0.0",d.getVersion());
+        assertThat(d.getDisplayFileName(),equalTo("classpreloader:2.0.0"));
+        assertEquals(ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM,d.getDependencyEcosystem());
     }
     
 
