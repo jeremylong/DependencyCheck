@@ -36,6 +36,8 @@ import java.security.NoSuchAlgorithmException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
  * Unit tests for NodePackageAnalyzer.
@@ -89,6 +91,25 @@ public class ComposerLockAnalyzerTest extends BaseDBTestCase {
     }
 
     /**
+     * Test of basic additions to the depdnency list by parsing the composer.lock file
+     *
+     * @throws AnalysisException is thrown when an exception occurs.
+     */
+    @Test
+    public void testRemoveRedundantParent() throws Exception {
+        final Engine engine = new Engine();
+
+        final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
+                "composer.lock"));
+        ///test that we don't remove the parent if it's not redundant by name
+        result.setDisplayFileName("NotComposer.Lock");
+        engine.getDependencies().add(result);
+        analyzer.analyze(result, engine);
+        //make sure the composer.lock is not removed
+        assertTrue(engine.getDependencies().contains(result));
+    }
+
+    /**
      * Test of inspect method, of class PythonDistributionAnalyzer.
      *
      * @throws AnalysisException is thrown when an exception occurs.
@@ -96,11 +117,18 @@ public class ComposerLockAnalyzerTest extends BaseDBTestCase {
     @Test
     public void testAnalyzePackageJson() throws Exception {
         final Engine engine = new Engine();
+
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                 "composer.lock"));
+        //simulate normal operation when the composer.lock is already added to the engine as a dependency
+        engine.getDependencies().add(result);
         analyzer.analyze(result, engine);
+        //make sure the redundant composer.lock is removed
+        assertFalse(engine.getDependencies().contains(result));
+        assertEquals(30,engine.getDependencies().size());
+        assertThat(engine.getDependencies().get(0).getDisplayFileName(),equalTo("composer.lock:classpreloader/classpreloader/2.0.0"));
     }
-
+    
 
     @Test(expected = InitializationException.class)
     public void analyzerIsDisabledInCaseOfMissingMessageDigest() throws InitializationException {
