@@ -47,6 +47,11 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
      * The name of the analyzer.
      */
     private static final String ANALYZER_NAME = "SWIFT Package Manager Analyzer";
+    
+    /**
+     * The dependency Ecosystem
+     */
+    static final String DEPENDENCY_ECOSYSTEM = "Swift.PM";
 
     /**
      * The phase that this analyzer is intended to run in.
@@ -119,6 +124,8 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
 
+    	    dependency.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);   
+    	
         String contents;
         try {
             contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());
@@ -141,11 +148,13 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
             final String name = addStringEvidence(product, packageDescription, "name", "name", Confidence.HIGHEST);
             if (name != null && !name.isEmpty()) {
                 vendor.addEvidence(SPM_FILE_NAME, "name_project", name, Confidence.HIGHEST);
+                dependency.setName(name);
             }
-            
-            final File actual = dependency.getActualFile();
-            final String parentName = actual.getParentFile().getName();
-            dependency.setDisplayFileName(parentName + "/" + actual.getName());
+            else
+            {
+            	    //if we can't get the name from the meta, then assume the name is the name of the parent folder containing the package.swift file.
+            		dependency.setName(dependency.getActualFile().getParentFile().getName());
+            }
         }
         setPackagePath(dependency);
     }

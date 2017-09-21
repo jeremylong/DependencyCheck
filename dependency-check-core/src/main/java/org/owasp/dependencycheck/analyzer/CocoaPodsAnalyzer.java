@@ -53,6 +53,11 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
     private static final String ANALYZER_NAME = "CocoaPods Package Analyzer";
 
     /**
+     * The dependency Ecosystem
+     */
+     static final String DEPENDENCY_ECOSYSTEM = "CocoaPod";
+    
+    /**
      * The phase that this analyzer is intended to run in.
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
@@ -122,6 +127,7 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
 
+    		dependency.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);
         String contents;
         try {
             contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());
@@ -141,6 +147,7 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
             final String name = addStringEvidence(product, contents, blockVariable, "name", "name", Confidence.HIGHEST);
             if (!name.isEmpty()) {
                 vendor.addEvidence(PODSPEC, "name_project", name, Confidence.HIGHEST);
+                dependency.setName(name);
             }
             addStringEvidence(product, contents, blockVariable, "summary", "summary", Confidence.HIGHEST);
 
@@ -148,7 +155,8 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
             addStringEvidence(vendor, contents, blockVariable, "homepage", "homepage", Confidence.HIGHEST);
             addStringEvidence(vendor, contents, blockVariable, "license", "licen[cs]es?", Confidence.HIGHEST);
 
-            addStringEvidence(version, contents, blockVariable, "version", "version", Confidence.HIGHEST);
+            final String versionStr = addStringEvidence(version, contents, blockVariable, "version", "version", Confidence.HIGHEST);
+            dependency.setVersion(versionStr);
         }
 
         setPackagePath(dependency);

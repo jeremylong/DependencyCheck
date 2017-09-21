@@ -106,7 +106,10 @@ public class SwiftAnalyzersTest extends BaseTest {
         assertThat(vendorString, containsString("MIT"));
         assertThat(result.getProductEvidence().toString(), containsString("EasyPeasy"));
         assertThat(result.getVersionEvidence().toString(), containsString("0.2.3"));
-        assertThat(result.getDisplayFileName(),equalTo("EasyPeasy.podspec"));
+        assertThat(result.getName(),equalTo("EasyPeasy"));
+        assertThat(result.getVersion(),equalTo("0.2.3"));
+        assertThat(result.getDisplayFileName(),equalTo("EasyPeasy:0.2.3"));
+        assertThat(result.getDependencyEcosystem(),equalTo(CocoaPodsAnalyzer.DEPENDENCY_ECOSYSTEM));
     }
 
     /**
@@ -121,6 +124,10 @@ public class SwiftAnalyzersTest extends BaseTest {
         spmAnalyzer.analyze(result, null);
 
         assertThat(result.getProductEvidence().toString(), containsString("Gloss"));
-        assertThat(result.getDisplayFileName(),equalTo("Gloss/Package.swift"));
+        assertThat(result.getName(),equalTo("Gloss"));
+        //TODO: when version processing is added, update the expected name.
+        assertThat(result.getDisplayFileName(),equalTo("Gloss"));
+        
+        assertThat(result.getDependencyEcosystem(),equalTo(SwiftPackageManagerAnalyzer.DEPENDENCY_ECOSYSTEM));
     }
 }

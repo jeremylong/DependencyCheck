@@ -142,6 +142,21 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      * Defines an actual or virtual dependency.
      */
     private boolean isVirtual = false;
+    
+    /**
+     * Defines the human-recognizable name for the dependency
+     */
+    private String name;
+    
+    /**
+     * Defines the human-recognizable version for the dependency
+     */
+    private String version;
+    
+    /**
+     * Defines the ecosystem identifier for this dependency
+     */
+    private String dependencyEcosystem;
 
     /**
      * Returns the package path.
@@ -283,13 +298,24 @@ public class Dependency implements Serializable, Comparable<Dependency> {
 
     /**
      * Returns the file name to display in reports; if no display file name has
-     * been set it will default to the actual file name.
+     * been set it will default to constructing a name based on the name and version 
+     * fields, otherwise it will return the actual file name.
      *
      * @return the file name to display
      */
     public String getDisplayFileName() {
         if (displayName == null) {
-            return this.fileName;
+        	   if(name != null) {
+        		   if (version != null) {
+        			   return name + ":" + version;
+        		   }
+        		   else {
+        			   return name;
+        		   }
+        	   }	   
+        	   else { 
+        		   return this.fileName;
+        	   }	   
         }
         return this.displayName;
     }
@@ -582,6 +608,20 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     }
 
     /**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
      * Get the list of vulnerabilities.
      *
      * @return the list of vulnerabilities
@@ -830,4 +870,32 @@ public class Dependency implements Serializable, Comparable<Dependency> {
         return "Dependency{ fileName='" + fileName + "', actualFilePath='" + actualFilePath
                 + "', filePath='" + filePath + "', packagePath='" + packagePath + "'}";
     }
+
+	/**
+	 * @return the version
+	 */
+	public String getVersion() {
+		return version;
+	}
+
+	/**
+	 * @param version the version to set
+	 */
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	/**
+	 * @return the dependencyEcosystem
+	 */
+	public String getDependencyEcosystem() {
+		return dependencyEcosystem;
+	}
+
+	/**
+	 * @param dependencyEcosystem the dependencyEcosystem to set
+	 */
+	public void setDependencyEcosystem(String dependencyEcosystem) {
+		this.dependencyEcosystem = dependencyEcosystem;
+	}
 }
