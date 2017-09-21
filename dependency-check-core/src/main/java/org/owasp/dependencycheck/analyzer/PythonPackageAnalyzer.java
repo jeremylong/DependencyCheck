@@ -109,7 +109,12 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
      * The file filter used to determine which files this analyzer supports.
      */
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
-
+    
+    /**
+     * The dependency Ecosystem
+     */
+     static final String DEPENDENCY_ECOSYSTEM = "Python.Pkg";
+    
     /**
      * Returns the name of the Python Package Analyzer.
      *
@@ -173,14 +178,15 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
-        final File file = dependency.getActualFile();
+        dependency.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);
+    	    final File file = dependency.getActualFile();
         final File parent = file.getParentFile();
         final String parentName = parent.getName();
         if (INIT_PY_FILTER.accept(file)) {
             //by definition, the containing folder of __init__.py is considered the package, even the file is empty:
             //"The __init__.py files are required to make Python treat the directories as containing packages"
             //see section "6.4 Packages" from https://docs.python.org/2/tutorial/modules.html;
-            dependency.setDisplayFileName(parentName + "/__init__.py");
+            dependency.setName(parentName);
             dependency.getProductEvidence().addEvidence(file.getName(),
                     "PackageName", parentName, Confidence.HIGHEST);
 
@@ -217,9 +223,9 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
         boolean found = false;
         if (!contents.isEmpty()) {
             final String source = file.getName();
-            found = gatherEvidence(VERSION_PATTERN, contents, source,
+            found = gatherVersionEvidence(VERSION_PATTERN, contents, source,
                     dependency.getVersionEvidence(), "SourceVersion",
-                    Confidence.MEDIUM);
+                    Confidence.MEDIUM,dependency);
             found |= addSummaryInfo(dependency, SUMMARY_PATTERN, 4, contents,
                     source, "summary");
             if (INIT_PY_FILTER.accept(file)) {
@@ -307,6 +313,30 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
         final boolean found = matcher.find();
         if (found) {
             evidence.addEvidence(source, name, matcher.group(4), confidence);
+        }
+        return found;
+    }
+    
+    /**
+     * Gather package version evidence from a Python source file using the given string
+     * assignment regex pattern.
+     *
+     * @param pattern to scan contents with
+     * @param contents of Python source file
+     * @param source for storing evidence
+     * @param evidence to store evidence in
+     * @param name of evidence
+     * @param confidence in evidence
+     * @return whether evidence was found
+     */
+    private boolean gatherVersionEvidence(Pattern pattern, String contents,
+            String source, EvidenceCollection evidence, String name,
+            Confidence confidence,Dependency d) {
+        final Matcher matcher = pattern.matcher(contents);
+        final boolean found = matcher.find();
+        if (found) {
+            evidence.addEvidence(source, name, matcher.group(4), confidence);
+            d.setVersion(matcher.group(4));
         }
         return found;
     }
