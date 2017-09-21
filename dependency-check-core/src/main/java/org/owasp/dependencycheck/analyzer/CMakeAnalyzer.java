@@ -58,6 +58,11 @@ import org.owasp.dependencycheck.exception.InitializationException;
 public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
+     * The dependency Ecosystem
+     */
+     static final String DEPENDENCY_ECOSYSTEM = "CMAKE";
+     
+    /**
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(CMakeAnalyzer.class);
@@ -149,10 +154,10 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
+    	    dependency.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);
         final File file = dependency.getActualFile();
         final String parentName = file.getParentFile().getName();
         final String name = file.getName();
-        dependency.setDisplayFileName(String.format("%s%c%s", parentName, File.separatorChar, name));
         String contents;
         try {
             contents = FileUtils.readFileToString(file, Charset.defaultCharset()).trim();
@@ -173,6 +178,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.debug("Group 1: {}", group);
                 dependency.getProductEvidence().addEvidence(name, "Project",
                         group, Confidence.HIGH);
+                dependency.setName(group);
             }
             LOGGER.debug("Found {} matches.", count);
             analyzeSetVersionCommand(dependency, engine, contents);
@@ -211,7 +217,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
             if (count > 1) {
                 //TODO - refactor so we do not assign to the parameter (checkstyle)
                 currentDep = new Dependency(dependency.getActualFile());
-                currentDep.setDisplayFileName(String.format("%s:%s", dependency.getDisplayFileName(), product));
+                currentDep.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);
                 final String filePath = String.format("%s:%s", dependency.getFilePath(), product);
                 currentDep.setFilePath(filePath);
 
@@ -225,11 +231,13 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 currentDep.setSha1sum(Checksum.getHex(sha1.digest(path)));
                 engine.getDependencies().add(currentDep);
             }
-            final String source = currentDep.getDisplayFileName();
+            final String source = currentDep.getFileName();
             currentDep.getProductEvidence().addEvidence(source, "Product",
                     product, Confidence.MEDIUM);
             currentDep.getVersionEvidence().addEvidence(source, "Version",
                     version, Confidence.MEDIUM);
+            currentDep.setName(product);
+            currentDep.setVersion(version);
         }
         LOGGER.debug("Found {} matches.", count);
     }

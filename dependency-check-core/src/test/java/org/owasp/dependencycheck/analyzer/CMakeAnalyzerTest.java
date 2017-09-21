@@ -123,11 +123,32 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
         analyzer.analyze(result, null);
         final String product = "zlib";
         assertProductEvidence(result, product);
+        
+        
     }
 
+    /**
+     * Test whether expected evidence is gathered from OpenCV's CVDetectPython.
+     *
+     * @throws AnalysisException is thrown when an exception occurs.
+     */
+    @Test
+    public void testAnalyzeCMakeListsPython() throws AnalysisException {
+        final Dependency result = new Dependency(BaseTest.getResourceAsFile(
+                this, "cmake/opencv/cmake/OpenCVDetectPython.cmake"));
+        analyzer.analyze(result, null);
+        
+        //this one finds nothing so it falls through to the filename. Can we do better?
+        assertEquals("OpenCVDetectPython.cmake",result.getDisplayFileName());
+        
+        
+    }
+    
     private void assertProductEvidence(Dependency result, String product) {
-        assertTrue("Expected product evidence to contain \"" + product + "\".",
+    		assertEquals(product,result.getName());
+    	    assertTrue("Expected product evidence to contain \"" + product + "\".",
                 result.getProductEvidence().toString().contains(product));
+        assertEquals(CMakeAnalyzer.DEPENDENCY_ECOSYSTEM,result.getDependencyEcosystem());
     }
 
     /**
@@ -150,11 +171,13 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
         final Dependency last = dependencies.get(3);
         assertProductEvidence(last, "libavresample");
         assertVersionEvidence(last, "1.0.1");
+        
     }
 
     private void assertVersionEvidence(Dependency result, String version) {
         assertTrue("Expected version evidence to contain \"" + version + "\".",
                 result.getVersionEvidence().toString().contains(version));
+        assertEquals(version,result.getVersion());
     }
 
     @Test(expected = InitializationException.class)
