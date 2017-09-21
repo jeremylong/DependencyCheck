@@ -158,6 +158,10 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private static final String ANALYZER_NAME = "Jar Analyzer";
     /**
+     * The dependency ecosystem.
+     */
+    static final String DEPENDENCY_ECOSYSTEM = "Java";
+    /**
      * The phase that this analyzer is intended to run in.
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
@@ -258,6 +262,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
             final boolean hasPOM = analyzePOM(dependency, classNames, engine);
             final boolean addPackagesAsEvidence = !(hasManifest && hasPOM);
             analyzePackageNames(classNames, dependency, addPackagesAsEvidence);
+            dependency.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);
         } catch (IOException ex) {
             throw new AnalysisException("Exception occurred reading the JAR file (" + dependency.getFileName() + ").", ex);
         }
