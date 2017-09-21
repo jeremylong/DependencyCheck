@@ -61,6 +61,11 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
      * Name of egg metadata files to analyze.
      */
     private static final String PKG_INFO = "PKG-INFO";
+    
+    /**
+     * The dependency Ecosystem
+     */
+     static final String DEPENDENCY_ECOSYSTEM = "Python.Dist";
 
     /**
      * Name of wheel metadata files to analyze.
@@ -183,6 +188,8 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
+    	
+    	    dependency.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);
         final File actualFile = dependency.getActualFile();
         if (WHL_FILTER.accept(actualFile)) {
             collectMetadataFromArchiveFormat(dependency, DIST_INFO_FILTER,
@@ -196,7 +203,6 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
             if (metadata || PKG_INFO.equals(name)) {
                 final File parent = actualFile.getParentFile();
                 final String parentName = parent.getName();
-                dependency.setDisplayFileName(parentName + "/" + name);
                 if (parent.isDirectory()
                         && (metadata && parentName.endsWith(".dist-info")
                         || parentName.endsWith(".egg-info") || "EGG-INFO"
@@ -298,6 +304,10 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
                 "Version", Confidence.HIGHEST);
         addPropertyToEvidence(headers, dependency.getProductEvidence(), "Name",
                 Confidence.HIGHEST);
+        
+        dependency.setName(headers.getHeader("Name", null));
+        dependency.setVersion(headers.getHeader("Version", null));
+        
         final String url = headers.getHeader("Home-page", null);
         final EvidenceCollection vendorEvidence = dependency
                 .getVendorEvidence();
