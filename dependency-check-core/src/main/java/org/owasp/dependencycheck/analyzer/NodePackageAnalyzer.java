@@ -60,6 +60,11 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
     private static final String ANALYZER_NAME = "Node.js Package Analyzer";
 
     /**
+     * The dependency ecosystem.
+     */
+    static final String DEPENDENCY_ECOSYSTEM = "npm";
+    
+    /**
      * The phase that this analyzer is intended to run in.
      */
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;
@@ -122,7 +127,8 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        final File file = dependency.getActualFile();
+        dependency.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);
+    		final File file = dependency.getActualFile();
         if (!file.isFile() || file.length()==0) {
             return;
         }
@@ -135,6 +141,7 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
                 if (value instanceof JsonString) {
                     final String valueString = ((JsonString) value).getString();
                     productEvidence.addEvidence(PACKAGE_JSON, "name", valueString, Confidence.HIGHEST);
+                    dependency.setName(valueString);
                     vendorEvidence.addEvidence(PACKAGE_JSON, "name_project", String.format("%s_project", valueString), Confidence.LOW);
                 } else {
                     LOGGER.warn("JSON value not string as expected: {}", value);
@@ -142,8 +149,9 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
             }
             addToEvidence(json, productEvidence, "description");
             addToEvidence(json, vendorEvidence, "author");
-            addToEvidence(json, dependency.getVersionEvidence(), "version");
-            dependency.setDisplayFileName(String.format("%s/%s", file.getParentFile().getName(), file.getName()));
+            final String version = addToEvidence(json, dependency.getVersionEvidence(), "version");
+            dependency.setVersion(version);
+            
         } catch (JsonException e) {
             LOGGER.warn("Failed to parse package.json file.", e);
         } catch (IOException e) {
@@ -158,21 +166,25 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
      * @param json information from node.js
      * @param collection a set of evidence about a dependency
      * @param key the key to obtain the data from the json information
+     * @return the actual string set into evidence
      */
-    private void addToEvidence(JsonObject json, EvidenceCollection collection, String key) {
-        if (json.containsKey(key)) {
+    private String addToEvidence(JsonObject json, EvidenceCollection collection, String key) {
+        String evidenceStr = null;
+    		if (json.containsKey(key)) {
             final JsonValue value = json.get(key);
             if (value instanceof JsonString) {
-                collection.addEvidence(PACKAGE_JSON, key, ((JsonString) value).getString(), Confidence.HIGHEST);
+            		evidenceStr = ((JsonString) value).getString();
+                collection.addEvidence(PACKAGE_JSON, key, evidenceStr, Confidence.HIGHEST);
             } else if (value instanceof JsonObject) {
                 final JsonObject jsonObject = (JsonObject) value;
                 for (final Map.Entry<String, JsonValue> entry : jsonObject.entrySet()) {
                     final String property = entry.getKey();
                     final JsonValue subValue = entry.getValue();
                     if (subValue instanceof JsonString) {
+                    	    evidenceStr = ((JsonString) subValue).getString();
                         collection.addEvidence(PACKAGE_JSON,
                                 String.format("%s.%s", key, property),
-                                ((JsonString) subValue).getString(),
+                                evidenceStr,
                                 Confidence.HIGHEST);
                     } else {
                         LOGGER.warn("JSON sub-value not string as expected: {}", subValue);
@@ -182,5 +194,6 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
                 LOGGER.warn("JSON value not string or JSON object as expected: {}", value);
             }
         }
+    		return evidenceStr;
     }
 }
