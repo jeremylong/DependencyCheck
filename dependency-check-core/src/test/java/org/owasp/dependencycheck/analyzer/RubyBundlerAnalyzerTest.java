@@ -105,7 +105,7 @@ public class RubyBundlerAnalyzerTest extends BaseTest {
         assertThat(result.getProductEvidence().toString(), containsString("High performance memcached client for Ruby"));
         assertThat(result.getVersionEvidence().toString(), containsString("2.7.5"));
         assertEquals("2.7.5",result.getVersion());
-        assertEquals(RubyBundlerAnalyzer.DEPENDENCY_ECOSYSTEM, result.getDependencyEcosystem());
+        assertEquals(RubyBundlerAnalyzer.DEPENDENCY_ECOSYSTEM, result.getEcosystem());
         assertEquals("dalli:2.7.5",result.getDisplayFileName());
         
     }

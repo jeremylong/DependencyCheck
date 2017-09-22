@@ -130,7 +130,7 @@ public class ComposerLockAnalyzerTest extends BaseDBTestCase {
         assertEquals("classpreloader",d.getName());
         assertEquals("2.0.0",d.getVersion());
         assertThat(d.getDisplayFileName(),equalTo("classpreloader:2.0.0"));
-        assertEquals(ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM,d.getDependencyEcosystem());
+        assertEquals(ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM,d.getEcosystem());
     }
     
 

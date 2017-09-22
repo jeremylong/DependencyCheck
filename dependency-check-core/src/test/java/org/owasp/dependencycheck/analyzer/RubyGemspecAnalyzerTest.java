@@ -94,7 +94,7 @@ public class RubyGemspecAnalyzerTest extends BaseTest {
                 "ruby/vulnerable/gems/specifications/rest-client-1.7.2.gemspec"));
         analyzer.analyze(result, null);
         final String vendorString = result.getVendorEvidence().toString();
-        assertEquals(RubyGemspecAnalyzer.DEPENDENCY_ECOSYSTEM, result.getDependencyEcosystem());
+        assertEquals(RubyGemspecAnalyzer.DEPENDENCY_ECOSYSTEM, result.getEcosystem());
         assertThat(vendorString, containsString("REST Client Team"));
         assertThat(vendorString, containsString("rest-client_project"));
         assertThat(vendorString, containsString("rest.client@librelist.com"));
@@ -118,7 +118,7 @@ public class RubyGemspecAnalyzerTest extends BaseTest {
                 "ruby/vulnerable/gems/rails-4.1.15/vendor/bundle/ruby/2.2.0/gems/pg-0.18.4/Rakefile"));
         analyzer.analyze(result, null);
         assertTrue(result.getEvidence().size()>0);
-        assertEquals(RubyGemspecAnalyzer.DEPENDENCY_ECOSYSTEM, result.getDependencyEcosystem());
+        assertEquals(RubyGemspecAnalyzer.DEPENDENCY_ECOSYSTEM, result.getEcosystem());
         assertEquals("pg",result.getName());
         assertEquals("0.18.4",result.getVersion());
         assertEquals("pg:0.18.4",result.getDisplayFileName());

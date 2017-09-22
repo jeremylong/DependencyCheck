@@ -46,6 +46,11 @@ import org.owasp.dependencycheck.exception.InitializationException;
 @Experimental
 public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
 
+	/**
+     * A descriptor for the type of dependencies processed or added by this analyzer
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = "Python.Pkg";
+    
     /**
      * Used when compiling file scanning regex patterns.
      */
@@ -111,11 +116,6 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(EXTENSIONS).build();
     
     /**
-     * The dependency Ecosystem
-     */
-     static final String DEPENDENCY_ECOSYSTEM = "Python.Pkg";
-    
-    /**
      * Returns the name of the Python Package Analyzer.
      *
      * @return the name of the analyzer
@@ -178,7 +178,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
-        dependency.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);
+        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
     	    final File file = dependency.getActualFile();
         final File parent = file.getParentFile();
         final String parentName = parent.getName();

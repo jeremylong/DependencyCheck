@@ -58,14 +58,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
+     * A descriptor for the type of dependencies processed or added by this analyzer
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = "Python.Dist";
+    
+    /**
      * Name of egg metadata files to analyze.
      */
     private static final String PKG_INFO = "PKG-INFO";
-    
-    /**
-     * The dependency Ecosystem
-     */
-     static final String DEPENDENCY_ECOSYSTEM = "Python.Dist";
 
     /**
      * Name of wheel metadata files to analyze.
@@ -189,7 +189,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
     	
-    	    dependency.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);
+    	    dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
         final File actualFile = dependency.getActualFile();
         if (WHL_FILTER.accept(actualFile)) {
             collectMetadataFromArchiveFormat(dependency, DIST_INFO_FILTER,

@@ -101,7 +101,7 @@ public class PythonPackageAnalyzerTest extends BaseTest {
         assertEquals("0.0.1",result.getVersion());
         assertEquals("eggtest",result.getName());
         assertEquals("eggtest:0.0.1",result.getDisplayFileName());
-        assertEquals(PythonPackageAnalyzer.DEPENDENCY_ECOSYSTEM,result.getDependencyEcosystem());
+        assertEquals(PythonPackageAnalyzer.DEPENDENCY_ECOSYSTEM,result.getEcosystem());
     }
 
 }

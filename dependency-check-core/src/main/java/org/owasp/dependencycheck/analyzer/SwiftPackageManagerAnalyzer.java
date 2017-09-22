@@ -44,14 +44,14 @@ import org.owasp.dependencycheck.utils.Settings;
 public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
+     * A descriptor for the type of dependencies processed or added by this analyzer
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = "Swift.PM";
+    
+    /**
      * The name of the analyzer.
      */
     private static final String ANALYZER_NAME = "SWIFT Package Manager Analyzer";
-    
-    /**
-     * The dependency Ecosystem
-     */
-    static final String DEPENDENCY_ECOSYSTEM = "Swift.PM";
 
     /**
      * The phase that this analyzer is intended to run in.
@@ -124,7 +124,7 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
 
-    	    dependency.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);   
+    	    dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);   
     	
         String contents;
         try {

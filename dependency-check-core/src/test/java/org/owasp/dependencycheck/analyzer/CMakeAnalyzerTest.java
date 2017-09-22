@@ -148,7 +148,7 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
     		assertEquals(product,result.getName());
     	    assertTrue("Expected product evidence to contain \"" + product + "\".",
                 result.getProductEvidence().toString().contains(product));
-        assertEquals(CMakeAnalyzer.DEPENDENCY_ECOSYSTEM,result.getDependencyEcosystem());
+        assertEquals(CMakeAnalyzer.DEPENDENCY_ECOSYSTEM,result.getEcosystem());
     }
 
     /**

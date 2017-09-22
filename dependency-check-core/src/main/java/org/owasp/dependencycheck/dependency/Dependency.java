@@ -154,9 +154,10 @@ public class Dependency implements Serializable, Comparable<Dependency> {
     private String version;
     
     /**
-     * Defines the ecosystem identifier for this dependency
+     * A descriptor for the type of dependency based on which analyzer added it
+     * or collected evidence about it
      */
-    private String dependencyEcosystem;
+    private String ecosystem;
 
     /**
      * Returns the package path.
@@ -886,16 +887,16 @@ public class Dependency implements Serializable, Comparable<Dependency> {
 	}
 
 	/**
-	 * @return the dependencyEcosystem
+	 * @return the ecosystem
 	 */
-	public String getDependencyEcosystem() {
-		return dependencyEcosystem;
+	public String getEcosystem() {
+		return ecosystem;
 	}
 
 	/**
-	 * @param dependencyEcosystem the dependencyEcosystem to set
+	 * @param ecosystem the ecosystem to set
 	 */
-	public void setDependencyEcosystem(String dependencyEcosystem) {
-		this.dependencyEcosystem = dependencyEcosystem;
+	public void setEcosystem(String ecosystem) {
+		this.ecosystem = ecosystem;
 	}
 }

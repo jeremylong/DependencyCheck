@@ -48,7 +48,12 @@ import org.slf4j.LoggerFactory;
 @Experimental
 public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
 
-    /**
+	/**
+     * A descriptor for the type of dependencies processed or added by this analyzer
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = "Ruby.Bundle";
+    
+	/**
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(RubyGemspecAnalyzer.class);
@@ -56,10 +61,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
      * The name of the analyzer.
      */
     private static final String ANALYZER_NAME = "Ruby Gemspec Analyzer";
-    /**
-     * The Dependency's ecosystem.
-     */
-    static final String DEPENDENCY_ECOSYSTEM = "Ruby.Bundle";
+    
     /**
      * The phase that this analyzer is intended to run in.
      */
@@ -135,7 +137,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
-    	    dependency.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);
+    	    dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
         String contents;
         try {
             contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());

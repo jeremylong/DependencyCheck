@@ -50,6 +50,11 @@ import org.owasp.dependencycheck.exception.InitializationException;
 public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
+     * A descriptor for the type of dependencies processed or added by this analyzer
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = "npm";
+    
+	/**
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(NodePackageAnalyzer.class);
@@ -58,11 +63,6 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
      * The name of the analyzer.
      */
     private static final String ANALYZER_NAME = "Node.js Package Analyzer";
-
-    /**
-     * The dependency ecosystem.
-     */
-    static final String DEPENDENCY_ECOSYSTEM = "npm";
     
     /**
      * The phase that this analyzer is intended to run in.
@@ -127,7 +127,7 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        dependency.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);
+        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
     		final File file = dependency.getActualFile();
         if (!file.isFile() || file.length()==0) {
             return;

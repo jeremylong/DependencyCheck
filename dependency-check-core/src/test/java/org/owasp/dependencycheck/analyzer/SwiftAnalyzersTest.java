@@ -109,7 +109,7 @@ public class SwiftAnalyzersTest extends BaseTest {
         assertThat(result.getName(),equalTo("EasyPeasy"));
         assertThat(result.getVersion(),equalTo("0.2.3"));
         assertThat(result.getDisplayFileName(),equalTo("EasyPeasy:0.2.3"));
-        assertThat(result.getDependencyEcosystem(),equalTo(CocoaPodsAnalyzer.DEPENDENCY_ECOSYSTEM));
+        assertThat(result.getEcosystem(),equalTo(CocoaPodsAnalyzer.DEPENDENCY_ECOSYSTEM));
     }
 
     /**
@@ -128,6 +128,6 @@ public class SwiftAnalyzersTest extends BaseTest {
         //TODO: when version processing is added, update the expected name.
         assertThat(result.getDisplayFileName(),equalTo("Gloss"));
         
-        assertThat(result.getDependencyEcosystem(),equalTo(SwiftPackageManagerAnalyzer.DEPENDENCY_ECOSYSTEM));
+        assertThat(result.getEcosystem(),equalTo(SwiftPackageManagerAnalyzer.DEPENDENCY_ECOSYSTEM));
     }
 }

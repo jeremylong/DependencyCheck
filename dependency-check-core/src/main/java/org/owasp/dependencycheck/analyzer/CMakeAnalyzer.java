@@ -58,9 +58,9 @@ import org.owasp.dependencycheck.exception.InitializationException;
 public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
-     * The dependency Ecosystem
+     * A descriptor for the type of dependencies processed or added by this analyzer
      */
-     static final String DEPENDENCY_ECOSYSTEM = "CMAKE";
+     public static final String DEPENDENCY_ECOSYSTEM = "CMAKE";
      
     /**
      * The logger.
@@ -154,9 +154,8 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
-    	    dependency.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);
+    	    dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
         final File file = dependency.getActualFile();
-        final String parentName = file.getParentFile().getName();
         final String name = file.getName();
         String contents;
         try {
@@ -217,7 +216,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
             if (count > 1) {
                 //TODO - refactor so we do not assign to the parameter (checkstyle)
                 currentDep = new Dependency(dependency.getActualFile());
-                currentDep.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);
+                currentDep.setEcosystem(DEPENDENCY_ECOSYSTEM);
                 final String filePath = String.format("%s:%s", dependency.getFilePath(), product);
                 currentDep.setFilePath(filePath);
 

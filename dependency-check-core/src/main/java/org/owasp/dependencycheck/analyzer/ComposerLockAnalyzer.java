@@ -47,6 +47,11 @@ import java.security.NoSuchAlgorithmException;
 public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
 
     /**
+     * A descriptor for the type of dependencies processed or added by this analyzer
+     */
+     public static final String DEPENDENCY_ECOSYSTEM = "Composer";
+	
+    /**
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ComposerLockAnalyzer.class);
@@ -55,11 +60,6 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
      * The analyzer name.
      */
     private static final String ANALYZER_NAME = "Composer.lock analyzer";
-
-    /**
-     * The dependency Ecosystem
-     */
-     static final String DEPENDENCY_ECOSYSTEM = "Composer";
     
     /**
      * composer.json.
@@ -119,7 +119,7 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
                 d.setName(dep.getProject());
                 d.setVersion(dep.getVersion());
                 
-                d.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);
+                d.setEcosystem(DEPENDENCY_ECOSYSTEM);
                 
                 final MessageDigest sha1 = getSha1MessageDigest();
                 d.setFilePath(filePath);

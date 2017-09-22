@@ -50,13 +50,15 @@ import org.owasp.dependencycheck.dependency.Dependency;
 public class RubyBundlerAnalyzer extends RubyGemspecAnalyzer {
 
     /**
+     * A descriptor for the type of dependencies processed or added by this analyzer
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = "Ruby.Bundle";
+    
+    /**
      * The name of the analyzer.
      */
     private static final String ANALYZER_NAME = "Ruby Bundler Analyzer";
-    /**
-     * The types of files on which this will work.
-     */
-    static final String DEPENDENCY_ECOSYSTEM = "Ruby.Bundle";
+
     /**
      * Folder name that contains .gemspec files created by "bundle install"
      */
@@ -100,7 +102,7 @@ public class RubyBundlerAnalyzer extends RubyGemspecAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
         super.analyzeDependency(dependency, engine);
-        dependency.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);
+        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
         //find the corresponding gem folder for this .gemspec stub by "bundle install --deployment"
         final File gemspecFile = dependency.getActualFile();
         final String gemFileName = gemspecFile.getName();

@@ -133,7 +133,7 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
         assertEquals("1.7.2",result.getVersion());
         assertEquals("Django",result.getName());
         assertEquals("Django:1.7.2",result.getDisplayFileName());
-        assertEquals(PythonDistributionAnalyzer.DEPENDENCY_ECOSYSTEM,result.getDependencyEcosystem());
+        assertEquals(PythonDistributionAnalyzer.DEPENDENCY_ECOSYSTEM,result.getEcosystem());
     }
 
     @Test
@@ -189,6 +189,6 @@ public class PythonDistributionAnalyzerTest extends BaseTest {
         assertEquals("0.0.1",result.getVersion());
         assertEquals("EggTest",result.getName());
         assertEquals("EggTest:0.0.1",result.getDisplayFileName());
-        assertEquals(PythonDistributionAnalyzer.DEPENDENCY_ECOSYSTEM,result.getDependencyEcosystem());
+        assertEquals(PythonDistributionAnalyzer.DEPENDENCY_ECOSYSTEM,result.getEcosystem());
     }
 }
