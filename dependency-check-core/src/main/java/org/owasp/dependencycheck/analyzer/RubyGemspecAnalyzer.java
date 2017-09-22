@@ -56,7 +56,10 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
      * The name of the analyzer.
      */
     private static final String ANALYZER_NAME = "Ruby Gemspec Analyzer";
-
+    /**
+     * The Dependency's ecosystem.
+     */
+    static final String DEPENDENCY_ECOSYSTEM = "Ruby.Bundle";
     /**
      * The phase that this analyzer is intended to run in.
      */
@@ -132,6 +135,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
+    	    dependency.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);
         String contents;
         try {
             contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());
@@ -148,6 +152,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
             final EvidenceCollection product = dependency.getProductEvidence();
             final String name = addStringEvidence(product, contents, blockVariable, "name", "name", Confidence.HIGHEST);
             if (!name.isEmpty()) {
+            		dependency.setName(name);
                 vendor.addEvidence(GEMSPEC, "name_project", name + "_project", Confidence.LOW);
             }
             addStringEvidence(product, contents, blockVariable, "summary", "summary", Confidence.LOW);
@@ -158,9 +163,13 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
             addStringEvidence(vendor, contents, blockVariable, "license", "licen[cs]es?", Confidence.HIGHEST);
 
             final String value = addStringEvidence(dependency.getVersionEvidence(), contents,
-                    blockVariable, "version", "version", Confidence.HIGHEST);
+                    blockVariable, "version", "version", Confidence.HIGHEST);            
             if (value.length() < 1) {
                 addEvidenceFromVersionFile(dependency.getActualFile(), dependency.getVersionEvidence());
+            }
+            else
+            {
+            		dependency.setVersion(value);
             }
         }
 

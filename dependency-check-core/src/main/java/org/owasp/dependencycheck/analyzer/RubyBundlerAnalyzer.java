@@ -53,7 +53,10 @@ public class RubyBundlerAnalyzer extends RubyGemspecAnalyzer {
      * The name of the analyzer.
      */
     private static final String ANALYZER_NAME = "Ruby Bundler Analyzer";
-
+    /**
+     * The types of files on which this will work.
+     */
+    static final String DEPENDENCY_ECOSYSTEM = "Ruby.Bundle";
     /**
      * Folder name that contains .gemspec files created by "bundle install"
      */
@@ -97,7 +100,7 @@ public class RubyBundlerAnalyzer extends RubyGemspecAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
         super.analyzeDependency(dependency, engine);
-
+        dependency.setDependencyEcosystem(DEPENDENCY_ECOSYSTEM);
         //find the corresponding gem folder for this .gemspec stub by "bundle install --deployment"
         final File gemspecFile = dependency.getActualFile();
         final String gemFileName = gemspecFile.getName();

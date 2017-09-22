@@ -80,6 +80,7 @@ public class RubyBundlerAnalyzerTest extends BaseTest {
     public void testSupportsFiles() {
         assertThat(analyzer.accept(new File("test.gemspec")), is(false));
         assertThat(analyzer.accept(new File("specifications" + File.separator + "test.gemspec")), is(true));
+        assertThat(analyzer.accept(new File("gemspec.lock")), is(false));
     }
 
     /**
@@ -100,7 +101,12 @@ public class RubyBundlerAnalyzerTest extends BaseTest {
         assertThat(vendorString, containsString("https://github.com/petergoldstein/dalli"));
         assertThat(vendorString, containsString("MIT"));
         assertThat(result.getProductEvidence().toString(), containsString("dalli"));
+        assertEquals("dalli",result.getName());
         assertThat(result.getProductEvidence().toString(), containsString("High performance memcached client for Ruby"));
         assertThat(result.getVersionEvidence().toString(), containsString("2.7.5"));
+        assertEquals("2.7.5",result.getVersion());
+        assertEquals(RubyBundlerAnalyzer.DEPENDENCY_ECOSYSTEM, result.getDependencyEcosystem());
+        assertEquals("dalli:2.7.5",result.getDisplayFileName());
+        
     }
 }
