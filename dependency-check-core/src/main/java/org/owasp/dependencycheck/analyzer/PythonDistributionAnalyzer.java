@@ -57,10 +57,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Experimental
 public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
 
-    /**
-     * A descriptor for the type of dependencies processed or added by this analyzer
-     */
-    public static final String DEPENDENCY_ECOSYSTEM = "Python.Dist";
+	/**
+	 * A descriptor for the type of dependencies processed or added by this analyzer
+	 */
+	public static final String DEPENDENCY_ECOSYSTEM = "Python.Dist";
     
     /**
      * Name of egg metadata files to analyze.
@@ -189,7 +189,7 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
     	
-    	    dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
+		dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
         final File actualFile = dependency.getActualFile();
         if (WHL_FILTER.accept(actualFile)) {
             collectMetadataFromArchiveFormat(dependency, DIST_INFO_FILTER,
@@ -304,11 +304,9 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
                 "Version", Confidence.HIGHEST);
         addPropertyToEvidence(headers, dependency.getProductEvidence(), "Name",
                 Confidence.HIGHEST);
-        
-        dependency.setName(headers.getHeader("Name", null));
-        dependency.setVersion(headers.getHeader("Version", null));
-        
-        final String url = headers.getHeader("Home-page", null);
+		dependency.setName(headers.getHeader("Name", null));
+		dependency.setVersion(headers.getHeader("Version", null));
+		final String url = headers.getHeader("Home-page", null);
         final EvidenceCollection vendorEvidence = dependency
                 .getVendorEvidence();
         if (StringUtils.isNotBlank(url)) {

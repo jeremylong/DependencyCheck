@@ -154,7 +154,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
-    	    dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
+		dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
         final File file = dependency.getActualFile();
         final String name = file.getName();
         String contents;

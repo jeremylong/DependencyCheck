@@ -47,10 +47,10 @@ import org.owasp.dependencycheck.exception.InitializationException;
 public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
 
 	/**
-     * A descriptor for the type of dependencies processed or added by this analyzer
-     */
-    public static final String DEPENDENCY_ECOSYSTEM = "Python.Pkg";
-    
+	 * A descriptor for the type of dependencies processed or added by this analyzer
+	 */
+	public static final String DEPENDENCY_ECOSYSTEM = "Python.Pkg";
+
     /**
      * Used when compiling file scanning regex patterns.
      */
@@ -178,7 +178,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
-        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
+		dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
     	    final File file = dependency.getActualFile();
         final File parent = file.getParentFile();
         final String parentName = parent.getName();
@@ -186,7 +186,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
             //by definition, the containing folder of __init__.py is considered the package, even the file is empty:
             //"The __init__.py files are required to make Python treat the directories as containing packages"
             //see section "6.4 Packages" from https://docs.python.org/2/tutorial/modules.html;
-            dependency.setName(parentName);
+			dependency.setName(parentName);
             dependency.getProductEvidence().addEvidence(file.getName(),
                     "PackageName", parentName, Confidence.HIGHEST);
 
@@ -329,17 +329,16 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
      * @param confidence in evidence
      * @return whether evidence was found
      */
-    private boolean gatherVersionEvidence(Pattern pattern, String contents,
-            String source, EvidenceCollection evidence, String name,
-            Confidence confidence,Dependency d) {
-        final Matcher matcher = pattern.matcher(contents);
-        final boolean found = matcher.find();
-        if (found) {
-            evidence.addEvidence(source, name, matcher.group(4), confidence);
-            d.setVersion(matcher.group(4));
-        }
-        return found;
-    }
+	private boolean gatherVersionEvidence(Pattern pattern, String contents, String source, EvidenceCollection evidence,
+			String name, Confidence confidence, Dependency d) {
+		final Matcher matcher = pattern.matcher(contents);
+		final boolean found = matcher.find();
+		if (found) {
+			evidence.addEvidence(source, name, matcher.group(4), confidence);
+			d.setVersion(matcher.group(4));
+		}
+		return found;
+	}
 
     @Override
     protected String getAnalyzerEnabledSettingKey() {

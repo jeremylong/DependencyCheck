@@ -49,11 +49,11 @@ import org.owasp.dependencycheck.exception.InitializationException;
 @Experimental
 public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
 
-    /**
-     * A descriptor for the type of dependencies processed or added by this analyzer
-     */
-    public static final String DEPENDENCY_ECOSYSTEM = "npm";
-    
+	/**
+	 * A descriptor for the type of dependencies processed or added by this analyzer
+	 */
+	public static final String DEPENDENCY_ECOSYSTEM = "npm";
+ 
 	/**
      * The logger.
      */
@@ -125,39 +125,40 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
         return Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED;
     }
 
-    @Override
-    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
-    		final File file = dependency.getActualFile();
-        if (!file.isFile() || file.length()==0) {
-            return;
-        }
-        try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {
-            final JsonObject json = jsonReader.readObject();
-            final EvidenceCollection productEvidence = dependency.getProductEvidence();
-            final EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
-            if (json.containsKey("name")) {
-                final Object value = json.get("name");
-                if (value instanceof JsonString) {
-                    final String valueString = ((JsonString) value).getString();
-                    productEvidence.addEvidence(PACKAGE_JSON, "name", valueString, Confidence.HIGHEST);
-                    dependency.setName(valueString);
-                    vendorEvidence.addEvidence(PACKAGE_JSON, "name_project", String.format("%s_project", valueString), Confidence.LOW);
-                } else {
-                    LOGGER.warn("JSON value not string as expected: {}", value);
-                }
-            }
-            addToEvidence(json, productEvidence, "description");
-            addToEvidence(json, vendorEvidence, "author");
-            final String version = addToEvidence(json, dependency.getVersionEvidence(), "version");
-            dependency.setVersion(version);
-            
-        } catch (JsonException e) {
-            LOGGER.warn("Failed to parse package.json file.", e);
-        } catch (IOException e) {
-            throw new AnalysisException("Problem occurred while reading dependency file.", e);
-        }
-    }
+	@Override
+	protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+		dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
+		final File file = dependency.getActualFile();
+		if (!file.isFile() || file.length() == 0) {
+			return;
+		}
+		try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {
+			final JsonObject json = jsonReader.readObject();
+			final EvidenceCollection productEvidence = dependency.getProductEvidence();
+			final EvidenceCollection vendorEvidence = dependency.getVendorEvidence();
+			if (json.containsKey("name")) {
+				final Object value = json.get("name");
+				if (value instanceof JsonString) {
+					final String valueString = ((JsonString) value).getString();
+					productEvidence.addEvidence(PACKAGE_JSON, "name", valueString, Confidence.HIGHEST);
+					dependency.setName(valueString);
+					vendorEvidence.addEvidence(PACKAGE_JSON, "name_project", String.format("%s_project", valueString),
+							Confidence.LOW);
+				} else {
+					LOGGER.warn("JSON value not string as expected: {}", value);
+				}
+			}
+			addToEvidence(json, productEvidence, "description");
+			addToEvidence(json, vendorEvidence, "author");
+			final String version = addToEvidence(json, dependency.getVersionEvidence(), "version");
+			dependency.setVersion(version);
+
+		} catch (JsonException e) {
+			LOGGER.warn("Failed to parse package.json file.", e);
+		} catch (IOException e) {
+			throw new AnalysisException("Problem occurred while reading dependency file.", e);
+		}
+	}
 
     /**
      * Adds information to an evidence collection from the node json

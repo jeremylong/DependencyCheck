@@ -46,11 +46,11 @@ import java.security.NoSuchAlgorithmException;
 @Experimental
 public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
 
-    /**
-     * A descriptor for the type of dependencies processed or added by this analyzer
-     */
-     public static final String DEPENDENCY_ECOSYSTEM = "Composer";
-	
+	/**
+	 * A descriptor for the type of dependencies processed or added by this analyzer
+	 */
+	public static final String DEPENDENCY_ECOSYSTEM = "Composer";
+
     /**
      * The logger.
      */
@@ -117,10 +117,8 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
                 final Dependency d = new Dependency(dependency.getActualFile());
                 final String filePath = String.format("%s:%s/%s/%s", dependency.getFilePath(), dep.getGroup(), dep.getProject(), dep.getVersion());        			
                 d.setName(dep.getProject());
-                d.setVersion(dep.getVersion());
-                
-                d.setEcosystem(DEPENDENCY_ECOSYSTEM);
-                
+                d.setVersion(dep.getVersion());              
+				d.setEcosystem(DEPENDENCY_ECOSYSTEM);
                 final MessageDigest sha1 = getSha1MessageDigest();
                 d.setFilePath(filePath);
                 d.setSha1sum(Checksum.getHex(sha1.digest(filePath.getBytes(Charset.defaultCharset()))));
@@ -133,13 +131,12 @@ public class ComposerLockAnalyzer extends AbstractFileTypeAnalyzer {
                 //make sure we only remove the main dependency if we went through this loop at least once.
                 	processedAtLeastOneDep = true;
                 }
-            //remove the dependency at the end because it's referenced in the loop itself.
-            //double check the name to be sure we only remove the generic entry.
-            if (processedAtLeastOneDep && dependency.getDisplayFileName().equalsIgnoreCase("composer.lock")) {
-            		LOGGER.debug("Removing main redundant dependency {}",dependency.getDisplayFileName());
-            		engine.getDependencies().remove(dependency);   
-
-            }
+			// remove the dependency at the end because it's referenced in the loop itself.
+			// double check the name to be sure we only remove the generic entry.
+			if (processedAtLeastOneDep && dependency.getDisplayFileName().equalsIgnoreCase("composer.lock")) {
+				LOGGER.debug("Removing main redundant dependency {}", dependency.getDisplayFileName());
+				engine.getDependencies().remove(dependency);
+			}
         } catch (IOException ex) {
             LOGGER.warn("Error opening dependency {}", dependency.getActualFilePath());
         } catch (ComposerException ce) {

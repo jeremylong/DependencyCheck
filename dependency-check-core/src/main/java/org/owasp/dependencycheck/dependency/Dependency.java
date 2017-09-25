@@ -304,22 +304,18 @@ public class Dependency implements Serializable, Comparable<Dependency> {
      *
      * @return the file name to display
      */
-    public String getDisplayFileName() {
-        if (displayName == null) {
-        	   if(name != null) {
-        		   if (version != null) {
-        			   return name + ":" + version;
-        		   }
-        		   else {
-        			   return name;
-        		   }
-        	   }	   
-        	   else { 
-        		   return this.fileName;
-        	   }	   
-        }
-        return this.displayName;
-    }
+	public String getDisplayFileName() {
+		if (displayName != null) {
+			return displayName;
+		}
+		if (name == null) {
+			return fileName;
+		}
+		if (version == null) {
+			return name;
+		}
+		return name + ":" + version;
+	}
 
     /**
      * <p>
@@ -880,7 +876,8 @@ public class Dependency implements Serializable, Comparable<Dependency> {
 	}
 
 	/**
-	 * @param version the version to set
+	 * @param version
+	 *            the version to set
 	 */
 	public void setVersion(String version) {
 		this.version = version;
@@ -894,7 +891,8 @@ public class Dependency implements Serializable, Comparable<Dependency> {
 	}
 
 	/**
-	 * @param ecosystem the ecosystem to set
+	 * @param ecosystem
+	 *            the ecosystem to set
 	 */
 	public void setEcosystem(String ecosystem) {
 		this.ecosystem = ecosystem;

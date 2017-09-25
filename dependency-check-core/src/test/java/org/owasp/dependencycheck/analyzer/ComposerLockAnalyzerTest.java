@@ -101,7 +101,7 @@ public class ComposerLockAnalyzerTest extends BaseDBTestCase {
 
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
                 "composer.lock"));
-        ///test that we don't remove the parent if it's not redundant by name
+        //test that we don't remove the parent if it's not redundant by name
         result.setDisplayFileName("NotComposer.Lock");
         engine.getDependencies().add(result);
         analyzer.analyze(result, engine);

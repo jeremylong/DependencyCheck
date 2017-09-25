@@ -49,10 +49,10 @@ import org.slf4j.LoggerFactory;
 public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
 
 	/**
-     * A descriptor for the type of dependencies processed or added by this analyzer
-     */
-    public static final String DEPENDENCY_ECOSYSTEM = "Ruby.Bundle";
-    
+	 * A descriptor for the type of dependencies processed or added by this analyzer
+	 */
+	public static final String DEPENDENCY_ECOSYSTEM = "Ruby.Bundle";
+  
 	/**
      * The logger.
      */
@@ -137,7 +137,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
-    	    dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
+		dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
         String contents;
         try {
             contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());
@@ -153,10 +153,10 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
             final EvidenceCollection vendor = dependency.getVendorEvidence();
             final EvidenceCollection product = dependency.getProductEvidence();
             final String name = addStringEvidence(product, contents, blockVariable, "name", "name", Confidence.HIGHEST);
-            if (!name.isEmpty()) {
-            		dependency.setName(name);
-                vendor.addEvidence(GEMSPEC, "name_project", name + "_project", Confidence.LOW);
-            }
+			if (!name.isEmpty()) {
+				dependency.setName(name);
+				vendor.addEvidence(GEMSPEC, "name_project", name + "_project", Confidence.LOW);
+			}
             addStringEvidence(product, contents, blockVariable, "summary", "summary", Confidence.LOW);
 
             addStringEvidence(vendor, contents, blockVariable, "author", "authors?", Confidence.HIGHEST);
@@ -164,17 +164,15 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
             addStringEvidence(vendor, contents, blockVariable, "homepage", "homepage", Confidence.HIGHEST);
             addStringEvidence(vendor, contents, blockVariable, "license", "licen[cs]es?", Confidence.HIGHEST);
 
-            final String value = addStringEvidence(dependency.getVersionEvidence(), contents,
-                    blockVariable, "version", "version", Confidence.HIGHEST);            
+			final String value = addStringEvidence(dependency.getVersionEvidence(), contents, blockVariable, "version",
+					"version", Confidence.HIGHEST);          
             if (value.length() < 1) {
                 addEvidenceFromVersionFile(dependency.getActualFile(), dependency.getVersionEvidence());
             }
-            else
-            {
-            		dependency.setVersion(value);
-            }
+			else {
+				dependency.setVersion(value);
+			}
         }
-
         setPackagePath(dependency);
     }
 

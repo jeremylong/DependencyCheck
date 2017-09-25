@@ -43,11 +43,11 @@ import org.owasp.dependencycheck.utils.Settings;
 @Experimental
 public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
 
-    /**
-     * A descriptor for the type of dependencies processed or added by this analyzer
-     */
-     public static final String DEPENDENCY_ECOSYSTEM = "CocoaPod";
-     
+	/**
+	 * A descriptor for the type of dependencies processed or added by this analyzer
+	 */
+	public static final String DEPENDENCY_ECOSYSTEM = "CocoaPod";
+  
     /**
      * The logger.
      */
@@ -127,7 +127,7 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
     protected void analyzeDependency(Dependency dependency, Engine engine)
             throws AnalysisException {
 
-    		dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
+		dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
         String contents;
         try {
             contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());

@@ -139,17 +139,15 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
         analyzer.analyze(result, null);
         
         //this one finds nothing so it falls through to the filename. Can we do better?
-        assertEquals("OpenCVDetectPython.cmake",result.getDisplayFileName());
-        
-        
+        assertEquals("OpenCVDetectPython.cmake",result.getDisplayFileName());       
     }
     
-    private void assertProductEvidence(Dependency result, String product) {
-    		assertEquals(product,result.getName());
-    	    assertTrue("Expected product evidence to contain \"" + product + "\".",
-                result.getProductEvidence().toString().contains(product));
-        assertEquals(CMakeAnalyzer.DEPENDENCY_ECOSYSTEM,result.getEcosystem());
-    }
+	private void assertProductEvidence(Dependency result, String product) {
+		assertEquals(product, result.getName());
+		assertTrue("Expected product evidence to contain \"" + product + "\".",
+				result.getProductEvidence().toString().contains(product));
+		assertEquals(CMakeAnalyzer.DEPENDENCY_ECOSYSTEM, result.getEcosystem());
+	}
 
     /**
      * Test whether expected version evidence is gathered from OpenCV's third party cmake files.
@@ -170,8 +168,7 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
         assertEquals("Number of additional dependencies should be 4.", 4, dependencies.size());
         final Dependency last = dependencies.get(3);
         assertProductEvidence(last, "libavresample");
-        assertVersionEvidence(last, "1.0.1");
-        
+        assertVersionEvidence(last, "1.0.1");      
     }
 
     private void assertVersionEvidence(Dependency result, String version) {
