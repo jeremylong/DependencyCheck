@@ -128,12 +128,11 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
         instance.initialize(getSettings());
         //trick the analyzer into thinking it is active.
         instance.accept(new File("test.ear"));
-        try {
+        try (Engine engine = new Engine(getSettings())) {
             getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             getSettings().setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
             getSettings().setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-            Engine engine = new Engine(getSettings());
-
+            
             instance.prepare(engine);
             File file = BaseTest.getResourceAsFile(this, "daytrader-ear-2.1.7.ear");
             Dependency dependency = new Dependency(file);
@@ -141,11 +140,7 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
             int initial_size = engine.getDependencies().length;
             instance.analyze(dependency, engine);
             int ending_size = engine.getDependencies().length;
-
-            engine.close();
-
             assertTrue(initial_size < ending_size);
-
         } finally {
             instance.close();
         }
@@ -160,21 +155,17 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
         instance.initialize(getSettings());
         //trick the analyzer into thinking it is active.
         instance.accept(new File("test.ear"));
-        try {
+        try (Engine engine = new Engine(getSettings())) {
             instance.prepare(null);
             File file = BaseTest.getResourceAsFile(this, "bootable-0.1.0.jar");
             Dependency dependency = new Dependency(file);
             getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             getSettings().setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
             getSettings().setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-            Engine engine = new Engine(getSettings());
-
+            
             int initial_size = engine.getDependencies().length;
             instance.analyze(dependency, engine);
             int ending_size = engine.getDependencies().length;
-
-            engine.close();
-
             assertTrue(initial_size < ending_size);
 
         } finally {
@@ -191,7 +182,7 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
         instance.initialize(getSettings());
         //trick the analyzer into thinking it is active so that it will prepare
         instance.accept(new File("test.tar"));
-        try {
+        try (Engine engine = new Engine(getSettings())) {
             instance.prepare(null);
 
             //File file = new File(this.getClass().getClassLoader().getResource("file.tar").getPath());
@@ -201,15 +192,11 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
             getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             getSettings().setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
             getSettings().setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-            Engine engine = new Engine(getSettings());
-
+            
             int initial_size = engine.getDependencies().length;
             instance.analyze(dependency, engine);
             int ending_size = engine.getDependencies().length;
-            engine.close();
-
             assertTrue(initial_size < ending_size);
-
         } finally {
             instance.close();
         }
@@ -223,7 +210,7 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
         instance.initialize(getSettings());
         instance.accept(new File("zip")); //ensure analyzer is "enabled"
-        try {
+        try (Engine engine = new Engine(getSettings())) {
             instance.prepare(null);
 
             //File file = new File(this.getClass().getClassLoader().getResource("file.tar.gz").getPath());
@@ -232,14 +219,12 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
             getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             getSettings().setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
             getSettings().setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-            Engine engine = new Engine(getSettings());
-
+            
             int initial_size = engine.getDependencies().length;
             //instance.analyze(dependency, engine);
             engine.scan(file);
             engine.analyzeDependencies();
             int ending_size = engine.getDependencies().length;
-            engine.close();
             assertTrue(initial_size < ending_size);
 
         } finally {
@@ -255,18 +240,16 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
         instance.initialize(getSettings());
         instance.accept(new File("zip")); //ensure analyzer is "enabled"
-        try {
+        try (Engine engine = new Engine(getSettings())){
             instance.prepare(null);
             File file = BaseTest.getResourceAsFile(this, "file.tar.bz2");
             getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             getSettings().setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
             getSettings().setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-            Engine engine = new Engine(getSettings());
             int initial_size = engine.getDependencies().length;
             engine.scan(file);
             engine.analyzeDependencies();
             int ending_size = engine.getDependencies().length;
-            engine.close();
             assertTrue(initial_size < ending_size);
         } finally {
             instance.close();
@@ -281,7 +264,7 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
         instance.initialize(getSettings());
         instance.accept(new File("zip")); //ensure analyzer is "enabled"
-        try {
+        try (Engine engine = new Engine(getSettings())) {
             instance.prepare(null);
 
             //File file = new File(this.getClass().getClassLoader().getResource("file.tgz").getPath());
@@ -289,13 +272,10 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
             getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             getSettings().setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
             getSettings().setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-            Engine engine = new Engine(getSettings());
-
             int initial_size = engine.getDependencies().length;
             engine.scan(file);
             engine.analyzeDependencies();
             int ending_size = engine.getDependencies().length;
-            engine.close();
             assertTrue(initial_size < ending_size);
 
         } finally {
@@ -311,18 +291,16 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
         instance.initialize(getSettings());
         instance.accept(new File("zip")); //ensure analyzer is "enabled"
-        try {
+        try (Engine engine = new Engine(getSettings())) {
             instance.prepare(null);
             File file = BaseTest.getResourceAsFile(this, "file.tbz2");
             getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             getSettings().setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
             getSettings().setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-            Engine engine = new Engine(getSettings());
             int initial_size = engine.getDependencies().length;
             engine.scan(file);
             engine.analyzeDependencies();
             int ending_size = engine.getDependencies().length;
-            engine.close();
             assertTrue(initial_size < ending_size);
         } finally {
             instance.close();
@@ -336,7 +314,7 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
     public void testAnalyze_badZip() throws Exception {
         ArchiveAnalyzer instance = new ArchiveAnalyzer();
         instance.initialize(getSettings());
-        try {
+        try (Engine engine = new Engine(getSettings())) {
             instance.prepare(null);
 
             //File file = new File(this.getClass().getClassLoader().getResource("test.zip").getPath());
@@ -345,7 +323,6 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
             getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
             getSettings().setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
             getSettings().setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-            Engine engine = new Engine(getSettings());
             int initial_size = engine.getDependencies().length;
 //            boolean failed = false;
 //            try {
@@ -355,7 +332,6 @@ public class ArchiveAnalyzerIT extends BaseDBTestCase {
 //            }
 //            assertTrue(failed);
             int ending_size = engine.getDependencies().length;
-            engine.close();
             assertEquals(initial_size, ending_size);
         } finally {
             instance.close();

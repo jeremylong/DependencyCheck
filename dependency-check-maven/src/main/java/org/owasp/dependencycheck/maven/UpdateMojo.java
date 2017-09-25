@@ -81,8 +81,6 @@ public class UpdateMojo extends BaseDependencyCheckMojo {
                 throw new MojoExecutionException(msg, ex);
             }
             getLog().error(msg);
-        } finally {
-            getSettings().cleanup();
         }
     }
 

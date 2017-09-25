@@ -84,12 +84,11 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
      */
     @Test
     public void testDetermineCPE_full() throws Exception {
-        //update needs to be performed so that xtream can be tested
-        Engine e = new Engine(getSettings());
-        e.doUpdates();
-
         CPEAnalyzer cpeAnalyzer = new CPEAnalyzer();
-        try {
+        try (Engine e = new Engine(getSettings())) {
+            //update needs to be performed so that xtream can be tested
+            e.doUpdates(true);
+
             cpeAnalyzer.initialize(getSettings());
             cpeAnalyzer.prepare(e);
             FileNameAnalyzer fnAnalyzer = new FileNameAnalyzer();
@@ -113,7 +112,6 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
             callDetermineCPE_full("jaxb-xercesImpl-1.5.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
             callDetermineCPE_full("ehcache-core-2.2.0.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
             callDetermineCPE_full("xstream-1.4.8.jar", "cpe:/a:x-stream:xstream:1.4.8", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
-
         } finally {
             cpeAnalyzer.close();
         }
@@ -124,7 +122,8 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
      *
      * @throws Exception is thrown when an exception occurs
      */
-    public void callDetermineCPE_full(String depName, String expResult, CPEAnalyzer cpeAnalyzer, FileNameAnalyzer fnAnalyzer, JarAnalyzer jarAnalyzer, HintAnalyzer hAnalyzer, FalsePositiveAnalyzer fp) throws Exception {
+    public void callDetermineCPE_full(String depName, String expResult, CPEAnalyzer cpeAnalyzer, FileNameAnalyzer fnAnalyzer,
+            JarAnalyzer jarAnalyzer, HintAnalyzer hAnalyzer, FalsePositiveAnalyzer fp) throws Exception {
 
         //File file = new File(this.getClass().getClassLoader().getResource(depName).getPath());
         File file = BaseTest.getResourceAsFile(this, depName);
@@ -197,35 +196,35 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         hintAnalyzer.analyze(spring3, null);
 
         CPEAnalyzer instance = new CPEAnalyzer();
-        Engine engine = new Engine(getSettings());
-        engine.openDatabase();
-        instance.initialize(getSettings());
-        instance.prepare(engine);
-        instance.determineCPE(commonValidator);
-        instance.determineCPE(struts);
-        instance.determineCPE(spring);
-        instance.determineCPE(spring3);
-        instance.close();
+        try (Engine engine = new Engine(getSettings())) {
+            engine.openDatabase(true, true);
+            instance.initialize(getSettings());
+            instance.prepare(engine);
+            instance.determineCPE(commonValidator);
+            instance.determineCPE(struts);
+            instance.determineCPE(spring);
+            instance.determineCPE(spring3);
+            instance.close();
 
-        String expResult = "cpe:/a:apache:struts:2.1.2";
+            String expResult = "cpe:/a:apache:struts:2.1.2";
 
-        for (Identifier i : commonValidator.getIdentifiers()) {
-            assertFalse("Apache Common Validator - found a CPE identifier?", "cpe".equals(i.getType()));
-        }
-
-        assertTrue("Incorrect match size - struts", struts.getIdentifiers().size() >= 1);
-        boolean found = false;
-        for (Identifier i : struts.getIdentifiers()) {
-            if (expResult.equals(i.getValue())) {
-                found = true;
-                break;
+            for (Identifier i : commonValidator.getIdentifiers()) {
+                assertFalse("Apache Common Validator - found a CPE identifier?", "cpe".equals(i.getType()));
             }
-        }
-        assertTrue("Incorrect match - struts", found);
-        assertTrue("Incorrect match size - spring3 - " + spring3.getIdentifiers().size(), spring3.getIdentifiers().size() >= 1);
 
-        jarAnalyzer.close();
-        engine.close();
+            assertTrue("Incorrect match size - struts", struts.getIdentifiers().size() >= 1);
+            boolean found = false;
+            for (Identifier i : struts.getIdentifiers()) {
+                if (expResult.equals(i.getValue())) {
+                    found = true;
+                    break;
+                }
+            }
+            assertTrue("Incorrect match - struts", found);
+            assertTrue("Incorrect match size - spring3 - " + spring3.getIdentifiers().size(), spring3.getIdentifiers().size() >= 1);
+
+            jarAnalyzer.close();
+        }
     }
 
     /**
@@ -241,13 +240,13 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         openssl.addEvidence(EvidenceType.VERSION, "test", "version", "1.0.1c", Confidence.HIGHEST);
 
         CPEAnalyzer instance = new CPEAnalyzer();
-        Engine engine = new Engine(getSettings());
-        engine.openDatabase();
-        instance.initialize(getSettings());
-        instance.prepare(engine);
-        instance.determineIdentifiers(openssl, "openssl", "openssl", Confidence.HIGHEST);
-        instance.close();
-        engine.close();
+        try (Engine engine = new Engine(getSettings())) {
+            engine.openDatabase(true, true);
+            instance.initialize(getSettings());
+            instance.prepare(engine);
+            instance.determineIdentifiers(openssl, "openssl", "openssl", Confidence.HIGHEST);
+            instance.close();
+        }
 
         String expResult = "cpe:/a:openssl:openssl:1.0.1c";
         Identifier expIdentifier = new Identifier("cpe", expResult, expResult);
@@ -258,7 +257,6 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
                 break;
             }
         }
-
         assertTrue("OpenSSL identifier not found", found);
     }
 
@@ -275,23 +273,23 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         String expProduct = "struts";
 
         CPEAnalyzer instance = new CPEAnalyzer();
-        Engine engine = new Engine(getSettings());
-        engine.openDatabase();
-        instance.initialize(getSettings());
-        instance.prepare(engine);
+        try (Engine engine = new Engine(getSettings())) {
+            engine.openDatabase(true, true);
+            instance.initialize(getSettings());
+            instance.prepare(engine);
 
-        Set<String> productWeightings = Collections.singleton("struts2");
-        Set<String> vendorWeightings = Collections.singleton("apache");
-        List<IndexEntry> result = instance.searchCPE(vendor, product, vendorWeightings, productWeightings);
-        instance.close();
+            Set<String> productWeightings = Collections.singleton("struts2");
+            Set<String> vendorWeightings = Collections.singleton("apache");
+            List<IndexEntry> result = instance.searchCPE(vendor, product, vendorWeightings, productWeightings);
 
-        boolean found = false;
-        for (IndexEntry entry : result) {
-            if (expVendor.equals(entry.getVendor()) && expProduct.equals(entry.getProduct())) {
-                found = true;
-                break;
+            boolean found = false;
+            for (IndexEntry entry : result) {
+                if (expVendor.equals(entry.getVendor()) && expProduct.equals(entry.getProduct())) {
+                    found = true;
+                    break;
+                }
             }
+            assertTrue("apache:struts was not identified", found);
         }
-        assertTrue("apache:struts was not identified", found);
     }
 }

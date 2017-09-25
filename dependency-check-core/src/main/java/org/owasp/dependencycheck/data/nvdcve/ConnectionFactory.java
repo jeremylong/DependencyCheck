@@ -29,13 +29,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.io.IOUtils;
-import org.owasp.dependencycheck.data.update.exception.UpdateException;
-import org.owasp.dependencycheck.exception.H2DBLockException;
 import org.owasp.dependencycheck.utils.DBUtils;
 import org.owasp.dependencycheck.utils.DependencyVersion;
 import org.owasp.dependencycheck.utils.DependencyVersionUtil;
 import org.owasp.dependencycheck.utils.FileUtils;
-import org.owasp.dependencycheck.utils.H2DBLock;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,26 +112,15 @@ public final class ConnectionFactory {
             return;
         }
         Connection conn = null;
-        H2DBLock dblock = null;
         try {
-            if (isH2Connection()) {
-                dblock = new H2DBLock(settings);
-                LOGGER.debug("locking for init");
-                dblock.lock();
-            }
-
             //load the driver if necessary
             final String driverName = settings.getString(Settings.KEYS.DB_DRIVER_NAME, "");
-            if (!driverName.isEmpty()) {
-                LOGGER.debug("Loading driver: {}", driverName);
-                final String driverPath = settings.getString(Settings.KEYS.DB_DRIVER_PATH, "");
+            final String driverPath = settings.getString(Settings.KEYS.DB_DRIVER_PATH, "");
+            if (!driverPath.isEmpty()) {
+                LOGGER.debug("Loading driver '{}' from '{}'", driverName, driverPath);
                 try {
-                    if (!driverPath.isEmpty()) {
-                        LOGGER.debug("Loading driver from: {}", driverPath);
-                        driver = DriverLoader.load(driverName, driverPath);
-                    } else {
-                        driver = DriverLoader.load(driverName);
-                    }
+                    LOGGER.debug("Loading driver from: {}", driverPath);
+                    driver = DriverLoader.load(driverName, driverPath);
                 } catch (DriverLoadException ex) {
                     LOGGER.debug("Unable to load database driver", ex);
                     throw new DatabaseException("Unable to load database driver", ex);
@@ -198,8 +184,6 @@ public final class ConnectionFactory {
                 LOGGER.debug("", dex);
                 throw new DatabaseException("Database schema does not match this version of dependency-check", dex);
             }
-        } catch (H2DBLockException ex) {
-            throw new DatabaseException("Unable to obtain an exclusive lock on the H2 database to perform initializataion", ex);
         } finally {
             if (conn != null) {
                 try {
@@ -207,9 +191,6 @@ public final class ConnectionFactory {
                 } catch (SQLException ex) {
                     LOGGER.debug("An error occurred closing the connection", ex);
                 }
-            }
-            if (dblock != null) {
-                dblock.release();
             }
         }
     }
@@ -272,10 +253,22 @@ public final class ConnectionFactory {
      * cannot be created
      */
     public static boolean h2DataFileExists(Settings configuration) throws IOException {
+        File file = getH2DataFile(configuration);
+        return file.exists();
+    }
+
+    /**
+     * Returns a reference to the H2 database file.
+     *
+     * @param configuration the configured settings
+     * @return the path to the H2 database file
+     * @throws IOException thrown if there is an error
+     */
+    public static File getH2DataFile(Settings configuration) throws IOException {
         final File dir = configuration.getDataDirectory();
         final String fileName = configuration.getString(Settings.KEYS.DB_FILE_NAME);
         final File file = new File(dir, fileName);
-        return file.exists();
+        return file;
     }
 
     /**

@@ -150,7 +150,7 @@ public class RubyBundleAuditAnalyzerIT extends BaseDBTestCase {
     @Test
     public void testAddCriticalityToVulnerability() throws AnalysisException, DatabaseException {
         try (Engine engine = new Engine(getSettings())) {
-            engine.doUpdates();
+            engine.doUpdates(true);
             analyzer.prepare(engine);
 
             final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
@@ -198,52 +198,19 @@ public class RubyBundleAuditAnalyzerIT extends BaseDBTestCase {
      */
     @Test
     public void testDependenciesPath() throws AnalysisException, DatabaseException {
-        final Engine engine = new Engine(getSettings());
-        engine.scan(BaseTest.getResourceAsFile(this,
-                "ruby/vulnerable/gems/rails-4.1.15/"));
-        try {
-            engine.analyzeDependencies();
-        } catch (NullPointerException ex) {
-            LOGGER.error("NPE", ex);
-            fail(ex.getMessage());
-        } catch (ExceptionCollection ex) {
-            Assume.assumeNoException("Exception setting up RubyBundleAuditAnalyzer; bundle audit may not be installed, or property \"analyzer.bundle.audit.path\" may not be set.", ex);
-            return;
+        try (Engine engine = new Engine(getSettings())) {
+            try {
+                engine.scan(BaseTest.getResourceAsFile(this, "ruby/vulnerable/gems/rails-4.1.15/"));
+                engine.analyzeDependencies();
+            } catch (NullPointerException ex) {
+                LOGGER.error("NPE", ex);
+                fail(ex.getMessage());
+            } catch (ExceptionCollection ex) {
+                Assume.assumeNoException("Exception setting up RubyBundleAuditAnalyzer; bundle audit may not be installed, or property \"analyzer.bundle.audit.path\" may not be set.", ex);
+                return;
+            }
+            List<Dependency> dependencies = new ArrayList<>(Arrays.asList(engine.getDependencies()));
+            LOGGER.info("{} dependencies found.", dependencies.size());
         }
-        List<Dependency> dependencies = new ArrayList<>(Arrays.asList(engine.getDependencies()));
-        LOGGER.info("{} dependencies found.", dependencies.size());
-        //TODO before re-enablign the following add actual assertions.
-//        Iterator<Dependency> dIterator = dependencies.iterator();
-//        while (dIterator.hasNext()) {
-//            Dependency dept = dIterator.next();
-//            LOGGER.info("dept path: {}", dept.getActualFilePath());
-//
-//            Set<Identifier> identifiers = dept.getIdentifiers();
-//            Iterator<Identifier> idIterator = identifiers.iterator();
-//            while (idIterator.hasNext()) {
-//                Identifier id = idIterator.next();
-//                LOGGER.info("  Identifier: {}, type={}, url={}, conf={}", id.getValue(), id.getType(), id.getUrl(), id.getConfidence());
-//            }
-//
-//            Set<Evidence> prodEv = dept.getProductEvidence().getEvidence();
-//            Iterator<Evidence> it = prodEv.iterator();
-//            while (it.hasNext()) {
-//                Evidence e = it.next();
-//                LOGGER.info("  prod: name={}, value={}, source={}, confidence={}", e.getName(), e.getValue(), e.getSource(), e.getConfidence());
-//            }
-//            Set<Evidence> versionEv = dept.getVersionEvidence().getEvidence();
-//            Iterator<Evidence> vIt = versionEv.iterator();
-//            while (vIt.hasNext()) {
-//                Evidence e = vIt.next();
-//                LOGGER.info("  version: name={}, value={}, source={}, confidence={}", e.getName(), e.getValue(), e.getSource(), e.getConfidence());
-//            }
-//
-//            Set<Evidence> vendorEv = dept.getVendorEvidence().getEvidence();
-//            Iterator<Evidence> vendorIt = vendorEv.iterator();
-//            while (vendorIt.hasNext()) {
-//                Evidence e = vendorIt.next();
-//                LOGGER.info("  vendor: name={}, value={}, source={}, confidence={}", e.getName(), e.getValue(), e.getSource(), e.getConfidence());
-//            }
-//        }
     }
 }

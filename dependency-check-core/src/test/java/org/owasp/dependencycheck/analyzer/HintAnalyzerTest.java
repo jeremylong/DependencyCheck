@@ -66,44 +66,45 @@ public class HintAnalyzerTest extends BaseDBTestCase {
     public void testAnalyze() throws Exception {
         //File guice = new File(this.getClass().getClassLoader().getResource("guice-3.0.jar").getPath());
         File guice = BaseTest.getResourceAsFile(this, "guice-3.0.jar");
-        //Dependency guice = new Dependency(fileg);
+        //Dependency guice = new EngineDependency(fileg);
         //File spring = new File(this.getClass().getClassLoader().getResource("spring-core-3.0.0.RELEASE.jar").getPath());
         File spring = BaseTest.getResourceAsFile(this, "spring-core-3.0.0.RELEASE.jar");
         //Dependency spring = new Dependency(files);
         getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
         getSettings().setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
         getSettings().setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
-        Engine engine = new Engine(getSettings());
+        try (Engine engine = new Engine(getSettings())) {
 
-        engine.scan(guice);
-        engine.scan(spring);
-        engine.analyzeDependencies();
-        Dependency gdep = null;
-        Dependency sdep = null;
-        for (Dependency d : engine.getDependencies()) {
-            if (d.getActualFile().equals(guice)) {
-                gdep = d;
-            } else if (d.getActualFile().equals(spring)) {
-                sdep = d;
+            engine.scan(guice);
+            engine.scan(spring);
+            engine.analyzeDependencies();
+            Dependency gdep = null;
+            Dependency sdep = null;
+            for (Dependency d : engine.getDependencies()) {
+                if (d.getActualFile().equals(guice)) {
+                    gdep = d;
+                } else if (d.getActualFile().equals(spring)) {
+                    sdep = d;
+                }
             }
+            final Evidence springTest1 = new Evidence("hint analyzer", "product", "springsource_spring_framework", Confidence.HIGH);
+            final Evidence springTest2 = new Evidence("hint analyzer", "vendor", "SpringSource", Confidence.HIGH);
+            final Evidence springTest3 = new Evidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
+            final Evidence springTest4 = new Evidence("hint analyzer", "product", "springsource_spring_framework", Confidence.HIGH);
+            final Evidence springTest5 = new Evidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
+
+            assertFalse(gdep.contains(EvidenceType.PRODUCT, springTest1));
+            assertFalse(gdep.contains(EvidenceType.VENDOR, springTest2));
+            assertFalse(gdep.contains(EvidenceType.VENDOR, springTest3));
+            assertFalse(gdep.contains(EvidenceType.PRODUCT, springTest4));
+            assertFalse(gdep.contains(EvidenceType.VENDOR, springTest5));
+
+            assertTrue(sdep.contains(EvidenceType.PRODUCT, springTest1));
+            assertTrue(sdep.contains(EvidenceType.VENDOR, springTest2));
+            assertTrue(sdep.contains(EvidenceType.VENDOR, springTest3));
+            //assertTrue(evidence.contains(springTest4));
+            //assertTrue(evidence.contains(springTest5));
         }
-        final Evidence springTest1 = new Evidence("hint analyzer", "product", "springsource_spring_framework", Confidence.HIGH);
-        final Evidence springTest2 = new Evidence("hint analyzer", "vendor", "SpringSource", Confidence.HIGH);
-        final Evidence springTest3 = new Evidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
-        final Evidence springTest4 = new Evidence("hint analyzer", "product", "springsource_spring_framework", Confidence.HIGH);
-        final Evidence springTest5 = new Evidence("hint analyzer", "vendor", "vmware", Confidence.HIGH);
-
-        assertFalse(gdep.contains(EvidenceType.PRODUCT, springTest1));
-        assertFalse(gdep.contains(EvidenceType.VENDOR, springTest2));
-        assertFalse(gdep.contains(EvidenceType.VENDOR, springTest3));
-        assertFalse(gdep.contains(EvidenceType.PRODUCT, springTest4));
-        assertFalse(gdep.contains(EvidenceType.VENDOR, springTest5));
-
-        assertTrue(sdep.contains(EvidenceType.PRODUCT, springTest1));
-        assertTrue(sdep.contains(EvidenceType.VENDOR, springTest2));
-        assertTrue(sdep.contains(EvidenceType.VENDOR, springTest3));
-        //assertTrue(evidence.contains(springTest4));
-        //assertTrue(evidence.contains(springTest5));
     }
 
     /**

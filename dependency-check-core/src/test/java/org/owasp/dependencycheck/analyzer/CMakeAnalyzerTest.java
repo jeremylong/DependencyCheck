@@ -154,19 +154,21 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
      */
     @Test
     public void testAnalyzeCMakeListsOpenCV3rdParty() throws AnalysisException, DatabaseException {
-        final Dependency result = new Dependency(BaseTest.getResourceAsFile(
-                this, "cmake/opencv/3rdparty/ffmpeg/ffmpeg_version.cmake"));
-        final Engine engine = new Engine(getSettings());
-        analyzer.analyze(result, engine);
-        assertProductEvidence(result, "libavcodec");
-        assertVersionEvidence(result, "55.18.102");
-        assertFalse("ALIASOF_ prefix shouldn't be present.",
-                Pattern.compile("\\bALIASOF_\\w+").matcher(result.getEvidence(EvidenceType.PRODUCT).toString()).find());
-        final Dependency[] dependencies = engine.getDependencies();
-        assertEquals("Number of additional dependencies should be 4.", 4, dependencies.length);
-        final Dependency last = dependencies[3];
-        assertProductEvidence(last, "libavresample");
-        assertVersionEvidence(last, "1.0.1");
+        try (Engine engine = new Engine(getSettings())) {
+            final Dependency result = new Dependency(BaseTest.getResourceAsFile(
+                    this, "cmake/opencv/3rdparty/ffmpeg/ffmpeg_version.cmake"));
+
+            analyzer.analyze(result, engine);
+            assertProductEvidence(result, "libavcodec");
+            assertVersionEvidence(result, "55.18.102");
+            assertFalse("ALIASOF_ prefix shouldn't be present.",
+                    Pattern.compile("\\bALIASOF_\\w+").matcher(result.getEvidence(EvidenceType.PRODUCT).toString()).find());
+            final Dependency[] dependencies = engine.getDependencies();
+            assertEquals("Number of additional dependencies should be 4.", 4, dependencies.length);
+            final Dependency last = dependencies[3];
+            assertProductEvidence(last, "libavresample");
+            assertVersionEvidence(last, "1.0.1");
+        }
     }
 
     private void assertVersionEvidence(Dependency result, String version) {

@@ -105,8 +105,8 @@ public class DependencyCheckScanAgent {
      */
     private boolean autoUpdate = true;
     /**
-     * Sets whether the data directory should be updated without performing a scan.
-     * Default is false.
+     * Sets whether the data directory should be updated without performing a
+     * scan. Default is false.
      */
     private boolean updateOnly = false;
     /**
@@ -221,8 +221,8 @@ public class DependencyCheckScanAgent {
      */
     private Settings settings;
     /**
-     * The path to optional dependency-check properties file. This will be
-     * used to side-load additional user-defined properties.
+     * The path to optional dependency-check properties file. This will be used
+     * to side-load additional user-defined properties.
      * {@link Settings#mergeProperties(String)}
      */
     private String propertiesFilePath;
@@ -937,7 +937,7 @@ public class DependencyCheckScanAgent {
                 LOGGER.error("Continuing execution");
             }
         }
-
+        
         settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);
         settings.setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);
         settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);
@@ -1028,7 +1028,7 @@ public class DependencyCheckScanAgent {
             final String msg = String.format("%n%nDependency-Check Failure:%n"
                     + "One or more dependencies were identified with vulnerabilities that have a CVSS score greater than '%.1f': %s%n"
                     + "See the dependency-check report for more details.%n%n", failBuildOnCVSS, ids.toString());
-
+            
             throw new ScanAgentException(msg);
         }
     }

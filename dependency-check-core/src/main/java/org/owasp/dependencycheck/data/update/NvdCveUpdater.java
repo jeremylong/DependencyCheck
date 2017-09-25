@@ -33,7 +33,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.data.nvdcve.ConnectionFactory;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
@@ -44,11 +43,9 @@ import org.owasp.dependencycheck.data.update.nvd.DownloadTask;
 import org.owasp.dependencycheck.data.update.nvd.NvdCveInfo;
 import org.owasp.dependencycheck.data.update.nvd.ProcessTask;
 import org.owasp.dependencycheck.data.update.nvd.UpdateableNvdCve;
-import org.owasp.dependencycheck.exception.H2DBLockException;
 import org.owasp.dependencycheck.utils.DateUtil;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
-import org.owasp.dependencycheck.utils.H2DBLock;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -113,17 +110,10 @@ public class NvdCveUpdater implements CachedWebDataSource {
         if (isUpdateConfiguredFalse()) {
             return;
         }
-        H2DBLock dblock = null;
         try {
-            if (ConnectionFactory.isH2Connection(settings)) {
-                dblock = new H2DBLock(settings);
-                LOGGER.debug("locking for update");
-                dblock.lock();
-            }
-            initializeExecutorServices();
             dbProperties = cveDb.getDatabaseProperties();
-
             if (checkUpdate()) {
+                initializeExecutorServices();
                 final UpdateableNvdCve updateable = getUpdatesNeeded();
                 if (updateable.isUpdateNeeded()) {
                     performUpdate(updateable);
@@ -140,12 +130,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
             throw new UpdateException("Unable to download the NVD CVE data.", ex);
         } catch (DatabaseException ex) {
             throw new UpdateException("Database Exception, unable to update the data to use the most current data.", ex);
-        } catch (H2DBLockException ex) {
-            throw new UpdateException("Unable to obtain an exclusive lock on the H2 database to perform updates", ex);
         } finally {
-            if (dblock != null) {
-                dblock.release();
-            }
             shutdownExecutorServices();
         }
     }

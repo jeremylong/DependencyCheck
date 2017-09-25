@@ -189,9 +189,10 @@ public class JarAnalyzerTest extends BaseTest {
         Dependency actualJarFile = new Dependency();
         actualJarFile.setActualFilePath(BaseTest.getResourceAsFile(this, "avro-ipc-1.5.0.jar").getAbsolutePath());
         actualJarFile.setFileName("avro-ipc-1.5.0.jar");
-        Engine engine = new Engine(getSettings());
-        engine.setDependencies(Arrays.asList(macOSMetaDataFile, actualJarFile));
-        instance.analyzeDependency(macOSMetaDataFile, engine);
+        try (Engine engine = new Engine(getSettings())) {
+            engine.setDependencies(Arrays.asList(macOSMetaDataFile, actualJarFile));
+            instance.analyzeDependency(macOSMetaDataFile, engine);
+        }
     }
 
     @Test
@@ -201,8 +202,9 @@ public class JarAnalyzerTest extends BaseTest {
         textFileWithJarExtension
                 .setActualFilePath(BaseTest.getResourceAsFile(this, "textFileWithJarExtension.jar").getAbsolutePath());
         textFileWithJarExtension.setFileName("textFileWithJarExtension.jar");
-        Engine engine = new Engine(getSettings());
-        engine.setDependencies(Collections.singletonList(textFileWithJarExtension));
-        instance.analyzeDependency(textFileWithJarExtension, engine);
+        try (Engine engine = new Engine(getSettings())) {
+            engine.setDependencies(Collections.singletonList(textFileWithJarExtension));
+            instance.analyzeDependency(textFileWithJarExtension, engine);
+        }
     }
 }
