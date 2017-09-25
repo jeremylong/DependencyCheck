@@ -194,7 +194,7 @@ public class NodePackageAnalyzer extends AbstractFileTypeAnalyzer {
             } else {
                 LOGGER.warn("JSON value not string or JSON object as expected: {}", value);
             }
-        }
-    		return evidenceStr;
-    }
+		}
+		return evidenceStr;
+	}
 }
