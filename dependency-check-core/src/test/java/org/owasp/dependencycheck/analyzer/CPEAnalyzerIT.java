@@ -45,12 +45,10 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
     /**
      * Tests of buildSearch of class CPEAnalyzer.
      *
-     * @throws IOException is thrown when an IO Exception occurs.
-     * @throws CorruptIndexException is thrown when the index is corrupt.
-     * @throws ParseException is thrown when a parse exception occurs
+     * @throws Exception is thrown when an IO Exception occurs.
      */
     @Test
-    public void testBuildSearch() throws IOException, CorruptIndexException, ParseException {
+    public void testBuildSearch() throws Exception {
         Set<String> productWeightings = Collections.singleton("struts2");
 
         Set<String> vendorWeightings = Collections.singleton("apache");
@@ -75,6 +73,7 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         queryText = instance.buildSearch(vendor, product, vendorWeightings, productWeightings);
         expResult = " product:(  struts^5 struts2^5 2 core )  AND  vendor:(  apache^5 software foundation ) ";
         assertTrue(expResult.equals(queryText));
+        instance.close();
     }
 
     /**
@@ -88,7 +87,6 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
         try (Engine e = new Engine(getSettings())) {
             //update needs to be performed so that xtream can be tested
             e.doUpdates(true);
-
             cpeAnalyzer.initialize(getSettings());
             cpeAnalyzer.prepare(e);
             FileNameAnalyzer fnAnalyzer = new FileNameAnalyzer();
@@ -108,9 +106,9 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
             callDetermineCPE_full("hazelcast-2.5.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
             callDetermineCPE_full("spring-context-support-2.5.5.jar", "cpe:/a:springsource:spring_framework:2.5.5", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
             callDetermineCPE_full("spring-core-3.0.0.RELEASE.jar", "cpe:/a:vmware:springsource_spring_framework:3.0.0", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
-            callDetermineCPE_full("org.mortbay.jetty.jar", "cpe:/a:mortbay_jetty:jetty:4.2.27", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
             callDetermineCPE_full("jaxb-xercesImpl-1.5.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
             callDetermineCPE_full("ehcache-core-2.2.0.jar", null, cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
+            callDetermineCPE_full("org.mortbay.jetty.jar", "cpe:/a:mortbay_jetty:jetty:4.2.27", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
             callDetermineCPE_full("xstream-1.4.8.jar", "cpe:/a:x-stream:xstream:1.4.8", cpeAnalyzer, fnAnalyzer, jarAnalyzer, hAnalyzer, fp);
         } finally {
             cpeAnalyzer.close();
@@ -291,5 +289,6 @@ public class CPEAnalyzerIT extends BaseDBTestCase {
             }
             assertTrue("apache:struts was not identified", found);
         }
+        instance.close();
     }
 }
