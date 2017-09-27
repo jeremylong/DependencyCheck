@@ -50,9 +50,11 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//CSOFF: AvoidStarImport
+import static org.owasp.dependencycheck.data.nvdcve.CveDB.PreparedStatementCveDb.*;
+//CSON: AvoidStarImport
 import static org.apache.commons.collections.map.AbstractReferenceMap.HARD;
 import static org.apache.commons.collections.map.AbstractReferenceMap.SOFT;
-import static org.owasp.dependencycheck.data.nvdcve.CveDB.PreparedStatementCveDb.*;
 
 /**
  * The database holding information about the NVD CVE data. This class is safe

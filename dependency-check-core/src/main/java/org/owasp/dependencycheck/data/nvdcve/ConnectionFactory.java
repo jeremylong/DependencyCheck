@@ -253,7 +253,7 @@ public final class ConnectionFactory {
      * cannot be created
      */
     public static boolean h2DataFileExists(Settings configuration) throws IOException {
-        File file = getH2DataFile(configuration);
+        final File file = getH2DataFile(configuration);
         return file.exists();
     }
 

@@ -18,8 +18,6 @@
 package org.owasp.dependencycheck.utils;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
@@ -78,8 +76,8 @@ public class H2DBLock {
      */
     public H2DBLock(Settings settings) {
         this.settings = settings;
-        byte[] random = new byte[16];
-        SecureRandom gen = new SecureRandom();
+        final byte[] random = new byte[16];
+        final SecureRandom gen = new SecureRandom();
         gen.nextBytes(random);
         magic = Checksum.getHex(random);
     }
@@ -122,13 +120,13 @@ public class H2DBLock {
                         file.getChannel().force(true);
                         Thread.sleep(20);
                         file.seek(0);
-                        String current = file.readLine();
+                        final String current = file.readLine();
                         if (current != null && !current.equals(magic)) {
                             lock.close();
                             lock = null;
                             LOGGER.debug("Another process obtained a lock first ({})", Thread.currentThread().getName());
                         } else {
-                            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                            final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                             LOGGER.debug("Lock file created ({}) {} @ {}", Thread.currentThread().getName(), magic, timestamp.toString());
                         }
                     }
@@ -146,7 +144,7 @@ public class H2DBLock {
                 }
                 if (lock == null || !lock.isValid()) {
                     try {
-                        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                        final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                         LOGGER.debug("Sleeping thread {} ({}) for 10 seconds because an exclusive lock on the database could not be obtained ({})",
                                 Thread.currentThread().getName(), magic, timestamp.toString());
                         Thread.sleep(SLEEP_DURATION);
@@ -186,7 +184,7 @@ public class H2DBLock {
         }
         if (lockFile != null && lockFile.isFile()) {
             try (RandomAccessFile f = new RandomAccessFile(lockFile, "rw")) {
-                String m = f.readLine();
+                final String m = f.readLine();
                 //yes, we are explicitly calling close on an auto-closable object - this is so we can delete the file.
                 f.close();
                 if (m != null && m.equals(magic) && !lockFile.delete()) {
@@ -198,7 +196,7 @@ public class H2DBLock {
             }
         }
         lockFile = null;
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         LOGGER.debug("Lock released ({}) {} @ {}", Thread.currentThread().getName(), magic, timestamp.toString());
     }
 

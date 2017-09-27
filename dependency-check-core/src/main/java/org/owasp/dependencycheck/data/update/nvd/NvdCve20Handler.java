@@ -33,8 +33,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.helpers.DefaultHandler;
-
+//CSOFF: AvoidStarImport
 import static org.owasp.dependencycheck.data.update.nvd.NvdCve20Handler.AttributeValues.*;
+//CSON: AvoidStarImport
 
 /**
  * A SAX Handler that will parse the NVD CVE XML (schema version 2.0).

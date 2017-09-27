@@ -42,9 +42,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -61,11 +59,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.concurrent.NotThreadSafe;
-
-import static org.owasp.dependencycheck.analyzer.AnalysisPhase.*;
 import org.owasp.dependencycheck.exception.H2DBLockException;
-import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.H2DBLock;
+
+//CSOFF: AvoidStarImport
+import static org.owasp.dependencycheck.analyzer.AnalysisPhase.*;
+//CSON: AvoidStarImport
+
 
 /**
  * Scans files, directories, etc. for Dependencies. Analyzers are loaded and
@@ -941,7 +941,7 @@ public class Engine implements FileFilter, AutoCloseable {
                     && settings.getString(Settings.KEYS.DB_CONNECTION_STRING).contains("file:%s")) {
                 H2DBLock lock = null;
                 try {
-                    File db = ConnectionFactory.getH2DataFile(settings);
+                    final File db = ConnectionFactory.getH2DataFile(settings);
                     if (db.isFile()) {
                         database.close();
                         if (lockRequired) {
@@ -949,12 +949,12 @@ public class Engine implements FileFilter, AutoCloseable {
                             lock.lock();
                         }
                         LOGGER.debug("copying database");
-                        File temp = settings.getTempDirectory();
-                        File tempDB = new File(temp, db.getName());
+                        final File temp = settings.getTempDirectory();
+                        final File tempDB = new File(temp, db.getName());
                         Files.copy(db.toPath(), tempDB.toPath());
                         LOGGER.debug("copying complete '{}'", temp.toPath());
                         settings.setString(Settings.KEYS.DATA_DIRECTORY, temp.getPath());
-                        String connStr = settings.getString(Settings.KEYS.DB_CONNECTION_STRING);
+                        final String connStr = settings.getString(Settings.KEYS.DB_CONNECTION_STRING);
                         settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connStr + "ACCESS_MODE_DATA=r");
                         database = new CveDB(settings);
                     }
