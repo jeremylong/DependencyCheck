@@ -187,6 +187,8 @@ public class H2DBLock {
         if (lockFile != null && lockFile.isFile()) {
             try (RandomAccessFile f = new RandomAccessFile(lockFile, "rw")) {
                 String m = f.readLine();
+                //yes, we are explicitly calling close on an auto-closable object - this is so we can delete the file.
+                f.close();
                 if (m != null && m.equals(magic) && !lockFile.delete()) {
                     LOGGER.error("Lock file '{}' was unable to be deleted. Please manually delete this file.", lockFile.toString());
                     lockFile.deleteOnExit();

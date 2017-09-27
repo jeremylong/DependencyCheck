@@ -28,6 +28,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.utils.Settings;
@@ -38,6 +40,8 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import javax.json.JsonValue;
+import javax.json.JsonValue.ValueType;
 import static org.owasp.dependencycheck.analyzer.NspAnalyzer.DEFAULT_URL;
 import org.owasp.dependencycheck.utils.URLConnectionFailureException;
 
@@ -133,7 +137,13 @@ public class NspSearch {
                                 advisory.setOverview(object.getString("overview"));
                                 advisory.setRecommendation(object.getString("recommendation", null));
                                 advisory.setCvssVector(object.getString("cvss_vector", null));
-                                advisory.setCvssScore(Float.parseFloat(object.getJsonNumber("cvss_score").toString()));
+
+                                if (object.get("cvss_score").getValueType() != ValueType.NULL) {
+                                    advisory.setCvssScore(Float.parseFloat(object.getJsonNumber("cvss_score").toString()));
+                                } else {
+                                    advisory.setCvssScore(-1);
+                                }
+
                                 advisory.setModule(object.getString("module", null));
                                 advisory.setVersion(object.getString("version", null));
                                 advisory.setVulnerableVersions(object.getString("vulnerable_versions", null));
@@ -153,6 +163,7 @@ public class NspSearch {
                         }
                     }
                     break;
+
                 case 400:
                     LOGGER.debug("Invalid payload submitted to Node Security Platform. Received response code: {} {}",
                             conn.getResponseCode(), conn.getResponseMessage());
